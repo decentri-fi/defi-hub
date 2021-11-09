@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>defitrack-blockchains</artifactId>
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>io.defitrack</groupId>
+        <artifactId>defitrack-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <modules>
+        <module>blockchain-dependencies</module>
+        <module>evm</module>
+        <module>ethereum</module>
+        <module>polygon</module>
+        <module>bsc</module>
+        <module>arbitrum</module>
+        <module>avalanche</module>
+        <module>fantom</module>
+    </modules>
+</project>
