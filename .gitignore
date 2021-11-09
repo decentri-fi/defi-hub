@@ -1,3 +1,5 @@
+.idea/
+
 # Compiled class file
 *.class
 
@@ -24,3 +26,5 @@ hs_err_pid*
 
 build/
 target/
+setup-git.sh
+
