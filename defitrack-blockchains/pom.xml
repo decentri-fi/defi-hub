@@ -13,6 +13,7 @@
     </parent>
 
     <modules>
+        <module>blockchain-dependencies</module>
         <module>evm</module>
         <module>ethereum</module>
         <module>polygon</module>

@@ -1,4 +1,4 @@
-package io.codechef.matic.config
+package io.defitrack.matic.config
 
 import okhttp3.OkHttpClient
 import org.slf4j.Logger
@@ -17,7 +17,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
 @Configuration
-class PolygonWeb3jConfigurer(@Value("\${io.codechef.polygon.endpoint.url}") private val endpoint: String) {
+class PolygonWeb3jConfigurer(@Value("\${io.defitrack.polygon.endpoint.url}") private val endpoint: String) {
 
 
     protected var webSocketClient: WebSocketClient? = null

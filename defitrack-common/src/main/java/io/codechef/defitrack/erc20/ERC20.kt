@@ -1,6 +1,6 @@
-package io.codechef.defitrack.erc20
+package io.defitrack.erc20
 
-import io.codechef.common.network.Network
+import io.defitrack.common.network.Network
 
 class ERC20(
     val name: String,

@@ -1,8 +1,8 @@
-package io.codechef.ethereumbased.contract
+package io.defitrack.ethereumbased.contract
 
 import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.retry
-import io.codechef.ethereumbased.contract.SolidityBasedContractAccessor.Companion.toAddress
+import io.defitrack.ethereumbased.contract.SolidityBasedContractAccessor.Companion.toAddress
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

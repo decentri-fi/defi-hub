@@ -1,4 +1,4 @@
-package io.codechef.ethereum.config
+package io.defitrack.ethereum.config
 
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.scheduling.annotation.Scheduled

@@ -1,4 +1,4 @@
-package io.codechef.protocol
+package io.defitrack.protocol
 
 enum class Protocol(
     val logo: String,

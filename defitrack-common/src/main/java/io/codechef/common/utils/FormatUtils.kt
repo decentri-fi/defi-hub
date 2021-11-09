@@ -1,8 +1,8 @@
-package io.codechef.common.utils
+package io.defitrack.common.utils
 
 import java.math.BigDecimal
-import io.codechef.common.utils.domain.PrettyAmount
-import io.codechef.common.utils.FormatUtils
+import io.defitrack.common.utils.domain.PrettyAmount
+import io.defitrack.common.utils.FormatUtils
 import org.web3j.utils.Convert
 import java.math.BigInteger
 import java.math.RoundingMode

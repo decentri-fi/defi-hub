@@ -1,4 +1,4 @@
-package io.codechef.ethereumbased.contract
+package io.defitrack.ethereumbased.contract
 
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Type

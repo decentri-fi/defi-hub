@@ -1,4 +1,4 @@
-package io.codechef.defitrack
+package io.defitrack
 
 import org.springframework.stereotype.Component
 import java.math.BigDecimal

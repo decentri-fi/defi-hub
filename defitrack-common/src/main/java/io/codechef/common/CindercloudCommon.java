@@ -1,4 +1,4 @@
-package io.codechef.common;
+package io.defitrack.common;
 
 import org.springframework.context.annotation.ComponentScan;
 

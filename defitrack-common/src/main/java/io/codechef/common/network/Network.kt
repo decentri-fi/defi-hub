@@ -1,4 +1,4 @@
-package io.codechef.common.network
+package io.defitrack.common.network
 
 enum class Network(val logo: String, val chainId: Int, val slug: String) {
     ETHEREUM("ethereum.png", 1, "ethereum"),

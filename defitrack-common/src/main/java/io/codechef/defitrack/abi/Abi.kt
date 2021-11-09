@@ -1,3 +1,3 @@
-package io.codechef.defitrack.abi
+package io.defitrack.abi
 
 data class Abi(val id: String, val content: String)

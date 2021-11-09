@@ -1,4 +1,4 @@
-package io.codechef.common.configuration;
+package io.defitrack.common.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

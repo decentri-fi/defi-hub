@@ -1,4 +1,4 @@
-package io.codechef.common
+package io.defitrack.common
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper

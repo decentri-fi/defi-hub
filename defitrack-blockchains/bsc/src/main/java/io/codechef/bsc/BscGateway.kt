@@ -1,4 +1,4 @@
-package io.codechef.bsc
+package io.defitrack.bsc
 
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.scheduling.annotation.Scheduled

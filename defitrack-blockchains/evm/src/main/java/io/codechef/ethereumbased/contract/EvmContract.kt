@@ -1,6 +1,6 @@
-package io.codechef.ethereumbased.contract
+package io.defitrack.ethereumbased.contract
 
-import io.codechef.ethereumbased.contract.multicall.MultiCallElement
+import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.Type

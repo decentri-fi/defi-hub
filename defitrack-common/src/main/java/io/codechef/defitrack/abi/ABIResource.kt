@@ -1,4 +1,4 @@
-package io.codechef.defitrack.abi
+package io.defitrack.abi
 
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*

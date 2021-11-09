@@ -1,4 +1,4 @@
-package io.codechef.common.configuration
+package io.defitrack.common.configuration
 
 import io.ktor.client.*
 import io.ktor.client.engine.apache.*

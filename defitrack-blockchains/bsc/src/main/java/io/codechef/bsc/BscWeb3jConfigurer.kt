@@ -1,4 +1,4 @@
-package io.codechef.bsc
+package io.defitrack.bsc
 
 import okhttp3.OkHttpClient
 import org.slf4j.Logger
@@ -17,7 +17,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
 @Configuration
-class BscWeb3jConfigurer(@Value("\${io.codechef.bsc.endpoint.url}") private val endpoint: String) {
+class BscWeb3jConfigurer(@Value("\${io.defitrack.bsc.endpoint.url}") private val endpoint: String) {
     protected var webSocketClient: WebSocketClient? = null
 
     val logger: Logger = LoggerFactory.getLogger(BscWeb3jConfigurer::class.java)

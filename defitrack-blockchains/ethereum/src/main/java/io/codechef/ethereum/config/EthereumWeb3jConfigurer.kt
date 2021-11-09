@@ -1,4 +1,4 @@
-package io.codechef.ethereum.config
+package io.defitrack.ethereum.config
 
 import okhttp3.OkHttpClient
 import org.slf4j.Logger
@@ -17,7 +17,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
 @Configuration
-class EthereumWeb3jConfigurer(@Value("\${io.codechef.ethereum.endpoint.url}") private val endpoint: String) {
+class EthereumWeb3jConfigurer(@Value("\${io.defitrack.ethereum.endpoint.url}") private val endpoint: String) {
     protected var webSocketClient: WebSocketClient? = null
     val logger: Logger = LoggerFactory.getLogger(EthereumWeb3jConfigurer::class.java)
 
