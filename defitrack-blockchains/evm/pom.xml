@@ -15,7 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>io.defitrack</groupId>
-            <artifactId>common</artifactId>
+            <artifactId>defitrack-common</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
