@@ -13,7 +13,10 @@
     </parent>
 
     <modules>
-
+        <module>defitrack-api</module>
+        <module>defitrack-api-gw</module>
+        <module>defitrack-erc20</module>
+        <module>defitrack-abi</module>
     </modules>
 
     <dependencyManagement>
@@ -31,6 +34,11 @@
                 <version>${project.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.defitrack</groupId>
+                <artifactId>defitrack-common</artifactId>
+                <version>${project.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

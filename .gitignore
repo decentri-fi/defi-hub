@@ -29,3 +29,4 @@ build/
 target/
 setup-git.sh
 
+*-dev.properties

@@ -16,6 +16,11 @@
         <dependencies>
             <dependency>
                 <groupId>io.defitrack</groupId>
+                <artifactId>protocol</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.defitrack</groupId>
                 <artifactId>aave</artifactId>
                 <version>${project.version}</version>
             </dependency>
