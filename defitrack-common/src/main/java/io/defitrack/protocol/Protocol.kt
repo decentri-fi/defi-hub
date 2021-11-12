@@ -12,7 +12,6 @@ enum class Protocol(
     YEARN("yearn.png", "yearn"),
     COMPOUND("compound.png", "compound", true),
     IRON("iron.png", "iron"),
-    BELT("belt.png", "belt"),
     BEEFY("beefy.png", "beefy", true),
     QUICKSWAP("quickswap.png", "quickswap", true),
     DRACULA("dracula.webp", "dracula"),
