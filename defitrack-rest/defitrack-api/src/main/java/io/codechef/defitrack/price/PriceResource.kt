@@ -1,7 +1,6 @@
-package io.codechef.defitrack.price
+package io.defitrack.abi
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
+import io.codechef.defitrack.price.PriceRequest
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.request.*
@@ -14,29 +13,35 @@ import kotlin.time.ExperimentalTime
 
 @Component
 class PriceResource(
-    private val objectMapper: ObjectMapper,
     @Value("\${priceResourceLocation:http://defitrack-price:8080}") val priceResourceLocation: String,
     private val client: HttpClient
 ) {
 
     @OptIn(ExperimentalTime::class)
-    val cache = Cache.Builder().expireAfterWrite(
-        Duration.Companion.minutes(10)
-    ).build<String, Map<String, BigDecimal>>()
+    val cache = Cache.Builder()
+        .expireAfterWrite(Duration.Companion.minutes(10))
+        .build<String, BigDecimal>()
 
-    fun getPrices(): Map<String, BigDecimal> {
+    fun getPrice(tokenName: String): BigDecimal {
         return runBlocking {
-            cache.get("prices") {
-                val result = client.get<String>(with(HttpRequestBuilder()) {
-                    url(priceResourceLocation)
-                    this
-                })
-                objectMapper.readValue(
-                    result,
-                    object : TypeReference<Map<String, BigDecimal>>() {}).map { entry ->
-                    entry.key.uppercase() to entry.value
-                }.toMap()
+            cache.get(tokenName) {
+                client.get("$priceResourceLocation/$tokenName")
             }
         }
+    }
+
+
+    fun calculatePrice(name: String, amount: Double): Double {
+        val price = getPrice(name)
+        return amount.times(price.toDouble())
+    }
+
+    fun calculatePrice(priceRequest: PriceRequest?): Double = runBlocking {
+        priceRequest?.let {
+            client.post("") {
+                this.header("Content-Type", "application/json")
+                this.body = priceRequest
+            }
+        } ?: 0.0
     }
 }

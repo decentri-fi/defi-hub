@@ -1,12 +1,12 @@
 package io.codechef.defitrack.protocol.quickswap.staking
 
 import io.codechef.defitrack.price.PriceRequest
-import io.codechef.defitrack.price.PriceService
 import io.codechef.defitrack.protocol.quickswap.apr.QuickswapAPRService
 import io.codechef.defitrack.staking.StakingMarketService
 import io.codechef.defitrack.staking.domain.StakingMarketElement
 import io.codechef.defitrack.token.TokenService
 import io.defitrack.abi.ABIResource
+import io.defitrack.abi.PriceResource
 import io.defitrack.common.network.Network
 import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.Protocol
@@ -25,7 +25,7 @@ class QuickswapStakingMarketService(
     private val quickswapService: QuickswapService,
     private val polygonContractAccessor: PolygonContractAccessor,
     private val abiService: ABIResource,
-    private val priceService: PriceService,
+    private val priceResource: PriceResource,
     private val tokenService: TokenService,
     private val quickswapAPRService: QuickswapAPRService,
 ) : StakingMarketService {
@@ -63,7 +63,7 @@ class QuickswapStakingMarketService(
                     rewardToken = rewardToken.toRewardToken(),
                     contractAddress = pool.address,
                     vaultType = "quickswap-reward-pool",
-                    marketSize = priceService.calculatePrice(
+                    marketSize = priceResource.calculatePrice(
                         PriceRequest(
                             address = stakedToken.address,
                             network = getNetwork(),

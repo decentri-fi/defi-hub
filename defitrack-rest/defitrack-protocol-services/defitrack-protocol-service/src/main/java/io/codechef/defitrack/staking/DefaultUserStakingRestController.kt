@@ -4,13 +4,13 @@ import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.retry
 import io.codechef.defitrack.network.toVO
 import io.codechef.defitrack.price.PriceRequest
-import io.codechef.defitrack.price.PriceService
 import io.codechef.defitrack.protocol.toVO
 import io.codechef.defitrack.staking.domain.StakingElement
 import io.codechef.defitrack.staking.domain.VaultStakedToken
 import io.codechef.defitrack.staking.vo.StakingElementVO
 import io.codechef.defitrack.staking.vo.VaultStakedTokenVO
 import io.codechef.defitrack.staking.vo.toVO
+import io.defitrack.abi.PriceResource
 import io.defitrack.common.network.Network
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -24,10 +24,8 @@ import java.math.RoundingMode
 @RequestMapping("/staking")
 class DefaultUserStakingRestController(
     private val stakingServices: List<UserStakingService>,
-    private val priceService: PriceService
+    private val priceResource: PriceResource
 ) {
-
-    val logger = LoggerFactory.getLogger(this::class.java)
 
     @GetMapping("/{userId}/positions")
     fun getUserStakings(@PathVariable("userId") address: String): List<StakingElementVO> {
@@ -41,7 +39,7 @@ class DefaultUserStakingRestController(
                     }
                 }
             } catch (ex: Exception) {
-                logger.error("Something went wrong trying to fetch the user poolings: ${ex.message}")
+                Companion.logger.error("Something went wrong trying to fetch the user poolings: ${ex.message}")
                 emptyList()
             }
         }.map {
@@ -65,7 +63,7 @@ class DefaultUserStakingRestController(
                     }
                 }
             } catch (ex: Exception) {
-                logger.error("Something went wrong trying to fetch the user poolings: ${ex.message}")
+                Companion.logger.error("Something went wrong trying to fetch the user poolings: ${ex.message}")
                 null
             }
         }.firstOrNull()?.toVO()
@@ -77,7 +75,7 @@ class DefaultUserStakingRestController(
             id = id,
             network = network.toVO(),
             protocol = protocol.toVO(),
-            dollarValue = priceService.calculatePrice(
+            dollarValue = priceResource.calculatePrice(
                 stakedToken?.toPriceRequest()
             ),
             name = name,
@@ -109,5 +107,9 @@ class DefaultUserStakingRestController(
             amount = amount.toBigDecimal().divide(BigDecimal.TEN.pow(decimals), 18, RoundingMode.HALF_UP),
             type = type
         )
+    }
+
+    companion object {
+        val logger = LoggerFactory.getLogger(this::class.java)
     }
 }

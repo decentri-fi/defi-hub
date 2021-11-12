@@ -3,9 +3,9 @@ package io.codechef.defitrack.protocol.adamant.claimable
 import io.codechef.defitrack.claimable.ClaimableElement
 import io.codechef.defitrack.claimable.ClaimableService
 import io.codechef.defitrack.claimable.ClaimableToken
-import io.codechef.defitrack.price.PriceService
 import io.codechef.defitrack.token.ERC20Resource
 import io.defitrack.abi.ABIResource
+import io.defitrack.abi.PriceResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
 import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
@@ -27,7 +27,7 @@ class AdamantClaimableService(
     private val adamantService: AdamantService,
     private val polygonContractAccessor: PolygonContractAccessor,
     private val erC20Resource: ERC20Resource,
-    private val priceService: PriceService
+    private val priceService: PriceResource
 ) : ClaimableService {
 
     val genericVaultABI = abiResource.getABI("adamant/GenericVault.json")

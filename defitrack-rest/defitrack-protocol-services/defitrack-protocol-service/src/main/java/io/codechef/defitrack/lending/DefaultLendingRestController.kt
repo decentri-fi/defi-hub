@@ -5,8 +5,8 @@ import com.github.michaelbull.retry.retry
 import io.codechef.defitrack.lending.domain.LendingElement
 import io.codechef.defitrack.lending.vo.LendingElementVO
 import io.codechef.defitrack.network.toVO
-import io.codechef.defitrack.price.PriceService
 import io.codechef.defitrack.protocol.toVO
+import io.defitrack.abi.PriceResource
 import io.defitrack.common.network.Network
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/lending")
 class DefaultLendingRestController(
     private val lendingServices: List<LendingService>,
-    private val priceService: PriceService
+    private val priceResource: PriceResource
 ) {
 
     companion object {
@@ -65,7 +65,7 @@ class DefaultLendingRestController(
                 user = user,
                 network = network.toVO(),
                 protocol = protocol.toVO(),
-                dollarValue = priceService.calculatePrice(
+                dollarValue = priceResource.calculatePrice(
                     symbol,
                     amount.toDouble()
                 ),

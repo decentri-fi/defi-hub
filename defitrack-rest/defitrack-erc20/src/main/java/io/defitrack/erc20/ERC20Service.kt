@@ -1,8 +1,8 @@
 package io.defitrack.erc20
 
 import io.codechef.defitrack.network.toVO
-import io.codechef.defitrack.price.PriceService
 import io.defitrack.abi.ABIResource
+import io.defitrack.abi.PriceResource
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.vo.ERC20Information
 import io.defitrack.ethereumbased.contract.ERC20Contract
@@ -14,7 +14,7 @@ class ERC20Service(
     private val abiService: ABIResource,
     private val erC20Repository: ERC20Repository,
     private val contractAccessors: List<EvmContractAccessor>,
-    private val priceService: PriceService
+    private val priceResource: PriceResource
 ) {
 
     val erc20Buffer = mutableMapOf<String, ERC20Contract>()
@@ -67,7 +67,7 @@ class ERC20Service(
                 symbol = it.symbol,
                 network = it.network.toVO(),
                 address = it.address,
-                dollarValue = priceService.getPrice(it.symbol).toDouble()
+                dollarValue = priceResource.getPrice(it.symbol).toDouble()
             )
         }
     }

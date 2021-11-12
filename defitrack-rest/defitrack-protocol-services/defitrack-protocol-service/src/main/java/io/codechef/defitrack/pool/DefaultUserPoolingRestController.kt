@@ -4,8 +4,8 @@ import io.codechef.defitrack.network.toVO
 import io.codechef.defitrack.pool.domain.PoolingElement
 import io.codechef.defitrack.pool.vo.PoolingElementVO
 import io.codechef.defitrack.price.PriceRequest
-import io.codechef.defitrack.price.PriceService
 import io.codechef.defitrack.protocol.toVO
+import io.defitrack.abi.PriceResource
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/pooling")
 class DefaultUserPoolingRestController(
     private val userPoolingServices: List<UserPoolingService>,
-    private val priceService: PriceService
+    private val priceResource: PriceResource
 ) {
 
     val logger = LoggerFactory.getLogger(this::class.java)
@@ -40,7 +40,7 @@ class DefaultUserPoolingRestController(
             lpAddress = lpAddress,
             amount = amount.toDouble(),
             name = name,
-            dollarValue = priceService.calculatePrice(
+            dollarValue = priceResource.calculatePrice(
                 PriceRequest(
                     lpAddress,
                     network,

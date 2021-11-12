@@ -1,7 +1,6 @@
 package io.codechef.protocol.beefy.staking
 
 import io.codechef.defitrack.price.PriceRequest
-import io.codechef.defitrack.price.PriceService
 import io.codechef.defitrack.staking.StakingMarketService
 import io.codechef.defitrack.staking.domain.RewardToken
 import io.codechef.defitrack.staking.domain.StakedToken
@@ -9,6 +8,7 @@ import io.codechef.defitrack.staking.domain.StakingMarketElement
 import io.codechef.defitrack.token.TokenService
 import io.codechef.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.abi.ABIResource
+import io.defitrack.abi.PriceResource
 import io.defitrack.common.network.Network
 import io.defitrack.fantom.config.FantomContractAccessor
 import io.defitrack.protocol.Protocol
@@ -34,7 +34,7 @@ class BeefyFantomStakingMarketService(
     private val beefyAPYService: BeefyAPYService,
     private val beefyService: BeefyService,
     private val tokenService: TokenService,
-    private val priceService: PriceService
+    private val priceService: PriceResource
 ) : StakingMarketService {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
