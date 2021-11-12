@@ -1,8 +1,8 @@
 package io.codechef.defitrack.claimable
 
 import io.codechef.defitrack.network.toVO
-import io.codechef.defitrack.price.PriceService
 import io.codechef.defitrack.protocol.toVO
+import io.defitrack.abi.PriceResource
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/")
 class DefaultClaimableRestController(
     private val claimableServices: List<ClaimableService>,
-    private val priceService: PriceService
+    private val priceService: PriceResource
 ) {
 
     companion object {

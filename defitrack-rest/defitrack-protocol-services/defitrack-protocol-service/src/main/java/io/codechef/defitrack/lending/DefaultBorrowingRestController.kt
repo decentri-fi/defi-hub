@@ -4,8 +4,8 @@ import io.codechef.defitrack.borrowing.BorrowService
 import io.codechef.defitrack.borrowing.domain.BorrowElement
 import io.codechef.defitrack.borrowing.vo.BorrowElementVO
 import io.codechef.defitrack.network.toVO
-import io.codechef.defitrack.price.PriceService
 import io.codechef.defitrack.protocol.toVO
+import io.defitrack.abi.PriceResource
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/borrowing")
 class DefaultBorrowingRestController(
     private val borrowingServices: List<BorrowService>,
-    private val priceService: PriceService
+    private val priceResource: PriceResource
 ) {
 
     companion object {
@@ -42,7 +42,7 @@ class DefaultBorrowingRestController(
                 user = user,
                 network = network.toVO(),
                 protocol = protocol.toVO(),
-                dollarValue = priceService.calculatePrice(
+                dollarValue = priceResource.calculatePrice(
                     symbol,
                     amount.toDouble()
                 ),

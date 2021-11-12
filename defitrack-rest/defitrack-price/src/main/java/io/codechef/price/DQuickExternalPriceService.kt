@@ -1,6 +1,5 @@
 package io.codechef.price
 
-import io.codechef.defitrack.price.ExternalPriceService
 import io.defitrack.abi.ABIResource
 import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.quickswap.QuickswapService

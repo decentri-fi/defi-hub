@@ -1,7 +1,7 @@
 package io.codechef.defitrack.protocol.quickswap.apr
 
-import io.codechef.defitrack.price.PriceService
 import io.defitrack.abi.ABIResource
+import io.defitrack.abi.PriceResource
 import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.quickswap.QuickswapDualRewardPoolContract
 import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
@@ -21,7 +21,7 @@ class QuickswapAPRService(
     private val quickswapService: QuickswapService,
     private val abiResource: ABIResource,
     private val polygonContractAccessor: PolygonContractAccessor,
-    private val priceService: PriceService,
+    private val priceResource: PriceResource,
 ) {
 
     val stakingRewardsABI by lazy {
@@ -62,14 +62,14 @@ class QuickswapAPRService(
         val quickRewardsPerYear =
             (contract.rewardRateA.times(BigInteger.valueOf(31536000))).toBigDecimal()
                 .divide(BigDecimal.TEN.pow(18))
-        val usdQuickRewardsPerYear = priceService.getPrice("QUICK").times(
+        val usdQuickRewardsPerYear = priceResource.getPrice("QUICK").times(
             quickRewardsPerYear
         )
 
         val maticRewardsPerYear =
             (contract.rewardRateB.times(BigInteger.valueOf(31536000))).toBigDecimal()
                 .divide(BigDecimal.TEN.pow(18))
-        val usdMaticRewardsPerYear = priceService.getPrice("MATIC").times(
+        val usdMaticRewardsPerYear = priceResource.getPrice("MATIC").times(
             maticRewardsPerYear
         )
 
@@ -94,7 +94,7 @@ class QuickswapAPRService(
         val quickRewardsPerYear =
             (contract.rewardRate.times(BigInteger.valueOf(31536000))).toBigDecimal()
                 .divide(BigDecimal.TEN.pow(18))
-        val usdRewardsPerYear = priceService.getPrice("DQUICK").times(
+        val usdRewardsPerYear = priceResource.getPrice("DQUICK").times(
             quickRewardsPerYear
         )
 

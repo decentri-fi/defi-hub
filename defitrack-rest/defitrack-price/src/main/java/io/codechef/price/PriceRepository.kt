@@ -1,4 +1,4 @@
-package io.codechef.defitrack.price
+package io.codechef.price
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper

@@ -1,7 +1,8 @@
-package io.codechef.defitrack.price
+package io.codechef.price
 
 import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.retry
+import io.codechef.defitrack.price.PriceRequest
 import io.codechef.defitrack.token.ERC20Resource
 import io.codechef.defitrack.token.TokenService
 import io.defitrack.common.network.Network
@@ -16,9 +17,9 @@ import java.math.BigInteger
 import java.math.RoundingMode
 
 @Service
-class PriceService(
+class PriceCalculator(
     private val erc20Service: ERC20Resource,
-    private val priceResource: PriceRepository,
+    private val priceRepository: PriceRepository,
     private val tokenService: TokenService,
     private val balancerTokenService: BalancerPolygonService,
     private val externalPriceServices: List<ExternalPriceService>
@@ -29,11 +30,6 @@ class PriceService(
         "WMATIC" to "MATIC",
         "miMATIC" to "MAI"
     )
-
-    fun calculatePrice(name: String, amount: Double): Double {
-        val price = getPrice(name)
-        return amount.times(price.toDouble())
-    }
 
     fun calculatePrice(
         priceRequest: PriceRequest?
@@ -116,7 +112,7 @@ class PriceService(
     fun getPrice(name: String): BigDecimal {
         return externalPriceServices.find {
             it.appliesTo(name)
-        }?.getPrice() ?: priceResource.getPrices()
+        }?.getPrice() ?: priceRepository.getPrices()
             .getOrDefault(synonyms.getOrDefault(name.uppercase(), name.uppercase()), BigDecimal.ZERO)
     }
 
