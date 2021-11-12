@@ -51,6 +51,7 @@
         <module>defitrack-common</module>
         <module>defitrack-blockchains</module>
         <module>defitrack-protocols</module>
+        <module>defitrack-rest</module>
     </modules>
 
     <dependencyManagement>

@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>defitrack-protocols</artifactId>
+    <artifactId>defitrack-rest</artifactId>
     <packaging>pom</packaging>
 
     <parent>
@@ -13,26 +13,7 @@
     </parent>
 
     <modules>
-        <module>protocol-dependencies</module>
-        <module>protocol</module>
-        <module>adamant</module>
-        <module>hop</module>
-        <module>convex</module>
-        <module>uniswap</module>
-        <module>jarvis</module>
-        <module>dfyn</module>
-        <module>dracula</module>
-        <module>polycat</module>
-        <module>dmm</module>
-        <module>quickswap</module>
-        <module>sushiswap</module>
-        <module>aave</module>
-        <module>crv</module>
-        <module>mStable</module>
-        <module>yearn</module>
-        <module>compound</module>
-        <module>beefy</module>
-        <module>balancer</module>
+
     </modules>
 
     <dependencyManagement>
@@ -40,6 +21,13 @@
             <dependency>
                 <groupId>io.defitrack</groupId>
                 <artifactId>blockchain-dependencies</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.defitrack</groupId>
+                <artifactId>protocol-dependencies</artifactId>
                 <version>${project.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
