@@ -17,6 +17,7 @@
         <module>defitrack-api-gw</module>
         <module>defitrack-erc20</module>
         <module>defitrack-abi</module>
+        <module>defitrack-price</module>
     </modules>
 
     <dependencyManagement>

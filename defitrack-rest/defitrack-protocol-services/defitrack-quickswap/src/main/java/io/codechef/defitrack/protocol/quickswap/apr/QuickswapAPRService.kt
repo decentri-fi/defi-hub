@@ -1,0 +1,135 @@
+package io.codechef.defitrack.protocol.quickswap.apr
+
+import io.codechef.defitrack.abi.ABIResource
+import io.codechef.defitrack.price.PriceService
+import io.codechef.matic.config.PolygonContractAccessor
+import io.codechef.quickswap.QuickswapDualRewardPoolContract
+import io.codechef.quickswap.QuickswapRewardPoolContract
+import io.codechef.quickswap.QuickswapService
+import io.github.reactivecircus.cache4k.Cache
+import kotlinx.coroutines.runBlocking
+import org.springframework.cache.annotation.Cacheable
+import org.springframework.stereotype.Component
+import java.math.BigDecimal
+import java.math.BigInteger
+import java.math.RoundingMode
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
+
+@Component
+class QuickswapAPRService(
+    private val quickswapService: QuickswapService,
+    private val abiResource: ABIResource,
+    private val polygonContractAccessor: PolygonContractAccessor,
+    private val priceService: PriceService,
+) {
+
+    val stakingRewardsABI by lazy {
+        abiResource.getABI("quickswap/StakingRewards.json")
+    }
+
+    val stakingDualRewards by lazy {
+        abiResource.getABI("quickswap/DualStakingRewards.json")
+    }
+
+    @OptIn(ExperimentalTime::class)
+    val cache = Cache.Builder().expireAfterWrite(
+        Duration.Companion.hours(1)
+    ).build<String, BigDecimal>()
+
+    fun getDualPoolAPR(address: String): BigDecimal {
+        return runBlocking {
+            cache.get("dual-rewardpool-$address") {
+                calculateDualRewardPool(address)
+            }
+        }
+    }
+
+    fun getRewardPoolAPR(address: String): BigDecimal {
+        return runBlocking {
+            cache.get("rewardpool-$address") {
+                calculateSingleRewardPool(address)
+            }
+        }
+    }
+
+    private fun calculateDualRewardPool(address: String): BigDecimal {
+        val contract = QuickswapDualRewardPoolContract(
+            polygonContractAccessor,
+            stakingDualRewards,
+            address
+        )
+        val quickRewardsPerYear =
+            (contract.rewardRateA.times(BigInteger.valueOf(31536000))).toBigDecimal()
+                .divide(BigDecimal.TEN.pow(18))
+        val usdQuickRewardsPerYear = priceService.getPrice("QUICK").times(
+            quickRewardsPerYear
+        )
+
+        val maticRewardsPerYear =
+            (contract.rewardRateB.times(BigInteger.valueOf(31536000))).toBigDecimal()
+                .divide(BigDecimal.TEN.pow(18))
+        val usdMaticRewardsPerYear = priceService.getPrice("MATIC").times(
+            maticRewardsPerYear
+        )
+
+        val reserveUsd = quickswapService.getPairs().find {
+            it.id.lowercase() == contract.stakingTokenAddress
+        }?.reserveUSD ?: BigDecimal.ZERO
+
+        return if ((usdQuickRewardsPerYear == BigDecimal.ZERO && usdMaticRewardsPerYear == BigDecimal.ZERO) || reserveUsd == BigDecimal.ZERO) {
+            BigDecimal.ZERO
+        } else {
+            (usdQuickRewardsPerYear.plus(usdMaticRewardsPerYear)).divide(reserveUsd, 6, RoundingMode.HALF_UP)
+        }
+    }
+
+    private fun calculateSingleRewardPool(address: String): BigDecimal {
+        val contract = QuickswapRewardPoolContract(
+            polygonContractAccessor,
+            stakingRewardsABI,
+            address
+        )
+
+        val quickRewardsPerYear =
+            (contract.rewardRate.times(BigInteger.valueOf(31536000))).toBigDecimal()
+                .divide(BigDecimal.TEN.pow(18))
+        val usdRewardsPerYear = priceService.getPrice("DQUICK").times(
+            quickRewardsPerYear
+        )
+
+        val reserveUsd = quickswapService.getPairs().find {
+            it.id.lowercase() == contract.stakingTokenAddress
+        }?.reserveUSD ?: BigDecimal.ZERO
+
+        return if (usdRewardsPerYear == BigDecimal.ZERO || reserveUsd == BigDecimal.ZERO) {
+            BigDecimal.ZERO
+        } else {
+            usdRewardsPerYear.divide(reserveUsd, 4, RoundingMode.HALF_UP)
+        }
+    }
+
+    @Cacheable(cacheNames = ["quickswap-aprs"], key = "'lp-' + #address")
+    fun getLPAPR(address: String): BigDecimal {
+        try {
+            val pairData = quickswapService.getPairDayData(address)
+            return if (pairData.size <= 1) {
+                BigDecimal.ZERO
+            } else {
+                pairData.drop(1).map {
+                    it.dailyVolumeUSD
+                }.reduce { a, b -> a.plus(b) }
+                    .times(BigDecimal.valueOf(0.003)).times(BigDecimal.valueOf(52))
+                    .divide(
+                        quickswapService.getPairs().find {
+                            it.id == address
+                        }!!.reserveUSD,
+                        18,
+                        RoundingMode.HALF_UP
+                    )
+            }
+        } catch (ex: Exception) {
+            return BigDecimal.ZERO
+        }
+    }
+}
