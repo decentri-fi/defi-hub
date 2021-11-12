@@ -16,6 +16,5 @@
         <module>defitrack-aave</module>
         <module>defitrack-adamant</module>
         <module>defitrack-balancer</module>
-    </modules>Dockerfile
-    pom.xml
+    </modules>
 </project>
