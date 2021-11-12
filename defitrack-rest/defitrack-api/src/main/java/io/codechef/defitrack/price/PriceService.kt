@@ -18,7 +18,7 @@ import java.math.RoundingMode
 @Service
 class PriceService(
     private val erc20Service: ERC20Resource,
-    private val priceResource: PriceResource,
+    private val priceResource: PriceRepository,
     private val tokenService: TokenService,
     private val balancerTokenService: BalancerPolygonService,
     private val externalPriceServices: List<ExternalPriceService>

@@ -13,7 +13,7 @@ import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
 @Component
-class PriceResource(
+class PriceRepository(
     private val objectMapper: ObjectMapper,
     @Value("\${priceResourceLocation:http://defitrack-price:8080}") val priceResourceLocation: String,
     private val client: HttpClient
