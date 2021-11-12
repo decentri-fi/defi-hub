@@ -3,8 +3,6 @@ package io.defitrack.protocol.aave
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.JsonParser
-import io.defitrack.aave.AaveReserve
-import io.defitrack.aave.UserReserve
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.http.*

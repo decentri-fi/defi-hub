@@ -1,12 +1,12 @@
 package io.defitrack.protocol.compound
 
-import io.defitrack.ethereum.config.EthereumContractAccessor
 import io.defitrack.ethereumbased.contract.EvmContract
+import io.defitrack.ethereumbased.contract.EvmContractAccessor
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.DynamicArray
 
 class CompoundComptrollerContract(
-    ethereumContractAccessor: EthereumContractAccessor,
+    ethereumContractAccessor: EvmContractAccessor,
     abi: String, address: String
 ) : EvmContract(
     ethereumContractAccessor, abi, address

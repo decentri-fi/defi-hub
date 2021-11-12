@@ -1,4 +1,4 @@
-package io.defitrack.aave
+package io.defitrack.protocol.aave
 
 import java.math.BigInteger
 

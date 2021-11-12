@@ -1,18 +1,18 @@
 package io.defitrack.protocol.compound
 
-import io.defitrack.ethereum.config.EthereumContractAccessor
-import io.defitrack.ethereumbased.contract.SolidityBasedContractAccessor.Companion.toAddress
-import io.defitrack.ethereumbased.contract.SolidityContract
+import io.defitrack.ethereumbased.contract.EvmContract
+import io.defitrack.ethereumbased.contract.EvmContractAccessor
+import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigDecimal
 import java.math.BigInteger
 
 class CompoundTokenContract(
-    ethereumContractAccessor: EthereumContractAccessor,
+    ethereumContractAccessor: EvmContractAccessor,
     abi: String,
     address: String,
-) : SolidityContract(
+) : EvmContract(
     ethereumContractAccessor, abi, address
 ) {
 

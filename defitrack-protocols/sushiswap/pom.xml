@@ -13,7 +13,7 @@
     <dependencies>
         <dependency>
             <groupId>io.defitrack</groupId>
-           <artifactId>protocol</artifactId>
+            <artifactId>protocol</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

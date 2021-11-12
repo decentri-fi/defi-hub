@@ -1,13 +1,13 @@
 package io.defitrack.protocol.adamant
 
-import io.defitrack.ethereumbased.contract.SolidityBasedContractAccessor
-import io.defitrack.ethereumbased.contract.SolidityContract
+import io.defitrack.ethereumbased.contract.EvmContract
+import io.defitrack.ethereumbased.contract.EvmContractAccessor
 
 class StrategyContract(
-    solidityBasedContractAccessor: SolidityBasedContractAccessor,
+    solidityBasedContractAccessor: EvmContractAccessor,
     abi: String,
     address: String
-) : SolidityContract(solidityBasedContractAccessor, abi, address) {
+) : EvmContract(solidityBasedContractAccessor, abi, address) {
 
     val feeDistToken by lazy {
         read("getFeeDistToken")[0].value as String

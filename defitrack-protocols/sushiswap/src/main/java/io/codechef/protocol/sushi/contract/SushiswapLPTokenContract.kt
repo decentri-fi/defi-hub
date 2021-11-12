@@ -1,18 +1,18 @@
 package io.defitrack.protocol.sushi.contract
 
-import io.defitrack.ethereumbased.contract.SolidityBasedContractAccessor
-import io.defitrack.ethereumbased.contract.SolidityBasedContractAccessor.Companion.toAddress
-import io.defitrack.ethereumbased.contract.SolidityContract
+import io.defitrack.ethereumbased.contract.EvmContract
+import io.defitrack.ethereumbased.contract.EvmContractAccessor
+import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
 class SushiswapLPTokenContract(
-    solidityBasedContractAccessor: SolidityBasedContractAccessor,
+    solidityBasedContractAccessor: EvmContractAccessor,
     abi: String,
     address: String
 ) :
-    SolidityContract(solidityBasedContractAccessor, abi, address) {
+    EvmContract(solidityBasedContractAccessor, abi, address) {
 
     val name by lazy {
         read("name")[0].value as String

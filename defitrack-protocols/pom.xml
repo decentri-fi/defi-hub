@@ -13,6 +13,7 @@
     </parent>
 
     <modules>
+        <module>protocol-dependencies</module>
         <module>protocol</module>
         <module>adamant</module>
         <module>hop</module>
@@ -20,13 +21,10 @@
         <module>uniswap</module>
         <module>jarvis</module>
         <module>dfyn</module>
-        <module>pancakeswap</module>
-        <module>dracula</module>
         <module>polycat</module>
         <module>dmm</module>
         <module>quickswap</module>
         <module>sushiswap</module>
-        <module>belt</module>
         <module>aave</module>
         <module>crv</module>
         <module>mStable</module>
