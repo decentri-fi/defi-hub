@@ -1,0 +1,99 @@
+package io.codechef.defitrack.protocol.compound.borrowing
+
+import io.codechef.common.network.Network
+import io.codechef.defitrack.protocol.compound.CompoundComptrollerContract
+import io.codechef.defitrack.protocol.compound.CompoundService
+import io.codechef.defitrack.protocol.compound.CompoundTokenContract
+import io.codechef.defitrack.abi.ABIResource
+import io.codechef.defitrack.borrowing.BorrowService
+import io.codechef.defitrack.borrowing.domain.BorrowElement
+import io.codechef.defitrack.token.ERC20Resource
+import io.codechef.ethereum.config.EthereumContractAccessor
+import io.codechef.protocol.Protocol
+import org.springframework.stereotype.Service
+import java.math.BigDecimal
+import java.math.BigInteger
+import java.math.RoundingMode
+import java.util.*
+
+@Service
+class CompoundBorrowingService(
+    private val compoundService: CompoundService,
+    private val abiResource: ABIResource,
+    private val ethereumContractAccessor: EthereumContractAccessor,
+    private val erC20Service: ERC20Resource
+) : BorrowService {
+
+    val comptrollerABI by lazy {
+        abiResource.getABI("compound/comptroller.json")
+    }
+
+    val cTokenABI by lazy {
+        abiResource.getABI("compound/ctoken.json")
+    }
+
+    fun getBorrowRate(compoundTokenContract: CompoundTokenContract): BigDecimal {
+        val blocksPerDay = 6463
+        val dailyRate =
+            (compoundTokenContract.borrowRatePerBlock.toBigDecimal().divide(BigDecimal.TEN.pow(18)) * BigDecimal(
+                blocksPerDay
+            ))
+
+        return dailyRate.times(BigDecimal(365)).times(BigDecimal.TEN.pow(4))
+            .divide(BigDecimal.TEN.pow(4), 4, RoundingMode.HALF_UP).times(BigDecimal(100))
+    }
+
+    fun getSupplyRate(compoundTokenContract: CompoundTokenContract): BigDecimal {
+        val blocksPerDay = 6463
+        val dailyRate =
+            (compoundTokenContract.supplyRatePerBlock.toBigDecimal().divide(BigDecimal.TEN.pow(18)) * BigDecimal(
+                blocksPerDay
+            )) + BigDecimal.ONE
+
+        return dailyRate.pow(365).minus(BigDecimal.ONE).times(BigDecimal.TEN.pow(4))
+            .divide(BigDecimal.TEN.pow(4), 4, RoundingMode.HALF_UP).times(BigDecimal(100))
+    }
+
+    private fun getTokenContracts() = CompoundComptrollerContract(
+        ethereumContractAccessor,
+        comptrollerABI,
+        compoundService.getComptroller()
+    ).getMarkets().map {
+        CompoundTokenContract(
+            ethereumContractAccessor,
+            cTokenABI,
+            it
+        )
+    }
+
+    override fun getBorrows(address: String): List<BorrowElement> {
+        return getTokenContracts().mapNotNull {
+            val underlying = it.underlyingAddress?.let { tokenAddress ->
+                erC20Service.getERC20(getNetwork(), tokenAddress)
+            }
+
+            val balance = it.borrowBalanceStored(address)
+            if (balance > BigInteger.ZERO) {
+                BorrowElement(
+                    id = UUID.randomUUID().toString(),
+                    user = address.toLowerCase(),
+                    network = getNetwork(),
+                    protocol = getProtocol(),
+                    name = it.name,
+                    rate = getBorrowRate(it).toDouble(),
+                    amount = balance.toBigDecimal().divide(
+                        BigDecimal.TEN.pow(underlying?.decimals ?: 18), 2, RoundingMode.HALF_UP
+                    ).toPlainString(),
+                    symbol = underlying?.symbol ?: "ETH",
+                    tokenUrl = "https://etherscan.io/address/${it.address}"
+                )
+            } else {
+                null
+            }
+        }
+    }
+
+    override fun getProtocol(): Protocol = Protocol.COMPOUND
+
+    override fun getNetwork(): Network = Network.ETHEREUM
+}
