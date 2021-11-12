@@ -15,5 +15,6 @@
     <modules>
         <module>defitrack-aave</module>
         <module>defitrack-adamant</module>
+        <module>defitrack-balancer</module>
     </modules>
 </project>
