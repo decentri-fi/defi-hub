@@ -1,14 +1,13 @@
 package io.codechef.defitrack.protocol.balancer.pooling
 
-import io.codechef.common.network.Network
 import io.codechef.defitrack.pool.UserPoolingService
 import io.codechef.defitrack.pool.domain.PoolingElement
-import io.codechef.protocol.Protocol
-import io.codechef.protocol.balancer.BalancerPolygonService
-import io.codechef.protocol.staking.TokenType
+import io.defitrack.common.network.Network
+import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.balancer.BalancerPolygonService
+import io.defitrack.protocol.staking.TokenType
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Component
-import org.springframework.stereotype.Service
 import java.math.BigDecimal
 
 @Component

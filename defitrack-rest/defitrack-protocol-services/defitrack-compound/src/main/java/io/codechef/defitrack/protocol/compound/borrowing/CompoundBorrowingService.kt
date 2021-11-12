@@ -1,15 +1,15 @@
 package io.codechef.defitrack.protocol.compound.borrowing
 
-import io.codechef.common.network.Network
-import io.codechef.defitrack.protocol.compound.CompoundComptrollerContract
-import io.codechef.defitrack.protocol.compound.CompoundService
-import io.codechef.defitrack.protocol.compound.CompoundTokenContract
-import io.codechef.defitrack.abi.ABIResource
 import io.codechef.defitrack.borrowing.BorrowService
 import io.codechef.defitrack.borrowing.domain.BorrowElement
 import io.codechef.defitrack.token.ERC20Resource
-import io.codechef.ethereum.config.EthereumContractAccessor
-import io.codechef.protocol.Protocol
+import io.defitrack.abi.ABIResource
+import io.defitrack.common.network.Network
+import io.defitrack.ethereum.config.EthereumContractAccessor
+import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.compound.CompoundComptrollerContract
+import io.defitrack.protocol.compound.CompoundService
+import io.defitrack.protocol.compound.CompoundTokenContract
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -76,7 +76,7 @@ class CompoundBorrowingService(
             if (balance > BigInteger.ZERO) {
                 BorrowElement(
                     id = UUID.randomUUID().toString(),
-                    user = address.toLowerCase(),
+                    user = address.lowercase(Locale.getDefault()),
                     network = getNetwork(),
                     protocol = getProtocol(),
                     name = it.name,

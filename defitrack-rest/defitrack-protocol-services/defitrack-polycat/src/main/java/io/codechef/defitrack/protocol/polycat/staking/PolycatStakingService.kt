@@ -1,17 +1,17 @@
 package io.codechef.defitrack.protocol.polycat.staking
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.codechef.common.network.Network
-import io.codechef.defitrack.abi.ABIResource
 import io.codechef.defitrack.staking.UserStakingService
 import io.codechef.defitrack.staking.domain.StakingElement
 import io.codechef.defitrack.staking.domain.VaultRewardToken
 import io.codechef.defitrack.token.TokenService
-import io.codechef.ethereumbased.contract.ERC20Contract
-import io.codechef.matic.config.PolygonContractAccessor
-import io.codechef.polycat.PolycatMasterChefContract
-import io.codechef.polycat.PolycatService
-import io.codechef.protocol.Protocol
+import io.defitrack.abi.ABIResource
+import io.defitrack.common.network.Network
+import io.defitrack.ethereumbased.contract.ERC20Contract
+import io.defitrack.polycat.PolycatMasterChefContract
+import io.defitrack.polycat.PolycatService
+import io.defitrack.polygon.config.PolygonContractAccessor
+import io.defitrack.protocol.Protocol
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigInteger

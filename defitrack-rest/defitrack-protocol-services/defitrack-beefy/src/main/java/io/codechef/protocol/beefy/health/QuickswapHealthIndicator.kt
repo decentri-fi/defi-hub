@@ -1,12 +1,12 @@
 package io.codechef.protocol.beefy.health
 
-import io.codechef.defitrack.abi.ABIResource
-import io.codechef.matic.config.PolygonContractAccessor
-import io.codechef.protocol.beefy.BeefyService
-import io.codechef.protocol.beefy.contract.BeefyVaultContract
-import io.codechef.protocol.beefy.contract.StrategyPolygonQuickLPContract
-import io.codechef.protocol.beefy.domain.BeefyVault
-import io.codechef.quickswap.QuickswapRewardPoolContract
+import io.defitrack.abi.ABIResource
+import io.defitrack.polygon.config.PolygonContractAccessor
+import io.defitrack.protocol.beefy.BeefyService
+import io.defitrack.protocol.beefy.contract.BeefyVaultContract
+import io.defitrack.protocol.beefy.contract.StrategyPolygonQuickLPContract
+import io.defitrack.protocol.beefy.domain.BeefyVault
+import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory

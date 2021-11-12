@@ -8,6 +8,7 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
+import java.util.*
 
 @Component
 class BalancerArbitrumService(
@@ -56,7 +57,7 @@ class BalancerArbitrumService(
     fun getBalances(address: String): List<PoolShare> = runBlocking {
         val query = """
             {
-              poolShares(where: {userAddress: "${address.toLowerCase()}"}) {
+              poolShares(where: {userAddress: "${address.lowercase(Locale.getDefault())}"}) {
                 userAddress {
                   id
                 },

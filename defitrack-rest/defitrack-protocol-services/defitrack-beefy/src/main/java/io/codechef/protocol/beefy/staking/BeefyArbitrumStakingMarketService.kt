@@ -1,9 +1,5 @@
 package io.codechef.protocol.beefy.staking
 
-import com.github.michaelbull.retry.policy.limitAttempts
-import com.github.michaelbull.retry.retry
-import io.codechef.common.network.Network
-import io.codechef.defitrack.abi.ABIResource
 import io.codechef.defitrack.price.PriceRequest
 import io.codechef.defitrack.price.PriceService
 import io.codechef.defitrack.staking.StakingMarketService
@@ -11,13 +7,14 @@ import io.codechef.defitrack.staking.domain.RewardToken
 import io.codechef.defitrack.staking.domain.StakedToken
 import io.codechef.defitrack.staking.domain.StakingMarketElement
 import io.codechef.defitrack.token.TokenService
-import io.codechef.ethereum.config.ArbitrumContractAccessor
-import io.codechef.protocol.Protocol
-import io.codechef.protocol.beefy.BeefyService
 import io.codechef.protocol.beefy.apy.BeefyAPYService
-import io.codechef.protocol.beefy.contract.BeefyVaultContract
-import io.codechef.protocol.beefy.domain.BeefyVault
-import kotlinx.coroutines.runBlocking
+import io.defitrack.abi.ABIResource
+import io.defitrack.common.network.Network
+import io.defitrack.ethereum.config.ArbitrumContractAccessor
+import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.beefy.BeefyService
+import io.defitrack.protocol.beefy.contract.BeefyVaultContract
+import io.defitrack.protocol.beefy.domain.BeefyVault
 import okhttp3.internal.toImmutableList
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -61,10 +58,10 @@ class BeefyArbitrumStakingMarketService(
         }
     }
 
-    private fun importVault(beefyVault: BeefyVaultContract)  {
+    private fun importVault(beefyVault: BeefyVaultContract) {
         try {
 
-            val want =  tokenService.getTokenInformation(beefyVault.want, getNetwork())
+            val want = tokenService.getTokenInformation(beefyVault.want, getNetwork())
 
             logger.info("adding ${beefyVault.name} to beefy vault list")
 

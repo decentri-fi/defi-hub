@@ -1,10 +1,10 @@
 package io.codechef.protocol.aave.borrowing
 
-import io.codechef.common.network.Network
 import io.codechef.defitrack.borrowing.BorrowService
 import io.codechef.defitrack.borrowing.domain.BorrowElement
-import io.codechef.protocol.Protocol
-import io.codechef.protocol.aave.AaveMainnetService
+import io.defitrack.common.network.Network
+import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.aave.AaveMainnetService
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigInteger

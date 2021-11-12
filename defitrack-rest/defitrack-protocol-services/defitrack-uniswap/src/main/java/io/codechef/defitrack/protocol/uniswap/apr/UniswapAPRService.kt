@@ -1,6 +1,6 @@
 package io.codechef.defitrack.protocol.uniswap.apr
 
-import io.codechef.uniswap.UniswapService
+import io.defitrack.uniswap.UniswapService
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Component
 import java.math.BigDecimal

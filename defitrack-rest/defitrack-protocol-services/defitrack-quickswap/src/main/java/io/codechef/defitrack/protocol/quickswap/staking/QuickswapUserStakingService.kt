@@ -1,19 +1,19 @@
 package io.codechef.defitrack.protocol.quickswap.staking
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.codechef.common.network.Network
-import io.codechef.defitrack.abi.ABIResource
 import io.codechef.defitrack.protocol.quickswap.apr.QuickswapAPRService
 import io.codechef.defitrack.staking.UserStakingService
 import io.codechef.defitrack.staking.domain.StakingElement
 import io.codechef.defitrack.staking.domain.VaultRewardToken
 import io.codechef.defitrack.token.TokenService
-import io.codechef.ethereumbased.contract.SolidityBasedContractAccessor.Companion.toAddress
-import io.codechef.ethereumbased.contract.multicall.MultiCallElement
-import io.codechef.matic.config.PolygonContractAccessor
-import io.codechef.protocol.Protocol
-import io.codechef.quickswap.QuickswapRewardPoolContract
-import io.codechef.quickswap.QuickswapService
+import io.defitrack.abi.ABIResource
+import io.defitrack.common.network.Network
+import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
+import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
+import io.defitrack.polygon.config.PolygonContractAccessor
+import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
+import io.defitrack.quickswap.QuickswapService
 import org.springframework.stereotype.Service
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.generated.Uint256
@@ -81,7 +81,9 @@ class QuickswapUserStakingService(
                     stakedToken = vaultStakedToken(stakedToken.address, balance),
                     vaultType = "quickswap-staking-rewards",
                     vaultAddress = pool.address,
-                    rate = (quickswapAPRService.getRewardPoolAPR(pool.address) + quickswapAPRService.getLPAPR(stakedToken.address)).toDouble()
+                    rate = (quickswapAPRService.getRewardPoolAPR(pool.address) + quickswapAPRService.getLPAPR(
+                        stakedToken.address
+                    )).toDouble()
                 )
             } else {
                 null

@@ -61,10 +61,14 @@
             </dependency>
             <dependency>
                 <groupId>io.defitrack</groupId>
-                <artifactId>dmm</artifactId>
+                <artifactId>dmm-polygon</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>io.defitrack</groupId>
+                <artifactId>dmm-ethereum</artifactId>
+                <version>${project.version}</version>
+            </dependency>            <dependency>
                 <groupId>io.defitrack</groupId>
                 <artifactId>dracula</artifactId>
                 <version>${project.version}</version>

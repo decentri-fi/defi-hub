@@ -1,17 +1,17 @@
 package io.codechef.defitrack.protocol.quickswap.staking
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.codechef.common.network.Network
-import io.codechef.defitrack.abi.ABIResource
 import io.codechef.defitrack.staking.UserStakingService
 import io.codechef.defitrack.staking.domain.StakingElement
 import io.codechef.defitrack.staking.domain.VaultRewardToken
 import io.codechef.defitrack.token.TokenService
-import io.codechef.matic.config.PolygonContractAccessor
-import io.codechef.protocol.Protocol
-import io.codechef.protocol.staking.TokenType
-import io.codechef.quickswap.QuickswapService
-import io.codechef.quickswap.contract.DQuickContract
+import io.defitrack.abi.ABIResource
+import io.defitrack.common.network.Network
+import io.defitrack.polygon.config.PolygonContractAccessor
+import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.staking.TokenType
+import io.defitrack.quickswap.QuickswapService
+import io.defitrack.quickswap.contract.DQuickContract
 import org.springframework.stereotype.Service
 import java.math.BigInteger
 

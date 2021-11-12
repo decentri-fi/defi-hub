@@ -1,12 +1,12 @@
 package io.codechef.defitrack.protocol.uniswap.pooling
 
-import io.codechef.common.network.Network
 import io.codechef.defitrack.pool.PoolingMarketService
 import io.codechef.defitrack.pool.domain.PoolingMarketElement
 import io.codechef.defitrack.pool.domain.PoolingToken
 import io.codechef.defitrack.protocol.uniswap.apr.DfynAPRService
-import io.codechef.protocol.Protocol
-import io.codechef.protocol.dfyn.DfynService
+import io.defitrack.common.network.Network
+import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.dfyn.DfynService
 import okhttp3.internal.toImmutableList
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component

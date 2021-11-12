@@ -1,7 +1,7 @@
 package io.codechef.defitrack.protocol.sushiswap.apr
 
-import io.codechef.common.network.Network
-import io.codechef.protocol.SushiswapService
+import io.defitrack.common.network.Network
+import io.defitrack.protocol.SushiswapService
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Component
 import java.math.BigDecimal

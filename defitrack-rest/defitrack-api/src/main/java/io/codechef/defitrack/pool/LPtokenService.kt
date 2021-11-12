@@ -5,6 +5,7 @@ import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereumbased.contract.EvmContractAccessor
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class LPtokenService(
@@ -19,7 +20,7 @@ class LPtokenService(
 
 
     fun getLP(network: Network, address: String): LPTokenContract {
-        val key = "${network.name}-${address.toLowerCase()}"
+        val key = "${network.name}-${address.lowercase(Locale.getDefault())}"
         return lpBuffer.getOrPut(key) {
             LPTokenContract(
                 getContractAccessor(network),

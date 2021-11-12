@@ -1,16 +1,16 @@
 package io.codechef.defitrack.protocol.uniswap.pooling
 
-import io.codechef.common.network.Network
-import io.codechef.defitrack.abi.ABIResource
 import io.codechef.defitrack.pool.UserPoolingService
 import io.codechef.defitrack.pool.domain.PoolingElement
-import io.codechef.ethereum.config.EthereumContractAccessor
-import io.codechef.ethereumbased.contract.SolidityBasedContractAccessor.Companion.toAddress
-import io.codechef.ethereumbased.contract.multicall.MultiCallElement
-import io.codechef.protocol.Protocol
-import io.codechef.protocol.staking.TokenType
-import io.codechef.uniswap.UniswapLPToken
-import io.codechef.uniswap.UniswapService
+import io.defitrack.abi.ABIResource
+import io.defitrack.common.network.Network
+import io.defitrack.ethereum.config.EthereumContractAccessor
+import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
+import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
+import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.staking.TokenType
+import io.defitrack.uniswap.UniswapLPToken
+import io.defitrack.uniswap.UniswapService
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import org.web3j.abi.TypeReference

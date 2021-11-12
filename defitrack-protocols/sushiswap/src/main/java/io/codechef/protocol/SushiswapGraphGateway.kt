@@ -11,6 +11,7 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import java.util.*
 
 class SushiswapGraphGateway(
     private val objectMapper: ObjectMapper,
@@ -72,7 +73,7 @@ class SushiswapGraphGateway(
         return runBlocking {
             val query = """
             { 
-                users(where: {id: "${user.toLowerCase()}"}) {
+                users(where: {id: "${user.lowercase(Locale.getDefault())}"}) {
                   id
                 liquidityPositions {
                   id

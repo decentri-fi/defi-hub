@@ -1,19 +1,19 @@
 package io.codechef.protocol.beefy.staking
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.codechef.bsc.BscContractAccessor
-import io.codechef.common.network.Network
-import io.codechef.defitrack.abi.ABIResource
 import io.codechef.defitrack.staking.UserStakingService
 import io.codechef.defitrack.staking.domain.StakingElement
 import io.codechef.defitrack.staking.domain.StakingMarketElement
 import io.codechef.defitrack.staking.domain.VaultRewardToken
 import io.codechef.defitrack.token.TokenService
-import io.codechef.ethereumbased.contract.SolidityBasedContractAccessor.Companion.toAddress
-import io.codechef.ethereumbased.contract.multicall.MultiCallElement
-import io.codechef.protocol.Protocol
 import io.codechef.protocol.beefy.apy.BeefyAPYService
-import io.codechef.protocol.beefy.contract.BeefyVaultContract
+import io.defitrack.abi.ABIResource
+import io.defitrack.bsc.BscContractAccessor
+import io.defitrack.common.network.Network
+import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
+import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
+import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.beefy.contract.BeefyVaultContract
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service

@@ -1,11 +1,11 @@
 package io.codechef.defitrack.protocol.quickswap.apr
 
-import io.codechef.defitrack.abi.ABIResource
 import io.codechef.defitrack.price.PriceService
-import io.codechef.matic.config.PolygonContractAccessor
-import io.codechef.quickswap.QuickswapDualRewardPoolContract
-import io.codechef.quickswap.QuickswapRewardPoolContract
-import io.codechef.quickswap.QuickswapService
+import io.defitrack.abi.ABIResource
+import io.defitrack.polygon.config.PolygonContractAccessor
+import io.defitrack.protocol.quickswap.QuickswapDualRewardPoolContract
+import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
+import io.defitrack.quickswap.QuickswapService
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.runBlocking
 import org.springframework.cache.annotation.Cacheable

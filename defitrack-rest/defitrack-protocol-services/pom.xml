@@ -16,5 +16,27 @@
         <module>defitrack-aave</module>
         <module>defitrack-adamant</module>
         <module>defitrack-balancer</module>
+        <module>defitrack-beefy</module>
+        <module>defitrack-compound</module>
+        <module>defitrack-convex</module>
+        <module>defitrack-curve</module>
+        <module>defitrack-dfyn</module>
+        <module>defitrack-dmm</module>
+        <module>defitrack-mstable</module>
+        <module>defitrack-polycat</module>
+        <module>defitrack-quickswap</module>
+        <module>defitrack-sushiswap</module>
+        <module>defitrack-uniswap</module>
+        <module>defitrack-protocol-service</module>
     </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.defitrack</groupId>
+                <artifactId>defitrack-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

@@ -1,15 +1,15 @@
 package io.codechef.defitrack.protocol.compound.lending
 
-import io.codechef.common.network.Network
-import io.codechef.defitrack.protocol.compound.CompoundComptrollerContract
-import io.codechef.defitrack.protocol.compound.CompoundService
-import io.codechef.defitrack.protocol.compound.CompoundTokenContract
-import io.codechef.defitrack.abi.ABIResource
 import io.codechef.defitrack.lending.LendingService
 import io.codechef.defitrack.lending.domain.LendingElement
 import io.codechef.defitrack.token.ERC20Resource
-import io.codechef.ethereum.config.EthereumContractAccessor
-import io.codechef.protocol.Protocol
+import io.defitrack.abi.ABIResource
+import io.defitrack.common.network.Network
+import io.defitrack.ethereum.config.EthereumContractAccessor
+import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.compound.CompoundComptrollerContract
+import io.defitrack.protocol.compound.CompoundService
+import io.defitrack.protocol.compound.CompoundTokenContract
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigInteger

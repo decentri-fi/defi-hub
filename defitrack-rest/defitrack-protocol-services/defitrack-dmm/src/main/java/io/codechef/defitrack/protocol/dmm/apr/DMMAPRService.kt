@@ -1,11 +1,10 @@
 package io.codechef.defitrack.protocol.dmm.apr
 
-import io.codechef.common.network.Network
-import io.codechef.protocol.dmm.DMMEthereumService
-import io.codechef.protocol.dmm.DMMPairDayData
-import io.codechef.protocol.dmm.DMMPolygonService
-import io.codechef.protocol.dmm.DMMPool
-import io.codechef.quickswap.dto.PairDayData
+import io.defitrack.common.network.Network
+import io.defitrack.protocol.dmm.DMMEthereumService
+import io.defitrack.protocol.dmm.DMMPairDayData
+import io.defitrack.protocol.dmm.DMMPolygonService
+import io.defitrack.protocol.dmm.DMMPool
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Component
 import java.math.BigDecimal

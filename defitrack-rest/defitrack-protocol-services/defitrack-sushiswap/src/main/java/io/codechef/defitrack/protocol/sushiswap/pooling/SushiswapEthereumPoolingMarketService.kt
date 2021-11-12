@@ -1,12 +1,12 @@
 package io.codechef.defitrack.protocol.sushiswap.pooling
 
-import io.codechef.common.network.Network
 import io.codechef.defitrack.pool.PoolingMarketService
 import io.codechef.defitrack.pool.domain.PoolingMarketElement
 import io.codechef.defitrack.pool.domain.PoolingToken
 import io.codechef.defitrack.protocol.sushiswap.apr.SushiswapAPRService
-import io.codechef.protocol.Protocol
-import io.codechef.protocol.SushiswapService
+import io.defitrack.common.network.Network
+import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.SushiswapService
 import okhttp3.internal.toImmutableList
 import org.springframework.stereotype.Component
 import java.math.BigDecimal

@@ -7,40 +7,19 @@
 
     <parent>
         <groupId>io.defitrack</groupId>
-        <artifactId>defitrack-protocol-serviceds</artifactId>
+        <artifactId>defitrack-protocol-services</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
+            <groupId>io.defitrack</groupId>
+            <artifactId>defitrack-protocol-service</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.codechef</groupId>
-            <artifactId>defitrack-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.codechef</groupId>
-            <artifactId>defitrack-protocol</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.codechef</groupId>
-            <artifactId>aave-mainnet</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.codechef</groupId>
-            <artifactId>aave-polygon</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
-            <optional>true</optional>
+            <groupId>io.defitrack</groupId>
+            <artifactId>aave</artifactId>
         </dependency>
     </dependencies>
 

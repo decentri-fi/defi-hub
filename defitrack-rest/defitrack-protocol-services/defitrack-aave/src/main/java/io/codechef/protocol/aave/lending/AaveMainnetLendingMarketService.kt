@@ -1,11 +1,11 @@
 package io.codechef.protocol.aave.lending
 
-import io.codechef.common.network.Network
-import io.codechef.defitrack.lending.domain.LendingMarketElement
 import io.codechef.defitrack.lending.LendingMarketService
+import io.codechef.defitrack.lending.domain.LendingMarketElement
 import io.codechef.defitrack.lending.domain.LendingToken
-import io.codechef.protocol.Protocol
-import io.codechef.protocol.aave.AaveMainnetService
+import io.defitrack.common.network.Network
+import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.aave.AaveMainnetService
 import org.springframework.stereotype.Service
 
 @Service

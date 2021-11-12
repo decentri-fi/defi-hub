@@ -1,15 +1,15 @@
 package io.codechef.defitrack.protocol.mstable
 
-import io.codechef.common.network.Network
-import io.codechef.defitrack.abi.ABIResource
 import io.codechef.defitrack.lending.LendingMarketService
 import io.codechef.defitrack.lending.domain.LendingMarketElement
 import io.codechef.defitrack.lending.domain.LendingToken
 import io.codechef.defitrack.token.TokenService
-import io.codechef.ethereum.config.EthereumContractAccessor
-import io.codechef.matic.config.PolygonContractAccessor
-import io.codechef.mstable.MStablePolygonService
-import io.codechef.protocol.Protocol
+import io.defitrack.abi.ABIResource
+import io.defitrack.common.network.Network
+import io.defitrack.mstable.MStablePolygonService
+import io.defitrack.polygon.config.PolygonContractAccessor
+import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.mstable.MStableEthereumSavingsContract
 import okhttp3.internal.toImmutableList
 import org.springframework.stereotype.Service
 import javax.annotation.PostConstruct

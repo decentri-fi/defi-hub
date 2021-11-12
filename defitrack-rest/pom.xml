@@ -18,6 +18,7 @@
         <module>defitrack-erc20</module>
         <module>defitrack-abi</module>
         <module>defitrack-price</module>
+        <module>defitrack-protocol-services</module>
     </modules>
 
     <dependencyManagement>

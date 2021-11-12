@@ -26,5 +26,21 @@
             <groupId>io.defitrack</groupId>
             <artifactId>evm</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>bsc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>polygon</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>fantom</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>avalanche</artifactId>
+        </dependency>
     </dependencies>
 </project>
