@@ -1,6 +1,6 @@
 FROM openjdk:15.0.2-slim
 
-ADD target/defitrack-compound-1.0.1-SNAPSHOT.jar defitrack.jar
+ADD target/defitrack-compound-0.0.1-SNAPSHOT.jar defitrack.jar
 
 EXPOSE 8080
 
