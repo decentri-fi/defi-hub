@@ -1,7 +1,7 @@
 package io.defitrack.protocol.aave.borrowing
 
-import io.codechef.defitrack.borrowing.BorrowService
-import io.codechef.defitrack.borrowing.domain.BorrowElement
+import io.defitrack.borrowing.BorrowService
+import io.defitrack.borrowing.domain.BorrowElement
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.AavePolygonService
@@ -14,13 +14,13 @@ import java.util.*
 @Service
 class AavePolygonBorrowingService(
     private val aavePolygonService: AavePolygonService,
-) : BorrowService {
+) : io.defitrack.borrowing.BorrowService {
 
-    override fun getBorrows(address: String): List<BorrowElement> {
+    override fun getBorrows(address: String): List<io.defitrack.borrowing.domain.BorrowElement> {
         return aavePolygonService.getUserReserves(address).mapNotNull {
 
             if ((it.currentStableDebt > BigInteger.ONE || it.currentVariableDebt > BigInteger.ONE)) {
-                BorrowElement(
+                io.defitrack.borrowing.domain.BorrowElement(
                     id = UUID.randomUUID().toString(),
                     protocol = getProtocol(),
                     network = getNetwork(),

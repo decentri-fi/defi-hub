@@ -1,8 +1,8 @@
 package io.defitrack.lending
 
-import io.codechef.defitrack.borrowing.BorrowService
-import io.codechef.defitrack.borrowing.domain.BorrowElement
-import io.codechef.defitrack.borrowing.vo.BorrowElementVO
+import io.defitrack.borrowing.BorrowService
+import io.defitrack.borrowing.domain.BorrowElement
+import io.defitrack.borrowing.vo.BorrowElementVO
 import io.codechef.defitrack.network.toVO
 import io.codechef.defitrack.protocol.toVO
 import io.defitrack.abi.PriceResource
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/borrowing")
 class DefaultBorrowingRestController(
-    private val borrowingServices: List<BorrowService>,
+    private val borrowingServices: List<io.defitrack.borrowing.BorrowService>,
     private val priceResource: PriceResource
 ) {
 
@@ -25,7 +25,7 @@ class DefaultBorrowingRestController(
     }
 
     @GetMapping("/{userId}/positions")
-    fun getPoolingMarkets(@PathVariable("userId") address: String): List<BorrowElementVO> {
+    fun getPoolingMarkets(@PathVariable("userId") address: String): List<io.defitrack.borrowing.vo.BorrowElementVO> {
         return borrowingServices.flatMap {
             try {
                 it.getBorrows(address)
@@ -36,9 +36,9 @@ class DefaultBorrowingRestController(
         }.map { it.toVO() }
     }
 
-    fun BorrowElement.toVO(): BorrowElementVO {
+    fun io.defitrack.borrowing.domain.BorrowElement.toVO(): io.defitrack.borrowing.vo.BorrowElementVO {
         return with(this) {
-            BorrowElementVO(
+            io.defitrack.borrowing.vo.BorrowElementVO(
                 user = user,
                 network = network.toVO(),
                 protocol = protocol.toVO(),

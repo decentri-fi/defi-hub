@@ -1,7 +1,7 @@
 package io.defitrack.protocol.compound.borrowing
 
-import io.codechef.defitrack.borrowing.BorrowService
-import io.codechef.defitrack.borrowing.domain.BorrowElement
+import io.defitrack.borrowing.BorrowService
+import io.defitrack.borrowing.domain.BorrowElement
 import io.codechef.defitrack.token.ERC20Resource
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
@@ -22,7 +22,7 @@ class CompoundBorrowingService(
     private val abiResource: ABIResource,
     private val ethereumContractAccessor: EthereumContractAccessor,
     private val erC20Service: ERC20Resource
-) : BorrowService {
+) : io.defitrack.borrowing.BorrowService {
 
     val comptrollerABI by lazy {
         abiResource.getABI("compound/comptroller.json")
@@ -66,7 +66,7 @@ class CompoundBorrowingService(
         )
     }
 
-    override fun getBorrows(address: String): List<BorrowElement> {
+    override fun getBorrows(address: String): List<io.defitrack.borrowing.domain.BorrowElement> {
         return getTokenContracts().mapNotNull {
             val underlying = it.underlyingAddress?.let { tokenAddress ->
                 erC20Service.getERC20(getNetwork(), tokenAddress)
@@ -74,7 +74,7 @@ class CompoundBorrowingService(
 
             val balance = it.borrowBalanceStored(address)
             if (balance > BigInteger.ZERO) {
-                BorrowElement(
+                io.defitrack.borrowing.domain.BorrowElement(
                     id = UUID.randomUUID().toString(),
                     user = address.lowercase(Locale.getDefault()),
                     network = getNetwork(),
