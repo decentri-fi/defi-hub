@@ -46,9 +46,14 @@ class PriceResource(
 
     fun calculatePrice(priceRequest: PriceRequest?): Double = runBlocking {
         priceRequest?.let {
-            client.post("") {
-                this.header("Content-Type", "application/json")
-                this.body = priceRequest
+            try {
+                client.post("") {
+                    this.header("Content-Type", "application/json")
+                    this.body = priceRequest
+                }
+            } catch (ex: Exception) {
+                logger.error("unable to fetch price for ${it.address}")
+                0.0
             }
         } ?: 0.0
     }
