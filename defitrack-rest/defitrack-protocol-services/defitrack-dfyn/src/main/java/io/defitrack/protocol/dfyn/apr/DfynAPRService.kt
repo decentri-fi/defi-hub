@@ -1,4 +1,4 @@
-package io.codechef.defitrack.protocol.uniswap.apr
+package io.defitrack.protocol.dfyn.apr
 
 import io.defitrack.protocol.dfyn.DfynService
 import org.springframework.cache.annotation.Cacheable

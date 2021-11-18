@@ -1,4 +1,4 @@
-package io.codechef.defitrack.protocol.uniswap.pooling
+package io.defitrack.protocol.dfyn.pooling
 
 import io.codechef.defitrack.pool.UserPoolingService
 import io.codechef.defitrack.pool.contract.LPTokenContract

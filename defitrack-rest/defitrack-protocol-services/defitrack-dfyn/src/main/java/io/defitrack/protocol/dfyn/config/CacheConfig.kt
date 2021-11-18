@@ -1,4 +1,4 @@
-package io.codechef.defitrack.protocol.uniswap.config
+package io.defitrack.protocol.dfyn.config
 
 import io.codechef.defitrack.config.DefaultCacheConfig
 import org.springframework.cache.caffeine.CaffeineCache

@@ -1,4 +1,4 @@
-package io.codechef.defitrack.protocol.curve.staking
+package io.defitrack.protocol.curve.staking
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.codechef.defitrack.staking.UserStakingService

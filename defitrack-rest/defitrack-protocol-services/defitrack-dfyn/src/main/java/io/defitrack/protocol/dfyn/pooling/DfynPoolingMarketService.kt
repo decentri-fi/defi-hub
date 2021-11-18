@@ -1,9 +1,9 @@
-package io.codechef.defitrack.protocol.uniswap.pooling
+package io.defitrack.protocol.dfyn.pooling
 
 import io.codechef.defitrack.pool.PoolingMarketService
 import io.codechef.defitrack.pool.domain.PoolingMarketElement
 import io.codechef.defitrack.pool.domain.PoolingToken
-import io.codechef.defitrack.protocol.uniswap.apr.DfynAPRService
+import io.defitrack.protocol.dfyn.apr.DfynAPRService
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.dfyn.DfynService

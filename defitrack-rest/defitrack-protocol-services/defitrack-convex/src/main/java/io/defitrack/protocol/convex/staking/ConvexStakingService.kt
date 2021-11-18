@@ -1,4 +1,4 @@
-package io.codechef.defitrack.protocol.convex.staking
+package io.defitrack.protocol.convex.staking
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.codechef.defitrack.staking.UserStakingService

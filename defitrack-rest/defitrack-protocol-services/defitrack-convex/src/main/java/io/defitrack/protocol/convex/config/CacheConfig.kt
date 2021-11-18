@@ -1,4 +1,4 @@
-package io.codechef.defitrack.protocol.convex.config
+package io.defitrack.protocol.convex.config
 
 import io.codechef.defitrack.config.DefaultCacheConfig
 import org.springframework.cache.caffeine.CaffeineCache
