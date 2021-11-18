@@ -1,4 +1,4 @@
-package io.codechef.defitrack.protocol.adamant.staking
+package io.defitrack.protocol.adamant.staking
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.codechef.defitrack.staking.UserStakingService

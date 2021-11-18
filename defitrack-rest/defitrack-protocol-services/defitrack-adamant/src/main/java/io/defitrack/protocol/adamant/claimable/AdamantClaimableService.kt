@@ -1,4 +1,4 @@
-package io.codechef.defitrack.protocol.adamant.claimable
+package io.defitrack.protocol.adamant.claimable
 
 import io.codechef.defitrack.claimable.ClaimableElement
 import io.codechef.defitrack.claimable.ClaimableService
