@@ -1,4 +1,4 @@
-package io.codechef.protocol.aave.borrowing
+package io.defitrack.protocol.aave.borrowing
 
 import io.codechef.defitrack.borrowing.BorrowService
 import io.codechef.defitrack.borrowing.domain.BorrowElement
