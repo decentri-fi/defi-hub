@@ -1,4 +1,4 @@
-package io.codechef.defitrack.protocol.mstable
+package io.defitrack.protocol.mstable
 
 import io.codechef.defitrack.lending.LendingService
 import io.codechef.defitrack.lending.domain.LendingElement
@@ -6,8 +6,6 @@ import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereum.config.EthereumContractAccessor
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.mstable.MStableEthereumSavingsContract
-import io.defitrack.protocol.mstable.MStableEthereumService
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigInteger

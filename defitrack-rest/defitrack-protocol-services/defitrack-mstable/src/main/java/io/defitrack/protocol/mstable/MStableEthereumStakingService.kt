@@ -1,4 +1,4 @@
-package io.codechef.defitrack.protocol.mstable
+package io.defitrack.protocol.mstable
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.codechef.defitrack.staking.UserStakingService
@@ -9,8 +9,6 @@ import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereum.config.EthereumContractAccessor
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.mstable.MStableEthereumBoostedSavingsVaultContract
-import io.defitrack.protocol.mstable.MStableEthereumService
 import org.springframework.stereotype.Service
 import java.math.BigInteger
 import java.util.*
