@@ -1,7 +1,7 @@
 package io.defitrack.protocol.quickswap.apr
 
 import io.defitrack.abi.ABIResource
-import io.defitrack.abi.PriceResource
+import io.defitrack.price.PriceResource
 import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.quickswap.QuickswapDualRewardPoolContract
 import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract

@@ -2,7 +2,7 @@ package io.defitrack.token
 
 import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.retry
-import io.codechef.defitrack.token.domain.ERC20Information
+import io.defitrack.token.domain.ERC20Information
 import io.defitrack.common.network.Network
 import io.ktor.client.*
 import io.ktor.client.request.*

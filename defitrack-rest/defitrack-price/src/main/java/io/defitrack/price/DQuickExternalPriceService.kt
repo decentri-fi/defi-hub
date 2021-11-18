@@ -1,4 +1,4 @@
-package io.codechef.price
+package io.defitrack.price
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.polygon.config.PolygonContractAccessor

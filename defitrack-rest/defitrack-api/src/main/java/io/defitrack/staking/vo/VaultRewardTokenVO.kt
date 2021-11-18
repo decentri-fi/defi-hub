@@ -1,6 +1,6 @@
 package io.defitrack.staking.vo
 
-import io.codechef.defitrack.staking.domain.VaultRewardToken
+import io.defitrack.staking.domain.VaultRewardToken
 
 data class VaultRewardTokenVO(
     var name: String = "",

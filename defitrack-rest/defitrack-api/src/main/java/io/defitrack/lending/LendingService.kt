@@ -1,7 +1,7 @@
 package io.defitrack.lending
 
 import io.defitrack.lending.domain.LendingElement
-import io.codechef.defitrack.protocol.ProtocolService
+import io.defitrack.protocol.ProtocolService
 
 interface LendingService : ProtocolService {
     fun getLendings(address: String): List<LendingElement>

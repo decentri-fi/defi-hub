@@ -1,8 +1,8 @@
 package io.defitrack.claimable
 
-import io.codechef.defitrack.network.toVO
-import io.codechef.defitrack.protocol.toVO
-import io.defitrack.abi.PriceResource
+import io.defitrack.network.toVO
+import io.defitrack.protocol.toVO
+import io.defitrack.price.PriceResource
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping

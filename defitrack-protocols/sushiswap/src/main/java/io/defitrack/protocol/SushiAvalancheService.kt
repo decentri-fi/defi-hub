@@ -1,4 +1,4 @@
-package io.codechef.protocol
+package io.defitrack.protocol
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.common.network.Network
@@ -13,14 +13,14 @@ import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
 @Component
-class SushiBscService(
+class SushiAvalancheService(
     objectMapper: ObjectMapper,
     client: HttpClient
 ) : SushiswapService {
 
     private val sushiswapService = SushiswapGraphGateway(
         objectMapper,
-        "https://api.thegraph.com/subgraphs/name/sushiswap/bsc-exchange",
+        "https://api.thegraph.com/subgraphs/name/sushiswap/avalanche-exchange",
         client
     )
 
@@ -41,6 +41,6 @@ class SushiBscService(
     override fun getUserPoolings(user: String) = sushiswapService.getUserPoolings(user)
 
     override fun getNetwork(): Network {
-        return Network.BSC
+        return Network.AVALANCHE
     }
 }

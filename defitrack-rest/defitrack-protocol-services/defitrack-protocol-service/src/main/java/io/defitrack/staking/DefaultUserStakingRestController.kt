@@ -2,16 +2,16 @@ package io.defitrack.staking
 
 import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.retry
-import io.codechef.defitrack.network.toVO
-import io.codechef.defitrack.price.PriceRequest
-import io.codechef.defitrack.protocol.toVO
-import io.codechef.defitrack.staking.UserStakingService
-import io.codechef.defitrack.staking.domain.StakingElement
-import io.codechef.defitrack.staking.domain.VaultStakedToken
-import io.codechef.defitrack.staking.vo.StakingElementVO
-import io.codechef.defitrack.staking.vo.VaultStakedTokenVO
-import io.codechef.defitrack.staking.vo.toVO
-import io.defitrack.abi.PriceResource
+import io.defitrack.network.toVO
+import io.defitrack.price.PriceRequest
+import io.defitrack.protocol.toVO
+import io.defitrack.staking.UserStakingService
+import io.defitrack.staking.domain.StakingElement
+import io.defitrack.staking.domain.VaultStakedToken
+import io.defitrack.staking.vo.StakingElementVO
+import io.defitrack.staking.vo.VaultStakedTokenVO
+import io.defitrack.staking.vo.toVO
+import io.defitrack.price.PriceResource
 import io.defitrack.common.network.Network
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking

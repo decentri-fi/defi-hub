@@ -1,7 +1,7 @@
 package io.defitrack.claimable
 
-import io.codechef.defitrack.network.NetworkVO
-import io.codechef.defitrack.protocol.ProtocolVO
+import io.defitrack.network.NetworkVO
+import io.defitrack.protocol.ProtocolVO
 
 class ClaimableElementVO(
     val address: String,

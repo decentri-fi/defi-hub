@@ -2,7 +2,7 @@ package io.defitrack.protocol.compound.borrowing
 
 import io.defitrack.borrowing.BorrowService
 import io.defitrack.borrowing.domain.BorrowElement
-import io.codechef.defitrack.token.ERC20Resource
+import io.defitrack.token.ERC20Resource
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereum.config.EthereumContractAccessor

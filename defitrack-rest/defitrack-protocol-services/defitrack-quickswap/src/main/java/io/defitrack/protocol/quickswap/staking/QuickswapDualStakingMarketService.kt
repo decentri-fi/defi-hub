@@ -1,12 +1,12 @@
 package io.defitrack.protocol.quickswap.staking
 
-import io.codechef.defitrack.price.PriceRequest
+import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
-import io.codechef.defitrack.staking.StakingMarketService
-import io.codechef.defitrack.staking.domain.StakingMarketElement
-import io.codechef.defitrack.token.TokenService
+import io.defitrack.staking.StakingMarketService
+import io.defitrack.staking.domain.StakingMarketElement
+import io.defitrack.token.TokenService
 import io.defitrack.abi.ABIResource
-import io.defitrack.abi.PriceResource
+import io.defitrack.price.PriceResource
 import io.defitrack.common.network.Network
 import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.Protocol

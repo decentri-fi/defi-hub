@@ -1,11 +1,11 @@
 package io.defitrack.pool
 
-import io.codechef.defitrack.network.toVO
+import io.defitrack.network.toVO
 import io.defitrack.pool.domain.PoolingElement
 import io.defitrack.pool.vo.PoolingElementVO
-import io.codechef.defitrack.price.PriceRequest
-import io.codechef.defitrack.protocol.toVO
-import io.defitrack.abi.PriceResource
+import io.defitrack.price.PriceRequest
+import io.defitrack.protocol.toVO
+import io.defitrack.price.PriceResource
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

@@ -1,6 +1,6 @@
 package io.defitrack.token.domain
 
-import io.codechef.defitrack.network.NetworkVO
+import io.defitrack.network.NetworkVO
 
 data class ERC20Information(
     val logo: String?,

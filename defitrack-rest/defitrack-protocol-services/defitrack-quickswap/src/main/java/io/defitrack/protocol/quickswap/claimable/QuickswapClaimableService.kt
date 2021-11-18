@@ -3,7 +3,7 @@ package io.defitrack.protocol.quickswap.claimable
 import io.defitrack.claimable.ClaimableElement
 import io.defitrack.claimable.ClaimableService
 import io.defitrack.claimable.ClaimableToken
-import io.codechef.defitrack.token.TokenService
+import io.defitrack.token.TokenService
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress

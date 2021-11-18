@@ -1,9 +1,9 @@
 package io.defitrack.staking
 
-import io.codechef.defitrack.protocol.ProtocolService
-import io.codechef.defitrack.staking.domain.RewardToken
-import io.codechef.defitrack.staking.domain.StakedToken
-import io.codechef.defitrack.staking.domain.StakingMarketElement
+import io.defitrack.protocol.ProtocolService
+import io.defitrack.staking.domain.RewardToken
+import io.defitrack.staking.domain.StakedToken
+import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.protocol.staking.Token
 
 interface StakingMarketService : ProtocolService {

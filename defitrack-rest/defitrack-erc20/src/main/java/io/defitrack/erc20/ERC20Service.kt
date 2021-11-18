@@ -1,8 +1,8 @@
 package io.defitrack.erc20
 
-import io.codechef.defitrack.network.toVO
+import io.defitrack.network.toVO
 import io.defitrack.abi.ABIResource
-import io.defitrack.abi.PriceResource
+import io.defitrack.price.PriceResource
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.vo.ERC20Information
 import io.defitrack.ethereumbased.contract.ERC20Contract

@@ -1,12 +1,12 @@
 package io.defitrack.pool
 
-import io.codechef.defitrack.logo.LogoService
-import io.codechef.defitrack.network.toVO
+import io.defitrack.logo.LogoService
+import io.defitrack.network.toVO
 import io.defitrack.pool.domain.PoolingMarketElement
 import io.defitrack.pool.vo.PoolingMarketElementToken
 import io.defitrack.pool.vo.PoolingMarketElementVO
-import io.codechef.defitrack.protocol.toVO
-import io.codechef.defitrack.token.TokenService
+import io.defitrack.protocol.toVO
+import io.defitrack.token.TokenService
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.staking.LpToken
 import org.slf4j.Logger

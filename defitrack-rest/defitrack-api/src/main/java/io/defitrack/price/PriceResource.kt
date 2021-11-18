@@ -1,6 +1,6 @@
-package io.defitrack.abi
+package io.defitrack.price
 
-import io.codechef.defitrack.price.PriceRequest
+import io.defitrack.price.PriceRequest
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.request.*

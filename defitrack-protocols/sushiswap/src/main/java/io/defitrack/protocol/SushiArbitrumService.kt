@@ -1,9 +1,7 @@
-package io.codechef.protocol
+package io.defitrack.protocol
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.common.network.Network
-import io.defitrack.protocol.SushiswapGraphGateway
-import io.defitrack.protocol.SushiswapService
 import io.defitrack.protocol.sushi.domain.SushiswapPair
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*

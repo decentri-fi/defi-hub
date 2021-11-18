@@ -1,8 +1,8 @@
 package io.defitrack.borrowing
 
 import io.defitrack.borrowing.domain.BorrowElement
-import io.codechef.defitrack.protocol.ProtocolService
+import io.defitrack.protocol.ProtocolService
 
 interface BorrowService : ProtocolService {
-    fun getBorrows(address: String): List<io.defitrack.borrowing.domain.BorrowElement>
+    fun getBorrows(address: String): List<BorrowElement>
 }

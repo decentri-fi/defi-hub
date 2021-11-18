@@ -1,9 +1,9 @@
 package io.defitrack.protocol.quickswap.staking
 
-import io.codechef.defitrack.staking.StakingMarketService
-import io.codechef.defitrack.staking.domain.RewardToken
-import io.codechef.defitrack.staking.domain.StakedToken
-import io.codechef.defitrack.staking.domain.StakingMarketElement
+import io.defitrack.staking.StakingMarketService
+import io.defitrack.staking.domain.RewardToken
+import io.defitrack.staking.domain.StakedToken
+import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.polygon.config.PolygonContractAccessor

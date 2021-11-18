@@ -3,9 +3,9 @@ package io.defitrack.lending
 import io.defitrack.lending.domain.LendingMarketElement
 import io.defitrack.lending.vo.LendingMarketElementToken
 import io.defitrack.lending.vo.LendingMarketElementVO
-import io.codechef.defitrack.logo.LogoService
-import io.codechef.defitrack.network.toVO
-import io.codechef.defitrack.protocol.toVO
+import io.defitrack.logo.LogoService
+import io.defitrack.network.toVO
+import io.defitrack.protocol.toVO
 import io.defitrack.common.network.Network
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping

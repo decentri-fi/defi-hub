@@ -1,4 +1,4 @@
-package io.codechef.price
+package io.defitrack.price
 
 import java.math.BigDecimal
 

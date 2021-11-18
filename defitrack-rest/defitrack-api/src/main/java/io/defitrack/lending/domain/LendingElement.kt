@@ -6,9 +6,9 @@ import io.defitrack.protocol.Protocol
 data class LendingElement constructor(
     var id: String = "",
     var user: String = "",
-    var network: Network = Network.ETHEREUM,
+    var network: Network,
     var platform: String = "",
-    var protocol: Protocol = Protocol.YEARN,
+    var protocol: Protocol,
     var rate: Double? = null,
     var name: String = "unknown",
     var amount: String = "",

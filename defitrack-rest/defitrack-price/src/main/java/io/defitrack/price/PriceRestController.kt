@@ -1,6 +1,5 @@
-package io.codechef.price
+package io.defitrack.price
 
-import io.codechef.defitrack.price.PriceRequest
 import org.springframework.web.bind.annotation.*
 import java.math.BigDecimal
 

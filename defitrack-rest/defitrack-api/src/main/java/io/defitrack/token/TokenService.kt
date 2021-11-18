@@ -1,7 +1,7 @@
 package io.defitrack.token
 
 import io.defitrack.pool.LPtokenService
-import io.codechef.defitrack.token.domain.ERC20Information
+import io.defitrack.token.domain.ERC20Information
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.staking.LpToken
 import io.defitrack.protocol.staking.SingleToken

@@ -1,4 +1,4 @@
-package io.codechef.config
+package io.defitrack.config
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.benmanes.caffeine.cache.Ticker

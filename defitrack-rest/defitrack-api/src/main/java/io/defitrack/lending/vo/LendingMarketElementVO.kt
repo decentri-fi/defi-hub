@@ -1,7 +1,7 @@
 package io.defitrack.lending.vo
 
-import io.codechef.defitrack.network.NetworkVO
-import io.codechef.defitrack.protocol.ProtocolVO
+import io.defitrack.network.NetworkVO
+import io.defitrack.protocol.ProtocolVO
 import java.math.BigDecimal
 
 data class LendingMarketElementVO(

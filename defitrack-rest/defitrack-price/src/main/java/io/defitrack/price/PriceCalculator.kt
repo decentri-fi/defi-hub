@@ -1,10 +1,9 @@
-package io.codechef.price
+package io.defitrack.price
 
 import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.retry
-import io.codechef.defitrack.price.PriceRequest
-import io.codechef.defitrack.token.ERC20Resource
-import io.codechef.defitrack.token.TokenService
+import io.defitrack.token.ERC20Resource
+import io.defitrack.token.TokenService
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.balancer.BalancerPolygonService
 import io.defitrack.protocol.staking.LpToken

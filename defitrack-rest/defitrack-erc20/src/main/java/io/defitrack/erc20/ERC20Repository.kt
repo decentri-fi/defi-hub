@@ -1,8 +1,8 @@
 package io.defitrack.erc20
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.codechef.defitrack.erc20.TokenInfo
-import io.codechef.defitrack.erc20.TokenListResponse
+import io.defitrack.erc20.TokenInfo
+import io.defitrack.erc20.TokenListResponse
 import io.defitrack.common.network.Network
 import io.ktor.client.*
 import io.ktor.client.request.*

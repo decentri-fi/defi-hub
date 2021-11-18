@@ -1,6 +1,6 @@
 package io.defitrack.erc20
 
-import io.codechef.defitrack.token.TokenService
+import io.defitrack.token.TokenService
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.vo.ERC20Information
 import io.defitrack.protocol.staking.Token

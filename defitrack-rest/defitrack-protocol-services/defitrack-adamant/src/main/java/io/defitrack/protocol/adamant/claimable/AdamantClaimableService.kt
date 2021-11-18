@@ -3,9 +3,9 @@ package io.defitrack.protocol.adamant.claimable
 import io.defitrack.claimable.ClaimableElement
 import io.defitrack.claimable.ClaimableService
 import io.defitrack.claimable.ClaimableToken
-import io.codechef.defitrack.token.ERC20Resource
+import io.defitrack.token.ERC20Resource
 import io.defitrack.abi.ABIResource
-import io.defitrack.abi.PriceResource
+import io.defitrack.price.PriceResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
 import io.defitrack.ethereumbased.contract.multicall.MultiCallElement

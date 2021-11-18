@@ -4,9 +4,9 @@ import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.retry
 import io.defitrack.lending.domain.LendingElement
 import io.defitrack.lending.vo.LendingElementVO
-import io.codechef.defitrack.network.toVO
-import io.codechef.defitrack.protocol.toVO
-import io.defitrack.abi.PriceResource
+import io.defitrack.network.toVO
+import io.defitrack.protocol.toVO
+import io.defitrack.price.PriceResource
 import io.defitrack.common.network.Network
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking

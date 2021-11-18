@@ -1,9 +1,9 @@
 package io.defitrack.protocol.curve.staking
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.codechef.defitrack.staking.UserStakingService
-import io.codechef.defitrack.staking.domain.StakingElement
-import io.codechef.defitrack.token.TokenService
+import io.defitrack.staking.UserStakingService
+import io.defitrack.staking.domain.StakingElement
+import io.defitrack.token.TokenService
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereum.config.EthereumContractAccessor

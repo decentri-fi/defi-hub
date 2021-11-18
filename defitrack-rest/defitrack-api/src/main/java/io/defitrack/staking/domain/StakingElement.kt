@@ -7,9 +7,9 @@ import java.math.BigInteger
 
 data class StakingElement(
     val id: String,
-    val network: Network = Network.ETHEREUM,
+    val network: Network,
     val user: String = "",
-    val protocol: Protocol = Protocol.YEARN,
+    val protocol: Protocol,
     val name: String = "unknown",
     val contractAddress: String,
     val vaultType: String,

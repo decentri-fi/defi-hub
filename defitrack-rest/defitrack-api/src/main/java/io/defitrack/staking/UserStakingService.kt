@@ -1,11 +1,11 @@
 package io.defitrack.staking
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.codechef.defitrack.protocol.ProtocolService
-import io.codechef.defitrack.staking.domain.StakingElement
-import io.codechef.defitrack.staking.domain.VaultRewardToken
-import io.codechef.defitrack.staking.domain.VaultStakedToken
-import io.codechef.defitrack.token.TokenService
+import io.defitrack.protocol.ProtocolService
+import io.defitrack.staking.domain.StakingElement
+import io.defitrack.staking.domain.VaultRewardToken
+import io.defitrack.staking.domain.VaultStakedToken
+import io.defitrack.token.TokenService
 import io.defitrack.protocol.staking.TokenType
 import java.math.BigInteger
 import java.util.*
