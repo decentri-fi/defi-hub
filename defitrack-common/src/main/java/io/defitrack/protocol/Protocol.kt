@@ -9,7 +9,6 @@ enum class Protocol(
     AAVE("aave.png", "aave", true),
     CURVE("curve.png", "curve"),
     MSTABLE("mstable.png", "mstable", true),
-    YEARN("yearn.png", "yearn"),
     COMPOUND("compound.png", "compound", true),
     BEEFY("beefy.png", "beefy", true),
     QUICKSWAP("quickswap.png", "quickswap", true),
