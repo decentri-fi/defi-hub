@@ -1,8 +1,8 @@
 package io.defitrack.protocol.mstable
 
-import io.codechef.defitrack.lending.LendingMarketService
-import io.codechef.defitrack.lending.domain.LendingMarketElement
-import io.codechef.defitrack.lending.domain.LendingToken
+import io.defitrack.lending.LendingMarketService
+import io.defitrack.lending.domain.LendingMarketElement
+import io.defitrack.lending.domain.LendingToken
 import io.codechef.defitrack.token.TokenService
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network

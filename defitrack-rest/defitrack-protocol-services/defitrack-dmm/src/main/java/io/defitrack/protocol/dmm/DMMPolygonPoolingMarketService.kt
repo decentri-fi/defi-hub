@@ -1,8 +1,8 @@
 package io.defitrack.protocol.dmm
 
-import io.codechef.defitrack.pool.PoolingMarketService
-import io.codechef.defitrack.pool.domain.PoolingMarketElement
-import io.codechef.defitrack.pool.domain.PoolingToken
+import io.defitrack.pool.PoolingMarketService
+import io.defitrack.pool.domain.PoolingMarketElement
+import io.defitrack.pool.domain.PoolingToken
 import io.defitrack.protocol.dmm.apr.DMMAPRService
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol

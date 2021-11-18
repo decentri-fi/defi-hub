@@ -1,7 +1,7 @@
 package io.defitrack.protocol.aave.lending
 
-import io.codechef.defitrack.lending.LendingService
-import io.codechef.defitrack.lending.domain.LendingElement
+import io.defitrack.lending.LendingService
+import io.defitrack.lending.domain.LendingElement
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.AaveMainnetService

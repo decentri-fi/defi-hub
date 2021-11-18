@@ -1,7 +1,7 @@
 package io.defitrack.protocol.mstable
 
-import io.codechef.defitrack.lending.LendingService
-import io.codechef.defitrack.lending.domain.LendingElement
+import io.defitrack.lending.LendingService
+import io.defitrack.lending.domain.LendingElement
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereum.config.EthereumContractAccessor

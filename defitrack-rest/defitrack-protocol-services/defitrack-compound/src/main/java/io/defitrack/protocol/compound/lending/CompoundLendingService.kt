@@ -1,7 +1,7 @@
 package io.defitrack.protocol.compound.lending
 
-import io.codechef.defitrack.lending.LendingService
-import io.codechef.defitrack.lending.domain.LendingElement
+import io.defitrack.lending.LendingService
+import io.defitrack.lending.domain.LendingElement
 import io.codechef.defitrack.token.ERC20Resource
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network

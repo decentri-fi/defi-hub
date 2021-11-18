@@ -1,7 +1,7 @@
 package io.defitrack.protocol.balancer.pooling
 
-import io.codechef.defitrack.pool.PoolingMarketService
-import io.codechef.defitrack.pool.domain.PoolingMarketElement
+import io.defitrack.pool.PoolingMarketService
+import io.defitrack.pool.domain.PoolingMarketElement
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.BalancerPolygonService

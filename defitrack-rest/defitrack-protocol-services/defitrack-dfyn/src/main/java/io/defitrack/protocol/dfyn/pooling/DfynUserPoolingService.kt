@@ -1,8 +1,8 @@
 package io.defitrack.protocol.dfyn.pooling
 
-import io.codechef.defitrack.pool.UserPoolingService
-import io.codechef.defitrack.pool.contract.LPTokenContract
-import io.codechef.defitrack.pool.domain.PoolingElement
+import io.defitrack.pool.UserPoolingService
+import io.defitrack.pool.contract.LPTokenContract
+import io.defitrack.pool.domain.PoolingElement
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress

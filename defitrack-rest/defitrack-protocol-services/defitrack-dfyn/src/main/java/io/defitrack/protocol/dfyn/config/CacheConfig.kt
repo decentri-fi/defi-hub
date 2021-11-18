@@ -1,6 +1,6 @@
 package io.defitrack.protocol.dfyn.config
 
-import io.codechef.defitrack.config.DefaultCacheConfig
+import io.defitrack.config.DefaultCacheConfig
 import org.springframework.cache.caffeine.CaffeineCache
 import org.springframework.context.annotation.Configuration
 import java.util.concurrent.TimeUnit

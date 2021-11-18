@@ -1,8 +1,8 @@
 package io.defitrack.protocol.adamant.claimable
 
-import io.codechef.defitrack.claimable.ClaimableElement
-import io.codechef.defitrack.claimable.ClaimableService
-import io.codechef.defitrack.claimable.ClaimableToken
+import io.defitrack.claimable.ClaimableElement
+import io.defitrack.claimable.ClaimableService
+import io.defitrack.claimable.ClaimableToken
 import io.codechef.defitrack.token.ERC20Resource
 import io.defitrack.abi.ABIResource
 import io.defitrack.abi.PriceResource
