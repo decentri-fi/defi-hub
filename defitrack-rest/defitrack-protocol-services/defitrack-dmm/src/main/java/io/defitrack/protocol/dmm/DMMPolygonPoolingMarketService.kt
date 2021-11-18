@@ -1,12 +1,11 @@
-package io.codechef.defitrack.protocol.dmm
+package io.defitrack.protocol.dmm
 
 import io.codechef.defitrack.pool.PoolingMarketService
 import io.codechef.defitrack.pool.domain.PoolingMarketElement
 import io.codechef.defitrack.pool.domain.PoolingToken
-import io.codechef.defitrack.protocol.dmm.apr.DMMAPRService
+import io.defitrack.protocol.dmm.apr.DMMAPRService
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.dmm.DMMPolygonService
 import okhttp3.internal.toImmutableList
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service

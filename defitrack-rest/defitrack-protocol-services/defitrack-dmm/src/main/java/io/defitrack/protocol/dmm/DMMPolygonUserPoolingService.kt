@@ -1,10 +1,9 @@
-package io.codechef.defitrack.protocol.dmm
+package io.defitrack.protocol.dmm
 
 import io.codechef.defitrack.pool.UserPoolingService
 import io.codechef.defitrack.pool.domain.PoolingElement
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.dmm.DMMPolygonService
 import io.defitrack.protocol.staking.TokenType
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service

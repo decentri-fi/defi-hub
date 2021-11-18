@@ -1,4 +1,4 @@
-package io.codechef.defitrack.protocol.dmm.apr
+package io.defitrack.protocol.dmm.apr
 
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.dmm.DMMEthereumService
