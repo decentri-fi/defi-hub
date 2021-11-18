@@ -21,9 +21,11 @@ class ERC20Repository(
     companion object {
         val NATIVE_WRAP_MAPPING = mapOf(
             Network.ETHEREUM to "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+            Network.AVALANCHE to "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
             Network.POLYGON to "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
             Network.ARBITRUM to "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-            Network.BSC to "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
+            Network.BSC to "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
+            Network.FANTOM to "0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83"
         )
     }
 
