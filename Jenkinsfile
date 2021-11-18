@@ -14,7 +14,7 @@ pipeline {
         stage('Package') {
              steps {
                  echo "-=- packaging project -=-"
-                 sh "./mvnw package -DskipTests -Pproduction"
+                 sh "./mvnw package -DskipTests"
                  sh "./ci/package.sh"
              }
         }
