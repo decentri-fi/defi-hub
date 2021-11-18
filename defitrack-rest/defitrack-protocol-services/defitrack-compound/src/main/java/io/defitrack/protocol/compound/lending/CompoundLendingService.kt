@@ -1,7 +1,7 @@
-package io.codechef.defitrack.protocol.compound.borrowing
+package io.defitrack.protocol.compound.lending
 
-import io.codechef.defitrack.borrowing.BorrowService
-import io.codechef.defitrack.borrowing.domain.BorrowElement
+import io.codechef.defitrack.lending.LendingService
+import io.codechef.defitrack.lending.domain.LendingElement
 import io.codechef.defitrack.token.ERC20Resource
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
@@ -17,12 +17,12 @@ import java.math.RoundingMode
 import java.util.*
 
 @Service
-class CompoundBorrowingService(
-    private val compoundService: CompoundService,
+class CompoundLendingService(
+    private val compoundContractProvider: CompoundService,
     private val abiResource: ABIResource,
     private val ethereumContractAccessor: EthereumContractAccessor,
     private val erC20Service: ERC20Resource
-) : BorrowService {
+) : LendingService {
 
     val comptrollerABI by lazy {
         abiResource.getABI("compound/comptroller.json")
@@ -54,43 +54,45 @@ class CompoundBorrowingService(
             .divide(BigDecimal.TEN.pow(4), 4, RoundingMode.HALF_UP).times(BigDecimal(100))
     }
 
+    override fun getLendings(address: String): List<LendingElement> {
+        val compoundTokenContracts = getTokenContracts()
+        return compoundTokenContracts.mapNotNull {
+            val cTokenBalance = it.balanceOf(address)
+            if (cTokenBalance > BigInteger.ZERO) {
+
+                val underlyingBalance = it.underlyingBalanceOf(address)
+                val underlying = it.underlyingAddress?.let { tokenAddress ->
+                    erC20Service.getERC20(getNetwork(), tokenAddress)
+                }
+
+                LendingElement(
+                    id = UUID.randomUUID().toString(),
+                    user = address.lowercase(),
+                    network = getNetwork(),
+                    protocol = getProtocol(),
+                    name = it.name,
+                    rate = getSupplyRate(compoundTokenContract = it).toDouble(),
+                    amount = underlyingBalance.divide(
+                        BigDecimal.TEN.pow(underlying?.decimals ?: 18), 4, RoundingMode.HALF_UP
+                    ).toPlainString(),
+                    symbol = underlying?.symbol ?: "ETH",
+                )
+            } else {
+                null
+            }
+        }
+    }
+
     private fun getTokenContracts() = CompoundComptrollerContract(
         ethereumContractAccessor,
         comptrollerABI,
-        compoundService.getComptroller()
+        compoundContractProvider.getComptroller()
     ).getMarkets().map {
         CompoundTokenContract(
             ethereumContractAccessor,
             cTokenABI,
             it
         )
-    }
-
-    override fun getBorrows(address: String): List<BorrowElement> {
-        return getTokenContracts().mapNotNull {
-            val underlying = it.underlyingAddress?.let { tokenAddress ->
-                erC20Service.getERC20(getNetwork(), tokenAddress)
-            }
-
-            val balance = it.borrowBalanceStored(address)
-            if (balance > BigInteger.ZERO) {
-                BorrowElement(
-                    id = UUID.randomUUID().toString(),
-                    user = address.lowercase(Locale.getDefault()),
-                    network = getNetwork(),
-                    protocol = getProtocol(),
-                    name = it.name,
-                    rate = getBorrowRate(it).toDouble(),
-                    amount = balance.toBigDecimal().divide(
-                        BigDecimal.TEN.pow(underlying?.decimals ?: 18), 2, RoundingMode.HALF_UP
-                    ).toPlainString(),
-                    symbol = underlying?.symbol ?: "ETH",
-                    tokenUrl = "https://etherscan.io/address/${it.address}"
-                )
-            } else {
-                null
-            }
-        }
     }
 
     override fun getProtocol(): Protocol = Protocol.COMPOUND

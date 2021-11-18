@@ -1,4 +1,4 @@
-package io.codechef.defitrack.protocol.compound.config
+package io.defitrack.protocol.compound.config
 
 import io.codechef.defitrack.config.DefaultCacheConfig
 import org.springframework.cache.caffeine.CaffeineCache
