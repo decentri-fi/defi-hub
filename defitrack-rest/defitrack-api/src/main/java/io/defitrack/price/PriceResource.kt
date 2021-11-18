@@ -4,6 +4,7 @@ import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.runBlocking
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
@@ -16,6 +17,10 @@ class PriceResource(
     private val client: HttpClient
 ) {
 
+    companion object {
+        private val logger = LoggerFactory.getLogger(this::class.java)
+    }
+
     @OptIn(ExperimentalTime::class)
     val cache = Cache.Builder()
         .expireAfterWrite(Duration.Companion.minutes(10))
@@ -24,7 +29,12 @@ class PriceResource(
     fun getPrice(tokenName: String): BigDecimal {
         return runBlocking {
             cache.get(tokenName) {
-                client.get("$priceResourceLocation/$tokenName")
+                try {
+                    client.get("$priceResourceLocation/$tokenName")
+                } catch (ex: Exception) {
+                    logger.error("unable to fetch price for $tokenName")
+                    BigDecimal.ZERO
+                }
             }
         }
     }
