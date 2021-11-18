@@ -13,7 +13,7 @@ class LogoService(private val erC20Resource: ERC20Resource) {
         return if (address == "0x0") {
             "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/${network.slug}/info/logo.png"
         } else {
-            getToken(network, address).logo
+            getToken(network, address)?.logo
                 ?: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/${network.slug}/assets/${
                     Keys.toChecksumAddress(
                         address
