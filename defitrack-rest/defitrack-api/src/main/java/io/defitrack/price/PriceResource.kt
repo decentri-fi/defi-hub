@@ -1,6 +1,5 @@
 package io.defitrack.price
 
-import io.defitrack.price.PriceRequest
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.request.*
@@ -29,7 +28,6 @@ class PriceResource(
             }
         }
     }
-
 
     fun calculatePrice(name: String, amount: Double): Double {
         val price = getPrice(name)
