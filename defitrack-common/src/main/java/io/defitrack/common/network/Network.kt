@@ -4,7 +4,7 @@ enum class Network(val logo: String, val chainId: Int, val slug: String) {
     ETHEREUM("ethereum.png", 1, "ethereum"),
     ARBITRUM("arbitrum.png", 42161, "arbitrum"),
     FANTOM("fantom.png", 250, "fantom"),
-    AVALANCHE("avalanche.png", 43114, "avalanche"),
+    AVALANCHE("avalanche.png", 43114, "avalanchex"),
     BSC("bsc.svg", 56, "smartchain"),
     POLYGON("polygon.png", 137, "polygon");
 
