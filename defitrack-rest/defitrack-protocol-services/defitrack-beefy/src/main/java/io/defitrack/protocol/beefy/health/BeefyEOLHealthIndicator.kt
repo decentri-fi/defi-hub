@@ -1,4 +1,4 @@
-package io.codechef.protocol.beefy.health
+package io.defitrack.protocol.beefy.health
 
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping

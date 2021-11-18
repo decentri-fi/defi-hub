@@ -1,4 +1,4 @@
-package io.codechef.protocol.beefy.staking
+package io.defitrack.protocol.beefy.staking
 
 import io.codechef.defitrack.price.PriceRequest
 import io.codechef.defitrack.staking.StakingMarketService
@@ -6,11 +6,11 @@ import io.codechef.defitrack.staking.domain.RewardToken
 import io.codechef.defitrack.staking.domain.StakedToken
 import io.codechef.defitrack.staking.domain.StakingMarketElement
 import io.codechef.defitrack.token.TokenService
-import io.codechef.protocol.beefy.apy.BeefyAPYService
+import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.abi.ABIResource
 import io.defitrack.abi.PriceResource
-import io.defitrack.bsc.BscContractAccessor
 import io.defitrack.common.network.Network
+import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.beefy.BeefyService
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
@@ -25,8 +25,8 @@ import java.util.concurrent.Executors
 import javax.annotation.PostConstruct
 
 @Service
-class BeefyBscStakingMarketService(
-    private val bscContractAccessor: BscContractAccessor,
+class BeefyPolygonStakingMarketService(
+    private val polygonContractAccessor: PolygonContractAccessor,
     private val abiResource: ABIResource,
     private val beefyAPYService: BeefyAPYService,
     private val beefyPolygonService: BeefyService,
@@ -43,11 +43,10 @@ class BeefyBscStakingMarketService(
 
     private val executor = Executors.newWorkStealingPool(8)
 
-
     @PostConstruct
     fun startup() {
         executor.submit {
-            val vaultContracts = beefyPolygonService.beefyBscVaults
+            val vaultContracts = beefyPolygonService.beefyPolygonVaults
                 .map(this::beefyVaultToVaultContract)
 
             vaultContracts.forEach { beefyVault ->
@@ -98,7 +97,7 @@ class BeefyBscStakingMarketService(
             )
             marketBuffer.add(element)
         } catch (ex: Exception) {
-            logger.error("Error trying to fetch vault metadata ${beefyVault.vaultId}", ex)
+            logger.error("Error trying to fetch vault metadata", ex)
         }
     }
 
@@ -118,12 +117,12 @@ class BeefyBscStakingMarketService(
     }
 
     override fun getNetwork(): Network {
-        return Network.BSC
+        return Network.POLYGON
     }
 
     private fun beefyVaultToVaultContract(beefyVault: BeefyVault) =
         BeefyVaultContract(
-            bscContractAccessor,
+            polygonContractAccessor,
             vaultV6ABI,
             beefyVault.earnContractAddress,
             beefyVault.id

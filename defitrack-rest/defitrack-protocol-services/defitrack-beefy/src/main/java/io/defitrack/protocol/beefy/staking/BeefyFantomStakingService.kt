@@ -1,4 +1,4 @@
-package io.codechef.protocol.beefy.staking
+package io.defitrack.protocol.beefy.staking
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.codechef.defitrack.staking.UserStakingService
@@ -6,12 +6,12 @@ import io.codechef.defitrack.staking.domain.StakingElement
 import io.codechef.defitrack.staking.domain.StakingMarketElement
 import io.codechef.defitrack.staking.domain.VaultRewardToken
 import io.codechef.defitrack.token.TokenService
-import io.codechef.protocol.beefy.apy.BeefyAPYService
+import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
 import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
-import io.defitrack.polygon.config.PolygonContractAccessor
+import io.defitrack.fantom.config.FantomContractAccessor
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
 import org.slf4j.Logger
@@ -24,11 +24,11 @@ import java.math.BigInteger
 import java.math.RoundingMode
 
 @Service
-class BeefyPolygonStakingService(
-    private val polygonContractAccessor: PolygonContractAccessor,
+class BeefyFantomStakingService(
+    private val fantomContractAccessor: FantomContractAccessor,
     private val abiResource: ABIResource,
     private val beefyAPYService: BeefyAPYService,
-    private val polygonStakingMarketService: BeefyPolygonStakingMarketService,
+    private val stakingMarketService: BeefyFantomStakingMarketService,
     objectMapper: ObjectMapper,
     tokenService: TokenService
 ) : UserStakingService(tokenService, objectMapper) {
@@ -39,12 +39,12 @@ class BeefyPolygonStakingService(
     }
 
     override fun getStaking(address: String, vaultId: String): StakingElement? {
-        return polygonStakingMarketService.marketBuffer.firstOrNull {
+        return stakingMarketService.fetchVaults().firstOrNull {
             it.id == vaultId
         }?.let {
 
             val contract = BeefyVaultContract(
-                polygonContractAccessor,
+                fantomContractAccessor,
                 vaultV6ABI,
                 it.contractAddress,
                 it.id
@@ -55,12 +55,12 @@ class BeefyPolygonStakingService(
     }
 
     override fun getStakings(address: String): List<StakingElement> {
-        val markets = polygonStakingMarketService.marketBuffer
+        val markets = stakingMarketService.getStakingMarkets()
 
-        return polygonContractAccessor.readMultiCall(
+        return fantomContractAccessor.readMultiCall(
             markets.map {
                 val contract = BeefyVaultContract(
-                    polygonContractAccessor,
+                    fantomContractAccessor,
                     vaultV6ABI,
                     it.contractAddress,
                     it.id
@@ -84,7 +84,7 @@ class BeefyPolygonStakingService(
         try {
             if (balance > BigInteger.ZERO) {
                 val contract = BeefyVaultContract(
-                    polygonContractAccessor,
+                    fantomContractAccessor,
                     vaultV6ABI,
                     market.contractAddress,
                     market.id
@@ -145,6 +145,6 @@ class BeefyPolygonStakingService(
     }
 
     override fun getNetwork(): Network {
-        return Network.POLYGON
+        return Network.FANTOM
     }
 }

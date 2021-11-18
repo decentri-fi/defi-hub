@@ -1,4 +1,4 @@
-package io.codechef.protocol.beefy.health
+package io.defitrack.protocol.beefy.health
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.polygon.config.PolygonContractAccessor

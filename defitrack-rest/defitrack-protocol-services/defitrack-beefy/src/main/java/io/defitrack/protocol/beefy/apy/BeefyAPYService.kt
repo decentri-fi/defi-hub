@@ -1,4 +1,4 @@
-package io.codechef.protocol.beefy.apy
+package io.defitrack.protocol.beefy.apy
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper

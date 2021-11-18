@@ -1,4 +1,4 @@
-package io.codechef.protocol.beefy.staking
+package io.defitrack.protocol.beefy.staking
 
 import io.codechef.defitrack.price.PriceRequest
 import io.codechef.defitrack.staking.StakingMarketService
@@ -6,7 +6,7 @@ import io.codechef.defitrack.staking.domain.RewardToken
 import io.codechef.defitrack.staking.domain.StakedToken
 import io.codechef.defitrack.staking.domain.StakingMarketElement
 import io.codechef.defitrack.token.TokenService
-import io.codechef.protocol.beefy.apy.BeefyAPYService
+import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.abi.ABIResource
 import io.defitrack.abi.PriceResource
 import io.defitrack.common.network.Network
