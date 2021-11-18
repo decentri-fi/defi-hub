@@ -1,4 +1,4 @@
-package io.codechef.defitrack.protocol.balancer.pooling
+package io.defitrack.protocol.balancer.pooling
 
 import io.codechef.defitrack.pool.PoolingMarketService
 import io.codechef.defitrack.pool.domain.PoolingMarketElement
