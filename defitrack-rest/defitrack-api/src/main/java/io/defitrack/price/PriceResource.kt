@@ -32,7 +32,7 @@ class PriceResource(
                 try {
                     client.get("$priceResourceLocation/$tokenName")
                 } catch (ex: Exception) {
-                    logger.error("unable to fetch price for $tokenName")
+                    logger.error("unable to fetch price for $tokenName", ex)
                     BigDecimal.ZERO
                 }
             }

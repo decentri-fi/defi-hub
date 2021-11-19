@@ -23,7 +23,6 @@ import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
 
-@Service
 class BeefyFantomStakingService(
     private val fantomContractAccessor: FantomContractAccessor,
     private val abiResource: ABIResource,
