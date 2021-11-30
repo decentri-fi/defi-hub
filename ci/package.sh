@@ -17,5 +17,6 @@ docker build -t defitrack/defitrack:polycat-${BRANCH_NAME} defitrack-rest/defitr
 docker build -t defitrack/defitrack:convex-${BRANCH_NAME} defitrack-rest/defitrack-protocol-services/defitrack-convex
 docker build -t defitrack/defitrack:compound-${BRANCH_NAME} defitrack-rest/defitrack-protocol-services/defitrack-compound
 docker build -t defitrack/defitrack:price-${BRANCH_NAME} defitrack-rest/defitrack-price
+docker build -t defitrack/defitrack:balance-${BRANCH_NAME} defitrack-rest/defitrack-balance
 docker build -t defitrack/defitrack:abi-${BRANCH_NAME} defitrack-rest/defitrack-abi
 docker build -t defitrack/defitrack:erc20-${BRANCH_NAME} defitrack-rest/defitrack-erc20
