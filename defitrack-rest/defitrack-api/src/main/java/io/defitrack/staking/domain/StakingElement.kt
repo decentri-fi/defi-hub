@@ -33,6 +33,5 @@ data class VaultRewardToken(
     var daily: String = "",
     var name: String = "",
     var symbol: String = "",
-    var url: String = "",
     var decimals: Int = 18
 )

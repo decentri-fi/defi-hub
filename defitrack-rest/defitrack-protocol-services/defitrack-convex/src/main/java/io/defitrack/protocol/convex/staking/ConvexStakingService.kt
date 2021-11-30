@@ -56,14 +56,13 @@ class ConvexStakingService(
                             name = rewardToken.name,
                             symbol = rewardToken.symbol,
                             decimals = rewardToken.decimals,
-                            url = "https://etherscan.io/address/${rewardToken.address}"
                         )
                     ),
                     stakedToken = vaultStakedToken(
                         address = stakedToken.address,
                         amount = balance
                     ),
-                    vaultType = "convext-reward-pool",
+                    vaultType = "convex-reward-pool",
                     vaultAddress = pool.address
                 )
             } else {

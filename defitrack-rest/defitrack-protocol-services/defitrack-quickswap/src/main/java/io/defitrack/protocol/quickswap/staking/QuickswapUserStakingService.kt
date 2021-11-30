@@ -75,7 +75,6 @@ class QuickswapUserStakingService(
                             name = rewardToken.name,
                             decimals = rewardToken.decimals,
                             symbol = rewardToken.symbol,
-                            url = "https://polygonscan.com/address/${rewardToken.address}",
                         )
                     ),
                     stakedToken = vaultStakedToken(stakedToken.address, balance),

@@ -1,17 +1,17 @@
-package io.defitrack.protocol.polycat.staking
+package io.defitrack.protocol.dinoswap.staking
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.defitrack.abi.ABIResource
+import io.defitrack.common.network.Network
+import io.defitrack.ethereumbased.contract.ERC20Contract
+import io.defitrack.polygon.config.PolygonContractAccessor
+import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.dinoswap.DinoswapMasterchefContract
+import io.defitrack.protocol.dinoswap.DinoswapService
 import io.defitrack.staking.UserStakingService
 import io.defitrack.staking.domain.StakingElement
 import io.defitrack.staking.domain.VaultRewardToken
 import io.defitrack.token.TokenService
-import io.defitrack.abi.ABIResource
-import io.defitrack.common.network.Network
-import io.defitrack.ethereumbased.contract.ERC20Contract
-import io.defitrack.polycat.PolycatMasterChefContract
-import io.defitrack.polycat.PolycatService
-import io.defitrack.polygon.config.PolygonContractAccessor
-import io.defitrack.protocol.Protocol
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -19,8 +19,8 @@ import java.math.RoundingMode
 import java.util.*
 
 @Service
-class PolycatStakingService(
-    private val polycatService: PolycatService,
+class DinoswapStakingService(
+    private val polycatService: DinoswapService,
     private val abiResource: ABIResource,
     objectMapper: ObjectMapper,
     tokenService: TokenService,
@@ -33,8 +33,8 @@ class PolycatStakingService(
 
     override fun getStakings(address: String): List<StakingElement> {
 
-        val polycatMasterChefContracts = polycatService.getPolycatFarms().map {
-            PolycatMasterChefContract(
+        val polycatMasterChefContracts = polycatService.getDinoFossilFarms().map {
+            DinoswapMasterchefContract(
                 polygonContractAccessor,
                 masterChefABI,
                 it
@@ -83,7 +83,7 @@ class PolycatStakingService(
                             )
                         ),
                         contractAddress = masterChef.address,
-                        vaultType = "polycat-masterchef"
+                        vaultType = "dinoswap-masterchef"
                     )
                 } else {
                     null
@@ -93,7 +93,7 @@ class PolycatStakingService(
     }
 
     override fun getProtocol(): Protocol {
-        return Protocol.POLYCAT
+        return Protocol.DINOSWAP
     }
 
     override fun getNetwork(): Network {

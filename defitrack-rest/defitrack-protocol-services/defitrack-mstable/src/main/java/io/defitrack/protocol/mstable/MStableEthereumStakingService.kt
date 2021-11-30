@@ -56,7 +56,6 @@ class MStableEthereumStakingService(
                         VaultRewardToken(
                             name = rewardsToken.name,
                             symbol = stakingToken.symbol,
-                            url = "https://etherscan.io/address/${stakingToken.address}",
                         )
                     ),
                     contractAddress = it.address,

@@ -42,7 +42,6 @@ class DQuickStakingService(
                             name = "Quick",
                             symbol = "QUICK",
                             daily = "",
-                            url = "https://polygonscan.io/address/0x831753dd7087cac61ab5644b308642cc1c33dc13",
                         )
                     ),
                     stakedToken = vaultStakedToken(
