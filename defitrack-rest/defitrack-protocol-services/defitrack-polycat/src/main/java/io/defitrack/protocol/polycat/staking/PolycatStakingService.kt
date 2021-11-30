@@ -64,7 +64,7 @@ class PolycatStakingService(
                     val perDay = userRewardPerBlock.times(BigDecimal(43200))
 
                     StakingElement(
-                        id = UUID.randomUUID().toString(),
+                        id = "polycat-${masterChef.address}-${poolIndex}",
                         network = getNetwork(),
                         user = address.lowercase(),
                         protocol = getProtocol(),

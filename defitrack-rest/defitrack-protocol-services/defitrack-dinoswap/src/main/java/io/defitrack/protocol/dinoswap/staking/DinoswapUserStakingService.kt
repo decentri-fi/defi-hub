@@ -1,17 +1,17 @@
 package io.defitrack.protocol.dinoswap.staking
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.defitrack.staking.UserStakingService
+import io.defitrack.staking.domain.StakingElement
+import io.defitrack.staking.domain.VaultRewardToken
+import io.defitrack.token.TokenService
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereumbased.contract.ERC20Contract
 import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.dinoswap.DinoswapMasterchefContract
+import io.defitrack.protocol.dinoswap.DinoswapFossilFarmsContract
 import io.defitrack.protocol.dinoswap.DinoswapService
-import io.defitrack.staking.UserStakingService
-import io.defitrack.staking.domain.StakingElement
-import io.defitrack.staking.domain.VaultRewardToken
-import io.defitrack.token.TokenService
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -19,24 +19,24 @@ import java.math.RoundingMode
 import java.util.*
 
 @Service
-class DinoswapStakingService(
-    private val polycatService: DinoswapService,
+class DinoswapUserStakingService(
+    private val dinoService: DinoswapService,
     private val abiResource: ABIResource,
     objectMapper: ObjectMapper,
     tokenService: TokenService,
     private val polygonContractAccessor: PolygonContractAccessor,
 ) : UserStakingService(tokenService, objectMapper) {
 
-    val masterChefABI by lazy {
+    val fossilFarms by lazy {
         abiResource.getABI("polycat/MasterChef.json")
     }
 
     override fun getStakings(address: String): List<StakingElement> {
 
-        val polycatMasterChefContracts = polycatService.getDinoFossilFarms().map {
-            DinoswapMasterchefContract(
+        val polycatMasterChefContracts = dinoService.getDinoFossilFarms().map {
+            DinoswapFossilFarmsContract(
                 polygonContractAccessor,
-                masterChefABI,
+                fossilFarms,
                 it
             )
         }
@@ -64,7 +64,7 @@ class DinoswapStakingService(
                     val perDay = userRewardPerBlock.times(BigDecimal(43200))
 
                     StakingElement(
-                        id = UUID.randomUUID().toString(),
+                        id = "dinoswap-${masterChef.address}-${poolIndex}",
                         network = getNetwork(),
                         user = address.lowercase(),
                         protocol = getProtocol(),
@@ -83,7 +83,7 @@ class DinoswapStakingService(
                             )
                         ),
                         contractAddress = masterChef.address,
-                        vaultType = "dinoswap-masterchef"
+                        vaultType = "polycat-masterchef"
                     )
                 } else {
                     null
@@ -93,7 +93,7 @@ class DinoswapStakingService(
     }
 
     override fun getProtocol(): Protocol {
-        return Protocol.DINOSWAP
+        return Protocol.POLYCAT
     }
 
     override fun getNetwork(): Network {

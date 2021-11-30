@@ -10,7 +10,7 @@ import org.web3j.abi.datatypes.generated.Uint16
 import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
-class DinoswapMasterchefContract(
+class DinoswapFossilFarmsContract(
     contractAccessor: EvmContractAccessor,
     abi: String,
     address: String,
