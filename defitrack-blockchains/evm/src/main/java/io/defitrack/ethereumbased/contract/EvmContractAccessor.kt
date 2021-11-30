@@ -1,6 +1,8 @@
 package io.defitrack.ethereumbased.contract
 
+import com.github.michaelbull.retry.policy.binaryExponentialBackoff
 import com.github.michaelbull.retry.policy.limitAttempts
+import com.github.michaelbull.retry.policy.plus
 import com.github.michaelbull.retry.retry
 import io.defitrack.abi.AbiDecoder
 import io.defitrack.abi.domain.AbiContractEvent
@@ -98,7 +100,7 @@ abstract class EvmContractAccessor(val abiDecoder: AbiDecoder) {
         inputs: List<Type<*>>,
         outputs: List<TypeReference<out Type<*>>?>? = null
     ): List<Type<*>> = runBlocking {
-        retry(limitAttempts(5)) {
+        retry(limitAttempts(5) + binaryExponentialBackoff(base = 10L, max = 5000L)) {
             function?.let {
                 executeCall(from, address, createFunction(it, inputs, outputs), null)
             } ?: emptyList()

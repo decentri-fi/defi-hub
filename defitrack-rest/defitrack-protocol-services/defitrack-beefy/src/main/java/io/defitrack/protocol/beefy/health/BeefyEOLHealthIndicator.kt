@@ -6,8 +6,16 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/eol")
-class BeefyEOLHealthIndicator(private val quickswapHealthIndicator: QuickswapHealthIndicator) {
+class BeefyEOLHealthIndicator(
+    private val quickswapHealthIndicator: QuickswapHealthIndicator,
+    private val sushiPolygonHealthIndicator: SushiPolygonHealthIndicator
+) {
 
-    @GetMapping
+    @GetMapping("/quickswap")
     fun getEOL() = quickswapHealthIndicator.getEOL()
+
+    @GetMapping("/sushi")
+    fun sushi(): List<String> {
+        return sushiPolygonHealthIndicator.getEOL()
+    }
 }
