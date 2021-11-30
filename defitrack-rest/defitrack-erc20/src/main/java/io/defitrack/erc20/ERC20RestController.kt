@@ -1,9 +1,9 @@
 package io.defitrack.erc20
 
-import io.defitrack.token.TokenService
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.vo.ERC20Information
 import io.defitrack.protocol.staking.Token
+import io.defitrack.token.TokenService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -16,6 +16,13 @@ class ERC20RestController(
     private val erC20Service: ERC20Service,
     private val tokenService: TokenService
 ) {
+
+    @GetMapping("/{network}")
+    fun getAllTokensForAddress(
+        @PathVariable("network") network: Network,
+    ): ResponseEntity<List<ERC20Information>> {
+        return ResponseEntity.ok(erC20Service.getAllTokensForNetwork(network))
+    }
 
     @GetMapping("/{network}/{address}")
     fun getERC20Information(

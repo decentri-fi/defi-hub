@@ -1,12 +1,12 @@
 package io.defitrack.erc20
 
-import io.defitrack.network.toVO
 import io.defitrack.abi.ABIResource
-import io.defitrack.price.PriceResource
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.vo.ERC20Information
 import io.defitrack.ethereumbased.contract.ERC20Contract
 import io.defitrack.ethereumbased.contract.EvmContractAccessor
+import io.defitrack.network.toVO
+import io.defitrack.price.PriceResource
 import org.springframework.stereotype.Service
 
 @Service
@@ -44,6 +44,12 @@ class ERC20Service(
             }
         } catch (exception: Exception) {
             null
+        }
+    }
+
+    fun getAllTokensForNetwork(network: Network): List<ERC20Information> {
+        return erC20Repository.allTokens(network).mapNotNull {
+            getERC20Information(network, it.address)
         }
     }
 
