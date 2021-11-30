@@ -12,6 +12,10 @@ class SushiPolygonService(objectMapper: ObjectMapper,
                           private val client: HttpClient
 ) : SushiswapService {
 
+    companion object {
+        fun getMiniChefs() = listOf("0x0769fd68dfb93167989c6f7254cd0d766fb2841f")
+    }
+
     private val sushiswapService = SushiswapGraphGateway(
         objectMapper,
         "https://api.thegraph.com/subgraphs/name/sushiswap/matic-exchange",
