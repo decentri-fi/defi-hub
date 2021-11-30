@@ -1,9 +1,9 @@
-package io.codechef.defitrack.balance.l1
+package io.defitrack.balance.l1
 
-import io.codechef.bsc.BscGateway
-import io.codechef.common.network.Network
-import io.codechef.defitrack.balance.BalanceService
-import io.codechef.defitrack.balance.TokenBalance
+import io.defitrack.balance.BalanceService
+import io.defitrack.balance.TokenBalance
+import io.defitrack.bsc.BscGateway
+import io.defitrack.common.network.Network
 import org.springframework.stereotype.Service
 import org.web3j.protocol.core.DefaultBlockParameterName
 import java.math.BigDecimal

@@ -6,6 +6,8 @@ import io.defitrack.balance.TokenBalance
 import io.defitrack.common.network.Network
 import io.defitrack.ethereum.config.ArbitrumContractAccessor
 import io.defitrack.ethereum.config.ArbitrumGateway
+import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
+import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import org.web3j.abi.TypeReference
@@ -37,7 +39,7 @@ class ArbitrumBalanceService(
 
     override fun getTokenBalances(user: String): List<TokenBalance> {
         return try {
-            val tokenAddresses = erc20Resource.allTokens(getNetwork()).map {
+            val tokenAddresses = erc20Resource.getAllTokens(getNetwork()).map {
                 it.address
             }
 

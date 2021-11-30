@@ -1,15 +1,14 @@
-package io.codechef.defitrack.balance.l1
+package io.defitrack.balance.l1
 
-import io.codechef.common.network.Network
-import io.codechef.defitrack.abi.ABIResource
-import io.codechef.defitrack.balance.BalanceService
-import io.codechef.defitrack.balance.TokenBalance
-import io.codechef.defitrack.erc20.ERC20Repository
-import io.codechef.defitrack.token.ERC20Resource
-import io.codechef.ethereumbased.contract.SolidityBasedContractAccessor.Companion.toAddress
-import io.codechef.ethereumbased.contract.multicall.MultiCallElement
-import io.codechef.matic.config.MaticGateway
-import io.codechef.matic.config.PolygonContractAccessor
+import io.defitrack.abi.ABIResource
+import io.defitrack.balance.BalanceService
+import io.defitrack.balance.TokenBalance
+import io.defitrack.common.network.Network
+import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
+import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
+import io.defitrack.polygon.config.PolygonContractAccessor
+import io.defitrack.polygon.config.PolygonGateway
+import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.generated.Uint256
@@ -21,8 +20,7 @@ import java.math.RoundingMode
 @Service
 class PolygonBalanceService(
     private val abiResource: ABIResource,
-    private val maticGateway: MaticGateway,
-    private val erC20Repository: ERC20Repository,
+    private val maticGateway: PolygonGateway,
     private val polygonContractAccessor: PolygonContractAccessor,
     private val erC20Service: ERC20Resource
 ) : BalanceService {
@@ -40,7 +38,7 @@ class PolygonBalanceService(
             )
 
     override fun getTokenBalances(user: String): List<TokenBalance> {
-        val tokenAddresses = erC20Repository.allTokens(getNetwork()).map {
+        val tokenAddresses = erC20Service.getAllTokens(getNetwork()).map {
             it.address
         }
 

@@ -1,15 +1,14 @@
-package io.codechef.defitrack.balance.l1
+package io.defitrack.balance.l1
 
-import io.codechef.common.network.Network
-import io.codechef.defitrack.abi.ABIResource
-import io.codechef.defitrack.balance.BalanceService
-import io.codechef.defitrack.balance.TokenBalance
-import io.codechef.defitrack.erc20.ERC20Repository
-import io.codechef.defitrack.token.ERC20Resource
-import io.codechef.ethereum.config.EthereumContractAccessor
-import io.codechef.ethereum.config.EthereumGateway
-import io.codechef.ethereumbased.contract.SolidityBasedContractAccessor.Companion.toAddress
-import io.codechef.ethereumbased.contract.multicall.MultiCallElement
+import io.defitrack.abi.ABIResource
+import io.defitrack.balance.BalanceService
+import io.defitrack.balance.TokenBalance
+import io.defitrack.common.network.Network
+import io.defitrack.ethereum.config.EthereumContractAccessor
+import io.defitrack.ethereum.config.EthereumGateway
+import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
+import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
+import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.generated.Uint256
@@ -24,7 +23,6 @@ class EthereumBalanceService(
     private val ethereumGateway: EthereumGateway,
     private val erc20Resource: ERC20Resource,
     private val abiResource: ABIResource,
-    private val erC20Repository: ERC20Repository
 ) : BalanceService {
     val erc20ABI by lazy {
         abiResource.getABI("general/ERC20.json")
@@ -39,7 +37,7 @@ class EthereumBalanceService(
             )
 
     override fun getTokenBalances(user: String): List<TokenBalance> {
-        val tokenAddresses = erC20Repository.allTokens(getNetwork()).map {
+        val tokenAddresses = erc20Resource.getAllTokens(getNetwork()).map {
             it.address
         }
 
