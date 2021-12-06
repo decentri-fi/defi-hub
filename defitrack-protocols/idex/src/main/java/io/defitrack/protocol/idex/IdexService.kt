@@ -17,7 +17,7 @@ class IdexService(private val client: HttpClient) {
         client.get("$idexAPI/v1/liquidityPools")
     }
 
-    fun idexFarm(): String {
-        return "0xb9c951c85c8646dafcdc0ad99d326c621abbadce"
+    fun idexFarm(): List<String> {
+        return listOf("0xb9c951c85c8646dafcdc0ad99d326c621abbadce")
     }
 }
