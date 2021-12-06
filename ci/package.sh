@@ -9,6 +9,7 @@ docker build -t defitrack/defitrack:dfyn-${BRANCH_NAME} defitrack-rest/defitrack
 docker build -t defitrack/defitrack:dinoswap-${BRANCH_NAME} defitrack-rest/defitrack-protocol-services/defitrack-dinoswap
 docker build -t defitrack/defitrack:balancer-${BRANCH_NAME} defitrack-rest/defitrack-protocol-services/defitrack-balancer
 docker build -t defitrack/defitrack:dmm-${BRANCH_NAME} defitrack-rest/defitrack-protocol-services/defitrack-dmm
+docker build -t defitrack/defitrack:idex-${BRANCH_NAME} defitrack-rest/defitrack-protocol-services/defitrack-idex
 docker build -t defitrack/defitrack:mstable-${BRANCH_NAME} defitrack-rest/defitrack-protocol-services/defitrack-mstable
 docker build -t defitrack/defitrack:aave-${BRANCH_NAME} defitrack-rest/defitrack-protocol-services/defitrack-aave
 docker build -t defitrack/defitrack:beefy-${BRANCH_NAME} defitrack-rest/defitrack-protocol-services/defitrack-beefy
