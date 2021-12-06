@@ -24,6 +24,11 @@ class ERC20RestController(
         return ResponseEntity.ok(erC20Service.getAllTokensForNetwork(network))
     }
 
+    @GetMapping("/{network}/wrapped")
+    fun getWrappedToken(@PathVariable("network") network: Network): ResponseEntity<String> {
+        return ResponseEntity.ok(ERC20Repository.NATIVE_WRAP_MAPPING[network])
+    }
+
     @GetMapping("/{network}/{address}")
     fun getERC20Information(
         @PathVariable("network") network: Network,
