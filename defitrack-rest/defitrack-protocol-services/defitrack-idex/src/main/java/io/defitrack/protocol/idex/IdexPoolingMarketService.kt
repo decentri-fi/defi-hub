@@ -9,6 +9,7 @@ import io.defitrack.token.TokenService
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.util.concurrent.Executors
@@ -24,7 +25,7 @@ class IdexPoolingMarketService(
 
     @OptIn(ExperimentalTime::class)
     private val cache = Cache.Builder().expireAfterWrite(
-        Duration.Companion.hours(3)
+        Duration.Companion.hours(4)
     ).build<String, List<PoolingMarketElement>>()
 
     companion object {
@@ -32,7 +33,9 @@ class IdexPoolingMarketService(
     }
 
     @PostConstruct
+    @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
     fun intitialPopulation() {
+        logger.debug("Fetching pooling markets")
         Executors.newSingleThreadExecutor().submit {
             getPoolingMarkets()
         }
