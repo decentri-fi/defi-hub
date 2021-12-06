@@ -42,6 +42,10 @@ class AvaxBalanceService(
             it.address
         }
 
+        if (tokenAddresses.isEmpty()) {
+            return emptyList()
+        }
+
         return avalancheContractAccessor.readMultiCall(tokenAddresses.map { address ->
             MultiCallElement(
                 avalancheContractAccessor.createFunction(

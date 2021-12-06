@@ -41,6 +41,10 @@ class EthereumBalanceService(
             it.address
         }
 
+        if (tokenAddresses.isEmpty()) {
+            return emptyList()
+        }
+
         return ethereumContractAccessor.readMultiCall(tokenAddresses.map { address ->
             MultiCallElement(
                 ethereumContractAccessor.createFunction(

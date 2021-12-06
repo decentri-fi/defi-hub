@@ -6,8 +6,8 @@ import io.defitrack.balance.TokenBalance
 import io.defitrack.common.network.Network
 import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
 import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
-import io.defitrack.polygon.config.PolygonContractAccessor
-import io.defitrack.polygon.config.PolygonGateway
+import io.defitrack.fantom.config.FantomContractAccessor
+import io.defitrack.fantom.config.FantomGateway
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import org.web3j.abi.TypeReference
@@ -18,10 +18,10 @@ import java.math.BigInteger
 import java.math.RoundingMode
 
 @Service
-class PolygonBalanceService(
+class FantomBalanceService(
     private val abiResource: ABIResource,
-    private val maticGateway: PolygonGateway,
-    private val polygonContractAccessor: PolygonContractAccessor,
+    private val fantomGateway: FantomGateway,
+    private val fantomContractAccessor: FantomContractAccessor,
     private val erC20Service: ERC20Resource
 ) : BalanceService {
 
@@ -29,10 +29,10 @@ class PolygonBalanceService(
         abiResource.getABI("general/ERC20.json")
     }
 
-    override fun getNetwork(): Network = Network.POLYGON
+    override fun getNetwork(): Network = Network.FANTOM
 
     override fun getNativeBalance(address: String): BigDecimal =
-        maticGateway.web3j().ethGetBalance(address, DefaultBlockParameterName.LATEST).send().balance
+        fantomGateway.web3j().ethGetBalance(address, DefaultBlockParameterName.LATEST).send().balance
             .toBigDecimal().divide(
                 BigDecimal.TEN.pow(18), 4, RoundingMode.HALF_UP
             )
@@ -46,10 +46,10 @@ class PolygonBalanceService(
             return emptyList()
         }
 
-        return polygonContractAccessor.readMultiCall(tokenAddresses.map { address ->
+        return fantomContractAccessor.readMultiCall(tokenAddresses.map { address ->
             MultiCallElement(
-                polygonContractAccessor.createFunction(
-                    polygonContractAccessor.getFunction(
+                fantomContractAccessor.createFunction(
+                    fantomContractAccessor.getFunction(
                         erc20ABI, "balanceOf"
                     )!!,
                     listOf(user.toAddress()),
@@ -83,6 +83,6 @@ class PolygonBalanceService(
 
 
     override fun nativeTokenName(): String {
-        return "MATIC"
+        return "FTM"
     }
 }
