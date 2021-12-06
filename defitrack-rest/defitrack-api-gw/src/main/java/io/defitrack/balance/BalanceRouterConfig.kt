@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration
 class BalanceRouterConfig {
 
     @Bean
-    fun abiRoutes(builder: RouteLocatorBuilder): RouteLocator {
+    fun balanceRoutes(builder: RouteLocatorBuilder): RouteLocator {
         val routeBuilder = builder.routes()
 
         routeBuilder.route("balance") {
