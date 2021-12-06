@@ -60,7 +60,7 @@ class ERC20Service(
         }
 
         val correctAddress =
-            (if (address == "0x0") ERC20Repository.NATIVE_WRAP_MAPPING[network] else address) ?: return null
+            (if (address == "0x0" || address == "0x0000000000000000000000000000000000000000") ERC20Repository.NATIVE_WRAP_MAPPING[network] else address) ?: return null
 
         val erc20 = getERC20(network, correctAddress)
 

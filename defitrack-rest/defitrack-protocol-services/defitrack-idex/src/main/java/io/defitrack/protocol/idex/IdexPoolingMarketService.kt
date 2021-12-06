@@ -11,6 +11,8 @@ import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
+import java.util.concurrent.Executors
+import javax.annotation.PostConstruct
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
@@ -29,6 +31,13 @@ class IdexPoolingMarketService(
         private val logger = LoggerFactory.getLogger(this::class.java)
     }
 
+    @PostConstruct
+    fun intitialPopulation() {
+        Executors.newSingleThreadExecutor().submit {
+            getPoolingMarkets()
+        }
+    }
+
     override fun getPoolingMarkets(): List<PoolingMarketElement> {
         return runBlocking {
             cache.get("all") {
@@ -40,33 +49,37 @@ class IdexPoolingMarketService(
     private fun fetchPoolingMarkets() = idexService.getLPs().mapNotNull {
 
         if (it.reserveUsd > BigDecimal.valueOf(10000)) {
+            try {
+                val token0 = tokenService.getTokenInformation(it.tokenA, getNetwork());
+                val token1 = tokenService.getTokenInformation(it.tokenB, getNetwork())
 
-            val token0 = tokenService.getTokenInformation(it.tokenA, getNetwork());
-            val token1 = tokenService.getTokenInformation(it.tokenB, getNetwork())
-
-            val element = PoolingMarketElement(
-                network = getNetwork(),
-                protocol = getProtocol(),
-                address = it.liquidityToken,
-                id = "idex-polygon-${it.liquidityToken}",
-                name = "IDEX ${token0.symbol}-${token1.symbol}",
-                token = listOf(
-                    PoolingToken(
-                        token0.name,
-                        token0.symbol,
-                        token0.address
+                val element = PoolingMarketElement(
+                    network = getNetwork(),
+                    protocol = getProtocol(),
+                    address = it.liquidityToken,
+                    id = "idex-polygon-${it.liquidityToken}",
+                    name = "IDEX ${token0.symbol}-${token1.symbol}",
+                    token = listOf(
+                        PoolingToken(
+                            token0.name,
+                            token0.symbol,
+                            token0.address
+                        ),
+                        PoolingToken(
+                            token1.name,
+                            token1.symbol,
+                            token1.address
+                        ),
                     ),
-                    PoolingToken(
-                        token1.name,
-                        token1.symbol,
-                        token1.address
-                    ),
-                ),
-                apr = BigDecimal.ZERO,
-                marketSize = it.reserveUsd
-            )
-            logger.info("imported ${element.id}")
-            element
+                    apr = BigDecimal.ZERO,
+                    marketSize = it.reserveUsd
+                )
+                logger.info("imported ${element.id}")
+                element
+            } catch (ex: Exception) {
+                logger.error("something went wrong while importing ${it.liquidityToken}", ex)
+                null
+            }
         } else {
             null
         }
