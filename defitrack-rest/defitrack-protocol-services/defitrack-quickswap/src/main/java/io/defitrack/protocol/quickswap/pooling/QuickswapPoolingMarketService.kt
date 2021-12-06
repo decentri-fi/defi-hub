@@ -10,6 +10,7 @@ import io.defitrack.quickswap.QuickswapService
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.util.concurrent.Executors
@@ -33,7 +34,9 @@ class QuickswapPoolingMarketService(
     }
 
     @PostConstruct
+    @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
     fun intitialPopulation() {
+        logger.debug("fetching quickswap pooling markets")
         Executors.newSingleThreadExecutor().submit {
             getPoolingMarkets()
         }
