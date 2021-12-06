@@ -24,6 +24,7 @@
         <module>dfyn</module>
         <module>polycat</module>
         <module>dmm</module>
+        <module>idex</module>
         <module>quickswap</module>
         <module>sushiswap</module>
         <module>aave</module>

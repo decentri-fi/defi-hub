@@ -23,6 +23,7 @@
         <module>defitrack-dfyn</module>
         <module>defitrack-dinoswap</module>
         <module>defitrack-dmm</module>
+        <module>defitrack-idex</module>
         <module>defitrack-mstable</module>
         <module>defitrack-polycat</module>
         <module>defitrack-quickswap</module>
