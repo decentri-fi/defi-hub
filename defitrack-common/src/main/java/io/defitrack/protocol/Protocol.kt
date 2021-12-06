@@ -17,6 +17,7 @@ enum class Protocol(
     ADAMANT("adamant.png", "adamant", true),
     UNISWAP("uniswap.png", "uniswap", true),
     DFYN("dfyn.svg", "dfyn", true),
+    IDEX("idex.png", "idex", true),
     SUSHISWAP("sushiswap.png", "sushiswap", true),
     DMM("dmm.png", "dmm", true),
     BALANCER("balancer.png", "balancer", true),
