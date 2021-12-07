@@ -39,7 +39,7 @@ class BeefyPolygonStakingService(
     }
 
     override fun getStaking(address: String, vaultId: String): StakingElement? {
-        return polygonStakingMarketService.marketBuffer.firstOrNull {
+        return polygonStakingMarketService.getStakingMarkets().firstOrNull {
             it.id == vaultId
         }?.let {
 
@@ -55,7 +55,7 @@ class BeefyPolygonStakingService(
     }
 
     override fun getStakings(address: String): List<StakingElement> {
-        val markets = polygonStakingMarketService.marketBuffer
+        val markets = polygonStakingMarketService.getStakingMarkets()
 
         return polygonContractAccessor.readMultiCall(
             markets.map {
