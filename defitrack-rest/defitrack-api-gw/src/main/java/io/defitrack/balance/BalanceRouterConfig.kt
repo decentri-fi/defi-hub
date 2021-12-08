@@ -13,10 +13,10 @@ class BalanceRouterConfig {
         val routeBuilder = builder.routes()
 
         routeBuilder.route("balance") {
-            it.path(true, "/balance")
+            it.path(true, "/balance/**")
                 .filters { filter ->
                     filter.rewritePath(
-                        "/balance(?<segment>.*)",
+                        "/balance/(?<segment>.*)",
                         "/\${segment}"
                     )
                 }
