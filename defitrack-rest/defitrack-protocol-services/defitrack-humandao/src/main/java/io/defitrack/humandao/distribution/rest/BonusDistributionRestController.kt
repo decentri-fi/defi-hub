@@ -1,6 +1,8 @@
-package io.defitrack
+package io.defitrack.humandao.distribution.rest
 
+import io.defitrack.humandao.distribution.service.BonusDistributionService
 import io.defitrack.common.network.Network
+import io.defitrack.humandao.distribution.vo.BonusDistributionStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

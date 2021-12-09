@@ -1,9 +1,8 @@
-package io.defitrack
+package io.defitrack.humandao.distribution.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.gson.Gson
 import io.defitrack.common.network.Network
-import io.defitrack.common.network.Network.POLYGON
+import io.defitrack.humandao.distribution.vo.BonusDistributionStatus
 import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.runBlocking
@@ -18,7 +17,7 @@ class BonusDistributionService(private val client: HttpClient,
 
     companion object {
         fun noBonus(address: String): BonusDistributionStatus {
-            return  BonusDistributionStatus(
+            return BonusDistributionStatus(
                 beneficiary = false,
                 address = address,
                 claimed = false,
@@ -30,7 +29,8 @@ class BonusDistributionService(private val client: HttpClient,
     }
 
     val merkleMap: Map<Network, MerkleConfig> = mapOf(
-        POLYGON to fetchMerkleConfig(POLYGON)
+        Network.POLYGON to fetchMerkleConfig(Network.POLYGON),
+        Network.ETHEREUM to fetchMerkleConfig(Network.ETHEREUM),
     )
 
     private fun fetchMerkleConfig(network: Network): MerkleConfig {

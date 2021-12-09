@@ -1,4 +1,4 @@
-package io.defitrack
+package io.defitrack.humandao.distribution.service
 
 class MerkleConfig(
     val merkleRoot: String,
