@@ -17,6 +17,10 @@
             <artifactId>defitrack-protocol-service</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>ethereum</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

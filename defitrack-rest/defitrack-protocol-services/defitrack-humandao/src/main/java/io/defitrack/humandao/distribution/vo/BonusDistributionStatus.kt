@@ -8,5 +8,7 @@ class BonusDistributionStatus(
     val claimed: Boolean,
     val index: Int,
     val proof: Array<String>,
-    val amount: BigInteger
+    val maxBonusAmount: BigInteger,
+    val currentBonusAmount: BigInteger,
+    val shouldFillUpBalance: Boolean
 )
