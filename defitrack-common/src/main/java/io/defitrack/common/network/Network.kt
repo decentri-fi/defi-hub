@@ -6,7 +6,8 @@ enum class Network(val logo: String, val chainId: Int, val slug: String) {
     FANTOM("fantom.png", 250, "fantom"),
     AVALANCHE("avalanche.png", 43114, "avalanchex"),
     BSC("bsc.svg", 56, "smartchain"),
-    POLYGON("polygon.png", 137, "polygon");
+    POLYGON("polygon.png", 137, "polygon"),
+    POLYGON_MUMBAI("polygon.png", 80001, "polygon_mumbai");
 
 
     val imageBasePath = "https://static.defitrack.io/images/networks/"
