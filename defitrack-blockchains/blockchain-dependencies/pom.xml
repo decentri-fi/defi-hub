@@ -36,6 +36,11 @@
             </dependency>
             <dependency>
                 <groupId>io.defitrack</groupId>
+                <artifactId>polygon-mumbai</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.defitrack</groupId>
                 <artifactId>avalanche</artifactId>
                 <version>${project.version}</version>
             </dependency>
