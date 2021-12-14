@@ -8,6 +8,7 @@ import io.defitrack.ethereumbased.contract.ERC20Contract
 import io.defitrack.humandao.distribution.contract.BonusDistributionContract
 import io.defitrack.humandao.distribution.vo.BonusDistributionStatus
 import io.defitrack.polygon.config.PolygonContractAccessor
+import io.defitrack.polygon.config.PolygonMumbaiContractAccessor
 import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.runBlocking
@@ -23,6 +24,7 @@ class BonusDistributionService(
     private val objectMapper: ObjectMapper,
     private val polygonContractAccessor: PolygonContractAccessor,
     private val ethereumContractAccessor: EthereumContractAccessor,
+    private val mumbaiContractAccessor: PolygonMumbaiContractAccessor,
     private val abiResource: ABIResource
 ) {
 
@@ -51,6 +53,7 @@ class BonusDistributionService(
 
     val merkleMap: Map<Network, MerkleConfig> = mapOf(
         Network.POLYGON to fetchMerkleConfig(Network.POLYGON),
+        Network.POLYGON_MUMBAI to fetchMerkleConfig(Network.POLYGON_MUMBAI),
         Network.ETHEREUM to fetchMerkleConfig(Network.ETHEREUM),
     )
 
@@ -64,6 +67,11 @@ class BonusDistributionService(
             ethereumContractAccessor,
             erc20ABI,
             "0xdac657ffd44a3b9d8aba8749830bf14beb66ff2d"
+        )        ,
+        Network.POLYGON_MUMBAI to ERC20Contract(
+            mumbaiContractAccessor,
+            erc20ABI,
+            "0xf8afb97235074ab1d2bb574df577d2b89519f330"
         )
     )
 
@@ -72,6 +80,11 @@ class BonusDistributionService(
             polygonContractAccessor,
             bonusDistributorABI,
             "0xBDAb8B19F2D43780303c1CdE00c245AC62d4054b"
+        ),
+        Network.POLYGON_MUMBAI to BonusDistributionContract(
+            polygonContractAccessor,
+            bonusDistributorABI,
+            "0x7fcA16Cb535DEf014b8984e9AAE55f2c23DB8C2f"
         )
     )
 
