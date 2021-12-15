@@ -52,8 +52,7 @@ class DinoswapFossilFarmsContract(
                 TypeReference.create(Address::class.java),
                 TypeReference.create(Uint256::class.java),
                 TypeReference.create(Uint256::class.java),
-                TypeReference.create(Uint256::class.java),
-                TypeReference.create(Uint16::class.java),
+                TypeReference.create(Uint256::class.java)
             )
         )[0].value as String
     }
