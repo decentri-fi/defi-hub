@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service
 import java.math.BigInteger
 
 @Service
-class ConvexStakingService(
+class ConvexPoolsUserStakingService(
     private val convexService: ConvexService,
     private val abiResource: ABIResource,
     private val ethereumContractAccessor: EthereumContractAccessor,
@@ -29,8 +29,6 @@ class ConvexStakingService(
     }
 
     override fun getStakings(address: String): List<StakingElement> {
-
-
         val cvxRewardPools = convexService.providePools().map {
             CvxRewardPool(
                 ethereumContractAccessor,

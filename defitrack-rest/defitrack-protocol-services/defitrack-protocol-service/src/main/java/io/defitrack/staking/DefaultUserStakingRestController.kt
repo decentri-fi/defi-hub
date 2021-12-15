@@ -40,7 +40,7 @@ class DefaultUserStakingRestController(
                     }
                 }
             } catch (ex: Exception) {
-                Companion.logger.error("Something went wrong trying to fetch the user poolings: ${ex.message}")
+                logger.error("Something went wrong trying to fetch the user poolings: ${ex.message}")
                 emptyList()
             }
         }.map {
