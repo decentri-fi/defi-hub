@@ -83,7 +83,7 @@ class DinoswapUserStakingService(
                             )
                         ),
                         contractAddress = masterChef.address,
-                        vaultType = "polycat-masterchef"
+                        vaultType = "dinoswap-fossilfarm"
                     )
                 } else {
                     null
