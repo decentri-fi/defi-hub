@@ -6,8 +6,8 @@ import org.springframework.cache.annotation.EnableCaching
 
 @SpringBootApplication
 @EnableCaching
-class PolycatApplication
+class DinoswapApplication
 
 fun main(args: Array<String>) {
-    runApplication<PolycatApplication>(*args)
+    runApplication<DinoswapApplication>(*args)
 }

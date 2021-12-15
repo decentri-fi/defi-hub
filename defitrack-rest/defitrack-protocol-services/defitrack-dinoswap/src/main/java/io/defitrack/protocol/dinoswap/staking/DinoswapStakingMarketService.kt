@@ -16,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
+import javax.annotation.PostConstruct
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
@@ -34,6 +35,11 @@ class DinoswapStakingMarketService(
     @OptIn(ExperimentalTime::class)
     val cache =
         Cache.Builder().expireAfterWrite(Duration.Companion.hours(1)).build<String, List<StakingMarketElement>>()
+
+    @PostConstruct
+    fun start() {
+        getStakingMarkets()
+    }
 
     override fun getStakingMarkets(): List<StakingMarketElement> {
         return runBlocking(Dispatchers.IO) {
