@@ -1,12 +1,12 @@
 package io.defitrack.protocol.uniswap.pooling
 
-import io.defitrack.pool.UserPoolingService
-import io.defitrack.pool.domain.PoolingElement
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereum.config.EthereumContractAccessor
 import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
 import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
+import io.defitrack.pool.UserPoolingService
+import io.defitrack.pool.domain.PoolingElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.staking.TokenType
 import io.defitrack.uniswap.UniswapLPToken
@@ -65,6 +65,7 @@ class UniswapUserPoolingService(
                 val amount = balance.toBigDecimal().divide(BigDecimal.TEN.pow(token.decimals), 4, RoundingMode.HALF_UP)
 
                 PoolingElement(
+                    id = "uniswap-ethereum-${want.id}",
                     lpAddress = token.address,
                     amount = amount,
                     name = "${token1.name}/${token2.name} LP",

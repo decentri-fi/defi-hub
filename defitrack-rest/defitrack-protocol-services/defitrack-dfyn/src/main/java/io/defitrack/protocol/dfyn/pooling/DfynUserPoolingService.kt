@@ -69,8 +69,9 @@ class DfynUserPoolingService(
                     network = getNetwork(),
                     protocol = getProtocol(),
                     symbol = "${token1.symbol}/${token2.symbol}",
-                    tokenType = TokenType.UNISWAP
-                )
+                    tokenType = TokenType.UNISWAP,
+                    id = "dfyn-polygon-${want.id}",
+                    )
             } else {
                 null
             }

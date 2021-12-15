@@ -1,11 +1,10 @@
 package io.defitrack.protocol.dmm
 
+import io.defitrack.common.network.Network
 import io.defitrack.pool.UserPoolingService
 import io.defitrack.pool.domain.PoolingElement
-import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.staking.TokenType
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 
 @Service
@@ -13,7 +12,6 @@ class DMMPolygonUserPoolingService(
     private val dmmPolygonService: DMMPolygonService,
 ) : UserPoolingService {
 
-    @Cacheable(cacheNames = ["dmm-lps"], key = "'polygon-' + #address")
     override fun userPoolings(address: String): List<PoolingElement> {
         return dmmPolygonService.getUserPoolings(address).flatMap {
             it.liquidityPositions
@@ -25,7 +23,8 @@ class DMMPolygonUserPoolingService(
                 it.pool.token0.symbol + "-" + it.pool.token1.symbol,
                 getNetwork(),
                 getProtocol(),
-                tokenType = TokenType.DMM
+                tokenType = TokenType.DMM,
+                id = "dmm-polygon-${it.pool.id}",
             )
         }
     }

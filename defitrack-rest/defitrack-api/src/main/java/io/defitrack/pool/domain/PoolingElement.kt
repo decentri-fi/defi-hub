@@ -12,5 +12,6 @@ class PoolingElement(
     val symbol: String,
     val network: Network,
     val protocol: Protocol,
-    val tokenType: TokenType = TokenType.SINGLE
-)
+    val tokenType: TokenType = TokenType.SINGLE,
+    val id: String,
+    )

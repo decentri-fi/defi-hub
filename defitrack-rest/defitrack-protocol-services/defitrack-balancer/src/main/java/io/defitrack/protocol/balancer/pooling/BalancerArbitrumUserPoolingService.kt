@@ -27,8 +27,9 @@ class BalancerArbitrumUserPoolingService(private val balancerArbitrumService: Ba
                 symbol = share.poolId.symbol,
                 network = getNetwork(),
                 protocol = getProtocol(),
-                tokenType = TokenType.BALANCER
-            )
+                tokenType = TokenType.BALANCER,
+                id = "balancer-arbitrum-${share.poolId.id}",
+                )
         }
     }
 

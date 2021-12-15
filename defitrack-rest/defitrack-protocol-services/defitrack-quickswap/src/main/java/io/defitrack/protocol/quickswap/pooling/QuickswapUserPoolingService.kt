@@ -65,8 +65,9 @@ class QuickswapUserPoolingService(
                     network = getNetwork(),
                     protocol = Protocol.QUICKSWAP,
                     symbol = "${token1.symbol}/${token2.symbol}",
-                    tokenType = TokenType.UNISWAP
-                )
+                    tokenType = TokenType.UNISWAP,
+                    id = "quickswap-polygon-${want.id}",
+                    )
             } else {
                 null
             }

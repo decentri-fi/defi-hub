@@ -37,7 +37,7 @@ class DfynPoolingMarketService(
                         network = getNetwork(),
                         protocol = getProtocol(),
                         address = it.id,
-                        id = "polygon-dfyn-${it.id}",
+                        id = "dfyn-polygon-${it.id}",
                         name = "DFYN ${it.token0.symbol}-${it.token1.symbol}",
                         token = listOf(
                             PoolingToken(

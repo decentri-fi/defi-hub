@@ -23,13 +23,9 @@ class UniswapPoolingMarketService(
     private val uniswapAPRService: UniswapAPRService,
 ) : PoolingMarketService {
 
-    private val executor = Executors.newCachedThreadPool()
-    private val poolingMarkets = mutableListOf<PoolingMarketElement>()
-
     companion object {
         private val logger = LoggerFactory.getLogger(this::class.java)
     }
-
 
     @OptIn(ExperimentalTime::class)
     private val cache = Cache.Builder().expireAfterWrite(

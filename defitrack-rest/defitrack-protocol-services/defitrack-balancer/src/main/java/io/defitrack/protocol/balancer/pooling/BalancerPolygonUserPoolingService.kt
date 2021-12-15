@@ -30,8 +30,9 @@ class BalancerPolygonUserPoolingService(private val balancerPolygonService: Bala
                 },
                 network = getNetwork(),
                 protocol = getProtocol(),
-                tokenType = TokenType.BALANCER
-            )
+                tokenType = TokenType.BALANCER,
+                id = "balancer-polygon-${share.poolId.id}",
+                )
         }
     }
 
