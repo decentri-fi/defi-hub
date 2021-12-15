@@ -4,7 +4,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
 
 data class LendingElement constructor(
-    var id: String = "",
+    var id: String,
     var user: String = "",
     var network: Network,
     var platform: String = "",

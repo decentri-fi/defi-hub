@@ -28,7 +28,7 @@ class DinoswapStakingMarketService(
 ) : StakingMarketService {
 
     val fossilFarms by lazy {
-        abiResource.getABI("polycat/FossilFarms.json")
+        abiResource.getABI("dinoswap/FossilFarms.json")
     }
 
     @OptIn(ExperimentalTime::class)

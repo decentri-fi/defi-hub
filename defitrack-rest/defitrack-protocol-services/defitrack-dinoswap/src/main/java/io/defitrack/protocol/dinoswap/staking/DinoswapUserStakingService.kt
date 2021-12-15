@@ -28,7 +28,7 @@ class DinoswapUserStakingService(
 ) : UserStakingService(tokenService, objectMapper) {
 
     val fossilFarms by lazy {
-        abiResource.getABI("polycat/MasterChef.json")
+        abiResource.getABI("polycat/FossilFarms.json")
     }
 
     override fun getStakings(address: String): List<StakingElement> {
@@ -93,7 +93,7 @@ class DinoswapUserStakingService(
     }
 
     override fun getProtocol(): Protocol {
-        return Protocol.POLYCAT
+        return Protocol.DINOSWAP
     }
 
     override fun getNetwork(): Network {
