@@ -31,7 +31,7 @@ class FantomContractAccessor(abiDecoder: AbiDecoder, val fantomGateway: FantomGa
     }
 
     override fun getNetwork(): Network {
-        return Network.ARBITRUM
+        return Network.FANTOM
     }
 
     override fun executeCall(from: String?, address: String, function: Function, endpoint: String?): List<Type<*>> {
@@ -40,24 +40,6 @@ class FantomContractAccessor(abiDecoder: AbiDecoder, val fantomGateway: FantomGa
         return FunctionReturnDecoder.decode(ethCall.value, function.outputParameters)
     }
 
-    fun listenToEvents(address: String, abi: String, event: String): Flowable<Map<String, Any>> {
-
-        getEvent(abi, event)?.let { contractEvent ->
-            val theEvent = Event(
-                contractEvent.name,
-                contractEvent.inputs
-                    .map { fromDataTypes(it.type, it.indexed) }
-                    .toList()
-            )
-
-            val ethFilter = EthFilter(
-                DefaultBlockParameterName.LATEST,
-                DefaultBlockParameterName.LATEST, address
-            )
-            ethFilter.addOptionalTopics(EventEncoder.encode(theEvent))
-            return createEventListener(ethFilter, theEvent, contractEvent)
-        } ?: return Flowable.empty()
-    }
 
     private fun createEventListener(
         ethFilter: EthFilter,

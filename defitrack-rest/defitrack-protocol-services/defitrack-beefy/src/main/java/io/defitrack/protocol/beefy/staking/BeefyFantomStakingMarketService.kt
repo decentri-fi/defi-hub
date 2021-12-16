@@ -27,6 +27,7 @@ import javax.annotation.PostConstruct
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
+@Service
 class BeefyFantomStakingMarketService(
     private val fantomContractAccessor: FantomContractAccessor,
     private val abiResource: ABIResource,
