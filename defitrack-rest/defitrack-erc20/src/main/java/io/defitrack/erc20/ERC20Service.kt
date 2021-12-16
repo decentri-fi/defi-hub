@@ -7,6 +7,9 @@ import io.defitrack.ethereumbased.contract.ERC20Contract
 import io.defitrack.ethereumbased.contract.EvmContractAccessor
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceResource
+import io.github.reactivecircus.cache4k.Cache
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 
 @Service
@@ -17,7 +20,7 @@ class ERC20Service(
     private val priceResource: PriceResource
 ) {
 
-    val erc20Buffer = mutableMapOf<String, ERC20Contract>()
+    val erc20Buffer = Cache.Builder().build<String, ERC20Contract>()
     val erc20ABI by lazy {
         abiService.getABI("general/ERC20.json")
     }
@@ -25,22 +28,22 @@ class ERC20Service(
     fun getERC20(network: Network, address: String): ERC20? {
         val key = network.name + "-" + address.lowercase()
         return try {
-            erc20Buffer.getOrPut(
-                key
-            ) {
-                ERC20Contract(
-                    getContractAccessor(network),
-                    erc20ABI,
-                    address
-                )
-            }.let {
-                ERC20(
-                    name = it.name,
-                    symbol = it.symbol,
-                    decimals = it.decimals,
-                    network = network,
-                    address = address.lowercase()
-                )
+            runBlocking(Dispatchers.IO) {
+                erc20Buffer.get(key) {
+                    ERC20Contract(
+                        getContractAccessor(network),
+                        erc20ABI,
+                        address
+                    )
+                }.let {
+                    ERC20(
+                        name = it.name,
+                        symbol = it.symbol,
+                        decimals = it.decimals,
+                        network = network,
+                        address = address.lowercase()
+                    )
+                }
             }
         } catch (exception: Exception) {
             null
@@ -60,7 +63,8 @@ class ERC20Service(
         }
 
         val correctAddress =
-            (if (address == "0x0" || address == "0x0000000000000000000000000000000000000000") ERC20Repository.NATIVE_WRAP_MAPPING[network] else address) ?: return null
+            (if (address == "0x0" || address == "0x0000000000000000000000000000000000000000") ERC20Repository.NATIVE_WRAP_MAPPING[network] else address)
+                ?: return null
 
         val erc20 = getERC20(network, correctAddress)
 

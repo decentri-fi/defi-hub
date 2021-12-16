@@ -1,4 +1,4 @@
-package io.codechef.defitrack.balance.l2
+package io.defitrack.balance.l2
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.balance.BalanceService
