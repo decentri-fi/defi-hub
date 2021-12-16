@@ -7,6 +7,7 @@ import io.defitrack.common.network.Network
 import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.runBlocking
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import javax.annotation.PostConstruct
 
@@ -19,6 +20,9 @@ class ERC20Repository(
     private lateinit var tokenList: List<TokenInfo>
 
     companion object {
+
+        val logger  = LoggerFactory.getLogger(this::class.java)
+
         val NATIVE_WRAP_MAPPING = mapOf(
             Network.ETHEREUM to "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
             Network.AVALANCHE to "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
@@ -53,10 +57,13 @@ class ERC20Repository(
                 url(url)
                 this
             })
-            objectMapper.readValue(
+            val tokens = objectMapper.readValue(
                 result,
                 TokenListResponse::class.java
             )
+
+            logger.debug("imported $url")
+            tokens
         }.tokens.mapNotNull { entry ->
             Network.fromChainId(entry.chainId)?.let { network ->
                 TokenInfo(
