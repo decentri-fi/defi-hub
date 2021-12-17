@@ -10,5 +10,6 @@ class PoolingElementVO(
     val network: NetworkVO,
     val symbol: String,
     val protocol: ProtocolVO,
-    val dollarValue: Double
+    val dollarValue: Double,
+    val id: String
 )

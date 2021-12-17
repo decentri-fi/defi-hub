@@ -58,6 +58,7 @@ class QuickswapClaimableService(
 
                 val stakingToken = tokenService.getTokenInformation(pool.stakingTokenAddress, getNetwork())
                 ClaimableElement(
+                    id = "quickswap-reward-$pool.address",
                     address = pool.address,
                     type = "quickswap-reward-vault",
                     name = "${stakingToken.name} Rewards",

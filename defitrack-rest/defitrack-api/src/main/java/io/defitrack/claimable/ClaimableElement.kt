@@ -5,6 +5,7 @@ import io.defitrack.protocol.Protocol
 
 
 class ClaimableElement(
+    val id: String,
     val name: String,
     val address: String,
     val type: String,

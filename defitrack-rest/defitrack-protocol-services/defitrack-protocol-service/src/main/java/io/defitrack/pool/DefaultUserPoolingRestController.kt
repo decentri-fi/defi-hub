@@ -50,7 +50,8 @@ class DefaultUserPoolingRestController(
             ),
             network = network.toVO(),
             symbol = symbol,
-            protocol = protocol.toVO()
+            protocol = protocol.toVO(),
+            id = id
         )
     }
 }

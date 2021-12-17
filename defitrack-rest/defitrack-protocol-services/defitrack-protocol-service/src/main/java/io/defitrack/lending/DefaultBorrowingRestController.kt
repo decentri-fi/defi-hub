@@ -47,7 +47,8 @@ class DefaultBorrowingRestController(
                 name = name,
                 amount = amount,
                 symbol = symbol,
-                tokenUrl = tokenUrl
+                tokenUrl = tokenUrl,
+                id = id
             )
         }
     }

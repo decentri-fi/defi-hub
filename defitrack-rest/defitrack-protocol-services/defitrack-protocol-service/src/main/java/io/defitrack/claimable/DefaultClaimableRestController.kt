@@ -30,6 +30,7 @@ class DefaultClaimableRestController(
                 it.claimables(address)
             }.map {
                 ClaimableElementVO(
+                    id = it.id,
                     name = it.name,
                     address = it.address,
                     type = it.type,

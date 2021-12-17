@@ -73,6 +73,7 @@ class DefaultLendingRestController(
                 name = name,
                 amount = amount,
                 symbol = symbol,
+                id = id
             )
         }
     }

@@ -1,19 +1,19 @@
 package io.defitrack.protocol.adamant.claimable
 
+import io.defitrack.abi.ABIResource
 import io.defitrack.claimable.ClaimableElement
 import io.defitrack.claimable.ClaimableService
 import io.defitrack.claimable.ClaimableToken
-import io.defitrack.token.ERC20Resource
-import io.defitrack.abi.ABIResource
-import io.defitrack.price.PriceResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
 import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
 import io.defitrack.polygon.config.PolygonContractAccessor
+import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.adamant.AdamantService
 import io.defitrack.protocol.adamant.AdamantVaultContract
 import io.defitrack.protocol.adamant.StrategyContract
+import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.generated.Uint256
@@ -84,7 +84,8 @@ class AdamantClaimableService(
                     type = "adamant-vault",
                     protocol = getProtocol(),
                     network = getNetwork(),
-                    ClaimableToken(
+                    id = "adamant-vault-claim-${vault.address}",
+                    claimableToken = ClaimableToken(
                         name = "Addy",
                         symbol = "ADDY",
                         amount = amountInUsd.toBigDecimal().divide(addyPrice, 4, RoundingMode.HALF_UP)

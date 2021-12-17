@@ -4,6 +4,7 @@ import io.defitrack.network.NetworkVO
 import io.defitrack.protocol.ProtocolVO
 
 data class LendingElementVO(
+    val id: String,
     val user: String,
     val network: NetworkVO,
     val protocol: ProtocolVO,
