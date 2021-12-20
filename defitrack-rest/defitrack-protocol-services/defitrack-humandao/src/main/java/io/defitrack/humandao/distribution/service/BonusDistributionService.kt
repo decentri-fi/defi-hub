@@ -79,7 +79,7 @@ class BonusDistributionService(
         Network.POLYGON to BonusDistributionContract(
             polygonContractAccessor,
             bonusDistributorABI,
-            "0xBDAb8B19F2D43780303c1CdE00c245AC62d4054b"
+            "0x5d04ec89c918383fb0810f2ad6c956cb2e41b3db"
         ),
         Network.POLYGON_MUMBAI to BonusDistributionContract(
             mumbaiContractAccessor,
