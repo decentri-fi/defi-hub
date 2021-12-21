@@ -44,8 +44,8 @@ class BonusDistributionService(
                 claimed = false,
                 index = 0,
                 proof = emptyArray(),
-                maxBonusAmount = BigInteger.ZERO,
-                currentBonusAmount = BigInteger.ZERO,
+                maxBonusAmount = "0",
+                currentBonusAmount = "0",
                 shouldFillUpBalance = false,
             )
         }
@@ -119,8 +119,8 @@ class BonusDistributionService(
                     claimed = getClaimed(network, it.value.index),
                     index = it.value.index,
                     proof = it.value.proof,
-                    maxBonusAmount = maxBonus,
-                    currentBonusAmount = currentBonus,
+                    maxBonusAmount = maxBonus.toString(),
+                    currentBonusAmount = currentBonus.toString(),
                     shouldFillUpBalance = maxBonus > currentBonus
                 )
             } ?: noBonus(address)
