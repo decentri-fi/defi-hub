@@ -81,6 +81,11 @@ class BonusDistributionService(
             bonusDistributorABI,
             "0x5d04ec89c918383fb0810f2ad6c956cb2e41b3db"
         ),
+        Network.ETHEREUM to BonusDistributionContract(
+            polygonContractAccessor,
+            bonusDistributorABI,
+            "0xD53b145739352c1BCc7079cDdA0cf6EDfbd8F015"
+        ),
         Network.POLYGON_MUMBAI to BonusDistributionContract(
             mumbaiContractAccessor,
             bonusDistributorABI,
