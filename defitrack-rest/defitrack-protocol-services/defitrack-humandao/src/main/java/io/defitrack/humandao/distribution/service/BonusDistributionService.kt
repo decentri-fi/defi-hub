@@ -82,7 +82,7 @@ class BonusDistributionService(
             "0x5d04ec89c918383fb0810f2ad6c956cb2e41b3db"
         ),
         Network.ETHEREUM to BonusDistributionContract(
-            polygonContractAccessor,
+            ethereumContractAccessor,
             bonusDistributorABI,
             "0xD53b145739352c1BCc7079cDdA0cf6EDfbd8F015"
         ),
