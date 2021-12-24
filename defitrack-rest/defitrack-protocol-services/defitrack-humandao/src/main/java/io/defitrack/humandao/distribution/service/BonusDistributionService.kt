@@ -102,6 +102,8 @@ class BonusDistributionService(
         }
     }
 
+
+
     fun getBonusDistributionStatus(network: Network, address: String): BonusDistributionStatus {
         val config = merkleMap[network]
         if (config == null) {
@@ -111,7 +113,7 @@ class BonusDistributionService(
                 it.key.lowercase() == address.lowercase()
             }?.let {
                 val maxBonus = BigInteger(
-                    Hex.decode(it.value.amount.substring(2))
+                    it.value.amount.substring(2), 16
                 )
                 val currentBonus = calculateFromChain(
                     network,
