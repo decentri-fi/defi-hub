@@ -7,7 +7,6 @@ class ProtocolVO(
     val name: String,
     val logo: String,
     val slug: String,
-    val dedicatedMicroService: Boolean
 )
 
 fun Protocol.toVO(): ProtocolVO {
@@ -15,6 +14,5 @@ fun Protocol.toVO(): ProtocolVO {
         name = this.name,
         logo = this.getImage(),
         slug = this.slug,
-        dedicatedMicroService = this.dedicatedMicroService
     )
 }

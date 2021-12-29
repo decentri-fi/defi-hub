@@ -1,5 +1,6 @@
 package io.defitrack.protocol.staking
 
+import io.defitrack.protocol.Protocol
 import java.math.BigInteger
 
 open class Token(
@@ -16,6 +17,7 @@ class LpToken(
     address: String,
     decimals: Int,
     type: TokenType,
+    val protocol: Protocol,
     val totalSupply: BigInteger,
     val token0: Token,
     val token1: Token,

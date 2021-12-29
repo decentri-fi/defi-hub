@@ -1,12 +1,13 @@
 package io.defitrack.token
 
-import io.defitrack.pool.LPtokenService
-import io.defitrack.token.domain.ERC20Information
 import io.defitrack.common.network.Network
+import io.defitrack.pool.LPtokenService
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.staking.LpToken
 import io.defitrack.protocol.staking.SingleToken
 import io.defitrack.protocol.staking.Token
 import io.defitrack.protocol.staking.TokenType
+import io.defitrack.token.domain.ERC20Information
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
@@ -51,25 +52,22 @@ class TokenService(
             val token = erc20Resource.getERC20(network, address)
             when {
                 (token.symbol) == "SLP" -> {
-                    fromLP("Sushi", network, token)
+                    fromLP(Protocol.SUSHISWAP, network, token)
                 }
                 (token.symbol) == "UNI-V2" -> {
-                    fromLP(if (network == Network.POLYGON) "Quickswap" else "Uniswap", network, token)
-                }
-                (token.symbol) == "WLP" -> {
-                    fromLP("Wault", network, token)
+                    fromLP(if (network == Network.POLYGON) Protocol.QUICKSWAP else Protocol.QUICKSWAP, network, token)
                 }
                 (token.symbol) == "spLP" -> {
-                    fromLP("Spooky", network, token)
+                    fromLP(Protocol.SPOOKY, network, token)
                 }
                 (token.symbol == "DFYNLP") -> {
-                    fromLP("Dfyn", network, token)
+                    fromLP(Protocol.DFYN, network, token)
                 }
                 (token.symbol == "SPIRIT-LP") -> {
-                    fromLP("Spirit", network, token)
+                    fromLP(Protocol.SPIRITSWAP, network, token)
                 }
                 isKyberDMMLP(token.symbol) -> {
-                    fromLP("DMM-LP", network, token)
+                    fromLP(Protocol.DMM, network, token)
                 }
                 else -> {
                     SingleToken(
@@ -87,7 +85,7 @@ class TokenService(
         return symbol.startsWith("DMM-LP")
     }
 
-    fun fromLP(provider: String, network: Network, erc20: ERC20Information): LpToken {
+    fun fromLP(protocol: Protocol, network: Network, erc20: ERC20Information): LpToken {
         val lp = LPtokenService.getLP(network, erc20.address)
 
         val token0 = getTokenInformation(
@@ -98,14 +96,15 @@ class TokenService(
         )
 
         return LpToken(
-            name = "$provider ${token0.symbol}/${token1.symbol} LP",
+            name = "${token0.symbol}/${token1.symbol} LP",
             symbol = "${token0.symbol}-${token1.symbol}",
             token0 = token0,
             token1 = token1,
             address = erc20.address,
             decimals = erc20.decimals,
             totalSupply = lp.totalSupply,
-            type = getType(lp.symbol)
+            type = getType(lp.symbol),
+            protocol = protocol
         )
     }
 }

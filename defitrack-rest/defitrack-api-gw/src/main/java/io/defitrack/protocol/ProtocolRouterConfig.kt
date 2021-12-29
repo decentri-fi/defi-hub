@@ -17,9 +17,7 @@ class ProtocolRouterConfig {
     fun protocolRoutes(builder: RouteLocatorBuilder): RouteLocator {
         val routeBuilder = builder.routes()
 
-        Protocol.values().filter {
-            it.dedicatedMicroService
-        }.forEach { proto ->
+        Protocol.values().forEach { proto ->
             routeBuilder.route(proto.name) {
                 it.path(true, "/${proto.slug}/**")
                     .filters { filter ->
