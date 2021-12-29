@@ -1,11 +1,11 @@
 package io.defitrack.protocol.quickswap.pooling
 
+import io.defitrack.common.network.Network
 import io.defitrack.pool.PoolingMarketService
 import io.defitrack.pool.domain.PoolingMarketElement
 import io.defitrack.pool.domain.PoolingToken
-import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
-import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
 import io.defitrack.quickswap.QuickswapService
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.runBlocking
@@ -52,8 +52,10 @@ class QuickswapPoolingMarketService(
         }
     }
 
-    private fun fetchPoolingMarkets() = quickswapService.getPairs().mapNotNull {
-        if (it.reserveUSD > BigDecimal.valueOf(100000)) {
+    private fun fetchPoolingMarkets() = quickswapService.getPairs()
+        .filter {
+            it.reserveUSD > BigDecimal.valueOf(100000)
+        }.map {
             val element = PoolingMarketElement(
                 network = getNetwork(),
                 protocol = getProtocol(),
@@ -77,10 +79,7 @@ class QuickswapPoolingMarketService(
             )
             logger.debug("imported ${element.id}")
             element
-        } else {
-            null
         }
-    }
 
     override fun getProtocol(): Protocol {
         return Protocol.QUICKSWAP

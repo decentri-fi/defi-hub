@@ -11,6 +11,7 @@ import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
+import java.math.BigDecimal
 import java.util.concurrent.Executors
 import javax.annotation.PostConstruct
 import kotlin.time.Duration
@@ -47,7 +48,11 @@ class SushiswapPolygonPoolingMarketService(
     private fun fetchPoolingMarkets() = sushiServices.filter {
         it.getNetwork() == getNetwork()
     }.flatMap { service ->
-        service.getPairs().map {
+        service.getPairs()
+            .filter {
+                it.reserveUSD > BigDecimal.valueOf(100000)
+            }
+            .map {
             val element = PoolingMarketElement(
                 network = service.getNetwork(),
                 protocol = getProtocol(),
@@ -69,7 +74,7 @@ class SushiswapPolygonPoolingMarketService(
                 id = "sushi-polygon-${it.id}",
                 marketSize = it.reserveUSD
             )
-            logger.info("${element.id} imported")
+            logger.debug("${element.id} imported")
             element
         }
     }
