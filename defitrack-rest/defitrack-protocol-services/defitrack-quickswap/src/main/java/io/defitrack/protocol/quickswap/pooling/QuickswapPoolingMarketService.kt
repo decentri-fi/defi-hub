@@ -75,7 +75,7 @@ class QuickswapPoolingMarketService(
                 apr = quickswapAPRService.getLPAPR(it.id),
                 marketSize = it.reserveUSD
             )
-            logger.info("imported ${element.id}")
+            logger.debug("imported ${element.id}")
             element
         } else {
             null
