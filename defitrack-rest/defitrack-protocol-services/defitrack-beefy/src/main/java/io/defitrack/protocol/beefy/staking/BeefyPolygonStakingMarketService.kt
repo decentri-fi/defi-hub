@@ -20,6 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -30,6 +31,7 @@ import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
 @Service
+@EnableScheduling
 class BeefyPolygonStakingMarketService(
     private val polygonContractAccessor: PolygonContractAccessor,
     private val abiResource: ABIResource,
@@ -53,6 +55,7 @@ class BeefyPolygonStakingMarketService(
     @PostConstruct
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
     fun init() {
+        logger.info("importing bifi markets")
         Executors.newSingleThreadExecutor().submit {
             getStakingMarkets()
         }
