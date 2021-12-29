@@ -60,7 +60,7 @@ class QuickswapUserPoolingService(
                 PoolingElement(
                     lpAddress = want.id,
                     amount = amount,
-                    name = "${token1.name}/${token2.name} LP",
+                    name = "${token1.symbol}/${token2.symbol} LP",
                     network = getNetwork(),
                     protocol = Protocol.QUICKSWAP,
                     symbol = "${token1.symbol}/${token2.symbol}",
