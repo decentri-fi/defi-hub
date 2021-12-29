@@ -29,7 +29,6 @@ class QuickswapUserPoolingService(
         abiservice.getABI("general/ERC20.json")
     }
 
-    @Cacheable(cacheNames = ["quickswap-lps"], key = "#address")
     override fun userPoolings(address: String): List<PoolingElement> {
         val tokens = quickswapService.getPairs()
 

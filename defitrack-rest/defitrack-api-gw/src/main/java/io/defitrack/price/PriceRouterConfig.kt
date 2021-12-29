@@ -21,7 +21,16 @@ class PriceRouterConfig {
                     )
                 }
                 .uri("http://defitrack-price:8080")
-        }
+        }.route("prices") {
+            it.path(true, "/price/**")
+                .filters { filter ->
+                    filter.rewritePath(
+                        "/price/(?<segment>.*)",
+                        "/\${segment}"
+                    )
+                }
+                .uri("http://defitrack-price:8080")
+        }.build()
         return routeBuilder.build()
     }
 }
