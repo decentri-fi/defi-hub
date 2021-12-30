@@ -2,7 +2,8 @@ package io.defitrack.protocol
 
 enum class Protocol(
     val logo: String,
-    val slug: String
+    val slug: String,
+    val enabled: Boolean = true
 ) {
 
     AAVE("aave.png", "aave"),
@@ -21,8 +22,8 @@ enum class Protocol(
     SUSHISWAP("sushiswap.png", "sushiswap"),
     DMM("dmm.png", "dmm"),
     BALANCER("balancer.png", "balancer"),
-    SPOOKY("spooky.png", "spooky"),
-    SPIRITSWAP("spirit.png", "spirit"),
+    SPOOKY("spooky.png", "spooky", false),
+    SPIRITSWAP("spirit.png", "spirit", false),
     CONVEX("convex.png", "convex");
 
     val imageBasePath = "https://static.defitrack.io/images/protocols/"

@@ -14,7 +14,9 @@ class ProtocolHandler {
         .contentType(APPLICATION_JSON)
         .body(
             BodyInserters.fromValue(
-                Protocol.values().map(Protocol::toVO)
+                Protocol.values().filter {
+                    it.enabled
+                }.map(Protocol::toVO)
             )
         )
 }
