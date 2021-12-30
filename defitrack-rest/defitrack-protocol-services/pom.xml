@@ -23,6 +23,8 @@
         <module>defitrack-dfyn</module>
         <module>defitrack-dinoswap</module>
         <module>defitrack-dmm</module>
+        <module>defitrack-spooky</module>
+        <module>defitrack-spirit</module>
         <module>defitrack-humandao</module>
         <module>defitrack-idex</module>
         <module>defitrack-mstable</module>

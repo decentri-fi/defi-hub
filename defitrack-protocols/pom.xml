@@ -23,6 +23,8 @@
         <module>jarvis</module>
         <module>dfyn</module>
         <module>polycat</module>
+        <module>spirit</module>
+        <module>spooky</module>
         <module>dmm</module>
         <module>idex</module>
         <module>quickswap</module>
