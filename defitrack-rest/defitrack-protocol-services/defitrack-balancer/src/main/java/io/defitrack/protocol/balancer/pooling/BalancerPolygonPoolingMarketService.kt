@@ -1,56 +1,66 @@
 package io.defitrack.protocol.balancer.pooling
 
+import io.defitrack.common.network.Network
 import io.defitrack.pool.PoolingMarketService
 import io.defitrack.pool.domain.PoolingMarketElement
-import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.BalancerPolygonService
-import okhttp3.internal.toImmutableList
+import io.github.reactivecircus.cache4k.Cache
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
+import java.util.concurrent.Executors
 import javax.annotation.PostConstruct
 
 @Service
 class BalancerPolygonPoolingMarketService(private val balancerPolygonService: BalancerPolygonService) :
     PoolingMarketService {
 
-    val marketBuffer = mutableListOf<PoolingMarketElement>()
+
+    val cache = Cache.Builder().build<String, List<PoolingMarketElement>>()
 
     companion object {
         private val logger = LoggerFactory.getLogger(this::class.java)
     }
 
+    @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
     @PostConstruct
-    fun init() {
-        try {
-            balancerPolygonService.getPools().forEach {
-                if (it.totalLiquidity > BigDecimal.valueOf(100000)) {
-                    val element = PoolingMarketElement(
-                        id = "balancer-polygon-${it.id}",
-                        network = getNetwork(),
-                        protocol = getProtocol(),
-                        address = it.address,
-                        name = "${
-                            it.tokens.joinToString("/") {
-                                it.symbol
-                            }
-                        } Pool",
-                        token = emptyList(),
-                        apr = BigDecimal.ZERO,
-                        marketSize = it.totalLiquidity
-                    )
-                    logger.info("importing ${element.id}")
-                    marketBuffer.add(element)
-                }
-            }
-        } catch (ex: Exception) {
-            logger.error("Error occurred at startup, balancer pools failed to load", ex);
+    fun initialize() {
+        Executors.newSingleThreadExecutor().submit {
+            getPoolingMarkets()
         }
     }
 
     override fun getPoolingMarkets(): List<PoolingMarketElement> {
-        return marketBuffer.toImmutableList()
+        return runBlocking(Dispatchers.IO) {
+            cache.get("all") {
+                balancerPolygonService.getPools().mapNotNull {
+                    if (it.totalLiquidity > BigDecimal.valueOf(100000)) {
+                        val element = PoolingMarketElement(
+                            id = "balancer-polygon-${it.id}",
+                            network = getNetwork(),
+                            protocol = getProtocol(),
+                            address = it.address,
+                            name = "${
+                                it.tokens.joinToString("/") {
+                                    it.symbol
+                                }
+                            } Pool",
+                            token = emptyList(),
+                            apr = BigDecimal.ZERO,
+                            marketSize = it.totalLiquidity
+                        )
+                        logger.debug("importing ${element.id}")
+                        element
+                    } else {
+                        null
+                    }
+                }
+            }
+        }
     }
 
     override fun getProtocol(): Protocol = Protocol.BALANCER

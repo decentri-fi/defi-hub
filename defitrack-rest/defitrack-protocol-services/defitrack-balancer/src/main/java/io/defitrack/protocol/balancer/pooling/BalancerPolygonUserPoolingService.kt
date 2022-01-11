@@ -14,7 +14,6 @@ import java.math.BigDecimal
 class BalancerPolygonUserPoolingService(private val balancerPolygonService: BalancerPolygonService) :
     UserPoolingService {
 
-    @Cacheable(cacheNames = ["balancer-lps"], key = "'polygon-' + #address")
     override fun userPoolings(address: String): List<PoolingElement> {
         val poolShares = balancerPolygonService.getBalances(address).filter {
             it.balance > BigDecimal.ZERO
