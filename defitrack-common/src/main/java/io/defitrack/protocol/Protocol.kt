@@ -7,7 +7,7 @@ enum class Protocol(
 ) {
 
     AAVE("aave.png", "aave"),
-    HUMANDAO("humandao.png", "humandao"),
+    HUMANDAO("humandao.jpg", "humandao"),
     CURVE("curve.png", "curve"),
     MSTABLE("mstable.png", "mstable"),
     COMPOUND("compound.png", "compound"),
