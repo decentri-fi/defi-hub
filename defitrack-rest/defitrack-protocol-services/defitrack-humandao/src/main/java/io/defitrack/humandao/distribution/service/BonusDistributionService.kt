@@ -22,9 +22,9 @@ import java.math.RoundingMode
 class BonusDistributionService(
     private val client: HttpClient,
     private val objectMapper: ObjectMapper,
-    private val polygonContractAccessor: PolygonContractAccessor,
-    private val ethereumContractAccessor: EthereumContractAccessor,
-    private val mumbaiContractAccessor: PolygonMumbaiContractAccessor,
+    polygonContractAccessor: PolygonContractAccessor,
+    ethereumContractAccessor: EthereumContractAccessor,
+    mumbaiContractAccessor: PolygonMumbaiContractAccessor,
     private val abiResource: ABIResource
 ) {
 
@@ -101,8 +101,6 @@ class BonusDistributionService(
             objectMapper.readValue(result, MerkleConfig::class.java)
         }
     }
-
-
 
     fun getBonusDistributionStatus(network: Network, address: String): BonusDistributionStatus {
         val config = merkleMap[network]
