@@ -26,6 +26,13 @@ class DefaultPoolingMarketRestController(
         val logger: Logger = LoggerFactory.getLogger(this::class.java)
     }
 
+    @GetMapping(value = ["/all-markets"])
+    fun allMarkets(): List<PoolingMarketElement> {
+        return poolingMarketServices.flatMap {
+            it.getPoolingMarkets()
+        }
+    }
+
     @GetMapping(value = ["/markets"], params = ["token", "network"])
     fun searchByToken(
         @RequestParam("token") tokenAddress: String,

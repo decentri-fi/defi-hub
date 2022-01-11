@@ -14,13 +14,17 @@ import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.util.concurrent.Executors
 import javax.annotation.PostConstruct
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
 
 @Service
 class BalancerPolygonPoolingMarketService(private val balancerPolygonService: BalancerPolygonService) :
     PoolingMarketService {
 
-
-    val cache = Cache.Builder().build<String, List<PoolingMarketElement>>()
+    @OptIn(ExperimentalTime::class)
+    val cache = Cache.Builder().expireAfterWrite(
+        Duration.Companion.hours(4)
+    ).build<String, List<PoolingMarketElement>>()
 
     companion object {
         private val logger = LoggerFactory.getLogger(this::class.java)

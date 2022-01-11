@@ -22,7 +22,7 @@ class SpiritGraphGateway(
     fun getPairs(): List<SushiswapPair> = runBlocking(Dispatchers.IO) {
         val query = """
         {
-            pairs(first: 500, orderDirection: desc, orderBy: volumeUSD) {
+            pairs(first: 100, orderDirection: desc, orderBy: volumeUSD) {
             id
             reserveUSD
             token0 {
@@ -53,9 +53,9 @@ class SpiritGraphGateway(
     fun getPairDayData(pairId: String) = runBlocking {
         val query = """
            {
-                pairDayDatas(first: 8, orderBy: date, orderDirection: desc where: {pair: "$pairId"}) {
+                pairDayDatas(first: 8, orderBy: date, orderDirection: desc where: {pairAddress: "$pairId"}) {
                 id,
-                volumeUSD
+                dailyVolumeUSD
               }
             }
         """.trimIndent()

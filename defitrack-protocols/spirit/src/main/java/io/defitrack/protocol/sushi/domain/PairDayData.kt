@@ -4,5 +4,5 @@ import java.math.BigDecimal
 
 class PairDayData(
     val id: String,
-    val volumeUSD: BigDecimal
+    val dailyVolumeUSD: BigDecimal
 )

@@ -19,7 +19,7 @@
         </dependency>
         <dependency>
             <groupId>io.defitrack</groupId>
-            <artifactId>spooky</artifactId>
+            <artifactId>spirit</artifactId>
         </dependency>
     </dependencies>
 

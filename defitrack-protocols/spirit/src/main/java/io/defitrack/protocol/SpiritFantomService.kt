@@ -18,7 +18,7 @@ class SpiritFantomService(
 
     private val sushiswapService = SpiritGraphGateway(
         objectMapper,
-        "https://api.thegraph.com/subgraphs/name/sushiswap/fantom-exchange",
+        "https://api.thegraph.com/subgraphs/name/moneyspirits/spiritswap",
         client
     )
 
