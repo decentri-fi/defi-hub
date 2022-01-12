@@ -24,7 +24,7 @@ import java.math.BigInteger
 import java.math.RoundingMode
 
 @Service
-class BeefyPolygonStakingService(
+class BeefyPolygonUserStakingService(
     private val polygonContractAccessor: PolygonContractAccessor,
     private val abiResource: ABIResource,
     private val beefyAPYService: BeefyAPYService,

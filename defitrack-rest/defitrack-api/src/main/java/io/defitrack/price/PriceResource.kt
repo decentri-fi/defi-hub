@@ -53,6 +53,7 @@ class PriceResource(
                 }
             } catch (ex: Exception) {
                 logger.error("unable to fetch price for ${it.address}")
+                ex.printStackTrace()
                 0.0
             }
         } ?: 0.0
