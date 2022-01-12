@@ -55,7 +55,6 @@ class BeefyPolygonStakingMarketService(
     @PostConstruct
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
     fun init() {
-        logger.info("importing bifi markets")
         Executors.newSingleThreadExecutor().submit {
             getStakingMarkets()
         }
@@ -64,6 +63,7 @@ class BeefyPolygonStakingMarketService(
 
     override fun getStakingMarkets(): List<StakingMarketElement> = runBlocking(Dispatchers.IO) {
         cache.get("all") {
+            logger.info("cache expired, importing bifi markets")
             val vaultContracts = beefyPolygonService.beefyPolygonVaults
                 .map(::beefyVaultToVaultContract)
 

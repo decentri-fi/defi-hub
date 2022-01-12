@@ -17,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
+import org.web3j.crypto.WalletUtils
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
@@ -30,21 +31,25 @@ class DefaultUserStakingRestController(
 
     @GetMapping("/{userId}/positions")
     fun getUserStakings(@PathVariable("userId") address: String): List<StakingElementVO> {
-        return stakingServices.flatMap {
-            try {
-                runBlocking(Dispatchers.IO) {
-                    retry(limitAttempts(3)) {
-                        it.getStakings(address).filter {
-                            (it.stakedToken?.amount ?: BigInteger.ZERO) > BigInteger.ZERO
+        if (WalletUtils.isValidAddress(address)) {
+            return stakingServices.flatMap {
+                try {
+                    runBlocking(Dispatchers.IO) {
+                        retry(limitAttempts(3)) {
+                            it.getStakings(address).filter {
+                                (it.stakedToken?.amount ?: BigInteger.ZERO) > BigInteger.ZERO
+                            }
                         }
                     }
+                } catch (ex: Exception) {
+                    logger.error("Something went wrong trying to fetch the user poolings: ${ex.message}")
+                    emptyList()
                 }
-            } catch (ex: Exception) {
-                logger.error("Something went wrong trying to fetch the user poolings: ${ex.message}")
-                emptyList()
+            }.map {
+                it.toVO()
             }
-        }.map {
-            it.toVO()
+        } else {
+            return emptyList()
         }
     }
 
@@ -54,20 +59,24 @@ class DefaultUserStakingRestController(
         @RequestParam("stakingElementId") stakingElementId: String,
         @RequestParam("network") network: Network
     ): StakingElementVO? {
-        return stakingServices.filter {
-            it.getNetwork() == network
-        }.mapNotNull {
-            try {
-                runBlocking(Dispatchers.IO) {
-                    retry(limitAttempts(3)) {
-                        it.getStaking(address, stakingElementId)
+        if (WalletUtils.isValidAddress(address)) {
+            return stakingServices.filter {
+                it.getNetwork() == network
+            }.firstNotNullOfOrNull {
+                try {
+                    runBlocking(Dispatchers.IO) {
+                        retry(limitAttempts(3)) {
+                            it.getStaking(address, stakingElementId)
+                        }
                     }
+                } catch (ex: Exception) {
+                    logger.error("Something went wrong trying to fetch the user poolings: ${ex.message}")
+                    null
                 }
-            } catch (ex: Exception) {
-                Companion.logger.error("Something went wrong trying to fetch the user poolings: ${ex.message}")
-                null
-            }
-        }.firstOrNull()?.toVO()
+            }?.toVO()
+        } else {
+            return null;
+        }
     }
 
 

@@ -35,7 +35,7 @@ abstract class EvmContractAccessor(val abiDecoder: AbiDecoder) {
 
     abstract fun getNetwork(): Network
 
-    fun readMultiCall(elements: List<MultiCallElement>): List<List<Type<*>>> {
+    open fun readMultiCall(elements: List<MultiCallElement>): List<List<Type<*>>> {
         val encodedFunctions = elements.map {
             DynamicStruct(
                 it.address.toAddress(),

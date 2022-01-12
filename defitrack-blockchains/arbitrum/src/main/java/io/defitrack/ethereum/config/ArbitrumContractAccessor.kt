@@ -27,7 +27,7 @@ import java.util.concurrent.CompletableFuture
 class ArbitrumContractAccessor(abiDecoder: AbiDecoder, val arbitrumGateway: ArbitrumGateway) :
     EvmContractAccessor(abiDecoder) {
     override fun getMulticallContract(): String {
-        return "0x13ad51a6664973ebd0749a7c84939d973f247921"
+        return "0x2d7aca3bD909bc5DC6DC70894669Adfb6483Bf5F"
     }
 
     override fun getNetwork(): Network {
@@ -38,72 +38,6 @@ class ArbitrumContractAccessor(abiDecoder: AbiDecoder, val arbitrumGateway: Arbi
         val encodedFunction = FunctionEncoder.encode(function)
         val ethCall = call(from, address, encodedFunction, endpoint)
         return FunctionReturnDecoder.decode(ethCall.value, function.outputParameters)
-    }
-
-    fun listenToEvents(address: String, abi: String, event: String): Flowable<Map<String, Any>> {
-
-        getEvent(abi, event)?.let { contractEvent ->
-            val theEvent = Event(
-                contractEvent.name,
-                contractEvent.inputs
-                    .map { fromDataTypes(it.type, it.indexed) }
-                    .toList()
-            )
-
-            val ethFilter = EthFilter(
-                DefaultBlockParameterName.LATEST,
-                DefaultBlockParameterName.LATEST, address
-            )
-            ethFilter.addOptionalTopics(EventEncoder.encode(theEvent))
-            return createEventListener(ethFilter, theEvent, contractEvent)
-        } ?: return Flowable.empty()
-    }
-
-    private fun createEventListener(
-        ethFilter: EthFilter,
-        theEvent: Event,
-        contractEvent: AbiContractEvent
-    ): Flowable<Map<String, Any>> {
-        return arbitrumGateway.web3j().ethLogFlowable(ethFilter)
-            .map { logs ->
-                val indexedValues = ArrayList<Type<*>>()
-                val nonIndexedValues = FunctionReturnDecoder.decode(
-                    logs.data, theEvent.nonIndexedParameters
-                )
-
-                val indexedParameters = theEvent.indexedParameters
-                for (i in indexedParameters.indices) {
-                    val value = FunctionReturnDecoder.decodeIndexedValue(
-                        logs.topics[i + 1], indexedParameters[i]
-                    )
-                    indexedValues.add(value)
-                }
-
-                val collect = indexedValues + nonIndexedValues
-
-                contractEvent.inputs
-                    .map { input -> input.name to collect[contractEvent.inputs.indexOf(input)].value }
-                    .toMap()
-            }
-    }
-
-    private fun callAsync(
-        from: String? = "0x0000000000000000000000000000000000000000",
-        contract: String,
-        encodedFunction: String,
-        endpoint: String?
-    ): CompletableFuture<EthCall> {
-        val web3j = endpoint?.let {
-            constructEndpoint(it)
-        } ?: arbitrumGateway.web3j()
-
-        return web3j.ethCall(
-            Transaction.createEthCallTransaction(
-                from,
-                contract,
-                encodedFunction
-            ), DefaultBlockParameterName.LATEST
-        ).sendAsync()
     }
 
     private fun call(
