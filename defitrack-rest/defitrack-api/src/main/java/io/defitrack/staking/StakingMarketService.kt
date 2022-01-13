@@ -11,7 +11,6 @@ import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import java.util.concurrent.Executors
-import javax.annotation.PostConstruct
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
@@ -25,9 +24,13 @@ abstract class StakingMarketService : ProtocolService {
 
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
     fun init() {
-        cache.invalidateAll()
-        Executors.newSingleThreadExecutor().submit {
-            getStakingMarkets()
+        try {
+            cache.invalidateAll()
+            Executors.newSingleThreadExecutor().submit {
+                getStakingMarkets()
+            }
+        } catch (ex: Exception) {
+            logger.error("something went wrong trying to populate the cache", ex)
         }
     }
 

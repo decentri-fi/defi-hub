@@ -22,9 +22,13 @@ abstract class LendingMarketService : ProtocolService {
 
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
     fun init() {
-        cache.invalidateAll()
-        Executors.newSingleThreadExecutor().submit {
-            getLendingMarkets()
+        try {
+            cache.invalidateAll()
+            Executors.newSingleThreadExecutor().submit {
+                getLendingMarkets()
+            }
+        } catch (ex: Exception) {
+            logger.error("something went wrong trying to populate the cache", ex)
         }
     }
 

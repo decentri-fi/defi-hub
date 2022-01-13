@@ -1,7 +1,6 @@
 package io.defitrack.protocol.aave.borrowing
 
 import io.defitrack.borrowing.BorrowService
-import io.defitrack.borrowing.domain.BorrowElement
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.AaveMainnetService
@@ -14,7 +13,7 @@ import java.util.*
 @Service
 class AaveMainnetBorrowingService(
     private val aaveMainnetService: AaveMainnetService,
-) : io.defitrack.borrowing.BorrowService {
+) : BorrowService {
 
     override fun getBorrows(address: String): List<io.defitrack.borrowing.domain.BorrowElement> {
         return aaveMainnetService.getUserReserves(address).mapNotNull {
