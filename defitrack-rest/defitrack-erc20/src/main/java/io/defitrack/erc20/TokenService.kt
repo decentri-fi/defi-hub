@@ -3,8 +3,6 @@ package io.defitrack.erc20
 import io.defitrack.common.network.Network
 import io.defitrack.pool.LPtokenService
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.staking.LpToken
-import io.defitrack.protocol.staking.SingleToken
 import io.defitrack.protocol.staking.Token
 import io.defitrack.protocol.staking.TokenType
 import io.defitrack.token.ERC20Resource
@@ -12,6 +10,7 @@ import io.defitrack.token.domain.ERC20Information
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
+import java.math.BigInteger
 
 @Service
 class TokenService(
@@ -71,11 +70,15 @@ class TokenService(
                     fromLP(Protocol.DMM, network, token)
                 }
                 else -> {
-                    SingleToken(
+                    Token(
                         name = token.name,
                         symbol = token.symbol,
                         address = token.address,
-                        decimals = token.decimals
+                        decimals = token.decimals,
+                        totalSupply = BigInteger.ZERO,
+                        type = TokenType.SINGLE,
+                        token0 = null,
+                        token1 = null
                     )
                 }
             }
@@ -86,7 +89,7 @@ class TokenService(
         return symbol.startsWith("DMM-LP")
     }
 
-    fun fromLP(protocol: Protocol, network: Network, erc20: ERC20Information): LpToken {
+    fun fromLP(protocol: Protocol, network: Network, erc20: ERC20Information): Token {
         val lp = LPtokenService.getLP(network, erc20.address)
 
         val token0 = getTokenInformation(
@@ -96,7 +99,7 @@ class TokenService(
             lp.token1, network
         )
 
-        return LpToken(
+        return Token(
             name = "${token0.symbol}/${token1.symbol} LP",
             symbol = "${token0.symbol}-${token1.symbol}",
             token0 = token0,

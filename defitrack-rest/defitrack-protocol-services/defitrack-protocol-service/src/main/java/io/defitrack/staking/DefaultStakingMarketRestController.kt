@@ -2,7 +2,7 @@ package io.defitrack.staking
 
 import io.defitrack.common.network.Network
 import io.defitrack.network.toVO
-import io.defitrack.protocol.staking.LpToken
+import io.defitrack.protocol.staking.TokenType
 import io.defitrack.protocol.toVO
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.staking.vo.RewardTokenVO
@@ -45,8 +45,8 @@ class DefaultStakingMarketRestController(
                 it.getStakingMarkets()
             }.filter {
                 val token = erC20Resource.getTokenInformation(it.network, it.token.address.lowercase())
-                if (token is LpToken) {
-                    token.token0.address.lowercase() == tokenAddress.lowercase() || token.token1.address.lowercase() == tokenAddress.lowercase() || it.token.address.lowercase() == tokenAddress.lowercase()
+                if (token.type != TokenType.SINGLE) {
+                    token.token0!!.address.lowercase() == tokenAddress.lowercase() || token.token1!!.address.lowercase() == tokenAddress.lowercase() || it.token.address.lowercase() == tokenAddress.lowercase()
                 } else {
                     it.token.address.lowercase() == tokenAddress.lowercase()
                 }

@@ -6,7 +6,7 @@ import io.defitrack.network.toVO
 import io.defitrack.pool.domain.PoolingMarketElement
 import io.defitrack.pool.vo.PoolingMarketElementToken
 import io.defitrack.pool.vo.PoolingMarketElementVO
-import io.defitrack.protocol.staking.LpToken
+import io.defitrack.protocol.staking.TokenType
 import io.defitrack.protocol.toVO
 import io.defitrack.token.ERC20Resource
 import org.slf4j.Logger
@@ -83,11 +83,11 @@ class DefaultPoolingMarketRestController(
             .flatMap {
                 it.getPoolingMarkets()
             }.filter { poolingMarketElement ->
-                when (token) {
-                    is LpToken -> {
+                when {
+                    (token.type) != TokenType.SINGLE -> {
                         poolingMarketElement.token.map { pt ->
                             pt.address.lowercase()
-                        }.containsAll(listOf(token.token0.address.lowercase(), token.token1.address.lowercase()))
+                        }.containsAll(listOf(token.token0!!.address.lowercase(), token.token1!!.address.lowercase()))
                     }
                     else -> false
                 }
