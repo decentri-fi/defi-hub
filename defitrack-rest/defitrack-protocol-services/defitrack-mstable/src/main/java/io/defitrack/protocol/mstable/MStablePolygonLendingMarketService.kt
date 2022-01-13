@@ -1,17 +1,15 @@
 package io.defitrack.protocol.mstable
 
+import io.defitrack.abi.ABIResource
+import io.defitrack.common.network.Network
 import io.defitrack.lending.LendingMarketService
 import io.defitrack.lending.domain.LendingMarketElement
 import io.defitrack.lending.domain.LendingToken
-import io.defitrack.abi.ABIResource
-import io.defitrack.common.network.Network
 import io.defitrack.mstable.MStablePolygonService
 import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.ERC20Resource
-import okhttp3.internal.toImmutableList
 import org.springframework.stereotype.Service
-import javax.annotation.PostConstruct
 
 @Service
 class MStablePolygonLendingMarketService(
@@ -19,23 +17,20 @@ class MStablePolygonLendingMarketService(
     private val abiResource: ABIResource,
     private val tokenService: ERC20Resource,
     private val polygonContractAccessor: PolygonContractAccessor,
-) : LendingMarketService {
+) : LendingMarketService() {
 
     val savingsContractABI by lazy {
         abiResource.getABI("mStable/SavingsContract.json")
     }
 
-    val marketBuffer = mutableListOf<LendingMarketElement>()
-
-    @PostConstruct
-    fun init() {
-        mStableService.getSavingsContracts().map {
+    override fun fetchLendingMarkets(): List<LendingMarketElement> {
+        return mStableService.getSavingsContracts().map {
             MStableEthereumSavingsContract(
                 polygonContractAccessor,
                 savingsContractABI,
                 it
             )
-        }.forEach {
+        }.map {
             val token = tokenService.getTokenInformation(getNetwork(), it.underlying)
             LendingMarketElement(
                 id = "mstable-polygon-${it.address}",
@@ -53,10 +48,6 @@ class MStablePolygonLendingMarketService(
                 poolType = "mstable"
             )
         }
-    }
-
-    override fun getLendingMarkets(): List<LendingMarketElement> {
-        return marketBuffer.toImmutableList()
     }
 
     override fun getProtocol(): Protocol {

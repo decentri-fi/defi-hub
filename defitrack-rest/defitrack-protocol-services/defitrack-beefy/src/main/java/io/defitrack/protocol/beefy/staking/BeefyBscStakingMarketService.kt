@@ -32,7 +32,6 @@ class BeefyBscStakingMarketService(
     private val priceService: PriceResource
 ) : StakingMarketService() {
 
-    val logger: Logger = LoggerFactory.getLogger(this::class.java)
     val vaultV6ABI by lazy {
         abiResource.getABI("beefy/VaultV6.json")
     }

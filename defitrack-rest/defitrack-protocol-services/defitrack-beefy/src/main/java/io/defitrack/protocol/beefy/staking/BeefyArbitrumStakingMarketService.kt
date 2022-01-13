@@ -15,8 +15,6 @@ import io.defitrack.staking.domain.RewardToken
 import io.defitrack.staking.domain.StakedToken
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -31,7 +29,6 @@ class BeefyArbitrumStakingMarketService(
     private val priceService: PriceResource
 ) : StakingMarketService() {
 
-    val logger: Logger = LoggerFactory.getLogger(this::class.java)
     val vaultV6ABI by lazy {
         abiResource.getABI("beefy/VaultV6.json")
     }

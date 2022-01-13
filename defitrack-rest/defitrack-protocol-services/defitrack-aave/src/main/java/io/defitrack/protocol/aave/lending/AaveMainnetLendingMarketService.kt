@@ -1,17 +1,17 @@
 package io.defitrack.protocol.aave.lending
 
+import io.defitrack.common.network.Network
 import io.defitrack.lending.LendingMarketService
 import io.defitrack.lending.domain.LendingMarketElement
 import io.defitrack.lending.domain.LendingToken
-import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.AaveMainnetService
 import org.springframework.stereotype.Service
 
 @Service
-class AaveMainnetLendingMarketService(private val aaveMainnetService: AaveMainnetService) : LendingMarketService {
+class AaveMainnetLendingMarketService(private val aaveMainnetService: AaveMainnetService) : LendingMarketService() {
 
-    override fun getLendingMarkets(): List<LendingMarketElement> {
+    override fun fetchLendingMarkets(): List<LendingMarketElement> {
         return aaveMainnetService.getReserves().map {
             LendingMarketElement(
                 id = "ethereum-aave-${it.symbol}",

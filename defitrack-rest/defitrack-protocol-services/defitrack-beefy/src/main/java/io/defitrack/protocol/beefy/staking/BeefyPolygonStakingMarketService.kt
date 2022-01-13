@@ -33,14 +33,11 @@ class BeefyPolygonStakingMarketService(
     private val priceService: PriceResource
 ) : StakingMarketService() {
 
-    val logger: Logger = LoggerFactory.getLogger(this::class.java)
     val vaultV6ABI by lazy {
         abiResource.getABI("beefy/VaultV6.json")
     }
 
-
     override fun fetchStakingMarkets(): List<StakingMarketElement> {
-        logger.info("cache expired, importing bifi markets")
         val vaultContracts = beefyPolygonService.beefyPolygonVaults
             .map(::beefyVaultToVaultContract)
 

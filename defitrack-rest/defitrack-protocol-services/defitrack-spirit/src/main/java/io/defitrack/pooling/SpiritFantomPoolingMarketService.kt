@@ -23,8 +23,6 @@ class SpiritFantomPoolingMarketService(
     private val spiritswapAPRService: SpiritswapAPRService
 ) : PoolingMarketService() {
 
-    private val logger = LoggerFactory.getLogger(this::class.java)
-
     override fun fetchPoolingMarkets() = spiritswapServices.filter {
         it.getNetwork() == getNetwork()
     }.flatMap { service ->
@@ -33,7 +31,7 @@ class SpiritFantomPoolingMarketService(
                 it.reserveUSD > BigDecimal.valueOf(100000)
             }
             .map {
-                val element = PoolingMarketElement(
+               PoolingMarketElement(
                     network = service.getNetwork(),
                     protocol = getProtocol(),
                     address = it.id,
@@ -54,8 +52,6 @@ class SpiritFantomPoolingMarketService(
                     id = "spirit-fantom-${it.id}",
                     marketSize = it.reserveUSD
                 )
-                logger.info("${element.id} imported")
-                element
             }
     }
 
