@@ -1,4 +1,4 @@
-package io.defitrack.token
+package io.defitrack.erc20
 
 import io.defitrack.common.network.Network
 import io.defitrack.pool.LPtokenService
@@ -7,6 +7,7 @@ import io.defitrack.protocol.staking.LpToken
 import io.defitrack.protocol.staking.SingleToken
 import io.defitrack.protocol.staking.Token
 import io.defitrack.protocol.staking.TokenType
+import io.defitrack.token.ERC20Resource
 import io.defitrack.token.domain.ERC20Information
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.runBlocking

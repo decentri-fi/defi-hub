@@ -10,45 +10,32 @@ import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.RewardToken
 import io.defitrack.staking.domain.StakedToken
 import io.defitrack.staking.domain.StakingMarketElement
-import io.defitrack.token.TokenService
-import io.github.reactivecircus.cache4k.Cache
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
-import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
 
 @Service
 class PolycatStakingMarketService(
     private val polycatService: PolycatService,
     private val abiResource: ABIResource,
-    private val tokenService: TokenService,
+    private val erC20Resource: ERC20Resource,
     private val polygonContractAccessor: PolygonContractAccessor,
-) : StakingMarketService {
+) : StakingMarketService() {
 
     val masterChefABI by lazy {
         abiResource.getABI("polycat/MasterChef.json")
     }
 
-    @OptIn(ExperimentalTime::class)
-    val cache =
-        Cache.Builder().expireAfterWrite(Duration.Companion.hours(1)).build<String, List<StakingMarketElement>>()
-
-    override fun getStakingMarkets(): List<StakingMarketElement> {
-        return runBlocking(Dispatchers.IO) {
-            cache.get("all") {
-                polycatService.getPolycatFarms().map {
-                    PolycatMasterChefContract(
-                        polygonContractAccessor,
-                        masterChefABI,
-                        it
-                    )
-                }.flatMap { chef ->
-                    (0 until chef.poolLength).map { poolId ->
-                        toStakingMarketElement(chef, poolId)
-                    }
-                }
+    override fun fetchStakingMarkets(): List<StakingMarketElement> {
+        return polycatService.getPolycatFarms().map {
+            PolycatMasterChefContract(
+                polygonContractAccessor,
+                masterChefABI,
+                it
+            )
+        }.flatMap { chef ->
+            (0 until chef.poolLength).map { poolId ->
+                toStakingMarketElement(chef, poolId)
             }
         }
     }
@@ -59,8 +46,8 @@ class PolycatStakingMarketService(
     ): StakingMarketElement {
         val rewardPerBlock = chef.rewardPerBlock.toBigDecimal().times(BigDecimal(43200)).times(BigDecimal(365))
         val stakedtoken =
-            tokenService.getTokenInformation(chef.getLpTokenForPoolId(poolId), getNetwork())
-        val rewardToken = tokenService.getTokenInformation(chef.rewardToken, getNetwork())
+            erC20Resource.getTokenInformation(getNetwork(), chef.getLpTokenForPoolId(poolId))
+        val rewardToken = erC20Resource.getTokenInformation(getNetwork(), chef.rewardToken)
         return StakingMarketElement(
             id = "polycat-${chef.address}-${poolId}",
             network = getNetwork(),

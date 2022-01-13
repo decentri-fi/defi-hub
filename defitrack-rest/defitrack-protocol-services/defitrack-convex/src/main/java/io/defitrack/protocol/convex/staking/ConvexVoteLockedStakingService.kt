@@ -10,7 +10,7 @@ import io.defitrack.protocol.convex.CvxLocker
 import io.defitrack.staking.UserStakingService
 import io.defitrack.staking.domain.StakingElement
 import io.defitrack.staking.domain.VaultRewardToken
-import io.defitrack.token.TokenService
+import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import java.math.BigInteger
 
@@ -19,10 +19,10 @@ class ConvexVoteLockedStakingService(
     private val convexService: ConvexService,
     private val abiResource: ABIResource,
     private val ethereumContractAccessor: EthereumContractAccessor,
-    tokenService: TokenService,
+    erC20Resource: ERC20Resource,
     objectMapper: ObjectMapper
 ) :
-    UserStakingService(tokenService, objectMapper) {
+    UserStakingService(erC20Resource, objectMapper) {
 
     val cvxRewardPoolABI by lazy {
         abiResource.getABI("convex/CvxLocker.json")
@@ -42,8 +42,8 @@ class ConvexVoteLockedStakingService(
             val balance = pool.balances(address)
             if (balance > BigInteger.ZERO) {
 
-                val rewardToken = tokenService.getTokenInformation(pool.rewardToken(), getNetwork())
-                val stakedToken = tokenService.getTokenInformation(pool.stakingToken(), getNetwork())
+                val rewardToken = erC20Resource.getTokenInformation(getNetwork(), pool.rewardToken())
+                val stakedToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingToken())
 
                 StakingElement(
                     network = getNetwork(),

@@ -2,13 +2,12 @@ package io.defitrack.price
 
 import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.retry
-import io.defitrack.token.ERC20Resource
-import io.defitrack.token.TokenService
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.balancer.BalancerPolygonService
 import io.defitrack.protocol.staking.LpToken
 import io.defitrack.protocol.staking.Token
 import io.defitrack.protocol.staking.TokenType
+import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -19,7 +18,6 @@ import java.math.RoundingMode
 class PriceCalculator(
     private val erc20Service: ERC20Resource,
     private val priceRepository: BeefyPricesService,
-    private val tokenService: TokenService,
     private val balancerTokenService: BalancerPolygonService,
     private val externalPriceServices: List<ExternalPriceService>
 ) {
@@ -40,11 +38,9 @@ class PriceCalculator(
                 }
 
                 val asERC = erc20Service.getERC20(priceRequest.network, priceRequest.address)
-                val token = tokenService.getTokenInformation(priceRequest.address, priceRequest.network)
+                val token = erc20Service.getTokenInformation(priceRequest.network, priceRequest.address)
 
-                val type = priceRequest.type ?: token.type
-
-                val price = when (type) {
+                val price = when (priceRequest.type ?: token.type) {
                     TokenType.SUSHISWAP -> {
                         calculateLpPrice(priceRequest, token)
                     }

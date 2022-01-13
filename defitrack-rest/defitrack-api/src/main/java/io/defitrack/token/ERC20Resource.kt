@@ -3,6 +3,7 @@ package io.defitrack.token
 import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.retry
 import io.defitrack.common.network.Network
+import io.defitrack.protocol.staking.Token
 import io.defitrack.token.domain.ERC20Information
 import io.ktor.client.*
 import io.ktor.client.request.*
@@ -29,6 +30,12 @@ class ERC20Resource(private val client: HttpClient) {
     fun getERC20(network: Network, address: String): ERC20Information {
         return runBlocking(Dispatchers.IO) {
             retry(limitAttempts(3)) { client.get("https://api.defitrack.io/erc20/${network.name}/$address") }
+        }
+    }
+
+    fun getTokenInformation(network: Network, address: String) : Token {
+        return runBlocking(Dispatchers.IO) {
+            retry(limitAttempts(3)) { client.get("https://api.defitrack.io/erc20/${network.name}/$address/token") }
         }
     }
 }

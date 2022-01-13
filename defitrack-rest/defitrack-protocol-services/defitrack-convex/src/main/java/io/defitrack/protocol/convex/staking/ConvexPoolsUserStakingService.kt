@@ -4,13 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.staking.UserStakingService
 import io.defitrack.staking.domain.StakingElement
 import io.defitrack.staking.domain.VaultRewardToken
-import io.defitrack.token.TokenService
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereum.config.EthereumContractAccessor
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.convex.ConvexService
 import io.defitrack.protocol.convex.CvxRewardPool
+import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import java.math.BigInteger
 
@@ -19,10 +19,10 @@ class ConvexPoolsUserStakingService(
     private val convexService: ConvexService,
     private val abiResource: ABIResource,
     private val ethereumContractAccessor: EthereumContractAccessor,
-    tokenService: TokenService,
+    erC20Resource: ERC20Resource,
     objectMapper: ObjectMapper
 ) :
-    UserStakingService(tokenService, objectMapper) {
+    UserStakingService(erC20Resource, objectMapper) {
 
     val cvxRewardPoolABI by lazy {
         abiResource.getABI("convex/CvxRewardPool.json")
@@ -42,8 +42,8 @@ class ConvexPoolsUserStakingService(
             val balance = pool.balanceOf(address)
             if (balance > BigInteger.ZERO) {
 
-                val rewardToken = tokenService.getTokenInformation(pool.rewardToken(), getNetwork())
-                val stakedToken = tokenService.getTokenInformation(pool.stakingToken(), getNetwork())
+                val rewardToken = erC20Resource.getTokenInformation(getNetwork(), pool.rewardToken(), )
+                val stakedToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingToken(), )
 
                 stakingElement(
                     user = address,

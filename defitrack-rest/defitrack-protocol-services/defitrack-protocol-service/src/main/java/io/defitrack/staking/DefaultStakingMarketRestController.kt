@@ -1,15 +1,14 @@
 package io.defitrack.staking
 
+import io.defitrack.common.network.Network
 import io.defitrack.network.toVO
+import io.defitrack.protocol.staking.LpToken
 import io.defitrack.protocol.toVO
-import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.staking.vo.RewardTokenVO
 import io.defitrack.staking.vo.StakedTokenVO
 import io.defitrack.staking.vo.StakingMarketElementVO
-import io.defitrack.token.TokenService
-import io.defitrack.common.network.Network
-import io.defitrack.protocol.staking.LpToken
+import io.defitrack.token.ERC20Resource
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -17,7 +16,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/staking")
 class DefaultStakingMarketRestController(
     private val stakingMarketServices: List<StakingMarketService>,
-    private val tokenService: TokenService
+    private val erC20Resource: ERC20Resource
 ) {
 
     @GetMapping("/all-markets", params = ["network"])
@@ -45,7 +44,7 @@ class DefaultStakingMarketRestController(
             }.flatMap {
                 it.getStakingMarkets()
             }.filter {
-                val token = tokenService.getTokenInformation(it.token.address.lowercase(), it.network)
+                val token = erC20Resource.getTokenInformation(it.network, it.token.address.lowercase())
                 if (token is LpToken) {
                     token.token0.address.lowercase() == tokenAddress.lowercase() || token.token1.address.lowercase() == tokenAddress.lowercase() || it.token.address.lowercase() == tokenAddress.lowercase()
                 } else {

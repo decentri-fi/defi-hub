@@ -1,14 +1,14 @@
 package io.defitrack.pool
 
+import io.defitrack.common.network.Network
 import io.defitrack.logo.LogoService
 import io.defitrack.network.toVO
 import io.defitrack.pool.domain.PoolingMarketElement
 import io.defitrack.pool.vo.PoolingMarketElementToken
 import io.defitrack.pool.vo.PoolingMarketElementVO
-import io.defitrack.protocol.toVO
-import io.defitrack.token.TokenService
-import io.defitrack.common.network.Network
 import io.defitrack.protocol.staking.LpToken
+import io.defitrack.protocol.toVO
+import io.defitrack.token.ERC20Resource
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*
 class DefaultPoolingMarketRestController(
     private val poolingMarketServices: List<PoolingMarketService>,
     private val logoService: LogoService,
-    private val tokenService: TokenService,
+    private val erC20Resource: ERC20Resource
 ) {
 
     companion object {
@@ -73,8 +73,8 @@ class DefaultPoolingMarketRestController(
         @RequestParam("token") tokenAddress: String,
         @RequestParam("network") network: Network
     ): List<PoolingMarketElementVO> {
-        val token = tokenService.getTokenInformation(
-            tokenAddress, network
+        val token = erC20Resource.getTokenInformation(
+            network, tokenAddress,
         )
         return poolingMarketServices
             .filter {

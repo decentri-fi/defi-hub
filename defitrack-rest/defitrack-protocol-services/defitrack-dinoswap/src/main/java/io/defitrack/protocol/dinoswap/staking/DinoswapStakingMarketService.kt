@@ -10,51 +10,32 @@ import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.RewardToken
 import io.defitrack.staking.domain.StakedToken
 import io.defitrack.staking.domain.StakingMarketElement
-import io.defitrack.token.TokenService
-import io.github.reactivecircus.cache4k.Cache
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
-import javax.annotation.PostConstruct
-import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
 
 @Service
 class DinoswapStakingMarketService(
     private val dinoswapService: DinoswapService,
     private val abiResource: ABIResource,
-    private val tokenService: TokenService,
+    private val tokenService: ERC20Resource,
     private val polygonContractAccessor: PolygonContractAccessor,
-) : StakingMarketService {
+) : StakingMarketService() {
 
     val fossilFarms by lazy {
         abiResource.getABI("dinoswap/FossilFarms.json")
     }
 
-    @OptIn(ExperimentalTime::class)
-    val cache =
-        Cache.Builder().expireAfterWrite(Duration.Companion.hours(1)).build<String, List<StakingMarketElement>>()
-
-    @PostConstruct
-    fun start() {
-        getStakingMarkets()
-    }
-
-    override fun getStakingMarkets(): List<StakingMarketElement> {
-        return runBlocking(Dispatchers.IO) {
-            cache.get("all") {
-                dinoswapService.getDinoFossilFarms().map {
-                    DinoswapFossilFarmsContract(
-                        polygonContractAccessor,
-                        fossilFarms,
-                        it
-                    )
-                }.flatMap { chef ->
-                    (0 until chef.poolLength).map { poolId ->
-                        toStakingMarketElement(chef, poolId)
-                    }
-                }
+    override fun fetchStakingMarkets(): List<StakingMarketElement> {
+        return dinoswapService.getDinoFossilFarms().map {
+            DinoswapFossilFarmsContract(
+                polygonContractAccessor,
+                fossilFarms,
+                it
+            )
+        }.flatMap { chef ->
+            (0 until chef.poolLength).map { poolId ->
+                toStakingMarketElement(chef, poolId)
             }
         }
     }
@@ -65,8 +46,8 @@ class DinoswapStakingMarketService(
     ): StakingMarketElement {
         val rewardPerBlock = chef.rewardPerBlock.toBigDecimal().times(BigDecimal(43200)).times(BigDecimal(365))
         val stakedtoken =
-            tokenService.getTokenInformation(chef.getLpTokenForPoolId(poolId), getNetwork())
-        val rewardToken = tokenService.getTokenInformation(chef.rewardToken, getNetwork())
+            tokenService.getTokenInformation(getNetwork(), chef.getLpTokenForPoolId(poolId), )
+        val rewardToken = tokenService.getTokenInformation(getNetwork(), chef.rewardToken)
         return StakingMarketElement(
             id = "dinoswap-${chef.address}-${poolId}",
             network = getNetwork(),

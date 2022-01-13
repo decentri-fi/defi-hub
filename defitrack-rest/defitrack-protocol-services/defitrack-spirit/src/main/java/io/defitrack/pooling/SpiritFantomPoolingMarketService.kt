@@ -21,29 +21,11 @@ import kotlin.time.ExperimentalTime
 class SpiritFantomPoolingMarketService(
     private val spiritswapServices: List<SpiritswapService>,
     private val spiritswapAPRService: SpiritswapAPRService
-) : PoolingMarketService {
+) : PoolingMarketService() {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @OptIn(ExperimentalTime::class)
-    private val cache = Cache.Builder().expireAfterWrite(
-        Duration.Companion.hours(4)
-    ).build<String, List<PoolingMarketElement>>()
-
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
-    fun initialPopulation() {
-        getPoolingMarkets()
-    }
-
-    override fun getPoolingMarkets(): List<PoolingMarketElement> {
-        return runBlocking(Dispatchers.IO) {
-            cache.get("all") {
-                fetchPoolingMarkets()
-            }
-        }
-    }
-
-    private fun fetchPoolingMarkets() = spiritswapServices.filter {
+    override fun fetchPoolingMarkets() = spiritswapServices.filter {
         it.getNetwork() == getNetwork()
     }.flatMap { service ->
         service.getPairs()

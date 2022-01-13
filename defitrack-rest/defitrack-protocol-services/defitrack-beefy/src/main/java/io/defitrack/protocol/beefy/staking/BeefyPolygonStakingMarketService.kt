@@ -14,21 +14,13 @@ import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.RewardToken
 import io.defitrack.staking.domain.StakedToken
 import io.defitrack.staking.domain.StakingMarketElement
-import io.defitrack.token.TokenService
-import io.github.reactivecircus.cache4k.Cache
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import io.defitrack.token.ERC20Resource
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.EnableScheduling
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.util.concurrent.Executors
-import javax.annotation.PostConstruct
-import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
 
 @Service
 @EnableScheduling
@@ -37,9 +29,9 @@ class BeefyPolygonStakingMarketService(
     private val abiResource: ABIResource,
     private val beefyAPYService: BeefyAPYService,
     private val beefyPolygonService: BeefyService,
-    private val tokenService: TokenService,
+    private val erC20Resource: ERC20Resource,
     private val priceService: PriceResource
-) : StakingMarketService {
+) : StakingMarketService() {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
     val vaultV6ABI by lazy {
@@ -47,35 +39,19 @@ class BeefyPolygonStakingMarketService(
     }
 
 
-    @OptIn(ExperimentalTime::class)
-    val cache =
-        Cache.Builder().expireAfterWrite(Duration.Companion.hours(4)).build<String, List<StakingMarketElement>>()
+    override fun fetchStakingMarkets(): List<StakingMarketElement> {
+        logger.info("cache expired, importing bifi markets")
+        val vaultContracts = beefyPolygonService.beefyPolygonVaults
+            .map(::beefyVaultToVaultContract)
 
-
-    @PostConstruct
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
-    fun init() {
-        Executors.newSingleThreadExecutor().submit {
-            getStakingMarkets()
-        }
-    }
-
-
-    override fun getStakingMarkets(): List<StakingMarketElement> = runBlocking(Dispatchers.IO) {
-        cache.get("all") {
-            logger.info("cache expired, importing bifi markets")
-            val vaultContracts = beefyPolygonService.beefyPolygonVaults
-                .map(::beefyVaultToVaultContract)
-
-            vaultContracts.mapNotNull { beefyVault ->
-                importVault(beefyVault)
-            }
+        return vaultContracts.mapNotNull { beefyVault ->
+            importVault(beefyVault)
         }
     }
 
     private fun importVault(beefyVault: BeefyVaultContract): StakingMarketElement? {
         return try {
-            val want = tokenService.getTokenInformation(beefyVault.want, getNetwork())
+            val want = erC20Resource.getTokenInformation(getNetwork(), beefyVault.want)
 
 
             val element = StakingMarketElement(

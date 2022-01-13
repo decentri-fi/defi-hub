@@ -18,7 +18,7 @@ class DQuickStakingMarketService(
     private val quickswapService: QuickswapService,
     private val polygonContractAccessor: PolygonContractAccessor,
     private val abiResource: ABIResource,
-) : StakingMarketService {
+) : StakingMarketService() {
 
     val dquickStakingABI by lazy {
         abiResource.getABI("quickswap/dquick.json")
@@ -26,7 +26,7 @@ class DQuickStakingMarketService(
 
     val dquick = dquickContract()
 
-    override fun getStakingMarkets(): List<StakingMarketElement> {
+    override fun fetchStakingMarkets(): List<StakingMarketElement> {
         return listOf(
             StakingMarketElement(
                 id = "polygon-dquick-${dquick.address.lowercase()}",

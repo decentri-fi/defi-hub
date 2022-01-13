@@ -2,16 +2,16 @@ package io.defitrack.staking
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.protocol.ProtocolService
+import io.defitrack.protocol.staking.TokenType
 import io.defitrack.staking.domain.StakingElement
 import io.defitrack.staking.domain.VaultRewardToken
 import io.defitrack.staking.domain.VaultStakedToken
-import io.defitrack.token.TokenService
-import io.defitrack.protocol.staking.TokenType
+import io.defitrack.token.ERC20Resource
 import java.math.BigInteger
 import java.util.*
 
 abstract class UserStakingService(
-    val tokenService: TokenService,
+    val erC20Resource: ERC20Resource,
     val objectMapper: ObjectMapper
 ) : ProtocolService {
 
@@ -27,9 +27,8 @@ abstract class UserStakingService(
         amount: BigInteger,
         type: TokenType? = null
     ): VaultStakedToken {
-        val token = tokenService.getTokenInformation(address, getNetwork())
-        val asERC20 = tokenService.erc20Resource.getERC20(getNetwork(), address)
-        val actualType = type ?: tokenService.getType(asERC20.symbol)
+        val token = erC20Resource.getTokenInformation(getNetwork(), address)
+        val actualType = type ?: token.type
 
         return VaultStakedToken(
             address,

@@ -1,10 +1,6 @@
 package io.defitrack.protocol.polycat.staking
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.defitrack.staking.UserStakingService
-import io.defitrack.staking.domain.StakingElement
-import io.defitrack.staking.domain.VaultRewardToken
-import io.defitrack.token.TokenService
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereumbased.contract.ERC20Contract
@@ -12,20 +8,23 @@ import io.defitrack.polycat.PolycatMasterChefContract
 import io.defitrack.polycat.PolycatService
 import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.Protocol
+import io.defitrack.staking.UserStakingService
+import io.defitrack.staking.domain.StakingElement
+import io.defitrack.staking.domain.VaultRewardToken
+import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
-import java.util.*
 
 @Service
 class PolycatStakingService(
     private val polycatService: PolycatService,
     private val abiResource: ABIResource,
     objectMapper: ObjectMapper,
-    tokenService: TokenService,
+    erC20Resource: ERC20Resource,
     private val polygonContractAccessor: PolygonContractAccessor,
-) : UserStakingService(tokenService, objectMapper) {
+) : UserStakingService(erC20Resource, objectMapper) {
 
     val masterChefABI by lazy {
         abiResource.getABI("polycat/MasterChef.json")
@@ -47,8 +46,8 @@ class PolycatStakingService(
 
                 if (balance > BigInteger.ZERO) {
                     val stakedtoken =
-                        tokenService.getTokenInformation(masterChef.getLpTokenForPoolId(poolIndex), getNetwork())
-                    val rewardToken = tokenService.getTokenInformation(masterChef.rewardToken, getNetwork())
+                        erC20Resource.getTokenInformation(getNetwork(), masterChef.getLpTokenForPoolId(poolIndex))
+                    val rewardToken = erC20Resource.getTokenInformation(getNetwork(), masterChef.rewardToken)
 
                     val poolBalance = ERC20Contract(
                         polygonContractAccessor,

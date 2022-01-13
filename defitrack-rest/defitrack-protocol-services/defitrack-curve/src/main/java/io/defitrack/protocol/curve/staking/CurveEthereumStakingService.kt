@@ -1,9 +1,6 @@
 package io.defitrack.protocol.curve.staking
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.defitrack.staking.UserStakingService
-import io.defitrack.staking.domain.StakingElement
-import io.defitrack.token.TokenService
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereum.config.EthereumContractAccessor
@@ -12,6 +9,9 @@ import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.crv.CrvMainnetGauge
 import io.defitrack.protocol.crv.CurveEthereumService
+import io.defitrack.staking.UserStakingService
+import io.defitrack.staking.domain.StakingElement
+import io.defitrack.token.ERC20Resource
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -25,9 +25,9 @@ class CurveEthereumStakingService(
     private val curveEthereumService: CurveEthereumService,
     private val ethereumContractAccessor: EthereumContractAccessor,
     private val abiResource: ABIResource,
-    tokenService: TokenService,
+    erC20Resource: ERC20Resource,
     objectMapper: ObjectMapper,
-) : UserStakingService(tokenService, objectMapper) {
+) : UserStakingService(erC20Resource, objectMapper) {
 
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     val gaugeABI by lazy {

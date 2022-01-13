@@ -7,52 +7,24 @@ import io.defitrack.pool.domain.PoolingToken
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
 import io.defitrack.quickswap.QuickswapService
-import io.github.reactivecircus.cache4k.Cache
-import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.EnableScheduling
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
-import java.util.concurrent.Executors
-import javax.annotation.PostConstruct
-import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
 
 @Component
 @EnableScheduling
 class QuickswapPoolingMarketService(
     private val quickswapService: QuickswapService,
     private val quickswapAPRService: QuickswapAPRService,
-) : PoolingMarketService {
-
-    @OptIn(ExperimentalTime::class)
-    private val cache = Cache.Builder().expireAfterWrite(
-        Duration.Companion.hours(4)
-    ).build<String, List<PoolingMarketElement>>()
+) : PoolingMarketService() {
 
     companion object {
         private val logger = LoggerFactory.getLogger(this::class.java)
     }
 
-    @PostConstruct
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
-    fun intitialPopulation() {
-        logger.info("fetching quickswap pooling markets")
-        Executors.newSingleThreadExecutor().submit {
-            getPoolingMarkets()
-        }
-    }
 
-    override fun getPoolingMarkets(): List<PoolingMarketElement> {
-        return runBlocking {
-            cache.get("all") {
-                fetchPoolingMarkets()
-            }
-        }
-    }
-
-    private fun fetchPoolingMarkets() = quickswapService.getPairs()
+    override fun fetchPoolingMarkets() = quickswapService.getPairs()
         .filter {
             it.reserveUSD > BigDecimal.valueOf(100000)
         }.map {

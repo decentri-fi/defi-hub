@@ -1,51 +1,22 @@
 package io.defitrack.protocol.sushiswap.pooling
 
+import io.defitrack.common.network.Network
 import io.defitrack.pool.PoolingMarketService
 import io.defitrack.pool.domain.PoolingMarketElement
 import io.defitrack.pool.domain.PoolingToken
-import io.defitrack.protocol.sushiswap.apr.SushiswapAPRService
-import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SushiswapService
-import io.github.reactivecircus.cache4k.Cache
-import kotlinx.coroutines.runBlocking
-import org.slf4j.LoggerFactory
+import io.defitrack.protocol.sushiswap.apr.SushiswapAPRService
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
-import java.util.concurrent.Executors
-import javax.annotation.PostConstruct
-import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
 
 @Component
 class SushiswapPolygonPoolingMarketService(
     private val sushiServices: List<SushiswapService>,
     private val sushiAPRService: SushiswapAPRService,
-) : PoolingMarketService {
+) : PoolingMarketService() {
 
-    private val logger = LoggerFactory.getLogger(this::class.java)
-
-    @OptIn(ExperimentalTime::class)
-    private val cache = Cache.Builder().expireAfterWrite(
-        Duration.Companion.hours(4)
-    ).build<String, List<PoolingMarketElement>>()
-
-    @PostConstruct
-    fun initialPopulation() {
-        Executors.newSingleThreadExecutor().submit {
-            getPoolingMarkets()
-        }
-    }
-
-    override fun getPoolingMarkets(): List<PoolingMarketElement> {
-        return runBlocking {
-            cache.get("all") {
-                fetchPoolingMarkets()
-            }
-        }
-    }
-
-    private fun fetchPoolingMarkets() = sushiServices.filter {
+    override fun fetchPoolingMarkets() = sushiServices.filter {
         it.getNetwork() == getNetwork()
     }.flatMap { service ->
         service.getPairs()
@@ -53,30 +24,29 @@ class SushiswapPolygonPoolingMarketService(
                 it.reserveUSD > BigDecimal.valueOf(100000)
             }
             .map {
-            val element = PoolingMarketElement(
-                network = service.getNetwork(),
-                protocol = getProtocol(),
-                address = it.id,
-                name = "SUSHI ${it.token0.symbol}-${it.token1.symbol}",
-                token = listOf(
-                    PoolingToken(
-                        it.token0.name,
-                        it.token0.symbol,
-                        it.token0.id
+                val element = PoolingMarketElement(
+                    network = service.getNetwork(),
+                    protocol = getProtocol(),
+                    address = it.id,
+                    name = "SUSHI ${it.token0.symbol}-${it.token1.symbol}",
+                    token = listOf(
+                        PoolingToken(
+                            it.token0.name,
+                            it.token0.symbol,
+                            it.token0.id
+                        ),
+                        PoolingToken(
+                            it.token1.name,
+                            it.token1.symbol,
+                            it.token1.id
+                        ),
                     ),
-                    PoolingToken(
-                        it.token1.name,
-                        it.token1.symbol,
-                        it.token1.id
-                    ),
-                ),
-                apr = sushiAPRService.getAPR(it.id, service.getNetwork()),
-                id = "sushi-polygon-${it.id}",
-                marketSize = it.reserveUSD
-            )
-            logger.debug("${element.id} imported")
-            element
-        }
+                    apr = sushiAPRService.getAPR(it.id, service.getNetwork()),
+                    id = "sushi-polygon-${it.id}",
+                    marketSize = it.reserveUSD
+                )
+                element
+            }
     }
 
     override fun getProtocol(): Protocol {

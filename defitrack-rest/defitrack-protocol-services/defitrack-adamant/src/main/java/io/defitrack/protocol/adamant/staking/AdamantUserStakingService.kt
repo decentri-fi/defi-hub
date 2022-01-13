@@ -3,7 +3,6 @@ package io.defitrack.protocol.adamant.staking
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.staking.UserStakingService
 import io.defitrack.staking.domain.StakingElement
-import io.defitrack.token.TokenService
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
@@ -12,6 +11,7 @@ import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.adamant.AdamantService
 import io.defitrack.protocol.adamant.AdamantVaultContract
+import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.generated.Uint256
@@ -19,13 +19,13 @@ import java.math.BigInteger
 
 @Service
 class AdamantUserStakingService(
-    tokenService: TokenService,
+    erC20Resource: ERC20Resource,
     objectMapper: ObjectMapper,
     private val adamantService: AdamantService,
     private val polygonContractAccessor: PolygonContractAccessor,
     private val abiResource: ABIResource,
 ) : UserStakingService(
-    tokenService,
+    erC20Resource,
     objectMapper
 ) {
 

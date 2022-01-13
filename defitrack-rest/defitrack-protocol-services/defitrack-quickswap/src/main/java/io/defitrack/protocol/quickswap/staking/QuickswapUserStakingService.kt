@@ -5,7 +5,6 @@ import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
 import io.defitrack.staking.UserStakingService
 import io.defitrack.staking.domain.StakingElement
 import io.defitrack.staking.domain.VaultRewardToken
-import io.defitrack.token.TokenService
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
@@ -14,6 +13,7 @@ import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
 import io.defitrack.quickswap.QuickswapService
+import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.generated.Uint256
@@ -26,7 +26,7 @@ class QuickswapUserStakingService(
     private val abiService: ABIResource,
     private val quickswapAPRService: QuickswapAPRService,
     objectMapper: ObjectMapper,
-    tokenService: TokenService,
+    tokenService: ERC20Resource,
 ) : UserStakingService(tokenService, objectMapper) {
 
     val stakingRewardsABI by lazy {
@@ -62,8 +62,8 @@ class QuickswapUserStakingService(
             if (balance > BigInteger.ZERO) {
 
                 val pool = pools[index]
-                val stakedToken = tokenService.getTokenInformation(pool.stakingTokenAddress, getNetwork())
-                val rewardToken = tokenService.getTokenInformation(pool.rewardsTokenAddress, getNetwork())
+                val stakedToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingTokenAddress)
+                val rewardToken = erC20Resource.getTokenInformation(getNetwork(), pool.rewardsTokenAddress)
 
                 stakingElement(
                     id = "quickswap-polygon-${pool.address}",

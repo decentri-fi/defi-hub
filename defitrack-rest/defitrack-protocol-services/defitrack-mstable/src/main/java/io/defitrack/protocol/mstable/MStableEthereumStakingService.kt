@@ -4,11 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.staking.UserStakingService
 import io.defitrack.staking.domain.StakingElement
 import io.defitrack.staking.domain.VaultRewardToken
-import io.defitrack.token.TokenService
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereum.config.EthereumContractAccessor
 import io.defitrack.protocol.Protocol
+import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import java.math.BigInteger
 import java.util.*
@@ -18,9 +18,9 @@ class MStableEthereumStakingService(
     private val mStableEthereumService: MStableEthereumService,
     private val ethereumContractAccessor: EthereumContractAccessor,
     private val abiResource: ABIResource,
-    tokenService: TokenService,
+    erC20Resource: ERC20Resource,
     objectMapper: ObjectMapper
-) : UserStakingService(tokenService, objectMapper) {
+) : UserStakingService(erC20Resource, objectMapper) {
 
     val boostedSavingsVaultABI by lazy {
         abiResource.getABI("mStable/BoostedSavingsVault.json")
@@ -40,8 +40,8 @@ class MStableEthereumStakingService(
             val balance = it.rawBalanceOf(address)
 
             if (balance > BigInteger.ZERO) {
-                val stakingToken = tokenService.getTokenInformation(it.stakingToken, getNetwork())
-                val rewardsToken = tokenService.getTokenInformation(it.rewardsToken, getNetwork())
+                val stakingToken = erC20Resource.getTokenInformation(getNetwork(), it.stakingToken)
+                val rewardsToken = erC20Resource.getTokenInformation(getNetwork(), it.rewardsToken)
                 StakingElement(
                     id = UUID.randomUUID().toString(),
                     network = this.getNetwork(),

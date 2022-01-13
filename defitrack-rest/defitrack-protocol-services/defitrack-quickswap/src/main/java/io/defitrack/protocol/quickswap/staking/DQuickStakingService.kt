@@ -1,10 +1,6 @@
 package io.defitrack.protocol.quickswap.staking
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.defitrack.staking.UserStakingService
-import io.defitrack.staking.domain.StakingElement
-import io.defitrack.staking.domain.VaultRewardToken
-import io.defitrack.token.TokenService
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.polygon.config.PolygonContractAccessor
@@ -12,6 +8,10 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.staking.TokenType
 import io.defitrack.quickswap.QuickswapService
 import io.defitrack.quickswap.contract.DQuickContract
+import io.defitrack.staking.UserStakingService
+import io.defitrack.staking.domain.StakingElement
+import io.defitrack.staking.domain.VaultRewardToken
+import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import java.math.BigInteger
 
@@ -21,8 +21,8 @@ class DQuickStakingService(
     private val polygonContractAccessor: PolygonContractAccessor,
     private val abiResource: ABIResource,
     objectMapper: ObjectMapper,
-    tokenService: TokenService
-) : UserStakingService(tokenService, objectMapper) {
+    erC20Resource: ERC20Resource
+) : UserStakingService(erC20Resource, objectMapper) {
 
     val dquickStakingABI by lazy {
         abiResource.getABI("quickswap/dquick.json")

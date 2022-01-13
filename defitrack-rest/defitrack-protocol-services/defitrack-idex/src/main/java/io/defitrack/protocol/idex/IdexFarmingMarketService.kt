@@ -8,7 +8,7 @@ import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.RewardToken
 import io.defitrack.staking.domain.StakedToken
 import io.defitrack.staking.domain.StakingMarketElement
-import io.defitrack.token.TokenService
+import io.defitrack.token.ERC20Resource
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -24,51 +24,35 @@ import kotlin.time.ExperimentalTime
 @Component
 class IdexFarmingMarketService(
     private val abiResource: ABIResource,
-    private val tokenService: TokenService,
+    private val tokenService: ERC20Resource,
     private val polygonContractAccessor: PolygonContractAccessor,
     private val idexService: IdexService
-) : StakingMarketService {
+) : StakingMarketService() {
 
     companion object {
         private val logger = LoggerFactory.getLogger(this::class.java)
     }
 
-    @OptIn(ExperimentalTime::class)
-    val cache =
-        Cache.Builder().expireAfterWrite(Duration.Companion.hours(4)).build<String, List<StakingMarketElement>>()
-
     val minichefABI by lazy {
         abiResource.getABI("idex/IdexFarm.json")
     }
 
-    @PostConstruct
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
-    fun init() {
-        Executors.newSingleThreadExecutor().submit {
-            getStakingMarkets()
-        }
-    }
-
-    override fun getStakingMarkets(): List<StakingMarketElement> {
-        return runBlocking(Dispatchers.IO) {
-            cache.get("all") {
-                idexService.idexFarm().map {
-                    IdexFarmContract(
-                        polygonContractAccessor,
-                        minichefABI,
-                        it
-                    )
-                }.flatMap { chef ->
-                    (0 until chef.poolLength).mapNotNull { poolId ->
-                        try {
-                            val farm = toStakingMarketElement(chef, poolId)
-                            logger.info("imported ${farm.id}")
-                            farm
-                        } catch (ex: Exception) {
-                            logger.debug("something went wrong trying to import idex pool", ex)
-                            null
-                        }
-                    }
+    override fun fetchStakingMarkets(): List<StakingMarketElement> {
+        return idexService.idexFarm().map {
+            IdexFarmContract(
+                polygonContractAccessor,
+                minichefABI,
+                it
+            )
+        }.flatMap { chef ->
+            (0 until chef.poolLength).mapNotNull { poolId ->
+                try {
+                    val farm = toStakingMarketElement(chef, poolId)
+                    logger.info("imported ${farm.id}")
+                    farm
+                } catch (ex: Exception) {
+                    logger.debug("something went wrong trying to import idex pool", ex)
+                    null
                 }
             }
         }
@@ -88,8 +72,8 @@ class IdexFarmingMarketService(
     ): StakingMarketElement {
         val rewardPerBlock = chef.rewardPerBlock.toBigDecimal().times(BigDecimal(43200)).times(BigDecimal(365))
         val stakedtoken =
-            tokenService.getTokenInformation(chef.getLpTokenForPoolId(poolId), getNetwork())
-        val rewardToken = tokenService.getTokenInformation(chef.rewardToken, getNetwork())
+            tokenService.getTokenInformation(getNetwork(), chef.getLpTokenForPoolId(poolId))
+        val rewardToken = tokenService.getTokenInformation(getNetwork(), chef.rewardToken)
         return StakingMarketElement(
             id = "idex-${chef.address}-${poolId}",
             network = getNetwork(),

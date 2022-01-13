@@ -1,19 +1,19 @@
 package io.defitrack.protocol.beefy.staking
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.defitrack.staking.UserStakingService
-import io.defitrack.staking.domain.StakingElement
-import io.defitrack.staking.domain.StakingMarketElement
-import io.defitrack.staking.domain.VaultRewardToken
-import io.defitrack.token.TokenService
-import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
 import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
 import io.defitrack.fantom.config.FantomContractAccessor
 import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
+import io.defitrack.staking.UserStakingService
+import io.defitrack.staking.domain.StakingElement
+import io.defitrack.staking.domain.StakingMarketElement
+import io.defitrack.staking.domain.VaultRewardToken
+import io.defitrack.token.ERC20Resource
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -30,8 +30,8 @@ class BeefyFantomUserStakingService(
     private val beefyAPYService: BeefyAPYService,
     private val stakingMarketService: BeefyFantomStakingMarketService,
     objectMapper: ObjectMapper,
-    tokenService: TokenService
-) : UserStakingService(tokenService, objectMapper) {
+    erC20Resource: ERC20Resource
+) : UserStakingService(erC20Resource, objectMapper) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
     val vaultV6ABI by lazy {
@@ -39,7 +39,7 @@ class BeefyFantomUserStakingService(
     }
 
     override fun getStaking(address: String, vaultId: String): StakingElement? {
-        return stakingMarketService.fetchVaults().firstOrNull {
+        return stakingMarketService.getStakingMarkets().firstOrNull {
             it.id == vaultId
         }?.let {
 
@@ -90,7 +90,7 @@ class BeefyFantomUserStakingService(
                     market.id
                 )
 
-                val want = tokenService.getTokenInformation(market.token.address, getNetwork())
+                val want = erC20Resource.getTokenInformation(getNetwork(), market.token.address)
                 val underlyingBalance = if (balance > BigInteger.ZERO) {
                     balance.toBigDecimal().times(contract.getPricePerFullShare.toBigDecimal())
                         .divide(BigDecimal.TEN.pow(18))

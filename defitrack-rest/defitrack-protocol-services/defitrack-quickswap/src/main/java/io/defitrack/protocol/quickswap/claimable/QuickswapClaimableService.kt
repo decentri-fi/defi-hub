@@ -1,10 +1,9 @@
 package io.defitrack.protocol.quickswap.claimable
 
+import io.defitrack.abi.ABIResource
 import io.defitrack.claimable.ClaimableElement
 import io.defitrack.claimable.ClaimableService
 import io.defitrack.claimable.ClaimableToken
-import io.defitrack.token.TokenService
-import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
 import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
@@ -12,6 +11,7 @@ import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
 import io.defitrack.quickswap.QuickswapService
+import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.generated.Uint256
@@ -22,7 +22,7 @@ class QuickswapClaimableService(
     private val quickswapService: QuickswapService,
     private val polygonContractAccessor: PolygonContractAccessor,
     private val abiService: ABIResource,
-    private val tokenService: TokenService
+    private val erC20Resource: ERC20Resource
 ) : ClaimableService {
 
     val stakingRewardsABI by lazy {
@@ -54,9 +54,9 @@ class QuickswapClaimableService(
             if (earned > BigInteger.ZERO) {
                 val pool = pools[index]
 
-                val reward = tokenService.getTokenInformation(pool.rewardsTokenAddress, getNetwork())
+                val reward = erC20Resource.getTokenInformation(getNetwork(), pool.rewardsTokenAddress)
 
-                val stakingToken = tokenService.getTokenInformation(pool.stakingTokenAddress, getNetwork())
+                val stakingToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingTokenAddress)
                 ClaimableElement(
                     id = "quickswap-reward-$pool.address",
                     address = pool.address,

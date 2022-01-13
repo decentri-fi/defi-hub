@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.staking.UserStakingService
 import io.defitrack.staking.domain.StakingElement
 import io.defitrack.staking.domain.VaultRewardToken
-import io.defitrack.token.TokenService
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereumbased.contract.ERC20Contract
@@ -12,6 +11,7 @@ import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.dinoswap.DinoswapFossilFarmsContract
 import io.defitrack.protocol.dinoswap.DinoswapService
+import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -23,9 +23,9 @@ class DinoswapUserStakingService(
     private val dinoService: DinoswapService,
     private val abiResource: ABIResource,
     objectMapper: ObjectMapper,
-    tokenService: TokenService,
+    erC20Resource: ERC20Resource,
     private val polygonContractAccessor: PolygonContractAccessor,
-) : UserStakingService(tokenService, objectMapper) {
+) : UserStakingService(erC20Resource, objectMapper) {
 
     val fossilFarms by lazy {
         abiResource.getABI("polycat/FossilFarms.json")
@@ -47,8 +47,8 @@ class DinoswapUserStakingService(
 
                 if (balance > BigInteger.ZERO) {
                     val stakedtoken =
-                        tokenService.getTokenInformation(masterChef.getLpTokenForPoolId(poolIndex), getNetwork())
-                    val rewardToken = tokenService.getTokenInformation(masterChef.rewardToken, getNetwork())
+                        erC20Resource.getTokenInformation(getNetwork(), masterChef.getLpTokenForPoolId(poolIndex))
+                    val rewardToken = erC20Resource.getTokenInformation(getNetwork(), masterChef.rewardToken)
 
                     val poolBalance = ERC20Contract(
                         polygonContractAccessor,

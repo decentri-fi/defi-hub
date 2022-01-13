@@ -3,12 +3,12 @@ package io.defitrack.protocol.mstable
 import io.defitrack.lending.LendingMarketService
 import io.defitrack.lending.domain.LendingMarketElement
 import io.defitrack.lending.domain.LendingToken
-import io.defitrack.token.TokenService
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.mstable.MStablePolygonService
 import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.Protocol
+import io.defitrack.token.ERC20Resource
 import okhttp3.internal.toImmutableList
 import org.springframework.stereotype.Service
 import javax.annotation.PostConstruct
@@ -17,7 +17,7 @@ import javax.annotation.PostConstruct
 class MStablePolygonLendingMarketService(
     private val mStableService: MStablePolygonService,
     private val abiResource: ABIResource,
-    private val tokenService: TokenService,
+    private val tokenService: ERC20Resource,
     private val polygonContractAccessor: PolygonContractAccessor,
 ) : LendingMarketService {
 
@@ -36,7 +36,7 @@ class MStablePolygonLendingMarketService(
                 it
             )
         }.forEach {
-            val token = tokenService.getTokenInformation(it.underlying, getNetwork())
+            val token = tokenService.getTokenInformation(getNetwork(), it.underlying)
             LendingMarketElement(
                 id = "mstable-polygon-${it.address}",
                 network = getNetwork(),

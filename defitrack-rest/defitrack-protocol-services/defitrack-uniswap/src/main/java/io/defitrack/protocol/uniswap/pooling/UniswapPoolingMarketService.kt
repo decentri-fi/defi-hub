@@ -21,27 +21,13 @@ import kotlin.time.ExperimentalTime
 class UniswapPoolingMarketService(
     private val uniswapService: UniswapService,
     private val uniswapAPRService: UniswapAPRService,
-) : PoolingMarketService {
+) : PoolingMarketService() {
 
     companion object {
         private val logger = LoggerFactory.getLogger(this::class.java)
     }
 
-    @OptIn(ExperimentalTime::class)
-    private val cache = Cache.Builder().expireAfterWrite(
-        Duration.Companion.hours(4)
-    ).build<String, List<PoolingMarketElement>>()
-
-    @PostConstruct
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
-    fun intitialPopulation() {
-        logger.debug("Fetching pooling markets")
-        Executors.newSingleThreadExecutor().submit {
-            getPoolingMarkets()
-        }
-    }
-
-    fun fetchPoolingMarkets(): List<PoolingMarketElement> {
+    override fun fetchPoolingMarkets(): List<PoolingMarketElement> {
         return uniswapService.getPairs().mapNotNull {
             try {
                 PoolingMarketElement(
@@ -71,15 +57,6 @@ class UniswapPoolingMarketService(
             }
         }
     }
-
-    override fun getPoolingMarkets(): List<PoolingMarketElement> {
-        return runBlocking {
-            cache.get("all") {
-                fetchPoolingMarkets()
-            }
-        }
-    }
-
 
     override fun getProtocol(): Protocol {
         return Protocol.UNISWAP
