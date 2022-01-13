@@ -42,7 +42,6 @@ abstract class StakingMarketService : ProtocolService {
 
     abstract fun fetchStakingMarkets(): List<StakingMarketElement>
 
-
     fun Token.toStakedToken(): StakedToken {
         return StakedToken(
             name = this.name,
