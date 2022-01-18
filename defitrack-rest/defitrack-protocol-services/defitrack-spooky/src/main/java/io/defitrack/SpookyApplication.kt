@@ -8,8 +8,8 @@ import org.springframework.scheduling.annotation.EnableAsync
 @SpringBootApplication
 @EnableCaching
 @EnableAsync
-class SushiswapApplication
+class SpookyApplication
 
 fun main(args: Array<String>) {
-    runApplication<SushiswapApplication>(*args)
+    runApplication<SpookyApplication>(*args)
 }
