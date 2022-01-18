@@ -15,8 +15,6 @@ import io.defitrack.staking.domain.RewardToken
 import io.defitrack.staking.domain.StakedToken
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -45,7 +43,7 @@ class BeefyFantomStakingMarketService(
     private fun importVault(beefyVault: BeefyVaultContract): StakingMarketElement? {
         return try {
             val want = erC20Resource.getTokenInformation(getNetwork(), beefyVault.want)
-            logger.info("adding ${beefyVault.name} to beefy vault list")
+            logger.debug("adding ${beefyVault.name} to beefy vault list")
             StakingMarketElement(
                 id = beefyVault.vaultId,
                 network = getNetwork(),
@@ -78,7 +76,7 @@ class BeefyFantomStakingMarketService(
                 vaultType = "beefyVaultV6"
             )
         } catch (ex: Exception) {
-            logger.error("Error trying to fetch vault metadata", ex)
+            logger.error("Error trying to fetch vault metadata: ${ex.message}")
             null
         }
     }

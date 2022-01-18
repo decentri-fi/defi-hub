@@ -82,10 +82,10 @@ class BeefyPolygonStakingMarketService(
                 ),
                 vaultType = "beefyVaultV6"
             )
-            logger.info("adding ${element.id} to beefy vault list")
+            logger.debug("adding ${element.id} to beefy vault list")
             element
         } catch (ex: Exception) {
-            logger.error("Error trying to fetch vault metadata", ex)
+            logger.error("Error trying to fetch vault metadata: ${ex.message}")
             null
         }
     }

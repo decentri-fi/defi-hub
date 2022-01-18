@@ -83,7 +83,7 @@ class BeefyBscStakingMarketService(
                 vaultType = "beefyVaultV6"
             )
         } catch (ex: Exception) {
-            logger.error("Error trying to fetch vault metadata ${beefyVault.vaultId}", ex)
+            logger.error("Error trying to fetch vault metadata ${beefyVault.vaultId}: ${ex.message}")
             null
         }
     }
