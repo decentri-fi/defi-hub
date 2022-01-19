@@ -24,12 +24,11 @@ class DfynUserPoolingService(
     private val uniswapService: DfynService,
     private val abiService: ABIResource,
     private val polygonContractAccessor: PolygonContractAccessor,
-) : UserPoolingService {
+) : UserPoolingService() {
 
     val erc20ABI = abiService.getABI("general/ERC20.json")
 
-    @Cacheable(cacheNames = ["dfyn-lps"], key = "#address")
-    override fun userPoolings(address: String): List<PoolingElement> {
+    override fun fetchUserPoolings(address: String): List<PoolingElement> {
         val allPairs = uniswapService.getPairs()
         return polygonContractAccessor.readMultiCall(
             allPairs.map { token ->

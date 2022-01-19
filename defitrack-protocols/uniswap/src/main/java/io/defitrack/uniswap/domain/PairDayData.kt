@@ -1,4 +1,4 @@
-package io.defitrack.uniswap
+package io.defitrack.uniswap.domain
 
 import java.math.BigDecimal
 

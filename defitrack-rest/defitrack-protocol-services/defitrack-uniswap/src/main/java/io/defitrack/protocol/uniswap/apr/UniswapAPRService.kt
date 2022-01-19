@@ -1,18 +1,18 @@
 package io.defitrack.protocol.uniswap.apr
 
-import io.defitrack.uniswap.UniswapService
+import io.defitrack.uniswap.AbstractUniswapService
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.RoundingMode
 
 @Component
-class UniswapAPRService(private val uniswapService: UniswapService) {
+class UniswapAPRService(private val abstractUniswapService: AbstractUniswapService) {
 
     @Cacheable(cacheNames = ["uniswap-aprs"], key = "#address")
     fun getAPR(address: String): BigDecimal {
         try {
-            val pairData = uniswapService.getPairDayData(address)
+            val pairData = abstractUniswapService.getPairDayData(address)
             return if (pairData.size <= 1) {
                 BigDecimal.ZERO
             } else {
@@ -21,7 +21,7 @@ class UniswapAPRService(private val uniswapService: UniswapService) {
                 }.reduce { a, b -> a.plus(b) }
                     .times(BigDecimal.valueOf(0.003)).times(BigDecimal.valueOf(52))
                     .divide(
-                        uniswapService.getPairs().find {
+                        abstractUniswapService.getPairs().find {
                             it.id == address
                         }!!.reserveUSD,
                         18,

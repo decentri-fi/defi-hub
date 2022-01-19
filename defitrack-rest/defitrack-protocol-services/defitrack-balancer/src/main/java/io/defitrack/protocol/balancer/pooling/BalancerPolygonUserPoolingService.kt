@@ -12,9 +12,9 @@ import java.math.BigDecimal
 
 @Component
 class BalancerPolygonUserPoolingService(private val balancerPolygonService: BalancerPolygonService) :
-    UserPoolingService {
+    UserPoolingService() {
 
-    override fun userPoolings(address: String): List<PoolingElement> {
+    override fun fetchUserPoolings(address: String): List<PoolingElement> {
         val poolShares = balancerPolygonService.getBalances(address).filter {
             it.balance > BigDecimal.ZERO
         }

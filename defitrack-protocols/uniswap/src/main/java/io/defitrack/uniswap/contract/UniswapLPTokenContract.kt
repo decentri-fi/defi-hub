@@ -1,4 +1,4 @@
-package io.defitrack.uniswap
+package io.defitrack.uniswap.contract
 
 import io.defitrack.ethereumbased.contract.EvmContract
 import io.defitrack.ethereumbased.contract.EvmContractAccessor
@@ -7,7 +7,7 @@ import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
-class UniswapLPToken(
+class UniswapLPTokenContract(
     solidityBasedContractAccessor: EvmContractAccessor,
     abi: String,
     address: String

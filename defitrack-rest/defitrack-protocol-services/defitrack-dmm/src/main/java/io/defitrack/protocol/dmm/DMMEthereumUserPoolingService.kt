@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service
 @Service
 class DMMEthereumUserPoolingService(
     private val dmmEthereumService: DMMEthereumService
-) : UserPoolingService {
+) : UserPoolingService() {
 
-    override fun userPoolings(address: String): List<PoolingElement> {
+    override fun fetchUserPoolings(address: String): List<PoolingElement> {
         return dmmEthereumService.getUserPoolings(address).flatMap {
             it.liquidityPositions
         }.map {

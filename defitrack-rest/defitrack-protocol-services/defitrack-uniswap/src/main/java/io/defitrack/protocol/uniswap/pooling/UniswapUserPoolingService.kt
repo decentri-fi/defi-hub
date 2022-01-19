@@ -9,9 +9,8 @@ import io.defitrack.pool.UserPoolingService
 import io.defitrack.pool.domain.PoolingElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.staking.TokenType
-import io.defitrack.uniswap.UniswapLPToken
-import io.defitrack.uniswap.UniswapService
-import org.springframework.cache.annotation.Cacheable
+import io.defitrack.uniswap.AbstractUniswapService
+import io.defitrack.uniswap.contract.UniswapLPTokenContract
 import org.springframework.stereotype.Service
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.generated.Uint256
@@ -21,18 +20,17 @@ import java.math.RoundingMode
 
 @Service
 class UniswapUserPoolingService(
-    private val uniswapService: UniswapService,
+    private val abstractUniswapService: AbstractUniswapService,
     private val abiService: ABIResource,
     private val ethereumContractAccessor: EthereumContractAccessor,
-) : UserPoolingService {
+) : UserPoolingService() {
 
     val erc20ABI by lazy {
         abiService.getABI("general/ERC20.json")
     }
 
-    @Cacheable(cacheNames = ["uniswap-lps"], key = "#address")
-    override fun userPoolings(address: String): List<PoolingElement> {
-        val allPairs = uniswapService.getPairs()
+    override fun fetchUserPoolings(address: String): List<PoolingElement> {
+        val allPairs = abstractUniswapService.getPairs()
         return ethereumContractAccessor.readMultiCall(
             allPairs.map { token ->
                 MultiCallElement(
@@ -54,7 +52,7 @@ class UniswapUserPoolingService(
             val balance = item[0].value as BigInteger
 
             if (balance > BigInteger.ZERO) {
-                val token = UniswapLPToken(
+                val token = UniswapLPTokenContract(
                     ethereumContractAccessor,
                     abiService.getABI("uniswap/UniswapV2Pair.json"),
                     address = want.id

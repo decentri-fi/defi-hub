@@ -12,10 +12,9 @@ import java.math.BigDecimal
 
 @Component
 class BalancerArbitrumUserPoolingService(private val balancerArbitrumService: BalancerArbitrumService) :
-    UserPoolingService {
+    UserPoolingService() {
 
-    @Cacheable(cacheNames = ["balancer-lps"], key = "'arbitrum-' + #address")
-    override fun userPoolings(address: String): List<PoolingElement> {
+    override fun fetchUserPoolings(address: String): List<PoolingElement> {
         val poolShares = balancerArbitrumService.getBalances(address).filter {
             it.balance > BigDecimal.ZERO
         }

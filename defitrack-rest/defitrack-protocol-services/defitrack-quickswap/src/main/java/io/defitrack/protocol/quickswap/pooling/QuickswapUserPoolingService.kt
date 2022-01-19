@@ -23,13 +23,13 @@ class QuickswapUserPoolingService(
     private val quickswapService: QuickswapService,
     private val polygonContractAccessor: PolygonContractAccessor,
     private val abiservice: ABIResource
-) : UserPoolingService {
+) : UserPoolingService() {
 
     val erc20ABI by lazy {
         abiservice.getABI("general/ERC20.json")
     }
 
-    override fun userPoolings(address: String): List<PoolingElement> {
+    override fun fetchUserPoolings(address: String): List<PoolingElement> {
         val tokens = quickswapService.getPairs()
 
         return polygonContractAccessor.readMultiCall(

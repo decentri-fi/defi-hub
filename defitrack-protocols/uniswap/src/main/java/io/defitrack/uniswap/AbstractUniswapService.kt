@@ -3,15 +3,18 @@ package io.defitrack.uniswap
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.JsonParser
+import io.defitrack.common.network.Network
+import io.defitrack.uniswap.domain.PairDayData
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Component
+import io.defitrack.uniswap.domain.*
 
 @Component
-class UniswapService(
+abstract class AbstractUniswapService(
     private val objectMapper: ObjectMapper,
     private val client: HttpClient
 ) {
@@ -68,9 +71,12 @@ class UniswapService(
     }
 
     fun query(query: String): String = runBlocking {
-        client.request("https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2") {
+        client.request(getGraphUrl()) {
             method = HttpMethod.Post
             body = objectMapper.writeValueAsString(mapOf("query" to query))
         }
     }
+
+    abstract fun getGraphUrl(): String
+    abstract fun getNetwork(): Network
 }
