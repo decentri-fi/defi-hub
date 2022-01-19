@@ -1,4 +1,4 @@
-package io.defitrack.protocol.sushiswap.pooling
+package io.defitrack.protocol.sushiswap.pooling.polygon
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
@@ -11,15 +11,8 @@ import io.defitrack.staking.domain.RewardToken
 import io.defitrack.staking.domain.StakedToken
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
-import io.github.reactivecircus.cache4k.Cache
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
-import java.util.concurrent.Executors
-import javax.annotation.PostConstruct
-import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
 
 @Component
 class SushiswapPolygonStakingMinichefMarketService(

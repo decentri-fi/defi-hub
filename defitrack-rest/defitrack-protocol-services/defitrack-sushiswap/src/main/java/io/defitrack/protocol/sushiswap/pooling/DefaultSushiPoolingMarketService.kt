@@ -1,17 +1,13 @@
 package io.defitrack.protocol.sushiswap.pooling
 
-import io.defitrack.common.network.Network
 import io.defitrack.pool.PoolingMarketService
 import io.defitrack.pool.domain.PoolingMarketElement
 import io.defitrack.pool.domain.PoolingToken
-import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SushiswapService
 import io.defitrack.protocol.sushiswap.apr.SushiswapAPRService
-import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
-@Component
-class SushiswapPolygonPoolingMarketService(
+abstract class DefaultSushiPoolingMarketService(
     private val sushiServices: List<SushiswapService>,
     private val sushiAPRService: SushiswapAPRService,
 ) : PoolingMarketService() {
@@ -42,18 +38,10 @@ class SushiswapPolygonPoolingMarketService(
                         ),
                     ),
                     apr = sushiAPRService.getAPR(it.id, service.getNetwork()),
-                    id = "sushi-polygon-${it.id}",
+                    id = "sushi-${getNetwork().slug}-${it.id}",
                     marketSize = it.reserveUSD
                 )
                 element
             }
-    }
-
-    override fun getProtocol(): Protocol {
-        return Protocol.SUSHISWAP
-    }
-
-    override fun getNetwork(): Network {
-        return Network.POLYGON
     }
 }
