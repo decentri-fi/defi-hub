@@ -40,7 +40,7 @@ class UniswapEthereumPoolingMarketService(
                                 it.token1.id
                             ),
                         ),
-                        apr = uniswapAPRService.getAPR(it.id),
+                        apr = uniswapAPRService.getAPR(it.id, getNetwork()),
                         marketSize = it.reserveUSD
                     )
                 } catch (ex: Exception) {

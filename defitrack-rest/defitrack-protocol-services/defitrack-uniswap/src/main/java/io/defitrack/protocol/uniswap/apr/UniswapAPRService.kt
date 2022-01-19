@@ -1,5 +1,6 @@
 package io.defitrack.protocol.uniswap.apr
 
+import io.defitrack.common.network.Network
 import io.defitrack.uniswap.AbstractUniswapService
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Component
@@ -7,12 +8,13 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 @Component
-class UniswapAPRService(private val abstractUniswapService: AbstractUniswapService) {
+class UniswapAPRService(private val abstractUniswapService: List<AbstractUniswapService>) {
 
-    @Cacheable(cacheNames = ["uniswap-aprs"], key = "#address")
-    fun getAPR(address: String): BigDecimal {
+    @Cacheable(cacheNames = ["uniswap-aprs"], key = "#address-#network")
+    fun getAPR(address: String, network: Network): BigDecimal {
         try {
-            val pairData = abstractUniswapService.getPairDayData(address)
+            val pairData = abstractUniswapService.firstOrNull { it.getNetwork() == network }?.getPairDayData(address) ?: emptyList()
+
             return if (pairData.size <= 1) {
                 BigDecimal.ZERO
             } else {
@@ -21,12 +23,14 @@ class UniswapAPRService(private val abstractUniswapService: AbstractUniswapServi
                 }.reduce { a, b -> a.plus(b) }
                     .times(BigDecimal.valueOf(0.003)).times(BigDecimal.valueOf(52))
                     .divide(
-                        abstractUniswapService.getPairs().find {
+                        abstractUniswapService.firstOrNull {
+                                it.getNetwork() == network
+                        }?.getPairs()!!.find {
                             it.id == address
                         }!!.reserveUSD,
-                        18,
-                        RoundingMode.HALF_UP
-                    )
+                            18,
+                            RoundingMode.HALF_UP
+                            )
             }
         } catch (ex: Exception) {
             return BigDecimal.ZERO
