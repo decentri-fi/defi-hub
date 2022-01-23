@@ -1,19 +1,19 @@
 package io.defitrack.protocol.uniswap.apr
 
 import io.defitrack.common.network.Network
-import io.defitrack.uniswap.AbstractUniswapService
+import io.defitrack.uniswap.AbstractUniswapV2Service
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.RoundingMode
 
 @Component
-class UniswapAPRService(private val abstractUniswapService: List<AbstractUniswapService>) {
+class UniswapAPRService(private val abstractUniswapV2Service: List<AbstractUniswapV2Service>) {
 
     @Cacheable(cacheNames = ["uniswap-aprs"], key = "#address-#network")
     fun getAPR(address: String, network: Network): BigDecimal {
         try {
-            val pairData = abstractUniswapService.firstOrNull { it.getNetwork() == network }?.getPairDayData(address) ?: emptyList()
+            val pairData = abstractUniswapV2Service.firstOrNull { it.getNetwork() == network }?.getPairDayData(address) ?: emptyList()
 
             return if (pairData.size <= 1) {
                 BigDecimal.ZERO
@@ -23,7 +23,7 @@ class UniswapAPRService(private val abstractUniswapService: List<AbstractUniswap
                 }.reduce { a, b -> a.plus(b) }
                     .times(BigDecimal.valueOf(0.003)).times(BigDecimal.valueOf(52))
                     .divide(
-                        abstractUniswapService.firstOrNull {
+                        abstractUniswapV2Service.firstOrNull {
                                 it.getNetwork() == network
                         }?.getPairs()!!.find {
                             it.id == address

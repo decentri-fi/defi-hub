@@ -9,7 +9,7 @@ import io.defitrack.pool.UserPoolingService
 import io.defitrack.pool.domain.PoolingElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.staking.TokenType
-import io.defitrack.uniswap.AbstractUniswapService
+import io.defitrack.uniswap.AbstractUniswapV2Service
 import io.defitrack.uniswap.contract.UniswapLPTokenContract
 import org.springframework.stereotype.Service
 import org.web3j.abi.TypeReference
@@ -20,7 +20,7 @@ import java.math.RoundingMode
 
 @Service
 class UniswapUserPoolingService(
-    private val abstractUniswapService: AbstractUniswapService,
+    private val abstractUniswapV2Service: AbstractUniswapV2Service,
     private val abiService: ABIResource,
     private val ethereumContractAccessor: EthereumContractAccessor,
 ) : UserPoolingService() {
@@ -30,7 +30,7 @@ class UniswapUserPoolingService(
     }
 
     override fun fetchUserPoolings(address: String): List<PoolingElement> {
-        val allPairs = abstractUniswapService.getPairs()
+        val allPairs = abstractUniswapV2Service.getPairs()
         return ethereumContractAccessor.readMultiCall(
             allPairs.map { token ->
                 MultiCallElement(

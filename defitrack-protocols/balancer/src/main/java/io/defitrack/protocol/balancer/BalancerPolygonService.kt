@@ -9,6 +9,7 @@ import io.ktor.client.features.*
 import io.ktor.client.features.json.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import java.util.*
@@ -88,7 +89,7 @@ class BalancerPolygonService(
         }
     }
 
-    fun getBalances(address: String): List<PoolShare> = runBlocking {
+    fun getBalances(address: String): List<PoolShare> = runBlocking(Dispatchers.IO) {
         val query = """
             {
               poolShares(where: {userAddress: "${address.lowercase(Locale.getDefault())}"}) {

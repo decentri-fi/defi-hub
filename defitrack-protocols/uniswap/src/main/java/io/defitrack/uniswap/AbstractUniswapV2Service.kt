@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component
 import io.defitrack.uniswap.domain.*
 
 @Component
-abstract class AbstractUniswapService(
+abstract class AbstractUniswapV2Service(
     private val objectMapper: ObjectMapper,
     private val client: HttpClient
 ) {

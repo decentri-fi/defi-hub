@@ -6,16 +6,16 @@ import io.ktor.client.*
 import org.springframework.stereotype.Component
 
 @Component
-class EthereumUniswapService(
+class PolygonUniswapV2Service(
     objectMapper: ObjectMapper,
     httpClient: HttpClient
-) : AbstractUniswapService(objectMapper, httpClient) {
+) : AbstractUniswapV2Service(objectMapper, httpClient) {
 
     override fun getGraphUrl(): String {
-        return "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2"
+        return "https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v3-polygon"
     }
 
     override fun getNetwork(): Network {
-        return Network.ETHEREUM
+        return Network.POLYGON
     }
 }

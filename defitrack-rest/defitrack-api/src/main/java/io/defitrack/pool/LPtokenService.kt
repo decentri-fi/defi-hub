@@ -1,9 +1,12 @@
 package io.defitrack.pool
 
-import io.defitrack.pool.contract.LPTokenContract
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereumbased.contract.EvmContractAccessor
+import io.defitrack.pool.contract.LPTokenContract
+import io.github.reactivecircus.cache4k.Cache
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -13,20 +16,22 @@ class LPtokenService(
     private val contractAccessors: List<EvmContractAccessor>
 ) {
 
-    private val lpBuffer = mutableMapOf<String, LPTokenContract>()
+    private val cache = Cache.Builder().build<String, LPTokenContract>()
+
     val lpABI by lazy {
         abiService.getABI("uniswap/UniswapV2Pair.json")
     }
 
-
     fun getLP(network: Network, address: String): LPTokenContract {
         val key = "${network.name}-${address.lowercase(Locale.getDefault())}"
-        return lpBuffer.getOrPut(key) {
-            LPTokenContract(
-                getContractAccessor(network),
-                lpABI,
-                address = address
-            )
+        return runBlocking(Dispatchers.IO) {
+            cache.get(key) {
+                LPTokenContract(
+                    getContractAccessor(network),
+                    lpABI,
+                    address = address
+                )
+            }
         }
     }
 

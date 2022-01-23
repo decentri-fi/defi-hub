@@ -6,13 +6,12 @@ import io.defitrack.pool.domain.PoolingMarketElement
 import io.defitrack.pool.domain.PoolingToken
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.uniswap.apr.UniswapAPRService
-import io.defitrack.uniswap.AbstractUniswapService
-import org.slf4j.LoggerFactory
+import io.defitrack.uniswap.AbstractUniswapV2Service
 import org.springframework.stereotype.Component
 
 @Component
 class UniswapEthereumPoolingMarketService(
-    private val uniswapServices: List<AbstractUniswapService>,
+    private val uniswapServices: List<AbstractUniswapV2Service>,
     private val uniswapAPRService: UniswapAPRService,
 ) : PoolingMarketService() {
 
