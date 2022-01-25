@@ -14,6 +14,7 @@ enum class Protocol(
     BEEFY("beefy.png", "beefy"),
     QUICKSWAP("quickswap.png", "quickswap"),
     POLYCAT("polycat.webp", "polycat"),
+    HOP("hop.png", "hop"),
     DINOSWAP("dinoswap.png", "dinoswap"),
     ADAMANT("adamant.png", "adamant"),
     UNISWAP("uniswap.png", "uniswap"),
