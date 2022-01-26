@@ -24,7 +24,8 @@ class PriceCalculator(
     val synonyms = mapOf(
         "WETH" to "ETH",
         "WMATIC" to "MATIC",
-        "miMATIC" to "MAI"
+        "miMATIC" to "MAI",
+        "WBTC" to "BTC"
     )
 
     fun calculatePrice(
