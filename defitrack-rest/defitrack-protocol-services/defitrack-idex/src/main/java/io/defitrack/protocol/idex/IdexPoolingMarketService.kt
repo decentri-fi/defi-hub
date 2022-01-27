@@ -20,7 +20,7 @@ class IdexPoolingMarketService(
         private val logger = LoggerFactory.getLogger(this::class.java)
     }
 
-    override fun fetchPoolingMarkets() = idexService.getLPs().mapNotNull {
+    override suspend fun fetchPoolingMarkets() = idexService.getLPs().mapNotNull {
 
         if (it.reserveUsd > BigDecimal.valueOf(10000)) {
             try {

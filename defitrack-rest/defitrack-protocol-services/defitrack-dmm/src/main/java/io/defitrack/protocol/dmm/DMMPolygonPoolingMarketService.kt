@@ -14,7 +14,7 @@ class DMMPolygonPoolingMarketService(
     private val dmmaprService: DMMAPRService
 ) : PoolingMarketService() {
 
-    override fun fetchPoolingMarkets(): List<PoolingMarketElement> {
+    override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> {
         return dmmPolygonService.getPoolingMarkets().map {
             PoolingMarketElement(
                 id = "dmm-polygon-${it.id}",

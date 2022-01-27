@@ -15,7 +15,7 @@ class UniswapPolygonPoolingMarketService(
     private val uniswapAPRService: UniswapAPRService,
 ) : PoolingMarketService() {
 
-    override fun fetchPoolingMarkets(): List<PoolingMarketElement> {
+    override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> {
         return uniswapServices.filter {
             it.getNetwork() == getNetwork()
         }.flatMap {

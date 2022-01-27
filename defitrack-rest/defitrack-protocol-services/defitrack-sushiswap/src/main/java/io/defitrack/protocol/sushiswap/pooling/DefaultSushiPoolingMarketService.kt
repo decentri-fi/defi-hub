@@ -12,7 +12,7 @@ abstract class DefaultSushiPoolingMarketService(
     private val sushiAPRService: SushiswapAPRService,
 ) : PoolingMarketService() {
 
-    override fun fetchPoolingMarkets() = sushiServices.filter {
+    override suspend fun fetchPoolingMarkets() = sushiServices.filter {
         it.getNetwork() == getNetwork()
     }.flatMap { service ->
         service.getPairs()

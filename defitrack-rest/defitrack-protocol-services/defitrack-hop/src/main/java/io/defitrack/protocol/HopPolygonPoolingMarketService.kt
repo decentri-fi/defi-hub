@@ -26,7 +26,7 @@ class HopPolygonPoolingMarketService(
 ) : PoolingMarketService() {
 
 
-    override fun fetchPoolingMarkets(): List<PoolingMarketElement> {
+    override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> {
         return hopService.getLps(getNetwork()).map { hopLpToken ->
 
             val contract = HopLpTokenContract(

@@ -24,7 +24,7 @@ class QuickswapPoolingMarketService(
     }
 
 
-    override fun fetchPoolingMarkets() = quickswapService.getPairs()
+    override suspend fun fetchPoolingMarkets() = quickswapService.getPairs()
         .filter {
             it.reserveUSD > BigDecimal.valueOf(100000)
         }.map {

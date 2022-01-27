@@ -23,7 +23,7 @@ class SpiritFantomPoolingMarketService(
     private val spiritswapAPRService: SpiritswapAPRService
 ) : PoolingMarketService() {
 
-    override fun fetchPoolingMarkets() = spiritswapServices.filter {
+    override suspend fun fetchPoolingMarkets() = spiritswapServices.filter {
         it.getNetwork() == getNetwork()
     }.flatMap { service ->
         service.getPairs()

@@ -16,7 +16,7 @@ class DfynPoolingMarketService(
     private val dfynAPRService: DfynAPRService,
 ) : PoolingMarketService() {
 
-    override fun fetchPoolingMarkets(): List<PoolingMarketElement> {
+    override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> {
         return dfynService.getPairs().mapNotNull {
             if (it.reserveUSD > BigDecimal.valueOf(100000)) {
                 PoolingMarketElement(

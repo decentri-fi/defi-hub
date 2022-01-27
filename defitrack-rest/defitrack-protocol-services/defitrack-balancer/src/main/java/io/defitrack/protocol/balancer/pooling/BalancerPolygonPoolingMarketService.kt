@@ -12,7 +12,7 @@ import java.math.BigDecimal
 class BalancerPolygonPoolingMarketService(private val balancerPolygonService: BalancerPolygonService) :
     PoolingMarketService() {
 
-    override fun fetchPoolingMarkets(): List<PoolingMarketElement> {
+    override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> {
         return balancerPolygonService.getPools().mapNotNull {
             if (it.totalLiquidity > BigDecimal.valueOf(100000)) {
                 PoolingMarketElement(
