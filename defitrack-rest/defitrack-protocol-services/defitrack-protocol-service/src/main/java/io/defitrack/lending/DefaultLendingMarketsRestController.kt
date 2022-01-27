@@ -1,12 +1,12 @@
 package io.defitrack.lending
 
+import io.defitrack.common.network.Network
 import io.defitrack.lending.domain.LendingMarketElement
 import io.defitrack.lending.vo.LendingMarketElementToken
 import io.defitrack.lending.vo.LendingMarketElementVO
 import io.defitrack.logo.LogoService
 import io.defitrack.network.toVO
 import io.defitrack.protocol.toVO
-import io.defitrack.common.network.Network
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -19,6 +19,15 @@ class DefaultLendingMarketsRestController(
     private val lendingMarketServices: List<LendingMarketService>,
     private val logoService: LogoService
 ) {
+
+    @GetMapping(value = ["/all-markets"])
+    fun getAllMarkets(): List<LendingMarketElementVO> {
+        return lendingMarketServices.flatMap {
+            it.getLendingMarkets()
+        }.map {
+            it.toVO()
+        }
+    }
 
     @GetMapping(value = ["/markets"], params = ["token"])
     fun searchByToken(

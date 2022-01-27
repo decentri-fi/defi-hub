@@ -29,15 +29,27 @@ class CompoundTokenContract(
         )[0].value as String
     }
 
+    val cash: BigInteger by lazy {
+        read(
+            "getCash"
+        )[0].value as BigInteger
+    }
+
+    val totalBorrows: BigInteger by lazy {
+        read(
+            "totalBorrows"
+        )[0].value as BigInteger
+    }
+
+
 
     val underlyingAddress: String? by lazy {
         try {
-
             read(
                 "underlying"
             )[0].value as String
         } catch (ex: Exception) {
-            null
+            "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
         }
     }
 

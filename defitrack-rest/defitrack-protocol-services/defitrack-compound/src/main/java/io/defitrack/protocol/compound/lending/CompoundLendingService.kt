@@ -1,15 +1,15 @@
 package io.defitrack.protocol.compound.lending
 
-import io.defitrack.lending.LendingService
-import io.defitrack.lending.domain.LendingElement
-import io.defitrack.token.ERC20Resource
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereum.config.EthereumContractAccessor
+import io.defitrack.lending.LendingService
+import io.defitrack.lending.domain.LendingElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.compound.CompoundComptrollerContract
 import io.defitrack.protocol.compound.CompoundService
 import io.defitrack.protocol.compound.CompoundTokenContract
+import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -18,7 +18,7 @@ import java.util.*
 
 @Service
 class CompoundLendingService(
-    private val compoundContractProvider: CompoundService,
+    private val compoundService: CompoundService,
     private val abiResource: ABIResource,
     private val ethereumContractAccessor: EthereumContractAccessor,
     private val erC20Service: ERC20Resource
@@ -86,7 +86,7 @@ class CompoundLendingService(
     private fun getTokenContracts() = CompoundComptrollerContract(
         ethereumContractAccessor,
         comptrollerABI,
-        compoundContractProvider.getComptroller()
+        compoundService.getComptroller()
     ).getMarkets().map {
         CompoundTokenContract(
             ethereumContractAccessor,
