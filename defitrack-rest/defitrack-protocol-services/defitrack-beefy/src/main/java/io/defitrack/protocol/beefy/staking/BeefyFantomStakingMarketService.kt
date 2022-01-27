@@ -33,7 +33,6 @@ class BeefyFantomStakingMarketService(
         abiResource.getABI("beefy/VaultV6.json")
     }
 
-
     override fun fetchStakingMarkets(): List<StakingMarketElement> {
         return beefyService.beefyFantomVaults
             .map(this@BeefyFantomStakingMarketService::beefyVaultToVaultContract)
