@@ -44,7 +44,6 @@ class BeefyArbitrumStakingMarketService(
     private fun toStakingMarketElement(beefyVault: BeefyVaultContract): StakingMarketElement? {
         return try {
             val want = erC20Resource.getTokenInformation(getNetwork(), beefyVault.want)
-            logger.debug("adding ${beefyVault.name} to beefy vault list")
             StakingMarketElement(
                 id = beefyVault.vaultId,
                 network = getNetwork(),
@@ -86,7 +85,6 @@ class BeefyArbitrumStakingMarketService(
         return try {
             (beefyAPYService.getAPYS().getOrDefault(beefyVault.vaultId, null)?.toDouble()) ?: 0.0
         } catch (ex: Exception) {
-            ex.printStackTrace()
             0.0
         }
     }
