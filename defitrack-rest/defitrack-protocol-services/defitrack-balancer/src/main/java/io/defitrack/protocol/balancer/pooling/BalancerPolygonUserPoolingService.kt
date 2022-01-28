@@ -14,7 +14,7 @@ import java.math.BigDecimal
 class BalancerPolygonUserPoolingService(private val balancerPolygonService: BalancerPolygonService) :
     UserPoolingService() {
 
-    override fun fetchUserPoolings(address: String): List<PoolingElement> {
+    override suspend fun fetchUserPoolings(address: String): List<PoolingElement> {
         val poolShares = balancerPolygonService.getBalances(address).filter {
             it.balance > BigDecimal.ZERO
         }

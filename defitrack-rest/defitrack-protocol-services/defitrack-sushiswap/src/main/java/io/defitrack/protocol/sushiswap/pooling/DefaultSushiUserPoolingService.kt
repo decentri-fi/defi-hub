@@ -10,7 +10,7 @@ abstract class DefaultSushiUserPoolingService(
     private val sushiServices: List<SushiswapService>,
 ) : UserPoolingService() {
 
-    override fun fetchUserPoolings(address: String): List<PoolingElement> {
+    override suspend fun fetchUserPoolings(address: String): List<PoolingElement> {
         return sushiServices.filter {
             it.getNetwork() == getNetwork()
         }.flatMap { service ->

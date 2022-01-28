@@ -28,7 +28,7 @@ class DfynUserPoolingService(
 
     val erc20ABI = abiService.getABI("general/ERC20.json")
 
-    override fun fetchUserPoolings(address: String): List<PoolingElement> {
+    override suspend fun fetchUserPoolings(address: String): List<PoolingElement> {
         val allPairs = uniswapService.getPairs()
         return polygonContractAccessor.readMultiCall(
             allPairs.map { token ->

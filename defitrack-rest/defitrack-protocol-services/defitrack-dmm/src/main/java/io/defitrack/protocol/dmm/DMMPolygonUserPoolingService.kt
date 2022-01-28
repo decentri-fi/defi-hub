@@ -12,7 +12,7 @@ class DMMPolygonUserPoolingService(
     private val dmmPolygonService: DMMPolygonService,
 ) : UserPoolingService() {
 
-    override fun fetchUserPoolings(address: String): List<PoolingElement> {
+    override suspend fun fetchUserPoolings(address: String): List<PoolingElement> {
         return dmmPolygonService.getUserPoolings(address).flatMap {
             it.liquidityPositions
         }.map {

@@ -29,7 +29,7 @@ class UniswapUserPoolingService(
         abiService.getABI("general/ERC20.json")
     }
 
-    override fun fetchUserPoolings(address: String): List<PoolingElement> {
+    override suspend fun fetchUserPoolings(address: String): List<PoolingElement> {
         val allPairs = abstractUniswapV2Service.getPairs()
         return ethereumContractAccessor.readMultiCall(
             allPairs.map { token ->

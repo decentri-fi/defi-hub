@@ -29,7 +29,7 @@ class QuickswapUserPoolingService(
         abiservice.getABI("general/ERC20.json")
     }
 
-    override fun fetchUserPoolings(address: String): List<PoolingElement> {
+    override suspend fun fetchUserPoolings(address: String): List<PoolingElement> {
         val tokens = quickswapService.getPairs()
 
         return polygonContractAccessor.readMultiCall(

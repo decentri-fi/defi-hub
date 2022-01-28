@@ -12,7 +12,7 @@ class DMMEthereumUserPoolingService(
     private val dmmEthereumService: DMMEthereumService
 ) : UserPoolingService() {
 
-    override fun fetchUserPoolings(address: String): List<PoolingElement> {
+    override suspend fun fetchUserPoolings(address: String): List<PoolingElement> {
         return dmmEthereumService.getUserPoolings(address).flatMap {
             it.liquidityPositions
         }.map {
