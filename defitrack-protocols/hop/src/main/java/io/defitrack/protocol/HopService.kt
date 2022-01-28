@@ -14,7 +14,6 @@ import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
-import java.math.BigInteger
 
 @Component
 class HopService(
@@ -26,36 +25,11 @@ class HopService(
     val addressesUrl = "https://raw.githubusercontent.com/defitrack/data/master/protocols/hop/addresses.json";
 
     val lpCache = Cache.Builder().build<Network, List<HopLpToken>>()
-    val tvlCache = Cache.Builder().build<Network, List<Tvl>>()
 
-    private fun getTvls(network: Network): List<Tvl> {
-        return runBlocking(Dispatchers.IO) {
-            tvlCache.get(network) {
-                val query = """
-            {
-                tvls {
-                  id
-                  amount
-                  token
-                }
-            }
-        """.trimIndent()
-                val endpoint = getGraph(network)
-                val response = query(endpoint, query)
-                val poolSharesAsString =
-                    JsonParser.parseString(response).asJsonObject["data"].asJsonObject["tvls"].toString()
-                return@get objectMapper.readValue(poolSharesAsString,
-                    object : TypeReference<List<Tvl>>() {
-
-                    })
-            }
-        }
-    }
-
-    fun getTvl(tokenName: String, network: Network): BigInteger {
-        return getTvls(network).firstOrNull {
-            convertTokenName(tokenName) == it.token
-        }?.amount ?: BigInteger.ZERO
+    fun getStakingRewards(network: Network): List<String> {
+        return abstractHopServices.filter {
+            it.getNetwork() == network
+        }.firstOrNull()?.getStakingRewards() ?: emptyList()
     }
 
     fun getDailyVolumes(tokenName: String, network: Network): List<DailyVolume> {

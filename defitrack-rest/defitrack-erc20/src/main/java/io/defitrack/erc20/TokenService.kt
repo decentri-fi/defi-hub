@@ -37,6 +37,9 @@ class TokenService(
         symbol == "DFYNLP" -> {
             TokenType.DFYN
         }
+        isHopLp(symbol) -> {
+
+        }
         isKyberDMMLP(symbol) -> {
             TokenType.KYBER
         }
@@ -69,6 +72,9 @@ class TokenService(
                 isKyberDMMLP(token.symbol) -> {
                     fromLP(Protocol.DMM, network, token)
                 }
+                isHopLp(token.symbol) -> {
+                    fromLP(Protocol.HOP, network, token)
+                }
                 else -> {
                     Token(
                         name = token.name,
@@ -87,6 +93,10 @@ class TokenService(
 
     private fun isKyberDMMLP(symbol: String): Boolean {
         return symbol.startsWith("DMM-LP")
+    }
+
+    private fun isHopLp(symbol: String): Boolean {
+        return symbol.startsWith("HOP-LP")
     }
 
     fun fromLP(protocol: Protocol, network: Network, erc20: ERC20Information): Token {
