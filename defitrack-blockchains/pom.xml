@@ -22,5 +22,6 @@
         <module>arbitrum</module>
         <module>avalanche</module>
         <module>fantom</module>
+        <module>optimism</module>
     </modules>
 </project>

@@ -2,6 +2,7 @@ package io.defitrack.common.network
 
 enum class Network(val logo: String, val chainId: Int, val slug: String) {
     ETHEREUM("ethereum.png", 1, "ethereum"),
+    OPTIMISM("optimism.png", 10, "optimism"),
     ARBITRUM("arbitrum.png", 42161, "arbitrum"),
     FANTOM("fantom.png", 250, "fantom"),
     AVALANCHE("avalanche.png", 43114, "avalanchex"),
