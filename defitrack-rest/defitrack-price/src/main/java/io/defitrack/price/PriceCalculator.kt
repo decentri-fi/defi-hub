@@ -7,6 +7,7 @@ import io.defitrack.protocol.balancer.BalancerPolygonService
 import io.defitrack.protocol.staking.Token
 import io.defitrack.protocol.staking.TokenType
 import io.defitrack.token.ERC20Resource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -16,7 +17,8 @@ import java.math.RoundingMode
 @Service
 class PriceCalculator(
     private val erc20Service: ERC20Resource,
-    private val priceRepository: BeefyPricesService,
+    private val beefyPriceService: BeefyPricesService,
+    private val coinGeckoPriceService: CoinGeckoPriceService,
     private val balancerTokenService: BalancerPolygonService,
     private val externalPriceServices: List<ExternalPriceService>
 ) {
@@ -104,11 +106,13 @@ class PriceCalculator(
         return amount.times(tokenPrice)
     }
 
-    fun getPrice(name: String): BigDecimal {
+    fun getPrice(symbol: String): BigDecimal {
         return externalPriceServices.find {
-            it.appliesTo(name)
-        }?.getPrice() ?: priceRepository.getPrices()
-            .getOrDefault(synonyms.getOrDefault(name.uppercase(), name.uppercase()), BigDecimal.ZERO)
+            it.appliesTo(symbol)
+        }?.getPrice() ?: beefyPriceService.getPrices()
+            .getOrDefault(synonyms.getOrDefault(symbol.uppercase(), symbol.uppercase()), null) ?: runBlocking(
+            Dispatchers.IO
+        ) { coinGeckoPriceService.getPrice(symbol) } ?: BigDecimal.ZERO
     }
 
     fun calculateLPWorth(
