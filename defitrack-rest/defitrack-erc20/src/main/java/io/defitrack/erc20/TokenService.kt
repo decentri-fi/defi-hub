@@ -38,7 +38,7 @@ class TokenService(
             TokenType.DFYN
         }
         isHopLp(symbol) -> {
-
+            TokenType.HOP
         }
         isKyberDMMLP(symbol) -> {
             TokenType.KYBER
