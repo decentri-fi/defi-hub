@@ -1,15 +1,15 @@
-package io.defitrack.crv.dto
+package io.defitrack.protocol.crv.dto
 
 import java.math.BigDecimal
 import java.math.BigInteger
 
 class Pool(
+    val fee: BigDecimal,
     val id: String,
     val name: String,
     val swapAddress: String,
     val virtualPrice: String,
     val lpToken: LpToken,
-    val underlyingCount: BigInteger,
     val coins: List<Coin>
 )
 
@@ -23,8 +23,6 @@ class LpToken(
 
 class Coin(
     val id: String,
-    val index: Int,
-    val token: Token,
     val underlying: UnderlyingCoin
 )
 

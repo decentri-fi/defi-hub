@@ -3,8 +3,8 @@ package io.defitrack.protocol.crv
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.JsonParser
-import io.defitrack.crv.dto.Gauge
-import io.defitrack.crv.dto.Pool
+import io.defitrack.protocol.crv.dto.Gauge
+import io.defitrack.protocol.crv.dto.Pool
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -18,12 +18,12 @@ class CurveEthereumService(
     private val client: HttpClient
 ) {
 
-    @Cacheable(value = ["curve-pools"], key = "'all'")
     fun getPools() = runBlocking {
         val query = """
             {
             	pools {
                 id
+                fee
                 name
                 swapAddress
                 virtualPrice

@@ -1,4 +1,4 @@
-package io.defitrack.crv.dto
+package io.defitrack.protocol.crv.dto
 
 class Gauge(
     val address: String,
