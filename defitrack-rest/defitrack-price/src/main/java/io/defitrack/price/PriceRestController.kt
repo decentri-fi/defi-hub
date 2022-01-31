@@ -20,7 +20,7 @@ class PriceRestController(
 
     @GetMapping("/{tokenName}")
     fun getPriceByName(@PathVariable("tokenName") tokenName: String): BigDecimal {
-        return getPrices()[tokenName] ?: BigDecimal.ZERO
+        return priceCalculator.getPrice(tokenName)
     }
 
     @PostMapping

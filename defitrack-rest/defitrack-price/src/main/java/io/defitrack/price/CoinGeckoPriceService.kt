@@ -1,5 +1,7 @@
 package io.defitrack.price
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.JsonParser
 import io.defitrack.common.network.Network
 import io.defitrack.price.coingecko.CoingeckoToken
@@ -16,7 +18,10 @@ import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
 @Service
-class CoinGeckoPriceService(private val httpClient: HttpClient) {
+class CoinGeckoPriceService(
+    private val httpClient: HttpClient,
+    private val objectMapper: ObjectMapper
+) {
 
     companion object {
         val coinlistLocation = "https://raw.githubusercontent.com/defitrack/data/master/coingecko/coins.json"
@@ -35,7 +40,10 @@ class CoinGeckoPriceService(private val httpClient: HttpClient) {
 
     suspend fun getCoingeckoTokens(): Set<CoingeckoToken> {
         return tokenCache.get("all") {
-            httpClient.get(coinlistLocation)
+            val response: String = httpClient.get(coinlistLocation)
+            objectMapper.readValue(response, object : TypeReference<Set<CoingeckoToken>>() {
+
+            })
         }
     }
 
