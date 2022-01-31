@@ -58,7 +58,7 @@ class TokenService(
                     fromLP(Protocol.SUSHISWAP, network, token)
                 }
                 (token.symbol) == "UNI-V2" -> {
-                    fromLP(if (network == Network.POLYGON) Protocol.QUICKSWAP else Protocol.QUICKSWAP, network, token)
+                    fromLP(if (network == Network.POLYGON) Protocol.QUICKSWAP else Protocol.UNISWAP, network, token)
                 }
                 (token.symbol) == "spLP" -> {
                     fromLP(Protocol.SPOOKY, network, token)
