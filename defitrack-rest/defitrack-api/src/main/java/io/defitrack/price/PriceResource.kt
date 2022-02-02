@@ -8,8 +8,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
-import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
+import kotlin.time.Duration.Companion.minutes
 
 @Component
 class PriceResource(
@@ -21,18 +20,17 @@ class PriceResource(
         private val logger = LoggerFactory.getLogger(this::class.java)
     }
 
-    @OptIn(ExperimentalTime::class)
     val cache = Cache.Builder()
-        .expireAfterWrite(Duration.Companion.minutes(10))
+        .expireAfterWrite(10.minutes)
         .build<String, BigDecimal>()
 
-    fun getPrice(tokenName: String): BigDecimal {
+    fun getPrice(symbol: String): BigDecimal {
         return runBlocking {
-            cache.get(tokenName) {
+            cache.get(symbol) {
                 try {
-                    client.get("$priceResourceLocation/$tokenName")
+                    client.get("$priceResourceLocation/$symbol")
                 } catch (ex: Exception) {
-                    logger.error("unable to fetch price for $tokenName", ex)
+                    logger.error("unable to fetch price for $symbol", ex)
                     BigDecimal.ZERO
                 }
             }

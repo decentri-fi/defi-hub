@@ -5,18 +5,7 @@ import java.math.BigDecimal
 
 @RestController
 @RequestMapping("/")
-class PriceRestController(
-    private val beefyPricesService: BeefyPricesService,
-    private val priceCalculator: PriceCalculator,
-    private val externalPriceServices: List<ExternalPriceService>
-) {
-
-    @GetMapping
-    fun getPrices(): Map<String, BigDecimal> {
-        return beefyPricesService.getPrices() + externalPriceServices.associate {
-            it.getOracleName().uppercase() to it.getPrice()
-        }
-    }
+class PriceRestController(private val priceCalculator: PriceCalculator) {
 
     @GetMapping("/{tokenName}")
     fun getPriceByName(@PathVariable("tokenName") tokenName: String): BigDecimal {
