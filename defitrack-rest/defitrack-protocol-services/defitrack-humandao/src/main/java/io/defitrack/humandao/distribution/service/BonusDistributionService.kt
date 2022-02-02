@@ -12,7 +12,6 @@ import io.defitrack.polygon.config.PolygonMumbaiContractAccessor
 import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.runBlocking
-import org.bouncycastle.util.encoders.Hex
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.BigInteger
