@@ -56,6 +56,7 @@ class AaveMainnetService(
                   decimals
                   liquidityRate
                   variableBorrowRate
+                  totalLiquidity
               }
             }
         """.trimIndent()

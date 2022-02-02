@@ -55,6 +55,7 @@ class AavePolygonService(
                   decimals
                   liquidityRate
                   variableBorrowRate
+                  totalLiquidity
               }
             }
         """.trimIndent()
