@@ -19,15 +19,7 @@ class MiniChefV2Contract(
 
 
     fun accSushiPerShare(poolIndex: Int): BigInteger {
-        return read(
-            "poolInfo",
-            inputs = listOf(poolIndex.toBigInteger().toUint256()),
-            outputs = listOf(
-                TypeReference.create(Uint128::class.java),
-                TypeReference.create(Uint64::class.java),
-                TypeReference.create(Uint64::class.java),
-            )
-        )[0].value as BigInteger
+        return poolInfos[poolIndex].accSushiPerShare
     }
 
     val poolInfos: List<MinichefPoolInfo> by lazy {
