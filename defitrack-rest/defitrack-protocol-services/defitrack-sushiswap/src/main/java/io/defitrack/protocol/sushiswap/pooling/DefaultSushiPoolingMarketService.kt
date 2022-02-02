@@ -37,7 +37,7 @@ abstract class DefaultSushiPoolingMarketService(
                             it.token1.id
                         ),
                     ),
-                    apr = sushiAPRService.getAPR(it.id, service.getNetwork()),
+                    apr = sushiAPRService.getPoolingAPR(it.id, service.getNetwork()),
                     id = "sushi-${getNetwork().slug}-${it.id}",
                     marketSize = it.reserveUSD
                 )

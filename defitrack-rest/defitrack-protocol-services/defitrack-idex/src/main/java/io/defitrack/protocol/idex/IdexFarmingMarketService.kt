@@ -37,7 +37,7 @@ class IdexFarmingMarketService(
         abiResource.getABI("idex/IdexFarm.json")
     }
 
-    override fun fetchStakingMarkets(): List<StakingMarketElement> {
+    override suspend fun fetchStakingMarkets(): List<StakingMarketElement> {
         return idexService.idexFarm().map {
             IdexFarmContract(
                 polygonContractAccessor,

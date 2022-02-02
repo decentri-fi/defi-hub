@@ -12,15 +12,15 @@ import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import java.util.concurrent.Executors
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.ExperimentalTime
 
 abstract class StakingMarketService : ProtocolService {
 
     val logger = LoggerFactory.getLogger(this.javaClass)
 
-    @OptIn(ExperimentalTime::class)
     val cache =
-        Cache.Builder().expireAfterWrite(Duration.Companion.hours(4)).build<String, List<StakingMarketElement>>()
+        Cache.Builder().expireAfterWrite(4.hours).build<String, List<StakingMarketElement>>()
 
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
     fun init() {
@@ -43,7 +43,7 @@ abstract class StakingMarketService : ProtocolService {
         }
     }
 
-    abstract fun fetchStakingMarkets(): List<StakingMarketElement>
+    abstract suspend fun fetchStakingMarkets(): List<StakingMarketElement>
 
     fun Token.toStakedToken(): StakedToken {
         return StakedToken(

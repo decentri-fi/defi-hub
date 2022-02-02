@@ -26,7 +26,7 @@ class DinoswapStakingMarketService(
         abiResource.getABI("dinoswap/FossilFarms.json")
     }
 
-    override fun fetchStakingMarkets(): List<StakingMarketElement> {
+    override suspend fun fetchStakingMarkets(): List<StakingMarketElement> {
         return dinoswapService.getDinoFossilFarms().map {
             DinoswapFossilFarmsContract(
                 polygonContractAccessor,

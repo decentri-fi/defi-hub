@@ -37,7 +37,7 @@ class BeefyPolygonStakingMarketService(
         abiResource.getABI("beefy/VaultV6.json")
     }
 
-    override fun fetchStakingMarkets(): List<StakingMarketElement> {
+    override suspend fun fetchStakingMarkets(): List<StakingMarketElement> {
         val vaultContracts = beefyPolygonService.beefyPolygonVaults
             .map(::beefyVaultToVaultContract)
 

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class SushiswapEthereumService(objectMapper: ObjectMapper,
-private val client: HttpClient
+client: HttpClient
 ) : SushiswapService {
 
     private val sushiswapService = SushiswapGraphGateway(

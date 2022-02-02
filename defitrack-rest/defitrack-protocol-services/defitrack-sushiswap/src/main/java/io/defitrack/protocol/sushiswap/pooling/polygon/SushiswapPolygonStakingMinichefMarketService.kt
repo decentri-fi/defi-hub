@@ -6,26 +6,27 @@ import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SushiPolygonService
 import io.defitrack.protocol.reward.MiniChefV2Contract
+import io.defitrack.protocol.sushiswap.apr.SushiswapAPRService
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.RewardToken
 import io.defitrack.staking.domain.StakedToken
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Component
-import java.math.BigDecimal
 
 @Component
 class SushiswapPolygonStakingMinichefMarketService(
     private val abiResource: ABIResource,
     private val erC20Resource: ERC20Resource,
     private val polygonContractAccessor: PolygonContractAccessor,
+    private val sushiswapAPRService: SushiswapAPRService
 ) : StakingMarketService() {
 
     val minichefABI by lazy {
         abiResource.getABI("sushi/MiniChefV2.json")
     }
 
-    override fun fetchStakingMarkets(): List<StakingMarketElement> {
+    override suspend fun fetchStakingMarkets(): List<StakingMarketElement> {
         return SushiPolygonService.getMiniChefs().map {
             MiniChefV2Contract(
                 polygonContractAccessor,
@@ -47,14 +48,15 @@ class SushiswapPolygonStakingMinichefMarketService(
         return Network.POLYGON
     }
 
-    private fun toStakingMarketElement(
+    private suspend fun toStakingMarketElement(
         chef: MiniChefV2Contract,
         poolId: Int
     ): StakingMarketElement {
-        val rewardPerBlock = chef.rewardPerBlock.toBigDecimal().times(BigDecimal(43200)).times(BigDecimal(365))
         val stakedtoken =
             erC20Resource.getTokenInformation(getNetwork(), chef.getLpTokenForPoolId(poolId))
         val rewardToken = erC20Resource.getTokenInformation(getNetwork(), chef.rewardToken)
+        val rate = sushiswapAPRService.getStakingAPR(chef, poolId).toDouble()
+        println("rate: $rate")
         return StakingMarketElement(
             id = "sushi-${chef.address}-${poolId}",
             network = getNetwork(),
@@ -76,7 +78,7 @@ class SushiswapPolygonStakingMinichefMarketService(
             contractAddress = chef.address,
             vaultType = "sushi-minichefV2",
             marketSize = 0.0,
-            rate = 0.0
+            rate = rate
         )
     }
 }

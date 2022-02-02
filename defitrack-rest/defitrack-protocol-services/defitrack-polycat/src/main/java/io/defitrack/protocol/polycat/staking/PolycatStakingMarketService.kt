@@ -26,7 +26,7 @@ class PolycatStakingMarketService(
         abiResource.getABI("polycat/MasterChef.json")
     }
 
-    override fun fetchStakingMarkets(): List<StakingMarketElement> {
+    override suspend fun fetchStakingMarkets(): List<StakingMarketElement> {
         return polycatService.getPolycatFarms().map {
             PolycatMasterChefContract(
                 polygonContractAccessor,

@@ -33,7 +33,7 @@ class BeefyArbitrumStakingMarketService(
         abiResource.getABI("beefy/VaultV6.json")
     }
 
-    override fun fetchStakingMarkets(): List<StakingMarketElement> {
+    override suspend fun fetchStakingMarkets(): List<StakingMarketElement> {
         return beefyService.beefyArbitrumVaults
             .map(this::beefyVaultToVaultContract)
             .mapNotNull {

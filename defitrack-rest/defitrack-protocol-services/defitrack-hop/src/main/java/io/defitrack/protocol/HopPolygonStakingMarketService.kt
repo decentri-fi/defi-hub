@@ -21,7 +21,7 @@ class HopPolygonStakingMarketService(
     private val polygonContractAccessor: PolygonContractAccessor,
     private val priceResource: PriceResource
 ) : StakingMarketService() {
-    override fun fetchStakingMarkets(): List<StakingMarketElement> {
+    override suspend fun fetchStakingMarkets(): List<StakingMarketElement> {
         return hopService.getStakingRewards(getNetwork()).map { stakingReward ->
 
             val pool = HopStakingReward(

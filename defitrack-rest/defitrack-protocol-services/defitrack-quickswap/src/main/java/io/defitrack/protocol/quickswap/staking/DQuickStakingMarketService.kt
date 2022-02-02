@@ -26,7 +26,7 @@ class DQuickStakingMarketService(
 
     val dquick = dquickContract()
 
-    override fun fetchStakingMarkets(): List<StakingMarketElement> {
+    override suspend fun fetchStakingMarkets(): List<StakingMarketElement> {
         return listOf(
             StakingMarketElement(
                 id = "polygon-dquick-${dquick.address.lowercase()}",
