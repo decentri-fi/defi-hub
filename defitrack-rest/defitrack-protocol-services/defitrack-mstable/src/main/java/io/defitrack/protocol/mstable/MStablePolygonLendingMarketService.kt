@@ -23,7 +23,7 @@ class MStablePolygonLendingMarketService(
         abiResource.getABI("mStable/SavingsContract.json")
     }
 
-    override fun fetchLendingMarkets(): List<LendingMarketElement> {
+    override suspend fun fetchLendingMarkets(): List<LendingMarketElement> {
         return mStableService.getSavingsContracts().map {
             MStableEthereumSavingsContract(
                 polygonContractAccessor,

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
 @Service
 class AaveMainnetLendingMarketService(private val aaveMainnetService: AaveMainnetService) : LendingMarketService() {
 
-    override fun fetchLendingMarkets(): List<LendingMarketElement> {
+    override suspend fun fetchLendingMarkets(): List<LendingMarketElement> {
         return aaveMainnetService.getReserves().map {
             LendingMarketElement(
                 id = "ethereum-aave-${it.symbol}",

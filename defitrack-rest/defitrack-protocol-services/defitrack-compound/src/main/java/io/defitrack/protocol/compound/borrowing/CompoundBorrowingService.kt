@@ -66,7 +66,7 @@ class CompoundBorrowingService(
         )
     }
 
-    override fun getBorrows(address: String): List<io.defitrack.borrowing.domain.BorrowElement> {
+    override suspend fun getBorrows(address: String): List<io.defitrack.borrowing.domain.BorrowElement> {
         return getTokenContracts().mapNotNull {
             val underlying = it.underlyingAddress?.let { tokenAddress ->
                 erC20Service.getERC20(getNetwork(), tokenAddress)

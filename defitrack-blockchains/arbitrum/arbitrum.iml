@@ -73,7 +73,6 @@
     <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib:1.6.10" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains:annotations:13.0" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.michael-bull.kotlin-result:kotlin-result-jvm:1.1.10" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.2" level="project" />
     <orderEntry type="library" name="Maven: io.github.reactivecircus.cache4k:cache4k:0.3.0" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-common:1.6.10" level="project" />
     <orderEntry type="library" name="Maven: io.github.reactivecircus.cache4k:cache4k-jvm:0.3.0" level="project" />
@@ -82,7 +81,7 @@
     <orderEntry type="library" scope="RUNTIME" name="Maven: co.touchlab:stately-common-jvm:1.1.7" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: co.touchlab:stately-isolate-jvm:1.1.7-a1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: co.touchlab:stately-iso-collections-jvm:1.1.7-a1" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.10" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0" level="project" />
     <orderEntry type="library" name="Maven: io.ktor:ktor-client-core-jvm:1.6.7" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.10" level="project" />
     <orderEntry type="library" name="Maven: io.ktor:ktor-http-jvm:1.6.7" level="project" />
@@ -107,7 +106,7 @@
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient:4.5.13" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore-nio:4.4.15" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.4.15" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.10" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.0" level="project" />
     <orderEntry type="library" name="Maven: com.zaxxer:HikariCP:4.0.3" level="project" />
     <orderEntry type="library" name="Maven: io.reactivex:rxjava:1.3.8" level="project" />
     <orderEntry type="library" name="Maven: io.reactivex.rxjava2:rxjava:2.2.21" level="project" />
@@ -121,7 +120,7 @@
     <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-reflect:1.6.10" level="project" />
     <orderEntry type="library" name="Maven: org.web3j:abi:4.8.4" level="project" />
     <orderEntry type="library" name="Maven: org.web3j:utils:4.8.4" level="project" />
-    <orderEntry type="library" name="Maven: org.bouncycastle:bcprov-jdk15on:${bouncycastle.version}" level="project" />
+    <orderEntry type="library" name="Maven: org.bouncycastle:bcprov-jdk15on:1.65" level="project" />
     <orderEntry type="library" name="Maven: org.web3j:core:4.8.4" level="project" />
     <orderEntry type="library" name="Maven: org.web3j:tuples:4.8.4" level="project" />
     <orderEntry type="library" name="Maven: com.github.jnr:jnr-unixsocket:0.21" level="project" />

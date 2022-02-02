@@ -3,42 +3,31 @@ package io.defitrack.protocol
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.sushi.domain.SushiswapPair
+import io.defitrack.thegraph.TheGraphGatewayProvider
 import io.github.reactivecircus.cache4k.Cache
-import io.ktor.client.*
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
-import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
+import kotlin.time.Duration.Companion.days
 
 @Component
 class SpookyFantomService(
     objectMapper: ObjectMapper,
-    client: HttpClient
+    theGraphGatewayProvider: TheGraphGatewayProvider
 ) : SpookyswapService {
 
-    private val sushiswapService = SpookyGraphGateway(
+    private val spookyService = SpookyGraphGateway(
         objectMapper,
-        "https://api.thegraph.com/subgraphs/name/sushiswap/fantom-exchange",
-        client
+        theGraphGatewayProvider.createTheGraphGateway("https://api.thegraph.com/subgraphs/name/sushiswap/fantom-exchange"),
     )
 
-    @OptIn(ExperimentalTime::class)
-    private val pairCache =
-        Cache.Builder().expireAfterWrite(Duration.Companion.days(1)).build<String, List<SushiswapPair>>()
+    private val pairCache = Cache.Builder().expireAfterWrite(1.days).build<String, List<SushiswapPair>>()
 
-    override fun getPairs(): List<SushiswapPair> {
-        return runBlocking {
-            pairCache.get("all") {
-                sushiswapService.getPairs()
-            }
-        }
+    override suspend fun getPairs() = pairCache.get("all") {
+        spookyService.getPairs()
     }
 
-    override fun getPairDayData(pairId: String) = sushiswapService.getPairDayData(pairId)
+    override suspend fun getPairDayData(pairId: String) = spookyService.getPairDayData(pairId)
 
-    override fun getUserPoolings(user: String) = sushiswapService.getUserPoolings(user)
+    override suspend fun getUserPoolings(user: String) = spookyService.getUserPoolings(user)
 
-    override fun getNetwork(): Network {
-        return Network.FANTOM
-    }
+    override fun getNetwork() = Network.FANTOM
 }

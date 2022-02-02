@@ -1,5 +1,6 @@
-package io.defitrack.protocol.aave
+package io.defitrack.protocol.aave.domain
 
+import io.defitrack.protocol.aave.domain.AaveReserve
 import java.math.BigInteger
 
 class UserReserve(

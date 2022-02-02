@@ -19,7 +19,7 @@ class AavePolygonLendingService(
 
     override fun getNetwork(): Network = Network.POLYGON
 
-    override fun getLendings(address: String): List<LendingElement> {
+    override suspend fun getLendings(address: String): List<LendingElement> {
         return aavePolygonService.getUserReserves(address).mapNotNull {
 
             if (it.currentATokenBalance > BigInteger.ZERO) {

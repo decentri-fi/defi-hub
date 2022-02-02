@@ -54,7 +54,7 @@ class CompoundLendingService(
             .divide(BigDecimal.TEN.pow(4), 4, RoundingMode.HALF_UP).times(BigDecimal(100))
     }
 
-    override fun getLendings(address: String): List<LendingElement> {
+    override suspend fun getLendings(address: String): List<LendingElement> {
         val compoundTokenContracts = getTokenContracts()
         return compoundTokenContracts.mapNotNull {
             val cTokenBalance = it.balanceOf(address)

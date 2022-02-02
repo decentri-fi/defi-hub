@@ -1,8 +1,8 @@
 package io.defitrack.protocol.aave.lending
 
+import io.defitrack.common.network.Network
 import io.defitrack.lending.LendingService
 import io.defitrack.lending.domain.LendingElement
-import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.AaveMainnetService
 import org.springframework.stereotype.Service
@@ -19,7 +19,7 @@ class AaveMainnetLendingService(
 
     override fun getNetwork(): Network = Network.ETHEREUM
 
-    override fun getLendings(address: String): List<LendingElement> {
+    override suspend fun getLendings(address: String): List<LendingElement> {
         return aaveMainnetService.getUserReserves(address).mapNotNull {
             if (it.currentATokenBalance > BigInteger.ZERO) {
                 LendingElement(

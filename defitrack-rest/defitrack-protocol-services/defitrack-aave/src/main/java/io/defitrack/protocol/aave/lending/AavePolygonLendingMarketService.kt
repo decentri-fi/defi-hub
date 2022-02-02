@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
 @Service
 class AavePolygonLendingMarketService(private val aavePolygonService: AavePolygonService) : LendingMarketService() {
 
-    override fun fetchLendingMarkets(): List<LendingMarketElement> {
+    override suspend fun fetchLendingMarkets(): List<LendingMarketElement> {
         return aavePolygonService.getReserves().map {
             LendingMarketElement(
                 id = "polygon-aave-${it.symbol}",

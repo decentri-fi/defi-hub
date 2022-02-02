@@ -8,17 +8,13 @@ import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import java.util.concurrent.Executors
-import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
+import kotlin.time.Duration.Companion.hours
 
 abstract class LendingMarketService : ProtocolService {
 
     val logger = LoggerFactory.getLogger(this.javaClass)
 
-    @OptIn(ExperimentalTime::class)
-    val cache = Cache.Builder().expireAfterWrite(
-        Duration.Companion.hours(4)
-    ).build<String, List<LendingMarketElement>>()
+    val cache = Cache.Builder().expireAfterWrite(4.hours).build<String, List<LendingMarketElement>>()
 
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
     fun init() {
@@ -32,7 +28,7 @@ abstract class LendingMarketService : ProtocolService {
         }
     }
 
-    abstract fun fetchLendingMarkets(): List<LendingMarketElement>
+    abstract suspend fun fetchLendingMarkets(): List<LendingMarketElement>
 
     fun getLendingMarkets(): List<LendingMarketElement> = runBlocking(Dispatchers.IO) {
         cache.get("all") {

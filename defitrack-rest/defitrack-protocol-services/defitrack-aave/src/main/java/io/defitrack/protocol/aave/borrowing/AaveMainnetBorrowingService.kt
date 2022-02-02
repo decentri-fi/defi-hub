@@ -16,7 +16,7 @@ class AaveMainnetBorrowingService(
     private val aaveMainnetService: AaveMainnetService,
 ) : BorrowService {
 
-    override fun getBorrows(address: String): List<BorrowElement> {
+    override suspend fun getBorrows(address: String): List<BorrowElement> {
         return aaveMainnetService.getUserReserves(address).mapNotNull {
 
             if ((it.currentStableDebt > BigInteger.ONE || it.currentVariableDebt > BigInteger.ONE)) {

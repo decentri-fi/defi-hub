@@ -35,7 +35,7 @@ class CompoundLendingMarketService(
         abiResource.getABI("compound/ctoken.json")
     }
 
-    override fun fetchLendingMarkets(): List<LendingMarketElement> {
+    override suspend fun fetchLendingMarkets(): List<LendingMarketElement> {
         return getTokenContracts().mapNotNull {
             it.underlyingAddress?.let { tokenAddress ->
                 erC20Resource.getERC20(getNetwork(), tokenAddress)

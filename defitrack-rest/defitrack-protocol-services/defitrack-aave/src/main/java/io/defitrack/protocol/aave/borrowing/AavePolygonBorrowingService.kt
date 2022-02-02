@@ -16,7 +16,7 @@ class AavePolygonBorrowingService(
     private val aavePolygonService: AavePolygonService,
 ) : io.defitrack.borrowing.BorrowService {
 
-    override fun getBorrows(address: String): List<io.defitrack.borrowing.domain.BorrowElement> {
+    override suspend fun getBorrows(address: String): List<io.defitrack.borrowing.domain.BorrowElement> {
         return aavePolygonService.getUserReserves(address).mapNotNull {
 
             if ((it.currentStableDebt > BigInteger.ONE || it.currentVariableDebt > BigInteger.ONE)) {

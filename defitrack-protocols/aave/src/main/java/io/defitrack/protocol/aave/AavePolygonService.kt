@@ -2,24 +2,25 @@ package io.defitrack.protocol.aave
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.gson.JsonParser
-import io.ktor.client.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import kotlinx.coroutines.runBlocking
-import org.springframework.cache.annotation.Cacheable
+import io.defitrack.protocol.aave.domain.AaveReserve
+import io.defitrack.protocol.aave.domain.UserReserve
+import io.defitrack.thegraph.TheGraphGatewayProvider
 import org.springframework.stereotype.Component
 
 @Component
 class AavePolygonService(
+    theGraphGatewayProvider: TheGraphGatewayProvider,
     private val objectMapper: ObjectMapper,
-    private val client: HttpClient
 ) {
 
-    fun getUserReserves(user: String) = runBlocking {
+    val thegraph =
+        theGraphGatewayProvider.createTheGraphGateway("https://api.thegraph.com/subgraphs/name/aave/aave-v2-matic")
+
+
+    suspend fun getUserReserves(user: String): List<UserReserve> {
         val query = """
            { 
-              userReserves(where: {user: "${user}"}) {
+              userReserves(where: {user: "$user"}) {
                 reserve {
                   id
                   underlyingAsset
@@ -36,17 +37,14 @@ class AavePolygonService(
             }
         """.trimIndent()
 
-        val response = query(query)
-        val poolSharesAsString =
-            JsonParser.parseString(response).asJsonObject["data"].asJsonObject["userReserves"].toString()
-        return@runBlocking objectMapper.readValue(poolSharesAsString,
+        val poolSharesAsString = thegraph.performQuery(query).asJsonObject["userReserves"].toString()
+        return objectMapper.readValue(poolSharesAsString,
             object : TypeReference<List<UserReserve>>() {
 
             })
     }
 
-    @Cacheable(cacheNames = ["aave-polygon-reserves"], key = "'all'")
-    fun getReserves() = runBlocking {
+    suspend fun getReserves(): List<AaveReserve> {
         val query = """
             {
               reserves {
@@ -61,19 +59,10 @@ class AavePolygonService(
             }
         """.trimIndent()
 
-        val response = query(query)
-        val poolSharesAsString =
-            JsonParser.parseString(response).asJsonObject["data"].asJsonObject["reserves"].toString()
-        return@runBlocking objectMapper.readValue(poolSharesAsString,
+        val reservesAsString = thegraph.performQuery(query).asJsonObject["reserves"].toString()
+        return objectMapper.readValue(reservesAsString,
             object : TypeReference<List<AaveReserve>>() {
 
             })
-    }
-
-    fun query(query: String): String = runBlocking {
-        client.request("https://api.thegraph.com/subgraphs/name/aave/aave-v2-matic") {
-            method = HttpMethod.Post
-            body = objectMapper.writeValueAsString(mapOf("query" to query))
-        }
     }
 }

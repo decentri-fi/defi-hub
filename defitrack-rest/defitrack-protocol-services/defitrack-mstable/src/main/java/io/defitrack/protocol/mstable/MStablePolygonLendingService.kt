@@ -32,7 +32,7 @@ class MStablePolygonLendingService(
         return Network.POLYGON
     }
 
-    override fun getLendings(address: String): List<LendingElement> =
+    override suspend fun getLendings(address: String): List<LendingElement> =
         mStableService.getSavingsContracts().map {
             MStableEthereumSavingsContract(
                 ethereumContractAccessor,
