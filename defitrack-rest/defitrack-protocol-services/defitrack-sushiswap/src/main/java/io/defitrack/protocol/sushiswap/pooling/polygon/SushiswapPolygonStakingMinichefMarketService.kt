@@ -10,6 +10,7 @@ import io.defitrack.protocol.SushiPolygonService
 import io.defitrack.protocol.reward.MiniChefV2Contract
 import io.defitrack.protocol.staking.Token
 import io.defitrack.protocol.staking.TokenType
+import io.defitrack.protocol.sushiswap.apr.MinichefAprCalculator
 import io.defitrack.protocol.sushiswap.apr.SushiswapAPRService
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.RewardToken
@@ -62,7 +63,8 @@ class SushiswapPolygonStakingMinichefMarketService(
         val stakedtoken =
             erC20Resource.getTokenInformation(getNetwork(), chef.getLpTokenForPoolId(poolId))
         val rewardToken = erC20Resource.getTokenInformation(getNetwork(), chef.rewardToken)
-        val rate = sushiswapAPRService.getStakingAPR(chef, poolId).toDouble()
+        val rate = MinichefAprCalculator(erC20Resource, priceResource, chef, poolId).calculateApr()
+        println(rate)
         return StakingMarketElement(
             id = "sushi-${chef.address}-${poolId}",
             network = getNetwork(),
@@ -84,7 +86,7 @@ class SushiswapPolygonStakingMinichefMarketService(
             contractAddress = chef.address,
             vaultType = "sushi-minichefV2",
             marketSize = calculateMarketSize(chef, stakedtoken),
-            rate = rate
+            rate = rate.toDouble()
         )
     }
 
