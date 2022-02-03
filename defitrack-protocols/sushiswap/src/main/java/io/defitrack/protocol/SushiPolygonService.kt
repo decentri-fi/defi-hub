@@ -4,12 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.sushi.domain.SushiswapPair
 import io.ktor.client.*
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Component
 
 @Component
-class SushiPolygonService(objectMapper: ObjectMapper,
-                          private val client: HttpClient
+class SushiPolygonService(
+    objectMapper: ObjectMapper,
+    client: HttpClient
 ) : SushiswapService {
 
     companion object {
@@ -22,7 +22,6 @@ class SushiPolygonService(objectMapper: ObjectMapper,
         client
     )
 
-    @Cacheable(cacheNames = ["sushiswap-pairs"], key = "'all-polygon'")
     override fun getPairs(): List<SushiswapPair> = sushiswapService.getPairs()
 
     override fun getPairDayData(pairId: String) = sushiswapService.getPairDayData(pairId)
