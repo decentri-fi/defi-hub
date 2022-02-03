@@ -1,11 +1,8 @@
 package io.defitrack.protocol.sushiswap.apr
 
 import io.defitrack.common.network.Network
-import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.SushiswapService
-import io.defitrack.protocol.reward.MiniChefV2Contract
-import io.defitrack.protocol.staking.TokenType
 import io.defitrack.token.ERC20Resource
 import io.github.reactivecircus.cache4k.Cache
 import org.springframework.stereotype.Component
@@ -26,41 +23,6 @@ class SushiswapAPRService(
 
     @OptIn(ExperimentalTime::class)
     val cache = Cache.Builder().expireAfterWrite(10.hours).build<String, BigDecimal>()
-
-    suspend fun getStakingAPR(
-        chef: MiniChefV2Contract,
-        poolId: Int
-    ): BigDecimal {
-
-        val network = chef.ethereumContractAccessor.getNetwork()
-
-        val poolInfo = chef.poolInfo(poolId);
-        val allSushiPerSecond = chef.sushiPerSecond
-        val poolBlockRewards = allSushiPerSecond.times(poolInfo.allocPoint).divide(chef.totalAllocPoint)
-
-        val sushiPerYear = poolBlockRewards.times(secondsPerYear.toBigInteger())
-        val rewardsPerYearInUsd = priceResource.calculatePrice(
-            PriceRequest(
-                chef.rewardToken,
-                network,
-                sushiPerYear.toBigDecimal().divide(BigDecimal.TEN.pow(18), 18, RoundingMode.HALF_UP),
-                TokenType.SINGLE
-            )
-        )
-        val stakedToken = chef.getLpTokenForPoolId(poolId)
-
-        val stakedTokenAmount = erC20Resource.getBalance(network, stakedToken, chef.address)
-        val totalStakedTokenInUsd = priceResource.calculatePrice(
-            PriceRequest(
-                stakedToken,
-                network,
-                stakedTokenAmount.toBigDecimal().divide(BigDecimal.TEN.pow(18), 18, RoundingMode.HALF_UP),
-                TokenType.SUSHISWAP
-            )
-        )
-
-        return rewardsPerYearInUsd.toBigDecimal().divide(totalStakedTokenInUsd.toBigDecimal(), 18, RoundingMode.HALF_UP)
-    }
 
     suspend fun getPoolingAPR(address: String, network: Network): BigDecimal {
         return cache.get("$address-${network.slug}") {
