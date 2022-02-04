@@ -46,7 +46,7 @@ class DinoswapStakingMarketService(
     ): StakingMarketElement {
         val rewardPerBlock = chef.rewardPerBlock.toBigDecimal().times(BigDecimal(43200)).times(BigDecimal(365))
         val stakedtoken =
-            tokenService.getTokenInformation(getNetwork(), chef.getLpTokenForPoolId(poolId), )
+            tokenService.getTokenInformation(getNetwork(), chef.getLpTokenForPoolId(poolId))
         val rewardToken = tokenService.getTokenInformation(getNetwork(), chef.rewardToken)
         return StakingMarketElement(
             id = "dinoswap-${chef.address}-${poolId}",
@@ -61,10 +61,12 @@ class DinoswapStakingMarketService(
                 decimals = stakedtoken.decimals,
                 type = stakedtoken.type
             ),
-            rewardToken = RewardToken(
-                name = rewardToken.name,
-                symbol = rewardToken.symbol,
-                decimals = rewardToken.decimals
+            reward = listOf(
+                RewardToken(
+                    name = rewardToken.name,
+                    symbol = rewardToken.symbol,
+                    decimals = rewardToken.decimals
+                )
             ),
             contractAddress = chef.address,
             vaultType = "dinoswap-fossilfarm"

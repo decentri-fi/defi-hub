@@ -48,7 +48,7 @@ class QuickswapStakingMarketService(
                 protocol = getProtocol(),
                 name = "${stakedToken.name} Reward Pool",
                 token = stakedToken.toStakedToken(),
-                rewardToken = rewardToken.toRewardToken(),
+                reward = listOf(rewardToken.toRewardToken()),
                 contractAddress = pool.address,
                 vaultType = "quickswap-reward-pool",
                 marketSize = getMarketSize(stakedToken, pool),

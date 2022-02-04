@@ -61,10 +61,12 @@ class PolycatStakingMarketService(
                 decimals = stakedtoken.decimals,
                 type = stakedtoken.type
             ),
-            rewardToken = RewardToken(
-                name = rewardToken.name,
-                symbol = rewardToken.symbol,
-                decimals = rewardToken.decimals
+            reward = listOf(
+                RewardToken(
+                    name = rewardToken.name,
+                    symbol = rewardToken.symbol,
+                    decimals = rewardToken.decimals
+                )
             ),
             contractAddress = chef.address,
             vaultType = "polycat-masterchef"

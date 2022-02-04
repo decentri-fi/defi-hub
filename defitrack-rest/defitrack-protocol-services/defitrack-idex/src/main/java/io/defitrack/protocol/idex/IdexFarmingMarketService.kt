@@ -9,17 +9,9 @@ import io.defitrack.staking.domain.RewardToken
 import io.defitrack.staking.domain.StakedToken
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
-import io.github.reactivecircus.cache4k.Cache
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
-import java.util.concurrent.Executors
-import javax.annotation.PostConstruct
-import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
 
 @Component
 class IdexFarmingMarketService(
@@ -87,10 +79,12 @@ class IdexFarmingMarketService(
                 decimals = stakedtoken.decimals,
                 type = stakedtoken.type
             ),
-            rewardToken = RewardToken(
-                name = rewardToken.name,
-                symbol = rewardToken.symbol,
-                decimals = rewardToken.decimals
+            reward = listOf(
+                RewardToken(
+                    name = rewardToken.name,
+                    symbol = rewardToken.symbol,
+                    decimals = rewardToken.decimals
+                )
             ),
             contractAddress = chef.address,
             vaultType = "idex-farm"

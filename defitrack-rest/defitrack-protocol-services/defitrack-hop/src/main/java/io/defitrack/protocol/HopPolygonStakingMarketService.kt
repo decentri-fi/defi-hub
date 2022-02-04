@@ -40,7 +40,7 @@ class HopPolygonStakingMarketService(
                 protocol = getProtocol(),
                 name = "${stakedToken.name} Staking Rewards",
                 token = stakedToken.toStakedToken(),
-                rewardToken = rewardToken.toRewardToken(),
+                reward = listOf(rewardToken.toRewardToken()),
                 contractAddress = pool.address,
                 vaultType = "hop-staking-rewards",
                 marketSize = getMarketSize(stakedToken, pool)

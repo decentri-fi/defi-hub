@@ -1,9 +1,5 @@
 package io.defitrack.protocol.quickswap.staking
 
-import io.defitrack.staking.StakingMarketService
-import io.defitrack.staking.domain.RewardToken
-import io.defitrack.staking.domain.StakedToken
-import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.polygon.config.PolygonContractAccessor
@@ -11,6 +7,10 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.staking.TokenType
 import io.defitrack.quickswap.QuickswapService
 import io.defitrack.quickswap.contract.DQuickContract
+import io.defitrack.staking.StakingMarketService
+import io.defitrack.staking.domain.RewardToken
+import io.defitrack.staking.domain.StakedToken
+import io.defitrack.staking.domain.StakingMarketElement
 import org.springframework.stereotype.Service
 
 @Service
@@ -41,10 +41,12 @@ class DQuickStakingMarketService(
                     decimals = 18,
                     type = TokenType.SINGLE
                 ),
-                rewardToken = RewardToken(
-                    name = "Quick",
-                    symbol = "QUICK",
-                    decimals = 18,
+                reward = listOf(
+                    RewardToken(
+                        name = "Quick",
+                        symbol = "QUICK",
+                        decimals = 18,
+                    )
                 ),
                 contractAddress = dquick.address,
                 vaultType = "quickswap-dquick",

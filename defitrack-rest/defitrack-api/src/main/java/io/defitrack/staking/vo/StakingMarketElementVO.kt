@@ -11,7 +11,7 @@ data class StakingMarketElementVO(
     val protocol: ProtocolVO,
     val name: String,
     val stakedToken: StakedTokenVO,
-    val rewardToken: RewardTokenVO?,
+    val reward: List<RewardTokenVO>,
     val contractAddress: String,
     val vaultType: String,
     val marketSize: BigDecimal,

@@ -12,7 +12,7 @@ data class StakingMarketElement(
     val protocol: Protocol,
     val name: String,
     val token: StakedToken,
-    val rewardToken: RewardToken?,
+    val reward: List<RewardToken>,
     val contractAddress: String,
     val vaultType: String,
     val marketSize: BigDecimal = BigDecimal.ZERO,

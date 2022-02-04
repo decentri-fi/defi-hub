@@ -50,19 +50,30 @@ class QuickswapDualStakingMarketService(
                     protocol = getProtocol(),
                     name = "${stakedToken.name} Dual Reward Pool",
                     token = stakedToken.toStakedToken(),
-                    rewardToken = rewardTokenA.toRewardToken(),
+                    reward = listOf(
+                        rewardTokenA.toRewardToken(),
+                        rewardTokenB.toRewardToken()
+                    ),
                     contractAddress = pool.address,
                     vaultType = "quickswap-dual-reward-pool",
                     marketSize = getMarketSize(stakedToken, pool),
-                    rate = (quickswapAPRService.getDualPoolAPR(pool.address) + quickswapAPRService.getLPAPR(
-                        stakedToken.address
-                    ))
+                    rate = getApr(pool, stakedToken)
                 )
             } catch (ex: Exception) {
                 ex.printStackTrace()
                 null
             }
         }
+    }
+
+    private fun getApr(
+        pool: QuickswapDualRewardPoolContract,
+        stakedToken: Token
+    ): BigDecimal {
+
+        return (quickswapAPRService.getDualPoolAPR(pool.address) + quickswapAPRService.getLPAPR(
+            stakedToken.address
+        ))
     }
 
     private fun getMarketSize(

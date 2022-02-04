@@ -85,7 +85,7 @@ class DefaultStakingMarketRestController(
             decimals = it.token.decimals,
             type = it.token.type
         ),
-        rewardToken = it.rewardToken?.let { reward ->
+        reward = it.reward.map { reward ->
             RewardTokenVO(
                 name = reward.name,
                 symbol = reward.symbol,

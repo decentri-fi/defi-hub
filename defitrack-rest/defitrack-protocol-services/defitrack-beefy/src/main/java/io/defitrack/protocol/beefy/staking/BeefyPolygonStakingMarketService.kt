@@ -64,10 +64,12 @@ class BeefyPolygonStakingMarketService(
                     decimals = want.decimals,
                     type = want.type
                 ),
-                rewardToken = RewardToken(
-                    name = want.name,
-                    symbol = want.symbol,
-                    decimals = want.decimals,
+                reward = listOf(
+                    RewardToken(
+                        name = want.name,
+                        symbol = want.symbol,
+                        decimals = want.decimals,
+                    )
                 ),
                 contractAddress = beefyVault.address,
                 marketSize = getMarketSize(want, beefyVault),
