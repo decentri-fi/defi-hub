@@ -1,9 +1,10 @@
-package io.defitrack.polycat
+package io.defitrack.protocol.polycat
 
 import io.defitrack.ethereumbased.contract.EvmContract
 import io.defitrack.ethereumbased.contract.EvmContractAccessor
 import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
 import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toUint256
+import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.generated.Uint16
@@ -44,23 +45,52 @@ class PolycatMasterChefContract(
         )[0].value as BigInteger
     }
 
-    fun getLpTokenForPoolId(poolIndex: Int): String {
-        return read(
-            "poolInfo",
-            inputs = listOf(poolIndex.toBigInteger().toUint256()),
-            outputs = listOf(
-                TypeReference.create(Address::class.java),
-                TypeReference.create(Uint256::class.java),
-                TypeReference.create(Uint256::class.java),
-                TypeReference.create(Uint256::class.java),
-                TypeReference.create(Uint16::class.java),
+    fun poolInfo(poolId: Int): PoolInfo {
+        return poolInfos[poolId]
+    }
+
+    val poolInfos by lazy {
+        val multicalls = (0 until poolLength).map { poolIndex ->
+            MultiCallElement(
+                createFunction(
+                    "poolInfo",
+                    inputs = listOf(poolIndex.toBigInteger().toUint256()),
+                    outputs = listOf(
+                        TypeReference.create(Address::class.java),
+                        TypeReference.create(Uint256::class.java),
+                        TypeReference.create(Uint256::class.java),
+                        TypeReference.create(Uint256::class.java),
+                        TypeReference.create(Uint16::class.java),
+                    )
+                ),
+                this.address
             )
-        )[0].value as String
+        }
+        val results = ethereumContractAccessor.readMultiCall(
+            multicalls
+        )
+        results.map { retVal ->
+            PoolInfo(
+                retVal[0].value as String,
+                retVal[1].value as BigInteger,
+                retVal[2].value as BigInteger,
+                retVal[3].value as BigInteger,
+                retVal[4].value as BigInteger,
+            )
+        }
     }
 
     val rewardPerBlock by lazy {
         read(
             "fishPerBlock",
+            outputs = listOf(TypeReference.create(Uint256::class.java))
+        )[0].value as BigInteger
+    }
+
+
+    val totalAllocPoint by lazy {
+        read(
+            "totalAllocPoint",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger
     }

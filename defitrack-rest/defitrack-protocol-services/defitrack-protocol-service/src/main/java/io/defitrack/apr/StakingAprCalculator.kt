@@ -1,5 +1,7 @@
 package io.defitrack.apr
 
+import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
+import io.defitrack.common.utils.BigDecimalExtensions.isZero
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.github.reactivecircus.cache4k.Cache
@@ -21,14 +23,16 @@ abstract class StakingAprCalculator(
                 calculateRewardsPerYearInUsd(it)
             }
 
-            val fullyStaked = getStakedTokens().sumOf {
-                calculateStakedTokenInUsd(it)
+            val fullyStaked by lazy {
+                getStakedTokens().sumOf {
+                    calculateStakedTokenInUsd(it)
+                }
             }
 
-            if (rewardsPerYear == BigDecimal.ZERO || fullyStaked == BigDecimal.ZERO) {
+            if (rewardsPerYear.isZero() || fullyStaked.isZero()) {
                 BigDecimal.ZERO
             } else {
-                rewardsPerYear.divide(fullyStaked, 18, RoundingMode.HALF_UP)
+                rewardsPerYear.dividePrecisely(fullyStaked)
             }
         }
     }
@@ -48,17 +52,19 @@ abstract class StakingAprCalculator(
     )
 
     private fun calculateRewardsPerYearInUsd(reward: Reward): BigDecimal {
-        val amount = reward.amount.times(secondsPerYear)
-            .divide(BigDecimal.valueOf(reward.blocksPerSecond.toLong()), 18, RoundingMode.HALF_UP)
-        return BigDecimal.valueOf(
-            priceResource.calculatePrice(
-                PriceRequest(
-                    reward.address,
-                    reward.network,
-                    amount,
-                    reward.tokenType
+        return if (reward.blocksPerSecond > 0) {
+            val amount = reward.amount.times(secondsPerYear)
+                .divide(BigDecimal.valueOf(reward.blocksPerSecond.toLong()), 18, RoundingMode.HALF_UP)
+            BigDecimal.valueOf(
+                priceResource.calculatePrice(
+                    PriceRequest(
+                        reward.address,
+                        reward.network,
+                        amount,
+                        reward.tokenType
+                    )
                 )
             )
-        )
+        } else BigDecimal.ZERO
     }
 }

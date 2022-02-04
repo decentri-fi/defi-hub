@@ -1,4 +1,4 @@
-package io.defitrack.polycat
+package io.defitrack.protocol.polycat
 
 import org.springframework.stereotype.Service
 
