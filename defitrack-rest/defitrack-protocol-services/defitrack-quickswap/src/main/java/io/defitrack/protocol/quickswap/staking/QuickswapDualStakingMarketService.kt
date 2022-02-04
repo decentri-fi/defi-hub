@@ -8,6 +8,7 @@ import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapDualRewardPoolContract
 import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
+import io.defitrack.protocol.staking.Token
 import io.defitrack.quickswap.QuickswapService
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.StakingMarketElement
@@ -52,19 +53,10 @@ class QuickswapDualStakingMarketService(
                     rewardToken = rewardTokenA.toRewardToken(),
                     contractAddress = pool.address,
                     vaultType = "quickswap-dual-reward-pool",
-                    marketSize = priceResource.calculatePrice(
-                        PriceRequest(
-                            address = stakedToken.address,
-                            network = getNetwork(),
-                            amount = pool.totalSupply.toBigDecimal().divide(
-                                BigDecimal.TEN.pow(stakedToken.decimals), RoundingMode.HALF_UP
-                            ),
-                            type = stakedToken.type
-                        )
-                    ),
+                    marketSize = getMarketSize(stakedToken, pool),
                     rate = (quickswapAPRService.getDualPoolAPR(pool.address) + quickswapAPRService.getLPAPR(
                         stakedToken.address
-                    )).toDouble()
+                    ))
                 )
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -72,6 +64,22 @@ class QuickswapDualStakingMarketService(
             }
         }
     }
+
+    private fun getMarketSize(
+        stakedToken: Token,
+        pool: QuickswapDualRewardPoolContract
+    ) = BigDecimal.valueOf(
+        priceResource.calculatePrice(
+            PriceRequest(
+                address = stakedToken.address,
+                network = getNetwork(),
+                amount = pool.totalSupply.toBigDecimal().divide(
+                    BigDecimal.TEN.pow(stakedToken.decimals), RoundingMode.HALF_UP
+                ),
+                type = stakedToken.type
+            )
+        )
+    )
 
     override fun getProtocol(): Protocol {
         return Protocol.QUICKSWAP

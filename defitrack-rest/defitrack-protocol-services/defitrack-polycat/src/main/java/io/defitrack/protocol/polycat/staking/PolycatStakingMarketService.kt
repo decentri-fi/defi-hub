@@ -67,9 +67,7 @@ class PolycatStakingMarketService(
                 decimals = rewardToken.decimals
             ),
             contractAddress = chef.address,
-            vaultType = "polycat-masterchef",
-            marketSize = 0.0,
-            rate = 0.0
+            vaultType = "polycat-masterchef"
         )
     }
 

@@ -4,16 +4,15 @@ import io.defitrack.pool.PoolingMarketService
 import io.defitrack.pool.domain.PoolingMarketElement
 import io.defitrack.pool.domain.PoolingToken
 import io.defitrack.protocol.SushiswapService
-import io.defitrack.protocol.sushiswap.apr.SushiswapAPRService
+import io.defitrack.protocol.sushiswap.apr.SushiPoolingAPRCalculator
 import java.math.BigDecimal
 
 abstract class DefaultSushiPoolingMarketService(
     private val sushiServices: List<SushiswapService>,
-    private val sushiAPRService: SushiswapAPRService,
 ) : PoolingMarketService() {
 
-    override suspend fun fetchPoolingMarkets() = sushiServices.filter {
-        it.getNetwork() == getNetwork()
+    override suspend fun fetchPoolingMarkets() = sushiServices.filter { sushiswapService ->
+        sushiswapService.getNetwork() == getNetwork()
     }.flatMap { service ->
         service.getPairs()
             .filter {
@@ -37,7 +36,7 @@ abstract class DefaultSushiPoolingMarketService(
                             it.token1.id
                         ),
                     ),
-                    apr = sushiAPRService.getPoolingAPR(it.id, service.getNetwork()),
+                    apr = SushiPoolingAPRCalculator(service, it.id).calculateApr(),
                     id = "sushi-${getNetwork().slug}-${it.id}",
                     marketSize = it.reserveUSD
                 )

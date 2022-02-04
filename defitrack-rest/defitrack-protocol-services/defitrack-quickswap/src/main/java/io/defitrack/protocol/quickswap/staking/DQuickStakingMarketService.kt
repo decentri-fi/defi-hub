@@ -48,8 +48,6 @@ class DQuickStakingMarketService(
                 ),
                 contractAddress = dquick.address,
                 vaultType = "quickswap-dquick",
-                marketSize = 0.0,
-                rate = 0.0
             )
         )
     }

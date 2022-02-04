@@ -1,6 +1,6 @@
 package io.defitrack.protocol.sushiswap.apr
 
-import io.defitrack.apr.AprCalculator
+import io.defitrack.apr.StakingAprCalculator
 import io.defitrack.apr.Reward
 import io.defitrack.apr.StakedAsset
 import io.defitrack.price.PriceResource
@@ -10,12 +10,12 @@ import io.defitrack.token.ERC20Resource
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-class MinichefAprCalculator(
+class MinichefStakingAprCalculator(
     private val erC20Resource: ERC20Resource,
     priceResource: PriceResource,
     private val chef: MiniChefV2Contract,
     private val poolId: Int
-) : AprCalculator(priceResource) {
+) : StakingAprCalculator(priceResource) {
 
     fun getNativeReward(): Reward {
         val poolInfo = chef.poolInfo(poolId);

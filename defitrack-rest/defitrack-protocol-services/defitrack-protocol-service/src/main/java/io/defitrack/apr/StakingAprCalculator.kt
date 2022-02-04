@@ -8,7 +8,7 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import kotlin.time.Duration.Companion.hours
 
-abstract class AprCalculator(
+abstract class StakingAprCalculator(
     private val priceResource: PriceResource,
 ) {
 
@@ -36,7 +36,7 @@ abstract class AprCalculator(
     abstract fun getRewardsPerSecond(): List<Reward>
     abstract fun getStakedTokens(): List<StakedAsset>
 
-    fun calculateStakedTokenInUsd(stakedAsset: StakedAsset): BigDecimal = BigDecimal.valueOf(
+    private fun calculateStakedTokenInUsd(stakedAsset: StakedAsset): BigDecimal = BigDecimal.valueOf(
         priceResource.calculatePrice(
             PriceRequest(
                 stakedAsset.address,
@@ -47,7 +47,7 @@ abstract class AprCalculator(
         )
     )
 
-    fun calculateRewardsPerYearInUsd(reward: Reward): BigDecimal {
+    private fun calculateRewardsPerYearInUsd(reward: Reward): BigDecimal {
         val amount = reward.amount.times(secondsPerYear)
             .divide(BigDecimal.valueOf(reward.blocksPerSecond.toLong()), 18, RoundingMode.HALF_UP)
         return BigDecimal.valueOf(

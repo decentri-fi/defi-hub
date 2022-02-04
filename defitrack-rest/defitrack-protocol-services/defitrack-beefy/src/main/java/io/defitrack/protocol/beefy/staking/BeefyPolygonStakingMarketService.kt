@@ -10,13 +10,12 @@ import io.defitrack.protocol.beefy.BeefyService
 import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
 import io.defitrack.protocol.beefy.domain.BeefyVault
+import io.defitrack.protocol.staking.Token
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.RewardToken
 import io.defitrack.staking.domain.StakedToken
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -71,15 +70,7 @@ class BeefyPolygonStakingMarketService(
                     decimals = want.decimals,
                 ),
                 contractAddress = beefyVault.address,
-                marketSize = priceService.calculatePrice(
-                    PriceRequest(
-                        want.address,
-                        getNetwork(),
-                        beefyVault.balance.toBigDecimal()
-                            .divide(BigDecimal.TEN.pow(want.decimals), 18, RoundingMode.HALF_UP),
-                        want.type
-                    )
-                ),
+                marketSize = getMarketSize(want, beefyVault),
                 vaultType = "beefyVaultV6"
             )
             logger.debug("adding ${element.id} to beefy vault list")
@@ -90,13 +81,27 @@ class BeefyPolygonStakingMarketService(
         }
     }
 
+    private fun getMarketSize(
+        want: Token,
+        beefyVault: BeefyVaultContract
+    ) = BigDecimal.valueOf(
+        priceService.calculatePrice(
+            PriceRequest(
+                want.address,
+                getNetwork(),
+                beefyVault.balance.toBigDecimal()
+                    .divide(BigDecimal.TEN.pow(want.decimals), 18, RoundingMode.HALF_UP),
+                want.type
+            )
+        )
+    )
 
-    private fun getAPY(beefyVault: BeefyVaultContract): Double {
+
+    private fun getAPY(beefyVault: BeefyVaultContract): BigDecimal {
         return try {
-            (beefyAPYService.getAPYS().getOrDefault(beefyVault.vaultId, null)?.toDouble()) ?: 0.0
+            (beefyAPYService.getAPYS().getOrDefault(beefyVault.vaultId, null)) ?: BigDecimal.ZERO
         } catch (ex: Exception) {
-            ex.printStackTrace()
-            0.0
+            BigDecimal.ZERO
         }
     }
 

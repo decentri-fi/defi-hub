@@ -8,6 +8,7 @@ import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
 import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
+import io.defitrack.protocol.staking.Token
 import io.defitrack.quickswap.QuickswapService
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.StakingMarketElement
@@ -50,22 +51,29 @@ class QuickswapStakingMarketService(
                 rewardToken = rewardToken.toRewardToken(),
                 contractAddress = pool.address,
                 vaultType = "quickswap-reward-pool",
-                marketSize = priceResource.calculatePrice(
-                    PriceRequest(
-                        address = stakedToken.address,
-                        network = getNetwork(),
-                        amount = pool.totalSupply.toBigDecimal().divide(
-                            BigDecimal.TEN.pow(stakedToken.decimals), RoundingMode.HALF_UP
-                        ),
-                        type = stakedToken.type
-                    )
-                ),
+                marketSize = getMarketSize(stakedToken, pool),
                 rate = (quickswapAPRService.getRewardPoolAPR(pool.address) + quickswapAPRService.getLPAPR(
                     stakedToken.address
-                )).toDouble()
+                ))
             )
         }
     }
+
+    private fun getMarketSize(
+        stakedToken: Token,
+        pool: QuickswapRewardPoolContract
+    ) = BigDecimal.valueOf(
+        priceResource.calculatePrice(
+            PriceRequest(
+                address = stakedToken.address,
+                network = getNetwork(),
+                amount = pool.totalSupply.toBigDecimal().divide(
+                    BigDecimal.TEN.pow(stakedToken.decimals), RoundingMode.HALF_UP
+                ),
+                type = stakedToken.type
+            )
+        )
+    )
 
     override fun getProtocol(): Protocol {
         return Protocol.QUICKSWAP

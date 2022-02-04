@@ -6,6 +6,7 @@ import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.contract.HopStakingReward
+import io.defitrack.protocol.staking.Token
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
@@ -42,20 +43,26 @@ class HopPolygonStakingMarketService(
                 rewardToken = rewardToken.toRewardToken(),
                 contractAddress = pool.address,
                 vaultType = "hop-staking-rewards",
-                marketSize = priceResource.calculatePrice(
-                    PriceRequest(
-                        address = stakedToken.address,
-                        network = getNetwork(),
-                        amount = pool.totalSupply.toBigDecimal().divide(
-                            BigDecimal.TEN.pow(stakedToken.decimals), RoundingMode.HALF_UP
-                        ),
-                        type = stakedToken.type
-                    )
-                ),
-                rate = 0.0
+                marketSize = getMarketSize(stakedToken, pool)
             )
         }
     }
+
+    private fun getMarketSize(
+        stakedToken: Token,
+        pool: HopStakingReward
+    ) = BigDecimal.valueOf(
+        priceResource.calculatePrice(
+            PriceRequest(
+                address = stakedToken.address,
+                network = getNetwork(),
+                amount = pool.totalSupply.toBigDecimal().divide(
+                    BigDecimal.TEN.pow(stakedToken.decimals), RoundingMode.HALF_UP
+                ),
+                type = stakedToken.type
+            )
+        )
+    )
 
     override fun getProtocol(): Protocol {
         return Protocol.HOP

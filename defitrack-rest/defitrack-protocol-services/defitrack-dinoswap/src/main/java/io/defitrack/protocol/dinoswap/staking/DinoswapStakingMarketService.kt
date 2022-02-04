@@ -67,9 +67,7 @@ class DinoswapStakingMarketService(
                 decimals = rewardToken.decimals
             ),
             contractAddress = chef.address,
-            vaultType = "dinoswap-fossilfarm",
-            marketSize = 0.0,
-            rate = 0.0
+            vaultType = "dinoswap-fossilfarm"
         )
     }
 

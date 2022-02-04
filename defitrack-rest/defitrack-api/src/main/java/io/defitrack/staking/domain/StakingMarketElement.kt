@@ -3,6 +3,7 @@ package io.defitrack.staking.domain
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.staking.TokenType
+import java.math.BigDecimal
 
 
 data class StakingMarketElement(
@@ -14,8 +15,8 @@ data class StakingMarketElement(
     val rewardToken: RewardToken?,
     val contractAddress: String,
     val vaultType: String,
-    val marketSize: Double,
-    val rate: Double = 0.0
+    val marketSize: BigDecimal = BigDecimal.ZERO,
+    val rate: BigDecimal = BigDecimal.ZERO
 )
 
 data class StakedToken(

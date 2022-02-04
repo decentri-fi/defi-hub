@@ -93,9 +93,7 @@ class IdexFarmingMarketService(
                 decimals = rewardToken.decimals
             ),
             contractAddress = chef.address,
-            vaultType = "idex-farm",
-            marketSize = 0.0,
-            rate = 0.0
+            vaultType = "idex-farm"
         )
     }
 }
