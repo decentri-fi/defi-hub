@@ -44,7 +44,6 @@ class PolycatStakingMarketService(
         chef: PolycatMasterChefContract,
         poolId: Int
     ): StakingMarketElement {
-        val rewardPerBlock = chef.rewardPerBlock.toBigDecimal().times(BigDecimal(43200)).times(BigDecimal(365))
         val stakedtoken =
             erC20Resource.getTokenInformation(getNetwork(), chef.getLpTokenForPoolId(poolId))
         val rewardToken = erC20Resource.getTokenInformation(getNetwork(), chef.rewardToken)

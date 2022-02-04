@@ -49,7 +49,6 @@ class BeefyPolygonStakingMarketService(
         return try {
             val want = erC20Resource.getTokenInformation(getNetwork(), beefyVault.want)
 
-
             val element = StakingMarketElement(
                 id = beefyVault.vaultId,
                 network = getNetwork(),
