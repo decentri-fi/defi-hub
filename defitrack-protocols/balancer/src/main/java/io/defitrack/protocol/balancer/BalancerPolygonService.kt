@@ -2,15 +2,22 @@ package io.defitrack.protocol.balancer
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.gson.JsonParser
+import io.defitrack.protocol.balancer.domain.LiquidityMiningReward
 import io.defitrack.thegraph.TheGraphGatewayProvider
+import io.ktor.client.*
+import io.ktor.client.request.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import java.util.*
+import java.util.stream.IntStream
+import kotlin.streams.toList
 
 @Component
 class BalancerPolygonService(
     private val objectMapper: ObjectMapper,
+    private val httpClient: HttpClient,
     theGraphGatewayProvider: TheGraphGatewayProvider,
 ) {
 
@@ -28,6 +35,46 @@ class BalancerPolygonService(
         )
     }
 
+    suspend fun findLatestLmWeek(): Int {
+        var int = 86 //dev's knowledge
+        return try {
+            while (true) {
+                int++
+                httpClient.get<String>("https://raw.githubusercontent.com/balancer-labs/bal-mining-scripts/master/reports/$int/_totals.json")
+            }
+            int - 1 //unused but necessary
+        } catch (ex: Exception) {
+            int - 1
+        }
+    }
+
+    fun getRewards(): List<LiquidityMiningReward> = runBlocking {
+        val lastWeek = findLatestLmWeek()
+        IntStream.rangeClosed(1, lastWeek).toList().flatMap {
+            getRewardsForWeek(lastWeek)
+        }
+    }
+
+    private fun getRewardsForWeek(week: Int): List<LiquidityMiningReward> {
+        return lmTokens.flatMap { token ->
+            getRewardsForWeekAndToken(week, token)
+        }
+    }
+
+    private fun getRewardsForWeekAndToken(week: Int, token: String): List<LiquidityMiningReward> = runBlocking {
+        val response: String = httpClient.get(
+            "https://raw.githubusercontent.com/balancer-labs/bal-mining-scripts/master/reports/$week/__polygon_$token.json"
+        )
+
+        JsonParser.parseString(response).asJsonObject.entrySet().map { entry ->
+            LiquidityMiningReward(
+                entry.key,
+                token,
+                entry.value.asBigDecimal,
+                week
+            )
+        }
+    }
 
     fun getPools(): List<Pool> = runBlocking {
         val query = """
