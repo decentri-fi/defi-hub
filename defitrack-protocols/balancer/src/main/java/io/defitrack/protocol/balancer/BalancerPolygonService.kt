@@ -50,8 +50,8 @@ class BalancerPolygonService(
 
     fun getRewards(): List<LiquidityMiningReward> = runBlocking {
         val lastWeek = findLatestLmWeek()
-        IntStream.rangeClosed(1, lastWeek).toList().flatMap {
-            getRewardsForWeek(lastWeek)
+        IntStream.rangeClosed(1, lastWeek).toList().flatMap { week ->
+            getRewardsForWeek(week)
         }
     }
 
@@ -62,17 +62,21 @@ class BalancerPolygonService(
     }
 
     private fun getRewardsForWeekAndToken(week: Int, token: String): List<LiquidityMiningReward> = runBlocking {
-        val response: String = httpClient.get(
-            "https://raw.githubusercontent.com/balancer-labs/bal-mining-scripts/master/reports/$week/__polygon_$token.json"
-        )
-
-        JsonParser.parseString(response).asJsonObject.entrySet().map { entry ->
-            LiquidityMiningReward(
-                entry.key,
-                token,
-                entry.value.asBigDecimal,
-                week
+        try {
+            val response: String = httpClient.get(
+                "https://raw.githubusercontent.com/balancer-labs/bal-mining-scripts/master/reports/$week/__polygon_$token.json"
             )
+
+            JsonParser.parseString(response).asJsonObject.entrySet().map { entry ->
+                LiquidityMiningReward(
+                    entry.key,
+                    token,
+                    entry.value.asBigDecimal,
+                    week
+                )
+            }
+        } catch (ex: Exception) {
+            emptyList()
         }
     }
 

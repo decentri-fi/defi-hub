@@ -7,17 +7,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
-import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
+import kotlin.time.Duration.Companion.hours
 
 abstract class PoolingMarketService : ProtocolService {
 
     val logger = LoggerFactory.getLogger(this.javaClass)
 
-    @OptIn(ExperimentalTime::class)
-    val cache = Cache.Builder().expireAfterWrite(
-        Duration.Companion.hours(4)
-    ).build<String, List<PoolingMarketElement>>()
+    val cache = Cache.Builder().expireAfterWrite(4.hours).build<String, List<PoolingMarketElement>>()
 
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
     fun init() {
