@@ -6,6 +6,7 @@ import com.google.gson.JsonParser
 import io.defitrack.protocol.sushi.domain.PairDayData
 import io.defitrack.protocol.sushi.domain.SushiUser
 import io.defitrack.protocol.sushi.domain.SushiswapPair
+import io.defitrack.thegraph.TheGraphGateway
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -14,9 +15,8 @@ import kotlinx.coroutines.runBlocking
 import java.util.*
 
 class SpiritGraphGateway(
-    private val objectMapper: ObjectMapper,
-    private val endpoint: String,
-    private val client: HttpClient
+    private val graphGateway: TheGraphGateway,
+    private val objectMapper: ObjectMapper
 ) {
 
     fun getPairs(): List<SushiswapPair> = runBlocking(Dispatchers.IO) {
@@ -41,9 +41,8 @@ class SpiritGraphGateway(
         }
     """.trimIndent()
 
-        val response = query(query)
         val poolSharesAsString =
-            JsonParser.parseString(response).asJsonObject["data"].asJsonObject["pairs"].toString()
+            graphGateway.performQuery(query).asJsonObject["pairs"].toString()
         return@runBlocking objectMapper.readValue(poolSharesAsString,
             object : TypeReference<List<SushiswapPair>>() {
 
@@ -60,9 +59,8 @@ class SpiritGraphGateway(
             }
         """.trimIndent()
 
-        val response = query(query)
         val poolSharesAsString =
-            JsonParser.parseString(response).asJsonObject["data"].asJsonObject["pairDayDatas"].toString()
+           graphGateway.performQuery(query).asJsonObject["pairDayDatas"].toString()
         return@runBlocking objectMapper.readValue(poolSharesAsString,
             object : TypeReference<List<PairDayData>>() {
 
@@ -99,20 +97,12 @@ class SpiritGraphGateway(
             }
         """.trimIndent()
 
-            val response = query(query)
             val poolSharesAsString =
-                JsonParser.parseString(response).asJsonObject["data"].asJsonObject["users"].toString()
+                graphGateway.performQuery(query).asJsonObject["users"].toString()
             return@runBlocking objectMapper.readValue(poolSharesAsString,
                 object : TypeReference<List<SushiUser>>() {
 
                 })
-        }
-    }
-
-    private suspend fun query(query: String): String {
-        return client.request(endpoint) {
-            method = HttpMethod.Post
-            body = objectMapper.writeValueAsString(mapOf("query" to query))
         }
     }
 }
