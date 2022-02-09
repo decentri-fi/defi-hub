@@ -27,7 +27,7 @@ import java.util.concurrent.CompletableFuture
 class FantomContractAccessor(abiDecoder: AbiDecoder, val fantomGateway: FantomGateway) :
     EvmContractAccessor(abiDecoder) {
     override fun getMulticallContract(): String {
-        return "0xC9F6b1B53E056fd04bE5a197ce4B2423d456B982"
+        return "0x2d5408f2287bf9f9b05404794459a846651d0a59"
     }
 
     override fun getNetwork(): Network {

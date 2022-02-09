@@ -21,6 +21,8 @@ class SpiritFantomService(
         objectMapper
     )
 
+    fun getMasterchef() = "0x9083ea3756bde6ee6f27a6e996806fbd37f6f093"
+
     @OptIn(ExperimentalTime::class)
     private val pairCache =
         Cache.Builder().expireAfterWrite(1.days).build<String, List<SushiswapPair>>()
