@@ -19,6 +19,8 @@ class SpookyFantomService(
         theGraphGatewayProvider.createTheGraphGateway("https://api.thegraph.com/subgraphs/name/sushiswap/fantom-exchange"),
     )
 
+    fun getMasterchef() = "0x2b2929e785374c651a81a63878ab22742656dcdd"
+
     private val pairCache = Cache.Builder().expireAfterWrite(1.days).build<String, List<SushiswapPair>>()
 
     override suspend fun getPairs() = pairCache.get("all") {

@@ -5,7 +5,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.fantom.config.FantomContractAccessor
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.SpiritFantomService
+import io.defitrack.protocol.SpookyFantomService
 import io.defitrack.protocol.reward.MasterchefLpContract
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
@@ -13,8 +13,8 @@ import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
 @Component
-class SpiritFantomStakingMarketService(
-    private val spiritFantomService: SpiritFantomService,
+class SpookyStakingMarketService(
+    private val spookyFantomService: SpookyFantomService,
     private val abiResource: ABIResource,
     private val erC20Resource: ERC20Resource,
     private val priceResource: PriceResource,
@@ -24,8 +24,8 @@ class SpiritFantomStakingMarketService(
     override suspend fun fetchStakingMarkets(): List<StakingMarketElement> {
         val masterchef = MasterchefLpContract(
             fantomContractAccessor,
-            abiResource.getABI("spirit/Masterchef.json"),
-            spiritFantomService.getMasterchef()
+            abiResource.getABI("spooky/Masterchef.json"),
+            spookyFantomService.getMasterchef()
         )
 
         val reward = erC20Resource.getTokenInformation(getNetwork(), masterchef.rewardToken)
@@ -41,16 +41,16 @@ class SpiritFantomStakingMarketService(
                 stakedToken
             )
             StakingMarketElement(
-                id = "fantom-spirit-${masterchef.address}-${index}",
+                id = "fantom-spooky-${masterchef.address}-${index}",
                 network = getNetwork(),
                 protocol = getProtocol(),
-                name = "${stakedToken.name} spirit farm",
+                name = "${stakedToken.name} spooky farm",
                 token = stakedToken.toStakedToken(),
                 reward = listOf(
                     reward.toRewardToken()
                 ),
                 contractAddress = masterchef.address,
-                vaultType = "spirit-masterchef",
+                vaultType = "spooky-masterchef",
                 marketSize = BigDecimal.ZERO,
                 rate = aprCalculator.calculateApr()
             )
@@ -58,7 +58,7 @@ class SpiritFantomStakingMarketService(
     }
 
     override fun getProtocol(): Protocol {
-        return Protocol.SPIRITSWAP
+        return Protocol.SPOOKY
     }
 
     override fun getNetwork(): Network {

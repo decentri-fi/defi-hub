@@ -32,20 +32,17 @@ class MasterchefLpContract(
         )[0].value as BigInteger)
     }
 
-    fun getLpTokenForPoolId(poolId: Int): String {
-        return poolInfos[poolId].lpToken
-    }
 
     val rewardToken by lazy {
         read(
-            "spirit",
+            "boo",
             outputs = listOf(TypeReference.create(Address::class.java))
         )[0].value as String
     }
 
     val sushiPerSecond by lazy {
         read(
-            "spiritPerBlock",
+            "booPerSecond",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger
     }
@@ -62,7 +59,6 @@ class MasterchefLpContract(
                         TypeReference.create(Uint256::class.java),
                         TypeReference.create(Uint256::class.java),
                         TypeReference.create(Uint256::class.java),
-                        TypeReference.create(Uint16::class.java),
                     )
                 ),
                 this.address
@@ -78,7 +74,6 @@ class MasterchefLpContract(
                 retVal[1].value as BigInteger,
                 retVal[2].value as BigInteger,
                 retVal[3].value as BigInteger,
-                retVal[4].value as BigInteger,
             )
         }
     }
