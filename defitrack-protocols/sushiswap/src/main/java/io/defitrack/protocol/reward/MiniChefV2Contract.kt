@@ -38,7 +38,7 @@ class MiniChefV2Contract(
             )
         }
 
-        val results = ethereumContractAccessor.readMultiCall(
+        val results = this.evmContractAccessor.readMultiCall(
             multicalls
         )
         results.map { retVal ->
@@ -86,7 +86,7 @@ class MiniChefV2Contract(
                 this.address
             )
         }
-        val results = ethereumContractAccessor.readMultiCall(multicalls)
+        val results = this.evmContractAccessor.readMultiCall(multicalls)
         results.map { retVal ->
             retVal[0].value as String
         }

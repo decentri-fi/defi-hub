@@ -6,7 +6,7 @@ import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.Type
 
 abstract class EvmContract(
-    val ethereumContractAccessor: EvmContractAccessor,
+    val evmContractAccessor: EvmContractAccessor,
     val abi: String,
     val address: String
 ) {
@@ -16,8 +16,8 @@ abstract class EvmContract(
         inputs: List<Type<*>> = emptyList(),
         outputs: List<TypeReference<out Type<*>>?>? = null
     ): Function {
-        return ethereumContractAccessor.createFunction(
-            ethereumContractAccessor.getFunction(abi, method)!!,
+        return evmContractAccessor.createFunction(
+            evmContractAccessor.getFunction(abi, method)!!,
             inputs,
             outputs
         )
@@ -25,9 +25,9 @@ abstract class EvmContract(
 
 
     fun readConstant(method: String): List<Type<*>> {
-        return ethereumContractAccessor.readFunction(
+        return evmContractAccessor.readFunction(
             address = address,
-            function = ethereumContractAccessor.getConstantFunction(
+            function = evmContractAccessor.getConstantFunction(
                 abi,
                 method
             )
@@ -36,8 +36,8 @@ abstract class EvmContract(
 
     fun readMultiple(requests: List<ReadRequest>): List<List<Type<*>>> {
         val functions = requests.map {
-            val abiFunction = ethereumContractAccessor.getFunction(abi, it.method)
-            val function = ethereumContractAccessor.createFunction(
+            val abiFunction = evmContractAccessor.getFunction(abi, it.method)
+            val function = evmContractAccessor.createFunction(
                 abiFunction!!, it.inputs, it.outputs
             )
             MultiCallElement(
@@ -45,7 +45,7 @@ abstract class EvmContract(
                 address
             )
         }
-        return ethereumContractAccessor.readMultiCall(functions)
+        return evmContractAccessor.readMultiCall(functions)
     }
 
     fun read(
@@ -53,11 +53,11 @@ abstract class EvmContract(
         inputs: List<Type<*>> = emptyList(),
         outputs: List<TypeReference<out Type<*>>?>? = null
     ): List<Type<*>> {
-        return ethereumContractAccessor.readFunction(
+        return evmContractAccessor.readFunction(
             address = address,
             inputs = inputs,
             outputs = outputs,
-            function = ethereumContractAccessor.getFunction(
+            function = evmContractAccessor.getFunction(
                 abi,
                 method
             )
@@ -65,10 +65,10 @@ abstract class EvmContract(
     }
 
     fun readConstant(method: String, inputs: List<Type<*>>): List<Type<*>> {
-        return ethereumContractAccessor.readFunction(
+        return evmContractAccessor.readFunction(
             address = address,
             inputs = inputs,
-            function = ethereumContractAccessor.getConstantFunction(
+            function = evmContractAccessor.getConstantFunction(
                 abi,
                 method
             )
@@ -80,10 +80,10 @@ abstract class EvmContract(
         inputs: List<Type<*>>,
         outputs: List<TypeReference<out Type<*>>?>? = null
     ): List<Type<*>> {
-        return ethereumContractAccessor.readFunction(
+        return evmContractAccessor.readFunction(
             address = address,
             inputs = inputs,
-            function = ethereumContractAccessor.getConstantFunction(
+            function = evmContractAccessor.getConstantFunction(
                 abi,
                 method
             ),

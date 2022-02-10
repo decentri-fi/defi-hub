@@ -23,11 +23,12 @@ class MinichefStakingAprCalculator(
         val poolBlockRewards = allSushiPerSecond.times(poolInfo.allocPoint).divide(chef.totalAllocPoint)
         return Reward(
             address = chef.rewardToken,
-            network = chef.ethereumContractAccessor.getNetwork(),
+            network = chef.evmContractAccessor.getNetwork(),
             amount = poolBlockRewards.toBigDecimal().divide(BigDecimal.TEN.pow(18), 18, RoundingMode.HALF_UP),
             tokenType = TokenType.SINGLE
         )
     }
+
 
     override fun getRewardsPerSecond(): List<Reward> {
         return listOf(
@@ -38,14 +39,14 @@ class MinichefStakingAprCalculator(
     override fun getStakedTokens(): List<StakedAsset> {
         val lpAddress = chef.getLpTokenForPoolId(poolId)
         val balance = erC20Resource.getBalance(
-            chef.ethereumContractAccessor.getNetwork(),
+            chef.evmContractAccessor.getNetwork(),
             lpAddress,
             chef.address
         )
         return listOf(
             StakedAsset(
                 address = lpAddress,
-                network = chef.ethereumContractAccessor.getNetwork(),
+                network = chef.evmContractAccessor.getNetwork(),
                 amount = balance.toBigDecimal().divide(BigDecimal.TEN.pow(18), 18, RoundingMode.HALF_UP),
                 tokenType = TokenType.SUSHISWAP
             )

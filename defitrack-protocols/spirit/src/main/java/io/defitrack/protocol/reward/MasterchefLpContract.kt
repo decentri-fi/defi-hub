@@ -25,6 +25,17 @@ class MasterchefLpContract(
         )[0].value as BigInteger).toInt()
     }
 
+    val totalAllocPoint by lazy {
+        (read(
+            "totalAllocPoint",
+            outputs = listOf(TypeReference.create(Uint256::class.java))
+        )[0].value as BigInteger)
+    }
+
+    fun getLpTokenForPoolId(poolId: Int): String {
+        return poolInfos[poolId].lpToken
+    }
+
     val rewardToken by lazy {
         read(
             "spirit",
@@ -58,7 +69,7 @@ class MasterchefLpContract(
             )
         }
 
-        val results = ethereumContractAccessor.readMultiCall(
+        val results = this.evmContractAccessor.readMultiCall(
             multicalls
         )
         results.map { retVal ->

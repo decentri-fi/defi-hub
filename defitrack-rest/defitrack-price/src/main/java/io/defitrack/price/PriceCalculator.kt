@@ -42,26 +42,12 @@ class PriceCalculator(
                 val asERC = erc20Service.getERC20(priceRequest.network, priceRequest.address)
                 val token = erc20Service.getTokenInformation(priceRequest.network, priceRequest.address)
 
-                val price = when (priceRequest.type ?: token.type) {
-                    TokenType.SUSHISWAP -> {
+                val tokenType = (priceRequest.type ?: token.type)
+                val price = when {
+                    tokenType.standardLpToken -> {
                         calculateLpPrice(priceRequest, token)
                     }
-                    TokenType.UNISWAP -> {
-                        calculateLpPrice(priceRequest, token)
-                    }
-                    TokenType.DMM -> {
-                        calculateLpPrice(priceRequest, token)
-                    }
-                    TokenType.WAULT -> {
-                        calculateLpPrice(priceRequest, token)
-                    }
-                    TokenType.DFYN -> {
-                        calculateLpPrice(priceRequest, token)
-                    }
-                    TokenType.KYBER -> {
-                        calculateLpPrice(priceRequest, token)
-                    }
-                    TokenType.BALANCER -> {
+                    tokenType == TokenType.BALANCER -> {
                         calculateBalancerPrice(priceRequest)
                     }
                     else -> {

@@ -66,7 +66,7 @@ class PolycatMasterChefContract(
                 this.address
             )
         }
-        val results = ethereumContractAccessor.readMultiCall(
+        val results = evmContractAccessor.readMultiCall(
             multicalls
         )
         results.map { retVal ->

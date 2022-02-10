@@ -34,7 +34,13 @@ class SpiritFantomStakingMarketService(
         return masterchef.poolInfos.mapIndexed { index, value ->
 
             val stakedToken = erC20Resource.getTokenInformation(getNetwork(), value.lpToken)
-
+            val aprCalculator = MinichefStakingAprCalculator(
+                erC20Resource,
+                priceResource,
+                masterchef,
+                index,
+                stakedToken
+            )
             StakingMarketElement(
                 id = "fantom-spirit-${masterchef.address}-${index}",
                 network = getNetwork(),
@@ -47,7 +53,7 @@ class SpiritFantomStakingMarketService(
                 contractAddress = masterchef.address,
                 vaultType = "spirit-masterchef",
                 marketSize = BigDecimal.ZERO,
-                rate = BigDecimal.ZERO
+                rate = aprCalculator.calculateApr()
             )
         }
     }
