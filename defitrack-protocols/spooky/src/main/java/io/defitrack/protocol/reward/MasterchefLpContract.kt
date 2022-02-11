@@ -2,11 +2,11 @@ package io.defitrack.protocol.reward
 
 import io.defitrack.ethereumbased.contract.EvmContract
 import io.defitrack.ethereumbased.contract.EvmContractAccessor
+import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
 import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toUint256
 import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
-import org.web3j.abi.datatypes.generated.Uint16
 import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
@@ -47,6 +47,28 @@ class MasterchefLpContract(
         )[0].value as BigInteger
     }
 
+    fun userInfoForPoolId(poolId: Int, address: String): MultiCallElement {
+        return MultiCallElement(
+            createFunction(
+                "userInfo",
+                inputs = listOf(
+                    poolId.toBigInteger().toUint256(),
+                    address.toAddress()
+                ),
+                outputs = listOf(
+                    TypeReference.create(Uint256::class.java),
+                    TypeReference.create(Uint256::class.java),
+                )
+            ),
+            this.address
+        )
+    }
+
+    fun userInfo(address: String): List<MultiCallElement> {
+        return (0 until poolLength).map { poolIndex ->
+            userInfoForPoolId(poolIndex, address)
+        }
+    }
 
     val poolInfos: List<PoolInfo> by lazy {
         val multicalls = (0 until poolLength).map { poolIndex ->

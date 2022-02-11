@@ -43,7 +43,7 @@ abstract class StakingMarketService : ProtocolService {
         }
     }
 
-    abstract suspend fun fetchStakingMarkets(): List<StakingMarketElement>
+    protected abstract suspend fun fetchStakingMarkets(): List<StakingMarketElement>
 
     fun Token.toStakedToken(): StakedToken {
         return StakedToken(
