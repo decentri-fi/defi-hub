@@ -15,7 +15,6 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import kotlin.time.Duration.Companion.days
 
-@Service
 class BalancerPolygonUserClaimingService(
     private val balancerPolygonService: BalancerPolygonService,
     private val erC20Resource: ERC20Resource
