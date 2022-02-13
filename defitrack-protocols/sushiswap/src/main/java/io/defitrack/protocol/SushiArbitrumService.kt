@@ -16,6 +16,10 @@ class SushiArbitrumService(
     client: HttpClient
 ) : SushiswapService {
 
+    companion object {
+        fun getMiniChefs() = listOf("0xf4d73326c13a4fc5fd7a064217e12780e9bd62c3")
+    }
+
     private val sushiswapService = SushiswapGraphGateway(
         objectMapper,
         "https://api.thegraph.com/subgraphs/name/sushiswap/arbitrum-exchange",

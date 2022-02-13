@@ -2,8 +2,6 @@ package io.defitrack.protocol
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.common.network.Network
-import io.defitrack.protocol.SushiswapGraphGateway
-import io.defitrack.protocol.SushiswapService
 import io.defitrack.protocol.sushi.domain.SushiswapPair
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
@@ -17,6 +15,10 @@ class SushiFantomService(
     objectMapper: ObjectMapper,
     client: HttpClient
 ) : SushiswapService {
+
+    companion object {
+        fun getMiniChefs() = listOf("0xf731202a3cf7efa9368c2d7bd613926f7a144db5")
+    }
 
     private val sushiswapService = SushiswapGraphGateway(
         objectMapper,

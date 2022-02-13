@@ -21,6 +21,26 @@
             <groupId>io.defitrack</groupId>
             <artifactId>sushiswap</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>fantom</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>arbitrum</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>ethereum</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>avalanche</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>polygon</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
