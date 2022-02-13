@@ -3,7 +3,7 @@ package io.defitrack.protocol
 import io.defitrack.common.network.Network
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
-import io.defitrack.protocol.staking.TokenType
+import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.RoundingMode

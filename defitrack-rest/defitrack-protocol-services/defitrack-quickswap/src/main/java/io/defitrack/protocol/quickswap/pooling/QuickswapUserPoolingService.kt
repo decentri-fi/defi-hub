@@ -8,9 +8,8 @@ import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddre
 import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
 import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.staking.TokenType
+import io.defitrack.token.TokenType
 import io.defitrack.quickswap.QuickswapService
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.generated.Uint256

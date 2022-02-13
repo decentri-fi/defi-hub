@@ -2,7 +2,7 @@ package io.defitrack.staking.vo
 
 import io.defitrack.network.NetworkVO
 import io.defitrack.protocol.ProtocolVO
-import io.defitrack.protocol.staking.TokenType
+import io.defitrack.token.TokenType
 import java.math.BigDecimal
 
 data class StakingMarketElementVO(

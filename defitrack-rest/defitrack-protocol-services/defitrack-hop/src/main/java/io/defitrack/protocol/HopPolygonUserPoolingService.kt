@@ -8,7 +8,7 @@ import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.pool.UserPoolingService
 import io.defitrack.pool.domain.PoolingElement
 import io.defitrack.protocol.contract.HopLpTokenContract
-import io.defitrack.protocol.staking.TokenType
+import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.generated.Uint256

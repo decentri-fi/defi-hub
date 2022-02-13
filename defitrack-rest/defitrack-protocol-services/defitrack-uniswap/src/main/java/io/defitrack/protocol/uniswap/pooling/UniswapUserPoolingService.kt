@@ -8,7 +8,7 @@ import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
 import io.defitrack.pool.UserPoolingService
 import io.defitrack.pool.domain.PoolingElement
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.staking.TokenType
+import io.defitrack.token.TokenType
 import io.defitrack.uniswap.EthereumUniswapV2Service
 import io.defitrack.uniswap.contract.UniswapLPTokenContract
 import org.springframework.stereotype.Service

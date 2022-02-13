@@ -4,7 +4,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.pool.UserPoolingService
 import io.defitrack.pool.domain.PoolingElement
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.staking.TokenType
+import io.defitrack.token.TokenType
 import org.springframework.stereotype.Service
 
 @Service

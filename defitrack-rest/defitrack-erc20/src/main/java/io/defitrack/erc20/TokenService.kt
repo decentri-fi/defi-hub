@@ -3,9 +3,9 @@ package io.defitrack.erc20
 import io.defitrack.common.network.Network
 import io.defitrack.pool.LPtokenService
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.staking.Token
-import io.defitrack.protocol.staking.TokenType
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.Token
+import io.defitrack.token.TokenType
 import io.defitrack.token.domain.ERC20Information
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.runBlocking
@@ -15,7 +15,8 @@ import java.math.BigInteger
 @Service
 class TokenService(
     val erc20Resource: ERC20Resource,
-    private val LPtokenService: LPtokenService
+    private val LPtokenService: LPtokenService,
+    private val hopTokenService: HopTokenService,
 ) {
 
     fun getType(symbol: String): TokenType = when {
@@ -73,7 +74,7 @@ class TokenService(
                     fromLP(Protocol.DMM, network, token)
                 }
                 isHopLp(token.symbol) -> {
-                    fromLP(Protocol.HOP, network, token)
+                    hopTokenService.getTokenInformation(token.address, network)
                 }
                 else -> {
                     Token(

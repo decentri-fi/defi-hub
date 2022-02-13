@@ -6,7 +6,7 @@ import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.contract.HopStakingReward
-import io.defitrack.protocol.staking.Token
+import io.defitrack.token.Token
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource

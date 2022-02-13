@@ -1,7 +1,7 @@
 package io.defitrack.staking
 
 import io.defitrack.protocol.ProtocolService
-import io.defitrack.protocol.staking.Token
+import io.defitrack.token.Token
 import io.defitrack.staking.domain.RewardToken
 import io.defitrack.staking.domain.StakedToken
 import io.defitrack.staking.domain.StakingMarketElement
@@ -11,9 +11,7 @@ import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import java.util.concurrent.Executors
-import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
-import kotlin.time.ExperimentalTime
 
 abstract class StakingMarketService : ProtocolService {
 

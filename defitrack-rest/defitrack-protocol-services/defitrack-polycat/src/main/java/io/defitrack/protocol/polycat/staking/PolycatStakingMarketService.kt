@@ -9,7 +9,7 @@ import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.polycat.PolycatMasterChefContract
 import io.defitrack.protocol.polycat.PolycatService
-import io.defitrack.protocol.staking.Token
+import io.defitrack.token.Token
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.RewardToken
 import io.defitrack.staking.domain.StakedToken

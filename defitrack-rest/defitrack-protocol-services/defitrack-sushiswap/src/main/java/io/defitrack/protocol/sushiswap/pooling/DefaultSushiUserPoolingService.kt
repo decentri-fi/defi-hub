@@ -3,7 +3,7 @@ package io.defitrack.protocol.sushiswap.pooling
 import io.defitrack.pool.UserPoolingService
 import io.defitrack.pool.domain.PoolingElement
 import io.defitrack.protocol.SushiswapService
-import io.defitrack.protocol.staking.TokenType
+import io.defitrack.token.TokenType
 import java.math.BigDecimal
 
 abstract class DefaultSushiUserPoolingService(

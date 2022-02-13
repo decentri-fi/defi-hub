@@ -10,8 +10,7 @@ import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
 import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.dfyn.DfynService
-import io.defitrack.protocol.staking.TokenType
-import org.springframework.cache.annotation.Cacheable
+import io.defitrack.token.TokenType
 import org.springframework.stereotype.Service
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.generated.Uint256

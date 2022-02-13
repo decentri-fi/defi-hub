@@ -8,8 +8,8 @@ import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SushiPolygonService
 import io.defitrack.protocol.reward.MiniChefV2Contract
-import io.defitrack.protocol.staking.Token
-import io.defitrack.protocol.staking.TokenType
+import io.defitrack.token.Token
+import io.defitrack.token.TokenType
 import io.defitrack.protocol.sushiswap.apr.MinichefStakingAprCalculator
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.RewardToken

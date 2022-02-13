@@ -6,7 +6,7 @@ import io.defitrack.network.toVO
 import io.defitrack.pool.domain.PoolingMarketElement
 import io.defitrack.pool.vo.PoolingMarketElementToken
 import io.defitrack.pool.vo.PoolingMarketElementVO
-import io.defitrack.protocol.staking.TokenType
+import io.defitrack.token.TokenType
 import io.defitrack.protocol.toVO
 import io.defitrack.token.ERC20Resource
 import org.slf4j.Logger

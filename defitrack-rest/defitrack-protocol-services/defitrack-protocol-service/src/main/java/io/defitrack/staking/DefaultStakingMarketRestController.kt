@@ -2,7 +2,7 @@ package io.defitrack.staking
 
 import io.defitrack.common.network.Network
 import io.defitrack.network.toVO
-import io.defitrack.protocol.staking.TokenType
+import io.defitrack.token.TokenType
 import io.defitrack.protocol.toVO
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.staking.vo.RewardTokenVO

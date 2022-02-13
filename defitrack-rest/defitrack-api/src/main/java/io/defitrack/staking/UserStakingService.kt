@@ -2,7 +2,7 @@ package io.defitrack.staking
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.protocol.ProtocolService
-import io.defitrack.protocol.staking.TokenType
+import io.defitrack.token.TokenType
 import io.defitrack.staking.domain.StakingElement
 import io.defitrack.staking.domain.VaultRewardToken
 import io.defitrack.staking.domain.VaultStakedToken

@@ -4,8 +4,8 @@ import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.retry
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.balancer.BalancerPolygonService
-import io.defitrack.protocol.staking.Token
-import io.defitrack.protocol.staking.TokenType
+import io.defitrack.token.Token
+import io.defitrack.token.TokenType
 import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking

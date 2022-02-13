@@ -5,8 +5,7 @@ import io.defitrack.pool.domain.PoolingElement
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.BalancerArbitrumService
-import io.defitrack.protocol.staking.TokenType
-import org.springframework.cache.annotation.Cacheable
+import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 

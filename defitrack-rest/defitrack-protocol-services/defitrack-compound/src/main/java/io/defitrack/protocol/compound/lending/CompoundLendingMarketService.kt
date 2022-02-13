@@ -12,7 +12,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.compound.CompoundComptrollerContract
 import io.defitrack.protocol.compound.CompoundService
 import io.defitrack.protocol.compound.CompoundTokenContract
-import io.defitrack.protocol.staking.TokenType
+import io.defitrack.token.TokenType
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Component
 import java.math.BigDecimal

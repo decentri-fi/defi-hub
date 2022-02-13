@@ -9,7 +9,7 @@ import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.AaveMainnetService
 import io.defitrack.protocol.aave.domain.AaveReserve
-import io.defitrack.protocol.staking.TokenType
+import io.defitrack.token.TokenType
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 

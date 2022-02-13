@@ -2,7 +2,7 @@ package io.defitrack.staking.domain
 
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.staking.TokenType
+import io.defitrack.token.TokenType
 import java.math.BigInteger
 
 data class StakingElement(
