@@ -40,7 +40,6 @@ class ERC20Repository(
             "https://raw.githubusercontent.com/defitrack/data/master/tokens/polygon/polygon.vetted.tokenlist.json",
             "https://raw.githubusercontent.com/defitrack/data/master/tokens/polygon/polygon.listed.tokenlist.json",
             "https://raw.githubusercontent.com/defitrack/data/master/tokens/ethereum/set.tokenlist.json",
-            "https://raw.githubusercontent.com/defitrack/data/master/tokens/ethereum/compound.tokenlist.json",
             "https://raw.githubusercontent.com/defitrack/data/master/tokens/arbitrum/tokenlist.json",
             "https://raw.githubusercontent.com/defitrack/data/master/tokens/fantom/aeb.tokenlist.json",
             "https://raw.githubusercontent.com/defitrack/data/master/tokens/fantom/fantomfinance.tokenlist.json",
