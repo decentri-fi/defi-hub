@@ -27,7 +27,7 @@ class DefaultUserStakingRestController(
 ) {
 
     @GetMapping("/{userId}/positions")
-    fun getUserStakings(@PathVariable("userId") address: String): List<Unit> {
+    fun getUserStakings(@PathVariable("userId") address: String): List<StakingElementVO> {
         if (WalletUtils.isValidAddress(address)) {
             return stakingServices.flatMap {
                 try {
