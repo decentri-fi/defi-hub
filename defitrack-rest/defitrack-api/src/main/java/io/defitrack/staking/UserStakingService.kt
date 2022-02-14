@@ -2,13 +2,12 @@ package io.defitrack.staking
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.protocol.ProtocolService
-import io.defitrack.token.TokenType
+import io.defitrack.staking.domain.RewardToken
+import io.defitrack.staking.domain.StakedToken
 import io.defitrack.staking.domain.StakingElement
-import io.defitrack.staking.domain.VaultRewardToken
-import io.defitrack.staking.domain.VaultStakedToken
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.TokenType
 import java.math.BigInteger
-import java.util.*
 
 abstract class UserStakingService(
     val erC20Resource: ERC20Resource,
@@ -22,21 +21,19 @@ abstract class UserStakingService(
         }
     }
 
-    fun vaultStakedToken(
+    fun stakedToken(
         address: String,
-        amount: BigInteger,
         type: TokenType? = null
-    ): VaultStakedToken {
+    ): StakedToken {
         val token = erC20Resource.getTokenInformation(getNetwork(), address)
         val actualType = type ?: token.type
 
-        return VaultStakedToken(
-            address,
-            getNetwork(),
-            amount,
-            token.symbol,
-            token.name,
-            token.decimals,
+        return StakedToken(
+            address = address,
+            network = getNetwork(),
+            symbol = token.symbol,
+            name = token.name,
+            decimals = token.decimals,
             type = actualType
         )
     }
@@ -45,12 +42,13 @@ abstract class UserStakingService(
         user: String,
         vaultUrl: String,
         vaultName: String,
-        rewardTokens: List<VaultRewardToken>,
-        stakedToken: VaultStakedToken,
+        rewardTokens: List<RewardToken>,
+        stakedToken: StakedToken,
         vaultType: String,
         vaultAddress: String,
         rate: Double = 0.0,
-        id: String = UUID.randomUUID().toString()
+        id: String,
+        amount: BigInteger
     ): StakingElement {
         return StakingElement(
             id = id,
@@ -63,7 +61,8 @@ abstract class UserStakingService(
             url = vaultUrl,
             vaultType = vaultType,
             stakedToken = stakedToken,
-            rewardTokens = rewardTokens
+            rewardTokens = rewardTokens,
+            amount = amount
         )
     }
 }

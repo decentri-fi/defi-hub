@@ -64,7 +64,10 @@ class CurveEthereumStakingService(
             val balance = result[0].value as BigInteger
             val gauge = gauges[index]
 
+
             if (balance > BigInteger.ZERO) {
+                val lpToken = erC20Resource.getTokenInformation(getNetwork(), gauge.pool!!.lpToken.address)
+
                 try {
                     StakingElement(
                         network = getNetwork(),
@@ -72,15 +75,15 @@ class CurveEthereumStakingService(
                         name = (gauge.pool?.name ?: "Curve") + " Gauge",
                         id = UUID.randomUUID().toString(),
                         url = "https://etherscan.io/address/" + gauge.address,
-                        stakedToken = gauge.pool?.let {
-                            vaultStakedToken(
-                                it.lpToken.address,
-                                balance
-                            )
-                        },
+                        stakedToken = stakedToken(
+                            lpToken.address,
+                            lpToken.type
+                        ),
                         rewardTokens = emptyList(),
                         vaultType = "curve-gauge",
-                        contractAddress = gauge.address
+                        contractAddress = gauge.address,
+                        amount = balance
+
                     )
                 } catch (ex: Exception) {
                     logger.debug("Something went wrong trying to fetch curve staking")

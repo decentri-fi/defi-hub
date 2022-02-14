@@ -1,15 +1,15 @@
 package io.defitrack.protocol.convex.staking
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.defitrack.staking.UserStakingService
-import io.defitrack.staking.domain.StakingElement
-import io.defitrack.staking.domain.VaultRewardToken
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereum.config.EthereumContractAccessor
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.convex.ConvexService
 import io.defitrack.protocol.convex.CvxRewardPool
+import io.defitrack.staking.UserStakingService
+import io.defitrack.staking.domain.RewardToken
+import io.defitrack.staking.domain.StakingElement
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import java.math.BigInteger
@@ -42,26 +42,27 @@ class ConvexPoolsUserStakingService(
             val balance = pool.balanceOf(address)
             if (balance > BigInteger.ZERO) {
 
-                val rewardToken = erC20Resource.getTokenInformation(getNetwork(), pool.rewardToken(), )
-                val stakedToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingToken(), )
+                val rewardToken = erC20Resource.getTokenInformation(getNetwork(), pool.rewardToken())
+                val stakedToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingToken())
 
                 stakingElement(
                     user = address,
                     vaultUrl = "https://etherscan.io/address/${pool.address}",
                     vaultName = pool.name,
                     rewardTokens = listOf(
-                        VaultRewardToken(
+                        RewardToken(
                             name = rewardToken.name,
                             symbol = rewardToken.symbol,
                             decimals = rewardToken.decimals,
                         )
                     ),
-                    stakedToken = vaultStakedToken(
+                    stakedToken = stakedToken(
                         address = stakedToken.address,
-                        amount = balance
                     ),
                     vaultType = "convex-reward-pool",
-                    vaultAddress = pool.address
+                    vaultAddress = pool.address,
+                    amount = balance,
+                    id = "cvx-rewardpool-${pool.address}"
                 )
             } else {
                 null

@@ -8,8 +8,8 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.polycat.PolycatMasterChefContract
 import io.defitrack.protocol.polycat.PolycatService
 import io.defitrack.staking.UserStakingService
+import io.defitrack.staking.domain.RewardToken
 import io.defitrack.staking.domain.StakingElement
-import io.defitrack.staking.domain.VaultRewardToken
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import java.math.BigInteger
@@ -53,19 +53,20 @@ class PolycatStakingService(
                         protocol = getProtocol(),
                         name = stakedtoken.name + " Vault",
                         url = "https://polygon.iron.finance/farms",
-                        stakedToken = vaultStakedToken(
+                        stakedToken = stakedToken(
                             stakedtoken.address,
-                            balance
+                            stakedtoken.type
                         ),
                         rewardTokens = listOf(
-                            VaultRewardToken(
+                            RewardToken(
                                 name = rewardToken.name,
                                 symbol = rewardToken.symbol,
                                 decimals = rewardToken.decimals
                             )
                         ),
                         contractAddress = masterChef.address,
-                        vaultType = "polycat-masterchef"
+                        vaultType = "polycat-masterchef",
+                        amount = balance
                     )
                 } else {
                     null

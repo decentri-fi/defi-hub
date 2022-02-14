@@ -7,7 +7,7 @@ object FormatUtilsExtensions {
     fun BigInteger.asEth(): Double = FormatUtils.asEth(this)
     fun BigDecimal.asEth(): Double = FormatUtils.asEth(this)
 
-    fun BigInteger.asEth(decimals: Int): Double = FormatUtils.asEth(this, decimals)
+    fun BigInteger.asEth(decimals: Int): BigDecimal = FormatUtils.asEth(this, decimals)
 
     fun Double.asWei(): BigInteger = FormatUtils.asWei(this)
 

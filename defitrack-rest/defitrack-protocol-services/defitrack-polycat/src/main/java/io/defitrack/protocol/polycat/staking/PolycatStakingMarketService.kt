@@ -92,7 +92,7 @@ class PolycatStakingMarketService(
                 PriceRequest(
                     stakedtoken.address,
                     getNetwork(),
-                    balance.asEth(stakedtoken.decimals).toBigDecimal(),
+                    balance.asEth(stakedtoken.decimals),
                     stakedtoken.type
                 )
             )

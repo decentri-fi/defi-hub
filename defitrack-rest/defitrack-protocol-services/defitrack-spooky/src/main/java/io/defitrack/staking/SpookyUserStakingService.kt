@@ -9,10 +9,11 @@ import io.defitrack.protocol.SpookyFantomService
 import io.defitrack.protocol.reward.MasterchefLpContract
 import io.defitrack.staking.domain.StakingElement
 import io.defitrack.staking.domain.StakingMarketElement
-import io.defitrack.staking.domain.VaultStakedToken
 import io.defitrack.token.ERC20Resource
+import org.springframework.stereotype.Component
 import java.math.BigInteger
 
+@Component
 class SpookyUserStakingService(
     private val spookyStakingMarketService: SpookyStakingMarketService,
     private val spookyFantomService: SpookyFantomService,
@@ -34,7 +35,8 @@ class SpookyUserStakingService(
         }
 
         return fantomContractAccessor.readMultiCall(masterchef.userInfo(address)).mapIndexed { index, value ->
-            if ((value[0].value as BigInteger) > BigInteger.ZERO) {
+            val balance = value[0].value
+            if ((balance as BigInteger) > BigInteger.ZERO) {
                 val stakingMarket = stakingMarkets[index]
                 StakingElement(
                     id = stakingMarket.id,
@@ -46,19 +48,11 @@ class SpookyUserStakingService(
                     vaultType = stakingMarket.vaultType,
                     rate = stakingMarket.rate.toDouble(),
                     url = "",
-                    stakedToken = stakingMarket.token.let {
-                        VaultStakedToken(
-                            it.address,
-                            it.network,
-                            value[0].value as BigInteger,
-                            it.symbol,
-                            it.name,
-                            it.decimals,
-                            it.type
-                        )
-                    }
+                    stakedToken = stakingMarket.token,
+                    rewardTokens = stakingMarket.reward,
+                    amount = balance
                 )
-            }     else {
+            } else {
                 null
             }
         }.filterNotNull()

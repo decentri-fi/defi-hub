@@ -2,7 +2,6 @@ package io.defitrack.staking.domain
 
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
-import io.defitrack.token.TokenType
 import java.math.BigInteger
 
 data class StakingElement(
@@ -15,23 +14,7 @@ data class StakingElement(
     val vaultType: String,
     val rate: Double = 0.0,
     val url: String = "?",
-    val stakedToken: VaultStakedToken? = null,
-    val rewardTokens: List<VaultRewardToken> = emptyList()
-)
-
-class VaultStakedToken(
-    val address: String,
-    val network: Network,
+    val stakedToken: StakedToken,
     val amount: BigInteger,
-    val symbol: String,
-    val name: String,
-    val decimals: Int,
-    val type: TokenType
-)
-
-data class VaultRewardToken(
-    var daily: String = "",
-    var name: String = "",
-    var symbol: String = "",
-    var decimals: Int = 18
+    val rewardTokens: List<RewardToken> = emptyList()
 )

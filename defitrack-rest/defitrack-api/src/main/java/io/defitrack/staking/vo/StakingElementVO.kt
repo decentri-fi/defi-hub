@@ -13,6 +13,6 @@ data class StakingElementVO(
     val vaultType: String,
     val rate: Double = 0.0,
     val url: String,
-    val stakedToken: VaultStakedTokenVO?,
-    val rewardTokens: List<VaultRewardTokenVO>
+    val stakedToken: StakedTokenVO,
+    val rewardTokens: List<RewardTokenVO>
 )

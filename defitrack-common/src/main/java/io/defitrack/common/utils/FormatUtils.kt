@@ -1,9 +1,9 @@
 package io.defitrack.common.utils
 
-import java.math.BigDecimal
+import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.domain.PrettyAmount
-import io.defitrack.common.utils.FormatUtils
 import org.web3j.utils.Convert
+import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
 
@@ -30,12 +30,8 @@ object FormatUtils {
     }
 
 
-    fun asEth(weiBalance: BigInteger?, decimals: Int): Double {
-        return BigDecimal(weiBalance).divide(
-            BigDecimal.valueOf(Math.pow(10.0, decimals.toDouble())),
-            8,
-            RoundingMode.HALF_DOWN
-        ).toDouble()
+    fun asEth(weiBalance: BigInteger?, decimals: Int): BigDecimal {
+        return BigDecimal(weiBalance).dividePrecisely(BigDecimal.TEN.pow(decimals))
     }
 
     fun asWei(ethBalance: Double): BigInteger {

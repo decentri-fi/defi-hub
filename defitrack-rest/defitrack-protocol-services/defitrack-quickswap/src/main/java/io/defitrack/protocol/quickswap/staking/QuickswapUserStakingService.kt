@@ -1,10 +1,6 @@
 package io.defitrack.protocol.quickswap.staking
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
-import io.defitrack.staking.UserStakingService
-import io.defitrack.staking.domain.StakingElement
-import io.defitrack.staking.domain.VaultRewardToken
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
@@ -12,7 +8,11 @@ import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
 import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
+import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
 import io.defitrack.quickswap.QuickswapService
+import io.defitrack.staking.UserStakingService
+import io.defitrack.staking.domain.RewardToken
+import io.defitrack.staking.domain.StakingElement
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import org.web3j.abi.TypeReference
@@ -71,18 +71,19 @@ class QuickswapUserStakingService(
                     vaultUrl = "https://quickswap.exchange",
                     vaultName = """${stakedToken.name} Reward""",
                     rewardTokens = listOf(
-                        VaultRewardToken(
+                        RewardToken(
                             name = rewardToken.name,
                             decimals = rewardToken.decimals,
                             symbol = rewardToken.symbol,
                         )
                     ),
-                    stakedToken = vaultStakedToken(stakedToken.address, balance),
+                    stakedToken = stakedToken(stakedToken.address),
                     vaultType = "quickswap-staking-rewards",
                     vaultAddress = pool.address,
                     rate = (quickswapAPRService.getRewardPoolAPR(pool.address) + quickswapAPRService.getLPAPR(
                         stakedToken.address
-                    )).toDouble()
+                    )).toDouble(),
+                    amount = balance
                 )
             } else {
                 null

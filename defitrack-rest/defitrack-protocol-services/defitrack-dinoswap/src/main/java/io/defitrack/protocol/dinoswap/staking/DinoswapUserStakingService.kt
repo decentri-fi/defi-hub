@@ -3,7 +3,6 @@ package io.defitrack.protocol.dinoswap.staking
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.staking.UserStakingService
 import io.defitrack.staking.domain.StakingElement
-import io.defitrack.staking.domain.VaultRewardToken
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereumbased.contract.ERC20Contract
@@ -11,6 +10,7 @@ import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.dinoswap.DinoswapFossilFarmsContract
 import io.defitrack.protocol.dinoswap.DinoswapService
+import io.defitrack.staking.domain.RewardToken
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -70,20 +70,19 @@ class DinoswapUserStakingService(
                         protocol = getProtocol(),
                         name = stakedtoken.name + " Vault",
                         url = "https://polygon.iron.finance/farms",
-                        stakedToken = vaultStakedToken(
+                        stakedToken = stakedToken(
                             stakedtoken.address,
-                            balance
                         ),
                         rewardTokens = listOf(
-                            VaultRewardToken(
+                            RewardToken(
                                 name = rewardToken.name,
                                 symbol = rewardToken.symbol,
                                 decimals = rewardToken.decimals,
-                                daily = perDay.divide(BigDecimal.TEN.pow(18), 4, RoundingMode.HALF_UP).toString()
                             )
                         ),
                         contractAddress = masterChef.address,
-                        vaultType = "dinoswap-fossilfarm"
+                        vaultType = "dinoswap-fossilfarm",
+                        amount = balance
                     )
                 } else {
                     null

@@ -8,8 +8,8 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.convex.ConvexService
 import io.defitrack.protocol.convex.CvxLocker
 import io.defitrack.staking.UserStakingService
+import io.defitrack.staking.domain.RewardToken
 import io.defitrack.staking.domain.StakingElement
-import io.defitrack.staking.domain.VaultRewardToken
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import java.math.BigInteger
@@ -52,18 +52,19 @@ class ConvexVoteLockedStakingService(
                     user = address,
                     name = pool.name,
                     rewardTokens = listOf(
-                        VaultRewardToken(
+                        RewardToken(
                             name = rewardToken.name,
                             symbol = rewardToken.symbol,
                             decimals = rewardToken.decimals,
                         )
                     ),
-                    stakedToken = vaultStakedToken(
+                    stakedToken = stakedToken(
                         address = stakedToken.address,
-                        amount = balance
+                        stakedToken.type
                     ),
                     vaultType = "convex-locked-vote",
-                    contractAddress = pool.address
+                    contractAddress = pool.address,
+                    amount = balance
                 )
             } else {
                 null

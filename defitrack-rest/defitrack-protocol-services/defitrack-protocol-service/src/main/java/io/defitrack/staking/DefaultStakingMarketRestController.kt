@@ -6,7 +6,9 @@ import io.defitrack.token.TokenType
 import io.defitrack.protocol.toVO
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.staking.vo.RewardTokenVO
+import io.defitrack.staking.vo.RewardTokenVO.Companion.toVO
 import io.defitrack.staking.vo.StakedTokenVO
+import io.defitrack.staking.vo.StakedTokenVO.Companion.toVO
 import io.defitrack.staking.vo.StakingMarketElementVO
 import io.defitrack.token.ERC20Resource
 import org.springframework.http.ResponseEntity
@@ -77,20 +79,9 @@ class DefaultStakingMarketRestController(
         network = it.network.toVO(),
         protocol = it.protocol.toVO(),
         name = it.name,
-        stakedToken = StakedTokenVO(
-            name = it.token.name,
-            symbol = it.token.symbol,
-            address = it.token.address,
-            network = it.token.network.toVO(),
-            decimals = it.token.decimals,
-            type = it.token.type
-        ),
+        stakedToken = it.token.toVO(),
         reward = it.reward.map { reward ->
-            RewardTokenVO(
-                name = reward.name,
-                symbol = reward.symbol,
-                decimals = reward.decimals
-            )
+            reward.toVO()
         },
         contractAddress = it.contractAddress,
         vaultType = it.vaultType,

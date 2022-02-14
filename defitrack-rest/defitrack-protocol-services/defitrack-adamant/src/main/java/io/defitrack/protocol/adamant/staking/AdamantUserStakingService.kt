@@ -1,8 +1,6 @@
 package io.defitrack.protocol.adamant.staking
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.defitrack.staking.UserStakingService
-import io.defitrack.staking.domain.StakingElement
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
@@ -11,6 +9,8 @@ import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.adamant.AdamantService
 import io.defitrack.protocol.adamant.AdamantVaultContract
+import io.defitrack.staking.UserStakingService
+import io.defitrack.staking.domain.StakingElement
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import org.web3j.abi.TypeReference
@@ -62,9 +62,8 @@ class AdamantUserStakingService(
             if (balance > BigInteger.ONE) {
                 val vault = adamantVaultContracts[index]
                 val wantAddress = vault.lpAddress
-                val stakedToken = vaultStakedToken(
+                val stakedToken = stakedToken(
                     wantAddress,
-                    vault.getTokensStaked(address)
                 )
 
                 stakingElement(
@@ -74,7 +73,9 @@ class AdamantUserStakingService(
                     rewardTokens = emptyList(),
                     stakedToken = stakedToken,
                     "adamant-generic-vault",
-                    vault.address
+                    vault.address,
+                    amount = vault.getTokensStaked(address),
+                    id = "adamant-generic-vault-$index"
                 )
             } else {
                 null

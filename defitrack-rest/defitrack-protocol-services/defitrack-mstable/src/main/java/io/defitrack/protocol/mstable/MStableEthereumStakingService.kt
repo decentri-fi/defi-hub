@@ -1,13 +1,13 @@
 package io.defitrack.protocol.mstable
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.defitrack.staking.UserStakingService
-import io.defitrack.staking.domain.StakingElement
-import io.defitrack.staking.domain.VaultRewardToken
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereum.config.EthereumContractAccessor
 import io.defitrack.protocol.Protocol
+import io.defitrack.staking.UserStakingService
+import io.defitrack.staking.domain.RewardToken
+import io.defitrack.staking.domain.StakingElement
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import java.math.BigInteger
@@ -48,18 +48,19 @@ class MStableEthereumStakingService(
                     protocol = this.getProtocol(),
                     name = it.name,
                     url = "https://etherscan.io/address/${it.address}",
-                    stakedToken = vaultStakedToken(
+                    stakedToken = stakedToken(
                         stakingToken.address,
-                        balance
                     ),
                     rewardTokens = listOf(
-                        VaultRewardToken(
+                        RewardToken(
                             name = rewardsToken.name,
                             symbol = stakingToken.symbol,
+                            decimals = rewardsToken.decimals
                         )
                     ),
                     contractAddress = it.address,
-                    vaultType = "mstable-boosted-savings-vault"
+                    vaultType = "mstable-boosted-savings-vault",
+                    amount = balance
                 )
             } else {
                 null

@@ -5,13 +5,13 @@ import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.Protocol
-import io.defitrack.token.TokenType
 import io.defitrack.quickswap.QuickswapService
 import io.defitrack.quickswap.contract.DQuickContract
 import io.defitrack.staking.UserStakingService
+import io.defitrack.staking.domain.RewardToken
 import io.defitrack.staking.domain.StakingElement
-import io.defitrack.staking.domain.VaultRewardToken
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.TokenType
 import org.springframework.stereotype.Service
 import java.math.BigInteger
 
@@ -38,15 +38,15 @@ class DQuickStakingService(
                 StakingElement(
                     user = address,
                     rewardTokens = listOf(
-                        VaultRewardToken(
+                        RewardToken(
                             name = "Quick",
                             symbol = "QUICK",
-                            daily = "",
+                            decimals = 18,
                         )
                     ),
-                    stakedToken = vaultStakedToken(
-                        "0x831753dd7087cac61ab5644b308642cc1c33dc13",
-                        dquick.quickBalance(address),
+                    stakedToken = stakedToken(
+                        address = "0x831753dd7087cac61ab5644b308642cc1c33dc13",
+
                         type = TokenType.SINGLE
                     ),
                     vaultType = "quickswap-dquick",
@@ -54,7 +54,8 @@ class DQuickStakingService(
                     network = getNetwork(),
                     protocol = getProtocol(),
                     name = "Dragon's Lair",
-                    contractAddress = dquick.address
+                    contractAddress = dquick.address,
+                    amount = dquick.quickBalance(address)
                 )
             )
         } else {
