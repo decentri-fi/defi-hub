@@ -33,6 +33,7 @@
         <module>defitrack-quickswap</module>
         <module>defitrack-sushiswap</module>
         <module>defitrack-uniswap</module>
+        <module>defitrack-yearn</module>
         <module>defitrack-protocol-service</module>
     </modules>
 
