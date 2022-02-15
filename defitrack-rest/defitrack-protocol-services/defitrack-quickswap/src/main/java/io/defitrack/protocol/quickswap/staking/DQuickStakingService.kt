@@ -20,9 +20,8 @@ class DQuickStakingService(
     private val quickswapService: QuickswapService,
     private val polygonContractAccessor: PolygonContractAccessor,
     private val abiResource: ABIResource,
-    objectMapper: ObjectMapper,
     erC20Resource: ERC20Resource
-) : UserStakingService(erC20Resource, objectMapper) {
+) : UserStakingService(erC20Resource) {
 
     val dquickStakingABI by lazy {
         abiResource.getABI("quickswap/dquick.json")

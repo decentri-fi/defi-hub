@@ -19,8 +19,7 @@ class MStableEthereumStakingService(
     private val ethereumContractAccessor: EthereumContractAccessor,
     private val abiResource: ABIResource,
     erC20Resource: ERC20Resource,
-    objectMapper: ObjectMapper
-) : UserStakingService(erC20Resource, objectMapper) {
+) : UserStakingService(erC20Resource) {
 
     val boostedSavingsVaultABI by lazy {
         abiResource.getABI("mStable/BoostedSavingsVault.json")

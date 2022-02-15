@@ -29,9 +29,8 @@ class BeefyFantomUserStakingService(
     private val abiResource: ABIResource,
     private val beefyAPYService: BeefyAPYService,
     private val stakingMarketService: BeefyFantomStakingMarketService,
-    objectMapper: ObjectMapper,
     erC20Resource: ERC20Resource
-) : UserStakingService(erC20Resource, objectMapper) {
+) : UserStakingService(erC20Resource) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
     val vaultV6ABI by lazy {
@@ -120,7 +119,7 @@ class BeefyFantomUserStakingService(
                     ),
                     vaultType = "beefyVaultV6",
                     contractAddress = market.contractAddress,
-                    amount =                         underlyingBalance.toBigInteger()
+                    amount = underlyingBalance.toBigInteger()
 
                 )
             } else {

@@ -20,8 +20,7 @@ class SpookyUserStakingService(
     private val fantomContractAccessor: FantomContractAccessor,
     private val abiResource: ABIResource,
     erC20Resource: ERC20Resource,
-    objectMapper: ObjectMapper
-) : UserStakingService(erC20Resource, objectMapper) {
+) : UserStakingService(erC20Resource) {
 
     override fun getStakings(address: String): List<StakingElement> {
         val masterchef = MasterchefLpContract(

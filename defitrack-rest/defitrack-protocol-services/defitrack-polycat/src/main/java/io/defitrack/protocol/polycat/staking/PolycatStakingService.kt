@@ -18,10 +18,9 @@ import java.math.BigInteger
 class PolycatStakingService(
     private val polycatService: PolycatService,
     private val abiResource: ABIResource,
-    objectMapper: ObjectMapper,
     erC20Resource: ERC20Resource,
     private val polygonContractAccessor: PolygonContractAccessor,
-) : UserStakingService(erC20Resource, objectMapper) {
+) : UserStakingService(erC20Resource) {
 
     val masterChefABI by lazy {
         abiResource.getABI("polycat/MasterChef.json")

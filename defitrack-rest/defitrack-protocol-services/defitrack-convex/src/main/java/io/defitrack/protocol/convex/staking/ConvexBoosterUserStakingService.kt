@@ -1,6 +1,5 @@
 package io.defitrack.protocol.convex.staking
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereum.config.EthereumContractAccessor
@@ -22,9 +21,8 @@ class ConvexBoosterUserStakingService(
     private val ethereumContractAccessor: EthereumContractAccessor,
     private val abiResource: ABIResource,
     erC20Resource: ERC20Resource,
-    objectMapper: ObjectMapper
 ) : UserStakingService(
-    erC20Resource, objectMapper
+    erC20Resource
 ) {
 
 
@@ -42,7 +40,7 @@ class ConvexBoosterUserStakingService(
             MultiCallElement(
                 ERC20Contract(
                     ethereumContractAccessor,
-                    abiResource.getABI("convex/CrvRewards.json"),
+                    abiResource.getABI("convex/ERC20.json"),
                     it.crvRewards
                 ).balanceOfMethod(address),
                 it.crvRewards

@@ -1,6 +1,5 @@
 package io.defitrack.protocol.convex.staking
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereum.config.EthereumContractAccessor
@@ -19,10 +18,9 @@ class ConvexVoteLockedStakingService(
     private val convexService: ConvexService,
     private val abiResource: ABIResource,
     private val ethereumContractAccessor: EthereumContractAccessor,
-    erC20Resource: ERC20Resource,
-    objectMapper: ObjectMapper
+    erC20Resource: ERC20Resource
 ) :
-    UserStakingService(erC20Resource, objectMapper) {
+    UserStakingService(erC20Resource) {
 
     val cvxRewardPoolABI by lazy {
         abiResource.getABI("convex/CvxLocker.json")

@@ -25,9 +25,8 @@ class QuickswapUserStakingService(
     private val polygonContractAccessor: PolygonContractAccessor,
     private val abiService: ABIResource,
     private val quickswapAPRService: QuickswapAPRService,
-    objectMapper: ObjectMapper,
     tokenService: ERC20Resource,
-) : UserStakingService(tokenService, objectMapper) {
+) : UserStakingService(tokenService) {
 
     val stakingRewardsABI by lazy {
         abiService.getABI("quickswap/StakingRewards.json")

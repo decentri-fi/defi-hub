@@ -13,7 +13,7 @@ class YearnService(
 ) {
 
     val graph =
-        graphGatewayProvider.createTheGraphGateway("https://api.thegraph.com/subgraphs/name/jainkunal/yearnvaultsv2subgraph")
+        graphGatewayProvider.createTheGraphGateway("https://api.thegraph.com/subgraphs/name/rareweasel/yearn-vaults-v2-mainnet")
 
     suspend fun provideYearnV2Vaults(): List<YearnV2Vault> =
         runBlocking {
@@ -32,6 +32,9 @@ class YearnService(
                 name
                 symbol
                 decimals
+              }
+              registry {
+                id
               }
               apiVersion
             } 

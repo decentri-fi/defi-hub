@@ -1,6 +1,5 @@
 package io.defitrack.protocol.adamant.staking
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
@@ -20,13 +19,11 @@ import java.math.BigInteger
 @Service
 class AdamantUserStakingService(
     erC20Resource: ERC20Resource,
-    objectMapper: ObjectMapper,
     private val adamantService: AdamantService,
     private val polygonContractAccessor: PolygonContractAccessor,
     private val abiResource: ABIResource,
 ) : UserStakingService(
-    erC20Resource,
-    objectMapper
+    erC20Resource
 ) {
 
     val genericVault by lazy {

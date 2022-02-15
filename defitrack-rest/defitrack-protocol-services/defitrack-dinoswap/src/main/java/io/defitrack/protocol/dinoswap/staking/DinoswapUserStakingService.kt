@@ -22,10 +22,9 @@ import java.util.*
 class DinoswapUserStakingService(
     private val dinoService: DinoswapService,
     private val abiResource: ABIResource,
-    objectMapper: ObjectMapper,
     erC20Resource: ERC20Resource,
     private val polygonContractAccessor: PolygonContractAccessor,
-) : UserStakingService(erC20Resource, objectMapper) {
+) : UserStakingService(erC20Resource) {
 
     val fossilFarms by lazy {
         abiResource.getABI("polycat/FossilFarms.json")

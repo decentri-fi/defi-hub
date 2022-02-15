@@ -1,6 +1,5 @@
 package io.defitrack.staking
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.protocol.ProtocolService
 import io.defitrack.staking.domain.RewardToken
 import io.defitrack.staking.domain.StakedToken
@@ -10,8 +9,7 @@ import io.defitrack.token.TokenType
 import java.math.BigInteger
 
 abstract class UserStakingService(
-    val erC20Resource: ERC20Resource,
-    val objectMapper: ObjectMapper
+    val erC20Resource: ERC20Resource
 ) : ProtocolService {
 
     abstract fun getStakings(address: String): List<StakingElement>

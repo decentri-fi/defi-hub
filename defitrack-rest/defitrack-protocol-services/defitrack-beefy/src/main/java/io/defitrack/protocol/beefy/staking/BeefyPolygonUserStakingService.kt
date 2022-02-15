@@ -1,6 +1,5 @@
 package io.defitrack.protocol.beefy.staking
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
@@ -30,8 +29,7 @@ class BeefyPolygonUserStakingService(
     private val beefyAPYService: BeefyAPYService,
     private val polygonStakingMarketService: BeefyPolygonStakingMarketService,
     erC20Resource: ERC20Resource,
-    objectMapper: ObjectMapper,
-) : UserStakingService(erC20Resource, objectMapper) {
+) : UserStakingService(erC20Resource) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
     val vaultV6ABI by lazy {
