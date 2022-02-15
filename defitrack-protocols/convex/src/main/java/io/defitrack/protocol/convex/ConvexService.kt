@@ -12,6 +12,10 @@ class ConvexService {
         )
     }
 
+    fun provideBooster() : String{
+        return "0xf403c135812408bfbe8713b5a23a04b3d48aae31"
+    }
+
     fun lockedRewardPool(): ConvexLockedRewardPool {
         return ConvexLockedRewardPool(
             "0xd18140b4b819b895a3dba5442f959fa44994af50",

@@ -6,7 +6,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.ethereum.config.EthereumContractAccessor
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.convex.ConvexService
-import io.defitrack.protocol.convex.CvxLocker
+import io.defitrack.protocol.convex.contract.CvxLockerContract
 import io.defitrack.staking.UserStakingService
 import io.defitrack.staking.domain.RewardToken
 import io.defitrack.staking.domain.StakingElement
@@ -30,7 +30,7 @@ class ConvexVoteLockedStakingService(
 
     override fun getStakings(address: String): List<StakingElement> {
         val cvxRewardPools = listOf(convexService.lockedRewardPool()).map {
-            CvxLocker(
+            CvxLockerContract(
                 ethereumContractAccessor,
                 cvxRewardPoolABI,
                 it.address,

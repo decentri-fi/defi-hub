@@ -1,4 +1,4 @@
-package io.defitrack.protocol.convex
+package io.defitrack.protocol.convex.contract
 
 import io.defitrack.ethereumbased.contract.EvmContract
 import io.defitrack.ethereumbased.contract.EvmContractAccessor
@@ -8,7 +8,7 @@ import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
-class CvxRewardPool(
+class CvxRewardPoolContract(
     solidityBasedContractAccessor: EvmContractAccessor,
     abi: String,
     address: String,

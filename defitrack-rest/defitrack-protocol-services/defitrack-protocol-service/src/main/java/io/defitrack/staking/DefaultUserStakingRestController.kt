@@ -101,7 +101,8 @@ class DefaultUserStakingRestController(
             stakedToken = stakedToken.toVO(),
             rewardTokens = rewardTokens.map {
                 it.toVO()
-            }
+            },
+            amount = amount
         )
     }
 
