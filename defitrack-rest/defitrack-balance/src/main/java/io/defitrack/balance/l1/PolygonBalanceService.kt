@@ -1,17 +1,12 @@
 package io.defitrack.balance.l1
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.balance.BalanceService
 import io.defitrack.balance.TokenBalance
 import io.defitrack.common.network.Network
-import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
-import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
 import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.polygon.config.PolygonGateway
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
-import org.web3j.abi.TypeReference
-import org.web3j.abi.datatypes.generated.Uint256
 import org.web3j.protocol.core.DefaultBlockParameterName
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -19,15 +14,10 @@ import java.math.RoundingMode
 
 @Service
 class PolygonBalanceService(
-    private val abiResource: ABIResource,
     private val maticGateway: PolygonGateway,
     private val polygonContractAccessor: PolygonContractAccessor,
     private val erC20Service: ERC20Resource
 ) : BalanceService {
-
-    val erc20ABI by lazy {
-        abiResource.getABI("general/ERC20.json")
-    }
 
     override fun getNetwork(): Network = Network.POLYGON
 
@@ -46,39 +36,22 @@ class PolygonBalanceService(
             return emptyList()
         }
 
-        return polygonContractAccessor.readMultiCall(tokenAddresses.map { address ->
-            MultiCallElement(
-                polygonContractAccessor.createFunction(
-                    polygonContractAccessor.getFunction(
-                        erc20ABI, "balanceOf"
-                    )!!,
-                    listOf(user.toAddress()),
-                    listOf(
-                        TypeReference.create(Uint256::class.java)
+        return erC20Service.getBalancesFor(user, tokenAddresses, polygonContractAccessor)
+            .mapIndexed { i, balance ->
+                if (balance > BigInteger.ZERO) {
+                    val token = erC20Service.getERC20(getNetwork(), tokenAddresses[i])
+                    TokenBalance(
+                        address = token.address,
+                        amount = balance,
+                        decimals = token.decimals,
+                        symbol = token.symbol,
+                        name = token.name,
+                        network = getNetwork(),
                     )
-                ),
-                address
-            )
-        }).mapIndexed { i, result ->
-            val balance = try {
-                result[0].value as BigInteger
-            } catch (ex: Exception) {
-                BigInteger.ZERO
-            }
-            if (balance > BigInteger.ZERO) {
-                val token = erC20Service.getERC20(getNetwork(), tokenAddresses[i])
-                TokenBalance(
-                    address = token.address,
-                    amount = balance.toBigDecimal(),
-                    decimals = token.decimals,
-                    symbol = token.symbol,
-                    name = token.name,
-                    network = getNetwork(),
-                )
-            } else {
-                null
-            }
-        }.filterNotNull()
+                } else {
+                    null
+                }
+            }.filterNotNull()
     }
 
 

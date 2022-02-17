@@ -16,7 +16,7 @@ abstract class EvmContract(
         inputs: List<Type<*>> = emptyList(),
         outputs: List<TypeReference<out Type<*>>?>? = null
     ): Function {
-        return evmContractAccessor.createFunction(
+        return EvmContractAccessor.createFunction(
             evmContractAccessor.getFunction(abi, method)!!,
             inputs,
             outputs
@@ -37,7 +37,7 @@ abstract class EvmContract(
     fun readMultiple(requests: List<ReadRequest>): List<List<Type<*>>> {
         val functions = requests.map {
             val abiFunction = evmContractAccessor.getFunction(abi, it.method)
-            val function = evmContractAccessor.createFunction(
+            val function = EvmContractAccessor.createFunction(
                 abiFunction!!, it.inputs, it.outputs
             )
             MultiCallElement(

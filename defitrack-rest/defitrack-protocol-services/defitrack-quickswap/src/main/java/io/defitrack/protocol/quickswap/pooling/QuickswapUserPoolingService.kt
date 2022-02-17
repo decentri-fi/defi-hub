@@ -1,21 +1,19 @@
 package io.defitrack.protocol.quickswap.pooling
 
-import io.defitrack.pool.UserPoolingService
-import io.defitrack.pool.domain.PoolingElement
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
+import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
+import io.defitrack.ethereumbased.contract.ERC20Contract
 import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
 import io.defitrack.polygon.config.PolygonContractAccessor
+import io.defitrack.pool.UserPoolingService
+import io.defitrack.pool.domain.PoolingElement
 import io.defitrack.protocol.Protocol
-import io.defitrack.token.TokenType
 import io.defitrack.quickswap.QuickswapService
+import io.defitrack.token.TokenType
 import org.springframework.stereotype.Service
-import org.web3j.abi.TypeReference
-import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigDecimal
 import java.math.BigInteger
-import java.math.RoundingMode
 
 @Service
 class QuickswapUserPoolingService(
@@ -34,15 +32,11 @@ class QuickswapUserPoolingService(
         return polygonContractAccessor.readMultiCall(
             tokens.map { token ->
                 MultiCallElement(
-                    polygonContractAccessor.createFunction(
-                        polygonContractAccessor.getFunction(
-                            erc20ABI, "balanceOf"
-                        )!!,
-                        listOf(address.toAddress()),
-                        listOf(
-                            TypeReference.create(Uint256::class.java)
-                        )
-                    ),
+                    ERC20Contract(
+                        polygonContractAccessor,
+                        erc20ABI,
+                        token.id
+                    ).balanceOfMethod(address),
                     token.id
                 )
             }
@@ -55,7 +49,7 @@ class QuickswapUserPoolingService(
             if (balance > BigInteger.ZERO) {
                 val token1 = want.token0
                 val token2 = want.token1
-                val amount = balance.toBigDecimal().divide(BigDecimal.TEN.pow(18), 4, RoundingMode.HALF_UP)
+                val amount = balance.toBigDecimal().dividePrecisely(BigDecimal.TEN.pow(18))
                 PoolingElement(
                     lpAddress = want.id,
                     amount = amount,
@@ -65,7 +59,7 @@ class QuickswapUserPoolingService(
                     symbol = "${token1.symbol}/${token2.symbol}",
                     tokenType = TokenType.UNISWAP,
                     id = "quickswap-polygon-${want.id}",
-                    )
+                )
             } else {
                 null
             }

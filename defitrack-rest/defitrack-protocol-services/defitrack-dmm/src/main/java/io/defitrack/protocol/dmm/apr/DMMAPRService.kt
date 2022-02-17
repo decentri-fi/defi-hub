@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.RoundingMode
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.ExperimentalTime
 
 @Component
@@ -18,8 +19,7 @@ class DMMAPRService(
     private val dmmEthereumService: DMMEthereumService
 ) {
 
-    @OptIn(ExperimentalTime::class)
-    val cache = Cache.Builder().expireAfterWrite(Duration.Companion.hours(10)).build<String, BigDecimal>()
+    val cache = Cache.Builder().expireAfterWrite(10.hours).build<String, BigDecimal>()
 
     suspend fun getAPR(address: String, network: Network): BigDecimal {
         return cache.get("$address-${network.slug}") {

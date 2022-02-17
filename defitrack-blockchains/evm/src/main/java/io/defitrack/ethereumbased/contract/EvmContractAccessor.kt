@@ -66,20 +66,6 @@ abstract class EvmContractAccessor(val abiDecoder: AbiDecoder) {
         }
     }
 
-    fun createFunction(
-        function: AbiContractFunction,
-        inputs: List<Type<*>>?,
-        outputs: List<TypeReference<out Type<*>>?>? = null
-    ): org.web3j.abi.datatypes.Function {
-        return Web3Function(function.name,
-            inputs ?: emptyList(),
-            outputs ?: function.outputs
-                .map { it.type }
-                .map { fromDataTypes(it, false) }
-                .toList()
-        )
-    }
-
     fun readFunction(
         address: String,
         from: String? = null,
@@ -141,6 +127,20 @@ abstract class EvmContractAccessor(val abiDecoder: AbiDecoder) {
     }
 
     companion object {
+
+        fun createFunction(
+            function: AbiContractFunction,
+            inputs: List<Type<*>>?,
+            outputs: List<TypeReference<out Type<*>>?>? = null
+        ): org.web3j.abi.datatypes.Function {
+            return Web3Function(function.name,
+                inputs ?: emptyList(),
+                outputs ?: function.outputs
+                    .map { it.type }
+                    .map { fromDataTypes(it, false) }
+                    .toList()
+            )
+        }
 
         fun String.decodeAsFunctionResponse(outputs: List<String>): List<Type<Any>>? {
             return FunctionReturnDecoder.decode(

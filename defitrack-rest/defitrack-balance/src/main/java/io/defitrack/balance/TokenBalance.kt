@@ -1,11 +1,11 @@
 package io.defitrack.balance
 
 import io.defitrack.common.network.Network
-import java.math.BigDecimal
+import java.math.BigInteger
 
 class TokenBalance(
     val address: String,
-    val amount: BigDecimal,
+    val amount: BigInteger,
     val decimals: Int,
     val symbol: String,
     val name: String,

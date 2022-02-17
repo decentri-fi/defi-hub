@@ -13,7 +13,6 @@ import kotlin.time.ExperimentalTime
 @Component
 class UniswapAPRService(private val abstractUniswapV2Service: List<AbstractUniswapV2Service>) {
 
-    @OptIn(ExperimentalTime::class)
     val cache = Cache.Builder().expireAfterWrite(10.hours).build<String, BigDecimal>()
 
     fun getAPR(address: String, network: Network): BigDecimal = runBlocking {

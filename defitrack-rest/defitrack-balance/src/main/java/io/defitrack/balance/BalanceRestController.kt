@@ -1,5 +1,6 @@
 package io.defitrack.balance
 
+import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.logo.LogoService
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceResource
@@ -8,7 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.math.BigDecimal
-import java.math.RoundingMode
 
 @RestController
 @RequestMapping
@@ -55,7 +55,7 @@ class BalanceRestController(
         }
     }.map {
         val normalizedAmount =
-            it.amount.divide(BigDecimal.TEN.pow(it.decimals), 18, RoundingMode.HALF_UP).toDouble()
+            it.amount.toBigDecimal().dividePrecisely(BigDecimal.TEN.pow(it.decimals)).toDouble()
         BalanceElement(
             normalizedAmount,
             it.network.toVO(),

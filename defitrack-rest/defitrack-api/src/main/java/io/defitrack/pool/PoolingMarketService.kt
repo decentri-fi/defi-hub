@@ -25,7 +25,7 @@ abstract class PoolingMarketService : ProtocolService {
         }
     }
 
-    abstract suspend fun fetchPoolingMarkets(): List<PoolingMarketElement>
+    protected abstract suspend fun fetchPoolingMarkets(): List<PoolingMarketElement>
 
     fun getPoolingMarkets(): List<PoolingMarketElement> = runBlocking(Dispatchers.IO) {
         cache.get("all") {
