@@ -37,15 +37,9 @@ class BeefyPolygonUserStakingService(
         return polygonStakingMarketService.getStakingMarkets().firstOrNull {
             it.id == vaultId
         }?.let {
-
-            val contract = BeefyVaultContract(
-                polygonContractAccessor,
-                vaultV6ABI,
-                it.contractAddress,
-                it.id
+            vaultToStakingElement(address, erC20Resource.getBalance(getNetwork(), it.contractAddress, address)).invoke(
+                it
             )
-
-            vaultToStakingElement(address, contract.balanceOf(address)).invoke(it)
         }
     }
 

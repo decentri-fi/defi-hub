@@ -1,6 +1,5 @@
 package io.defitrack.protocol.mstable
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereum.config.EthereumContractAccessor
@@ -35,36 +34,36 @@ class MStableEthereumStakingService(
             )
         }
 
-        return vaultContracts.mapNotNull {
-            val balance = it.rawBalanceOf(address)
-
-            if (balance > BigInteger.ZERO) {
-                val stakingToken = erC20Resource.getTokenInformation(getNetwork(), it.stakingToken)
-                val rewardsToken = erC20Resource.getTokenInformation(getNetwork(), it.rewardsToken)
-                StakingElement(
-                    id = UUID.randomUUID().toString(),
-                    network = this.getNetwork(),
-                    protocol = this.getProtocol(),
-                    name = it.name,
-                    url = "https://etherscan.io/address/${it.address}",
-                    stakedToken = stakedToken(
-                        stakingToken.address,
-                    ),
-                    rewardTokens = listOf(
-                        RewardToken(
-                            name = rewardsToken.name,
-                            symbol = stakingToken.symbol,
-                            decimals = rewardsToken.decimals
-                        )
-                    ),
-                    contractAddress = it.address,
-                    vaultType = "mstable-boosted-savings-vault",
-                    amount = balance
-                )
-            } else {
-                null
-            }
-        }
+        return erC20Resource.getBalancesFor(address, vaultContracts.map { it.address }, ethereumContractAccessor)
+            .mapIndexed { index, balance ->
+                if (balance > BigInteger.ZERO) {
+                    val contract = vaultContracts[index]
+                    val stakingToken = erC20Resource.getTokenInformation(getNetwork(), contract.stakingToken)
+                    val rewardsToken = erC20Resource.getTokenInformation(getNetwork(), contract.rewardsToken)
+                    StakingElement(
+                        id = UUID.randomUUID().toString(),
+                        network = this.getNetwork(),
+                        protocol = this.getProtocol(),
+                        name = contract.name,
+                        url = "https://etherscan.io/address/${contract.address}",
+                        stakedToken = stakedToken(
+                            stakingToken.address,
+                        ),
+                        rewardTokens = listOf(
+                            RewardToken(
+                                name = rewardsToken.name,
+                                symbol = stakingToken.symbol,
+                                decimals = rewardsToken.decimals
+                            )
+                        ),
+                        contractAddress = contract.address,
+                        vaultType = "mstable-boosted-savings-vault",
+                        amount = balance
+                    )
+                } else {
+                    null
+                }
+            }.filterNotNull()
     }
 
     override fun getProtocol(): Protocol {

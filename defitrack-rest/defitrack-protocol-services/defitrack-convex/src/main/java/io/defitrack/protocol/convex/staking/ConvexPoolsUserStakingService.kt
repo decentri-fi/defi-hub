@@ -36,36 +36,36 @@ class ConvexPoolsUserStakingService(
             )
         }
 
-        return cvxRewardPools.mapNotNull { pool ->
-            val balance = pool.balanceOf(address)
-            if (balance > BigInteger.ZERO) {
+        return erC20Resource.getBalancesFor(address, cvxRewardPools.map { it.address }, ethereumContractAccessor)
+            .mapIndexed { index, balance ->
+                if (balance > BigInteger.ZERO) {
+                    val pool = cvxRewardPools[index]
+                    val rewardToken = erC20Resource.getTokenInformation(getNetwork(), pool.rewardToken())
+                    val stakedToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingToken())
 
-                val rewardToken = erC20Resource.getTokenInformation(getNetwork(), pool.rewardToken())
-                val stakedToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingToken())
-
-                stakingElement(
-                    user = address,
-                    vaultUrl = "https://etherscan.io/address/${pool.address}",
-                    vaultName = pool.name,
-                    rewardTokens = listOf(
-                        RewardToken(
-                            name = rewardToken.name,
-                            symbol = rewardToken.symbol,
-                            decimals = rewardToken.decimals,
-                        )
-                    ),
-                    stakedToken = stakedToken(
-                        address = stakedToken.address,
-                    ),
-                    vaultType = "convex-reward-pool",
-                    vaultAddress = pool.address,
-                    amount = balance,
-                    id = "cvx-rewardpool-${pool.address}"
-                )
-            } else {
-                null
-            }
-        }
+                    stakingElement(
+                        user = address,
+                        vaultUrl = "https://etherscan.io/address/${pool.address}",
+                        vaultName = pool.name,
+                        rewardTokens = listOf(
+                            RewardToken(
+                                name = rewardToken.name,
+                                symbol = rewardToken.symbol,
+                                decimals = rewardToken.decimals,
+                            )
+                        ),
+                        stakedToken = stakedToken(
+                            address = stakedToken.address,
+                        ),
+                        vaultType = "convex-reward-pool",
+                        vaultAddress = pool.address,
+                        amount = balance,
+                        id = "cvx-rewardpool-${pool.address}"
+                    )
+                } else {
+                    null
+                }
+            }.filterNotNull()
     }
 
     override fun getProtocol(): Protocol {

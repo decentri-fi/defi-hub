@@ -24,16 +24,6 @@ class CrvRewardContract(
         )
     }
 
-    fun balanceOf(address: String): BigInteger {
-        return read(
-            "balanceOf",
-            inputs = listOf(address.toAddress()),
-            outputs = listOf(
-                TypeReference.create(Uint256::class.java)
-            )
-        )[0].value as BigInteger
-    }
-
     fun earned(address: String): BigInteger {
         return read(
             "earned",
