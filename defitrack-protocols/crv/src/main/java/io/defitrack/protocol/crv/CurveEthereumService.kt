@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.JsonParser
 import io.defitrack.protocol.crv.dto.Gauge
 import io.defitrack.protocol.crv.dto.Pool
+import io.defitrack.thegraph.TheGraphGatewayProvider
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -15,8 +16,10 @@ import org.springframework.stereotype.Service
 @Service
 class CurveEthereumService(
     private val objectMapper: ObjectMapper,
-    private val client: HttpClient
+    theGraphGatewayProvider: TheGraphGatewayProvider
 ) {
+
+    val theGraph = theGraphGatewayProvider.createTheGraphGateway("https://api.thegraph.com/subgraphs/name/curvefi/curve")
 
     fun getPools() = runBlocking {
         val query = """
@@ -53,16 +56,14 @@ class CurveEthereumService(
             }
         """.trimIndent()
 
-        val response = query(query)
         val poolSharesAsString =
-            JsonParser.parseString(response).asJsonObject["data"].asJsonObject["pools"].toString()
+            theGraph.performQuery(query).asJsonObject["pools"].toString()
         return@runBlocking objectMapper.readValue(poolSharesAsString,
             object : TypeReference<List<Pool>>() {
 
             })
     }
 
-    @Cacheable(value = ["curve-gauges"], key = "'all'")
     fun getGauges() = runBlocking {
         val query = """
             {
@@ -108,19 +109,11 @@ class CurveEthereumService(
         """.trimIndent()
 
 
-        val response = query(query)
         val poolSharesAsString =
-            JsonParser.parseString(response).asJsonObject["data"].asJsonObject["gauges"].toString()
+            theGraph.performQuery(query).asJsonObject["gauges"].toString()
         return@runBlocking objectMapper.readValue(poolSharesAsString,
             object : TypeReference<List<Gauge>>() {
 
             })
-    }
-
-    fun query(query: String): String = runBlocking {
-        client.request("https://api.thegraph.com/subgraphs/name/sistemico/curve") {
-            method = HttpMethod.Post
-            body = objectMapper.writeValueAsString(mapOf("query" to query))
-        }
     }
 }

@@ -23,8 +23,8 @@ enum class Protocol(
     SUSHISWAP("sushiswap.png", "sushiswap"),
     DMM("dmm.png", "dmm"),
     BALANCER("balancer.png", "balancer"),
-    SPOOKY("spooky.png", "spooky", false),
-    SPIRITSWAP("spirit.png", "spirit", false),
+    SPOOKY("spooky.png", "spooky"),
+    SPIRITSWAP("spirit.png", "spirit"),
     CONVEX("convex.png", "convex");
 
     val imageBasePath = "https://static.defitrack.io/images/protocols/"

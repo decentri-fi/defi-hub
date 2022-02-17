@@ -20,12 +20,12 @@ class CurveEthereumPoolingMarketService(
                 id = "curve-ethereum-${pool.id}",
                 network = getNetwork(),
                 protocol = getProtocol(),
-                address = pool.id,
-                name = pool.name,
+                address = pool.lpToken.address,
+                name = pool.lpToken.name,
                 token = pool.coins.map { coin ->
                     PoolingToken(
-                        name = coin.underlying.token.name,
-                        symbol = coin.underlying.token.symbol,
+                        name = coin.underlying.token.name ?: "Ether",
+                        symbol = coin.underlying.token.symbol ?: "ETH",
                         address = coin.underlying.token.address
                     )
                 },

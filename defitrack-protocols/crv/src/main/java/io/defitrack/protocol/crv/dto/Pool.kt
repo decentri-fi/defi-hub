@@ -36,6 +36,6 @@ class UnderlyingCoin(
 class Token(
     val address: String,
     val decimals: Int,
-    val name: String,
-    val symbol: String,
+    val name: String? = "?",
+    val symbol: String? = "?",
 )
