@@ -1,10 +1,8 @@
 package io.defitrack.protocol.quickswap.staking
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
-import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
 import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
@@ -45,19 +43,9 @@ class QuickswapUserStakingService(
             )
         }
 
-        return polygonContractAccessor.readMultiCall(pools.map { contract ->
-            MultiCallElement(
-                contract.createFunction(
-                    "balanceOf",
-                    listOf(address.toAddress()),
-                    listOf(
-                        TypeReference.create(Uint256::class.java)
-                    )
-                ),
-                contract.address
-            )
-        }).mapIndexed { index, result ->
-            val balance = result[0].value as BigInteger
+
+        return erC20Resource.getBalancesFor(address, pools.map {it.address}, polygonContractAccessor)
+            .mapIndexed { index, balance ->
             if (balance > BigInteger.ZERO) {
 
                 val pool = pools[index]

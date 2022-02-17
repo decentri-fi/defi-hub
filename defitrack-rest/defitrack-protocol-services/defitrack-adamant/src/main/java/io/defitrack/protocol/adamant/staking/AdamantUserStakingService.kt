@@ -2,8 +2,6 @@ package io.defitrack.protocol.adamant.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
-import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
 import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.adamant.AdamantService
@@ -12,8 +10,6 @@ import io.defitrack.staking.UserStakingService
 import io.defitrack.staking.domain.StakingElement
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
-import org.web3j.abi.TypeReference
-import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
 @Service
@@ -41,43 +37,30 @@ class AdamantUserStakingService(
             )
         }
 
-        return polygonContractAccessor.readMultiCall(
-            adamantVaultContracts.map {
-                MultiCallElement(
-                    it.createFunction(
-                        "balanceOf",
-                        listOf(address.toAddress()),
-                        listOf(
-                            TypeReference.create(Uint256::class.java)
-                        )
-                    ),
-                    it.address
-                )
-            }
-        ).mapIndexed { index, result ->
-            val balance = result[0].value as BigInteger
-            if (balance > BigInteger.ONE) {
-                val vault = adamantVaultContracts[index]
-                val wantAddress = vault.lpAddress
-                val stakedToken = stakedToken(
-                    wantAddress,
-                )
+        return erC20Resource.getBalancesFor(address, adamantVaultContracts.map { it.address }, polygonContractAccessor)
+            .mapIndexed { index, balance ->
+                if (balance > BigInteger.ZERO) {
+                    val vault = adamantVaultContracts[index]
+                    val wantAddress = vault.lpAddress
+                    val stakedToken = stakedToken(
+                        wantAddress,
+                    )
 
-                stakingElement(
-                    address,
-                    "https://adamant.finance",
-                    "Adamant ${stakedToken.name} Vault",
-                    rewardTokens = emptyList(),
-                    stakedToken = stakedToken,
-                    "adamant-generic-vault",
-                    vault.address,
-                    amount = vault.getTokensStaked(address),
-                    id = "adamant-generic-vault-$index"
-                )
-            } else {
-                null
-            }
-        }.filterNotNull()
+                    stakingElement(
+                        address,
+                        "https://adamant.finance",
+                        "Adamant ${stakedToken.name} Vault",
+                        rewardTokens = emptyList(),
+                        stakedToken = stakedToken,
+                        "adamant-generic-vault",
+                        vault.address,
+                        amount = vault.getTokensStaked(address),
+                        id = "adamant-generic-vault-$index"
+                    )
+                } else {
+                    null
+                }
+            }.filterNotNull()
     }
 
     override fun getProtocol(): Protocol {

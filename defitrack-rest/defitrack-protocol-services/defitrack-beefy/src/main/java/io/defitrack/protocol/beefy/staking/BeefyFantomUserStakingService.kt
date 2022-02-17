@@ -56,26 +56,10 @@ class BeefyFantomUserStakingService(
     override fun getStakings(address: String): List<StakingElement> {
         val markets = stakingMarketService.getStakingMarkets()
 
-        return fantomContractAccessor.readMultiCall(
-            markets.map {
-                val contract = BeefyVaultContract(
-                    fantomContractAccessor,
-                    vaultV6ABI,
-                    it.contractAddress,
-                    it.id
-                )
-                MultiCallElement(
-                    contract.createFunction(
-                        "balanceOf",
-                        inputs = listOf(address.toAddress()),
-                        outputs = listOf(
-                            TypeReference.create(Uint256::class.java)
-                        )
-                    ),
-                    contract.address
-                )
-            }).mapIndexed { index, balance ->
-            vaultToStakingElement(address, balance[0].value as BigInteger)(markets[index])
+
+        return erC20Resource.getBalancesFor(address, markets.map { it.contractAddress }, fantomContractAccessor)
+            .mapIndexed { index, balance ->
+            vaultToStakingElement(address, balance)(markets[index])
         }.filterNotNull()
     }
 

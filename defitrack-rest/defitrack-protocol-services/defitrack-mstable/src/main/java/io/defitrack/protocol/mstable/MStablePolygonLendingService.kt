@@ -1,22 +1,24 @@
 package io.defitrack.protocol.mstable
 
-import io.defitrack.lending.LendingService
-import io.defitrack.lending.domain.LendingElement
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.ethereum.config.EthereumContractAccessor
+import io.defitrack.lending.LendingService
+import io.defitrack.lending.domain.LendingElement
 import io.defitrack.mstable.MStablePolygonService
 import io.defitrack.protocol.Protocol
+import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigInteger
-import java.math.RoundingMode
 import java.util.*
 
 @Service
 class MStablePolygonLendingService(
     private val mStableService: MStablePolygonService,
     private val abiResource: ABIResource,
+    private val erC20Resource: ERC20Resource,
     private val ethereumContractAccessor: EthereumContractAccessor,
 ) : LendingService {
 
@@ -32,29 +34,32 @@ class MStablePolygonLendingService(
         return Network.POLYGON
     }
 
-    override suspend fun getLendings(address: String): List<LendingElement> =
-        mStableService.getSavingsContracts().map {
+    override suspend fun getLendings(address: String): List<LendingElement> {
+        val contracts = mStableService.getSavingsContracts().map {
             MStableEthereumSavingsContract(
                 ethereumContractAccessor,
                 savingsContractABI,
                 it
             )
-        }.mapNotNull {
-            val balance = it.balanceOf(address)
-            if (balance > BigInteger.ZERO) {
-                LendingElement(
-                    user = address,
-                    id = UUID.randomUUID().toString(),
-                    network = getNetwork(),
-                    protocol = getProtocol(),
-                    name = it.name,
-                    amount = balance.toBigDecimal().divide(
-                        BigDecimal.TEN.pow(it.decimals), 6, RoundingMode.HALF_UP
-                    ).toPlainString(),
-                    symbol = it.symbol,
-                )
-            } else {
-                null
-            }
         }
+
+        return erC20Resource.getBalancesFor(address, contracts.map { it.address }, ethereumContractAccessor)
+            .mapIndexed { index, balance ->
+                if (balance > BigInteger.ZERO) {
+                    val contract = contracts[index]
+                    LendingElement(
+                        user = address,
+                        id = UUID.randomUUID().toString(),
+                        network = getNetwork(),
+                        protocol = getProtocol(),
+                        name = contract.name,
+                        amount = balance.toBigDecimal().dividePrecisely(BigDecimal.TEN.pow(contract.decimals))
+                            .toPlainString(),
+                        symbol = contract.symbol,
+                    )
+                } else
+                    null
+            }.filterNotNull()
+    }
+}
 }

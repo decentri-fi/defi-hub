@@ -2,8 +2,7 @@ package io.defitrack.protocol.beefy.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
-import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
+import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.beefy.apy.BeefyAPYService
@@ -16,8 +15,6 @@ import io.defitrack.token.ERC20Resource
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import org.web3j.abi.TypeReference
-import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
@@ -55,27 +52,10 @@ class BeefyPolygonUserStakingService(
     override fun getStakings(address: String): List<StakingElement> {
         val markets = polygonStakingMarketService.getStakingMarkets()
 
-        return polygonContractAccessor.readMultiCall(
-            markets.map {
-                val contract = BeefyVaultContract(
-                    polygonContractAccessor,
-                    vaultV6ABI,
-                    it.contractAddress,
-                    it.id
-                )
-                MultiCallElement(
-                    contract.createFunction(
-                        "balanceOf",
-                        inputs = listOf(address.toAddress()),
-                        outputs = listOf(
-                            TypeReference.create(Uint256::class.java)
-                        )
-                    ),
-                    contract.address
-                )
-            }).mapIndexed { index, balance ->
-            vaultToStakingElement(address, balance[0].value as BigInteger)(markets[index])
-        }.filterNotNull()
+        return erC20Resource.getBalancesFor(address, markets.map { it.contractAddress }, polygonContractAccessor)
+            .mapIndexed { index, balance ->
+                vaultToStakingElement(address, balance)(markets[index])
+            }.filterNotNull()
     }
 
     private fun vaultToStakingElement(address: String, balance: BigInteger) = { market: StakingMarketElement ->
@@ -91,7 +71,7 @@ class BeefyPolygonUserStakingService(
                 val want = erC20Resource.getTokenInformation(getNetwork(), market.token.address)
                 val underlyingBalance = if (balance > BigInteger.ZERO) {
                     balance.toBigDecimal().times(contract.getPricePerFullShare.toBigDecimal())
-                        .divide(BigDecimal.TEN.pow(18))
+                        .dividePrecisely(BigDecimal.TEN.pow(18))
                 } else {
                     BigDecimal.ZERO
                 }

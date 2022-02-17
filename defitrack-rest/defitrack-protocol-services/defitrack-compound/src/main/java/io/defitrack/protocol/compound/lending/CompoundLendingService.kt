@@ -2,6 +2,7 @@ package io.defitrack.protocol.compound.lending
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.ethereum.config.EthereumContractAccessor
 import io.defitrack.lending.LendingService
 import io.defitrack.lending.domain.LendingElement
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
-import java.util.*
 
 @Service
 class CompoundLendingService(
@@ -56,31 +56,31 @@ class CompoundLendingService(
 
     override suspend fun getLendings(address: String): List<LendingElement> {
         val compoundTokenContracts = getTokenContracts()
-        return compoundTokenContracts.mapNotNull {
-            val cTokenBalance = it.balanceOf(address)
-            if (cTokenBalance > BigInteger.ZERO) {
 
-                val underlyingBalance = it.underlyingBalanceOf(address)
-                val underlying = it.underlyingAddress?.let { tokenAddress ->
-                    erC20Service.getERC20(getNetwork(), tokenAddress)
+        return erC20Service.getBalancesFor(address, compoundTokenContracts.map { it.address }, ethereumContractAccessor)
+            .mapIndexed { index, balance ->
+                if (balance > BigInteger.ZERO) {
+                    val tokenContract = compoundTokenContracts[index]
+                    val underlyingBalance = tokenContract.underlyingBalanceOf(address)
+                    val underlying = tokenContract.underlyingAddress?.let { tokenAddress ->
+                        erC20Service.getERC20(getNetwork(), tokenAddress)
+                    }
+                    LendingElement(
+                        id = "compound-ethereum-${tokenContract.address}",
+                        user = address.lowercase(),
+                        network = getNetwork(),
+                        protocol = getProtocol(),
+                        name = tokenContract.name,
+                        rate = getSupplyRate(compoundTokenContract = tokenContract).toDouble(),
+                        amount = underlyingBalance.dividePrecisely(
+                            BigDecimal.TEN.pow(underlying?.decimals ?: 18)
+                        ).toPlainString(),
+                        symbol = underlying?.symbol ?: "ETH",
+                    )
+                } else {
+                    null
                 }
-
-                LendingElement(
-                    id = UUID.randomUUID().toString(),
-                    user = address.lowercase(),
-                    network = getNetwork(),
-                    protocol = getProtocol(),
-                    name = it.name,
-                    rate = getSupplyRate(compoundTokenContract = it).toDouble(),
-                    amount = underlyingBalance.divide(
-                        BigDecimal.TEN.pow(underlying?.decimals ?: 18), 4, RoundingMode.HALF_UP
-                    ).toPlainString(),
-                    symbol = underlying?.symbol ?: "ETH",
-                )
-            } else {
-                null
-            }
-        }
+            }.filterNotNull()
     }
 
     private fun getTokenContracts() = CompoundComptrollerContract(
