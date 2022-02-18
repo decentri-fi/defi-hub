@@ -7,7 +7,7 @@ import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
-class mStablePolygonBoostedSavingsVaultContract(
+class MStablePolygonBoostedSavingsVaultContract(
     ethereumContractAccessor: EvmContractAccessor,
     abi: String,
     address: String,

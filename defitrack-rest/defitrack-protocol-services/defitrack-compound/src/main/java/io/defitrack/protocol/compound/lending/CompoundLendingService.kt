@@ -2,7 +2,6 @@ package io.defitrack.protocol.compound.lending
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.ethereum.config.EthereumContractAccessor
 import io.defitrack.lending.LendingService
 import io.defitrack.lending.domain.LendingElement
@@ -12,6 +11,7 @@ import io.defitrack.protocol.compound.CompoundService
 import io.defitrack.protocol.compound.CompoundTokenContract
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.FungibleToken
+import io.defitrack.token.TokenType
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -64,20 +64,23 @@ class CompoundLendingService(
                     val tokenContract = compoundTokenContracts[index]
                     val underlyingBalance = tokenContract.underlyingBalanceOf(address)
                     val underlying = tokenContract.underlyingAddress?.let { tokenAddress ->
-                        erC20Service.getERC20(getNetwork(), tokenAddress)
+                        erC20Service.getTokenInformation(getNetwork(), tokenAddress)
                     }
+                    val token = underlying?.toFungibleToken() ?: FungibleToken(
+                        "0x0",
+                        "Eth",
+                        18,
+                        "ETH",
+                        TokenType.SINGLE
+                    )
                     LendingElement(
                         id = "compound-ethereum-${tokenContract.address}",
                         network = getNetwork(),
                         protocol = getProtocol(),
-                        name = tokenContract.name,
+                        name = token.name,
                         rate = getSupplyRate(compoundTokenContract = tokenContract).toDouble(),
                         amount = underlyingBalance,
-                        token = FungibleToken(
-                            name = underlying?.name ?: "Eth",
-                            symbol = underlying?.symbol ?: "ETH",
-                            decimals = underlying?.decimals ?: 18
-                        )
+                        token = token
                     )
                 } else {
                     null

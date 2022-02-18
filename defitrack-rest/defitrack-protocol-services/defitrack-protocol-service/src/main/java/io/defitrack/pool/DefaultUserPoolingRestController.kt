@@ -6,6 +6,7 @@ import io.defitrack.pool.vo.PoolingElementVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.toVO
 import io.defitrack.price.PriceResource
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -19,7 +20,7 @@ class DefaultUserPoolingRestController(
     private val priceResource: PriceResource
 ) {
 
-    val logger = LoggerFactory.getLogger(this::class.java)
+    val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     @GetMapping("/{userId}/positions")
     fun getUserPoolings(@PathVariable("userId") address: String): List<PoolingElementVO> {

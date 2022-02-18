@@ -1,6 +1,6 @@
 package io.defitrack.avalanche.config
 
-import io.defitrack.abi.AbiDecoder
+import io.defitrack.evm.abi.AbiDecoder
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.EvmContractAccessor
 import org.springframework.stereotype.Component

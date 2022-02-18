@@ -9,7 +9,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
 import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
 import io.defitrack.token.TokenInformation
-import io.defitrack.quickswap.QuickswapService
+import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource

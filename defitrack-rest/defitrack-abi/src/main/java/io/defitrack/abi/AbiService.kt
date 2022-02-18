@@ -4,7 +4,6 @@ import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.runBlocking
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Component
 
 @Component

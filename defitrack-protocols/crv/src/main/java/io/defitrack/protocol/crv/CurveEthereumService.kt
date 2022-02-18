@@ -2,15 +2,10 @@ package io.defitrack.protocol.crv
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.gson.JsonParser
 import io.defitrack.protocol.crv.dto.Gauge
 import io.defitrack.protocol.crv.dto.Pool
 import io.defitrack.thegraph.TheGraphGatewayProvider
-import io.ktor.client.*
-import io.ktor.client.request.*
-import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 
 @Service
@@ -21,7 +16,7 @@ class CurveEthereumService(
 
     val theGraph = theGraphGatewayProvider.createTheGraphGateway("https://api.thegraph.com/subgraphs/name/curvefi/curve")
 
-    fun getPools() = runBlocking {
+    fun getPools(): List<Pool> = runBlocking {
         val query = """
             {
             	pools {
@@ -64,7 +59,7 @@ class CurveEthereumService(
             })
     }
 
-    fun getGauges() = runBlocking {
+    fun getGauges(): List<Gauge> = runBlocking {
         val query = """
             {
             	gauges {

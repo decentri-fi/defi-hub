@@ -14,6 +14,7 @@ import io.defitrack.staking.vo.StakedTokenVO.Companion.toVO
 import io.defitrack.staking.vo.StakingElementVO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
 import org.web3j.crypto.WalletUtils
@@ -72,7 +73,7 @@ class DefaultUserStakingRestController(
                 }
             }?.toVO()
         } else {
-            return null;
+            return null
         }
     }
 
@@ -107,6 +108,6 @@ class DefaultUserStakingRestController(
 
 
     companion object {
-        val logger = LoggerFactory.getLogger(this::class.java)
+        val logger: Logger = LoggerFactory.getLogger(this::class.java)
     }
 }

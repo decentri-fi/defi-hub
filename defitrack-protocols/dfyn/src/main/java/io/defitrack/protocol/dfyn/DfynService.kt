@@ -18,10 +18,10 @@ class DfynService(
     private val client: HttpClient
 ) {
 
-    fun getPairDayData(pairId: String) = runBlocking {
+    fun getPairDayData(pairId: String): List<PairDayData> = runBlocking {
         val query = """
            {
-                pairDayDatas(first: 8, orderBy: date, orderDirection: desc where: {pairAddress: "${pairId}"}) {
+                pairDayDatas(first: 8, orderBy: date, orderDirection: desc where: {pairAddress: "$pairId"}) {
                 id,
                 dailyVolumeUSD
               }

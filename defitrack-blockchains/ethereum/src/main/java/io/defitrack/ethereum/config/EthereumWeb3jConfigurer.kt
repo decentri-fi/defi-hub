@@ -44,10 +44,10 @@ class EthereumWeb3jConfigurer(@Value("\${io.defitrack.ethereum.endpoint.url}") p
             webSocketService.connect({
 
             }, {
-                logger.error("An error occurred in secondary websocket", it);
+                logger.error("An error occurred in secondary websocket", it)
                 assureConnection()
             }, {
-                logger.info("Websocket connection closed");
+                logger.info("Websocket connection closed")
             })
             Web3j.build(webSocketService)
         } else {

@@ -1,12 +1,12 @@
-package io.defitrack.abi
+package io.defitrack.evm.abi
 
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import io.defitrack.abi.domain.AbiContract
-import io.defitrack.abi.domain.AbiContractElement
+import io.defitrack.evm.abi.domain.AbiContract
+import io.defitrack.evm.abi.domain.AbiContractElement
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -24,7 +24,7 @@ class AbiDecoder {
 
     fun decode(json: String): AbiContract {
         return try {
-            AbiContract(mapper.readValue<List<AbiContractElement>>(json, object : TypeReference<List<AbiContractElement>>() {
+            AbiContract(mapper.readValue(json, object : TypeReference<List<AbiContractElement>>() {
 
             }))
         } catch (ex: Exception) {

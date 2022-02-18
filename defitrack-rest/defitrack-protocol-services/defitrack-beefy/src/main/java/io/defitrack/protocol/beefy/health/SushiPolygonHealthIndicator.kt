@@ -12,10 +12,7 @@ import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.math.BigInteger
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.util.*
-import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.ExperimentalTime
 
 @Component
@@ -33,7 +30,7 @@ class SushiPolygonHealthIndicator(
         abiResource.getABI("sushi/MiniChefV2.json")
     }
 
-    val StrategyMiniChefLP by lazy {
+    val strategyMiniChefLP by lazy {
         abiResource.getABI("beefy/StrategyMiniChefLP.json")
     }
 
@@ -43,7 +40,7 @@ class SushiPolygonHealthIndicator(
 
     @OptIn(ExperimentalTime::class)
     val cache = Cache.Builder().expireAfterWrite(
-        Duration.Companion.hours(1)
+        1.hours
     ).build<String, List<String>>()
 
     fun getEOL(): List<String> {
@@ -83,7 +80,7 @@ class SushiPolygonHealthIndicator(
     private fun asMinichefStrat(address: String): StrategyMinichefLPContract {
         return StrategyMinichefLPContract(
             polygonContractAccessor,
-            StrategyMiniChefLP,
+            strategyMiniChefLP,
             address
         )
     }

@@ -8,7 +8,7 @@ import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.humandao.distribution.contract.BonusDistributionContract
 import io.defitrack.humandao.distribution.vo.BonusDistributionStatus
 import io.defitrack.polygon.config.PolygonContractAccessor
-import io.defitrack.polygon.config.PolygonMumbaiContractAccessor
+import io.defitrack.polygonmumbai.config.PolygonMumbaiContractAccessor
 import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.runBlocking

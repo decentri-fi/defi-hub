@@ -16,7 +16,7 @@ class DfynAPRService(private val dfynService: DfynService) {
     val cache = Cache.Builder().expireAfterWrite(10.hours).build<String, BigDecimal>()
 
     fun getAPR(address: String): BigDecimal = runBlocking {
-        cache.get("$address") {
+        cache.get(address) {
             try {
                 val pairData = dfynService.getPairDayData(address)
                 if (pairData.size <= 1) {

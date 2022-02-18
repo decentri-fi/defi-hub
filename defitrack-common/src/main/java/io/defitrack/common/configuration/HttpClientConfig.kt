@@ -16,7 +16,7 @@ class HttpClientConfig {
         return HttpClient(Apache) {
             install(JsonFeature) {
                 serializer = GsonSerializer()
-                acceptContentTypes += ContentType("application", "json+hal")
+                acceptContentTypes = acceptContentTypes + ContentType("application", "json+hal")
             }
             install(HttpTimeout) {
                 requestTimeoutMillis = 60000

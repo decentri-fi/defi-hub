@@ -10,12 +10,12 @@ import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import javax.annotation.PostConstruct
-import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
+import kotlin.time.Duration.Companion.days
 
 @Service
 class CoinGeckoPriceService(
@@ -25,11 +25,10 @@ class CoinGeckoPriceService(
 
     companion object {
         val coinlistLocation = "https://raw.githubusercontent.com/defitrack/data/master/coingecko/coins.json"
-        val logger = LoggerFactory.getLogger(this::class.java)
+        val logger: Logger = LoggerFactory.getLogger(this::class.java)
     }
 
-    @OptIn(ExperimentalTime::class)
-    val tokenCache = Cache.Builder().expireAfterWrite(Duration.Companion.days(7)).build<String, Set<CoingeckoToken>>()
+    val tokenCache = Cache.Builder().expireAfterWrite(7.days).build<String, Set<CoingeckoToken>>()
 
     @PostConstruct
     fun init() {

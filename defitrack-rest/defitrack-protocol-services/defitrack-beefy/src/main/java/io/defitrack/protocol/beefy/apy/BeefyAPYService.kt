@@ -8,7 +8,7 @@ import io.ktor.client.request.*
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
-import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.ExperimentalTime
 
 @Service
@@ -20,7 +20,7 @@ class BeefyAPYService(
 
     @OptIn(ExperimentalTime::class)
     val cache = Cache.Builder()
-        .expireAfterWrite(Duration.Companion.hours(1))
+        .expireAfterWrite(1.hours)
         .build<String, Map<String, BigDecimal>>()
 
     fun getAPYS(): Map<String, BigDecimal> {

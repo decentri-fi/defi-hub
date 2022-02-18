@@ -20,7 +20,7 @@ class MinichefStakingAprCalculator(
 ) : StakingAprCalculator(priceResource) {
 
     fun getNativeReward(): Reward {
-        val poolInfo = chef.poolInfo(poolId);
+        val poolInfo = chef.poolInfo(poolId)
         val allSushiPerSecond = chef.sushiPerSecond
         val poolBlockRewards = allSushiPerSecond.times(poolInfo.allocPoint).divide(chef.totalAllocPoint)
         return Reward(

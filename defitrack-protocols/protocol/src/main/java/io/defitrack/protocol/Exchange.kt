@@ -15,7 +15,7 @@ class Exchange(
         from: String,
         to: String,
         amount: BigInteger
-    ) = try {
+    ): BigInteger = try {
         swapper.getExpectedTokens(from, to, amount)
     } catch (exc: Exception) {
         BigInteger.ZERO

@@ -4,15 +4,13 @@ import io.defitrack.abi.ABIResource
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.quickswap.contract.DQuickContract
-import io.defitrack.quickswap.QuickswapService
+import io.defitrack.protocol.quickswap.QuickswapService
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.BigInteger
-import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
-import kotlin.time.ExperimentalTime
 
 @Component
 class DQuickExternalPriceService(
@@ -33,7 +31,7 @@ class DQuickExternalPriceService(
     ).build<String, BigDecimal>()
 
     override fun getOracleName(): String {
-        return "dquick";
+        return "dquick"
     }
 
     override fun getPrice(): BigDecimal {

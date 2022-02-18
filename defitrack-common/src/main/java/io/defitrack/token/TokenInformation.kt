@@ -13,4 +13,14 @@ class TokenInformation(
     val tokenInformation0: TokenInformation? = null,
     val tokenInformation1: TokenInformation? = null,
     val protocol: Protocol? = null
-)
+) {
+    fun toFungibleToken(): FungibleToken {
+        return FungibleToken(
+            address,
+            name,
+            decimals,
+            symbol,
+            type
+        )
+    }
+}

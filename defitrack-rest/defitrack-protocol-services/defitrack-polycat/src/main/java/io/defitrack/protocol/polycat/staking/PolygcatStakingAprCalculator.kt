@@ -19,7 +19,7 @@ class PolygcatStakingAprCalculator(
 
 
     fun getNativeReward(): Reward {
-        val poolInfo = chef.poolInfo(poolId);
+        val poolInfo = chef.poolInfo(poolId)
         val allSushiPerSecond = chef.rewardPerBlock
         val poolBlockRewards = allSushiPerSecond.times(poolInfo.allocPoint).divide(chef.totalAllocPoint)
         return Reward(

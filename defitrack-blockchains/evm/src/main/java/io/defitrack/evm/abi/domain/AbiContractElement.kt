@@ -1,4 +1,4 @@
-package io.defitrack.abi.domain
+package io.defitrack.evm.abi.domain
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
@@ -11,4 +11,4 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
         JsonSubTypes.Type(value = AbiContractReceive::class, name = "receive"),
         JsonSubTypes.Type(value = AbiContractEvent::class, name = "event")
 )
-open class AbiContractElement()
+open class AbiContractElement

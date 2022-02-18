@@ -2,6 +2,7 @@ package io.defitrack.protocol
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.common.network.Network
+import io.defitrack.protocol.sushi.domain.PairDayData
 import io.defitrack.protocol.sushi.domain.SushiswapPair
 import io.defitrack.thegraph.TheGraphGatewayProvider
 import io.github.reactivecircus.cache4k.Cache
@@ -23,7 +24,6 @@ class SpiritFantomService(
 
     fun getMasterchef() = "0x9083ea3756bde6ee6f27a6e996806fbd37f6f093"
 
-    @OptIn(ExperimentalTime::class)
     private val pairCache =
         Cache.Builder().expireAfterWrite(1.days).build<String, List<SushiswapPair>>()
 
@@ -35,7 +35,7 @@ class SpiritFantomService(
         }
     }
 
-    override fun getPairDayData(pairId: String) = spiritswapService.getPairDayData(pairId)
+    override fun getPairDayData(pairId: String): List<PairDayData> = spiritswapService.getPairDayData(pairId)
 
     override fun getUserPoolings(user: String) = spiritswapService.getUserPoolings(user)
 

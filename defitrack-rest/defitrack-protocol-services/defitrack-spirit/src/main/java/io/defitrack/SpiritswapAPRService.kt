@@ -7,6 +7,7 @@ import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.RoundingMode
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.ExperimentalTime
 
 @Component
@@ -16,7 +17,8 @@ class SpiritswapAPRService(
 
     @OptIn(ExperimentalTime::class)
     val aprCache = Cache.Builder().expireAfterWrite(
-        kotlin.time.Duration.Companion.hours(4)).build<String, BigDecimal>()
+        4.hours
+    ).build<String, BigDecimal>()
 
     fun getAPR(address: String, network: Network): BigDecimal {
         return runBlocking {

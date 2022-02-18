@@ -5,7 +5,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.TokenType
-import io.defitrack.quickswap.QuickswapService
+import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.contract.DQuickContract
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.RewardToken

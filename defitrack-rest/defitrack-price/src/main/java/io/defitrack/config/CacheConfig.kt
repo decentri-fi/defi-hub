@@ -21,7 +21,7 @@ class CacheConfig {
                 buildCache("external-prices", 15, TimeUnit.MINUTES),
             )
         )
-        return manager;
+        return manager
     }
 
     fun buildCache(name: String, ttl: Int, ttlUnit: TimeUnit): CaffeineCache {

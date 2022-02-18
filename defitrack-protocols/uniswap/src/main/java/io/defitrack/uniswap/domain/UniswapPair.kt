@@ -7,8 +7,7 @@ class UniswapPair(
     val token0: UniswapToken,
     val token1: UniswapToken,
     val reserveUSD: BigDecimal
-) {
-}
+)
 
 class UniswapToken(
     val id: String,

@@ -16,7 +16,7 @@ class DMMEthereumService(
 ) {
 
 
-    fun getPairDayData(pairId: String) = runBlocking {
+    fun getPairDayData(pairId: String): List<DMMPairDayData> = runBlocking {
         val query = """
            {
                 pairDayDatas(first: 8, orderBy: date, orderDirection: desc where: {pairAddress: "$pairId"}) {
@@ -36,7 +36,7 @@ class DMMEthereumService(
     }
 
 
-    fun getUserPoolings(user: String) = runBlocking {
+    fun getUserPoolings(user: String): List<DMMUser> = runBlocking {
         val query = """
             { 
                 users(where: {id: "${user.lowercase()}"}) {
@@ -73,7 +73,7 @@ class DMMEthereumService(
             })
     }
 
-    fun getPoolingMarkets() = runBlocking {
+    fun getPoolingMarkets(): List<DMMPool> = runBlocking {
         val query = """
             {
             	pools(first: 500, where: { reserveUSD_gt: 1000 }) {

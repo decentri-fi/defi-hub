@@ -1,4 +1,3 @@
-package io.defitrack.quickswap
+package io.defitrack.protocol.quickswap
 
-class Quickswap {
-}
+class Quickswap

@@ -2,6 +2,7 @@ package io.defitrack.protocol
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.common.network.Network
+import io.defitrack.protocol.sushi.domain.PairDayData
 import io.defitrack.protocol.sushi.domain.SushiswapPair
 import io.ktor.client.*
 import org.springframework.stereotype.Component
@@ -24,7 +25,7 @@ class SushiPolygonService(
 
     override fun getPairs(): List<SushiswapPair> = sushiswapService.getPairs()
 
-    override fun getPairDayData(pairId: String) = sushiswapService.getPairDayData(pairId)
+    override fun getPairDayData(pairId: String): List<PairDayData> = sushiswapService.getPairDayData(pairId)
 
     override fun getUserPoolings(user: String) = sushiswapService.getUserPoolings(user)
 

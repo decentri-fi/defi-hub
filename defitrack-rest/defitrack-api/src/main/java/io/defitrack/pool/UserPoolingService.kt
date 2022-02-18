@@ -6,6 +6,7 @@ import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.ExperimentalTime
 
 abstract class UserPoolingService : ProtocolService {
@@ -13,7 +14,7 @@ abstract class UserPoolingService : ProtocolService {
 
     @OptIn(ExperimentalTime::class)
     val cache = Cache.Builder().expireAfterWrite(
-        Duration.Companion.minutes(1)
+        1.minutes
     ).build<String, List<PoolingElement>>()
 
     fun userPoolings(address: String): List<PoolingElement> {

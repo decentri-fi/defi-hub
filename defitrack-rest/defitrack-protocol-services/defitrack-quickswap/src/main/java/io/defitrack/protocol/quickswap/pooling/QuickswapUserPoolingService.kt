@@ -9,7 +9,7 @@ import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.pool.UserPoolingService
 import io.defitrack.pool.domain.PoolingElement
 import io.defitrack.protocol.Protocol
-import io.defitrack.quickswap.QuickswapService
+import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -68,10 +68,10 @@ class QuickswapUserPoolingService(
 
 
     override fun getProtocol(): Protocol {
-        return Protocol.QUICKSWAP;
+        return Protocol.QUICKSWAP
     }
 
     override fun getNetwork(): Network {
-        return Network.POLYGON;
+        return Network.POLYGON
     }
 }

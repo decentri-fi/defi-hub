@@ -85,7 +85,7 @@ class PolycatStakingMarketService(
             getNetwork(),
             stakedtoken.address,
             chef.address
-        );
+        )
 
         return BigDecimal(
             priceResource.calculatePrice(

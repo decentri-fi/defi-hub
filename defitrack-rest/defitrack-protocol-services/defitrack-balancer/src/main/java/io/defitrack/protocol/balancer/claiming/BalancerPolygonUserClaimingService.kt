@@ -12,7 +12,6 @@ import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
-import org.springframework.stereotype.Service
 import kotlin.time.Duration.Companion.days
 
 class BalancerPolygonUserClaimingService(

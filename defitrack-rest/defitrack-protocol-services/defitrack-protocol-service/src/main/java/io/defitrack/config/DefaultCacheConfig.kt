@@ -25,7 +25,7 @@ abstract class DefaultCacheConfig {
                 buildCache("tokens", 7, TimeUnit.DAYS)
             )
         )
-        return manager;
+        return manager
     }
 
     fun buildCache(name: String, ttl: Int, ttlUnit: TimeUnit): CaffeineCache {

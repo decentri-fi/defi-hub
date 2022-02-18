@@ -1,4 +1,4 @@
-package io.defitrack.polygon.config
+package io.defitrack.polygonmumbai.config
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

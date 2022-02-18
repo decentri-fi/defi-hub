@@ -24,7 +24,7 @@ class IdexPoolingMarketService(
 
         if (it.reserveUsd > BigDecimal.valueOf(10000)) {
             try {
-                val token0 = erc20Resource.getTokenInformation(getNetwork(), it.tokenA);
+                val token0 = erc20Resource.getTokenInformation(getNetwork(), it.tokenA)
                 val token1 = erc20Resource.getTokenInformation(getNetwork(), it.tokenB)
 
                 val element = PoolingMarketElement(

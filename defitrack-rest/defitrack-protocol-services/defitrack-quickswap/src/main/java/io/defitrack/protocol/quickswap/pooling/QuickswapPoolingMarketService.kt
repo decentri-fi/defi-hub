@@ -6,7 +6,7 @@ import io.defitrack.pool.domain.PoolingMarketElement
 import io.defitrack.pool.domain.PoolingToken
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
-import io.defitrack.quickswap.QuickswapService
+import io.defitrack.protocol.quickswap.QuickswapService
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.stereotype.Component

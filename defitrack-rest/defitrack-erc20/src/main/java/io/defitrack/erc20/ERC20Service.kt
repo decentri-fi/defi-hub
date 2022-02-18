@@ -59,7 +59,7 @@ class ERC20Service(
     fun getERC20Information(network: Network, address: String): ERC20Information? {
 
         if (address.isBlank()) {
-            return null;
+            return null
         }
 
         val correctAddress =

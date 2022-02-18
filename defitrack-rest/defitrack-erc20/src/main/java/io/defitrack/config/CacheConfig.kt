@@ -20,7 +20,7 @@ class CacheConfig {
             listOf(
             )
         )
-        return manager;
+        return manager
     }
 
     fun buildCache(name: String, ttl: Int, ttlUnit: TimeUnit): CaffeineCache {

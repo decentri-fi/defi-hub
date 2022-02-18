@@ -5,7 +5,7 @@ import io.defitrack.price.PriceResource
 import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.quickswap.QuickswapDualRewardPoolContract
 import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
-import io.defitrack.quickswap.QuickswapService
+import io.defitrack.protocol.quickswap.QuickswapService
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.runBlocking
 import org.springframework.cache.annotation.Cacheable
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
-import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.ExperimentalTime
 
 @Component
@@ -34,7 +34,7 @@ class QuickswapAPRService(
 
     @OptIn(ExperimentalTime::class)
     val cache = Cache.Builder().expireAfterWrite(
-        Duration.Companion.hours(1)
+        1.hours
     ).build<String, BigDecimal>()
 
     fun getDualPoolAPR(address: String): BigDecimal {

@@ -6,7 +6,6 @@ import com.google.gson.JsonParser
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.domain.DailyVolume
 import io.defitrack.protocol.domain.HopLpToken
-import io.defitrack.protocol.domain.Tvl
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.request.*
@@ -22,7 +21,7 @@ class HopService(
     private val abstractHopServices: List<AbstractHopService>
 ) {
 
-    val addressesUrl = "https://raw.githubusercontent.com/defitrack/data/master/protocols/hop/addresses.json";
+    val addressesUrl = "https://raw.githubusercontent.com/defitrack/data/master/protocols/hop/addresses.json"
 
     val lpCache = Cache.Builder().build<Network, List<HopLpToken>>()
 

@@ -44,10 +44,10 @@ class FantomWeb3jConfigurer(@Value("\${io.defitrack.fantom.endpoint.url}") priva
             webSocketService.connect({
 
             }, {
-                logger.error("An error occurred in secondary websocket", it);
+                logger.error("An error occurred in secondary websocket", it)
                 assureConnection()
             }, {
-                logger.info("Websocket connection closed");
+                logger.info("Websocket connection closed")
             })
             Web3j.build(webSocketService)
         } else {

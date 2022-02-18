@@ -5,18 +5,20 @@ import io.defitrack.borrowing.domain.BorrowElement
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.AavePolygonService
-import io.defitrack.token.FungibleToken
+import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import java.math.BigInteger
 
 @Service
 class AavePolygonBorrowingService(
     private val aavePolygonService: AavePolygonService,
+    private val erC20Resource: ERC20Resource
 ) : BorrowService {
 
     override suspend fun getBorrows(address: String): List<BorrowElement> {
         return aavePolygonService.getUserReserves(address).mapNotNull {
             if ((it.currentStableDebt > BigInteger.ONE || it.currentVariableDebt > BigInteger.ONE)) {
+                val token = erC20Resource.getTokenInformation(getNetwork(), it.reserve.underlyingAsset)
                 BorrowElement(
                     id = "aave-polygon-${it.reserve.id}",
                     protocol = getProtocol(),
@@ -24,11 +26,7 @@ class AavePolygonBorrowingService(
                     rate = it.reserve.borrowRate,
                     amount = (it.currentStableDebt + it.currentVariableDebt),
                     name = it.reserve.name,
-                    token = FungibleToken(
-                        symbol = it.reserve.symbol,
-                        name = it.reserve.name,
-                        decimals = it.reserve.decimals
-                    )
+                    token = token.toFungibleToken()
                 )
             } else null
         }

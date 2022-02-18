@@ -5,10 +5,8 @@ import io.defitrack.common.network.Network
 import io.defitrack.ethereum.config.EthereumContractAccessor
 import io.defitrack.lending.LendingService
 import io.defitrack.lending.domain.LendingElement
-import io.defitrack.mstable.MStablePolygonService
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.ERC20Resource
-import io.defitrack.token.FungibleToken
 import org.springframework.stereotype.Service
 import java.math.BigInteger
 
@@ -44,18 +42,14 @@ class MStablePolygonLendingService(
         return erC20Resource.getBalancesFor(address, contracts.map { it.address }, ethereumContractAccessor)
             .mapIndexed { index, balance ->
                 if (balance > BigInteger.ZERO) {
-                    val contract = contracts[index]
+                    val token = erC20Resource.getTokenInformation(getNetwork(), contracts[index].address)
                     LendingElement(
-                        id = "mstable-polygon-${contract.address}",
+                        id = "mstable-polygon-${token.address}",
                         network = getNetwork(),
                         protocol = getProtocol(),
-                        name = contract.name,
+                        name = token.name,
                         amount = balance,
-                        token = FungibleToken(
-                            name = contract.name,
-                            decimals = contract.decimals,
-                            symbol = contract.symbol
-                        )
+                        token = token.toFungibleToken()
                     )
                 } else
                     null

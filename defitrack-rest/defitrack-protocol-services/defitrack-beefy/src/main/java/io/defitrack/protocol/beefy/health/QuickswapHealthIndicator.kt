@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
-import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.ExperimentalTime
 
 @Component
@@ -42,7 +42,7 @@ class QuickswapHealthIndicator(
 
     @OptIn(ExperimentalTime::class)
     val cache = Cache.Builder().expireAfterWrite(
-        Duration.Companion.hours(1)
+        1.hours
     ).build<String, List<String>>()
 
     fun getEOL(): List<String> {

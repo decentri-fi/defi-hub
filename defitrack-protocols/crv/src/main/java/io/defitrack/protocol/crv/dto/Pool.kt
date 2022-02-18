@@ -1,7 +1,6 @@
 package io.defitrack.protocol.crv.dto
 
 import java.math.BigDecimal
-import java.math.BigInteger
 
 class Pool(
     val fee: BigDecimal,

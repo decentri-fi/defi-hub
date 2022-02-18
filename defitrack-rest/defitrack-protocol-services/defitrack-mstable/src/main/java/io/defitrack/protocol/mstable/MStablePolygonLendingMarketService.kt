@@ -5,7 +5,6 @@ import io.defitrack.common.network.Network
 import io.defitrack.lending.LendingMarketService
 import io.defitrack.lending.domain.LendingMarketElement
 import io.defitrack.lending.domain.LendingToken
-import io.defitrack.mstable.MStablePolygonService
 import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.ERC20Resource

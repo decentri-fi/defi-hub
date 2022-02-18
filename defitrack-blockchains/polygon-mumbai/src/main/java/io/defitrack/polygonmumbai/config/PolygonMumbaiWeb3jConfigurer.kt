@@ -1,4 +1,4 @@
-package io.defitrack.polygon.config
+package io.defitrack.polygonmumbai.config
 
 import okhttp3.OkHttpClient
 import org.slf4j.Logger
@@ -47,10 +47,10 @@ class PolygonMumbaiWeb3jConfigurer(@Value("\${io.defitrack.polygon-mumbai.endpoi
             webSocketService.connect({
 
             }, {
-                logger.error("An error occurred in secondary websocket", it);
+                logger.error("An error occurred in secondary websocket", it)
                 assureConnection()
             }, {
-                logger.info("Websocket connection closed");
+                logger.info("Websocket connection closed")
             })
             Web3j.build(webSocketService)
         } else {

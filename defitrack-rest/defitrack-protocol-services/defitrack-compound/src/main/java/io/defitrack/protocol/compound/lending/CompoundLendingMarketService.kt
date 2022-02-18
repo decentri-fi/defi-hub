@@ -82,7 +82,7 @@ class CompoundLendingMarketService(
     }
 
     override fun getProtocol(): Protocol {
-        return Protocol.COMPOUND;
+        return Protocol.COMPOUND
     }
 
     override fun getNetwork(): Network {

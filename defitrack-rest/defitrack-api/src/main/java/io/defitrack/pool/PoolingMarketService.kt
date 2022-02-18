@@ -5,13 +5,14 @@ import io.defitrack.protocol.ProtocolService
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import kotlin.time.Duration.Companion.hours
 
 abstract class PoolingMarketService : ProtocolService {
 
-    val logger = LoggerFactory.getLogger(this.javaClass)
+    val logger: Logger = LoggerFactory.getLogger(this.javaClass)
 
     val cache = Cache.Builder().expireAfterWrite(4.hours).build<String, List<PoolingMarketElement>>()
 

@@ -31,7 +31,7 @@ class ConvexBoosterUserStakingService(
             ethereumContractAccessor,
             abiResource.getABI("convex/Booster.json"),
             convexService.provideBooster()
-        );
+        )
 
         val poolInfos = booster.poolInfos
 

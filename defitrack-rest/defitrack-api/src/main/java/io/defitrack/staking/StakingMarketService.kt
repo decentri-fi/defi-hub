@@ -1,13 +1,14 @@
 package io.defitrack.staking
 
 import io.defitrack.protocol.ProtocolService
-import io.defitrack.token.TokenInformation
 import io.defitrack.staking.domain.RewardToken
 import io.defitrack.staking.domain.StakedToken
 import io.defitrack.staking.domain.StakingMarketElement
+import io.defitrack.token.TokenInformation
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import java.util.concurrent.Executors
@@ -15,7 +16,7 @@ import kotlin.time.Duration.Companion.hours
 
 abstract class StakingMarketService : ProtocolService {
 
-    val logger = LoggerFactory.getLogger(this.javaClass)
+    val logger: Logger = LoggerFactory.getLogger(this.javaClass)
 
     val cache =
         Cache.Builder().expireAfterWrite(4.hours).build<String, List<StakingMarketElement>>()

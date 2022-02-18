@@ -1,4 +1,4 @@
-package io.defitrack.mstable
+package io.defitrack.protocol.mstable
 
 import org.springframework.stereotype.Service
 

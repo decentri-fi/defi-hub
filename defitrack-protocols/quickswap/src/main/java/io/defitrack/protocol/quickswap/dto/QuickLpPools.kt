@@ -1,4 +1,4 @@
-package io.defitrack.quickswap.dto
+package io.defitrack.protocol.quickswap.dto
 class QuickLpPools(
     val name: String,
     val address: String,

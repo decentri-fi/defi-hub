@@ -105,7 +105,7 @@ class BeefyBscStakingMarketService(
     }
 
     override fun getProtocol(): Protocol {
-        return Protocol.BEEFY;
+        return Protocol.BEEFY
     }
 
     override fun getNetwork(): Network {

@@ -3,9 +3,11 @@ package io.defitrack.lending
 import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.retry
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.lending.domain.LendingElement
 import io.defitrack.lending.vo.LendingElementVO
 import io.defitrack.network.toVO
+import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.toVO
 import kotlinx.coroutines.Dispatchers
@@ -62,13 +64,20 @@ class DefaultLendingRestController(
 
     fun LendingElement.toVO(): LendingElementVO {
         return with(this) {
+
+            val lendingInDollars = priceResource.calculatePrice(
+                PriceRequest(
+                    address = token.address,
+                    network = network,
+                    amount = amount.asEth(token.decimals),
+                    type = null
+                )
+            )
+
             LendingElementVO(
                 network = network.toVO(),
                 protocol = protocol.toVO(),
-                dollarValue = priceResource.calculatePrice(
-                    token.symbol,
-                    amount.toDouble()
-                ),
+                dollarValue = lendingInDollars,
                 rate = rate,
                 name = name,
                 amount = amount,

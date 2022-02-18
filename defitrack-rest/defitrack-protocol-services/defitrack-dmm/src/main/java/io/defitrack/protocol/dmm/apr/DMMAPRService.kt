@@ -9,9 +9,7 @@ import io.github.reactivecircus.cache4k.Cache
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.RoundingMode
-import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
-import kotlin.time.ExperimentalTime
 
 @Component
 class DMMAPRService(
@@ -24,7 +22,7 @@ class DMMAPRService(
     suspend fun getAPR(address: String, network: Network): BigDecimal {
         return cache.get("$address-${network.slug}") {
             try {
-                val pairData = getPairData(address, network);
+                val pairData = getPairData(address, network)
                 if (pairData.size <= 1) {
                     BigDecimal.ZERO
                 } else {

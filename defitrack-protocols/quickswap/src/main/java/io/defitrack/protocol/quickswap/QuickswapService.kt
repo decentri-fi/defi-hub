@@ -1,18 +1,18 @@
-package io.defitrack.quickswap
+package io.defitrack.protocol.quickswap
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.JsonParser
-import io.defitrack.quickswap.dto.PairDayData
-import io.defitrack.quickswap.dto.QuickLpPools
-import io.defitrack.quickswap.dto.QuickswapPair
+import io.defitrack.protocol.quickswap.dto.PairDayData
+import io.defitrack.protocol.quickswap.dto.QuickLpPools
+import io.defitrack.protocol.quickswap.dto.QuickswapPair
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
-import kotlin.time.Duration
+import kotlin.time.Duration.Companion.days
 import kotlin.time.ExperimentalTime
 
 
@@ -24,12 +24,12 @@ class QuickswapService(
 
     @OptIn(ExperimentalTime::class)
     val vaultCache = Cache.Builder().expireAfterWrite(
-        Duration.Companion.days(1)
+        1.days
     ).build<String, List<String>>()
 
     @OptIn(ExperimentalTime::class)
     val pairCache = Cache.Builder().expireAfterWrite(
-        Duration.Companion.days(1)
+        1.days
     ).build<String, List<QuickswapPair>>()
 
     fun getDQuickContract(): String {
@@ -77,7 +77,7 @@ class QuickswapService(
         }
     }
 
-    fun getPairDayData(pairId: String) = runBlocking {
+    fun getPairDayData(pairId: String): List<PairDayData> = runBlocking {
         val query = """
            {
                 pairDayDatas(first: 8, orderBy: date, orderDirection: desc where: {pairAddress: "$pairId"}) {

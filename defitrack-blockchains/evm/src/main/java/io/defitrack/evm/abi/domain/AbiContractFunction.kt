@@ -1,4 +1,4 @@
-package io.defitrack.abi.domain
+package io.defitrack.evm.abi.domain
 
 import com.fasterxml.jackson.annotation.JsonProperty
 

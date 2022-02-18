@@ -8,7 +8,7 @@ import io.ktor.client.request.*
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
-import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.ExperimentalTime
 
 @Service
@@ -19,7 +19,7 @@ class BeefyPricesService(
 ) {
 
     @OptIn(ExperimentalTime::class)
-    val cache = Cache.Builder().expireAfterWrite(Duration.Companion.hours(1)).build<String, Map<String, BigDecimal>>()
+    val cache = Cache.Builder().expireAfterWrite(1.hours).build<String, Map<String, BigDecimal>>()
 
     fun getPrices(): Map<String, BigDecimal> {
         return runBlocking {

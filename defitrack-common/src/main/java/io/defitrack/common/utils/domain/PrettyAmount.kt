@@ -11,8 +11,9 @@ class PrettyAmount(
         val decimalFormatter = DecimalFormat("#0.0000")
     }
 
-    val isRounded: Boolean
-        get() = value != null && value != format()
+    private val isRounded: Boolean by lazy {
+        value != null && value != format()
+    }
 
     private fun format(): String {
         return try {

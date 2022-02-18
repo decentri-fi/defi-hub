@@ -5,13 +5,14 @@ import io.defitrack.lending.LendingService
 import io.defitrack.lending.domain.LendingElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.AaveMainnetService
-import io.defitrack.token.FungibleToken
+import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import java.math.BigInteger
 
 @Service
 class AaveMainnetLendingService(
     private val aaveMainnetService: AaveMainnetService,
+    private val erC20Resource: ERC20Resource
 ) : LendingService {
 
     override fun getProtocol(): Protocol = Protocol.AAVE
@@ -21,6 +22,7 @@ class AaveMainnetLendingService(
     override suspend fun getLendings(address: String): List<LendingElement> {
         return aaveMainnetService.getUserReserves(address).mapNotNull {
             if (it.currentATokenBalance > BigInteger.ZERO) {
+                val token = erC20Resource.getTokenInformation(getNetwork(), it.reserve.underlyingAsset)
                 LendingElement(
                     id = "ethereum-aave-${it.reserve.symbol}",
                     protocol = getProtocol(),
@@ -28,11 +30,7 @@ class AaveMainnetLendingService(
                     rate = it.reserve.lendingRate,
                     amount = it.currentATokenBalance,
                     name = it.reserve.name,
-                    token = FungibleToken(
-                        symbol = it.reserve.symbol,
-                        name = it.reserve.name,
-                        decimals = it.reserve.decimals
-                    )
+                    token = token.toFungibleToken()
                 )
             } else null
         }

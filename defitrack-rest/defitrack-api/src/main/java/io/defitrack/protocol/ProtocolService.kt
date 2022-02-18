@@ -1,7 +1,6 @@
 package io.defitrack.protocol
 
 import io.defitrack.common.network.Network
-import io.defitrack.protocol.Protocol
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode

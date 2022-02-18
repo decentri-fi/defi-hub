@@ -82,16 +82,7 @@ object FormatUtils {
         }
     }
 
-    @JvmStatic
-    fun prettifyAddress(address: String): String {
-        return if (!address.startsWith("0x")) {
-            String.format("0x%s", address)
-        } else {
-            address
-        }
-    }
-
-    fun isSmallerThan(
+    private fun isSmallerThan(
         aBigInt: BigInteger,
         `val`: BigInteger?
     ): Boolean {

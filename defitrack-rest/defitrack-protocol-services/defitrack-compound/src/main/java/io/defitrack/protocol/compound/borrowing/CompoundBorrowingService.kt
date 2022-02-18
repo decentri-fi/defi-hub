@@ -11,6 +11,7 @@ import io.defitrack.protocol.compound.CompoundService
 import io.defitrack.protocol.compound.CompoundTokenContract
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.FungibleToken
+import io.defitrack.token.TokenType
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -78,22 +79,25 @@ class CompoundBorrowingService(
         ).mapIndexed { index, retVal ->
             val balance = retVal[0].value as BigInteger
             if (balance > BigInteger.ZERO) {
-                val contract = tokenContracts[index]
-                val underlying = contract.underlyingAddress?.let { tokenAddress ->
-                    erC20Service.getERC20(getNetwork(), tokenAddress)
+                val compoundTokenContract = tokenContracts[index]
+                val underlying = compoundTokenContract.underlyingAddress?.let { tokenAddress ->
+                    erC20Service.getTokenInformation(getNetwork(), tokenAddress)
                 }
+                val token = underlying?.toFungibleToken() ?: FungibleToken(
+                    "0x0",
+                    "Eth",
+                    18,
+                    "ETH",
+                    TokenType.SINGLE
+                )
                 BorrowElement(
-                    id = "compound-ethereum-${contract.underlyingAddress ?: "0x0"}",
+                    id = "compound-ethereum-${underlying?.address ?: "0x0"}",
                     network = getNetwork(),
                     protocol = getProtocol(),
-                    name = contract.name,
-                    rate = getBorrowRate(contract).toDouble(),
+                    name = token.name,
+                    rate = getBorrowRate(compoundTokenContract).toDouble(),
                     amount = balance,
-                    token = FungibleToken(
-                        name = underlying?.name ?: "Eth",
-                        decimals = underlying?.decimals ?: 18,
-                        symbol = underlying?.symbol ?: "ETH"
-                    )
+                    token = token
                 )
             } else {
                 null
