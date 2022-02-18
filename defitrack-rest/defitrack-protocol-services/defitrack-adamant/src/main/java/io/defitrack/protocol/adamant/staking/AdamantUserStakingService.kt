@@ -47,13 +47,11 @@ class AdamantUserStakingService(
                     )
 
                     stakingElement(
-                        address,
-                        "https://adamant.finance",
-                        "Adamant ${stakedToken.name} Vault",
+                       vaultName =  "Adamant ${stakedToken.name} Vault",
                         rewardTokens = emptyList(),
                         stakedToken = stakedToken,
-                        "adamant-generic-vault",
-                        vault.address,
+                        vaultType = "adamant-generic-vault",
+                        vaultAddress = vault.address,
                         amount = vault.getTokensStaked(address),
                         id = "adamant-generic-vault-$index"
                     )

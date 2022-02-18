@@ -8,7 +8,7 @@ import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
 import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
-import io.defitrack.token.Token
+import io.defitrack.token.TokenInformation
 import io.defitrack.quickswap.QuickswapService
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.StakingMarketElement
@@ -60,17 +60,17 @@ class QuickswapStakingMarketService(
     }
 
     private fun getMarketSize(
-        stakedToken: Token,
+        stakedTokenInformation: TokenInformation,
         pool: QuickswapRewardPoolContract
     ) = BigDecimal.valueOf(
         priceResource.calculatePrice(
             PriceRequest(
-                address = stakedToken.address,
+                address = stakedTokenInformation.address,
                 network = getNetwork(),
                 amount = pool.totalSupply.toBigDecimal().divide(
-                    BigDecimal.TEN.pow(stakedToken.decimals), RoundingMode.HALF_UP
+                    BigDecimal.TEN.pow(stakedTokenInformation.decimals), RoundingMode.HALF_UP
                 ),
-                type = stakedToken.type
+                type = stakedTokenInformation.type
             )
         )
     )

@@ -14,7 +14,7 @@ import io.defitrack.staking.domain.RewardToken
 import io.defitrack.staking.domain.StakedToken
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
-import io.defitrack.token.Token
+import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
@@ -88,14 +88,14 @@ class SushiswapArbitrumStakingMinichefMarketService(
         )
     }
 
-    private fun calculateMarketSize(chef: MiniChefV2Contract, stakedToken: Token): BigDecimal {
-        val balance = erC20Resource.getBalance(getNetwork(), stakedToken.address, chef.address)
+    private fun calculateMarketSize(chef: MiniChefV2Contract, stakedTokenInformation: TokenInformation): BigDecimal {
+        val balance = erC20Resource.getBalance(getNetwork(), stakedTokenInformation.address, chef.address)
         return BigDecimal.valueOf(
             priceResource.calculatePrice(
                 PriceRequest(
-                    stakedToken.address,
+                    stakedTokenInformation.address,
                     getNetwork(),
-                    balance.toBigDecimal().divide(BigDecimal.TEN.pow(stakedToken.decimals), 18, RoundingMode.HALF_UP),
+                    balance.toBigDecimal().divide(BigDecimal.TEN.pow(stakedTokenInformation.decimals), 18, RoundingMode.HALF_UP),
                     TokenType.SUSHISWAP
                 )
             )

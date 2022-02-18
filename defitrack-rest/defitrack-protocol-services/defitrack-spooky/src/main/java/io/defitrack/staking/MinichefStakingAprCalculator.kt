@@ -5,7 +5,7 @@ import io.defitrack.apr.StakedAsset
 import io.defitrack.apr.StakingAprCalculator
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.reward.MasterchefLpContract
-import io.defitrack.token.Token
+import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
 import io.defitrack.token.ERC20Resource
 import java.math.BigDecimal
@@ -16,7 +16,7 @@ class MinichefStakingAprCalculator(
     priceResource: PriceResource,
     private val chef: MasterchefLpContract,
     private val poolId: Int,
-    private val stakedToken: Token
+    private val stakedTokenInformation: TokenInformation
 ) : StakingAprCalculator(priceResource) {
 
     fun getNativeReward(): Reward {
@@ -40,15 +40,15 @@ class MinichefStakingAprCalculator(
     override fun getStakedTokens(): List<StakedAsset> {
         val balance = erC20Resource.getBalance(
             chef.evmContractAccessor.getNetwork(),
-            stakedToken.address,
+            stakedTokenInformation.address,
             chef.address
         )
         return listOf(
             StakedAsset(
-                address = stakedToken.address,
+                address = stakedTokenInformation.address,
                 network = chef.evmContractAccessor.getNetwork(),
                 amount = balance.toBigDecimal().divide(BigDecimal.TEN.pow(18), 18, RoundingMode.HALF_UP),
-                tokenType = stakedToken.type
+                tokenType = stakedTokenInformation.type
             )
         )
     }

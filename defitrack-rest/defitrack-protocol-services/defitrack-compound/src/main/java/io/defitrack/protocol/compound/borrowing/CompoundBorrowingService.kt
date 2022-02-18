@@ -1,20 +1,20 @@
 package io.defitrack.protocol.compound.borrowing
 
-import io.defitrack.borrowing.BorrowService
-import io.defitrack.borrowing.domain.BorrowElement
-import io.defitrack.token.ERC20Resource
 import io.defitrack.abi.ABIResource
+import io.defitrack.borrowing.domain.BorrowElement
 import io.defitrack.common.network.Network
 import io.defitrack.ethereum.config.EthereumContractAccessor
+import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.compound.CompoundComptrollerContract
 import io.defitrack.protocol.compound.CompoundService
 import io.defitrack.protocol.compound.CompoundTokenContract
+import io.defitrack.token.ERC20Resource
+import io.defitrack.token.FungibleToken
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
-import java.util.*
 
 @Service
 class CompoundBorrowingService(
@@ -66,31 +66,39 @@ class CompoundBorrowingService(
         )
     }
 
-    override suspend fun getBorrows(address: String): List<io.defitrack.borrowing.domain.BorrowElement> {
-        return getTokenContracts().mapNotNull {
-            val underlying = it.underlyingAddress?.let { tokenAddress ->
-                erC20Service.getERC20(getNetwork(), tokenAddress)
+    override suspend fun getBorrows(address: String): List<BorrowElement> {
+        val tokenContracts = getTokenContracts()
+        return ethereumContractAccessor.readMultiCall(
+            tokenContracts.map {
+                MultiCallElement(
+                    it.borrowBalanceStoredFunction(address),
+                    it.address
+                )
             }
-
-            val balance = it.borrowBalanceStored(address)
+        ).mapIndexed { index, retVal ->
+            val balance = retVal[0].value as BigInteger
             if (balance > BigInteger.ZERO) {
-                io.defitrack.borrowing.domain.BorrowElement(
-                    id = UUID.randomUUID().toString(),
-                    user = address.lowercase(Locale.getDefault()),
+                val contract = tokenContracts[index]
+                val underlying = contract.underlyingAddress?.let { tokenAddress ->
+                    erC20Service.getERC20(getNetwork(), tokenAddress)
+                }
+                BorrowElement(
+                    id = "compound-ethereum-${contract.underlyingAddress ?: "0x0"}",
                     network = getNetwork(),
                     protocol = getProtocol(),
-                    name = it.name,
-                    rate = getBorrowRate(it).toDouble(),
-                    amount = balance.toBigDecimal().divide(
-                        BigDecimal.TEN.pow(underlying?.decimals ?: 18), 2, RoundingMode.HALF_UP
-                    ).toPlainString(),
-                    symbol = underlying?.symbol ?: "ETH",
-                    tokenUrl = "https://etherscan.io/address/${it.address}"
+                    name = contract.name,
+                    rate = getBorrowRate(contract).toDouble(),
+                    amount = balance,
+                    token = FungibleToken(
+                        name = underlying?.name ?: "Eth",
+                        decimals = underlying?.decimals ?: 18,
+                        symbol = underlying?.symbol ?: "ETH"
+                    )
                 )
             } else {
                 null
             }
-        }
+        }.filterNotNull()
     }
 
     override fun getProtocol(): Protocol = Protocol.COMPOUND

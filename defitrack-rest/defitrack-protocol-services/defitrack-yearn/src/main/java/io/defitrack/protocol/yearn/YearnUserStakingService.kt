@@ -54,8 +54,6 @@ class YearnUserStakingService(
                     val stakedtoken = erC20Resource.getTokenInformation(getNetwork(), vaults[index].token.id)
 
                     stakingElement(
-                        user = address,
-                        vaultUrl = "",
                         vaultName = "Yearn $index Vault",
                         rewardTokens = listOf(
                             RewardToken(

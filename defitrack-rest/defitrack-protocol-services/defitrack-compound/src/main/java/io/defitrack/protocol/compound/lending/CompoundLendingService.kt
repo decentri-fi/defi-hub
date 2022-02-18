@@ -11,6 +11,7 @@ import io.defitrack.protocol.compound.CompoundComptrollerContract
 import io.defitrack.protocol.compound.CompoundService
 import io.defitrack.protocol.compound.CompoundTokenContract
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.FungibleToken
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -67,15 +68,16 @@ class CompoundLendingService(
                     }
                     LendingElement(
                         id = "compound-ethereum-${tokenContract.address}",
-                        user = address.lowercase(),
                         network = getNetwork(),
                         protocol = getProtocol(),
                         name = tokenContract.name,
                         rate = getSupplyRate(compoundTokenContract = tokenContract).toDouble(),
-                        amount = underlyingBalance.dividePrecisely(
-                            BigDecimal.TEN.pow(underlying?.decimals ?: 18)
-                        ).toPlainString(),
-                        symbol = underlying?.symbol ?: "ETH",
+                        amount = underlyingBalance,
+                        token = FungibleToken(
+                            name = underlying?.name ?: "Eth",
+                            symbol = underlying?.symbol ?: "ETH",
+                            decimals = underlying?.decimals ?: 18
+                        )
                     )
                 } else {
                     null

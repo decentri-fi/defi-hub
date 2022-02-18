@@ -44,8 +44,6 @@ class ConvexPoolsUserStakingService(
                     val stakedToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingToken())
 
                     stakingElement(
-                        user = address,
-                        vaultUrl = "https://etherscan.io/address/${pool.address}",
                         vaultName = pool.name,
                         rewardTokens = listOf(
                             RewardToken(

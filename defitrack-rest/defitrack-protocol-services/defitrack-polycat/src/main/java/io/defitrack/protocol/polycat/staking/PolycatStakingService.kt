@@ -47,10 +47,8 @@ class PolycatStakingService(
                     StakingElement(
                         id = "polycat-${masterChef.address}-${poolIndex}",
                         network = getNetwork(),
-                        user = address.lowercase(),
                         protocol = getProtocol(),
                         name = stakedtoken.name + " Vault",
-                        url = "https://polygon.iron.finance/farms",
                         stakedToken = stakedToken(
                             stakedtoken.address,
                             stakedtoken.type

@@ -8,6 +8,7 @@ import io.defitrack.lending.LendingService
 import io.defitrack.lending.domain.LendingElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.FungibleToken
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -47,15 +48,16 @@ class MStableEthereumLendingService(
                 if (balance > BigInteger.ZERO) {
                     val contract = contracts[index]
                     LendingElement(
-                        user = address,
                         id = UUID.randomUUID().toString(),
                         network = getNetwork(),
                         protocol = getProtocol(),
                         name = contract.name,
-                        amount = balance.toBigDecimal().dividePrecisely(
-                            BigDecimal.TEN.pow(contract.decimals)
-                        ).toPlainString(),
-                        symbol = contract.symbol,
+                        amount = balance,
+                        token = FungibleToken(
+                            name = contract.name,
+                            decimals = contract.decimals,
+                            symbol = contract.symbol,
+                        )
                     )
                 } else {
                     null

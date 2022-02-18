@@ -1,5 +1,7 @@
 package io.defitrack.lending
 
+import io.defitrack.borrowing.domain.BorrowElement
+import io.defitrack.borrowing.vo.BorrowElementVO
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.toVO
@@ -24,7 +26,7 @@ class DefaultBorrowingRestController(
     }
 
     @GetMapping("/{userId}/positions")
-    fun getPoolingMarkets(@PathVariable("userId") address: String): List<io.defitrack.borrowing.vo.BorrowElementVO> =
+    fun getPoolingMarkets(@PathVariable("userId") address: String): List<BorrowElementVO> =
         runBlocking(Dispatchers.IO) {
             borrowingServices.flatMap {
                 try {
@@ -36,22 +38,20 @@ class DefaultBorrowingRestController(
             }.map { it.toVO() }
         }
 
-    fun io.defitrack.borrowing.domain.BorrowElement.toVO(): io.defitrack.borrowing.vo.BorrowElementVO {
+    fun BorrowElement.toVO(): BorrowElementVO {
         return with(this) {
-            io.defitrack.borrowing.vo.BorrowElementVO(
-                user = user,
+            BorrowElementVO(
                 network = network.toVO(),
                 protocol = protocol.toVO(),
                 dollarValue = priceResource.calculatePrice(
-                    symbol,
+                    token.symbol,
                     amount.toDouble()
                 ),
                 rate = rate,
                 name = name,
                 amount = amount,
-                symbol = symbol,
-                tokenUrl = tokenUrl,
-                id = id
+                id = id,
+                token = token
             )
         }
     }

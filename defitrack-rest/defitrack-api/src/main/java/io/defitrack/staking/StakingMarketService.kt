@@ -1,7 +1,7 @@
 package io.defitrack.staking
 
 import io.defitrack.protocol.ProtocolService
-import io.defitrack.token.Token
+import io.defitrack.token.TokenInformation
 import io.defitrack.staking.domain.RewardToken
 import io.defitrack.staking.domain.StakedToken
 import io.defitrack.staking.domain.StakingMarketElement
@@ -43,7 +43,7 @@ abstract class StakingMarketService : ProtocolService {
 
     protected abstract suspend fun fetchStakingMarkets(): List<StakingMarketElement>
 
-    fun Token.toStakedToken(): StakedToken {
+    fun TokenInformation.toStakedToken(): StakedToken {
         return StakedToken(
             name = this.name,
             symbol = this.symbol,
@@ -55,7 +55,7 @@ abstract class StakingMarketService : ProtocolService {
     }
 
 
-    fun Token.toRewardToken(): RewardToken {
+    fun TokenInformation.toRewardToken(): RewardToken {
         return RewardToken(
             name = this.name,
             symbol = this.symbol,

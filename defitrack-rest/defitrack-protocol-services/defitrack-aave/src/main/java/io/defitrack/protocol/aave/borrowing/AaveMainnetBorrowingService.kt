@@ -5,11 +5,9 @@ import io.defitrack.borrowing.domain.BorrowElement
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.AaveMainnetService
+import io.defitrack.token.FungibleToken
 import org.springframework.stereotype.Service
-import java.math.BigDecimal
 import java.math.BigInteger
-import java.math.RoundingMode
-import java.util.*
 
 @Service
 class AaveMainnetBorrowingService(
@@ -18,20 +16,19 @@ class AaveMainnetBorrowingService(
 
     override suspend fun getBorrows(address: String): List<BorrowElement> {
         return aaveMainnetService.getUserReserves(address).mapNotNull {
-
             if ((it.currentStableDebt > BigInteger.ONE || it.currentVariableDebt > BigInteger.ONE)) {
                 BorrowElement(
-                    id = UUID.randomUUID().toString(),
+                    id = "aave-ethereum-${it.reserve.id}",
                     protocol = getProtocol(),
                     network = getNetwork(),
                     rate = it.reserve.borrowRate,
-                    amount = (it.currentStableDebt + it.currentVariableDebt).toBigDecimal()
-                        .divide(
-                            BigDecimal.TEN.pow(it.reserve.decimals), 2, RoundingMode.HALF_UP
-                        ).toPlainString(),
-                    name = it.reserve.name,
-                    symbol = it.reserve.symbol,
-                    tokenUrl = "https://etherscan.io/address/tokens/${it.reserve.underlyingAsset}",
+                    amount = (it.currentStableDebt + it.currentVariableDebt),
+                    name = "Aave ${it.reserve.name} Borrow",
+                    token = FungibleToken(
+                        symbol = it.reserve.symbol,
+                        name = it.reserve.name,
+                        decimals = it.reserve.decimals
+                    )
                 )
             } else null
         }

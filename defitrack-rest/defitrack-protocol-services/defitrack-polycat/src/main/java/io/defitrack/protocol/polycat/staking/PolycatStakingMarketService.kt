@@ -9,7 +9,7 @@ import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.polycat.PolycatMasterChefContract
 import io.defitrack.protocol.polycat.PolycatService
-import io.defitrack.token.Token
+import io.defitrack.token.TokenInformation
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.RewardToken
 import io.defitrack.staking.domain.StakedToken
@@ -79,7 +79,7 @@ class PolycatStakingMarketService(
         )
     }
 
-    private fun calculateMarketSize(stakedtoken: Token, chef: PolycatMasterChefContract): BigDecimal {
+    private fun calculateMarketSize(stakedtoken: TokenInformation, chef: PolycatMasterChefContract): BigDecimal {
 
         val balance = erC20Resource.getBalance(
             getNetwork(),

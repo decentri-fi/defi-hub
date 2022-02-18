@@ -5,33 +5,30 @@ import io.defitrack.borrowing.domain.BorrowElement
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.AavePolygonService
+import io.defitrack.token.FungibleToken
 import org.springframework.stereotype.Service
-import java.math.BigDecimal
 import java.math.BigInteger
-import java.math.RoundingMode
-import java.util.*
 
 @Service
 class AavePolygonBorrowingService(
     private val aavePolygonService: AavePolygonService,
-) : io.defitrack.borrowing.BorrowService {
+) : BorrowService {
 
-    override suspend fun getBorrows(address: String): List<io.defitrack.borrowing.domain.BorrowElement> {
+    override suspend fun getBorrows(address: String): List<BorrowElement> {
         return aavePolygonService.getUserReserves(address).mapNotNull {
-
             if ((it.currentStableDebt > BigInteger.ONE || it.currentVariableDebt > BigInteger.ONE)) {
-                io.defitrack.borrowing.domain.BorrowElement(
-                    id = UUID.randomUUID().toString(),
+                BorrowElement(
+                    id = "aave-polygon-${it.reserve.id}",
                     protocol = getProtocol(),
                     network = getNetwork(),
                     rate = it.reserve.borrowRate,
-                    amount = (it.currentStableDebt + it.currentVariableDebt).toBigDecimal()
-                        .divide(
-                            BigDecimal.TEN.pow(it.reserve.decimals), 2, RoundingMode.HALF_UP
-                        ).toPlainString(),
+                    amount = (it.currentStableDebt + it.currentVariableDebt),
                     name = it.reserve.name,
-                    symbol = it.reserve.symbol,
-                    tokenUrl = "https://etherscan.io/address/tokens/${it.reserve.underlyingAsset}",
+                    token = FungibleToken(
+                        symbol = it.reserve.symbol,
+                        name = it.reserve.name,
+                        decimals = it.reserve.decimals
+                    )
                 )
             } else null
         }

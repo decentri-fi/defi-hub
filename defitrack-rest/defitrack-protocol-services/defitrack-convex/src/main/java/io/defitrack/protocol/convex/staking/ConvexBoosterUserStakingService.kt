@@ -53,13 +53,10 @@ class ConvexBoosterUserStakingService(
                 StakingElement(
                     id = "convex-booster-$index",
                     network = getNetwork(),
-                    user = address,
                     protocol = getProtocol(),
                     name = "Convex Crv Booster $index",
                     contractAddress = booster.address,
                     vaultType = "convex-crv-rewards",
-                    rate = 0.0,
-                    url = "",
                     stakedToken = StakedToken(
                         stakedToken.name,
                         stakedToken.symbol,

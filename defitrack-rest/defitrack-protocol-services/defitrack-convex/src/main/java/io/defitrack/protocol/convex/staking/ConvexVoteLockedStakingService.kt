@@ -47,7 +47,6 @@ class ConvexVoteLockedStakingService(
                     network = getNetwork(),
                     protocol = getProtocol(),
                     id = "convex-ethereum-${pool.address}",
-                    user = address,
                     name = pool.name,
                     rewardTokens = listOf(
                         RewardToken(

@@ -6,7 +6,7 @@ import io.defitrack.evm.contract.EvmContractAccessor
 import io.defitrack.protocol.HopService
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.contract.HopLpTokenContract
-import io.defitrack.token.Token
+import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 
@@ -21,7 +21,7 @@ class HopTokenService(
     fun getTokenInformation(
         address: String,
         network: Network
-    ): Token {
+    ): TokenInformation {
         return hopService.getLps(network).find {
             it.lpToken.lowercase() == address.lowercase()
         }!!.let { hopLpToken ->
@@ -35,11 +35,11 @@ class HopTokenService(
             val token0 = erC20Service.getERC20(network, hopLpToken.canonicalToken)
             val token1 = erC20Service.getERC20(network, hopLpToken.hToken)
 
-            Token(
+            TokenInformation(
                 name = saddleToken.name,
                 symbol = saddleToken.symbol,
-                token0 = token0?.toToken(),
-                token1 = token1?.toToken(),
+                tokenInformation0 = token0?.toToken(),
+                tokenInformation1 = token1?.toToken(),
                 address = address,
                 decimals = saddleToken.decimals,
                 totalSupply = saddleToken.totalSupply,

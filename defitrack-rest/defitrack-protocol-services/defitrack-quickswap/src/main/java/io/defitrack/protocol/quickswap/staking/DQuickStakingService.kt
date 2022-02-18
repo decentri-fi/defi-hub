@@ -33,7 +33,6 @@ class DQuickStakingService(
         return if (balance > BigInteger.ZERO) {
             listOf(
                 StakingElement(
-                    user = address,
                     rewardTokens = listOf(
                         RewardToken(
                             name = "Quick",

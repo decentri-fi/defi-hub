@@ -2,16 +2,16 @@ package io.defitrack.borrowing.domain
 
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
+import io.defitrack.token.FungibleToken
+import java.math.BigInteger
 
 data class BorrowElement(
-    var id: String = "",
-    var user: String = "",
+    var id: String,
     var network: Network,
-    var platform: String = "",
     var protocol: Protocol,
-    var name: String = "unknown",
+    var name: String,
     var rate: Double? = null,
-    var amount: String = "?",
-    var symbol: String = "?",
-    var tokenUrl: String = "?"
+    var amount: BigInteger,
+    val token: FungibleToken
 )
+

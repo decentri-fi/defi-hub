@@ -51,8 +51,6 @@ class QuickswapUserStakingService(
 
                 stakingElement(
                     id = "quickswap-polygon-${pool.address}",
-                    user = address.lowercase(),
-                    vaultUrl = "https://quickswap.exchange",
                     vaultName = """${stakedToken.name} Reward""",
                     rewardTokens = listOf(
                         RewardToken(

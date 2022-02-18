@@ -5,10 +5,9 @@ import io.defitrack.lending.LendingService
 import io.defitrack.lending.domain.LendingElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.AaveMainnetService
+import io.defitrack.token.FungibleToken
 import org.springframework.stereotype.Service
-import java.math.BigDecimal
 import java.math.BigInteger
-import java.math.RoundingMode
 
 @Service
 class AaveMainnetLendingService(
@@ -23,17 +22,17 @@ class AaveMainnetLendingService(
         return aaveMainnetService.getUserReserves(address).mapNotNull {
             if (it.currentATokenBalance > BigInteger.ZERO) {
                 LendingElement(
-                    user = address.lowercase(),
                     id = "ethereum-aave-${it.reserve.symbol}",
                     protocol = getProtocol(),
                     network = getNetwork(),
                     rate = it.reserve.lendingRate,
-                    amount = (it.currentATokenBalance).toBigDecimal()
-                        .divide(
-                            BigDecimal.TEN.pow(it.reserve.decimals), 6, RoundingMode.HALF_UP
-                        ).toPlainString(),
+                    amount = it.currentATokenBalance,
                     name = it.reserve.name,
-                    symbol = it.reserve.symbol,
+                    token = FungibleToken(
+                        symbol = it.reserve.symbol,
+                        name = it.reserve.name,
+                        decimals = it.reserve.decimals
+                    )
                 )
             } else null
         }

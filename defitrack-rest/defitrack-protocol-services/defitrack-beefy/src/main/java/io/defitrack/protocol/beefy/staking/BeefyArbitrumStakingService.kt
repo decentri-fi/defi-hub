@@ -79,10 +79,8 @@ class BeefyArbitrumStakingService(
                     id = market.id,
                     network = getNetwork(),
                     protocol = getProtocol(),
-                    user = address,
                     name = market.name,
                     rate = getAPY(market.id),
-                    url = "https://polygon.beefy.finance/",
                     stakedToken =
                     stakedToken(
                         want.address,

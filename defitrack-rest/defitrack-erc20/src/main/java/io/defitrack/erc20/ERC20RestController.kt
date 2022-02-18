@@ -2,7 +2,7 @@ package io.defitrack.erc20
 
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.vo.ERC20Information
-import io.defitrack.token.Token
+import io.defitrack.token.TokenInformation
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -46,7 +46,7 @@ class ERC20RestController(
     fun getTokenInformation(
         @PathVariable("network") network: Network,
         @PathVariable("address") address: String
-    ): ResponseEntity<Token> {
+    ): ResponseEntity<TokenInformation> {
         if (!WalletUtils.isValidAddress(address)) {
             return ResponseEntity.badRequest().build()
         }

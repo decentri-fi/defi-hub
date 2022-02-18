@@ -8,7 +8,7 @@ import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SushiPolygonService
 import io.defitrack.protocol.reward.MiniChefV2Contract
-import io.defitrack.token.Token
+import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
 import io.defitrack.protocol.sushiswap.apr.MinichefStakingAprCalculator
 import io.defitrack.staking.StakingMarketService
@@ -88,14 +88,14 @@ class SushiswapPolygonStakingMinichefMarketService(
         )
     }
 
-    private fun calculateMarketSize(chef: MiniChefV2Contract, stakedToken: Token): BigDecimal {
-        val balance = erC20Resource.getBalance(getNetwork(), stakedToken.address, chef.address)
+    private fun calculateMarketSize(chef: MiniChefV2Contract, stakedTokenInformation: TokenInformation): BigDecimal {
+        val balance = erC20Resource.getBalance(getNetwork(), stakedTokenInformation.address, chef.address)
         return BigDecimal.valueOf(
             priceResource.calculatePrice(
                 PriceRequest(
-                    stakedToken.address,
+                    stakedTokenInformation.address,
                     getNetwork(),
-                    balance.toBigDecimal().divide(BigDecimal.TEN.pow(stakedToken.decimals), 18, RoundingMode.HALF_UP),
+                    balance.toBigDecimal().divide(BigDecimal.TEN.pow(stakedTokenInformation.decimals), 18, RoundingMode.HALF_UP),
                     TokenType.SUSHISWAP
                 )
             )

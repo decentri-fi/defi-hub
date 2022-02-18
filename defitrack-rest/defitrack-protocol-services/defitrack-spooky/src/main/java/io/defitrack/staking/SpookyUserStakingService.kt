@@ -40,13 +40,11 @@ class SpookyUserStakingService(
                 StakingElement(
                     id = stakingMarket.id,
                     network = getNetwork(),
-                    user = address,
                     protocol = getProtocol(),
                     name = stakingMarket.name,
                     contractAddress = stakingMarket.contractAddress,
                     vaultType = stakingMarket.vaultType,
                     rate = stakingMarket.rate.toDouble(),
-                    url = "",
                     stakedToken = stakingMarket.token,
                     rewardTokens = stakingMarket.reward,
                     amount = balance

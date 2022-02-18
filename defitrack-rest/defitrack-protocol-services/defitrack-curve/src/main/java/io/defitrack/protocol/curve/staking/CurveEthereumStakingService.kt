@@ -11,7 +11,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.math.BigInteger
-import java.util.*
 
 @Service
 class CurveEthereumStakingService(
@@ -38,8 +37,7 @@ class CurveEthereumStakingService(
                             network = getNetwork(),
                             protocol = getProtocol(),
                             name = (gauge.pool?.name ?: "Curve") + " Gauge",
-                            id = UUID.randomUUID().toString(),
-                            url = "https://etherscan.io/address/" + gauge.address,
+                            id = "curve-ethereum-${gauge.address}",
                             stakedToken = stakedToken(
                                 lpToken.address,
                                 lpToken.type
@@ -48,7 +46,6 @@ class CurveEthereumStakingService(
                             vaultType = "curve-gauge",
                             contractAddress = gauge.address,
                             amount = balance
-
                         )
                     } catch (ex: Exception) {
                         logger.debug("Something went wrong trying to fetch curve staking", ex.message)

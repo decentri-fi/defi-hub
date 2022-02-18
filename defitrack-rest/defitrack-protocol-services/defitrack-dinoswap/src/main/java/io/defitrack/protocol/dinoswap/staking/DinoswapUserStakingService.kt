@@ -47,26 +47,11 @@ class DinoswapUserStakingService(
                         erC20Resource.getTokenInformation(getNetwork(), masterChef.getLpTokenForPoolId(poolIndex))
                     val rewardToken = erC20Resource.getTokenInformation(getNetwork(), masterChef.rewardToken)
 
-                    val poolBalance = ERC20Contract(
-                        polygonContractAccessor,
-                        abiResource.getABI("general/ERC20.json"),
-                        stakedtoken.address
-                    ).balanceOf(masterChef.address)
-
-
-                    val userRewardPerBlock = balance.toBigDecimal().divide(
-                        poolBalance.toBigDecimal(), 18, RoundingMode.HALF_UP
-                    ).times(masterChef.rewardPerBlock.toBigDecimal())
-
-                    val perDay = userRewardPerBlock.times(BigDecimal(43200))
-
                     StakingElement(
                         id = "dinoswap-${masterChef.address}-${poolIndex}",
                         network = getNetwork(),
-                        user = address.lowercase(),
                         protocol = getProtocol(),
                         name = stakedtoken.name + " Vault",
-                        url = "https://polygon.iron.finance/farms",
                         stakedToken = stakedToken(
                             stakedtoken.address,
                         ),

@@ -2,15 +2,15 @@ package io.defitrack.lending.domain
 
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
+import io.defitrack.token.FungibleToken
+import java.math.BigInteger
 
-data class LendingElement constructor(
-    var id: String,
-    var user: String = "",
-    var network: Network,
-    var platform: String = "",
-    var protocol: Protocol,
-    var rate: Double? = null,
-    var name: String = "unknown",
-    var amount: String = "",
-    var symbol: String = "?"
+data class LendingElement(
+    val id: String,
+    val network: Network,
+    val protocol: Protocol,
+    val rate: Double? = null,
+    val amount: BigInteger,
+    val name: String,
+    val token: FungibleToken
 )

@@ -5,6 +5,7 @@ import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.EvmContractAccessor
 import io.defitrack.evm.contract.EvmContractAccessor.Companion.toAddress
 import org.web3j.abi.TypeReference
+import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -73,8 +74,8 @@ class CompoundTokenContract(
         )[0].value as BigInteger
     }
 
-    fun underlyingBalanceOf(address: String): BigDecimal {
-        return balanceOf(address).times(exchangeRate).toBigDecimal().dividePrecisely(BigDecimal.TEN.pow(18))
+    fun underlyingBalanceOf(address: String): BigInteger {
+        return balanceOf(address).times(exchangeRate).toBigDecimal().dividePrecisely(BigDecimal.TEN.pow(18)).toBigInteger()
     }
 
     val exchangeRate by lazy {
@@ -84,6 +85,14 @@ class CompoundTokenContract(
                 TypeReference.create(Uint256::class.java)
             )
         )[0].value as BigInteger
+    }
+
+    fun borrowBalanceStoredFunction(address: String): Function {
+        return createFunction(
+            "borrowBalanceStored",
+            inputs = listOf(address.toAddress()),
+            outputs = listOf(TypeReference.create(Uint256::class.java))
+        )
     }
 
     fun borrowBalanceStored(address: String): BigInteger {

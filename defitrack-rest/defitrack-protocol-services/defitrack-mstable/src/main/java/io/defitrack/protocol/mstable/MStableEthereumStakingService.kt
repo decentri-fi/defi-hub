@@ -10,7 +10,6 @@ import io.defitrack.staking.domain.StakingElement
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import java.math.BigInteger
-import java.util.*
 
 @Service
 class MStableEthereumStakingService(
@@ -41,11 +40,10 @@ class MStableEthereumStakingService(
                     val stakingToken = erC20Resource.getTokenInformation(getNetwork(), contract.stakingToken)
                     val rewardsToken = erC20Resource.getTokenInformation(getNetwork(), contract.rewardsToken)
                     StakingElement(
-                        id = UUID.randomUUID().toString(),
+                        id = "mstable-ethereum-${contract.address}",
                         network = this.getNetwork(),
                         protocol = this.getProtocol(),
                         name = contract.name,
-                        url = "https://etherscan.io/address/${contract.address}",
                         stakedToken = stakedToken(
                             stakingToken.address,
                         ),

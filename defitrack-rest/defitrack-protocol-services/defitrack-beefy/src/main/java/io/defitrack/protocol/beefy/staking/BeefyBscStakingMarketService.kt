@@ -10,7 +10,7 @@ import io.defitrack.protocol.beefy.BeefyService
 import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
 import io.defitrack.protocol.beefy.domain.BeefyVault
-import io.defitrack.token.Token
+import io.defitrack.token.TokenInformation
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.RewardToken
 import io.defitrack.staking.domain.StakedToken
@@ -82,7 +82,7 @@ class BeefyBscStakingMarketService(
     }
 
     private fun getMarketSize(
-        want: Token,
+        want: TokenInformation,
         beefyVault: BeefyVaultContract
     ) = BigDecimal.valueOf(
         priceService.calculatePrice(

@@ -63,18 +63,17 @@ class DefaultLendingRestController(
     fun LendingElement.toVO(): LendingElementVO {
         return with(this) {
             LendingElementVO(
-                user = user,
                 network = network.toVO(),
                 protocol = protocol.toVO(),
                 dollarValue = priceResource.calculatePrice(
-                    symbol,
+                    token.symbol,
                     amount.toDouble()
                 ),
                 rate = rate,
                 name = name,
                 amount = amount,
-                symbol = symbol,
-                id = id
+                id = id,
+                token = token
             )
         }
     }

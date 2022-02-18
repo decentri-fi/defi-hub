@@ -7,13 +7,11 @@ import java.math.BigInteger
 data class StakingElement(
     val id: String,
     val network: Network,
-    val user: String = "",
     val protocol: Protocol,
     val name: String = "unknown",
     val contractAddress: String,
     val vaultType: String,
-    val rate: Double = 0.0,
-    val url: String = "?",
+    val rate: Double? = null,
     val stakedToken: StakedToken,
     val amount: BigInteger,
     val rewardTokens: List<RewardToken> = emptyList()

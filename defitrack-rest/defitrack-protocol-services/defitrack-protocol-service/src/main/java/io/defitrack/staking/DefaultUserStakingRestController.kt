@@ -95,7 +95,6 @@ class DefaultUserStakingRestController(
             dollarValue = stakedInDollars,
             name = name,
             rate = rate,
-            url = url,
             vaultType = vaultType,
             contractAddress = contractAddress,
             stakedToken = stakedToken.toVO(),

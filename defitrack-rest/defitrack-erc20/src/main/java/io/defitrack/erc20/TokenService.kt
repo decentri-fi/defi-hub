@@ -4,7 +4,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.pool.LPtokenService
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.ERC20Resource
-import io.defitrack.token.Token
+import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
 import io.defitrack.token.domain.ERC20Information
 import io.github.reactivecircus.cache4k.Cache
@@ -49,10 +49,10 @@ class TokenService(
         }
     }
 
-    val tokenCache = Cache.Builder().build<String, Token>()
+    val tokenInformationCache = Cache.Builder().build<String, TokenInformation>()
 
-    fun getTokenInformation(address: String, network: Network): Token = runBlocking {
-        tokenCache.get("${address}-${network}") {
+    fun getTokenInformation(address: String, network: Network): TokenInformation = runBlocking {
+        tokenInformationCache.get("${address}-${network}") {
             val token = erc20Resource.getERC20(network, address)
             when {
                 (token.symbol) == "SLP" -> {
@@ -77,15 +77,15 @@ class TokenService(
                     hopTokenService.getTokenInformation(token.address, network)
                 }
                 else -> {
-                    Token(
+                    TokenInformation(
                         name = token.name,
                         symbol = token.symbol,
                         address = token.address,
                         decimals = token.decimals,
                         totalSupply = BigInteger.ZERO,
                         type = TokenType.SINGLE,
-                        token0 = null,
-                        token1 = null
+                        tokenInformation0 = null,
+                        tokenInformation1 = null
                     )
                 }
             }
@@ -100,7 +100,7 @@ class TokenService(
         return symbol.startsWith("HOP-LP")
     }
 
-    fun fromLP(protocol: Protocol, network: Network, erc20: ERC20Information): Token {
+    fun fromLP(protocol: Protocol, network: Network, erc20: ERC20Information): TokenInformation {
         val lp = LPtokenService.getLP(network, erc20.address)
 
         val token0 = getTokenInformation(
@@ -110,11 +110,11 @@ class TokenService(
             lp.token1, network
         )
 
-        return Token(
+        return TokenInformation(
             name = "${token0.symbol}/${token1.symbol} LP",
             symbol = "${token0.symbol}-${token1.symbol}",
-            token0 = token0,
-            token1 = token1,
+            tokenInformation0 = token0,
+            tokenInformation1 = token1,
             address = erc20.address,
             decimals = erc20.decimals,
             totalSupply = lp.totalSupply,

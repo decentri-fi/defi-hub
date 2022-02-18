@@ -1,14 +1,13 @@
 package io.defitrack.protocol.aave.lending
 
+import io.defitrack.common.network.Network
 import io.defitrack.lending.LendingService
 import io.defitrack.lending.domain.LendingElement
-import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.AavePolygonService
+import io.defitrack.token.FungibleToken
 import org.springframework.stereotype.Service
-import java.math.BigDecimal
 import java.math.BigInteger
-import java.math.RoundingMode
 
 @Service
 class AavePolygonLendingService(
@@ -21,20 +20,19 @@ class AavePolygonLendingService(
 
     override suspend fun getLendings(address: String): List<LendingElement> {
         return aavePolygonService.getUserReserves(address).mapNotNull {
-
             if (it.currentATokenBalance > BigInteger.ZERO) {
                 LendingElement(
-                    user = address.lowercase(),
                     id = "polygon-aave-${it.reserve.symbol}",
                     protocol = getProtocol(),
                     network = getNetwork(),
                     rate = it.reserve.lendingRate,
-                    amount = (it.currentATokenBalance).toBigDecimal()
-                        .divide(
-                            BigDecimal.TEN.pow(it.reserve.decimals), 6, RoundingMode.HALF_UP
-                        ).toPlainString(),
+                    amount = it.currentATokenBalance,
                     name = it.reserve.name,
-                    symbol = it.reserve.symbol
+                    token = FungibleToken(
+                        it.reserve.name,
+                        it.reserve.decimals,
+                        it.reserve.symbol
+                    )
                 )
             } else null
         }

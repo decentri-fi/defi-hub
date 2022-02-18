@@ -4,7 +4,7 @@ import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.retry
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.balancer.BalancerPolygonService
-import io.defitrack.token.Token
+import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
 import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.Dispatchers
@@ -74,14 +74,14 @@ class PriceCalculator(
 
     private fun calculateLpPrice(
         priceRequest: PriceRequest,
-        token: Token
+        tokenInformation: TokenInformation
     ) = calculateLPWorth(
         priceRequest.network,
-        token.address,
+        tokenInformation.address,
         priceRequest.amount,
-        token.totalSupply,
-        token.token0!!,
-        token.token1!!
+        tokenInformation.totalSupply,
+        tokenInformation.tokenInformation0!!,
+        tokenInformation.tokenInformation1!!
     )
 
     fun calculateTokenWorth(
@@ -106,27 +106,27 @@ class PriceCalculator(
         lpAddress: String,
         userLPAmount: BigDecimal,
         totalLPAmount: BigInteger,
-        token0: Token,
-        token1: Token,
+        tokenInformation0: TokenInformation,
+        tokenInformation1: TokenInformation,
     ): BigDecimal {
 
-        val token0Price = getPrice(token0.symbol)
-        val token1Price = getPrice(token1.symbol)
+        val token0Price = getPrice(tokenInformation0.symbol)
+        val token1Price = getPrice(tokenInformation1.symbol)
 
         val userShare =
             userLPAmount.divide(totalLPAmount.toBigDecimal().divide(BigDecimal.TEN.pow(18)), 18, RoundingMode.HALF_UP)
 
-        val lpToken0Amount = erc20Service.getBalance(network, token0.address, lpAddress)
-        val lpToken1Amount = erc20Service.getBalance(network, token1.address, lpAddress)
+        val lpToken0Amount = erc20Service.getBalance(network, tokenInformation0.address, lpAddress)
+        val lpToken1Amount = erc20Service.getBalance(network, tokenInformation1.address, lpAddress)
 
         val userToken0Amount = lpToken0Amount.toBigDecimal().times(userShare)
         val userToken1Amount = lpToken1Amount.toBigDecimal().times(userShare)
 
         val totalDollarValueToken0 = userToken0Amount.div(
-            BigDecimal.TEN.pow(token0.decimals)
+            BigDecimal.TEN.pow(tokenInformation0.decimals)
         ).times(token0Price)
         val totalDollarValueToken1 = userToken1Amount.div(
-            BigDecimal.TEN.pow(token1.decimals)
+            BigDecimal.TEN.pow(tokenInformation1.decimals)
         ).times(token1Price)
 
         val multiplier =

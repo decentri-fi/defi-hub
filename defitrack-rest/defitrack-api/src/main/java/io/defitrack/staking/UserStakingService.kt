@@ -37,8 +37,6 @@ abstract class UserStakingService(
     }
 
     fun stakingElement(
-        user: String,
-        vaultUrl: String,
         vaultName: String,
         rewardTokens: List<RewardToken>,
         stakedToken: StakedToken,
@@ -51,12 +49,10 @@ abstract class UserStakingService(
         return StakingElement(
             id = id,
             network = getNetwork(),
-            user = user.lowercase(),
             protocol = getProtocol(),
             name = vaultName,
             rate = rate,
             contractAddress = vaultAddress,
-            url = vaultUrl,
             vaultType = vaultType,
             stakedToken = stakedToken,
             rewardTokens = rewardTokens,

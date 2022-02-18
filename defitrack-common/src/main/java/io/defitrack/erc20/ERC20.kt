@@ -1,7 +1,7 @@
 package io.defitrack.erc20
 
 import io.defitrack.common.network.Network
-import io.defitrack.token.Token
+import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
 
 class ERC20(
@@ -11,7 +11,7 @@ class ERC20(
     val network: Network,
     val address: String,
 ) {
-    fun toToken(): Token = Token(
+    fun toToken(): TokenInformation = TokenInformation(
         name = name,
         symbol = symbol,
         decimals = decimals,

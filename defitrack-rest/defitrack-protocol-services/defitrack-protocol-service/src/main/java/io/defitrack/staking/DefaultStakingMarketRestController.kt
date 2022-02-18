@@ -5,9 +5,7 @@ import io.defitrack.network.toVO
 import io.defitrack.token.TokenType
 import io.defitrack.protocol.toVO
 import io.defitrack.staking.domain.StakingMarketElement
-import io.defitrack.staking.vo.RewardTokenVO
 import io.defitrack.staking.vo.RewardTokenVO.Companion.toVO
-import io.defitrack.staking.vo.StakedTokenVO
 import io.defitrack.staking.vo.StakedTokenVO.Companion.toVO
 import io.defitrack.staking.vo.StakingMarketElementVO
 import io.defitrack.token.ERC20Resource
@@ -48,7 +46,7 @@ class DefaultStakingMarketRestController(
             }.filter {
                 val token = erC20Resource.getTokenInformation(it.network, it.token.address.lowercase())
                 if (token.type != TokenType.SINGLE) {
-                    token.token0!!.address.lowercase() == tokenAddress.lowercase() || token.token1!!.address.lowercase() == tokenAddress.lowercase() || it.token.address.lowercase() == tokenAddress.lowercase()
+                    token.tokenInformation0!!.address.lowercase() == tokenAddress.lowercase() || token.tokenInformation1!!.address.lowercase() == tokenAddress.lowercase() || it.token.address.lowercase() == tokenAddress.lowercase()
                 } else {
                     it.token.address.lowercase() == tokenAddress.lowercase()
                 }
