@@ -1,12 +1,11 @@
 package io.defitrack.protocol.quickswap.staking
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.quickswap.contract.DQuickContract
 import io.defitrack.quickswap.QuickswapService
-import io.defitrack.quickswap.contract.DQuickContract
 import io.defitrack.staking.UserStakingService
 import io.defitrack.staking.domain.RewardToken
 import io.defitrack.staking.domain.StakingElement
@@ -30,8 +29,7 @@ class DQuickStakingService(
     val dquick = dquickContract()
 
     override fun getStakings(address: String): List<StakingElement> {
-
-        val balance = dquick.balanceOf(address)
+        val balance = erC20Resource.getBalance(getNetwork(), dquick.address, address)
         return if (balance > BigInteger.ZERO) {
             listOf(
                 StakingElement(

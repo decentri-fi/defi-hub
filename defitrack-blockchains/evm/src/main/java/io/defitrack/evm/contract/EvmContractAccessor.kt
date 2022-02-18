@@ -1,4 +1,4 @@
-package io.defitrack.ethereumbased.contract
+package io.defitrack.evm.contract
 
 import com.github.michaelbull.retry.policy.binaryExponentialBackoff
 import com.github.michaelbull.retry.policy.limitAttempts
@@ -8,7 +8,7 @@ import io.defitrack.abi.AbiDecoder
 import io.defitrack.abi.domain.AbiContractEvent
 import io.defitrack.abi.domain.AbiContractFunction
 import io.defitrack.common.network.Network
-import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
+import io.defitrack.evm.contract.multicall.MultiCallElement
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.codec.binary.Hex
 import org.apache.commons.lang3.StringUtils

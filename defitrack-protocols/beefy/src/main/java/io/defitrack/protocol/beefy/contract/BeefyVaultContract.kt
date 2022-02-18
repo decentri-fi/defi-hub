@@ -1,7 +1,7 @@
 package io.defitrack.protocol.beefy.contract
 
-import io.defitrack.ethereumbased.contract.ERC20Contract
-import io.defitrack.ethereumbased.contract.EvmContractAccessor
+import io.defitrack.evm.contract.ERC20Contract
+import io.defitrack.evm.contract.EvmContractAccessor
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.generated.Uint256

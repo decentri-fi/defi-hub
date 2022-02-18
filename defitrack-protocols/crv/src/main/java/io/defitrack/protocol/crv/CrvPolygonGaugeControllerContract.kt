@@ -1,17 +1,14 @@
 package io.defitrack.protocol.crv
 
-import io.defitrack.ethereumbased.contract.EvmContract
-import io.defitrack.ethereumbased.contract.EvmContractAccessor
-import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
-import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toUint256
+import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.EvmContractAccessor
+import io.defitrack.evm.contract.EvmContractAccessor.Companion.toUint256
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Utf8String
 import org.web3j.abi.datatypes.generated.Int128
 import org.web3j.abi.datatypes.generated.Uint256
-import java.math.BigDecimal
 import java.math.BigInteger
-import java.math.RoundingMode
 
 class CrvPolygonGaugeControllerContract(
     ethereumContractAccessor: EvmContractAccessor,
@@ -52,16 +49,6 @@ class CrvPolygonGauge(
     address: String,
 ) : EvmContract(ethereumContractAccessor, abi, address) {
 
-    fun balanceOf(address: String): BigInteger {
-        return read(
-            "balanceOf",
-            inputs = listOf(address.toAddress()),
-            outputs = listOf(
-                TypeReference.create(Uint256::class.java)
-            )
-        )[0].value as BigInteger
-    }
-
     val name: String by lazy {
         read(
             "name",
@@ -94,10 +81,6 @@ class CrvPolygonGauge(
                 TypeReference.create(Uint256::class.java)
             )
         )[0].value as BigInteger
-    }
-
-    fun decimalBalanceOf(address: String): BigDecimal {
-        return balanceOf(address).toBigDecimal().divide(BigDecimal.TEN.pow(decimals.toInt()), 4, RoundingMode.HALF_UP)
     }
 
     val lpToken: String by lazy {

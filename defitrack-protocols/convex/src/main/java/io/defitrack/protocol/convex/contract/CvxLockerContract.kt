@@ -1,9 +1,9 @@
 package io.defitrack.protocol.convex.contract
 
-import io.defitrack.ethereumbased.contract.EvmContract
-import io.defitrack.ethereumbased.contract.EvmContractAccessor
-import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
-import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toUint256
+import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.EvmContractAccessor
+import io.defitrack.evm.contract.EvmContractAccessor.Companion.toAddress
+import io.defitrack.evm.contract.EvmContractAccessor.Companion.toUint256
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.DynamicBytes

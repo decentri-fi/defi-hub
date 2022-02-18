@@ -2,7 +2,7 @@ package io.defitrack.erc20
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.ethereumbased.contract.EvmContractAccessor
+import io.defitrack.evm.contract.EvmContractAccessor
 import io.defitrack.protocol.HopService
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.contract.HopLpTokenContract

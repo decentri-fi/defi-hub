@@ -1,8 +1,9 @@
 package io.defitrack.protocol.compound
 
-import io.defitrack.ethereumbased.contract.EvmContract
-import io.defitrack.ethereumbased.contract.EvmContractAccessor
-import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
+import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
+import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.EvmContractAccessor
+import io.defitrack.evm.contract.EvmContractAccessor.Companion.toAddress
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigDecimal
@@ -42,7 +43,6 @@ class CompoundTokenContract(
     }
 
 
-
     val underlyingAddress: String? by lazy {
         try {
             read(
@@ -74,8 +74,7 @@ class CompoundTokenContract(
     }
 
     fun underlyingBalanceOf(address: String): BigDecimal {
-        return balanceOf(address).times(exchangeRate).toBigDecimal()
-            .divide(BigDecimal.TEN.pow(18))
+        return balanceOf(address).times(exchangeRate).toBigDecimal().dividePrecisely(BigDecimal.TEN.pow(18))
     }
 
     val exchangeRate by lazy {

@@ -3,10 +3,9 @@ package io.defitrack.fantom.config
 import io.defitrack.abi.AbiDecoder
 import io.defitrack.abi.domain.AbiContractEvent
 import io.defitrack.common.network.Network
-import io.defitrack.ethereumbased.contract.EvmContractAccessor
+import io.defitrack.evm.contract.EvmContractAccessor
 import io.reactivex.Flowable
 import org.springframework.stereotype.Component
-import org.web3j.abi.EventEncoder
 import org.web3j.abi.FunctionEncoder
 import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.datatypes.Event

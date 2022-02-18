@@ -1,8 +1,8 @@
 package io.defitrack.humandao.distribution.contract
 
-import io.defitrack.ethereumbased.contract.EvmContract
-import io.defitrack.ethereumbased.contract.EvmContractAccessor
-import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toUint256
+import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.EvmContractAccessor
+import io.defitrack.evm.contract.EvmContractAccessor.Companion.toUint256
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Bool
 import java.math.BigInteger

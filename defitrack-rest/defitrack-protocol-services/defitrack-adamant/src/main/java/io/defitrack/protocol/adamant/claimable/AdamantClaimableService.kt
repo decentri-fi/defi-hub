@@ -5,8 +5,8 @@ import io.defitrack.claimable.ClaimableElement
 import io.defitrack.claimable.ClaimableService
 import io.defitrack.claimable.ClaimableToken
 import io.defitrack.common.network.Network
-import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
-import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
+import io.defitrack.evm.contract.EvmContractAccessor.Companion.toAddress
+import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol

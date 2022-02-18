@@ -1,8 +1,8 @@
 package io.defitrack.protocol.quickswap
 
-import io.defitrack.ethereumbased.contract.*
-import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
-import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toUint256
+import io.defitrack.evm.contract.*
+import io.defitrack.evm.contract.EvmContractAccessor.Companion.toAddress
+import io.defitrack.evm.contract.EvmContractAccessor.Companion.toUint256
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.generated.Uint256

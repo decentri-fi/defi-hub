@@ -1,6 +1,6 @@
-package io.defitrack.ethereumbased.contract
+package io.defitrack.evm.contract
 
-import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
+import io.defitrack.evm.contract.multicall.MultiCallElement
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.Type

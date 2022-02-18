@@ -1,11 +1,10 @@
 package io.defitrack.protocol.dinoswap.staking
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.staking.UserStakingService
 import io.defitrack.staking.domain.StakingElement
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.ethereumbased.contract.ERC20Contract
+import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.dinoswap.DinoswapFossilFarmsContract
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
-import java.util.*
 
 @Service
 class DinoswapUserStakingService(

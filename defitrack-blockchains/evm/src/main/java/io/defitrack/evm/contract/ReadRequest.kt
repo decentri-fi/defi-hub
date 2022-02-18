@@ -1,4 +1,4 @@
-package io.defitrack.ethereumbased.contract
+package io.defitrack.evm.contract
 
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Type

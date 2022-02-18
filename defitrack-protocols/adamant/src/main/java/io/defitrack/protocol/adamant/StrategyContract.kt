@@ -1,7 +1,7 @@
 package io.defitrack.protocol.adamant
 
-import io.defitrack.ethereumbased.contract.EvmContract
-import io.defitrack.ethereumbased.contract.EvmContractAccessor
+import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.EvmContractAccessor
 
 class StrategyContract(
     solidityBasedContractAccessor: EvmContractAccessor,

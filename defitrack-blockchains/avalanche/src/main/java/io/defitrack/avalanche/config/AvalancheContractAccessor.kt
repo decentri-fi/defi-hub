@@ -2,7 +2,7 @@ package io.defitrack.avalanche.config
 
 import io.defitrack.abi.AbiDecoder
 import io.defitrack.common.network.Network
-import io.defitrack.ethereumbased.contract.EvmContractAccessor
+import io.defitrack.evm.contract.EvmContractAccessor
 import org.springframework.stereotype.Component
 import org.web3j.abi.FunctionEncoder
 import org.web3j.abi.FunctionReturnDecoder

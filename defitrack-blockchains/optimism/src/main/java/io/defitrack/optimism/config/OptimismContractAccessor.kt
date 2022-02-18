@@ -1,27 +1,21 @@
 package io.defitrack.optimism.config
 
 import io.defitrack.abi.AbiDecoder
-import io.defitrack.abi.domain.AbiContractEvent
 import io.defitrack.common.network.Network
-import io.defitrack.ethereumbased.contract.EvmContractAccessor
-import io.reactivex.Flowable
+import io.defitrack.evm.contract.EvmContractAccessor
 import org.springframework.stereotype.Component
-import org.web3j.abi.EventEncoder
 import org.web3j.abi.FunctionEncoder
 import org.web3j.abi.FunctionReturnDecoder
-import org.web3j.abi.datatypes.Event
 import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.Type
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.DefaultBlockParameterName
-import org.web3j.protocol.core.methods.request.EthFilter
 import org.web3j.protocol.core.methods.request.Transaction
 import org.web3j.protocol.core.methods.response.EthCall
 import org.web3j.protocol.http.HttpService
 import org.web3j.protocol.websocket.WebSocketClient
 import org.web3j.protocol.websocket.WebSocketService
 import java.net.URI
-import java.util.concurrent.CompletableFuture
 
 @Component
 class OptimismContractAccessor(abiDecoder: AbiDecoder, val arbitrumGateway: OptimismGateway) :

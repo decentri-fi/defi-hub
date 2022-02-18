@@ -1,10 +1,7 @@
 package io.defitrack.protocol.mstable
 
-import io.defitrack.ethereumbased.contract.EvmContract
-import io.defitrack.ethereumbased.contract.EvmContractAccessor
-import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
-import org.web3j.abi.TypeReference
-import org.web3j.abi.datatypes.generated.Uint256
+import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.EvmContractAccessor
 import java.math.BigInteger
 
 class MStableEthereumSavingsContract(
@@ -31,15 +28,6 @@ class MStableEthereumSavingsContract(
         )[0].value as String
     }
 
-    fun balanceOf(address: String): BigInteger {
-        return read(
-            "balanceOf",
-            inputs = listOf(address.toAddress()),
-            outputs = listOf(
-                TypeReference.create(Uint256::class.java)
-            )
-        )[0].value as BigInteger
-    }
 
     val decimals: Int by lazy {
         (read(

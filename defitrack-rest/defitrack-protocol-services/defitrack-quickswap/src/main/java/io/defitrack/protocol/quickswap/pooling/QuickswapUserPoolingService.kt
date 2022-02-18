@@ -3,8 +3,8 @@ package io.defitrack.protocol.quickswap.pooling
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
-import io.defitrack.ethereumbased.contract.ERC20Contract
-import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
+import io.defitrack.evm.contract.ERC20Contract
+import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.pool.UserPoolingService
 import io.defitrack.pool.domain.PoolingElement

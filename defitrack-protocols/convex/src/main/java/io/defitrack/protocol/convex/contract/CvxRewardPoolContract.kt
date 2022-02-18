@@ -1,8 +1,8 @@
 package io.defitrack.protocol.convex.contract
 
-import io.defitrack.ethereumbased.contract.EvmContract
-import io.defitrack.ethereumbased.contract.EvmContractAccessor
-import io.defitrack.ethereumbased.contract.EvmContractAccessor.Companion.toAddress
+import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.EvmContractAccessor
+import io.defitrack.evm.contract.EvmContractAccessor.Companion.toAddress
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.generated.Uint256
@@ -14,16 +14,6 @@ class CvxRewardPoolContract(
     address: String,
     val name: String
 ) : EvmContract(solidityBasedContractAccessor, abi, address) {
-
-    fun balanceOf(address: String): BigInteger {
-        return read(
-            "balanceOf",
-            inputs = listOf(address.toAddress()),
-            outputs = listOf(
-                TypeReference.create(Uint256::class.java)
-            )
-        )[0].value as BigInteger
-    }
 
     fun earned(address: String): BigInteger {
         return read(

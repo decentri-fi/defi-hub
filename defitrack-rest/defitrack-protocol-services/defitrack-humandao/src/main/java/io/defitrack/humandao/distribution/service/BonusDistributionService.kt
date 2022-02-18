@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereum.config.EthereumContractAccessor
-import io.defitrack.ethereumbased.contract.ERC20Contract
+import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.humandao.distribution.contract.BonusDistributionContract
 import io.defitrack.humandao.distribution.vo.BonusDistributionStatus
 import io.defitrack.polygon.config.PolygonContractAccessor

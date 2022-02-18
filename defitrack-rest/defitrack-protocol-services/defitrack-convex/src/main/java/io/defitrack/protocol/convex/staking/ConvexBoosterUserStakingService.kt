@@ -3,8 +3,8 @@ package io.defitrack.protocol.convex.staking
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereum.config.EthereumContractAccessor
-import io.defitrack.ethereumbased.contract.ERC20Contract
-import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
+import io.defitrack.evm.contract.ERC20Contract
+import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.convex.ConvexService
 import io.defitrack.protocol.convex.contract.ConvexBoosterContract

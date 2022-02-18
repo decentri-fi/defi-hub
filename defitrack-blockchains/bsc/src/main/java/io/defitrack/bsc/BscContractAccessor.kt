@@ -3,7 +3,7 @@ package io.defitrack.bsc
 import io.defitrack.abi.AbiDecoder
 import io.defitrack.abi.domain.AbiContractEvent
 import io.defitrack.common.network.Network
-import io.defitrack.ethereumbased.contract.EvmContractAccessor
+import io.defitrack.evm.contract.EvmContractAccessor
 import io.reactivex.Flowable
 import org.springframework.stereotype.Component
 import org.web3j.abi.EventEncoder
@@ -13,9 +13,7 @@ import org.web3j.abi.datatypes.Event
 import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.Type
 import org.web3j.protocol.Web3j
-import org.web3j.protocol.core.DefaultBlockParameter
 import org.web3j.protocol.core.DefaultBlockParameterName
-import org.web3j.protocol.core.DefaultBlockParameterNumber
 import org.web3j.protocol.core.methods.request.EthFilter
 import org.web3j.protocol.core.methods.request.Transaction
 import org.web3j.protocol.core.methods.response.EthCall

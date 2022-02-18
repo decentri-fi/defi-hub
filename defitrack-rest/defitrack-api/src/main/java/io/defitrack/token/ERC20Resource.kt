@@ -4,9 +4,9 @@ import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.retry
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.ethereumbased.contract.ERC20Contract
-import io.defitrack.ethereumbased.contract.EvmContractAccessor
-import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
+import io.defitrack.evm.contract.ERC20Contract
+import io.defitrack.evm.contract.EvmContractAccessor
+import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.token.domain.ERC20Information
 import io.ktor.client.*
 import io.ktor.client.request.*

@@ -3,8 +3,8 @@ package io.defitrack.protocol.yearn
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.ethereum.config.EthereumContractAccessor
-import io.defitrack.ethereumbased.contract.ERC20Contract
-import io.defitrack.ethereumbased.contract.multicall.MultiCallElement
+import io.defitrack.evm.contract.ERC20Contract
+import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.staking.UserStakingService
 import io.defitrack.staking.domain.RewardToken

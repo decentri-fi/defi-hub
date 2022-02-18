@@ -2,7 +2,7 @@ package io.defitrack.pool
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.ethereumbased.contract.EvmContractAccessor
+import io.defitrack.evm.contract.EvmContractAccessor
 import io.defitrack.pool.contract.LPTokenContract
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.Dispatchers
