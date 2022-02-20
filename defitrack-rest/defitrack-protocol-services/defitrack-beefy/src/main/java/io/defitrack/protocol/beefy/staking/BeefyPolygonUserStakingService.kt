@@ -8,7 +8,6 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
 import io.defitrack.staking.UserStakingService
-import io.defitrack.staking.domain.RewardToken
 import io.defitrack.staking.domain.StakingElement
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
@@ -76,18 +75,10 @@ class BeefyPolygonUserStakingService(
                     protocol = getProtocol(),
                     name = market.name,
                     rate = getAPY(market.id),
-                    stakedToken =
-                    stakedToken(
-                        want.address,
-                        want.type
-                    ),
+                    stakedToken = want.toFungibleToken(),
                     amount = underlyingBalance.toBigInteger(),
                     rewardTokens = listOf(
-                        RewardToken(
-                            name = want.name,
-                            symbol = want.symbol,
-                            decimals = want.decimals
-                        )
+                        want.toFungibleToken()
                     ),
                     vaultType = "beefyVaultV6",
                     contractAddress = market.contractAddress

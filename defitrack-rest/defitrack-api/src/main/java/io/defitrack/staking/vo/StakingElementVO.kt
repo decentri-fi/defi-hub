@@ -2,6 +2,7 @@ package io.defitrack.staking.vo
 
 import io.defitrack.network.NetworkVO
 import io.defitrack.protocol.ProtocolVO
+import io.defitrack.token.FungibleToken
 import java.math.BigInteger
 
 data class StakingElementVO(
@@ -13,7 +14,7 @@ data class StakingElementVO(
     val contractAddress: String,
     val vaultType: String,
     val rate: Double?,
-    val stakedToken: StakedTokenVO,
+    val stakedToken: FungibleToken,
     val amount: BigInteger,
-    val rewardTokens: List<RewardTokenVO>
+    val rewardTokens: List<FungibleToken>
 )

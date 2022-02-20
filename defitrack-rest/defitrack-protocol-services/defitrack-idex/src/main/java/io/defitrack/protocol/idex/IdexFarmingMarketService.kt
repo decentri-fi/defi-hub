@@ -5,8 +5,6 @@ import io.defitrack.common.network.Network
 import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.Protocol
 import io.defitrack.staking.StakingMarketService
-import io.defitrack.staking.domain.RewardToken
-import io.defitrack.staking.domain.StakedToken
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
 import org.slf4j.LoggerFactory
@@ -40,7 +38,7 @@ class IdexFarmingMarketService(
             (0 until chef.poolLength).mapNotNull { poolId ->
                 try {
                     val farm = toStakingMarketElement(chef, poolId)
-                    logger.info("imported ${farm.id}")
+                    logger.debug("imported ${farm.id}")
                     farm
                 } catch (ex: Exception) {
                     logger.debug("something went wrong trying to import idex pool", ex)
@@ -71,20 +69,9 @@ class IdexFarmingMarketService(
             network = getNetwork(),
             name = stakedtoken.name + " Farm",
             protocol = getProtocol(),
-            token = StakedToken(
-                name = stakedtoken.name,
-                symbol = stakedtoken.symbol,
-                address = stakedtoken.address,
-                network = getNetwork(),
-                decimals = stakedtoken.decimals,
-                type = stakedtoken.type
-            ),
+            token = stakedtoken.toFungibleToken(),
             reward = listOf(
-                RewardToken(
-                    name = rewardToken.name,
-                    symbol = rewardToken.symbol,
-                    decimals = rewardToken.decimals
-                )
+                rewardToken.toFungibleToken()
             ),
             contractAddress = chef.address,
             vaultType = "idex-farm"

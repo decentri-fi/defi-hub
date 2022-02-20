@@ -8,14 +8,12 @@ import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SushiPolygonService
 import io.defitrack.protocol.reward.MiniChefV2Contract
-import io.defitrack.token.TokenInformation
-import io.defitrack.token.TokenType
 import io.defitrack.protocol.sushiswap.apr.MinichefStakingAprCalculator
 import io.defitrack.staking.StakingMarketService
-import io.defitrack.staking.domain.RewardToken
-import io.defitrack.staking.domain.StakedToken
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.TokenInformation
+import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -66,20 +64,9 @@ class SushiswapPolygonStakingMinichefMarketService(
             network = getNetwork(),
             name = stakedtoken.name + " Farm",
             protocol = getProtocol(),
-            token = StakedToken(
-                name = stakedtoken.name,
-                symbol = stakedtoken.symbol,
-                address = stakedtoken.address,
-                network = getNetwork(),
-                decimals = stakedtoken.decimals,
-                type = stakedtoken.type
-            ),
+            token = stakedtoken.toFungibleToken(),
             reward = listOf(
-                RewardToken(
-                    name = rewardToken.name,
-                    symbol = rewardToken.symbol,
-                    decimals = rewardToken.decimals
-                )
+                rewardToken.toFungibleToken()
             ),
             contractAddress = chef.address,
             vaultType = "sushi-minichefV2",
@@ -95,7 +82,8 @@ class SushiswapPolygonStakingMinichefMarketService(
                 PriceRequest(
                     stakedTokenInformation.address,
                     getNetwork(),
-                    balance.toBigDecimal().divide(BigDecimal.TEN.pow(stakedTokenInformation.decimals), 18, RoundingMode.HALF_UP),
+                    balance.toBigDecimal()
+                        .divide(BigDecimal.TEN.pow(stakedTokenInformation.decimals), 18, RoundingMode.HALF_UP),
                     TokenType.SUSHISWAP
                 )
             )

@@ -6,10 +6,10 @@ import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.contract.HopStakingReward
-import io.defitrack.token.TokenInformation
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.TokenInformation
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -39,8 +39,8 @@ class HopPolygonStakingMarketService(
                 network = getNetwork(),
                 protocol = getProtocol(),
                 name = "${stakedToken.name} Staking Rewards",
-                token = stakedToken.toStakedToken(),
-                reward = listOf(rewardToken.toRewardToken()),
+                token = stakedToken.toFungibleToken(),
+                reward = listOf(rewardToken.toFungibleToken()),
                 contractAddress = pool.address,
                 vaultType = "hop-staking-rewards",
                 marketSize = getMarketSize(stakedToken, pool)

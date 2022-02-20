@@ -1,10 +1,7 @@
 package io.defitrack.staking
 
 import io.defitrack.protocol.ProtocolService
-import io.defitrack.staking.domain.RewardToken
-import io.defitrack.staking.domain.StakedToken
 import io.defitrack.staking.domain.StakingMarketElement
-import io.defitrack.token.TokenInformation
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -43,24 +40,4 @@ abstract class StakingMarketService : ProtocolService {
     }
 
     protected abstract suspend fun fetchStakingMarkets(): List<StakingMarketElement>
-
-    fun TokenInformation.toStakedToken(): StakedToken {
-        return StakedToken(
-            name = this.name,
-            symbol = this.symbol,
-            address = this.address,
-            network = getNetwork(),
-            decimals = this.decimals,
-            type = this.type
-        )
-    }
-
-
-    fun TokenInformation.toRewardToken(): RewardToken {
-        return RewardToken(
-            name = this.name,
-            symbol = this.symbol,
-            decimals = this.decimals,
-        )
-    }
 }

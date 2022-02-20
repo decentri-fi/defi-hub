@@ -41,15 +41,12 @@ class AdamantUserStakingService(
             .mapIndexed { index, balance ->
                 if (balance > BigInteger.ZERO) {
                     val vault = adamantVaultContracts[index]
-                    val wantAddress = vault.lpAddress
-                    val stakedToken = stakedToken(
-                        wantAddress,
-                    )
+                    val stakedToken = erC20Resource.getTokenInformation(getNetwork(), vault.lpAddress)
 
                     stakingElement(
-                       vaultName =  "Adamant ${stakedToken.name} Vault",
+                        vaultName = "Adamant ${stakedToken.name} Vault",
                         rewardTokens = emptyList(),
-                        stakedToken = stakedToken,
+                        stakedToken = stakedToken.toFungibleToken(),
                         vaultType = "adamant-generic-vault",
                         vaultAddress = vault.address,
                         amount = vault.getTokensStaked(address),

@@ -2,13 +2,11 @@ package io.defitrack.staking
 
 import io.defitrack.common.network.Network
 import io.defitrack.network.toVO
-import io.defitrack.token.TokenType
 import io.defitrack.protocol.toVO
 import io.defitrack.staking.domain.StakingMarketElement
-import io.defitrack.staking.vo.RewardTokenVO.Companion.toVO
-import io.defitrack.staking.vo.StakedTokenVO.Companion.toVO
 import io.defitrack.staking.vo.StakingMarketElementVO
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.TokenType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -77,10 +75,8 @@ class DefaultStakingMarketRestController(
         network = it.network.toVO(),
         protocol = it.protocol.toVO(),
         name = it.name,
-        stakedToken = it.token.toVO(),
-        reward = it.reward.map { reward ->
-            reward.toVO()
-        },
+        stakedToken = it.token,
+        reward = it.reward,
         contractAddress = it.contractAddress,
         vaultType = it.vaultType,
         marketSize = it.marketSize,

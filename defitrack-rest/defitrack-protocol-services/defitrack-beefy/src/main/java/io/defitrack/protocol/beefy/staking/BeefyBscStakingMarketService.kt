@@ -3,6 +3,7 @@ package io.defitrack.protocol.beefy.staking
 import io.defitrack.abi.ABIResource
 import io.defitrack.bsc.BscContractAccessor
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
@@ -10,16 +11,13 @@ import io.defitrack.protocol.beefy.BeefyService
 import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
 import io.defitrack.protocol.beefy.domain.BeefyVault
-import io.defitrack.token.TokenInformation
 import io.defitrack.staking.StakingMarketService
-import io.defitrack.staking.domain.RewardToken
-import io.defitrack.staking.domain.StakedToken
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.TokenInformation
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
-import java.math.RoundingMode
 
 @Service
 class BeefyBscStakingMarketService(
@@ -56,20 +54,9 @@ class BeefyBscStakingMarketService(
                 protocol = getProtocol(),
                 name = "${beefyVault.symbol} Beefy Vault",
                 rate = getAPY(beefyVault),
-                token = StakedToken(
-                    name = want.name,
-                    symbol = want.symbol,
-                    address = want.address,
-                    network = getNetwork(),
-                    decimals = want.decimals,
-                    type = want.type
-                ),
+                token = want.toFungibleToken(),
                 reward = listOf(
-                    RewardToken(
-                        name = want.name,
-                        symbol = want.symbol,
-                        decimals = want.decimals,
-                    )
+                    want.toFungibleToken()
                 ),
                 contractAddress = beefyVault.address,
                 marketSize = getMarketSize(want, beefyVault),
@@ -90,7 +77,7 @@ class BeefyBscStakingMarketService(
                 want.address,
                 getNetwork(),
                 beefyVault.balance.toBigDecimal()
-                    .divide(BigDecimal.TEN.pow(want.decimals), 18, RoundingMode.HALF_UP),
+                    .dividePrecisely(BigDecimal.TEN.pow(want.decimals)),
                 want.type
             )
         )

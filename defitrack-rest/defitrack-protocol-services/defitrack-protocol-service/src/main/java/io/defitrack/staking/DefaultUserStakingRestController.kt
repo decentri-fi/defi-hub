@@ -9,8 +9,6 @@ import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.toVO
 import io.defitrack.staking.domain.StakingElement
-import io.defitrack.staking.vo.RewardTokenVO.Companion.toVO
-import io.defitrack.staking.vo.StakedTokenVO.Companion.toVO
 import io.defitrack.staking.vo.StakingElementVO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -98,14 +96,11 @@ class DefaultUserStakingRestController(
             rate = rate,
             vaultType = vaultType,
             contractAddress = contractAddress,
-            stakedToken = stakedToken.toVO(),
-            rewardTokens = rewardTokens.map {
-                it.toVO()
-            },
+            stakedToken = stakedToken,
+            rewardTokens = rewardTokens,
             amount = amount
         )
     }
-
 
     companion object {
         val logger: Logger = LoggerFactory.getLogger(this::class.java)

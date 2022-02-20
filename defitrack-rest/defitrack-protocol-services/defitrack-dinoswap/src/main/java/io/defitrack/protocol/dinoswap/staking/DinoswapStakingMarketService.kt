@@ -7,8 +7,6 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.dinoswap.DinoswapFossilFarmsContract
 import io.defitrack.protocol.dinoswap.DinoswapService
 import io.defitrack.staking.StakingMarketService
-import io.defitrack.staking.domain.RewardToken
-import io.defitrack.staking.domain.StakedToken
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
@@ -44,7 +42,6 @@ class DinoswapStakingMarketService(
         chef: DinoswapFossilFarmsContract,
         poolId: Int
     ): StakingMarketElement {
-        val rewardPerBlock = chef.rewardPerBlock.toBigDecimal().times(BigDecimal(43200)).times(BigDecimal(365))
         val stakedtoken =
             tokenService.getTokenInformation(getNetwork(), chef.getLpTokenForPoolId(poolId))
         val rewardToken = tokenService.getTokenInformation(getNetwork(), chef.rewardToken)
@@ -53,20 +50,9 @@ class DinoswapStakingMarketService(
             network = getNetwork(),
             name = stakedtoken.name + " Farm",
             protocol = getProtocol(),
-            token = StakedToken(
-                name = stakedtoken.name,
-                symbol = stakedtoken.symbol,
-                address = stakedtoken.address,
-                network = getNetwork(),
-                decimals = stakedtoken.decimals,
-                type = stakedtoken.type
-            ),
+            token = stakedtoken.toFungibleToken(),
             reward = listOf(
-                RewardToken(
-                    name = rewardToken.name,
-                    symbol = rewardToken.symbol,
-                    decimals = rewardToken.decimals
-                )
+                rewardToken.toFungibleToken()
             ),
             contractAddress = chef.address,
             vaultType = "dinoswap-fossilfarm"

@@ -5,7 +5,6 @@ import io.defitrack.common.network.Network
 import io.defitrack.ethereum.config.EthereumContractAccessor
 import io.defitrack.protocol.Protocol
 import io.defitrack.staking.UserStakingService
-import io.defitrack.staking.domain.RewardToken
 import io.defitrack.staking.domain.StakingElement
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
@@ -44,15 +43,9 @@ class MStableEthereumStakingService(
                         network = this.getNetwork(),
                         protocol = this.getProtocol(),
                         name = contract.name,
-                        stakedToken = stakedToken(
-                            stakingToken.address,
-                        ),
+                        stakedToken = stakingToken.toFungibleToken(),
                         rewardTokens = listOf(
-                            RewardToken(
-                                name = rewardsToken.name,
-                                symbol = stakingToken.symbol,
-                                decimals = rewardsToken.decimals
-                            )
+                            rewardsToken.toFungibleToken()
                         ),
                         contractAddress = contract.address,
                         vaultType = "mstable-boosted-savings-vault",

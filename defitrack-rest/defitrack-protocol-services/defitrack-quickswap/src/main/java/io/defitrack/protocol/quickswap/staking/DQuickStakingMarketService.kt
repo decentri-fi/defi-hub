@@ -4,13 +4,11 @@ import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.Protocol
-import io.defitrack.token.TokenType
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.contract.DQuickContract
 import io.defitrack.staking.StakingMarketService
-import io.defitrack.staking.domain.RewardToken
-import io.defitrack.staking.domain.StakedToken
 import io.defitrack.staking.domain.StakingMarketElement
+import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 
 @Service
@@ -18,6 +16,7 @@ class DQuickStakingMarketService(
     private val quickswapService: QuickswapService,
     private val polygonContractAccessor: PolygonContractAccessor,
     private val abiResource: ABIResource,
+    private val erC20Resource: ERC20Resource,
 ) : StakingMarketService() {
 
     val dquickStakingABI by lazy {
@@ -27,26 +26,18 @@ class DQuickStakingMarketService(
     val dquick = dquickContract()
 
     override suspend fun fetchStakingMarkets(): List<StakingMarketElement> {
+
+        val dquickInfo = erC20Resource.getTokenInformation(getNetwork(), dquick.address).toFungibleToken()
+
         return listOf(
             StakingMarketElement(
                 id = "polygon-dquick-${dquick.address.lowercase()}",
                 network = getNetwork(),
                 protocol = getProtocol(),
-                name = "DQuick",
-                token = StakedToken(
-                    name = "Quick",
-                    symbol = "QUICK",
-                    address = "0x831753dd7087cac61ab5644b308642cc1c33dc13",
-                    network = getNetwork(),
-                    decimals = 18,
-                    type = TokenType.SINGLE
-                ),
+                name = "Dragon's Lair",
+                token = dquickInfo,
                 reward = listOf(
-                    RewardToken(
-                        name = "Quick",
-                        symbol = "QUICK",
-                        decimals = 18,
-                    )
+                    dquickInfo
                 ),
                 contractAddress = dquick.address,
                 vaultType = "quickswap-dquick",

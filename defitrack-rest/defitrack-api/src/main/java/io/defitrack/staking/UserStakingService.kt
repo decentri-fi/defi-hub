@@ -1,10 +1,9 @@
 package io.defitrack.staking
 
 import io.defitrack.protocol.ProtocolService
-import io.defitrack.staking.domain.RewardToken
-import io.defitrack.staking.domain.StakedToken
 import io.defitrack.staking.domain.StakingElement
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.FungibleToken
 import io.defitrack.token.TokenType
 import java.math.BigInteger
 
@@ -19,27 +18,10 @@ abstract class UserStakingService(
         }
     }
 
-    fun stakedToken(
-        address: String,
-        type: TokenType? = null
-    ): StakedToken {
-        val token = erC20Resource.getTokenInformation(getNetwork(), address)
-        val actualType = type ?: token.type
-
-        return StakedToken(
-            address = address,
-            network = getNetwork(),
-            symbol = token.symbol,
-            name = token.name,
-            decimals = token.decimals,
-            type = actualType
-        )
-    }
-
     fun stakingElement(
         vaultName: String,
-        rewardTokens: List<RewardToken>,
-        stakedToken: StakedToken,
+        rewardTokens: List<FungibleToken>,
+        stakedToken: FungibleToken,
         vaultType: String,
         vaultAddress: String,
         rate: Double = 0.0,

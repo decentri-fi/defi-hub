@@ -7,7 +7,6 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
 import io.defitrack.staking.UserStakingService
-import io.defitrack.staking.domain.RewardToken
 import io.defitrack.staking.domain.StakingElement
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
@@ -44,7 +43,7 @@ class BeefyBscStakingService(
                 it.id
             )
 
-            vaultToStakingElement(address, contract.balanceOf(address)).invoke(it)
+            vaultToStakingElement(contract.balanceOf(address)).invoke(it)
         }
     }
 
@@ -54,11 +53,11 @@ class BeefyBscStakingService(
 
         return erC20Resource.getBalancesFor(address, markets.map { it.contractAddress }, bscContractAccessor)
             .mapIndexed { index, balance ->
-                vaultToStakingElement(address, balance)(markets[index])
+                vaultToStakingElement(balance)(markets[index])
             }.filterNotNull()
     }
 
-    private fun vaultToStakingElement(address: String, balance: BigInteger) = { market: StakingMarketElement ->
+    private fun vaultToStakingElement(balance: BigInteger) = { market: StakingMarketElement ->
         try {
             if (balance > BigInteger.ZERO) {
                 val contract = BeefyVaultContract(
@@ -82,17 +81,9 @@ class BeefyBscStakingService(
                     protocol = getProtocol(),
                     name = market.name,
                     rate = getAPY(market.id),
-                    stakedToken =
-                    stakedToken(
-                        want.address,
-                        want.type
-                    ),
+                    stakedToken = want.toFungibleToken(),
                     rewardTokens = listOf(
-                        RewardToken(
-                            name = want.name,
-                            symbol = want.symbol,
-                            decimals = want.decimals
-                        )
+                        want.toFungibleToken()
                     ),
                     vaultType = "beefyVaultV6",
                     contractAddress = market.contractAddress,

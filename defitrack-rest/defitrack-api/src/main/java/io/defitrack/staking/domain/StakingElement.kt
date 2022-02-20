@@ -2,6 +2,7 @@ package io.defitrack.staking.domain
 
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
+import io.defitrack.token.FungibleToken
 import java.math.BigInteger
 
 data class StakingElement(
@@ -12,7 +13,7 @@ data class StakingElement(
     val contractAddress: String,
     val vaultType: String,
     val rate: Double? = null,
-    val stakedToken: StakedToken,
+    val stakedToken: FungibleToken,
     val amount: BigInteger,
-    val rewardTokens: List<RewardToken> = emptyList()
+    val rewardTokens: List<FungibleToken> = emptyList()
 )

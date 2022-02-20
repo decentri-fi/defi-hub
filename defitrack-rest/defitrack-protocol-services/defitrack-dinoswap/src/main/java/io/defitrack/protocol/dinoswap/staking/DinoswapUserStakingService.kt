@@ -7,7 +7,6 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.dinoswap.DinoswapFossilFarmsContract
 import io.defitrack.protocol.dinoswap.DinoswapService
 import io.defitrack.staking.UserStakingService
-import io.defitrack.staking.domain.RewardToken
 import io.defitrack.staking.domain.StakingElement
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
@@ -49,15 +48,9 @@ class DinoswapUserStakingService(
                         network = getNetwork(),
                         protocol = getProtocol(),
                         name = stakedtoken.name + " Vault",
-                        stakedToken = stakedToken(
-                            stakedtoken.address,
-                        ),
+                        stakedToken = stakedtoken.toFungibleToken(),
                         rewardTokens = listOf(
-                            RewardToken(
-                                name = rewardToken.name,
-                                symbol = rewardToken.symbol,
-                                decimals = rewardToken.decimals,
-                            )
+                            rewardToken.toFungibleToken()
                         ),
                         contractAddress = masterChef.address,
                         vaultType = "dinoswap-fossilfarm",

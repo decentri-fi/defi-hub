@@ -38,10 +38,7 @@ class CurveEthereumStakingService(
                             protocol = getProtocol(),
                             name = (gauge.pool?.name ?: "Curve") + " Gauge",
                             id = "curve-ethereum-${gauge.address}",
-                            stakedToken = stakedToken(
-                                lpToken.address,
-                                lpToken.type
-                            ),
+                            stakedToken = lpToken.toFungibleToken(),
                             rewardTokens = emptyList(),
                             vaultType = "curve-gauge",
                             contractAddress = gauge.address,

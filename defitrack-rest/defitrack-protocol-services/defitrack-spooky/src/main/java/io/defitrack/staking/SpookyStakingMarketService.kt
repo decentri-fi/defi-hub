@@ -45,9 +45,9 @@ class SpookyStakingMarketService(
                 network = getNetwork(),
                 protocol = getProtocol(),
                 name = "${stakedToken.name} spooky farm",
-                token = stakedToken.toStakedToken(),
+                token = stakedToken.toFungibleToken(),
                 reward = listOf(
-                    reward.toRewardToken()
+                    reward.toFungibleToken()
                 ),
                 contractAddress = masterchef.address,
                 vaultType = "spooky-masterchef",

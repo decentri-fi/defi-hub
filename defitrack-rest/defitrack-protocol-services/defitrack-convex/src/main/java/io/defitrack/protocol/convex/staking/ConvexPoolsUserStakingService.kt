@@ -7,7 +7,6 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.convex.ConvexService
 import io.defitrack.protocol.convex.contract.CvxRewardPoolContract
 import io.defitrack.staking.UserStakingService
-import io.defitrack.staking.domain.RewardToken
 import io.defitrack.staking.domain.StakingElement
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
@@ -46,15 +45,9 @@ class ConvexPoolsUserStakingService(
                     stakingElement(
                         vaultName = pool.name,
                         rewardTokens = listOf(
-                            RewardToken(
-                                name = rewardToken.name,
-                                symbol = rewardToken.symbol,
-                                decimals = rewardToken.decimals,
-                            )
+                            rewardToken.toFungibleToken()
                         ),
-                        stakedToken = stakedToken(
-                            address = stakedToken.address,
-                        ),
+                        stakedToken = stakedToken.toFungibleToken(),
                         vaultType = "convex-reward-pool",
                         vaultAddress = pool.address,
                         amount = balance,

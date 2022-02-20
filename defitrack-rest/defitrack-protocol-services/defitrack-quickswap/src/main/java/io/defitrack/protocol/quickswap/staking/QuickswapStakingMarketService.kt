@@ -7,12 +7,12 @@ import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
-import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
-import io.defitrack.token.TokenInformation
 import io.defitrack.protocol.quickswap.QuickswapService
+import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.TokenInformation
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -47,8 +47,8 @@ class QuickswapStakingMarketService(
                 network = getNetwork(),
                 protocol = getProtocol(),
                 name = "${stakedToken.name} Reward Pool",
-                token = stakedToken.toStakedToken(),
-                reward = listOf(rewardToken.toRewardToken()),
+                token = stakedToken.toFungibleToken(),
+                reward = listOf(rewardToken.toFungibleToken()),
                 contractAddress = pool.address,
                 vaultType = "quickswap-reward-pool",
                 marketSize = getMarketSize(stakedToken, pool),

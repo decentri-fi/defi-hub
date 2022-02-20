@@ -12,8 +12,6 @@ import io.defitrack.protocol.beefy.contract.BeefyVaultContract
 import io.defitrack.protocol.beefy.domain.BeefyVault
 import io.defitrack.token.TokenInformation
 import io.defitrack.staking.StakingMarketService
-import io.defitrack.staking.domain.RewardToken
-import io.defitrack.staking.domain.StakedToken
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
 import org.springframework.scheduling.annotation.EnableScheduling
@@ -55,20 +53,9 @@ class BeefyPolygonStakingMarketService(
                 protocol = getProtocol(),
                 name = "${beefyVault.symbol} Beefy Vault",
                 rate = getAPY(beefyVault),
-                token = StakedToken(
-                    name = want.name,
-                    symbol = want.symbol,
-                    address = want.address,
-                    network = getNetwork(),
-                    decimals = want.decimals,
-                    type = want.type
-                ),
+                token = want.toFungibleToken(),
                 reward = listOf(
-                    RewardToken(
-                        name = want.name,
-                        symbol = want.symbol,
-                        decimals = want.decimals,
-                    )
+                    want.toFungibleToken()
                 ),
                 contractAddress = beefyVault.address,
                 marketSize = getMarketSize(want, beefyVault),

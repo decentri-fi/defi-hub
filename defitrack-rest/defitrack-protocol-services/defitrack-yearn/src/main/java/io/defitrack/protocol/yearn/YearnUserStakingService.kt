@@ -7,8 +7,6 @@ import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.staking.UserStakingService
-import io.defitrack.staking.domain.RewardToken
-import io.defitrack.staking.domain.StakedToken
 import io.defitrack.staking.domain.StakingElement
 import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.runBlocking
@@ -28,9 +26,6 @@ class YearnUserStakingService(
     val erc20ABI = abiResource.getABI("general/ERC20.json")
 
     override fun getStakings(address: String): List<StakingElement> {
-
-
-        //TODO: check registry
         return runBlocking {
             val vaults = yearnService.provideYearnV2Vaults().filter {
                 it.token.symbol.isNotBlank()
@@ -51,25 +46,13 @@ class YearnUserStakingService(
                 val balance = retVal[0].value as BigInteger
                 if (balance > BigInteger.ZERO) {
 
-                    val stakedtoken = erC20Resource.getTokenInformation(getNetwork(), vaults[index].token.id)
+                    val stakedtoken =
+                        erC20Resource.getTokenInformation(getNetwork(), vaults[index].token.id).toFungibleToken()
 
                     stakingElement(
                         vaultName = "Yearn $index Vault",
-                        rewardTokens = listOf(
-                            RewardToken(
-                                stakedtoken.name,
-                                stakedtoken.symbol,
-                                stakedtoken.decimals
-                            )
-                        ),
-                        stakedToken = StakedToken(
-                            name = stakedtoken.name,
-                            symbol = stakedtoken.symbol,
-                            address = stakedtoken.address,
-                            network = getNetwork(),
-                            decimals = stakedtoken.decimals,
-                            type = stakedtoken.type
-                        ),
+                        rewardTokens = listOf(stakedtoken),
+                        stakedToken = stakedtoken,
                         vaultType = "yearn-v2",
                         vaultAddress = vaults[index].shareToken.id,
                         rate = 0.0,

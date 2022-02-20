@@ -7,10 +7,8 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.contract.DQuickContract
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.staking.UserStakingService
-import io.defitrack.staking.domain.RewardToken
 import io.defitrack.staking.domain.StakingElement
 import io.defitrack.token.ERC20Resource
-import io.defitrack.token.TokenType
 import org.springframework.stereotype.Service
 import java.math.BigInteger
 
@@ -31,20 +29,14 @@ class DQuickStakingService(
     override fun getStakings(address: String): List<StakingElement> {
         val balance = erC20Resource.getBalance(getNetwork(), dquick.address, address)
         return if (balance > BigInteger.ZERO) {
+            val dquickToken = erC20Resource.getTokenInformation(getNetwork(), dquick.address).toFungibleToken()
+            val quickToken = erC20Resource.getTokenInformation(getNetwork(), "0x831753dd7087cac61ab5644b308642cc1c33dc13").toFungibleToken()
             listOf(
                 StakingElement(
                     rewardTokens = listOf(
-                        RewardToken(
-                            name = "Quick",
-                            symbol = "QUICK",
-                            decimals = 18,
-                        )
+                       dquickToken
                     ),
-                    stakedToken = stakedToken(
-                        address = "0x831753dd7087cac61ab5644b308642cc1c33dc13",
-
-                        type = TokenType.SINGLE
-                    ),
+                    stakedToken = quickToken,
                     vaultType = "quickswap-dquick",
                     id = "polygon-dquick-${dquick.address}",
                     network = getNetwork(),

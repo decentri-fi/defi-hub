@@ -5,10 +5,9 @@ import io.defitrack.common.network.Network
 import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
-import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
 import io.defitrack.protocol.quickswap.QuickswapService
+import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
 import io.defitrack.staking.UserStakingService
-import io.defitrack.staking.domain.RewardToken
 import io.defitrack.staking.domain.StakingElement
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
@@ -41,36 +40,32 @@ class QuickswapUserStakingService(
         }
 
 
-        return erC20Resource.getBalancesFor(address, pools.map {it.address}, polygonContractAccessor)
+        return erC20Resource.getBalancesFor(address, pools.map { it.address }, polygonContractAccessor)
             .mapIndexed { index, balance ->
-            if (balance > BigInteger.ZERO) {
+                if (balance > BigInteger.ZERO) {
 
-                val pool = pools[index]
-                val stakedToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingTokenAddress)
-                val rewardToken = erC20Resource.getTokenInformation(getNetwork(), pool.rewardsTokenAddress)
+                    val pool = pools[index]
+                    val stakedToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingTokenAddress)
+                    val rewardToken = erC20Resource.getTokenInformation(getNetwork(), pool.rewardsTokenAddress)
 
-                stakingElement(
-                    id = "quickswap-polygon-${pool.address}",
-                    vaultName = """${stakedToken.name} Reward""",
-                    rewardTokens = listOf(
-                        RewardToken(
-                            name = rewardToken.name,
-                            decimals = rewardToken.decimals,
-                            symbol = rewardToken.symbol,
-                        )
-                    ),
-                    stakedToken = stakedToken(stakedToken.address),
-                    vaultType = "quickswap-staking-rewards",
-                    vaultAddress = pool.address,
-                    rate = (quickswapAPRService.getRewardPoolAPR(pool.address) + quickswapAPRService.getLPAPR(
-                        stakedToken.address
-                    )).toDouble(),
-                    amount = balance
-                )
-            } else {
-                null
-            }
-        }.filterNotNull()
+                    stakingElement(
+                        id = "quickswap-polygon-${pool.address}",
+                        vaultName = """${stakedToken.name} Reward""",
+                        rewardTokens = listOf(
+                            rewardToken.toFungibleToken()
+                        ),
+                        stakedToken = stakedToken.toFungibleToken(),
+                        vaultType = "quickswap-staking-rewards",
+                        vaultAddress = pool.address,
+                        rate = (quickswapAPRService.getRewardPoolAPR(pool.address) + quickswapAPRService.getLPAPR(
+                            stakedToken.address
+                        )).toDouble(),
+                        amount = balance
+                    )
+                } else {
+                    null
+                }
+            }.filterNotNull()
     }
 
     override fun getProtocol(): Protocol {
