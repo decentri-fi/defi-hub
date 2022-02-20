@@ -32,7 +32,6 @@ class QuickswapAPRService(
         abiResource.getABI("quickswap/DualStakingRewards.json")
     }
 
-    @OptIn(ExperimentalTime::class)
     val cache = Cache.Builder().expireAfterWrite(
         1.hours
     ).build<String, BigDecimal>()

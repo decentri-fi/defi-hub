@@ -36,7 +36,7 @@ class BeefyPolygonUserStakingService(
         return polygonStakingMarketService.getStakingMarkets().firstOrNull {
             it.id == vaultId
         }?.let {
-            vaultToStakingElement(address, erC20Resource.getBalance(getNetwork(), it.contractAddress, address)).invoke(
+            vaultToStakingElement(erC20Resource.getBalance(getNetwork(), it.contractAddress, address)).invoke(
                 it
             )
         }
@@ -47,11 +47,11 @@ class BeefyPolygonUserStakingService(
 
         return erC20Resource.getBalancesFor(address, markets.map { it.contractAddress }, polygonContractAccessor)
             .mapIndexed { index, balance ->
-                vaultToStakingElement(address, balance)(markets[index])
+                vaultToStakingElement(balance)(markets[index])
             }.filterNotNull()
     }
 
-    private fun vaultToStakingElement(address: String, balance: BigInteger) = { market: StakingMarketElement ->
+    private fun vaultToStakingElement(balance: BigInteger) = { market: StakingMarketElement ->
         try {
             if (balance > BigInteger.ZERO) {
                 val contract = BeefyVaultContract(

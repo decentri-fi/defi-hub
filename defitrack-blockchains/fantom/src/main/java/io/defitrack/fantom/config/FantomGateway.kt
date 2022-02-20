@@ -1,19 +1,18 @@
 package io.defitrack.fantom.config
 
+import io.defitrack.evm.web3j.EvmGateway
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.core.annotation.Order
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import org.web3j.protocol.Web3j
 
 @Component
-@Order(2)
 class FantomGateway(
     val abstractWeb3JConfigurer: FantomWeb3jConfigurer,
     @Qualifier("fantomWeb3j") val web3j: Web3j,
-) {
+) : EvmGateway {
 
     @Scheduled(fixedRate = 20000)
     fun scheduledTask() {
@@ -24,7 +23,7 @@ class FantomGateway(
         }
     }
 
-    fun web3j(): Web3j {
+    override fun web3j(): Web3j {
         abstractWeb3JConfigurer.assureConnection()
         return web3j
     }

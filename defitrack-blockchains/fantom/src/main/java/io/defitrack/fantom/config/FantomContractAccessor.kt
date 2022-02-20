@@ -4,6 +4,7 @@ import io.defitrack.evm.abi.AbiDecoder
 import io.defitrack.evm.abi.domain.AbiContractEvent
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.EvmContractAccessor
+import io.defitrack.evm.web3j.EvmGateway
 import io.reactivex.Flowable
 import org.springframework.stereotype.Component
 import org.web3j.abi.FunctionEncoder
@@ -33,87 +34,7 @@ class FantomContractAccessor(abiDecoder: AbiDecoder, val fantomGateway: FantomGa
         return Network.FANTOM
     }
 
-    override fun executeCall(from: String?, address: String, function: Function, endpoint: String?): List<Type<*>> {
-        val encodedFunction = FunctionEncoder.encode(function)
-        val ethCall = call(from, address, encodedFunction, endpoint)
-        return FunctionReturnDecoder.decode(ethCall.value, function.outputParameters)
-    }
-
-
-    private fun createEventListener(
-        ethFilter: EthFilter,
-        theEvent: Event,
-        contractEvent: AbiContractEvent
-    ): Flowable<Map<String, Any>> {
-        return fantomGateway.web3j().ethLogFlowable(ethFilter)
-            .map { logs ->
-                val indexedValues = ArrayList<Type<*>>()
-                val nonIndexedValues = FunctionReturnDecoder.decode(
-                    logs.data, theEvent.nonIndexedParameters
-                )
-
-                val indexedParameters = theEvent.indexedParameters
-                for (i in indexedParameters.indices) {
-                    val value = FunctionReturnDecoder.decodeIndexedValue(
-                        logs.topics[i + 1], indexedParameters[i]
-                    )
-                    indexedValues.add(value)
-                }
-
-                val collect = indexedValues + nonIndexedValues
-
-                contractEvent.inputs
-                    .map { input -> input.name to collect[contractEvent.inputs.indexOf(input)].value }
-                    .toMap()
-            }
-    }
-
-    private fun callAsync(
-        from: String? = "0x0000000000000000000000000000000000000000",
-        contract: String,
-        encodedFunction: String,
-        endpoint: String?
-    ): CompletableFuture<EthCall> {
-        val web3j = endpoint?.let {
-            constructEndpoint(it)
-        } ?: fantomGateway.web3j()
-
-        return web3j.ethCall(
-            Transaction.createEthCallTransaction(
-                from,
-                contract,
-                encodedFunction
-            ), DefaultBlockParameterName.LATEST
-        ).sendAsync()
-    }
-
-    private fun call(
-        from: String? = "0x0000000000000000000000000000000000000000",
-        contract: String,
-        encodedFunction: String,
-        endpoint: String?
-    ): EthCall {
-        val web3j = endpoint?.let {
-            constructEndpoint(it)
-        } ?: fantomGateway.web3j()
-
-        return web3j.ethCall(
-            Transaction.createEthCallTransaction(
-                from,
-                contract,
-                encodedFunction
-            ), DefaultBlockParameterName.LATEST
-        ).send()
-    }
-
-    private fun constructEndpoint(endpoint: String): Web3j {
-        return if (endpoint.startsWith("ws")) {
-            val webSocketClient = WebSocketClient(URI.create(endpoint))
-            val webSocketService = WebSocketService(webSocketClient, false)
-            webSocketService.connect()
-            Web3j.build(webSocketService)
-        } else {
-            Web3j.build(HttpService(endpoint, false))
-        }
+    override fun getGateway(): EvmGateway {
+        return fantomGateway
     }
 }

@@ -60,7 +60,6 @@ class IdexFarmingMarketService(
         chef: IdexFarmContract,
         poolId: Int
     ): StakingMarketElement {
-        val rewardPerBlock = chef.rewardPerBlock.toBigDecimal().times(BigDecimal(43200)).times(BigDecimal(365))
         val stakedtoken =
             tokenService.getTokenInformation(getNetwork(), chef.getLpTokenForPoolId(poolId))
         val rewardToken = tokenService.getTokenInformation(getNetwork(), chef.rewardToken)
