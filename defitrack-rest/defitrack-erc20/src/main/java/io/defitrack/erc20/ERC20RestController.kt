@@ -1,7 +1,6 @@
 package io.defitrack.erc20
 
 import io.defitrack.common.network.Network
-import io.defitrack.erc20.vo.ERC20Information
 import io.defitrack.token.TokenInformation
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -19,8 +18,8 @@ class ERC20RestController(
     @GetMapping("/{network}")
     fun getAllTokensForAddress(
         @PathVariable("network") network: Network,
-    ): ResponseEntity<List<ERC20Information>> {
-        return ResponseEntity.ok(erC20Service.getAllTokensForNetwork(network))
+    ): ResponseEntity<List<TokenInformation>> {
+        return ResponseEntity.ok(tokenService.getAllTokensForNetwork(network))
     }
 
     @GetMapping("/{network}/wrapped")
@@ -32,25 +31,11 @@ class ERC20RestController(
         )
     }
 
-    @GetMapping("/{network}/{address}")
-    fun getERC20Information(
-        @PathVariable("network") network: Network,
-        @PathVariable("address") address: String
-    ): ResponseEntity<ERC20Information> {
-        return erC20Service.getERC20Information(network, address)?.let {
-            ResponseEntity.ok(it)
-        } ?: ResponseEntity.notFound().build()
-    }
-
     @GetMapping("/{network}/{address}/token")
     fun getTokenInformation(
         @PathVariable("network") network: Network,
         @PathVariable("address") address: String
     ): ResponseEntity<TokenInformation> {
-        if (!WalletUtils.isValidAddress(address)) {
-            return ResponseEntity.badRequest().build()
-        }
-
         return try {
             ResponseEntity.ok(
                 tokenService.getTokenInformation(

@@ -3,10 +3,8 @@ package io.defitrack.erc20
 import io.defitrack.common.network.Network
 import io.defitrack.pool.LPtokenService
 import io.defitrack.protocol.Protocol
-import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
-import io.defitrack.token.domain.ERC20Information
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
@@ -14,10 +12,18 @@ import java.math.BigInteger
 
 @Service
 class TokenService(
-    val erc20Resource: ERC20Resource,
+    private val erc20Service: ERC20Service,
+    private val erC20Repository: ERC20Repository,
     private val LPtokenService: LPtokenService,
     private val hopTokenService: HopTokenService,
 ) {
+
+
+    fun getAllTokensForNetwork(network: Network): List<TokenInformation> {
+        return erC20Repository.allTokens(network).mapNotNull {
+            getTokenInformation( it.address, network)
+        }
+    }
 
     fun getType(symbol: String): TokenType = when {
         symbol == "SLP" -> {
@@ -53,7 +59,7 @@ class TokenService(
 
     fun getTokenInformation(address: String, network: Network): TokenInformation = runBlocking {
         tokenInformationCache.get("${address}-${network}") {
-            val token = erc20Resource.getERC20(network, address)
+            val token = erc20Service.getERC20(network, address)
             when {
                 (token.symbol) == "SLP" -> {
                     fromLP(Protocol.SUSHISWAP, network, token)
@@ -100,7 +106,7 @@ class TokenService(
         return symbol.startsWith("HOP-LP")
     }
 
-    fun fromLP(protocol: Protocol, network: Network, erc20: ERC20Information): TokenInformation {
+    fun fromLP(protocol: Protocol, network: Network, erc20: ERC20): TokenInformation {
         val lp = LPtokenService.getLP(network, erc20.address)
 
         val token0 = getTokenInformation(

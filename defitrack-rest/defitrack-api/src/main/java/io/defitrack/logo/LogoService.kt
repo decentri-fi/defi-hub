@@ -2,7 +2,7 @@ package io.defitrack.logo
 
 import io.defitrack.common.network.Network
 import io.defitrack.token.ERC20Resource
-import io.defitrack.token.domain.ERC20Information
+import io.defitrack.token.TokenInformation
 import org.springframework.stereotype.Service
 import org.web3j.crypto.Keys
 
@@ -25,8 +25,8 @@ class LogoService(private val erC20Resource: ERC20Resource) {
     private fun getToken(
         network: Network,
         address: String
-    ): ERC20Information? = try {
-        erC20Resource.getERC20(network, address)
+    ): TokenInformation? = try {
+        erC20Resource.getTokenInformation(network, address)
     } catch (ex: Exception) {
         null
     }

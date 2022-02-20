@@ -7,7 +7,6 @@ import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.contract.EvmContractAccessor
 import io.defitrack.evm.contract.multicall.MultiCallElement
-import io.defitrack.token.domain.ERC20Information
 import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +24,7 @@ class ERC20Resource(
         abiResource.getABI("general/ERC20.json")
     }
 
-    fun getAllTokens(network: Network): List<ERC20Information> {
+    fun getAllTokens(network: Network): List<TokenInformation> {
         return runBlocking(Dispatchers.IO) {
             retry(limitAttempts(3)) { client.get("https://api.defitrack.io/erc20/${network.name}") }
         }
@@ -34,12 +33,6 @@ class ERC20Resource(
     fun getBalance(network: Network, tokenAddress: String, user: String): BigInteger {
         return runBlocking(Dispatchers.IO) {
             client.get("https://api.defitrack.io/erc20/${network.name}/$tokenAddress/$user")
-        }
-    }
-
-    fun getERC20(network: Network, address: String): ERC20Information {
-        return runBlocking(Dispatchers.IO) {
-            retry(limitAttempts(3)) { client.get("https://api.defitrack.io/erc20/${network.name}/$address") }
         }
     }
 

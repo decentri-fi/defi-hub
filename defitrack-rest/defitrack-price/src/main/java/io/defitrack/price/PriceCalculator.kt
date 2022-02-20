@@ -4,9 +4,9 @@ import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.retry
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.balancer.BalancerPolygonService
+import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
-import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
@@ -39,7 +39,7 @@ class PriceCalculator(
                     return@retry 0.0
                 }
 
-                val asERC = erc20Service.getERC20(priceRequest.network, priceRequest.address)
+                val asERC = erc20Service.getTokenInformation(priceRequest.network, priceRequest.address)
                 val token = erc20Service.getTokenInformation(priceRequest.network, priceRequest.address)
 
                 val tokenType = (priceRequest.type ?: token.type)
