@@ -10,6 +10,7 @@ import io.defitrack.evm.abi.domain.AbiContractEvent
 import io.defitrack.evm.abi.domain.AbiContractFunction
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.evm.web3j.EvmGateway
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.codec.binary.Hex
 import org.apache.commons.lang3.StringUtils
@@ -21,15 +22,10 @@ import org.web3j.abi.datatypes.*
 import org.web3j.abi.datatypes.generated.Int128
 import org.web3j.abi.datatypes.generated.Uint256
 import org.web3j.abi.datatypes.generated.Uint8
-import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.core.methods.request.Transaction
 import org.web3j.protocol.core.methods.response.EthCall
-import org.web3j.protocol.http.HttpService
-import org.web3j.protocol.websocket.WebSocketClient
-import org.web3j.protocol.websocket.WebSocketService
 import java.math.BigInteger
-import java.net.URI
 import java.util.Collections.emptyList
 import org.web3j.abi.datatypes.Function as Web3Function
 
@@ -61,11 +57,7 @@ abstract class EvmContractAccessor(val abiDecoder: AbiDecoder) {
                 object : TypeReference<DynamicArray<DynamicBytes?>?>() {})
         )
 
-        val data = runBlocking {
-            retry(limitAttempts(3)) {
-                executeCall(null, getMulticallContract(), aggregateFunction, null)[1].value as List<DynamicBytes>
-            }
-        }
+        val data = executeCall(getMulticallContract(), aggregateFunction)[1].value as List<DynamicBytes>
 
         return data.map {
             val element = elements[data.indexOf(it)]
@@ -75,85 +67,58 @@ abstract class EvmContractAccessor(val abiDecoder: AbiDecoder) {
 
     fun readFunction(
         address: String,
-        from: String? = null,
-        function: AbiContractFunction?,
-        endpoint: String? = null
-    ): List<Type<*>> = runBlocking {
-        retry(limitAttempts(5)) {
-            function?.let {
-                executeCall(from, address, createFunction(it, null, null), endpoint)
-            } ?: emptyList()
-        }
+        function: AbiContractFunction,
+    ): List<Type<*>> {
+        return executeCall(address, createFunction(function, null, null))
     }
 
     fun readFunction(
         address: String,
-        from: String? = null,
-        function: AbiContractFunction?,
+        function: AbiContractFunction,
         inputs: List<Type<*>>,
         outputs: List<TypeReference<out Type<*>>?>? = null
-    ): List<Type<*>> = runBlocking {
-        retry(limitAttempts(5) + binaryExponentialBackoff(base = 10L, max = 5000L)) {
-            function?.let {
-                executeCall(from, address, createFunction(it, inputs, outputs), null)
-            } ?: emptyList()
-        }
+    ): List<Type<*>> {
+        return executeCall(address, createFunction(function, inputs, outputs)) ?: emptyList()
     }
 
     fun executeCall(
-        from: String?,
         address: String,
         function: org.web3j.abi.datatypes.Function,
-        endpoint: String?
     ): List<Type<*>> {
         val encodedFunction = FunctionEncoder.encode(function)
-        val ethCall = call(from, address, encodedFunction, endpoint)
+        val ethCall = call(null, address, encodedFunction)
         return FunctionReturnDecoder.decode(ethCall.value, function.outputParameters)
     }
 
     private fun call(
         from: String? = "0x0000000000000000000000000000000000000000",
         contract: String,
-        encodedFunction: String,
-        endpoint: String?
-    ): EthCall {
-        val web3j = endpoint?.let {
-            constructEndpoint(it)
-        } ?: getGateway().web3j()
-
-        return web3j.ethCall(
-            Transaction.createEthCallTransaction(
-                from,
-                contract,
-                encodedFunction
-            ), DefaultBlockParameterName.LATEST
-        ).send()
-    }
-
-    private fun constructEndpoint(endpoint: String): Web3j {
-        return if (endpoint.startsWith("ws")) {
-            val webSocketClient = WebSocketClient(URI.create(endpoint))
-            val webSocketService = WebSocketService(webSocketClient, false)
-            webSocketService.connect()
-            Web3j.build(webSocketService)
-        } else {
-            Web3j.build(HttpService(endpoint, false))
+        encodedFunction: String
+    ): EthCall = runBlocking(Dispatchers.IO) {
+        retry(limitAttempts(5) + binaryExponentialBackoff(base = 10L, max = 5000L)) {
+            getGateway().web3j().ethCall(
+                Transaction.createEthCallTransaction(
+                    from,
+                    contract,
+                    encodedFunction
+                ), DefaultBlockParameterName.LATEST
+            ).send()
         }
     }
 
-    fun getConstantFunction(abi: String, method: String): AbiContractFunction? {
+    fun getConstantFunction(abi: String, method: String): AbiContractFunction {
         return abiDecoder.decode(abi)
             .elements
             .filterIsInstance<AbiContractFunction>()
             .filter { it.isConstant }
-            .firstOrNull { it.name.equals(method, ignoreCase = true) }
+            .first { it.name.equals(method, ignoreCase = true) }
     }
 
-    fun getFunction(abi: String, method: String): AbiContractFunction? {
+    fun getFunction(abi: String, method: String): AbiContractFunction {
         return abiDecoder.decode(abi)
             .elements
             .filterIsInstance<AbiContractFunction>()
-            .firstOrNull { it.name.equals(method, ignoreCase = true) }
+            .first { it.name.equals(method, ignoreCase = true) }
     }
 
 
