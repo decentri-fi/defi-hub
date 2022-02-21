@@ -4,6 +4,8 @@ import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.logo.LogoService
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceResource
+import io.defitrack.token.FungibleToken
+import io.defitrack.token.TokenType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -31,14 +33,18 @@ class BalanceRestController(
                 BalanceElement(
                     amount = balance.toDouble(),
                     network = it.getNetwork().toVO(),
-                    name = it.nativeTokenName(),
-                    address = "0x0",
+                    token = FungibleToken(
+                        address = "0x0",
+                        name = it.nativeTokenName(),
+                        decimals = 18,
+                        symbol = it.nativeTokenName(),
+                        type = TokenType.SINGLE
+                    ),
                     dollarValue = priceResource.calculatePrice(
                         it.nativeTokenName(),
                         balance.toDouble()
                     ),
                     logo = logoService.generateLogoUrl(it.getNetwork(), "0x0"),
-                    symbol = it.nativeTokenName()
                 )
             } else {
                 null
@@ -55,15 +61,13 @@ class BalanceRestController(
         }
     }.map {
         val normalizedAmount =
-            it.amount.toBigDecimal().dividePrecisely(BigDecimal.TEN.pow(it.decimals)).toDouble()
+            it.amount.toBigDecimal().dividePrecisely(BigDecimal.TEN.pow(it.token.decimals)).toDouble()
         BalanceElement(
             normalizedAmount,
             it.network.toVO(),
-            it.address,
-            it.symbol,
-            it.name,
-            priceResource.calculatePrice(it.symbol, normalizedAmount),
-            logoService.generateLogoUrl(it.network, it.address),
+            it.token,
+            priceResource.calculatePrice(it.token.symbol, normalizedAmount),
+            logoService.generateLogoUrl(it.network, it.token.address),
         )
     }
 }

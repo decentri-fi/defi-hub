@@ -43,7 +43,7 @@ class BalancerPolygonUserClaimingService(
         return getAll().filter {
             it.user.lowercase() == address.lowercase()
         }.map {
-            val token = erC20Resource.getERC20(getNetwork(), it.token)
+            val token = erC20Resource.getTokenInformation(getNetwork(), it.token)
             ClaimableElement(
                 "balancer-polygon-${it.week}-${it.token}",
                 "${token.symbol} reward",

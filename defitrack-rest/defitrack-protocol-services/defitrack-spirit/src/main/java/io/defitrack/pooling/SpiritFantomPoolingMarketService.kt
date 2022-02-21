@@ -4,23 +4,17 @@ import io.defitrack.SpiritswapAPRService
 import io.defitrack.common.network.Network
 import io.defitrack.pool.PoolingMarketService
 import io.defitrack.pool.domain.PoolingMarketElement
-import io.defitrack.pool.domain.PoolingToken
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SpiritswapService
-import io.github.reactivecircus.cache4k.Cache
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import org.slf4j.LoggerFactory
-import org.springframework.scheduling.annotation.Scheduled
+import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
-import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
 
 @Component
 class SpiritFantomPoolingMarketService(
     private val spiritswapServices: List<SpiritswapService>,
-    private val spiritswapAPRService: SpiritswapAPRService
+    private val spiritswapAPRService: SpiritswapAPRService,
+    private val erC20Resource: ERC20Resource,
 ) : PoolingMarketService() {
 
     override suspend fun fetchPoolingMarkets() = spiritswapServices.filter {
@@ -31,22 +25,18 @@ class SpiritFantomPoolingMarketService(
                 it.reserveUSD > BigDecimal.valueOf(100000)
             }
             .map {
-               PoolingMarketElement(
+
+                val token0 = erC20Resource.getTokenInformation(getNetwork(), it.token0.id)
+                val token1 = erC20Resource.getTokenInformation(getNetwork(), it.token1.id)
+
+                PoolingMarketElement(
                     network = service.getNetwork(),
                     protocol = getProtocol(),
                     address = it.id,
                     name = "Spirit ${it.token0.symbol}-${it.token1.symbol}",
                     token = listOf(
-                        PoolingToken(
-                            it.token0.name,
-                            it.token0.symbol,
-                            it.token0.id
-                        ),
-                        PoolingToken(
-                            it.token1.name,
-                            it.token1.symbol,
-                            it.token1.id
-                        ),
+                        token0.toFungibleToken(),
+                        token1.toFungibleToken(),
                     ),
                     apr = spiritswapAPRService.getAPR(it.id, service.getNetwork()),
                     id = "spirit-fantom-${it.id}",

@@ -3,9 +3,9 @@ package io.defitrack.protocol.uniswap.pooling
 import io.defitrack.common.network.Network
 import io.defitrack.pool.PoolingMarketService
 import io.defitrack.pool.domain.PoolingMarketElement
-import io.defitrack.pool.domain.PoolingToken
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.uniswap.apr.UniswapAPRService
+import io.defitrack.token.ERC20Resource
 import io.defitrack.uniswap.AbstractUniswapV2Service
 import org.springframework.stereotype.Component
 
@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component
 class UniswapPolygonPoolingMarketService(
     private val uniswapServices: List<AbstractUniswapV2Service>,
     private val uniswapAPRService: UniswapAPRService,
+    private val erC20Resource: ERC20Resource
 ) : PoolingMarketService() {
 
     override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> {
@@ -21,6 +22,8 @@ class UniswapPolygonPoolingMarketService(
         }.flatMap {
             it.getPairs().mapNotNull {
                 try {
+                    val token0 = erC20Resource.getTokenInformation(getNetwork(), it.token0.id)
+                    val token1 = erC20Resource.getTokenInformation(getNetwork(), it.token1.id)
                     PoolingMarketElement(
                         network = getNetwork(),
                         protocol = getProtocol(),
@@ -28,16 +31,8 @@ class UniswapPolygonPoolingMarketService(
                         name = "UNI ${it.token0.symbol}-${it.token1.symbol}",
                         address = it.id,
                         token = listOf(
-                            PoolingToken(
-                                it.token0.name,
-                                it.token0.symbol,
-                                it.token0.id
-                            ),
-                            PoolingToken(
-                                it.token1.name,
-                                it.token1.symbol,
-                                it.token1.id
-                            ),
+                            token0.toFungibleToken(),
+                            token1.toFungibleToken(),
                         ),
                         apr = uniswapAPRService.getAPR(it.id, getNetwork()),
                         marketSize = it.reserveUSD

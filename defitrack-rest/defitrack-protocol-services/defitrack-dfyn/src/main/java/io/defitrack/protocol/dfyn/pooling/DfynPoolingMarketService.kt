@@ -3,10 +3,10 @@ package io.defitrack.protocol.dfyn.pooling
 import io.defitrack.common.network.Network
 import io.defitrack.pool.PoolingMarketService
 import io.defitrack.pool.domain.PoolingMarketElement
-import io.defitrack.pool.domain.PoolingToken
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.dfyn.DfynService
 import io.defitrack.protocol.dfyn.apr.DfynAPRService
+import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
@@ -14,11 +14,15 @@ import java.math.BigDecimal
 class DfynPoolingMarketService(
     private val dfynService: DfynService,
     private val dfynAPRService: DfynAPRService,
+    private val erc20Resource: ERC20Resource
 ) : PoolingMarketService() {
 
     override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> {
         return dfynService.getPairs().mapNotNull {
             if (it.reserveUSD > BigDecimal.valueOf(100000)) {
+                val token0 = erc20Resource.getTokenInformation(getNetwork(), it.token0.id)
+                val token1 = erc20Resource.getTokenInformation(getNetwork(), it.token1.id)
+
                 PoolingMarketElement(
                     network = getNetwork(),
                     protocol = getProtocol(),
@@ -26,16 +30,8 @@ class DfynPoolingMarketService(
                     id = "dfyn-polygon-${it.id}",
                     name = "DFYN ${it.token0.symbol}-${it.token1.symbol}",
                     token = listOf(
-                        PoolingToken(
-                            it.token0.name,
-                            it.token0.symbol,
-                            it.token0.id
-                        ),
-                        PoolingToken(
-                            it.token1.name,
-                            it.token1.symbol,
-                            it.token1.id
-                        ),
+                        token0.toFungibleToken(),
+                        token1.toFungibleToken()
                     ),
                     apr = dfynAPRService.getAPR(it.id),
                     marketSize = it.reserveUSD

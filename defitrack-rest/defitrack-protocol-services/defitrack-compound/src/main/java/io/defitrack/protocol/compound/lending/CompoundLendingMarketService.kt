@@ -5,15 +5,14 @@ import io.defitrack.common.network.Network
 import io.defitrack.ethereum.config.EthereumContractAccessor
 import io.defitrack.lending.LendingMarketService
 import io.defitrack.lending.domain.LendingMarketElement
-import io.defitrack.lending.domain.LendingToken
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.compound.CompoundComptrollerContract
 import io.defitrack.protocol.compound.CompoundService
 import io.defitrack.protocol.compound.CompoundTokenContract
-import io.defitrack.token.TokenType
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -38,7 +37,7 @@ class CompoundLendingMarketService(
     override suspend fun fetchLendingMarkets(): List<LendingMarketElement> {
         return getTokenContracts().mapNotNull {
             it.underlyingAddress?.let { tokenAddress ->
-                erC20Resource.getERC20(getNetwork(), tokenAddress)
+                erC20Resource.getTokenInformation(getNetwork(), tokenAddress)
             }?.let { underlyingToken ->
                 LendingMarketElement(
                     id = "compound-ethereum-${it.address}",
@@ -47,11 +46,7 @@ class CompoundLendingMarketService(
                     name = it.name,
                     rate = getSupplyRate(compoundTokenContract = it).toDouble(),
                     address = it.address,
-                    token = LendingToken(
-                        underlyingToken.name,
-                        underlyingToken.symbol,
-                        underlyingToken.address
-                    ),
+                    token = underlyingToken.toFungibleToken(),
                     marketSize = priceResource.calculatePrice(
                         PriceRequest(
                             underlyingToken.address,

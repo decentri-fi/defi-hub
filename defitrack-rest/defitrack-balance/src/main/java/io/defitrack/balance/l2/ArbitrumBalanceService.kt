@@ -38,13 +38,10 @@ class ArbitrumBalanceService(
                 .mapIndexed { i, balance ->
 
                     if (balance > BigInteger.ZERO) {
-                        val token = erc20Resource.getERC20(getNetwork(), tokenAddresses[i])
+                        val token = erc20Resource.getTokenInformation(getNetwork(), tokenAddresses[i])
                         TokenBalance(
-                            address = token.address,
                             amount = balance,
-                            decimals = token.decimals,
-                            symbol = token.symbol,
-                            name = token.name,
+                            token = token.toFungibleToken(),
                             network = getNetwork(),
                         )
                     } else {

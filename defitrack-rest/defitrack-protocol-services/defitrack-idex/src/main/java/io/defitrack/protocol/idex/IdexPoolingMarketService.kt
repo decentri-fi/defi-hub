@@ -3,10 +3,8 @@ package io.defitrack.protocol.idex
 import io.defitrack.common.network.Network
 import io.defitrack.pool.PoolingMarketService
 import io.defitrack.pool.domain.PoolingMarketElement
-import io.defitrack.pool.domain.PoolingToken
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.ERC20Resource
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
@@ -15,10 +13,6 @@ class IdexPoolingMarketService(
     private val idexService: IdexService,
     private val erc20Resource: ERC20Resource
 ) : PoolingMarketService() {
-
-    companion object {
-        private val logger = LoggerFactory.getLogger(this::class.java)
-    }
 
     override suspend fun fetchPoolingMarkets() = idexService.getLPs().mapNotNull {
 
@@ -34,16 +28,8 @@ class IdexPoolingMarketService(
                     id = "idex-polygon-${it.liquidityToken}",
                     name = "IDEX ${token0.symbol}-${token1.symbol}",
                     token = listOf(
-                        PoolingToken(
-                            token0.name,
-                            token0.symbol,
-                            token0.address
-                        ),
-                        PoolingToken(
-                            token1.name,
-                            token1.symbol,
-                            token1.address
-                        ),
+                        token0.toFungibleToken(),
+                        token1.toFungibleToken(),
                     ),
                     apr = BigDecimal.ZERO,
                     marketSize = it.reserveUsd

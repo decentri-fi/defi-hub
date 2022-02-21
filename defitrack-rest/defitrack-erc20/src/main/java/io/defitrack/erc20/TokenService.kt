@@ -1,6 +1,7 @@
 package io.defitrack.erc20
 
 import io.defitrack.common.network.Network
+import io.defitrack.nativetoken.NativeTokenService
 import io.defitrack.pool.LPtokenService
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.TokenInformation
@@ -16,12 +17,13 @@ class TokenService(
     private val erC20Repository: ERC20Repository,
     private val LPtokenService: LPtokenService,
     private val hopTokenService: HopTokenService,
+    private val nativeTokenService: NativeTokenService
 ) {
 
 
     fun getAllTokensForNetwork(network: Network): List<TokenInformation> {
-        return erC20Repository.allTokens(network).mapNotNull {
-            getTokenInformation( it.address, network)
+        return erC20Repository.allTokens(network).map {
+            getTokenInformation(it.address, network)
         }
     }
 
@@ -58,6 +60,11 @@ class TokenService(
     val tokenInformationCache = Cache.Builder().build<String, TokenInformation>()
 
     fun getTokenInformation(address: String, network: Network): TokenInformation = runBlocking {
+
+        if (address == "0x0" || address == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") {
+            return@runBlocking nativeTokenService.getNativeToken(network)
+        }
+
         tokenInformationCache.get("${address}-${network}") {
             val token = erc20Service.getERC20(network, address)
             when {

@@ -68,7 +68,7 @@ class AdamantClaimableService(
                     vault.strategy
                 )
 
-                val token = erC20Resource.getERC20(getNetwork(), strategy.feeDistToken)
+                val token = erC20Resource.getTokenInformation(getNetwork(), strategy.feeDistToken)
                 val pendingReward = vault.getPendingReward(address)
                 val addyPrice = priceService.getPrice("ADDY")
 

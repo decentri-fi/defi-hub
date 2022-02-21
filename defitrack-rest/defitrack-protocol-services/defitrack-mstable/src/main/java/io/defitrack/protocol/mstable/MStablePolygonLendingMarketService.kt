@@ -4,7 +4,6 @@ import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.lending.LendingMarketService
 import io.defitrack.lending.domain.LendingMarketElement
-import io.defitrack.lending.domain.LendingToken
 import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.ERC20Resource
@@ -37,11 +36,7 @@ class MStablePolygonLendingMarketService(
                 protocol = getProtocol(),
                 address = it.address,
                 name = token.name,
-                token = LendingToken(
-                    name = token.name,
-                    symbol = token.symbol,
-                    address = token.address
-                ),
+                token = token.toFungibleToken(),
                 marketSize = 0.0,
                 rate = 0.0,
                 poolType = "mstable"

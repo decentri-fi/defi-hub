@@ -39,13 +39,10 @@ class PolygonBalanceService(
         return erC20Service.getBalancesFor(user, tokenAddresses, polygonContractAccessor)
             .mapIndexed { i, balance ->
                 if (balance > BigInteger.ZERO) {
-                    val token = erC20Service.getERC20(getNetwork(), tokenAddresses[i])
+                    val token = erC20Service.getTokenInformation(getNetwork(), tokenAddresses[i])
                     TokenBalance(
-                        address = token.address,
                         amount = balance,
-                        decimals = token.decimals,
-                        symbol = token.symbol,
-                        name = token.name,
+                        token = token.toFungibleToken(),
                         network = getNetwork(),
                     )
                 } else {

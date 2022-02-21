@@ -5,13 +5,12 @@ import io.defitrack.common.network.Network
 import io.defitrack.polygon.config.PolygonContractAccessor
 import io.defitrack.pool.PoolingMarketService
 import io.defitrack.pool.domain.PoolingMarketElement
-import io.defitrack.pool.domain.PoolingToken
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.contract.HopLpTokenContract
 import io.defitrack.protocol.contract.HopSwapContract
-import io.defitrack.token.TokenType
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
@@ -41,8 +40,8 @@ class HopPolygonPoolingMarketService(
                 contract.swap
             )
 
-            val htoken = erC20Resource.getERC20(getNetwork(), hopLpToken.hToken)
-            val canonical = erC20Resource.getERC20(getNetwork(), hopLpToken.canonicalToken)
+            val htoken = erC20Resource.getTokenInformation(getNetwork(), hopLpToken.hToken)
+            val canonical = erC20Resource.getTokenInformation(getNetwork(), hopLpToken.canonicalToken)
 
             val marketSize = getPrice(canonical.address, contract, swapContract).toBigDecimal()
             PoolingMarketElement(
@@ -52,16 +51,8 @@ class HopPolygonPoolingMarketService(
                 address = hopLpToken.lpToken,
                 name = contract.name,
                 token = listOf(
-                    PoolingToken(
-                        name = htoken.name,
-                        symbol = htoken.symbol,
-                        address = htoken.address
-                    ),
-                    PoolingToken(
-                        name = canonical.name,
-                        symbol = canonical.symbol,
-                        address = canonical.address
-                    )
+                    htoken.toFungibleToken(),
+                    canonical.toFungibleToken()
                 ),
                 marketSize = marketSize,
                 apr = hopAPRService.getAPR(
