@@ -61,7 +61,7 @@ class TokenService(
 
     fun getTokenInformation(address: String, network: Network): TokenInformation = runBlocking {
 
-        if (address == "0x0" || address == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") {
+        if (address == "0x0" || address.lowercase() == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") {
             return@runBlocking nativeTokenService.getNativeToken(network)
         }
 
