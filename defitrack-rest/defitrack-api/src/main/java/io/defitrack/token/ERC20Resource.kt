@@ -38,7 +38,7 @@ class ERC20Resource(
 
     fun getTokenInformation(network: Network, address: String): TokenInformation {
         return runBlocking(Dispatchers.IO) {
-            retry(limitAttempts(3)) { client.get("https://api.defitrack.io/erc20/${network.name}/$address") }
+            retry(limitAttempts(3)) { client.get("https://api.defitrack.io/erc20/${network.name}/$address/token") }
         }
     }
 
