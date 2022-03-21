@@ -19,5 +19,5 @@ data class PoolingMarketElementToken(
     val name: String,
     val symbol: String,
     val address: String,
-    val logo: String
+    val logo: String?
 )

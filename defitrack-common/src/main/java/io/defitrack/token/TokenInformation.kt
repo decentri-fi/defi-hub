@@ -21,7 +21,8 @@ class TokenInformation(
             name,
             decimals,
             symbol,
-            type
+            logo,
+            type,
         )
     }
 }

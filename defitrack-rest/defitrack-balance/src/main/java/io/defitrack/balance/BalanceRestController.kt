@@ -1,11 +1,9 @@
 package io.defitrack.balance
 
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
-import io.defitrack.logo.LogoService
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceResource
-import io.defitrack.token.FungibleToken
-import io.defitrack.token.TokenType
+import io.defitrack.token.ERC20Resource
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -17,7 +15,7 @@ import java.math.BigDecimal
 class BalanceRestController(
     private val balanceServices: List<BalanceService>,
     private val priceResource: PriceResource,
-    private val logoService: LogoService
+    private val erC20Resource: ERC20Resource,
 ) {
 
     @GetMapping("/{address}/native-balance")
@@ -33,18 +31,14 @@ class BalanceRestController(
                 BalanceElement(
                     amount = balance.toDouble(),
                     network = it.getNetwork().toVO(),
-                    token = FungibleToken(
-                        address = "0x0",
-                        name = it.nativeTokenName(),
-                        decimals = 18,
-                        symbol = it.nativeTokenName(),
-                        type = TokenType.SINGLE
+                    token = erC20Resource.getTokenInformation(
+                        it.getNetwork(),
+                        "0x0"
                     ),
                     dollarValue = priceResource.calculatePrice(
                         it.nativeTokenName(),
                         balance.toDouble()
                     ),
-                    logo = logoService.generateLogoUrl(it.getNetwork(), "0x0"),
                 )
             } else {
                 null
@@ -63,11 +57,10 @@ class BalanceRestController(
         val normalizedAmount =
             it.amount.toBigDecimal().dividePrecisely(BigDecimal.TEN.pow(it.token.decimals)).toDouble()
         BalanceElement(
-            normalizedAmount,
-            it.network.toVO(),
-            it.token,
-            priceResource.calculatePrice(it.token.symbol, normalizedAmount),
-            logoService.generateLogoUrl(it.network, it.token.address),
+            amount = normalizedAmount,
+            network = it.network.toVO(),
+            token = erC20Resource.getTokenInformation(it.network, address),
+            dollarValue = priceResource.calculatePrice(it.token.symbol, normalizedAmount)
         )
     }
 }

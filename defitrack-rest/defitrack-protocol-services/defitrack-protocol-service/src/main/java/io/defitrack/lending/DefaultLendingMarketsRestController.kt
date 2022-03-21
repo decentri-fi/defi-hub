@@ -4,7 +4,6 @@ import io.defitrack.common.network.Network
 import io.defitrack.lending.domain.LendingMarketElement
 import io.defitrack.lending.vo.LendingMarketElementToken
 import io.defitrack.lending.vo.LendingMarketElementVO
-import io.defitrack.logo.LogoService
 import io.defitrack.network.toVO
 import io.defitrack.protocol.toVO
 import org.springframework.web.bind.annotation.GetMapping
@@ -17,7 +16,6 @@ import java.math.BigDecimal
 @RequestMapping("/lending")
 class DefaultLendingMarketsRestController(
     private val lendingMarketServices: List<LendingMarketService>,
-    private val logoService: LogoService
 ) {
 
     @GetMapping(value = ["/all-markets"])
@@ -53,7 +51,7 @@ class DefaultLendingMarketsRestController(
                 name = token.name,
                 symbol = token.symbol,
                 address = token.address,
-                logo = logoService.generateLogoUrl(network, token.address)
+                logo = token.logo
             ),
             rate = rate,
             poolType = poolType,

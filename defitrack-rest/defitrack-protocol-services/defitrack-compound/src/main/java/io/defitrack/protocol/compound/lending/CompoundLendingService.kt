@@ -10,8 +10,6 @@ import io.defitrack.protocol.compound.CompoundComptrollerContract
 import io.defitrack.protocol.compound.CompoundService
 import io.defitrack.protocol.compound.CompoundTokenContract
 import io.defitrack.token.ERC20Resource
-import io.defitrack.token.FungibleToken
-import io.defitrack.token.TokenType
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -66,13 +64,8 @@ class CompoundLendingService(
                     val underlying = tokenContract.underlyingAddress?.let { tokenAddress ->
                         erC20Service.getTokenInformation(getNetwork(), tokenAddress)
                     }
-                    val token = underlying?.toFungibleToken() ?: FungibleToken(
-                        "0x0",
-                        "Eth",
-                        18,
-                        "ETH",
-                        TokenType.SINGLE
-                    )
+                    val token = underlying?.toFungibleToken() ?: erC20Service.getTokenInformation(getNetwork(), "0x0")
+                        .toFungibleToken()
                     LendingElement(
                         id = "compound-ethereum-${tokenContract.address}",
                         network = getNetwork(),
