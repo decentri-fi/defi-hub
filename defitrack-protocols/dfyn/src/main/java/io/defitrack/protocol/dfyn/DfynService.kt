@@ -5,12 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.JsonParser
 import io.defitrack.protocol.dfyn.domain.Pair
 import io.defitrack.protocol.dfyn.domain.PairDayData
+import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Component
+import kotlin.time.Duration.Companion.days
 
 @Component
 class DfynService(
@@ -37,9 +39,12 @@ class DfynService(
             })
     }
 
-    @Cacheable(cacheNames = ["dfyn-pairs"], key = "'all'")
+    private val pairCache =
+        Cache.Builder().expireAfterWrite(1.days).build<String, List<Pair>>()
+
     fun getPairs(): List<Pair> = runBlocking {
-        val query = """
+        pairCache.get("all") {
+            val query = """
             {
             	pairs(first: 200, orderDirection: desc, orderBy: volumeUSD) {
                 id
@@ -60,13 +65,14 @@ class DfynService(
             }
         """.trimIndent()
 
-        val response = query(query)
-        val poolSharesAsString =
-            JsonParser.parseString(response).asJsonObject["data"].asJsonObject["pairs"].toString()
-        return@runBlocking objectMapper.readValue(poolSharesAsString,
-            object : TypeReference<List<Pair>>() {
+            val response = query(query)
+            val poolSharesAsString =
+                JsonParser.parseString(response).asJsonObject["data"].asJsonObject["pairs"].toString()
+            objectMapper.readValue(poolSharesAsString,
+                object : TypeReference<List<Pair>>() {
 
-            })
+                })
+        }
     }
 
     fun query(query: String): String = runBlocking {

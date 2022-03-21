@@ -60,7 +60,7 @@ class ERC20Repository(
                 TokenListResponse::class.java
             )
 
-            logger.debug("imported $url")
+            logger.info("imported $url")
             tokens
         }.tokens.mapNotNull { entry ->
             Network.fromChainId(entry.chainId)?.let { network ->
@@ -76,19 +76,6 @@ class ERC20Repository(
     fun allTokens(network: Network): List<TokenInfo> {
         return tokenList.filter { it.network == network }.distinctBy {
             it.address.lowercase()
-        }
-    }
-
-    fun getToken(network: Network, address: String): TokenInfo? {
-        if (address == "0x0") {
-            return NATIVE_WRAP_MAPPING[network]?.let {
-                tokenList.find { info ->
-                    info.address.lowercase() == it.lowercase() && info.network == network
-                }
-            }
-        }
-        return tokenList.find {
-            it.address.lowercase() == address.lowercase() && it.network == network
         }
     }
 }
