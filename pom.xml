@@ -138,7 +138,6 @@
                 <artifactId>utils</artifactId>
                 <version>${web3j.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.web3j</groupId>
                 <artifactId>parity</artifactId>

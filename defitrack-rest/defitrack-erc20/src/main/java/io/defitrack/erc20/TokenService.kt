@@ -1,6 +1,7 @@
 package io.defitrack.erc20
 
 import io.defitrack.common.network.Network
+import io.defitrack.logo.LogoService
 import io.defitrack.nativetoken.NativeTokenService
 import io.defitrack.pool.LPtokenService
 import io.defitrack.protocol.Protocol
@@ -17,7 +18,8 @@ class TokenService(
     private val erC20Repository: ERC20Repository,
     private val LPtokenService: LPtokenService,
     private val hopTokenService: HopTokenService,
-    private val nativeTokenService: NativeTokenService
+    private val nativeTokenService: NativeTokenService,
+    private val logoService: LogoService
 ) {
 
 
@@ -91,6 +93,7 @@ class TokenService(
                 }
                 else -> {
                     TokenInformation(
+                        logo = logoService.generateLogoUrl(network, address),
                         name = token.name,
                         symbol = token.symbol,
                         address = token.address,
