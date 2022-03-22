@@ -20,6 +20,7 @@
         <module>defitrack-balance</module>
         <module>defitrack-price</module>
         <module>defitrack-protocol-services</module>
+        <module>defitrack-blockchain-services</module>
     </modules>
 
     <dependencyManagement>

@@ -4,6 +4,7 @@ import com.github.michaelbull.retry.policy.binaryExponentialBackoff
 import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.policy.plus
 import com.github.michaelbull.retry.retry
+import io.defitrack.evm.contract.ContractInteractionCommand
 import io.defitrack.evm.web3j.EvmGateway
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -21,17 +22,18 @@ class ContractInteractionRestController(
     private val evmGateway: EvmGateway
 ) {
     @PostMapping("/call")
-    fun call(@RequestBody contractInteractionCommand: ContractInteractionCommand): EthCall = runBlocking(Dispatchers.IO) {
-        retry(limitAttempts(10) + binaryExponentialBackoff(base = 10L, max = 60000L)) {
-            with(contractInteractionCommand) {
-                evmGateway.web3j().ethCall(
-                    Transaction.createEthCallTransaction(
-                        from,
-                        contract,
-                        function
-                    ), DefaultBlockParameterName.LATEST
-                ).send()
+    fun call(@RequestBody contractInteractionCommand: ContractInteractionCommand): EthCall =
+        runBlocking(Dispatchers.IO) {
+            retry(limitAttempts(10) + binaryExponentialBackoff(base = 10L, max = 60000L)) {
+                with(contractInteractionCommand) {
+                    evmGateway.web3j().ethCall(
+                        Transaction.createEthCallTransaction(
+                            from,
+                            contract,
+                            function
+                        ), DefaultBlockParameterName.LATEST
+                    ).send()
+                }
             }
         }
-    }
 }

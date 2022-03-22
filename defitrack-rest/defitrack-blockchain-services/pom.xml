@@ -3,25 +3,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>defitrack-blockchains</artifactId>
+    <artifactId>defitrack-blockchain-services</artifactId>
     <packaging>pom</packaging>
 
     <parent>
         <groupId>io.defitrack</groupId>
-        <artifactId>defitrack-parent</artifactId>
+        <artifactId>defitrack-rest</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
     <modules>
-        <module>blockchain-dependencies</module>
-        <module>evm</module>
-        <module>ethereum</module>
-        <module>polygon</module>
-        <module>polygon-mumbai</module>
-        <module>bsc</module>
-        <module>arbitrum</module>
-        <module>avalanche</module>
-        <module>fantom</module>
-        <module>optimism</module>
+        <module>defitrack-blockchain-service</module>
+        <module>defitrack-polygon</module>
     </modules>
 </project>

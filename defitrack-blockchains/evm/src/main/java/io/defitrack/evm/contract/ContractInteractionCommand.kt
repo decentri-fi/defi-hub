@@ -1,4 +1,4 @@
-package io.defitrack.contract
+package io.defitrack.evm.contract
 
 class ContractInteractionCommand(
     val from: String?,

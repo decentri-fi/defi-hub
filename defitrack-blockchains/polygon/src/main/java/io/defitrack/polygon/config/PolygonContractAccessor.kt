@@ -1,8 +1,8 @@
 package io.defitrack.polygon.config
 
 import io.defitrack.common.network.Network
-import io.defitrack.contract.ContractInteractionCommand
 import io.defitrack.evm.abi.AbiDecoder
+import io.defitrack.evm.contract.ContractInteractionCommand
 import io.defitrack.evm.contract.EvmContractAccessor
 import io.defitrack.evm.web3j.EvmGateway
 import io.ktor.client.*
@@ -25,7 +25,7 @@ class PolygonContractAccessor(
         contract: String,
         encodedFunction: String
     ): EthCall = runBlocking(Dispatchers.IO) {
-        httpClient.post("http://localhost:8080") {
+        httpClient.post("http://defitrack-polygon:8080/contract") {
             this.body = ContractInteractionCommand(
                 from = from,
                 contract = contract,

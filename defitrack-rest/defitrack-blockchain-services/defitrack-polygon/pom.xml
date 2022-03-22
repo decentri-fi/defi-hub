@@ -3,29 +3,32 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>blockchain-api</artifactId>
-    <packaging>jar</packaging>
+    <artifactId>defitrack-polygon</artifactId>
 
     <parent>
         <groupId>io.defitrack</groupId>
-        <artifactId>defitrack-blockchains</artifactId>
+        <artifactId>defitrack-blockchain-services</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
             <groupId>io.defitrack</groupId>
-            <artifactId>evm</artifactId>
+            <artifactId>defitrack-blockchain-service</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>io.defitrack</groupId>
-            <artifactId>defitrack-common</artifactId>
-            <version>${project.version}</version>
+            <artifactId>polygon</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>

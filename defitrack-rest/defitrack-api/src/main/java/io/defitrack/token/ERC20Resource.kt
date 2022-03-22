@@ -6,7 +6,9 @@ import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.contract.EvmContractAccessor
+import io.defitrack.evm.contract.EvmContractAccessor.Companion.createFunction
 import io.defitrack.evm.contract.multicall.MultiCallElement
+import io.defitrack.polygon.config.PolygonContractAccessor
 import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +19,8 @@ import java.math.BigInteger
 @Component
 class ERC20Resource(
     private val client: HttpClient,
-    private val abiResource: ABIResource
+    private val abiResource: ABIResource,
+    private val polygonContractAccessor: PolygonContractAccessor
 ) {
 
     val erc20ABI by lazy {
@@ -50,7 +53,7 @@ class ERC20Resource(
         return evmContractAccessor.readMultiCall(tokens.map {
             MultiCallElement(
                 ERC20Contract(
-                    evmContractAccessor,
+                    polygonContractAccessor,
                     erc20ABI,
                     it
                 ).balanceOfMethod(address),
