@@ -20,6 +20,7 @@
         <dependency>
             <groupId>io.defitrack</groupId>
             <artifactId>polygon</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
