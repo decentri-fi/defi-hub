@@ -1,5 +1,7 @@
 #!/bin/bash
 
+docker build -t defitrack/defitrack:polygon-${BRANCH_NAME} defitrack-blockchains/polygon
+
 docker build -t defitrack/defitrack:uniswap-${BRANCH_NAME} defitrack-rest/defitrack-protocol-services/defitrack-uniswap
 docker build -t defitrack/defitrack:quickswap-${BRANCH_NAME} defitrack-rest/defitrack-protocol-services/defitrack-quickswap
 docker build -t defitrack/defitrack:sushiswap-${BRANCH_NAME} defitrack-rest/defitrack-protocol-services/defitrack-sushiswap

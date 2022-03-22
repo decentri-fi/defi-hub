@@ -1,4 +1,4 @@
-package io.defitrack.ethereum.config
+package io.defitrack.arbitrum.config
 
 import io.defitrack.evm.web3j.EvmGateway
 import org.slf4j.Logger

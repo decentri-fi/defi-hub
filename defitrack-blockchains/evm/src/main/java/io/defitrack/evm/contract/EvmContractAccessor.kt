@@ -90,12 +90,12 @@ abstract class EvmContractAccessor(val abiDecoder: AbiDecoder) {
         return FunctionReturnDecoder.decode(ethCall.value, function.outputParameters)
     }
 
-    private fun call(
+    open fun call(
         from: String? = "0x0000000000000000000000000000000000000000",
         contract: String,
         encodedFunction: String
     ): EthCall = runBlocking(Dispatchers.IO) {
-        retry(limitAttempts(5) + binaryExponentialBackoff(base = 10L, max = 5000L)) {
+        retry(limitAttempts(10) + binaryExponentialBackoff(base = 10L, max = 60000L)) {
             getGateway().web3j().ethCall(
                 Transaction.createEthCallTransaction(
                     from,

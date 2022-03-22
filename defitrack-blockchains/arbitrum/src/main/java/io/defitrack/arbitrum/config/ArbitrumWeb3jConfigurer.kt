@@ -1,4 +1,4 @@
-package io.defitrack.ethereum.config
+package io.defitrack.arbitrum.config
 
 import okhttp3.OkHttpClient
 import org.slf4j.Logger

@@ -13,6 +13,7 @@
     </parent>
 
     <modules>
+        <module>blockchain-api</module>
         <module>blockchain-dependencies</module>
         <module>evm</module>
         <module>ethereum</module>

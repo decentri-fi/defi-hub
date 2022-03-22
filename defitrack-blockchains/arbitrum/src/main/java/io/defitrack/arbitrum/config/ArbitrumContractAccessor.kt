@@ -1,4 +1,4 @@
-package io.defitrack.ethereum.config
+package io.defitrack.arbitrum.config
 
 import io.defitrack.common.network.Network
 import io.defitrack.evm.abi.AbiDecoder

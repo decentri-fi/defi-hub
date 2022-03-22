@@ -3,8 +3,8 @@ package io.defitrack.balance.l2
 import io.defitrack.balance.BalanceService
 import io.defitrack.balance.TokenBalance
 import io.defitrack.common.network.Network
-import io.defitrack.ethereum.config.ArbitrumContractAccessor
-import io.defitrack.ethereum.config.ArbitrumGateway
+import io.defitrack.arbitrum.config.ArbitrumContractAccessor
+import io.defitrack.arbitrum.config.ArbitrumGateway
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import org.web3j.protocol.core.DefaultBlockParameterName

@@ -6,7 +6,6 @@
     <artifactId>arbitrum</artifactId>
     <packaging>jar</packaging>
 
-
     <parent>
         <groupId>io.defitrack</groupId>
         <artifactId>defitrack-blockchains</artifactId>
