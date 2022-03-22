@@ -7,6 +7,6 @@ import io.defitrack.token.TokenInformation
 data class BalanceElement(
     val amount: Double,
     val network: NetworkVO,
-    val token: TokenInformation,
+    val token: FungibleToken,
     val dollarValue: Double,
 )
