@@ -32,7 +32,7 @@ class NetworkRouterConfig {
                             "/\${segment}"
                         )
                     }
-                    .uri("http://defitrack-${network.slug}:8080")
+                    .uri("http://defitrack-${network.slug}:8080/api")
             }
         }
         return routeBuilder.build()
