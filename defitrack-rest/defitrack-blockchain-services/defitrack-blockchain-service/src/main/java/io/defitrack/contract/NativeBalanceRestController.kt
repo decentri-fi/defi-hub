@@ -9,7 +9,7 @@ import org.web3j.protocol.core.DefaultBlockParameterName
 import java.math.BigInteger
 
 @RestController
-@RequestMapping("/api/balance")
+@RequestMapping("/balance")
 class NativeBalanceRestController(private val evmGateway: EvmGateway) {
 
     @GetMapping("/{address}")

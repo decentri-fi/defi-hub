@@ -17,7 +17,7 @@ import org.web3j.protocol.core.methods.request.Transaction
 import org.web3j.protocol.core.methods.response.EthCall
 
 @RestController
-@RequestMapping("/api/contract")
+@RequestMapping("/contract")
 class ContractInteractionRestController(
     private val evmGateway: EvmGateway
 ) {

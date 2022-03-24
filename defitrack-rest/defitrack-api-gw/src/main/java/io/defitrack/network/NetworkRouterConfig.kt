@@ -28,11 +28,11 @@ class NetworkRouterConfig {
                 it.path(true, "/networks/${network.slug}/**")
                     .filters { filter ->
                         filter.rewritePath(
-                            "/${network.slug}/(?<segment>.*)",
+                            "/networks/${network.slug}/(?<segment>.*)",
                             "/\${segment}"
                         )
                     }
-                    .uri("http://defitrack-${network.slug}:8080/api")
+                    .uri("http://defitrack-${network.slug}:8080")
             }
         }
         return routeBuilder.build()
