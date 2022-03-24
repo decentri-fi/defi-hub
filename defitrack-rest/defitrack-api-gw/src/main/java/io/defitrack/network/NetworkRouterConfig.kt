@@ -25,7 +25,7 @@ class NetworkRouterConfig {
 
         Network.values().forEach { network ->
             routeBuilder.route(network.name) {
-                it.path(true, "/${network.slug}/**")
+                it.path(true, "/networks/${network.slug}/**")
                     .filters { filter ->
                         filter.rewritePath(
                             "/${network.slug}/(?<segment>.*)",
