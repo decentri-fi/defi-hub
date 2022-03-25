@@ -1,6 +1,13 @@
 #!/bin/bash
 
+docker build -t defitrack/defitrack:arbitrum-${BRANCH_NAME} defitrack-rest/defitrack-blockchain-services/defitrack-arbitrum
+docker build -t defitrack/defitrack:avalanche-${BRANCH_NAME} defitrack-rest/defitrack-blockchain-services/defitrack-avalanche
+docker build -t defitrack/defitrack:bsc-${BRANCH_NAME} defitrack-rest/defitrack-blockchain-services/defitrack-bsc
+docker build -t defitrack/defitrack:ethereum-${BRANCH_NAME} defitrack-rest/defitrack-blockchain-services/defitrack-ethereum
+docker build -t defitrack/defitrack:fantom-${BRANCH_NAME} defitrack-rest/defitrack-blockchain-services/defitrack-fantom
+docker build -t defitrack/defitrack:optimism-${BRANCH_NAME} defitrack-rest/defitrack-blockchain-services/defitrack-optimism
 docker build -t defitrack/defitrack:polygon-${BRANCH_NAME} defitrack-rest/defitrack-blockchain-services/defitrack-polygon
+docker build -t defitrack/defitrack:polygon-mumbai-${BRANCH_NAME} defitrack-rest/defitrack-blockchain-services/defitrack-polygon-mumbai
 
 docker build -t defitrack/defitrack:uniswap-${BRANCH_NAME} defitrack-rest/defitrack-protocol-services/defitrack-uniswap
 docker build -t defitrack/defitrack:quickswap-${BRANCH_NAME} defitrack-rest/defitrack-protocol-services/defitrack-quickswap

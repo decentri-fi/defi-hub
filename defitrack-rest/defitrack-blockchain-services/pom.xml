@@ -15,5 +15,12 @@
     <modules>
         <module>defitrack-blockchain-service</module>
         <module>defitrack-polygon</module>
+        <module>defitrack-ethereum</module>
+        <module>defitrack-optimism</module>
+        <module>defitrack-arbitrum</module>
+        <module>defitrack-fantom</module>
+        <module>defitrack-avalanche</module>
+        <module>defitrack-bsc</module>
+        <module>defitrack-polygon-mumbai</module>
     </modules>
 </project>

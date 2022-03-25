@@ -1,5 +1,6 @@
 package io.defitrack.polygon.config
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.common.network.Network
 import io.defitrack.evm.abi.AbiDecoder
 import io.defitrack.evm.contract.ContractInteractionCommand
@@ -7,8 +8,10 @@ import io.defitrack.evm.contract.EvmContractAccessor
 import io.defitrack.evm.web3j.EvmGateway
 import io.ktor.client.*
 import io.ktor.client.request.*
+import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.web3j.protocol.core.methods.response.EthCall
 
@@ -17,6 +20,7 @@ class PolygonContractAccessor(
     abiDecoder: AbiDecoder,
     private val polygonGateway: PolygonGateway,
     private val httpClient: HttpClient,
+    @Value("\${io.defitrack.services.polygon.endpoint:http://defitrack-polygon:8080}") private val polygonMicroserviceEndpoint: String,
 ) :
     EvmContractAccessor(abiDecoder) {
 
@@ -25,12 +29,14 @@ class PolygonContractAccessor(
         contract: String,
         encodedFunction: String
     ): EthCall = runBlocking(Dispatchers.IO) {
-        httpClient.post("http://defitrack-polygon:8080/contract") {
-            this.body = ContractInteractionCommand(
-                from = from,
-                contract = contract,
-                function = encodedFunction
-            )
+       httpClient.post("$polygonMicroserviceEndpoint/contract/call") {
+            contentType(ContentType.Application.Json)
+            this.body =
+                ContractInteractionCommand(
+                    from = from,
+                    contract = contract,
+                    function = encodedFunction
+                )
         }
     }
 
