@@ -2,7 +2,8 @@ package io.defitrack.protocol.quickswap.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.polygon.config.PolygonContractAccessor
+import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.contract.DQuickContract
 import io.defitrack.protocol.quickswap.QuickswapService
@@ -15,7 +16,7 @@ import java.math.BigInteger
 @Service
 class DQuickStakingService(
     private val quickswapService: QuickswapService,
-    private val polygonContractAccessor: PolygonContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway,
     private val abiResource: ABIResource,
     erC20Resource: ERC20Resource
 ) : UserStakingService(erC20Resource) {
@@ -52,7 +53,7 @@ class DQuickStakingService(
     }
 
     private fun dquickContract() = DQuickContract(
-        polygonContractAccessor,
+        contractAccessorGateway.getGateway(getNetwork()),
         dquickStakingABI,
         quickswapService.getDQuickContract(),
     )

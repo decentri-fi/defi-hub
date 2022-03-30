@@ -3,7 +3,8 @@ package io.defitrack.protocol.compound.borrowing
 import io.defitrack.abi.ABIResource
 import io.defitrack.borrowing.domain.BorrowElement
 import io.defitrack.common.network.Network
-import io.defitrack.ethereum.config.EthereumContractAccessor
+import io.defitrack.ethereum.config.EthereumContractAccessorConfig
+import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.compound.CompoundComptrollerContract
@@ -19,7 +20,7 @@ import java.math.RoundingMode
 class CompoundBorrowingService(
     private val compoundService: CompoundService,
     private val abiResource: ABIResource,
-    private val ethereumContractAccessor: EthereumContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway,
     private val erC20Service: ERC20Resource
 ) : io.defitrack.borrowing.BorrowService {
 
@@ -30,6 +31,8 @@ class CompoundBorrowingService(
     val cTokenABI by lazy {
         abiResource.getABI("compound/ctoken.json")
     }
+
+    val gateway = contractAccessorGateway.getGateway(getNetwork())
 
     fun getBorrowRate(compoundTokenContract: CompoundTokenContract): BigDecimal {
         val blocksPerDay = 6463
@@ -54,12 +57,12 @@ class CompoundBorrowingService(
     }
 
     private fun getTokenContracts() = CompoundComptrollerContract(
-        ethereumContractAccessor,
+        gateway,
         comptrollerABI,
         compoundService.getComptroller()
     ).getMarkets().map {
         CompoundTokenContract(
-            ethereumContractAccessor,
+            gateway,
             cTokenABI,
             it
         )
@@ -67,7 +70,7 @@ class CompoundBorrowingService(
 
     override suspend fun getBorrows(address: String): List<BorrowElement> {
         val tokenContracts = getTokenContracts()
-        return ethereumContractAccessor.readMultiCall(
+        return gateway.readMultiCall(
             tokenContracts.map {
                 MultiCallElement(
                     it.borrowBalanceStoredFunction(address),

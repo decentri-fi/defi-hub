@@ -2,7 +2,8 @@ package io.defitrack.protocol.uniswap.pooling
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
-import io.defitrack.ethereum.config.EthereumContractAccessor
+import io.defitrack.ethereum.config.EthereumContractAccessorConfig
+import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.pool.UserPoolingService
 import io.defitrack.pool.domain.PoolingElement
 import io.defitrack.protocol.Protocol
@@ -17,11 +18,12 @@ import java.math.BigInteger
 class UniswapUserPoolingService(
     private val etrhereumUniswapV2Service: EthereumUniswapV2Service,
     private val erC20Resource: ERC20Resource,
-    private val ethereumContractAccessor: EthereumContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway,
 ) : UserPoolingService() {
 
     override suspend fun fetchUserPoolings(address: String): List<PoolingElement> {
         val allPairs = etrhereumUniswapV2Service.getPairs()
+        val ethereumContractAccessor = contractAccessorGateway.getGateway(getNetwork())
 
         return erC20Resource.getBalancesFor(address, allPairs.map { it.id }, ethereumContractAccessor)
             .mapIndexed { index, balance ->

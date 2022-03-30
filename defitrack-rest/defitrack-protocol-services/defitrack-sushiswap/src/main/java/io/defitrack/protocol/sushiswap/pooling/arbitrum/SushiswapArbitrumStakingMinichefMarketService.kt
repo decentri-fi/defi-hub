@@ -2,7 +2,8 @@ package io.defitrack.protocol.sushiswap.pooling.arbitrum
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.polygon.config.PolygonContractAccessor
+import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
@@ -23,7 +24,7 @@ class SushiswapArbitrumStakingMinichefMarketService(
     private val abiResource: ABIResource,
     private val erC20Resource: ERC20Resource,
     private val priceResource: PriceResource,
-    private val polygonContractAccessor: PolygonContractAccessor
+    private val contractAccessorGateway: ContractAccessorGateway
 ) : StakingMarketService() {
 
     val minichefABI by lazy {
@@ -33,7 +34,7 @@ class SushiswapArbitrumStakingMinichefMarketService(
     override suspend fun fetchStakingMarkets(): List<StakingMarketElement> {
         return SushiArbitrumService.getMiniChefs().map {
             MiniChefV2Contract(
-                polygonContractAccessor,
+                contractAccessorGateway.getGateway(getNetwork()),
                 minichefABI,
                 it
             )

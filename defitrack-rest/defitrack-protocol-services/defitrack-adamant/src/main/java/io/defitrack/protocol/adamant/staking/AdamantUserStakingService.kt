@@ -2,7 +2,9 @@ package io.defitrack.protocol.adamant.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.polygon.config.PolygonContractAccessor
+import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.EvmContractAccessor
+import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.adamant.AdamantService
 import io.defitrack.protocol.adamant.AdamantVaultContract
@@ -16,7 +18,7 @@ import java.math.BigInteger
 class AdamantUserStakingService(
     erC20Resource: ERC20Resource,
     private val adamantService: AdamantService,
-    private val polygonContractAccessor: PolygonContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway,
     private val abiResource: ABIResource,
 ) : UserStakingService(
     erC20Resource
@@ -26,18 +28,20 @@ class AdamantUserStakingService(
         abiResource.getABI("adamant/GenericVault.json")
     }
 
+    val gateway = contractAccessorGateway.getGateway(getNetwork())
+
     override fun getStakings(address: String): List<StakingElement> {
 
         val adamantVaultContracts = adamantService.adamantGenericVaults().map {
             AdamantVaultContract(
-                polygonContractAccessor,
+                gateway,
                 genericVault,
                 it.vaultAddress,
                 it.lpAddress
             )
         }
 
-        return erC20Resource.getBalancesFor(address, adamantVaultContracts.map { it.address }, polygonContractAccessor)
+        return erC20Resource.getBalancesFor(address, adamantVaultContracts.map { it.address }, gateway)
             .mapIndexed { index, balance ->
                 if (balance > BigInteger.ZERO) {
                     val vault = adamantVaultContracts[index]

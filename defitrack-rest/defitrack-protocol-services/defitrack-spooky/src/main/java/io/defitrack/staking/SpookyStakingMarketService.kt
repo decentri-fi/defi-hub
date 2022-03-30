@@ -2,7 +2,8 @@ package io.defitrack.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.fantom.config.FantomContractAccessor
+import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.fantom.config.FantomContractAccessorConfig
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SpookyFantomService
@@ -18,12 +19,12 @@ class SpookyStakingMarketService(
     private val abiResource: ABIResource,
     private val erC20Resource: ERC20Resource,
     private val priceResource: PriceResource,
-    private val fantomContractAccessor: FantomContractAccessor
+    private val contractAccessorGateway: ContractAccessorGateway
 ) : StakingMarketService() {
 
     override suspend fun fetchStakingMarkets(): List<StakingMarketElement> {
         val masterchef = MasterchefLpContract(
-            fantomContractAccessor,
+            contractAccessorGateway.getGateway(getNetwork()),
             abiResource.getABI("spooky/Masterchef.json"),
             spookyFantomService.getMasterchef()
         )

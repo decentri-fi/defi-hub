@@ -2,7 +2,7 @@ package io.defitrack.protocol.beefy.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.polygon.config.PolygonContractAccessor
+import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
@@ -10,10 +10,10 @@ import io.defitrack.protocol.beefy.BeefyService
 import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
 import io.defitrack.protocol.beefy.domain.BeefyVault
-import io.defitrack.token.TokenInformation
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.TokenInformation
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -22,7 +22,7 @@ import java.math.RoundingMode
 @Service
 @EnableScheduling
 class BeefyPolygonStakingMarketService(
-    private val polygonContractAccessor: PolygonContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway,
     private val abiResource: ABIResource,
     private val beefyAPYService: BeefyAPYService,
     private val beefyPolygonService: BeefyService,
@@ -103,7 +103,7 @@ class BeefyPolygonStakingMarketService(
 
     private fun beefyVaultToVaultContract(beefyVault: BeefyVault) =
         BeefyVaultContract(
-            polygonContractAccessor,
+            contractAccessorGateway.getGateway(getNetwork()),
             vaultV6ABI,
             beefyVault.earnContractAddress,
             beefyVault.id

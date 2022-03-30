@@ -2,7 +2,8 @@ package io.defitrack.protocol.beefy.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.fantom.config.FantomContractAccessor
+import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.fantom.config.FantomContractAccessorConfig
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
@@ -19,7 +20,7 @@ import java.math.RoundingMode
 
 @Service
 class BeefyFantomUserStakingService(
-    private val fantomContractAccessor: FantomContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway,
     private val abiResource: ABIResource,
     private val beefyAPYService: BeefyAPYService,
     private val stakingMarketService: BeefyFantomStakingMarketService,
@@ -31,13 +32,15 @@ class BeefyFantomUserStakingService(
         abiResource.getABI("beefy/VaultV6.json")
     }
 
+    val gateway = contractAccessorGateway.getGateway(getNetwork())
+
     override fun getStaking(address: String, vaultId: String): StakingElement? {
         return stakingMarketService.getStakingMarkets().firstOrNull {
             it.id == vaultId
         }?.let {
 
             val contract = BeefyVaultContract(
-                fantomContractAccessor,
+                gateway,
                 vaultV6ABI,
                 it.contractAddress,
                 it.id
@@ -51,7 +54,7 @@ class BeefyFantomUserStakingService(
         val markets = stakingMarketService.getStakingMarkets()
 
 
-        return erC20Resource.getBalancesFor(address, markets.map { it.contractAddress }, fantomContractAccessor)
+        return erC20Resource.getBalancesFor(address, markets.map { it.contractAddress }, gateway)
             .mapIndexed { index, balance ->
                 vaultToStakingElement(address, balance)(markets[index])
             }.filterNotNull()
@@ -61,7 +64,7 @@ class BeefyFantomUserStakingService(
         try {
             if (balance > BigInteger.ZERO) {
                 val contract = BeefyVaultContract(
-                    fantomContractAccessor,
+                    gateway,
                     vaultV6ABI,
                     market.contractAddress,
                     market.id

@@ -1,14 +1,15 @@
 package io.defitrack.protocol.quickswap.apr
 
 import io.defitrack.abi.ABIResource
-import io.defitrack.polygon.config.PolygonContractAccessor
+import io.defitrack.common.network.Network
+import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.quickswap.QuickswapDualRewardPoolContract
 import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.runBlocking
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -19,7 +20,7 @@ import kotlin.time.Duration.Companion.hours
 class QuickswapAPRService(
     private val quickswapService: QuickswapService,
     private val abiResource: ABIResource,
-    private val polygonContractAccessor: PolygonContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway,
     private val priceResource: PriceResource,
 ) {
 
@@ -53,7 +54,7 @@ class QuickswapAPRService(
 
     private fun calculateDualRewardPool(address: String): BigDecimal {
         val contract = QuickswapDualRewardPoolContract(
-            polygonContractAccessor,
+            contractAccessorGateway.getGateway(Network.POLYGON),
             stakingDualRewards,
             address
         )
@@ -84,7 +85,7 @@ class QuickswapAPRService(
 
     private fun calculateSingleRewardPool(address: String): BigDecimal {
         val contract = QuickswapRewardPoolContract(
-            polygonContractAccessor,
+            contractAccessorGateway.getGateway(Network.POLYGON),
             stakingRewardsABI,
             address
         )

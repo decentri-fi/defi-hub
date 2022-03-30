@@ -2,7 +2,8 @@ package io.defitrack.protocol.yearn
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.ethereum.config.EthereumContractAccessor
+import io.defitrack.ethereum.config.EthereumContractAccessorConfig
+import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.protocol.Protocol
@@ -16,7 +17,7 @@ import java.math.BigInteger
 @Component
 class YearnUserStakingService(
     private val yearnService: YearnService,
-    private val ethereumContractAccessor: EthereumContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway,
     abiResource: ABIResource,
     erC20Resource: ERC20Resource,
 ) : UserStakingService(
@@ -25,7 +26,11 @@ class YearnUserStakingService(
 
     val erc20ABI = abiResource.getABI("general/ERC20.json")
 
+
+
     override fun getStakings(address: String): List<StakingElement> {
+        val ethereumContractAccessor = contractAccessorGateway.getGateway(getNetwork())
+
         return runBlocking {
             val vaults = yearnService.provideYearnV2Vaults().filter {
                 it.token.symbol.isNotBlank()

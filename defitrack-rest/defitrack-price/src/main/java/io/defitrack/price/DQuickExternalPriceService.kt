@@ -1,10 +1,11 @@
 package io.defitrack.price
 
 import io.defitrack.abi.ABIResource
+import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
-import io.defitrack.polygon.config.PolygonContractAccessor
-import io.defitrack.protocol.quickswap.contract.DQuickContract
+import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.protocol.quickswap.QuickswapService
+import io.defitrack.protocol.quickswap.contract.DQuickContract
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
@@ -17,7 +18,7 @@ class DQuickExternalPriceService(
     quickswapService: QuickswapService,
     private val beefyPricesService: BeefyPricesService,
     private val abiResource: ABIResource,
-    private val polygonContractAccessor: PolygonContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway
 ) : ExternalPriceService {
 
     val dquickStakingABI by lazy {
@@ -38,7 +39,7 @@ class DQuickExternalPriceService(
         return runBlocking {
             cache.get("dquick") {
                 val quickAmount = DQuickContract(
-                    polygonContractAccessor,
+                    contractAccessorGateway.getGateway(Network.POLYGON),
                     dquickStakingABI,
                     dquickAddress
                 ).dquickForQuick(BigInteger.ONE.times(BigInteger.TEN.pow(18)))

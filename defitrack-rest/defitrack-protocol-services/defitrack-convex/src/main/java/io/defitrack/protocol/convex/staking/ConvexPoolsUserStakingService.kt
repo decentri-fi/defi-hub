@@ -2,7 +2,7 @@ package io.defitrack.protocol.convex.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.ethereum.config.EthereumContractAccessor
+import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.convex.ConvexService
 import io.defitrack.protocol.convex.contract.CvxRewardPoolContract
@@ -16,7 +16,7 @@ import java.math.BigInteger
 class ConvexPoolsUserStakingService(
     private val convexService: ConvexService,
     private val abiResource: ABIResource,
-    private val ethereumContractAccessor: EthereumContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway,
     erC20Resource: ERC20Resource,
 ) :
     UserStakingService(erC20Resource) {
@@ -26,16 +26,17 @@ class ConvexPoolsUserStakingService(
     }
 
     override fun getStakings(address: String): List<StakingElement> {
+        val gateway = contractAccessorGateway.getGateway(getNetwork())
         val cvxRewardPools = convexService.providePools().map {
             CvxRewardPoolContract(
-                ethereumContractAccessor,
+                gateway,
                 cvxRewardPoolABI,
                 it.address,
                 it.name
             )
         }
 
-        return erC20Resource.getBalancesFor(address, cvxRewardPools.map { it.address }, ethereumContractAccessor)
+        return erC20Resource.getBalancesFor(address, cvxRewardPools.map { it.address }, gateway)
             .mapIndexed { index, balance ->
                 if (balance > BigInteger.ZERO) {
                     val pool = cvxRewardPools[index]

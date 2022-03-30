@@ -11,10 +11,10 @@ import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
 class ConvexBoosterContract(
-    solidityBasedContractAccessor: EvmContractAccessor,
+    evmContractAccessor: EvmContractAccessor,
     abi: String,
     address: String
-) : EvmContract(solidityBasedContractAccessor, abi, address) {
+) : EvmContract(evmContractAccessor, abi, address) {
 
     val poolLength by lazy {
         (read(

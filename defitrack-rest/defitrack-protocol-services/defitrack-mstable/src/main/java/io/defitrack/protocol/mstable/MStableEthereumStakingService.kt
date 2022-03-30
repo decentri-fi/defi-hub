@@ -2,7 +2,8 @@ package io.defitrack.protocol.mstable
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.ethereum.config.EthereumContractAccessor
+import io.defitrack.ethereum.config.EthereumContractAccessorConfig
+import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.protocol.Protocol
 import io.defitrack.staking.UserStakingService
 import io.defitrack.staking.domain.StakingElement
@@ -13,7 +14,7 @@ import java.math.BigInteger
 @Service
 class MStableEthereumStakingService(
     private val mStableEthereumService: MStableEthereumService,
-    private val ethereumContractAccessor: EthereumContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway,
     private val abiResource: ABIResource,
     erC20Resource: ERC20Resource,
 ) : UserStakingService(erC20Resource) {
@@ -23,16 +24,17 @@ class MStableEthereumStakingService(
     }
 
     override fun getStakings(address: String): List<StakingElement> {
+        val gateway = contractAccessorGateway.getGateway(getNetwork())
 
         val vaultContracts = mStableEthereumService.getBoostedSavingsVaults().map {
             MStableEthereumBoostedSavingsVaultContract(
-                ethereumContractAccessor,
+                gateway,
                 boostedSavingsVaultABI,
                 it
             )
         }
 
-        return erC20Resource.getBalancesFor(address, vaultContracts.map { it.address }, ethereumContractAccessor)
+        return erC20Resource.getBalancesFor(address, vaultContracts.map { it.address }, gateway)
             .mapIndexed { index, balance ->
                 if (balance > BigInteger.ZERO) {
                     val contract = vaultContracts[index]

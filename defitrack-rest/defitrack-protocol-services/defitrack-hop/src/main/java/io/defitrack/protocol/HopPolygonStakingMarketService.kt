@@ -2,7 +2,8 @@ package io.defitrack.protocol
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.polygon.config.PolygonContractAccessor
+import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.contract.HopStakingReward
@@ -19,14 +20,14 @@ class HopPolygonStakingMarketService(
     private val hopService: HopService,
     private val erC20Resource: ERC20Resource,
     private val abiResource: ABIResource,
-    private val polygonContractAccessor: PolygonContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway,
     private val priceResource: PriceResource
 ) : StakingMarketService() {
     override suspend fun fetchStakingMarkets(): List<StakingMarketElement> {
         return hopService.getStakingRewards(getNetwork()).map { stakingReward ->
 
             val pool = HopStakingReward(
-                polygonContractAccessor,
+                contractAccessorGateway.getGateway(getNetwork()),
                 abiResource.getABI("quickswap/StakingRewards.json"),
                 stakingReward
             )

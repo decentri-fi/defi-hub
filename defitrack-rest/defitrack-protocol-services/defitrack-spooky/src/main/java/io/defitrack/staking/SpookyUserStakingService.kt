@@ -1,9 +1,8 @@
 package io.defitrack.staking
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.fantom.config.FantomContractAccessor
+import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SpookyFantomService
 import io.defitrack.protocol.reward.MasterchefLpContract
@@ -17,14 +16,16 @@ import java.math.BigInteger
 class SpookyUserStakingService(
     private val spookyStakingMarketService: SpookyStakingMarketService,
     private val spookyFantomService: SpookyFantomService,
-    private val fantomContractAccessor: FantomContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway,
     private val abiResource: ABIResource,
     erC20Resource: ERC20Resource,
 ) : UserStakingService(erC20Resource) {
 
     override fun getStakings(address: String): List<StakingElement> {
+        val gateway = contractAccessorGateway.getGateway(getNetwork())
+
         val masterchef = MasterchefLpContract(
-            fantomContractAccessor,
+            gateway,
             abiResource.getABI("spooky/Masterchef.json"),
             spookyFantomService.getMasterchef()
         )
@@ -33,26 +34,27 @@ class SpookyUserStakingService(
             spookyStakingMarketService.getStakingMarkets()
         }
 
-        return fantomContractAccessor.readMultiCall(masterchef.userInfo(address)).mapIndexed { index, value ->
-            val balance = value[0].value
-            if ((balance as BigInteger) > BigInteger.ZERO) {
-                val stakingMarket = stakingMarkets[index]
-                StakingElement(
-                    id = stakingMarket.id,
-                    network = getNetwork(),
-                    protocol = getProtocol(),
-                    name = stakingMarket.name,
-                    contractAddress = stakingMarket.contractAddress,
-                    vaultType = stakingMarket.vaultType,
-                    rate = stakingMarket.rate.toDouble(),
-                    stakedToken = stakingMarket.token,
-                    rewardTokens = stakingMarket.reward,
-                    amount = balance
-                )
-            } else {
-                null
-            }
-        }.filterNotNull()
+        return gateway.readMultiCall(masterchef.userInfo(address))
+            .mapIndexed { index, value ->
+                val balance = value[0].value
+                if ((balance as BigInteger) > BigInteger.ZERO) {
+                    val stakingMarket = stakingMarkets[index]
+                    StakingElement(
+                        id = stakingMarket.id,
+                        network = getNetwork(),
+                        protocol = getProtocol(),
+                        name = stakingMarket.name,
+                        contractAddress = stakingMarket.contractAddress,
+                        vaultType = stakingMarket.vaultType,
+                        rate = stakingMarket.rate.toDouble(),
+                        stakedToken = stakingMarket.token,
+                        rewardTokens = stakingMarket.reward,
+                        amount = balance
+                    )
+                } else {
+                    null
+                }
+            }.filterNotNull()
     }
 
     override fun getProtocol(): Protocol {

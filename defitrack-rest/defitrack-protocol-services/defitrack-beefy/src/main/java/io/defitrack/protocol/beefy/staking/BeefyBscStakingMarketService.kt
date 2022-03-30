@@ -1,9 +1,10 @@
 package io.defitrack.protocol.beefy.staking
 
 import io.defitrack.abi.ABIResource
-import io.defitrack.bsc.BscContractAccessor
+import io.defitrack.bsc.BscContractAccessorConfig
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
+import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
@@ -21,7 +22,7 @@ import java.math.BigDecimal.ZERO
 
 @Service
 class BeefyBscStakingMarketService(
-    private val bscContractAccessor: BscContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway,
     private val abiResource: ABIResource,
     private val beefyAPYService: BeefyAPYService,
     private val beefyPolygonService: BeefyService,
@@ -32,6 +33,8 @@ class BeefyBscStakingMarketService(
     val vaultV6ABI by lazy {
         abiResource.getABI("beefy/VaultV6.json")
     }
+
+    val gateway = contractAccessorGateway.getGateway(getNetwork())
 
     override suspend fun fetchStakingMarkets(): List<StakingMarketElement> {
         return beefyPolygonService.beefyBscVaults
@@ -101,7 +104,7 @@ class BeefyBscStakingMarketService(
 
     private fun beefyVaultToVaultContract(beefyVault: BeefyVault) =
         BeefyVaultContract(
-            bscContractAccessor,
+            gateway,
             vaultV6ABI,
             beefyVault.earnContractAddress,
             beefyVault.id

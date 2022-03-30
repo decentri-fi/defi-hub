@@ -4,7 +4,8 @@ import io.defitrack.balance.BalanceService
 import io.defitrack.balance.TokenBalance
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
-import io.defitrack.polygon.config.PolygonContractAccessor
+import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.token.ERC20Resource
 import io.ktor.client.*
 import io.ktor.client.request.*
@@ -17,7 +18,7 @@ import java.math.BigInteger
 class PolygonBalanceService(
     private val erC20Service: ERC20Resource,
     private val httpClient: HttpClient,
-    private val polygonContractAccessor: PolygonContractAccessor
+    private val contractAccessorGateway: ContractAccessorGateway,
 ) : BalanceService {
 
     override fun getNetwork(): Network = Network.POLYGON
@@ -40,7 +41,7 @@ class PolygonBalanceService(
             return emptyList()
         }
 
-        return erC20Service.getBalancesFor(user, tokenAddresses, polygonContractAccessor)
+        return erC20Service.getBalancesFor(user, tokenAddresses, contractAccessorGateway.getGateway(getNetwork()))
             .mapIndexed { i, balance ->
                 if (balance > BigInteger.ZERO) {
                     val token = erC20Service.getTokenInformation(getNetwork(), tokenAddresses[i])

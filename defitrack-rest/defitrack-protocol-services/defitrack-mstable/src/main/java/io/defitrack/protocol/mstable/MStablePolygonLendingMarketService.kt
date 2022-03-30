@@ -2,9 +2,10 @@ package io.defitrack.protocol.mstable
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
+import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.lending.LendingMarketService
 import io.defitrack.lending.domain.LendingMarketElement
-import io.defitrack.polygon.config.PolygonContractAccessor
+import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
@@ -14,7 +15,7 @@ class MStablePolygonLendingMarketService(
     private val mStableService: MStablePolygonService,
     private val abiResource: ABIResource,
     private val tokenService: ERC20Resource,
-    private val polygonContractAccessor: PolygonContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway
 ) : LendingMarketService() {
 
     val savingsContractABI by lazy {
@@ -24,7 +25,7 @@ class MStablePolygonLendingMarketService(
     override suspend fun fetchLendingMarkets(): List<LendingMarketElement> {
         return mStableService.getSavingsContracts().map {
             MStableEthereumSavingsContract(
-                polygonContractAccessor,
+                contractAccessorGateway.getGateway(getNetwork()),
                 savingsContractABI,
                 it
             )

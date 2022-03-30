@@ -2,7 +2,7 @@ package io.defitrack.protocol.mstable
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.ethereum.config.EthereumContractAccessor
+import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.lending.LendingService
 import io.defitrack.lending.domain.LendingElement
 import io.defitrack.protocol.Protocol
@@ -16,7 +16,7 @@ class MStableEthereumLendingService(
     private val mStableService: MStableEthereumService,
     private val abiResource: ABIResource,
     private val erC20Resource: ERC20Resource,
-    private val ethereumContractAccessor: EthereumContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway
 ) : LendingService {
 
     val savingsContractABI by lazy {
@@ -32,15 +32,16 @@ class MStableEthereumLendingService(
     }
 
     override suspend fun getLendings(address: String): List<LendingElement> {
+        val gateway = contractAccessorGateway.getGateway(getNetwork())
         val contracts = mStableService.getSavingsContracts().map {
             MStableEthereumSavingsContract(
-                ethereumContractAccessor,
+                gateway,
                 savingsContractABI,
                 it
             )
         }
 
-        return erC20Resource.getBalancesFor(address, contracts.map { it.address }, ethereumContractAccessor)
+        return erC20Resource.getBalancesFor(address, contracts.map { it.address }, gateway)
             .mapIndexed { index, balance ->
                 if (balance > BigInteger.ZERO) {
                     val contract = contracts[index]

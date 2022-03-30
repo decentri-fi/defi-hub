@@ -2,7 +2,8 @@ package io.defitrack.protocol.beefy.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.arbitrum.config.ArbitrumContractAccessor
+import io.defitrack.arbitrum.config.ArbitrumContractAccessorConfig
+import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
@@ -20,7 +21,7 @@ import java.math.RoundingMode
 
 @Service
 class BeefyArbitrumStakingMarketService(
-    private val arbitrumContractAccessor: ArbitrumContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway,
     private val abiResource: ABIResource,
     private val beefyAPYService: BeefyAPYService,
     private val beefyService: BeefyService,
@@ -96,7 +97,7 @@ class BeefyArbitrumStakingMarketService(
 
     private fun beefyVaultToVaultContract(beefyVault: BeefyVault) =
         BeefyVaultContract(
-            arbitrumContractAccessor,
+            contractAccessorGateway.getGateway(getNetwork()),
             vaultV6ABI,
             beefyVault.earnContractAddress,
             beefyVault.id

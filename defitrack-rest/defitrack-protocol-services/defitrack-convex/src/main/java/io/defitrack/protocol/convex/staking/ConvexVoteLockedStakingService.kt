@@ -2,7 +2,7 @@ package io.defitrack.protocol.convex.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.ethereum.config.EthereumContractAccessor
+import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.convex.ConvexService
 import io.defitrack.protocol.convex.contract.CvxLockerContract
@@ -16,7 +16,7 @@ import java.math.BigInteger
 class ConvexVoteLockedStakingService(
     private val convexService: ConvexService,
     private val abiResource: ABIResource,
-    private val ethereumContractAccessor: EthereumContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway,
     erC20Resource: ERC20Resource
 ) :
     UserStakingService(erC20Resource) {
@@ -28,7 +28,7 @@ class ConvexVoteLockedStakingService(
     override fun getStakings(address: String): List<StakingElement> {
         val cvxRewardPools = listOf(convexService.lockedRewardPool()).map {
             CvxLockerContract(
-                ethereumContractAccessor,
+                contractAccessorGateway.getGateway(getNetwork()),
                 cvxRewardPoolABI,
                 it.address,
                 it.name

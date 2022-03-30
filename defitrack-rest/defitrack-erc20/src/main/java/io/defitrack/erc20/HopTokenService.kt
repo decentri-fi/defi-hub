@@ -38,8 +38,8 @@ class HopTokenService(
             TokenInformation(
                 name = saddleToken.name,
                 symbol = saddleToken.symbol,
-                tokenInformation0 = token0?.toToken(),
-                tokenInformation1 = token1?.toToken(),
+                tokenInformation0 = token0.toToken(),
+                tokenInformation1 = token1.toToken(),
                 address = address,
                 decimals = saddleToken.decimals,
                 totalSupply = saddleToken.totalSupply,
@@ -51,7 +51,7 @@ class HopTokenService(
 
     fun getContractAccessor(network: Network): EvmContractAccessor {
         return contractAccessors.find {
-            it.getNetwork() == network
+            it.network == network
         } ?: throw IllegalArgumentException("$network not supported")
     }
 }

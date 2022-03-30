@@ -5,9 +5,10 @@ import io.defitrack.claimable.ClaimableElement
 import io.defitrack.claimable.ClaimableService
 import io.defitrack.claimable.ClaimableToken
 import io.defitrack.common.network.Network
+import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.evm.contract.EvmContractAccessor.Companion.toAddress
 import io.defitrack.evm.contract.multicall.MultiCallElement
-import io.defitrack.polygon.config.PolygonContractAccessor
+import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.adamant.AdamantService
@@ -25,18 +26,20 @@ import java.math.RoundingMode
 class AdamantClaimableService(
     private val abiResource: ABIResource,
     private val adamantService: AdamantService,
-    private val polygonContractAccessor: PolygonContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway,
     private val erC20Resource: ERC20Resource,
     private val priceService: PriceResource
 ) : ClaimableService {
 
     val genericVaultABI = abiResource.getABI("adamant/GenericVault.json")
 
+    val gateway = contractAccessorGateway.getGateway(getNetwork())
+
     override fun claimables(address: String): List<ClaimableElement> {
 
         val vaultContracts = adamantService.adamantGenericVaults().map {
             AdamantVaultContract(
-                polygonContractAccessor,
+                gateway,
                 genericVaultABI,
                 it.vaultAddress,
                 it.lpAddress
@@ -44,7 +47,7 @@ class AdamantClaimableService(
         }
 
 
-        return polygonContractAccessor.readMultiCall(
+        return gateway.readMultiCall(
             vaultContracts.map {
                 MultiCallElement(
                     it.createFunction(
@@ -63,7 +66,7 @@ class AdamantClaimableService(
                 val vault = vaultContracts[index]
 
                 val strategy = StrategyContract(
-                    polygonContractAccessor,
+                    gateway,
                     abiResource.getABI("adamant/IStrategy.json"),
                     vault.strategy
                 )

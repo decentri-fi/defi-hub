@@ -3,7 +3,8 @@ package io.defitrack.protocol.beefy.staking
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
-import io.defitrack.polygon.config.PolygonContractAccessor
+import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
@@ -20,7 +21,7 @@ import java.math.RoundingMode
 
 @Service
 class BeefyPolygonUserStakingService(
-    private val polygonContractAccessor: PolygonContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway,
     private val abiResource: ABIResource,
     private val beefyAPYService: BeefyAPYService,
     private val polygonStakingMarketService: BeefyPolygonStakingMarketService,
@@ -31,6 +32,8 @@ class BeefyPolygonUserStakingService(
     val vaultV6ABI by lazy {
         abiResource.getABI("beefy/VaultV6.json")
     }
+
+    val gateway = contractAccessorGateway.getGateway(getNetwork())
 
     override fun getStaking(address: String, vaultId: String): StakingElement? {
         return polygonStakingMarketService.getStakingMarkets().firstOrNull {
@@ -45,7 +48,7 @@ class BeefyPolygonUserStakingService(
     override fun getStakings(address: String): List<StakingElement> {
         val markets = polygonStakingMarketService.getStakingMarkets()
 
-        return erC20Resource.getBalancesFor(address, markets.map { it.contractAddress }, polygonContractAccessor)
+        return erC20Resource.getBalancesFor(address, markets.map { it.contractAddress }, gateway)
             .mapIndexed { index, balance ->
                 vaultToStakingElement(balance)(markets[index])
             }.filterNotNull()
@@ -55,7 +58,7 @@ class BeefyPolygonUserStakingService(
         try {
             if (balance > BigInteger.ZERO) {
                 val contract = BeefyVaultContract(
-                    polygonContractAccessor,
+                    gateway,
                     vaultV6ABI,
                     market.contractAddress,
                     market.id

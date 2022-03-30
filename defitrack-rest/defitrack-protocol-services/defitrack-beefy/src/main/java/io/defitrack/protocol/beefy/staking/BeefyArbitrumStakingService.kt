@@ -2,7 +2,8 @@ package io.defitrack.protocol.beefy.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.arbitrum.config.ArbitrumContractAccessor
+import io.defitrack.arbitrum.config.ArbitrumContractAccessorConfig
+import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
@@ -19,7 +20,7 @@ import java.math.RoundingMode
 
 @Service
 class BeefyArbitrumStakingService(
-    private val arbitrumContractAccessor: ArbitrumContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway,
     private val abiResource: ABIResource,
     private val beefyAPYService: BeefyAPYService,
     private val stakingMarketService: BeefyArbitrumStakingMarketService,
@@ -31,13 +32,15 @@ class BeefyArbitrumStakingService(
         abiResource.getABI("beefy/VaultV6.json")
     }
 
+    val gateway =contractAccessorGateway.getGateway(getNetwork())
+
     override fun getStaking(address: String, vaultId: String): StakingElement? {
         return stakingMarketService.getStakingMarkets().firstOrNull {
             it.id == vaultId
         }?.let {
 
             val contract = BeefyVaultContract(
-                arbitrumContractAccessor,
+                gateway,
                 vaultV6ABI,
                 it.contractAddress,
                 it.id
@@ -50,7 +53,7 @@ class BeefyArbitrumStakingService(
     override fun getStakings(address: String): List<StakingElement> {
         val markets = stakingMarketService.getStakingMarkets()
 
-        return erC20Resource.getBalancesFor(address, markets.map { it.contractAddress }, arbitrumContractAccessor)
+        return erC20Resource.getBalancesFor(address, markets.map { it.contractAddress }, gateway)
             .mapIndexed { index, balance ->
                 vaultToStakingElement(balance)(markets[index])
             }.filterNotNull()
@@ -60,7 +63,7 @@ class BeefyArbitrumStakingService(
         try {
             if (balance > BigInteger.ZERO) {
                 val contract = BeefyVaultContract(
-                    arbitrumContractAccessor,
+                    gateway,
                     vaultV6ABI,
                     market.contractAddress,
                     market.id

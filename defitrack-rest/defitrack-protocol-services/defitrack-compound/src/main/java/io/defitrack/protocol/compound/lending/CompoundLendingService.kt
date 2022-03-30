@@ -2,7 +2,8 @@ package io.defitrack.protocol.compound.lending
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.ethereum.config.EthereumContractAccessor
+import io.defitrack.ethereum.config.EthereumContractAccessorConfig
+import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.lending.LendingService
 import io.defitrack.lending.domain.LendingElement
 import io.defitrack.protocol.Protocol
@@ -19,7 +20,7 @@ import java.math.RoundingMode
 class CompoundLendingService(
     private val compoundService: CompoundService,
     private val abiResource: ABIResource,
-    private val ethereumContractAccessor: EthereumContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway,
     private val erC20Service: ERC20Resource
 ) : LendingService {
 
@@ -30,6 +31,8 @@ class CompoundLendingService(
     val cTokenABI by lazy {
         abiResource.getABI("compound/ctoken.json")
     }
+
+    val gateway = contractAccessorGateway.getGateway(getNetwork())
 
     fun getBorrowRate(compoundTokenContract: CompoundTokenContract): BigDecimal {
         val blocksPerDay = 6463
@@ -56,7 +59,7 @@ class CompoundLendingService(
     override suspend fun getLendings(address: String): List<LendingElement> {
         val compoundTokenContracts = getTokenContracts()
 
-        return erC20Service.getBalancesFor(address, compoundTokenContracts.map { it.address }, ethereumContractAccessor)
+        return erC20Service.getBalancesFor(address, compoundTokenContracts.map { it.address }, gateway)
             .mapIndexed { index, balance ->
                 if (balance > BigInteger.ZERO) {
                     val tokenContract = compoundTokenContracts[index]
@@ -82,12 +85,12 @@ class CompoundLendingService(
     }
 
     private fun getTokenContracts() = CompoundComptrollerContract(
-        ethereumContractAccessor,
+        gateway,
         comptrollerABI,
         compoundService.getComptroller()
     ).getMarkets().map {
         CompoundTokenContract(
-            ethereumContractAccessor,
+            gateway,
             cTokenABI,
             it
         )

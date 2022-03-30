@@ -2,7 +2,8 @@ package io.defitrack.protocol.sushiswap.pooling.fantom
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.fantom.config.FantomContractAccessor
+import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.fantom.config.FantomContractAccessorConfig
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
@@ -23,7 +24,7 @@ class SushiswapFantomStakingMinichefMarketService(
     private val abiResource: ABIResource,
     private val erC20Resource: ERC20Resource,
     private val priceResource: PriceResource,
-    private val fantomContractAccessor: FantomContractAccessor
+    private val contractAccessorGateway: ContractAccessorGateway
 ) : StakingMarketService() {
 
     val minichefABI by lazy {
@@ -33,7 +34,7 @@ class SushiswapFantomStakingMinichefMarketService(
     override suspend fun fetchStakingMarkets(): List<StakingMarketElement> {
         return SushiFantomService.getMiniChefs().map {
             MiniChefV2Contract(
-                fantomContractAccessor,
+                contractAccessorGateway.getGateway(getNetwork()),
                 minichefABI,
                 it
             )

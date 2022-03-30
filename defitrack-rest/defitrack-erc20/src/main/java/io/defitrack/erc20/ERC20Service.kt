@@ -2,6 +2,7 @@ package io.defitrack.erc20
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
+import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.contract.EvmContractAccessor
 import io.github.reactivecircus.cache4k.Cache
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Service
 @Service
 class ERC20Service(
     private val abiService: ABIResource,
-    private val contractAccessors: List<EvmContractAccessor>
+    private val contractAccessorGateway: ContractAccessorGateway
 ) {
 
     val erc20Buffer = Cache.Builder().build<String, ERC20Contract>()
@@ -27,7 +28,7 @@ class ERC20Service(
         return runBlocking(Dispatchers.IO) {
             erc20Buffer.get(key) {
                 ERC20Contract(
-                    getContractAccessor(network),
+                    contractAccessorGateway.getGateway(network),
                     erc20ABI,
                     correctAddress
                 )
@@ -43,15 +44,8 @@ class ERC20Service(
         }
     }
 
-
-    fun getContractAccessor(network: Network): EvmContractAccessor {
-        return contractAccessors.find {
-            it.getNetwork() == network
-        } ?: throw IllegalArgumentException("$network not supported")
-    }
-
     fun getBalance(network: Network, address: String, userAddress: String) = ERC20Contract(
-        getContractAccessor(network),
+        contractAccessorGateway.getGateway(network),
         erc20ABI,
         address
     ).balanceOf(userAddress)

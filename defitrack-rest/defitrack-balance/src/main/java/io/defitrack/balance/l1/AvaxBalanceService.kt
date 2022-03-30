@@ -1,11 +1,12 @@
 package io.defitrack.balance.l1
 
-import io.defitrack.avalanche.config.AvalancheContractAccessor
+import io.defitrack.avalanche.config.AvalancheContractAccessorConfig
 import io.defitrack.avalanche.config.AvalancheGateway
 import io.defitrack.balance.BalanceService
 import io.defitrack.balance.TokenBalance
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
+import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import org.web3j.protocol.core.DefaultBlockParameterName
@@ -15,7 +16,7 @@ import java.math.BigInteger
 @Service
 class AvaxBalanceService(
     private val avalancheGateway: AvalancheGateway,
-    private val avalancheContractAccessor: AvalancheContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway,
     private val erC20Service: ERC20Resource
 ) : BalanceService {
 
@@ -34,7 +35,7 @@ class AvaxBalanceService(
             return emptyList()
         }
 
-        return erC20Service.getBalancesFor(user, tokenAddresses, avalancheContractAccessor)
+        return erC20Service.getBalancesFor(user, tokenAddresses, contractAccessorGateway.getGateway(getNetwork()))
             .mapIndexed { i, balance ->
                 if (balance > BigInteger.ZERO) {
                     val token = erC20Service.getTokenInformation(getNetwork(), tokenAddresses[i])

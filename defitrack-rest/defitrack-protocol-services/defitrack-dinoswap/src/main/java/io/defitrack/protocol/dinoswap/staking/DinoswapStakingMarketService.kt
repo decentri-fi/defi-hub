@@ -2,7 +2,8 @@ package io.defitrack.protocol.dinoswap.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.polygon.config.PolygonContractAccessor
+import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.dinoswap.DinoswapFossilFarmsContract
 import io.defitrack.protocol.dinoswap.DinoswapService
@@ -10,14 +11,13 @@ import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
-import java.math.BigDecimal
 
 @Service
 class DinoswapStakingMarketService(
     private val dinoswapService: DinoswapService,
     private val abiResource: ABIResource,
     private val tokenService: ERC20Resource,
-    private val polygonContractAccessor: PolygonContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway
 ) : StakingMarketService() {
 
     val fossilFarms by lazy {
@@ -27,7 +27,7 @@ class DinoswapStakingMarketService(
     override suspend fun fetchStakingMarkets(): List<StakingMarketElement> {
         return dinoswapService.getDinoFossilFarms().map {
             DinoswapFossilFarmsContract(
-                polygonContractAccessor,
+                contractAccessorGateway.getGateway(getNetwork()),
                 fossilFarms,
                 it
             )

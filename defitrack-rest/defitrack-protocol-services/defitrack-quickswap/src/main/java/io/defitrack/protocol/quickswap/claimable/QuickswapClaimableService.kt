@@ -5,9 +5,10 @@ import io.defitrack.claimable.ClaimableElement
 import io.defitrack.claimable.ClaimableService
 import io.defitrack.claimable.ClaimableToken
 import io.defitrack.common.network.Network
+import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.evm.contract.EvmContractAccessor.Companion.toAddress
 import io.defitrack.evm.contract.multicall.MultiCallElement
-import io.defitrack.polygon.config.PolygonContractAccessor
+import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
 import io.defitrack.protocol.quickswap.QuickswapService
@@ -20,7 +21,7 @@ import java.math.BigInteger
 @Service
 class QuickswapClaimableService(
     private val quickswapService: QuickswapService,
-    private val polygonContractAccessor: PolygonContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway,
     private val abiService: ABIResource,
     private val erC20Resource: ERC20Resource
 ) : ClaimableService {
@@ -30,15 +31,17 @@ class QuickswapClaimableService(
     }
 
     override fun claimables(address: String): List<ClaimableElement> {
+        val gateway = contractAccessorGateway.getGateway(getNetwork())
+
         val pools = quickswapService.getVaultAddresses().map {
             QuickswapRewardPoolContract(
-                polygonContractAccessor,
+                gateway,
                 stakingRewardsABI,
                 it,
             )
         }
 
-        return polygonContractAccessor.readMultiCall(pools.map { contract ->
+        return gateway.readMultiCall(pools.map { contract ->
             MultiCallElement(
                 contract.createFunction(
                     "earned",

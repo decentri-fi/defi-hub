@@ -2,7 +2,8 @@ package io.defitrack.protocol.quickswap.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.polygon.config.PolygonContractAccessor
+import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
 import io.defitrack.protocol.quickswap.QuickswapService
@@ -16,7 +17,7 @@ import java.math.BigInteger
 @Service
 class QuickswapUserStakingService(
     private val quickswapService: QuickswapService,
-    private val polygonContractAccessor: PolygonContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway,
     private val abiService: ABIResource,
     private val quickswapAPRService: QuickswapAPRService,
     tokenService: ERC20Resource,
@@ -31,16 +32,17 @@ class QuickswapUserStakingService(
     }
 
     private fun getRewardVaults(address: String): List<StakingElement> {
+        val gateway = contractAccessorGateway.getGateway(getNetwork())
         val pools = quickswapService.getVaultAddresses().map {
             QuickswapRewardPoolContract(
-                polygonContractAccessor,
+                gateway,
                 stakingRewardsABI,
                 it
             )
         }
 
 
-        return erC20Resource.getBalancesFor(address, pools.map { it.address }, polygonContractAccessor)
+        return erC20Resource.getBalancesFor(address, pools.map { it.address }, gateway)
             .mapIndexed { index, balance ->
                 if (balance > BigInteger.ZERO) {
 

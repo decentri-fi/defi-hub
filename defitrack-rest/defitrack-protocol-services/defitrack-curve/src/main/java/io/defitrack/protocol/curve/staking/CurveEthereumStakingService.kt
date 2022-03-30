@@ -1,7 +1,7 @@
 package io.defitrack.protocol.curve.staking
 
 import io.defitrack.common.network.Network
-import io.defitrack.ethereum.config.EthereumContractAccessor
+import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.crv.CurveEthereumService
 import io.defitrack.staking.UserStakingService
@@ -15,7 +15,7 @@ import java.math.BigInteger
 @Service
 class CurveEthereumStakingService(
     private val curveEthereumService: CurveEthereumService,
-    private val ethereumContractAccessor: EthereumContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway,
     erC20Resource: ERC20Resource,
 ) : UserStakingService(erC20Resource) {
 
@@ -26,7 +26,11 @@ class CurveEthereumStakingService(
             it.pool != null
         }
 
-        return erC20Resource.getBalancesFor(address, gauges.map { it.address }, ethereumContractAccessor)
+        return erC20Resource.getBalancesFor(
+            address,
+            gauges.map { it.address },
+            contractAccessorGateway.getGateway(getNetwork())
+        )
             .mapIndexed { index, balance ->
                 if (balance > BigInteger.ZERO) {
                     val gauge = gauges[index]

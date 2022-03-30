@@ -2,7 +2,8 @@ package io.defitrack.protocol.dinoswap.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.polygon.config.PolygonContractAccessor
+import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.dinoswap.DinoswapFossilFarmsContract
 import io.defitrack.protocol.dinoswap.DinoswapService
@@ -17,7 +18,7 @@ class DinoswapUserStakingService(
     private val dinoService: DinoswapService,
     private val abiResource: ABIResource,
     erC20Resource: ERC20Resource,
-    private val polygonContractAccessor: PolygonContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway
 ) : UserStakingService(erC20Resource) {
 
     val fossilFarms by lazy {
@@ -28,7 +29,7 @@ class DinoswapUserStakingService(
 
         val polycatMasterChefContracts = dinoService.getDinoFossilFarms().map {
             DinoswapFossilFarmsContract(
-                polygonContractAccessor,
+                contractAccessorGateway.getGateway(getNetwork()),
                 fossilFarms,
                 it
             )

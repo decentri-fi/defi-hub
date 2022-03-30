@@ -1,15 +1,14 @@
 package io.defitrack.evm.contract
 
-import com.github.michaelbull.retry.policy.binaryExponentialBackoff
-import com.github.michaelbull.retry.policy.limitAttempts
-import com.github.michaelbull.retry.policy.plus
-import com.github.michaelbull.retry.retry
 import io.defitrack.common.network.Network
 import io.defitrack.evm.abi.AbiDecoder
 import io.defitrack.evm.abi.domain.AbiContractEvent
 import io.defitrack.evm.abi.domain.AbiContractFunction
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.evm.web3j.EvmGateway
+import io.ktor.client.*
+import io.ktor.client.request.*
+import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.codec.binary.Hex
@@ -22,21 +21,19 @@ import org.web3j.abi.datatypes.*
 import org.web3j.abi.datatypes.generated.Int128
 import org.web3j.abi.datatypes.generated.Uint256
 import org.web3j.abi.datatypes.generated.Uint8
-import org.web3j.protocol.core.DefaultBlockParameterName
-import org.web3j.protocol.core.methods.request.Transaction
 import org.web3j.protocol.core.methods.response.EthCall
 import java.math.BigInteger
 import java.util.Collections.emptyList
 import org.web3j.abi.datatypes.Function as Web3Function
 
 
-abstract class EvmContractAccessor(val abiDecoder: AbiDecoder) {
-
-    abstract fun getMulticallContract(): String
-
-    abstract fun getNetwork(): Network
-
-    abstract fun getGateway(): EvmGateway
+class EvmContractAccessor(
+    val abiDecoder: AbiDecoder,
+    val network: Network,
+    val multicallContractAddress: String,
+    val httpClient: HttpClient,
+    val endpoint: String
+) {
 
     open fun readMultiCall(elements: List<MultiCallElement>): List<List<Type<*>>> {
         val encodedFunctions = elements.map {
@@ -57,7 +54,7 @@ abstract class EvmContractAccessor(val abiDecoder: AbiDecoder) {
                 object : TypeReference<DynamicArray<DynamicBytes?>?>() {})
         )
 
-        val data = executeCall(getMulticallContract(), aggregateFunction)[1].value as List<DynamicBytes>
+        val data = executeCall(multicallContractAddress, aggregateFunction)[1].value as List<DynamicBytes>
 
         return data.map {
             val element = elements[data.indexOf(it)]
@@ -90,19 +87,19 @@ abstract class EvmContractAccessor(val abiDecoder: AbiDecoder) {
         return FunctionReturnDecoder.decode(ethCall.value, function.outputParameters)
     }
 
-    open fun call(
-        from: String? = "0x0000000000000000000000000000000000000000",
+    fun call(
+        from: String?,
         contract: String,
         encodedFunction: String
     ): EthCall = runBlocking(Dispatchers.IO) {
-        retry(limitAttempts(10) + binaryExponentialBackoff(base = 10L, max = 60000L)) {
-            getGateway().web3j().ethCall(
-                Transaction.createEthCallTransaction(
-                    from,
-                    contract,
-                    encodedFunction
-                ), DefaultBlockParameterName.LATEST
-            ).send()
+        httpClient.post("$endpoint/contract/call") {
+            contentType(ContentType.Application.Json)
+            this.body =
+                ContractInteractionCommand(
+                    from = from,
+                    contract = contract,
+                    function = encodedFunction
+                )
         }
     }
 

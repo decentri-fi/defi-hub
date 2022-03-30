@@ -2,26 +2,23 @@ package io.defitrack.protocol.idex
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.polygon.config.PolygonContractAccessor
+import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.protocol.Protocol
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import java.math.BigDecimal
 
 @Component
 class IdexFarmingMarketService(
     private val abiResource: ABIResource,
     private val tokenService: ERC20Resource,
-    private val polygonContractAccessor: PolygonContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway,
     private val idexService: IdexService
 ) : StakingMarketService() {
 
-    companion object {
-        private val logger = LoggerFactory.getLogger(this::class.java)
-    }
 
     val minichefABI by lazy {
         abiResource.getABI("idex/IdexFarm.json")
@@ -30,7 +27,7 @@ class IdexFarmingMarketService(
     override suspend fun fetchStakingMarkets(): List<StakingMarketElement> {
         return idexService.idexFarm().map {
             IdexFarmContract(
-                polygonContractAccessor,
+                contractAccessorGateway.getGateway(getNetwork()),
                 minichefABI,
                 it
             )

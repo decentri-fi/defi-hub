@@ -1,8 +1,8 @@
 package io.defitrack.protocol.beefy.staking
 
 import io.defitrack.abi.ABIResource
-import io.defitrack.bsc.BscContractAccessor
 import io.defitrack.common.network.Network
+import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
@@ -19,7 +19,7 @@ import java.math.RoundingMode
 
 @Service
 class BeefyBscStakingService(
-    private val bscContractAccessor: BscContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway,
     private val abiResource: ABIResource,
     private val beefyAPYService: BeefyAPYService,
     private val stakingMarketService: BeefyBscStakingMarketService,
@@ -31,13 +31,15 @@ class BeefyBscStakingService(
         abiResource.getABI("beefy/VaultV6.json")
     }
 
+    val gateway = contractAccessorGateway.getGateway(getNetwork())
+
     override fun getStaking(address: String, vaultId: String): StakingElement? {
         return stakingMarketService.getStakingMarkets().firstOrNull {
             it.id == vaultId
         }?.let {
 
             val contract = BeefyVaultContract(
-                bscContractAccessor,
+                gateway,
                 vaultV6ABI,
                 it.contractAddress,
                 it.id
@@ -51,7 +53,7 @@ class BeefyBscStakingService(
         val markets = stakingMarketService.getStakingMarkets()
 
 
-        return erC20Resource.getBalancesFor(address, markets.map { it.contractAddress }, bscContractAccessor)
+        return erC20Resource.getBalancesFor(address, markets.map { it.contractAddress }, gateway)
             .mapIndexed { index, balance ->
                 vaultToStakingElement(balance)(markets[index])
             }.filterNotNull()
@@ -61,7 +63,7 @@ class BeefyBscStakingService(
         try {
             if (balance > BigInteger.ZERO) {
                 val contract = BeefyVaultContract(
-                    bscContractAccessor,
+                    gateway,
                     vaultV6ABI,
                     market.contractAddress,
                     market.id

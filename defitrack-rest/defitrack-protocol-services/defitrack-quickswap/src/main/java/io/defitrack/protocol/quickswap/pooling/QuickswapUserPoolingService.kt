@@ -3,9 +3,10 @@ package io.defitrack.protocol.quickswap.pooling
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
+import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.contract.multicall.MultiCallElement
-import io.defitrack.polygon.config.PolygonContractAccessor
+import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.pool.UserPoolingService
 import io.defitrack.pool.domain.PoolingElement
 import io.defitrack.protocol.Protocol
@@ -18,7 +19,7 @@ import java.math.BigInteger
 @Service
 class QuickswapUserPoolingService(
     private val quickswapService: QuickswapService,
-    private val polygonContractAccessor: PolygonContractAccessor,
+    private val contractAccessorGateway: ContractAccessorGateway,
     private val abiservice: ABIResource
 ) : UserPoolingService() {
 
@@ -27,13 +28,16 @@ class QuickswapUserPoolingService(
     }
 
     override suspend fun fetchUserPoolings(address: String): List<PoolingElement> {
+
+        val gateway = contractAccessorGateway.getGateway(getNetwork())
+
         val tokens = quickswapService.getPairs()
 
-        return polygonContractAccessor.readMultiCall(
+        return gateway.readMultiCall(
             tokens.map { token ->
                 MultiCallElement(
                     ERC20Contract(
-                        polygonContractAccessor,
+                        gateway,
                         erc20ABI,
                         token.id
                     ).balanceOfMethod(address),
