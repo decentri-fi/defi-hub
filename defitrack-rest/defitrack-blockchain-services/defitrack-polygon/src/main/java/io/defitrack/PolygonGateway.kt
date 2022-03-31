@@ -1,4 +1,4 @@
-package io.defitrack.polygon.config
+package io.defitrack
 
 import io.defitrack.evm.web3j.EvmGateway
 import org.slf4j.Logger

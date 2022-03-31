@@ -1,6 +1,7 @@
 package io.defitrack.evm.contract
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.evm.abi.AbiDecoder
 import io.defitrack.evm.abi.domain.AbiContractEvent
 import io.defitrack.evm.abi.domain.AbiContractFunction
@@ -22,6 +23,7 @@ import org.web3j.abi.datatypes.generated.Int128
 import org.web3j.abi.datatypes.generated.Uint256
 import org.web3j.abi.datatypes.generated.Uint8
 import org.web3j.protocol.core.methods.response.EthCall
+import java.math.BigDecimal
 import java.math.BigInteger
 import java.util.Collections.emptyList
 import org.web3j.abi.datatypes.Function as Web3Function
@@ -34,6 +36,15 @@ class EvmContractAccessor(
     val httpClient: HttpClient,
     val endpoint: String
 ) {
+
+    fun getNativeBalance(address: String): BigDecimal = runBlocking {
+        httpClient.get<BigInteger>(
+            "$endpoint/balances/$address"
+
+        ).toBigDecimal().dividePrecisely(
+            BigDecimal.TEN.pow(18)
+        )
+    }
 
     open fun readMultiCall(elements: List<MultiCallElement>): List<List<Type<*>>> {
         val encodedFunctions = elements.map {

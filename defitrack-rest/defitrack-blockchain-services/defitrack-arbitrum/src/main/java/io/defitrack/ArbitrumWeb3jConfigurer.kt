@@ -1,4 +1,4 @@
-package io.defitrack.polygon.config
+package io.defitrack
 
 import okhttp3.OkHttpClient
 import org.slf4j.Logger
@@ -17,12 +17,9 @@ import java.util.concurrent.ScheduledThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
 @Configuration
-class PolygonWeb3jConfigurer(@Value("\${io.defitrack.polygon.endpoint.url}") private val endpoint: String) {
-
-
+class ArbitrumWeb3jConfigurer(@Value("\${io.defitrack.arbitrum.endpoint.url}") private val endpoint: String) {
     protected var webSocketClient: WebSocketClient? = null
-
-    val logger: Logger = LoggerFactory.getLogger(PolygonWeb3jConfigurer::class.java)
+    val logger: Logger = LoggerFactory.getLogger(ArbitrumWeb3jConfigurer::class.java)
 
     fun assureConnection() {
         try {
@@ -38,11 +35,11 @@ class PolygonWeb3jConfigurer(@Value("\${io.defitrack.polygon.endpoint.url}") pri
     }
 
     @Primary
-    @Bean("polygonWeb3j")
+    @Bean("arbitrumWeb3j")
     @Throws(ConnectException::class)
-    fun ethereumWeb3j(): Web3j {
-        return if (endpoint.startsWith("ws")) {
-            this.webSocketClient = WebSocketClient(URI.create(endpoint))
+    fun bscWeb3j(): Web3j {
+        return if (ethereumBasedEndpoint().startsWith("ws")) {
+            this.webSocketClient = WebSocketClient(URI.create(ethereumBasedEndpoint()))
             val webSocketService = WebSocketService(webSocketClient, false)
             webSocketService.connect({
 
@@ -59,8 +56,10 @@ class PolygonWeb3jConfigurer(@Value("\${io.defitrack.polygon.endpoint.url}") pri
             builder.writeTimeout(60, TimeUnit.SECONDS)
             builder.readTimeout(60, TimeUnit.SECONDS)
             builder.callTimeout(60, TimeUnit.SECONDS)
-            val httpService = HttpService(endpoint, false)
+            val httpService = HttpService(ethereumBasedEndpoint(), false)
             return Web3j.build(httpService, 5L, ScheduledThreadPoolExecutor(5))
         }
     }
+
+    fun ethereumBasedEndpoint(): String = endpoint
 }
