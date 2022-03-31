@@ -17,7 +17,7 @@ class OptimismContractAccessorConfig(
 )  {
 
     @Bean
-    fun fantomContractAccessor(): EvmContractAccessor {
+    fun optimismContractAccessor(): EvmContractAccessor {
         return EvmContractAccessor(
             abiDecoder,
             Network.OPTIMISM,

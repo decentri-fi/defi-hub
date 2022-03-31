@@ -16,7 +16,7 @@ class ArbitrumContractAccessorConfig(
 ) {
 
     @Bean
-    fun fantomContractAccessor(): EvmContractAccessor {
+    fun arbitrumContractAccessor(): EvmContractAccessor {
         return EvmContractAccessor(
             abiDecoder,
             Network.ARBITRUM,
