@@ -34,7 +34,7 @@
         <commons-io.version>2.8.0</commons-io.version>
         <okhttp.version>4.9.1</okhttp.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
-        <kotlin.version>1.6.10</kotlin.version>
+        <kotlin.version>1.6.20</kotlin.version>
         <jackson-module-kotlin.version>2.13.1</jackson-module-kotlin.version>
         <coroutines.version>1.6.0</coroutines.version>
         <ktor.version>1.6.7</ktor.version>
