@@ -4,6 +4,7 @@ import okhttp3.OkHttpClient
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.web3j.protocol.Web3j
@@ -35,7 +36,7 @@ class Web3JProvider(@Value("\${io.defitrack.evm.endpoint.url}") private val endp
         }
     }
 
-    @Primary
+    @Bean
     @Throws(ConnectException::class)
     fun web3j(): Web3j {
         return if (endpoint.startsWith("ws")) {
