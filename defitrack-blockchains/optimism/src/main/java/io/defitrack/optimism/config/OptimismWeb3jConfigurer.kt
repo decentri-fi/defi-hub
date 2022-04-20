@@ -37,7 +37,7 @@ class OptimismWeb3jConfigurer(@Value("\${io.defitrack.optimism.endpoint.url}") p
     @Primary
     @Bean("optimismWeb3j")
     @Throws(ConnectException::class)
-    fun bscWeb3j(): Web3j {
+    fun optimismWeb3j(): Web3j {
         return if (ethereumBasedEndpoint().startsWith("ws")) {
             this.webSocketClient = WebSocketClient(URI.create(ethereumBasedEndpoint()))
             val webSocketService = WebSocketService(webSocketClient, false)

@@ -11,7 +11,7 @@ import org.web3j.protocol.Web3j
 @Component
 class OptimismGateway(
     val abstractWeb3JConfigurer: OptimismWeb3jConfigurer,
-    @Qualifier("arbitrumWeb3j") val web3j: Web3j,
+    @Qualifier("optimismWeb3j") val web3j: Web3j,
 ) : EvmGateway {
 
     @Scheduled(fixedRate = 20000)
