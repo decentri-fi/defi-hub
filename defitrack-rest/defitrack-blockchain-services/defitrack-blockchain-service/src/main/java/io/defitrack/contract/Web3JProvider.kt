@@ -1,10 +1,9 @@
-package io.defitrack.avalanche.config
+package io.defitrack.contract
 
 import okhttp3.OkHttpClient
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.web3j.protocol.Web3j
@@ -17,9 +16,11 @@ import java.util.concurrent.ScheduledThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
 @Configuration
-class AvalancheWeb3jConfigurer(@Value("\${io.defitrack.avalanche.endpoint.url}") private val endpoint: String) {
+class Web3JProvider(@Value("\${io.defitrack.evm.endpoint.url}") private val endpoint: String) {
+
     protected var webSocketClient: WebSocketClient? = null
-    val logger: Logger = LoggerFactory.getLogger(AvalancheWeb3jConfigurer::class.java)
+
+    val logger: Logger = LoggerFactory.getLogger(Web3JProvider::class.java)
 
     fun assureConnection() {
         try {
@@ -35,11 +36,10 @@ class AvalancheWeb3jConfigurer(@Value("\${io.defitrack.avalanche.endpoint.url}")
     }
 
     @Primary
-    @Bean("avalancheWeb3j")
     @Throws(ConnectException::class)
-    fun bscWeb3j(): Web3j {
-        return if (ethereumBasedEndpoint().startsWith("ws")) {
-            this.webSocketClient = WebSocketClient(URI.create(ethereumBasedEndpoint()))
+    fun web3j(): Web3j {
+        return if (endpoint.startsWith("ws")) {
+            this.webSocketClient = WebSocketClient(URI.create(endpoint))
             val webSocketService = WebSocketService(webSocketClient, false)
             webSocketService.connect({
 
@@ -56,10 +56,8 @@ class AvalancheWeb3jConfigurer(@Value("\${io.defitrack.avalanche.endpoint.url}")
             builder.writeTimeout(60, TimeUnit.SECONDS)
             builder.readTimeout(60, TimeUnit.SECONDS)
             builder.callTimeout(60, TimeUnit.SECONDS)
-            val httpService = HttpService(ethereumBasedEndpoint(), false)
+            val httpService = HttpService(endpoint, false)
             return Web3j.build(httpService, 5L, ScheduledThreadPoolExecutor(5))
         }
     }
-
-    fun ethereumBasedEndpoint(): String = endpoint
 }
