@@ -29,7 +29,7 @@ import java.util.Collections.emptyList
 import org.web3j.abi.datatypes.Function as Web3Function
 
 
-class EvmContractAccessor(
+open class EvmContractAccessor(
     val abiDecoder: AbiDecoder,
     val network: Network,
     val multicallContractAddress: String,
