@@ -22,7 +22,7 @@ import java.math.BigDecimal.ZERO
 
 @Service
 class BeefyBscStakingMarketService(
-    private val contractAccessorGateway: ContractAccessorGateway,
+    contractAccessorGateway: ContractAccessorGateway,
     private val abiResource: ABIResource,
     private val beefyAPYService: BeefyAPYService,
     private val beefyPolygonService: BeefyService,
@@ -49,8 +49,6 @@ class BeefyBscStakingMarketService(
 
             val want = erC20Resource.getTokenInformation(getNetwork(), beefyVault.want)
 
-            logger.debug("adding ${beefyVault.name} to beefy vault list")
-
             StakingMarketElement(
                 id = beefyVault.vaultId,
                 network = getNetwork(),
@@ -66,6 +64,7 @@ class BeefyBscStakingMarketService(
                 vaultType = "beefyVaultV6"
             )
         } catch (ex: Exception) {
+            ex.printStackTrace()
             logger.error("Error trying to fetch vault metadata ${beefyVault.vaultId}: ${ex.message}")
             null
         }
