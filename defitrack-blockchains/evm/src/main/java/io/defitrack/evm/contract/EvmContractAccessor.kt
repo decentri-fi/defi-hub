@@ -6,7 +6,6 @@ import io.defitrack.evm.abi.AbiDecoder
 import io.defitrack.evm.abi.domain.AbiContractEvent
 import io.defitrack.evm.abi.domain.AbiContractFunction
 import io.defitrack.evm.contract.multicall.MultiCallElement
-import io.defitrack.evm.web3j.EvmGateway
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.http.*
