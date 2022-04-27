@@ -2,7 +2,7 @@ package io.defitrack.bsc
 
 import io.defitrack.common.network.Network
 import io.defitrack.evm.abi.AbiDecoder
-import io.defitrack.evm.contract.EvmContractAccessor
+import io.defitrack.evm.contract.BlockchainGateway
 import io.ktor.client.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -16,8 +16,8 @@ class BscContractAccessorConfig(
 ) {
 
     @Bean
-    fun bscContractAccessor(): EvmContractAccessor {
-        return EvmContractAccessor(
+    fun bscContractAccessor(): BlockchainGateway {
+        return BlockchainGateway(
             abiDecoder,
             Network.BSC,
             "0x41263cba59eb80dc200f3e2544eda4ed6a90e76c",

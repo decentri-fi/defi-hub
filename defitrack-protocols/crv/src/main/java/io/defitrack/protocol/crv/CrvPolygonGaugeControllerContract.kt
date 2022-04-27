@@ -1,8 +1,8 @@
 package io.defitrack.protocol.crv
 
 import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.contract.EvmContractAccessor
-import io.defitrack.evm.contract.EvmContractAccessor.Companion.toUint256
+import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.BlockchainGateway.Companion.toUint256
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Utf8String
@@ -11,7 +11,7 @@ import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
 class CrvPolygonGaugeControllerContract(
-    ethereumContractAccessor: EvmContractAccessor,
+    ethereumContractAccessor: BlockchainGateway,
     abi: String,
     address: String,
 ) : EvmContract(
@@ -44,7 +44,7 @@ class CrvPolygonGaugeControllerContract(
 }
 
 class CrvPolygonGauge(
-    ethereumContractAccessor: EvmContractAccessor,
+    ethereumContractAccessor: BlockchainGateway,
     abi: String,
     address: String,
 ) : EvmContract(ethereumContractAccessor, abi, address) {

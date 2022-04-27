@@ -1,10 +1,10 @@
 package io.defitrack.protocol.crv
 
 import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.contract.EvmContractAccessor
+import io.defitrack.evm.contract.BlockchainGateway
 
 class CrvPolygonPool(
-    ethereumContractAccessor: EvmContractAccessor,
+    ethereumContractAccessor: BlockchainGateway,
     abi: String,
     address: String
 ) : EvmContract(ethereumContractAccessor, abi, address)

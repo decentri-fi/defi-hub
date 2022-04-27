@@ -2,7 +2,7 @@ package io.defitrack.fantom.config
 
 import io.defitrack.common.network.Network
 import io.defitrack.evm.abi.AbiDecoder
-import io.defitrack.evm.contract.EvmContractAccessor
+import io.defitrack.evm.contract.BlockchainGateway
 import io.ktor.client.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -16,8 +16,8 @@ class FantomContractAccessorConfig(
 ) {
 
     @Bean
-    fun fantomContractAccessor(): EvmContractAccessor {
-        return EvmContractAccessor(
+    fun fantomContractAccessor(): BlockchainGateway {
+        return BlockchainGateway(
             abiDecoder,
             Network.FANTOM,
             "0x2d5408f2287bf9f9b05404794459a846651d0a59",

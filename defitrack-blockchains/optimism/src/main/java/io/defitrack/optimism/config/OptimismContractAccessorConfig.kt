@@ -2,7 +2,7 @@ package io.defitrack.optimism.config
 
 import io.defitrack.common.network.Network
 import io.defitrack.evm.abi.AbiDecoder
-import io.defitrack.evm.contract.EvmContractAccessor
+import io.defitrack.evm.contract.BlockchainGateway
 import io.ktor.client.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -16,8 +16,8 @@ class OptimismContractAccessorConfig(
 ) {
 
     @Bean
-    fun optimismContractAccessor(): EvmContractAccessor {
-        return EvmContractAccessor(
+    fun optimismContractAccessor(): BlockchainGateway {
+        return BlockchainGateway(
             abiDecoder,
             Network.OPTIMISM,
             "0xaFE0A0302134df664f0EE212609CA8Fb89255BE4",

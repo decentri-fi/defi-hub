@@ -5,9 +5,8 @@ import com.github.michaelbull.retry.retry
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ERC20Contract
-import io.defitrack.evm.contract.EvmContractAccessor
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.multicall.MultiCallElement
-import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.Dispatchers
@@ -46,12 +45,12 @@ class ERC20Resource(
     fun getBalancesFor(
         address: String,
         tokens: List<String>,
-        evmContractAccessor: EvmContractAccessor
+        blockchainGateway: BlockchainGateway
     ): List<BigInteger> {
-        return evmContractAccessor.readMultiCall(tokens.map {
+        return blockchainGateway.readMultiCall(tokens.map {
             MultiCallElement(
                 ERC20Contract(
-                    evmContractAccessor,
+                    blockchainGateway,
                     erc20ABI,
                     it
                 ).balanceOfMethod(address),

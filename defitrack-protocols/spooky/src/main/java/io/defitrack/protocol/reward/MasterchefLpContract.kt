@@ -1,9 +1,9 @@
 package io.defitrack.protocol.reward
 
 import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.contract.EvmContractAccessor
-import io.defitrack.evm.contract.EvmContractAccessor.Companion.toAddress
-import io.defitrack.evm.contract.EvmContractAccessor.Companion.toUint256
+import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
+import io.defitrack.evm.contract.BlockchainGateway.Companion.toUint256
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
@@ -11,11 +11,11 @@ import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
 class MasterchefLpContract(
-    evmContractAccessor: EvmContractAccessor,
+    blockchainGateway: BlockchainGateway,
     abi: String,
     address: String
 ) : EvmContract(
-    evmContractAccessor, abi, address
+    blockchainGateway, abi, address
 ) {
 
     val poolLength by lazy {
@@ -87,7 +87,7 @@ class MasterchefLpContract(
             )
         }
 
-        val results = this.evmContractAccessor.readMultiCall(
+        val results = this.blockchainGateway.readMultiCall(
             multicalls
         )
         results.map { retVal ->

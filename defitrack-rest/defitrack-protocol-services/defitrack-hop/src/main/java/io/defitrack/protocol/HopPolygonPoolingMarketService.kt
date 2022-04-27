@@ -3,7 +3,6 @@ package io.defitrack.protocol
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ContractAccessorGateway
-import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.pool.PoolingMarketService
 import io.defitrack.pool.domain.PoolingMarketElement
 import io.defitrack.price.PriceRequest
@@ -32,13 +31,13 @@ class HopPolygonPoolingMarketService(
         return hopService.getLps(getNetwork()).map { hopLpToken ->
 
             val contract = HopLpTokenContract(
-                evmContractAccessor = gateway,
+                blockchainGateway = gateway,
                 abiResource.getABI("hop/SaddleToken.json"),
                 hopLpToken.lpToken
             )
 
             val swapContract = HopSwapContract(
-                evmContractAccessor = gateway,
+                blockchainGateway = gateway,
                 abiResource.getABI("hop/Swap.json"),
                 contract.swap
             )

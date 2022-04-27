@@ -1,7 +1,7 @@
 package io.defitrack.protocol.yearn
 
 import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.contract.EvmContractAccessor
+import io.defitrack.evm.contract.BlockchainGateway
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Utf8String
@@ -9,7 +9,7 @@ import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
 class YearnEthereumVaultV2Contract(
-    ethereumContractAccessor: EvmContractAccessor,
+    ethereumContractAccessor: BlockchainGateway,
     abi: String,
     address: String
 ) : EvmContract(ethereumContractAccessor, abi, address) {

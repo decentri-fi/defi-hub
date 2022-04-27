@@ -1,10 +1,10 @@
 package io.defitrack.protocol.adamant
 
 import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.contract.EvmContractAccessor
+import io.defitrack.evm.contract.BlockchainGateway
 
 class StrategyContract(
-    solidityBasedContractAccessor: EvmContractAccessor,
+    solidityBasedContractAccessor: BlockchainGateway,
     abi: String,
     address: String
 ) : EvmContract(solidityBasedContractAccessor, abi, address) {

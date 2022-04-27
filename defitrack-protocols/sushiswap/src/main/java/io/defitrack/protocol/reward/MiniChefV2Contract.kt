@@ -1,9 +1,9 @@
 package io.defitrack.protocol.reward
 
 import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.contract.EvmContractAccessor
-import io.defitrack.evm.contract.EvmContractAccessor.Companion.toAddress
-import io.defitrack.evm.contract.EvmContractAccessor.Companion.toUint256
+import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
+import io.defitrack.evm.contract.BlockchainGateway.Companion.toUint256
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
@@ -13,9 +13,9 @@ import org.web3j.abi.datatypes.generated.Uint64
 import java.math.BigInteger
 
 class MiniChefV2Contract(
-    evmContractAccessor: EvmContractAccessor,
+    blockchainGateway: BlockchainGateway,
     abi: String, address: String
-) : EvmContract(evmContractAccessor, abi, address) {
+) : EvmContract(blockchainGateway, abi, address) {
 
 
     fun accSushiPerShare(poolIndex: Int): BigInteger {
@@ -38,7 +38,7 @@ class MiniChefV2Contract(
             )
         }
 
-        val results = this.evmContractAccessor.readMultiCall(
+        val results = this.blockchainGateway.readMultiCall(
             multicalls
         )
         results.map { retVal ->
@@ -86,7 +86,7 @@ class MiniChefV2Contract(
                 this.address
             )
         }
-        val results = this.evmContractAccessor.readMultiCall(multicalls)
+        val results = this.blockchainGateway.readMultiCall(multicalls)
         results.map { retVal ->
             retVal[0].value as String
         }

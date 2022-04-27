@@ -2,8 +2,8 @@ package io.defitrack.protocol.compound
 
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.contract.EvmContractAccessor
-import io.defitrack.evm.contract.EvmContractAccessor.Companion.toAddress
+import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.generated.Uint256
@@ -11,7 +11,7 @@ import java.math.BigDecimal
 import java.math.BigInteger
 
 class CompoundTokenContract(
-    ethereumContractAccessor: EvmContractAccessor,
+    ethereumContractAccessor: BlockchainGateway,
     abi: String,
     address: String,
 ) : EvmContract(

@@ -3,7 +3,6 @@ package io.defitrack.evm.contract
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.evm.abi.AbiDecoder
-import io.defitrack.evm.abi.domain.AbiContractEvent
 import io.defitrack.evm.abi.domain.AbiContractFunction
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.ktor.client.*
@@ -28,7 +27,7 @@ import java.util.Collections.emptyList
 import org.web3j.abi.datatypes.Function as Web3Function
 
 
-open class EvmContractAccessor(
+open class BlockchainGateway(
     val abiDecoder: AbiDecoder,
     val network: Network,
     val multicallContractAddress: String,
@@ -126,22 +125,6 @@ open class EvmContractAccessor(
             .elements
             .filterIsInstance<AbiContractFunction>()
             .first { it.name.equals(method, ignoreCase = true) }
-    }
-
-
-    fun getNonConstantFunction(abi: String, method: String): AbiContractFunction? {
-        return abiDecoder.decode(abi)
-            .elements
-            .filterIsInstance<AbiContractFunction>()
-            .filter { !it.isConstant }
-            .firstOrNull { it.name.equals(method, ignoreCase = true) }
-    }
-
-    fun getEvent(abi: String, event: String): AbiContractEvent? {
-        return abiDecoder.decode(abi)
-            .elements
-            .filterIsInstance<AbiContractEvent>()
-            .firstOrNull { it.name.equals(event, ignoreCase = true) }
     }
 
     companion object {

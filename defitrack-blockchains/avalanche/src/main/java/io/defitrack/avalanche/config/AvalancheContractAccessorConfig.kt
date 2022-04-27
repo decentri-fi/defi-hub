@@ -2,7 +2,7 @@ package io.defitrack.avalanche.config
 
 import io.defitrack.common.network.Network
 import io.defitrack.evm.abi.AbiDecoder
-import io.defitrack.evm.contract.EvmContractAccessor
+import io.defitrack.evm.contract.BlockchainGateway
 import io.ktor.client.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -17,8 +17,8 @@ class AvalancheContractAccessorConfig(
 
 
     @Bean
-    fun avalancheContractAccessor(): EvmContractAccessor {
-        return EvmContractAccessor(
+    fun avalancheContractAccessor(): BlockchainGateway {
+        return BlockchainGateway(
             abiDecoder,
             Network.AVALANCHE,
             "0x6FfF95AC47b586bDDEea244b3c2fe9c4B07b9F76",

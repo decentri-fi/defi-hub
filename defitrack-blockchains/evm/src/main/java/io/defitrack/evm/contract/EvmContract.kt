@@ -6,7 +6,7 @@ import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.Type
 
 abstract class EvmContract(
-    val evmContractAccessor: EvmContractAccessor,
+    val blockchainGateway: BlockchainGateway,
     val abi: String,
     val address: String
 ) {
@@ -16,8 +16,8 @@ abstract class EvmContract(
         inputs: List<Type<*>> = emptyList(),
         outputs: List<TypeReference<out Type<*>>?>? = null
     ): Function {
-        return EvmContractAccessor.createFunction(
-            evmContractAccessor.getFunction(abi, method),
+        return BlockchainGateway.createFunction(
+            blockchainGateway.getFunction(abi, method),
             inputs,
             outputs
         )
@@ -25,9 +25,9 @@ abstract class EvmContract(
 
 
     fun readConstant(method: String): List<Type<*>> {
-        return evmContractAccessor.readFunction(
+        return blockchainGateway.readFunction(
             address = address,
-            function = evmContractAccessor.getConstantFunction(
+            function = blockchainGateway.getConstantFunction(
                 abi,
                 method
             )
@@ -36,8 +36,8 @@ abstract class EvmContract(
 
     fun readMultiple(requests: List<ReadRequest>): List<List<Type<*>>> {
         val functions = requests.map {
-            val abiFunction = evmContractAccessor.getFunction(abi, it.method)
-            val function = EvmContractAccessor.createFunction(
+            val abiFunction = blockchainGateway.getFunction(abi, it.method)
+            val function = BlockchainGateway.createFunction(
                 abiFunction, it.inputs, it.outputs
             )
             MultiCallElement(
@@ -45,7 +45,7 @@ abstract class EvmContract(
                 address
             )
         }
-        return evmContractAccessor.readMultiCall(functions)
+        return blockchainGateway.readMultiCall(functions)
     }
 
     fun read(
@@ -53,11 +53,11 @@ abstract class EvmContract(
         inputs: List<Type<*>> = emptyList(),
         outputs: List<TypeReference<out Type<*>>?>? = null
     ): List<Type<*>> {
-        return evmContractAccessor.readFunction(
+        return blockchainGateway.readFunction(
             address = address,
             inputs = inputs,
             outputs = outputs,
-            function = evmContractAccessor.getFunction(
+            function = blockchainGateway.getFunction(
                 abi,
                 method
             )
@@ -65,10 +65,10 @@ abstract class EvmContract(
     }
 
     fun readConstant(method: String, inputs: List<Type<*>>): List<Type<*>> {
-        return evmContractAccessor.readFunction(
+        return blockchainGateway.readFunction(
             address = address,
             inputs = inputs,
-            function = evmContractAccessor.getConstantFunction(
+            function = blockchainGateway.getConstantFunction(
                 abi,
                 method
             )
@@ -80,10 +80,10 @@ abstract class EvmContract(
         inputs: List<Type<*>>,
         outputs: List<TypeReference<out Type<*>>?>? = null
     ): List<Type<*>> {
-        return evmContractAccessor.readFunction(
+        return blockchainGateway.readFunction(
             address = address,
             inputs = inputs,
-            function = evmContractAccessor.getConstantFunction(
+            function = blockchainGateway.getConstantFunction(
                 abi,
                 method
             ),

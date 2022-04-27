@@ -1,11 +1,11 @@
 package io.defitrack.protocol.mstable
 
 import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.contract.EvmContractAccessor
+import io.defitrack.evm.contract.BlockchainGateway
 import java.math.BigInteger
 
 class MStableEthereumSavingsContract(
-    ethereumContractAccessor: EvmContractAccessor,
+    ethereumContractAccessor: BlockchainGateway,
     abi: String,
     address: String
 ) : EvmContract(ethereumContractAccessor, abi, address) {

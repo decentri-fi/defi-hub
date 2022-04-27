@@ -24,7 +24,7 @@ class PolygcatStakingAprCalculator(
         val poolBlockRewards = allSushiPerSecond.times(poolInfo.allocPoint).divide(chef.totalAllocPoint)
         return Reward(
             address = chef.rewardToken,
-            network = chef.evmContractAccessor.network,
+            network = chef.blockchainGateway.network,
             amount = poolBlockRewards.toBigDecimal().divide(BigDecimal.TEN.pow(18), 18, RoundingMode.HALF_UP),
             tokenType = TokenType.SINGLE
         )
@@ -38,16 +38,16 @@ class PolygcatStakingAprCalculator(
 
     override fun getStakedTokens(): List<StakedAsset> {
         val lpAddress = chef.poolInfo(poolId).lpToken
-        val token = erc20Resource.getTokenInformation(chef.evmContractAccessor.network, lpAddress)
+        val token = erc20Resource.getTokenInformation(chef.blockchainGateway.network, lpAddress)
         val balance = erc20Resource.getBalance(
-            chef.evmContractAccessor.network,
+            chef.blockchainGateway.network,
             lpAddress,
             chef.address
         )
         return listOf(
             StakedAsset(
                 address = lpAddress,
-                network = chef.evmContractAccessor.network,
+                network = chef.blockchainGateway.network,
                 amount = balance.toBigDecimal().divide(BigDecimal.TEN.pow(18), 18, RoundingMode.HALF_UP),
                 tokenType = token.type
             )

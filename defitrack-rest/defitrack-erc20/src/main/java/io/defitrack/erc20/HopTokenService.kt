@@ -2,7 +2,7 @@ package io.defitrack.erc20
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.EvmContractAccessor
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.protocol.HopService
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.contract.HopLpTokenContract
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component
 @Component
 class HopTokenService(
     private val abiResource: ABIResource,
-    private val contractAccessors: List<EvmContractAccessor>,
+    private val contractAccessors: List<BlockchainGateway>,
     private val hopService: HopService,
     private val erC20Service: ERC20Service
 ) {
@@ -27,7 +27,7 @@ class HopTokenService(
         }!!.let { hopLpToken ->
 
             val saddleToken = HopLpTokenContract(
-                evmContractAccessor = getContractAccessor(network),
+                blockchainGateway = getContractAccessor(network),
                 abiResource.getABI("hop/SaddleToken.json"),
                 address
             )
@@ -49,7 +49,7 @@ class HopTokenService(
         }
     }
 
-    fun getContractAccessor(network: Network): EvmContractAccessor {
+    fun getContractAccessor(network: Network): BlockchainGateway {
         return contractAccessors.find {
             it.network == network
         } ?: throw IllegalArgumentException("$network not supported")

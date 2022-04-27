@@ -2,7 +2,7 @@ package io.defitrack.evm.contract
 
 import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.retry
-import io.defitrack.evm.contract.EvmContractAccessor.Companion.toAddress
+import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -12,7 +12,7 @@ import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
 open class ERC20Contract(
-    ethereumContractAccessor: EvmContractAccessor,
+    ethereumContractAccessor: BlockchainGateway,
     abi: String,
     address: String
 ) :

@@ -1,15 +1,15 @@
 package io.defitrack.protocol.quickswap
 
 import io.defitrack.evm.contract.*
-import io.defitrack.evm.contract.EvmContractAccessor.Companion.toAddress
-import io.defitrack.evm.contract.EvmContractAccessor.Companion.toUint256
+import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
+import io.defitrack.evm.contract.BlockchainGateway.Companion.toUint256
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
 class QuickswapVaultChefContract(
-    contractAccessor: EvmContractAccessor,
+    contractAccessor: BlockchainGateway,
     abi: String,
     address: String,
 ) : EvmContract(
@@ -107,7 +107,7 @@ data class UserInfo(
 )
 
 class IStrategy(
-    solidityBasedContractAccessor: EvmContractAccessor,
+    solidityBasedContractAccessor: BlockchainGateway,
     abi: String,
     address: String,
 ) : EvmContract(

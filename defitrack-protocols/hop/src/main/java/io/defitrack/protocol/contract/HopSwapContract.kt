@@ -1,14 +1,14 @@
 package io.defitrack.protocol.contract
 
 import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.contract.EvmContractAccessor
+import io.defitrack.evm.contract.BlockchainGateway
 import java.math.BigInteger
 
 class HopSwapContract(
-    evmContractAccessor: EvmContractAccessor,
+    blockchainGateway: BlockchainGateway,
     abi: String,
     address: String
-) : EvmContract(evmContractAccessor, abi, address) {
+) : EvmContract(blockchainGateway, abi, address) {
 
     val virtualPrice by lazy {
         read("getVirtualPrice")[0].value as BigInteger

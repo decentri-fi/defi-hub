@@ -1,9 +1,9 @@
 package io.defitrack.protocol.convex.contract
 
 import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.contract.EvmContractAccessor
-import io.defitrack.evm.contract.EvmContractAccessor.Companion.toAddress
-import io.defitrack.evm.contract.EvmContractAccessor.Companion.toUint256
+import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
+import io.defitrack.evm.contract.BlockchainGateway.Companion.toUint256
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.DynamicBytes
@@ -13,11 +13,11 @@ import org.web3j.abi.datatypes.generated.Uint32
 import java.math.BigInteger
 
 class CvxLockerContract(
-    evmContractAccessor: EvmContractAccessor,
+    blockchainGateway: BlockchainGateway,
     abi: String,
     address: String,
     val name: String
-) : EvmContract(evmContractAccessor, abi, address) {
+) : EvmContract(blockchainGateway, abi, address) {
 
     fun lockedBalances(address: String) {
         val retVal = read(

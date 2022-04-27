@@ -3,8 +3,6 @@ package io.defitrack.protocol.beefy.staking
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ContractAccessorGateway
-import io.defitrack.evm.contract.EvmContractAccessor
-import io.defitrack.fantom.config.FantomContractAccessorConfig
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol

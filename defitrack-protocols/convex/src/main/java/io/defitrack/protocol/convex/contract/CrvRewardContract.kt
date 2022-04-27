@@ -1,15 +1,15 @@
 package io.defitrack.protocol.convex.contract
 
 import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.contract.EvmContractAccessor
+import io.defitrack.evm.contract.BlockchainGateway
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
 class CrvRewardContract(
-    solidityBasedContractAccessor: EvmContractAccessor,
-                        abi: String,
-                        address: String
+    solidityBasedContractAccessor: BlockchainGateway,
+    abi: String,
+    address: String
 ) : EvmContract(solidityBasedContractAccessor, abi, address) {
 
 

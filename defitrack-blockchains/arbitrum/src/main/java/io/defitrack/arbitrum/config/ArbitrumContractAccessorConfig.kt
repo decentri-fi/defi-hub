@@ -2,7 +2,7 @@ package io.defitrack.arbitrum.config
 
 import io.defitrack.common.network.Network
 import io.defitrack.evm.abi.AbiDecoder
-import io.defitrack.evm.contract.EvmContractAccessor
+import io.defitrack.evm.contract.BlockchainGateway
 import io.ktor.client.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -16,8 +16,8 @@ class ArbitrumContractAccessorConfig(
 ) {
 
     @Bean
-    fun arbitrumContractAccessor(): EvmContractAccessor {
-        return EvmContractAccessor(
+    fun arbitrumContractAccessor(): BlockchainGateway {
+        return BlockchainGateway(
             abiDecoder,
             Network.ARBITRUM,
             "0x2d7aca3bD909bc5DC6DC70894669Adfb6483Bf5F",

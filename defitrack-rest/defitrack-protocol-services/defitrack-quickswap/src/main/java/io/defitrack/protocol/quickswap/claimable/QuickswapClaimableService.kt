@@ -6,9 +6,8 @@ import io.defitrack.claimable.ClaimableService
 import io.defitrack.claimable.ClaimableToken
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ContractAccessorGateway
-import io.defitrack.evm.contract.EvmContractAccessor.Companion.toAddress
+import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
 import io.defitrack.evm.contract.multicall.MultiCallElement
-import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
 import io.defitrack.protocol.quickswap.QuickswapService

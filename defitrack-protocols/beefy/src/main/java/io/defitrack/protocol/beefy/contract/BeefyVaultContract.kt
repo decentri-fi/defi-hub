@@ -1,14 +1,14 @@
 package io.defitrack.protocol.beefy.contract
 
 import io.defitrack.evm.contract.ERC20Contract
-import io.defitrack.evm.contract.EvmContractAccessor
+import io.defitrack.evm.contract.BlockchainGateway
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
 class BeefyVaultContract(
-    solidityBasedContractAccessor: EvmContractAccessor,
+    solidityBasedContractAccessor: BlockchainGateway,
     abi: String,
     address: String,
     val vaultId: String,
