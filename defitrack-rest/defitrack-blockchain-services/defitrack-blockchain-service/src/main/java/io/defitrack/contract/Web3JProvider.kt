@@ -60,7 +60,7 @@ class Web3JProvider(@Value("\${io.defitrack.evm.endpoint.url}") private val endp
             builder.callTimeout(60, TimeUnit.SECONDS)
             builder.addInterceptor(
                 RateLimiterInterceptor(
-                    SimpleRateLimiter(15.0)
+                    SimpleRateLimiter(10.0)
                 )
             )
             val httpService = HttpService(endpoint, false)
