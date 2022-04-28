@@ -1,10 +1,7 @@
 package io.defitrack.contract
 
-import com.github.michaelbull.retry.policy.binaryExponentialBackoff
-import com.github.michaelbull.retry.policy.limitAttempts
-import com.github.michaelbull.retry.policy.plus
-import com.github.michaelbull.retry.retry
 import io.defitrack.evm.contract.ContractInteractionCommand
+import io.defitrack.evm.web3j.SimpleRateLimiter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.springframework.web.bind.annotation.PostMapping
@@ -21,19 +18,21 @@ import org.web3j.protocol.core.methods.response.EthCall
 class ContractInteractionRestController(
     private val web3j: Web3j
 ) {
+
+    val simpleRateLimiter = SimpleRateLimiter(10.0)
+
     @PostMapping("/call")
     fun call(@RequestBody contractInteractionCommand: ContractInteractionCommand): EthCall =
         runBlocking(Dispatchers.IO) {
-            retry(limitAttempts(10) + binaryExponentialBackoff(base = 10L, max = 60000L)) {
-                with(contractInteractionCommand) {
-                    web3j.ethCall(
-                        Transaction.createEthCallTransaction(
-                            from,
-                            contract,
-                            function
-                        ), DefaultBlockParameterName.LATEST
-                    ).send()
-                }
+            simpleRateLimiter.acquire()
+            with(contractInteractionCommand) {
+                web3j.ethCall(
+                    Transaction.createEthCallTransaction(
+                        from,
+                        contract,
+                        function
+                    ), DefaultBlockParameterName.LATEST
+                ).send()
             }
         }
 }
