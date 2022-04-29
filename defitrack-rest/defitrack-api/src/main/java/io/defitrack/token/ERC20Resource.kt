@@ -11,6 +11,7 @@ import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.math.BigInteger
 
@@ -18,6 +19,7 @@ import java.math.BigInteger
 class ERC20Resource(
     private val client: HttpClient,
     private val abiResource: ABIResource,
+    @Value("\${erc20ResourceLocation:http://defitrack-erc20:8080}") private val erc20ResourceLocation: String
 ) {
 
     val erc20ABI by lazy {
@@ -26,19 +28,19 @@ class ERC20Resource(
 
     fun getAllTokens(network: Network): List<TokenInformation> {
         return runBlocking(Dispatchers.IO) {
-            retry(limitAttempts(3)) { client.get("https://api.defitrack.io/erc20/${network.name}") }
+            retry(limitAttempts(3)) { client.get("$erc20ResourceLocation/${network.name}") }
         }
     }
 
     fun getBalance(network: Network, tokenAddress: String, user: String): BigInteger {
         return runBlocking(Dispatchers.IO) {
-            client.get("https://api.defitrack.io/erc20/${network.name}/$tokenAddress/$user")
+            client.get("$erc20ResourceLocation/${network.name}/$tokenAddress/$user")
         }
     }
 
     fun getTokenInformation(network: Network, address: String): TokenInformation {
         return runBlocking(Dispatchers.IO) {
-            retry(limitAttempts(3)) { client.get("https://api.defitrack.io/erc20/${network.name}/$address/token") }
+            retry(limitAttempts(3)) { client.get("$erc20ResourceLocation/${network.name}/$address/token") }
         }
     }
 

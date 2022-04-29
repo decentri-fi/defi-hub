@@ -105,7 +105,7 @@ open class BlockchainGateway(
         contract: String,
         encodedFunction: String
     ): EthCall = runBlocking(Dispatchers.IO) {
-        retry(limitAttempts(2) + binaryExponentialBackoff(1000, 10000)) {
+        retry(limitAttempts(5) + binaryExponentialBackoff(1000, 10000)) {
             httpClient.post("$endpoint/contract/call") {
                 contentType(ContentType.Application.Json)
                 this.body =
