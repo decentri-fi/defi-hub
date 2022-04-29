@@ -41,7 +41,11 @@ open class ERC20Contract(
     }
 
     val name by lazy {
-        read("name")[0].value as String
+        try {
+            read("name")[0].value as String
+        } catch (ex: Exception) {
+            "unknown"
+        }
     }
 
     val symbol by lazy {
