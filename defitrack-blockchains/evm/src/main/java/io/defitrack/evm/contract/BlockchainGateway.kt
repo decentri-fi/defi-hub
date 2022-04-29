@@ -1,5 +1,9 @@
 package io.defitrack.evm.contract
 
+import com.github.michaelbull.retry.policy.binaryExponentialBackoff
+import com.github.michaelbull.retry.policy.limitAttempts
+import com.github.michaelbull.retry.policy.plus
+import com.github.michaelbull.retry.retry
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.evm.abi.AbiDecoder
@@ -101,14 +105,16 @@ open class BlockchainGateway(
         contract: String,
         encodedFunction: String
     ): EthCall = runBlocking(Dispatchers.IO) {
-        httpClient.post("$endpoint/contract/call") {
-            contentType(ContentType.Application.Json)
-            this.body =
-                ContractInteractionCommand(
-                    from = from,
-                    contract = contract,
-                    function = encodedFunction
-                )
+        retry(limitAttempts(2) + binaryExponentialBackoff(1000, 10000)) {
+            httpClient.post("$endpoint/contract/call") {
+                contentType(ContentType.Application.Json)
+                this.body =
+                    ContractInteractionCommand(
+                        from = from,
+                        contract = contract,
+                        function = encodedFunction
+                    )
+            }
         }
     }
 
