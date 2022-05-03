@@ -23,7 +23,7 @@ class TokenService(
 ) {
 
 
-    fun getAllTokensForNetwork(network: Network): List<TokenInformation> {
+    suspend fun getAllTokensForNetwork(network: Network): List<TokenInformation> {
         return erC20Repository.allTokens(network).map {
             getTokenInformation(it.address, network)
         }
@@ -61,13 +61,13 @@ class TokenService(
 
     val tokenInformationCache = Cache.Builder().build<String, TokenInformation>()
 
-    fun getTokenInformation(address: String, network: Network): TokenInformation = runBlocking {
+    suspend fun getTokenInformation(address: String, network: Network): TokenInformation  {
 
         if (address == "0x0" || address.lowercase() == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") {
-            return@runBlocking nativeTokenService.getNativeToken(network)
+            return nativeTokenService.getNativeToken(network)
         }
 
-        tokenInformationCache.get("${address}-${network}") {
+        return tokenInformationCache.get("${address}-${network}") {
             val token = erc20Service.getERC20(network, address)
             when {
                 (token.symbol) == "SLP" -> {
@@ -116,7 +116,7 @@ class TokenService(
         return symbol.startsWith("HOP-LP")
     }
 
-    fun fromLP(protocol: Protocol, network: Network, erc20: ERC20): TokenInformation {
+    suspend fun fromLP(protocol: Protocol, network: Network, erc20: ERC20): TokenInformation {
         val lp = LPtokenService.getLP(network, erc20.address)
 
         val token0 = getTokenInformation(

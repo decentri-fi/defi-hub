@@ -13,7 +13,6 @@ import java.math.BigInteger
 class NativeBalanceRestController(
     private val web3j: Web3j
 ) {
-
     @GetMapping("/{address}")
     fun getNativeBalance(@PathVariable("address") address: String): BigInteger {
         return web3j.ethGetBalance(address, DefaultBlockParameterName.LATEST).send().balance

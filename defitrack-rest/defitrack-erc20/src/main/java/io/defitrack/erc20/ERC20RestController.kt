@@ -2,6 +2,7 @@ package io.defitrack.erc20
 
 import io.defitrack.common.network.Network
 import io.defitrack.token.TokenInformation
+import kotlinx.coroutines.runBlocking
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -19,7 +20,11 @@ class ERC20RestController(
     fun getAllTokensForAddress(
         @PathVariable("network") network: Network,
     ): ResponseEntity<List<TokenInformation>> {
-        return ResponseEntity.ok(tokenService.getAllTokensForNetwork(network))
+        return ResponseEntity.ok(
+            runBlocking {
+                tokenService.getAllTokensForNetwork(network)
+            }
+        )
     }
 
     @GetMapping("/{network}/wrapped")
@@ -38,9 +43,11 @@ class ERC20RestController(
     ): ResponseEntity<TokenInformation> {
         return try {
             ResponseEntity.ok(
-                tokenService.getTokenInformation(
-                    address, network
-                )
+                runBlocking {
+                    tokenService.getTokenInformation(
+                        address, network
+                    )
+                }
             )
         } catch (ex: Exception) {
             ResponseEntity.notFound().build()

@@ -21,7 +21,7 @@ class ContractInteractionRestController(
     private val web3j: Web3j
 ) {
 
-    val simpleRateLimiter = SimpleRateLimiter(10.0)
+    val simpleRateLimiter = SimpleRateLimiter(20.0)
 
     @PostMapping("/call")
     fun call(@RequestBody contractInteractionCommand: ContractInteractionCommand): EthCall =
