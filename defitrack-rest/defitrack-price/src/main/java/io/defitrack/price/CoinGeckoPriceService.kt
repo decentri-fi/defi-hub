@@ -63,11 +63,15 @@ class CoinGeckoPriceService(
 
     suspend fun getPrice(symbol: String): BigDecimal? {
         return try {
-            getTokenBySymbol(symbol)?.let { token ->
-                val response: String =
-                    httpClient.get("https://api.coingecko.com/api/v3/simple/price?ids=${token.id}&vs_currencies=usd")
-                val jsonObject = JsonParser.parseString(response)
-                jsonObject.asJsonObject[token.id].asJsonObject["usd"].asBigDecimal
+            if (symbol.isBlank()) {
+                BigDecimal.ZERO
+            } else {
+                getTokenBySymbol(symbol)?.let { token ->
+                    val response: String =
+                        httpClient.get("https://api.coingecko.com/api/v3/simple/price?ids=${token.id}&vs_currencies=usd")
+                    val jsonObject = JsonParser.parseString(response)
+                    jsonObject.asJsonObject[token.id].asJsonObject["usd"].asBigDecimal
+                }
             }
         } catch (ex: Exception) {
             logger.error("error trying to fetch price for $symbol")

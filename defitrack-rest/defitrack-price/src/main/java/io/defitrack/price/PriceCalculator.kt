@@ -9,6 +9,7 @@ import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -22,6 +23,8 @@ class PriceCalculator(
     private val balancerTokenService: BalancerPolygonService,
     private val externalPriceServices: List<ExternalPriceService>
 ) {
+
+    val logger = LoggerFactory.getLogger(this::class.java)
 
     val synonyms = mapOf(
         "WETH" to "ETH",
@@ -75,14 +78,21 @@ class PriceCalculator(
     private fun calculateLpPrice(
         priceRequest: PriceRequest,
         tokenInformation: TokenInformation
-    ) = calculateLPWorth(
-        priceRequest.network,
-        tokenInformation.address,
-        priceRequest.amount,
-        tokenInformation.totalSupply,
-        tokenInformation.tokenInformation0!!,
-        tokenInformation.tokenInformation1!!
-    )
+    ): BigDecimal {
+        return try {
+            return calculateLPWorth(
+                priceRequest.network,
+                tokenInformation.address,
+                priceRequest.amount,
+                tokenInformation.totalSupply,
+                tokenInformation.tokenInformation0!!,
+                tokenInformation.tokenInformation1!!
+            )
+        } catch (ex: Exception) {
+            logger.error("Unable to calculate price for ${priceRequest.address}")
+            BigDecimal.ZERO
+        }
+    }
 
     fun calculateTokenWorth(
         symbol: String,
