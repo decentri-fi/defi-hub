@@ -12,11 +12,11 @@ import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
 open class ERC20Contract(
-    ethereumContractAccessor: BlockchainGateway,
+    blockchainGateway: BlockchainGateway,
     abi: String,
     address: String
 ) :
-    EvmContract(ethereumContractAccessor, abi, address) {
+    EvmContract(blockchainGateway, abi, address) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 

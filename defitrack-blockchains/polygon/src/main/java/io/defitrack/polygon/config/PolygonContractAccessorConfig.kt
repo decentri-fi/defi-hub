@@ -16,7 +16,7 @@ class PolygonContractAccessorConfig(
 ) {
 
     @Bean
-    fun polygonContractAccessor(): BlockchainGateway {
+    fun polygonGateway(): BlockchainGateway {
         return BlockchainGateway(
             abiDecoder, Network.POLYGON, "0x11ce4B23bD875D7F5C6a31084f55fDe1e9A87507", httpClient, endpoint
         )

@@ -235,5 +235,4 @@ open class BlockchainGateway(
             return Bool(this)
         }
     }
-
 }
