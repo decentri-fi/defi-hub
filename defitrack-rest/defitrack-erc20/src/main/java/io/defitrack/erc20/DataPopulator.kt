@@ -20,9 +20,10 @@ class DataPopulator(private val tokenService: TokenService) {
                 launch {
                     try {
                         logger.info("Initial population for $it")
-                        tokenService.getAllTokensForNetwork(it)
-                        logger.info("Done populating $it")
+                        val tokens = tokenService.getAllTokensForNetwork(it)
+                        logger.info("Done populating $it with ${tokens.size} elements")
                     } catch (ex: Exception) {
+                        ex.printStackTrace()
                         logger.error("${ex.message}")
                     }
                 }

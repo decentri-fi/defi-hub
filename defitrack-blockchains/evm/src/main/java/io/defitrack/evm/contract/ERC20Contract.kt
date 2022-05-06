@@ -1,9 +1,6 @@
 package io.defitrack.evm.contract
 
-import com.github.michaelbull.retry.policy.limitAttempts
-import com.github.michaelbull.retry.retry
 import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
-import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.web3j.abi.TypeReference
@@ -49,14 +46,20 @@ open class ERC20Contract(
     }
 
     val symbol by lazy {
-        read("symbol")[0].value as String
+        val read = read("symbol")
+        if (read.isEmpty()) {
+            "unknown"
+        } else {
+            read[0].value as String
+        }
     }
 
     val decimals by lazy {
-        runBlocking {
-            retry(limitAttempts(5)) {
-                (read("decimals")[0].value as BigInteger).toInt()
-            }
+        val read = read("decimals")
+        if (read.isEmpty()) {
+            18
+        }  else {
+            (read[0].value as BigInteger).toInt()
         }
     }
 }

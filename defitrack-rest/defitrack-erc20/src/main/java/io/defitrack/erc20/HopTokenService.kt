@@ -18,7 +18,7 @@ class HopTokenService(
     private val erC20Service: ERC20Service
 ) {
 
-    fun getTokenInformation(
+    suspend fun getTokenInformation(
         address: String,
         network: Network
     ): TokenInformation {

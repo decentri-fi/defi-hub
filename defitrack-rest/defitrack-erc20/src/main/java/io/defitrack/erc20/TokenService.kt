@@ -8,7 +8,10 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
 import io.github.reactivecircus.cache4k.Cache
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Service
 import java.math.BigInteger
 
@@ -24,8 +27,12 @@ class TokenService(
 
 
     suspend fun getAllTokensForNetwork(network: Network): List<TokenInformation> {
-        return erC20Repository.allTokens(network).map {
-            getTokenInformation(it.address, network)
+        return withContext(Dispatchers.IO.limitedParallelism(10)) {
+            erC20Repository.allTokens(network).map {
+                async {
+                    getTokenInformation(it.address, network)
+                }
+            }.awaitAll()
         }
     }
 
@@ -61,8 +68,7 @@ class TokenService(
 
     val tokenInformationCache = Cache.Builder().build<String, TokenInformation>()
 
-    suspend fun getTokenInformation(address: String, network: Network): TokenInformation  {
-
+    suspend fun getTokenInformation(address: String, network: Network): TokenInformation {
         if (address == "0x0" || address.lowercase() == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") {
             return nativeTokenService.getNativeToken(network)
         }
