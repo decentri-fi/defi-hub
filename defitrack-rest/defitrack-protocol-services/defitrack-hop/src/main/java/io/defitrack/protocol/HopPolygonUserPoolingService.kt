@@ -1,13 +1,14 @@
 package io.defitrack.protocol
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.evm.contract.ContractAccessorGateway
-import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.pool.UserPoolingService
 import io.defitrack.pool.domain.PoolingElement
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
+import java.math.BigDecimal
 import java.math.BigInteger
 
 @Component
@@ -20,19 +21,26 @@ class HopPolygonUserPoolingService(
     override suspend fun fetchUserPoolings(address: String): List<PoolingElement> {
         val markets = hopPolygonPoolingMarketService.getPoolingMarkets()
 
-        return erC20Resource.getBalancesFor(address, markets.map { it.address }, contractAccessorGateway.getGateway(getNetwork()))
+        return erC20Resource.getBalancesFor(
+            address,
+            markets.map { it.address },
+            contractAccessorGateway.getGateway(getNetwork())
+        )
             .mapIndexed { index, balance ->
                 if (balance > BigInteger.ONE) {
                     val pool = markets[index]
+
+                    val tokenInfo = erC20Resource.getTokenInformation(getNetwork(), pool.address)
+
                     PoolingElement(
                         lpAddress = pool.address,
-                        amount = balance.toBigDecimal(),
-                        name = pool.token.map { it.symbol }.joinToString { "/" } + " LP",
-                        symbol = pool.token.map { it.symbol }.joinToString { "-" },
+                        amount = balance.toBigDecimal().dividePrecisely(BigDecimal.TEN.pow(tokenInfo.decimals)),
+                        name = pool.token.joinToString("/") { it.symbol } + " LP",
+                        symbol = tokenInfo.symbol,
                         network = getNetwork(),
                         protocol = getProtocol(),
-                        TokenType.HOP,
-                        pool.id
+                        tokenType = TokenType.HOP,
+                        id = pool.id
                     )
                 } else {
                     null
