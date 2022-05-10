@@ -3,7 +3,6 @@ package io.defitrack.protocol.dinoswap.staking
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ContractAccessorGateway
-import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.dinoswap.DinoswapFossilFarmsContract
 import io.defitrack.protocol.dinoswap.DinoswapService
@@ -50,8 +49,8 @@ class DinoswapStakingMarketService(
             network = getNetwork(),
             name = stakedtoken.name + " Farm",
             protocol = getProtocol(),
-            token = stakedtoken.toFungibleToken(),
-            reward = listOf(
+            stakedToken = stakedtoken.toFungibleToken(),
+            rewardTokens = listOf(
                 rewardToken.toFungibleToken()
             ),
             contractAddress = chef.address,

@@ -3,7 +3,6 @@ package io.defitrack.protocol.sushiswap.pooling.polygon
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ContractAccessorGateway
-import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
@@ -65,8 +64,8 @@ class SushiswapPolygonStakingMinichefMarketService(
             network = getNetwork(),
             name = stakedtoken.name + " Farm",
             protocol = getProtocol(),
-            token = stakedtoken.toFungibleToken(),
-            reward = listOf(
+            stakedToken = stakedtoken.toFungibleToken(),
+            rewardTokens = listOf(
                 rewardToken.toFungibleToken()
             ),
             contractAddress = chef.address,

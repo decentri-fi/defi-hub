@@ -60,7 +60,7 @@ class QuickswapUserStakingService(
                         vaultAddress = pool.address,
                         rate = (quickswapAPRService.getRewardPoolAPR(pool.address) + quickswapAPRService.getLPAPR(
                             stakedToken.address
-                        )).toDouble(),
+                        )),
                         amount = balance
                     )
                 } else {

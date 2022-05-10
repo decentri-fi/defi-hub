@@ -3,7 +3,6 @@ package io.defitrack.staking
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ContractAccessorGateway
-import io.defitrack.fantom.config.FantomContractAccessorConfig
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SpookyFantomService
@@ -46,8 +45,8 @@ class SpookyStakingMarketService(
                 network = getNetwork(),
                 protocol = getProtocol(),
                 name = "${stakedToken.name} spooky farm",
-                token = stakedToken.toFungibleToken(),
-                reward = listOf(
+                stakedToken = stakedToken.toFungibleToken(),
+                rewardTokens = listOf(
                     reward.toFungibleToken()
                 ),
                 contractAddress = masterchef.address,

@@ -3,7 +3,6 @@ package io.defitrack.protocol.quickswap.staking
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ContractAccessorGateway
-import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.contract.DQuickContract
@@ -36,8 +35,8 @@ class DQuickStakingMarketService(
                 network = getNetwork(),
                 protocol = getProtocol(),
                 name = "Dragon's Lair",
-                token = dquickInfo,
-                reward = listOf(
+                stakedToken = dquickInfo,
+                rewardTokens = listOf(
                     dquickInfo
                 ),
                 contractAddress = dquick.address,

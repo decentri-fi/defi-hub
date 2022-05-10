@@ -34,8 +34,8 @@ class BalancerPolygonStakingMarketService(
                     network = getNetwork(),
                     protocol = getProtocol(),
                     name = stakedToken.symbol + " Gauge",
-                    token = stakedToken.toFungibleToken(),
-                    reward = getRewardTokens(
+                    stakedToken = stakedToken.toFungibleToken(),
+                    rewardTokens = getRewardTokens(
                         BalancerGaugeContract(
                             contractAccessorGateway.getGateway(getNetwork()),
                             balancerGaugeContractAbi,

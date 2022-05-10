@@ -3,12 +3,10 @@ package io.defitrack.protocol.idex
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ContractAccessorGateway
-import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.protocol.Protocol
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
 @Component
@@ -65,8 +63,8 @@ class IdexFarmingMarketService(
             network = getNetwork(),
             name = stakedtoken.name + " Farm",
             protocol = getProtocol(),
-            token = stakedtoken.toFungibleToken(),
-            reward = listOf(
+            stakedToken = stakedtoken.toFungibleToken(),
+            rewardTokens = listOf(
                 rewardToken.toFungibleToken()
             ),
             contractAddress = chef.address,

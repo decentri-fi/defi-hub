@@ -39,16 +39,14 @@ class MStableEthereumStakingService(
                     val contract = vaultContracts[index]
                     val stakingToken = erC20Resource.getTokenInformation(getNetwork(), contract.stakingToken)
                     val rewardsToken = erC20Resource.getTokenInformation(getNetwork(), contract.rewardsToken)
-                    StakingElement(
+                    stakingElement(
                         id = "mstable-ethereum-${contract.address}",
-                        network = this.getNetwork(),
-                        protocol = this.getProtocol(),
-                        name = contract.name,
+                        vaultName = contract.name,
                         stakedToken = stakingToken.toFungibleToken(),
                         rewardTokens = listOf(
                             rewardsToken.toFungibleToken()
                         ),
-                        contractAddress = contract.address,
+                        vaultAddress = contract.address,
                         vaultType = "mstable-boosted-savings-vault",
                         amount = balance
                     )

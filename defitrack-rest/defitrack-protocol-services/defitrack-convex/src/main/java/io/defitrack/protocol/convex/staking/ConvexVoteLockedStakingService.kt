@@ -42,17 +42,15 @@ class ConvexVoteLockedStakingService(
                 val rewardToken = erC20Resource.getTokenInformation(getNetwork(), pool.rewardToken())
                 val stakedToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingToken())
 
-                StakingElement(
-                    network = getNetwork(),
-                    protocol = getProtocol(),
+                stakingElement(
                     id = "convex-ethereum-${pool.address}",
-                    name = pool.name,
+                    vaultName = pool.name,
                     rewardTokens = listOf(
                         rewardToken.toFungibleToken()
                     ),
                     stakedToken = stakedToken.toFungibleToken(),
                     vaultType = "convex-locked-vote",
-                    contractAddress = pool.address,
+                    vaultAddress = pool.address,
                     amount = balance
                 )
             } else {

@@ -8,7 +8,6 @@ import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
 import io.defitrack.staking.UserStakingService
 import io.defitrack.staking.domain.StakingElement
-import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -19,7 +18,7 @@ import java.math.RoundingMode
 
 @Service
 class BeefyFantomUserStakingService(
-    private val contractAccessorGateway: ContractAccessorGateway,
+    contractAccessorGateway: ContractAccessorGateway,
     private val abiResource: ABIResource,
     private val beefyAPYService: BeefyAPYService,
     private val stakingMarketService: BeefyFantomStakingMarketService,
@@ -33,72 +32,47 @@ class BeefyFantomUserStakingService(
 
     val gateway = contractAccessorGateway.getGateway(getNetwork())
 
-    override fun getStaking(address: String, vaultId: String): StakingElement? {
-        return stakingMarketService.getStakingMarkets().firstOrNull {
-            it.id == vaultId
-        }?.let {
-
-            val contract = BeefyVaultContract(
-                gateway,
-                vaultV6ABI,
-                it.contractAddress,
-                it.id
-            )
-
-            vaultToStakingElement(address, contract.balanceOf(address)).invoke(it)
-        }
-    }
-
     override fun getStakings(address: String): List<StakingElement> {
         val markets = stakingMarketService.getStakingMarkets()
 
-
         return erC20Resource.getBalancesFor(address, markets.map { it.contractAddress }, getNetwork())
             .mapIndexed { index, balance ->
-                vaultToStakingElement(address, balance)(markets[index])
+                if (balance > BigInteger.ZERO) {
+                    val market = markets[index]
+
+                    try {
+                        if (balance > BigInteger.ZERO) {
+                            val contract = BeefyVaultContract(
+                                gateway,
+                                vaultV6ABI,
+                                market.contractAddress,
+                                market.id
+                            )
+
+                            val underlyingBalance = if (balance > BigInteger.ZERO) {
+                                balance.toBigDecimal().times(contract.getPricePerFullShare.toBigDecimal())
+                                    .divide(BigDecimal.TEN.pow(18))
+                            } else {
+                                BigDecimal.ZERO
+                            }
+
+                            StakingElement(
+                                market = market,
+                                amount = underlyingBalance.toBigInteger()
+                            )
+                        } else {
+                            null
+                        }
+                    } catch (ex: Exception) {
+                        logger.error("Problem with vault was: {}", market.contractAddress, ex)
+                        null
+                    }
+                } else {
+                    null
+                }
             }.filterNotNull()
     }
 
-    private fun vaultToStakingElement(address: String, balance: BigInteger) = { market: StakingMarketElement ->
-        try {
-            if (balance > BigInteger.ZERO) {
-                val contract = BeefyVaultContract(
-                    gateway,
-                    vaultV6ABI,
-                    market.contractAddress,
-                    market.id
-                )
-
-                val want = erC20Resource.getTokenInformation(getNetwork(), market.token.address)
-                val underlyingBalance = if (balance > BigInteger.ZERO) {
-                    balance.toBigDecimal().times(contract.getPricePerFullShare.toBigDecimal())
-                        .divide(BigDecimal.TEN.pow(18))
-                } else {
-                    BigDecimal.ZERO
-                }
-
-                StakingElement(
-                    id = market.id,
-                    network = getNetwork(),
-                    protocol = getProtocol(),
-                    name = market.name,
-                    rate = getAPY(market.id),
-                    stakedToken = want.toFungibleToken(),
-                    rewardTokens = listOf(
-                        want.toFungibleToken()
-                    ),
-                    vaultType = "beefyVaultV6",
-                    contractAddress = market.contractAddress,
-                    amount = underlyingBalance.toBigInteger()
-                )
-            } else {
-                null
-            }
-        } catch (ex: Exception) {
-            logger.error("Problem with vault was: {}", market.contractAddress, ex)
-            null
-        }
-    }
 
     private fun getAPY(vaultId: String): Double {
         return try {

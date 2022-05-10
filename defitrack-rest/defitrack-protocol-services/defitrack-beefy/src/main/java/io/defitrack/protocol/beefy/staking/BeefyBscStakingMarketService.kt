@@ -1,7 +1,6 @@
 package io.defitrack.protocol.beefy.staking
 
 import io.defitrack.abi.ABIResource
-import io.defitrack.bsc.BscContractAccessorConfig
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.evm.contract.ContractAccessorGateway
@@ -55,8 +54,8 @@ class BeefyBscStakingMarketService(
                 protocol = getProtocol(),
                 name = "${beefyVault.symbol} Beefy Vault",
                 rate = getAPY(beefyVault),
-                token = want.toFungibleToken(),
-                reward = listOf(
+                stakedToken = want.toFungibleToken(),
+                rewardTokens = listOf(
                     want.toFungibleToken()
                 ),
                 contractAddress = beefyVault.address,

@@ -2,9 +2,10 @@ package io.defitrack.staking
 
 import io.defitrack.protocol.ProtocolService
 import io.defitrack.staking.domain.StakingElement
+import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.FungibleToken
-import io.defitrack.token.TokenType
+import java.math.BigDecimal
 import java.math.BigInteger
 
 abstract class UserStakingService(
@@ -12,9 +13,9 @@ abstract class UserStakingService(
 ) : ProtocolService {
 
     abstract fun getStakings(address: String): List<StakingElement>
-    open fun getStaking(address: String, vaultId: String): StakingElement? {
+    open fun getStaking(address: String, stakingMarketId: String): StakingElement? {
         return getStakings(address).firstOrNull {
-            it.id == vaultId
+            it.market.id == stakingMarketId
         }
     }
 
@@ -24,20 +25,22 @@ abstract class UserStakingService(
         stakedToken: FungibleToken,
         vaultType: String,
         vaultAddress: String,
-        rate: Double = 0.0,
+        rate: BigDecimal = BigDecimal.ZERO,
         id: String,
         amount: BigInteger
     ): StakingElement {
         return StakingElement(
-            id = id,
-            network = getNetwork(),
-            protocol = getProtocol(),
-            name = vaultName,
-            rate = rate,
-            contractAddress = vaultAddress,
-            vaultType = vaultType,
-            stakedToken = stakedToken,
-            rewardTokens = rewardTokens,
+            market = StakingMarketElement(
+                id = id,
+                network = getNetwork(),
+                protocol = getProtocol(),
+                name = vaultName,
+                rate = rate,
+                contractAddress = vaultAddress,
+                vaultType = vaultType,
+                stakedToken = stakedToken,
+                rewardTokens = rewardTokens,
+            ),
             amount = amount
         )
     }

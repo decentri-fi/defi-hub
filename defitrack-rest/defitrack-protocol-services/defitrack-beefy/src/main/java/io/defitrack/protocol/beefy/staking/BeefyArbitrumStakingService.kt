@@ -33,9 +33,9 @@ class BeefyArbitrumStakingService(
 
     val gateway = contractAccessorGateway.getGateway(getNetwork())
 
-    override fun getStaking(address: String, vaultId: String): StakingElement? {
+    override fun getStaking(address: String, stakingMarketId: String): StakingElement? {
         return stakingMarketService.getStakingMarkets().firstOrNull {
-            it.id == vaultId
+            it.id == stakingMarketId
         }?.let {
 
             val contract = BeefyVaultContract(
@@ -68,7 +68,7 @@ class BeefyArbitrumStakingService(
                     market.id
                 )
 
-                val want = erC20Resource.getTokenInformation(getNetwork(), market.token.address)
+                val want = erC20Resource.getTokenInformation(getNetwork(), market.stakedToken.address)
                 val underlyingBalance = if (balance > BigInteger.ZERO) {
                     balance.toBigDecimal().times(contract.getPricePerFullShare.toBigDecimal())
                         .divide(BigDecimal.TEN.pow(18))
@@ -76,18 +76,16 @@ class BeefyArbitrumStakingService(
                     BigDecimal.ZERO
                 }
 
-                StakingElement(
+                stakingElement(
                     id = market.id,
-                    network = getNetwork(),
-                    protocol = getProtocol(),
-                    name = market.name,
+                    vaultName = market.name,
                     rate = getAPY(market.id),
                     stakedToken = want.toFungibleToken(),
                     rewardTokens = listOf(
                         want.toFungibleToken()
                     ),
                     vaultType = "beefyVaultV6",
-                    contractAddress = market.contractAddress,
+                    vaultAddress = market.contractAddress,
                     amount = underlyingBalance.toBigInteger()
                 )
             } else {
@@ -99,13 +97,13 @@ class BeefyArbitrumStakingService(
         }
     }
 
-    private fun getAPY(vaultId: String): Double {
+    private fun getAPY(vaultId: String): BigDecimal {
         return try {
             (beefyAPYService.getAPYS().getOrDefault(vaultId, null)?.times(BigDecimal(10000))
-                ?.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP)?.toDouble()) ?: 0.0
+                ?.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP) ?: BigDecimal.ZERO)
         } catch (ex: Exception) {
             ex.printStackTrace()
-            0.0
+            BigDecimal.ZERO
         }
     }
 

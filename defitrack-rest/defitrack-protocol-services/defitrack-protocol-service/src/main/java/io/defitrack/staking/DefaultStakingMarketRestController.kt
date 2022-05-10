@@ -42,14 +42,14 @@ class DefaultStakingMarketRestController(
             }.flatMap {
                 it.getStakingMarkets()
             }.filter {
-                val token = erC20Resource.getTokenInformation(it.network, it.token.address.lowercase())
+                val token = erC20Resource.getTokenInformation(it.network, it.stakedToken.address.lowercase())
                 if (token.type != TokenType.SINGLE) {
-                    it.token.address.lowercase() == tokenAddress.lowercase() ||
+                    it.stakedToken.address.lowercase() == tokenAddress.lowercase() ||
                             token.underlyingTokens.any { underlyingToken ->
                                 underlyingToken.address.lowercase() == tokenAddress.lowercase()
                             }
                 } else {
-                    it.token.address.lowercase() == tokenAddress.lowercase()
+                    it.stakedToken.address.lowercase() == tokenAddress.lowercase()
                 }
             }.map {
                 toVO(it)
@@ -78,8 +78,8 @@ class DefaultStakingMarketRestController(
         network = it.network.toVO(),
         protocol = it.protocol.toVO(),
         name = it.name,
-        stakedToken = it.token,
-        reward = it.reward,
+        stakedToken = it.stakedToken,
+        reward = it.rewardTokens,
         contractAddress = it.contractAddress,
         vaultType = it.vaultType,
         marketSize = it.marketSize,

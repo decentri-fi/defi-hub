@@ -3,7 +3,6 @@ package io.defitrack.protocol.quickswap.staking
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ContractAccessorGateway
-import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
@@ -50,8 +49,8 @@ class QuickswapDualStakingMarketService(
                     network = getNetwork(),
                     protocol = getProtocol(),
                     name = "${stakedToken.name} Dual Reward Pool",
-                    token = stakedToken.toFungibleToken(),
-                    reward = listOf(
+                    stakedToken = stakedToken.toFungibleToken(),
+                    rewardTokens = listOf(
                         rewardTokenA.toFungibleToken(),
                         rewardTokenB.toFungibleToken()
                     ),

@@ -39,12 +39,10 @@ class ConvexBoosterUserStakingService(
                 if (balance > BigInteger.ZERO) {
                     val stakedToken = erC20Resource.getTokenInformation(getNetwork(), poolInfos[index].lpToken)
 
-                    StakingElement(
+                    stakingElement(
                         id = "convex-booster-$index",
-                        network = getNetwork(),
-                        protocol = getProtocol(),
-                        name = "Convex Crv Booster $index",
-                        contractAddress = booster.address,
+                        vaultName = "Convex Crv Booster $index",
+                        vaultAddress = booster.address,
                         vaultType = "convex-crv-rewards",
                         stakedToken = stakedToken.toFungibleToken(),
                         amount = balance,

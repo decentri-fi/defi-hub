@@ -36,15 +36,13 @@ class CurveEthereumStakingService(
                 val lpToken = erC20Resource.getTokenInformation(getNetwork(), gauge.pool!!.lpToken.address)
 
                 try {
-                    StakingElement(
-                        network = getNetwork(),
-                        protocol = getProtocol(),
-                        name = (gauge.pool?.name ?: "Curve") + " Gauge",
+                    stakingElement(
+                        vaultName = (gauge.pool?.name ?: "Curve") + " Gauge",
                         id = "curve-ethereum-${gauge.address}",
                         stakedToken = lpToken.toFungibleToken(),
                         rewardTokens = emptyList(),
                         vaultType = "curve-gauge",
-                        contractAddress = gauge.address,
+                        vaultAddress = gauge.address,
                         amount = balance
                     )
                 } catch (ex: Exception) {

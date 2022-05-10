@@ -4,7 +4,6 @@ import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.ContractAccessorGateway
-import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
@@ -56,8 +55,8 @@ class PolycatStakingMarketService(
             network = getNetwork(),
             name = stakedtoken.name + " Farm",
             protocol = getProtocol(),
-            token = stakedtoken.toFungibleToken(),
-            reward = listOf(
+            stakedToken = stakedtoken.toFungibleToken(),
+            rewardTokens = listOf(
                 rewardToken.toFungibleToken()
             ),
             rate = PolygcatStakingAprCalculator(erC20Resource, priceResource, chef, poolId).calculateApr(),

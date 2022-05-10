@@ -53,8 +53,8 @@ class BeefyPolygonStakingMarketService(
                 protocol = getProtocol(),
                 name = "${beefyVault.symbol} Beefy Vault",
                 rate = getAPY(beefyVault),
-                token = want.toFungibleToken(),
-                reward = listOf(
+                stakedToken = want.toFungibleToken(),
+                rewardTokens = listOf(
                     want.toFungibleToken()
                 ),
                 contractAddress = beefyVault.address,

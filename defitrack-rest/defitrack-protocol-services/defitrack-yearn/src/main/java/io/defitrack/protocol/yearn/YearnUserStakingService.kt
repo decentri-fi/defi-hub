@@ -2,7 +2,6 @@ package io.defitrack.protocol.yearn
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.ethereum.config.EthereumContractAccessorConfig
 import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.contract.multicall.MultiCallElement
@@ -12,6 +11,7 @@ import io.defitrack.staking.domain.StakingElement
 import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
+import java.math.BigDecimal
 import java.math.BigInteger
 
 @Component
@@ -25,7 +25,6 @@ class YearnUserStakingService(
 ) {
 
     val erc20ABI = abiResource.getABI("general/ERC20.json")
-
 
 
     override fun getStakings(address: String): List<StakingElement> {
@@ -60,7 +59,7 @@ class YearnUserStakingService(
                         stakedToken = stakedtoken,
                         vaultType = "yearn-v2",
                         vaultAddress = vaults[index].shareToken.id,
-                        rate = 0.0,
+                        rate = BigDecimal.ZERO,
                         id = "yearn-ethereum-v2-$index",
                         amount = balance
                     )

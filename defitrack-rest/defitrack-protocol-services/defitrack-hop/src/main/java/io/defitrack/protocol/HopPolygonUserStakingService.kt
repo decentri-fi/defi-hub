@@ -30,17 +30,15 @@ class HopPolygonUserStakingService(
         ).mapIndexed { index, balance ->
             if (balance > BigInteger.ONE) {
                 val market = markets[index]
-                StakingElement(
+                stakingElement(
                     id = market.id,
-                    network = getNetwork(),
-                    protocol = getProtocol(),
-                    name = market.name,
-                    contractAddress = market.contractAddress,
+                    vaultName = market.name,
+                    vaultAddress = market.contractAddress,
                     vaultType = market.vaultType,
-                    rate = market.rate.toDouble(),
-                    stakedToken = market.token,
+                    rate = market.rate,
+                    stakedToken = market.stakedToken,
                     amount = balance,
-                    rewardTokens = market.reward,
+                    rewardTokens = market.rewardTokens,
                 )
             } else {
                 null

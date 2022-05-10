@@ -3,7 +3,6 @@ package io.defitrack.protocol
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ContractAccessorGateway
-import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.contract.HopStakingReward
@@ -40,8 +39,8 @@ class HopPolygonStakingMarketService(
                 network = getNetwork(),
                 protocol = getProtocol(),
                 name = "${stakedToken.name} Staking Rewards",
-                token = stakedToken.toFungibleToken(),
-                reward = listOf(rewardToken.toFungibleToken()),
+                stakedToken = stakedToken.toFungibleToken(),
+                rewardTokens = listOf(rewardToken.toFungibleToken()),
                 contractAddress = pool.address,
                 vaultType = "hop-staking-rewards",
                 marketSize = getMarketSize(stakedToken, pool)

@@ -3,10 +3,9 @@ package io.defitrack.protocol.quickswap.staking
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ContractAccessorGateway
-import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.quickswap.contract.DQuickContract
 import io.defitrack.protocol.quickswap.QuickswapService
+import io.defitrack.protocol.quickswap.contract.DQuickContract
 import io.defitrack.staking.UserStakingService
 import io.defitrack.staking.domain.StakingElement
 import io.defitrack.token.ERC20Resource
@@ -31,19 +30,19 @@ class DQuickStakingService(
         val balance = erC20Resource.getBalance(getNetwork(), dquick.address, address)
         return if (balance > BigInteger.ZERO) {
             val dquickToken = erC20Resource.getTokenInformation(getNetwork(), dquick.address).toFungibleToken()
-            val quickToken = erC20Resource.getTokenInformation(getNetwork(), "0x831753dd7087cac61ab5644b308642cc1c33dc13").toFungibleToken()
+            val quickToken =
+                erC20Resource.getTokenInformation(getNetwork(), "0x831753dd7087cac61ab5644b308642cc1c33dc13")
+                    .toFungibleToken()
             listOf(
-                StakingElement(
+                stakingElement(
                     rewardTokens = listOf(
-                       dquickToken
+                        dquickToken
                     ),
                     stakedToken = quickToken,
                     vaultType = "quickswap-dquick",
                     id = "polygon-dquick-${dquick.address}",
-                    network = getNetwork(),
-                    protocol = getProtocol(),
-                    name = "Dragon's Lair",
-                    contractAddress = dquick.address,
+                    vaultName = "Dragon's Lair",
+                    vaultAddress = dquick.address,
                     amount = dquick.quickBalance(address)
                 )
             )

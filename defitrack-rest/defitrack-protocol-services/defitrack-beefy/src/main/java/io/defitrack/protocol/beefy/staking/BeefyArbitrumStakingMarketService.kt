@@ -2,7 +2,6 @@ package io.defitrack.protocol.beefy.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.arbitrum.config.ArbitrumContractAccessorConfig
 import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
@@ -50,8 +49,8 @@ class BeefyArbitrumStakingMarketService(
                 protocol = getProtocol(),
                 name = "${beefyVault.symbol} Beefy Vault",
                 rate = getAPY(beefyVault),
-                token = want.toFungibleToken(),
-                reward = listOf(
+                stakedToken = want.toFungibleToken(),
+                rewardTokens = listOf(
                     want.toFungibleToken()
                 ),
                 contractAddress = beefyVault.address,

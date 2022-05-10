@@ -39,16 +39,14 @@ class SpookyUserStakingService(
                 val balance = value[0].value
                 if ((balance as BigInteger) > BigInteger.ZERO) {
                     val stakingMarket = stakingMarkets[index]
-                    StakingElement(
+                    stakingElement(
                         id = stakingMarket.id,
-                        network = getNetwork(),
-                        protocol = getProtocol(),
-                        name = stakingMarket.name,
-                        contractAddress = stakingMarket.contractAddress,
+                        vaultName = stakingMarket.name,
+                        vaultAddress = stakingMarket.contractAddress,
                         vaultType = stakingMarket.vaultType,
-                        rate = stakingMarket.rate.toDouble(),
-                        stakedToken = stakingMarket.token,
-                        rewardTokens = stakingMarket.reward,
+                        rate = stakingMarket.rate,
+                        stakedToken = stakingMarket.stakedToken,
+                        rewardTokens = stakingMarket.rewardTokens,
                         amount = balance
                     )
                 } else {

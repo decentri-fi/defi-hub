@@ -80,24 +80,24 @@ class DefaultUserStakingRestController(
 
         val stakedInDollars = priceResource.calculatePrice(
             PriceRequest(
-                address = stakedToken.address,
-                network = network,
-                amount = amount.asEth(stakedToken.decimals),
-                type = stakedToken.type
+                address = market.stakedToken.address,
+                network = market.network,
+                amount = amount.asEth(market.stakedToken.decimals),
+                type = market.stakedToken.type
             )
         )
 
         return StakingElementVO(
-            id = id,
-            network = network.toVO(),
-            protocol = protocol.toVO(),
+            id = market.id,
+            network = market.network.toVO(),
+            protocol = market.protocol.toVO(),
             dollarValue = stakedInDollars,
-            name = name,
-            rate = rate,
-            vaultType = vaultType,
-            contractAddress = contractAddress,
-            stakedToken = stakedToken,
-            rewardTokens = rewardTokens,
+            name = market.name,
+            rate = market.rate.toDouble(),
+            vaultType = market.vaultType,
+            contractAddress = market.contractAddress,
+            stakedToken = market.stakedToken,
+            rewardTokens = market.rewardTokens,
             amount = amount
         )
     }

@@ -3,7 +3,6 @@ package io.defitrack.protocol.dinoswap.staking
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ContractAccessorGateway
-import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.dinoswap.DinoswapFossilFarmsContract
 import io.defitrack.protocol.dinoswap.DinoswapService
@@ -44,16 +43,14 @@ class DinoswapUserStakingService(
                         erC20Resource.getTokenInformation(getNetwork(), masterChef.getLpTokenForPoolId(poolIndex))
                     val rewardToken = erC20Resource.getTokenInformation(getNetwork(), masterChef.rewardToken)
 
-                    StakingElement(
+                    stakingElement(
                         id = "dinoswap-${masterChef.address}-${poolIndex}",
-                        network = getNetwork(),
-                        protocol = getProtocol(),
-                        name = stakedtoken.name + " Vault",
+                        vaultName = stakedtoken.name + " Vault",
                         stakedToken = stakedtoken.toFungibleToken(),
                         rewardTokens = listOf(
                             rewardToken.toFungibleToken()
                         ),
-                        contractAddress = masterChef.address,
+                        vaultAddress = masterChef.address,
                         vaultType = "dinoswap-fossilfarm",
                         amount = balance
                     )
