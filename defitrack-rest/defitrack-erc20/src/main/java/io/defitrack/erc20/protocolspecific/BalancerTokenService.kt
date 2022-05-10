@@ -40,7 +40,16 @@ class BalancerTokenService(
                 address = it.address,
                 decimals = erc20.decimals,
                 type = TokenType.BALANCER,
-                protocol = Protocol.BALANCER
+                protocol = Protocol.BALANCER,
+                underlyingTokens = it.tokens.map { poolToken ->
+                    TokenInformation(
+                        name = poolToken.name,
+                        symbol = poolToken.symbol,
+                        address = poolToken.address,
+                        decimals = poolToken.decimals,
+                        type = TokenType.SINGLE
+                    )
+                }
             )
         } ?: throw java.lang.IllegalArgumentException("Pool with $address not found as balancer pool")
     }
