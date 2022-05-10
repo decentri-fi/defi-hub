@@ -86,10 +86,9 @@ class DefaultPoolingMarketRestController(
                         poolingMarketElement.token.map { pt ->
                             pt.address.lowercase()
                         }.containsAll(
-                            listOf(
-                                token.tokenInformation0!!.address.lowercase(),
-                                token.tokenInformation1!!.address.lowercase()
-                            )
+                            token.underlyingTokens.map {
+                                it.address.lowercase()
+                            }
                         )
                     }
                     else -> false

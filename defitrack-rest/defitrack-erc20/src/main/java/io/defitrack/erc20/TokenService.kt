@@ -120,8 +120,6 @@ class TokenService(
                         decimals = token.decimals,
                         totalSupply = BigInteger.ZERO,
                         type = TokenType.SINGLE,
-                        tokenInformation0 = null,
-                        tokenInformation1 = null
                     )
                 }
             }
@@ -149,13 +147,12 @@ class TokenService(
         return TokenInformation(
             name = "${token0.symbol}/${token1.symbol} LP",
             symbol = "${token0.symbol}-${token1.symbol}",
-            tokenInformation0 = token0,
-            tokenInformation1 = token1,
             address = erc20.address,
             decimals = erc20.decimals,
             totalSupply = lp.totalSupply,
             type = getType(lp),
-            protocol = protocol
+            protocol = protocol,
+            underlyingTokens = listOf(token0, token1)
         )
     }
 }

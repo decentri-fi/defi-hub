@@ -85,8 +85,7 @@ class PriceCalculator(
                 tokenInformation.address,
                 priceRequest.amount,
                 tokenInformation.totalSupply,
-                tokenInformation.tokenInformation0!!,
-                tokenInformation.tokenInformation1!!
+                tokenInformation.underlyingTokens
             )
         } catch (ex: Exception) {
             logger.error("Unable to calculate price for ${priceRequest.address}")
@@ -116,35 +115,22 @@ class PriceCalculator(
         lpAddress: String,
         userLPAmount: BigDecimal,
         totalLPAmount: BigInteger,
-        tokenInformation0: TokenInformation,
-        tokenInformation1: TokenInformation,
+        underlyingTokens: List<TokenInformation>
     ): BigDecimal {
-
-        val token0Price = getPrice(tokenInformation0.symbol)
-        val token1Price = getPrice(tokenInformation1.symbol)
 
         val userShare =
             userLPAmount.divide(totalLPAmount.toBigDecimal().divide(BigDecimal.TEN.pow(18)), 18, RoundingMode.HALF_UP)
 
-        val lpToken0Amount = erc20Service.getBalance(network, tokenInformation0.address, lpAddress)
-        val lpToken1Amount = erc20Service.getBalance(network, tokenInformation1.address, lpAddress)
+        return underlyingTokens.map { underlyingToken ->
+            val price = getPrice(underlyingToken.symbol)
+            val underlyingTokenBalance = erc20Service.getBalance(network, underlyingToken.address, lpAddress)
+            val userTokenAmount = underlyingTokenBalance.toBigDecimal().times(userShare)
 
-        val userToken0Amount = lpToken0Amount.toBigDecimal().times(userShare)
-        val userToken1Amount = lpToken1Amount.toBigDecimal().times(userShare)
-
-        val totalDollarValueToken0 = userToken0Amount.div(
-            BigDecimal.TEN.pow(tokenInformation0.decimals)
-        ).times(token0Price)
-        val totalDollarValueToken1 = userToken1Amount.div(
-            BigDecimal.TEN.pow(tokenInformation1.decimals)
-        ).times(token1Price)
-
-        val multiplier =
-            if (totalDollarValueToken0.toBigInteger() == BigInteger.ZERO || totalDollarValueToken1.toBigInteger() == BigInteger.ZERO) {
-                2
-            } else {
-                1
-            }
-        return (totalDollarValueToken0 + totalDollarValueToken1).times(multiplier.toBigDecimal())
+            userTokenAmount.div(
+                BigDecimal.TEN.pow(underlyingToken.decimals)
+            ).times(price)
+        }.reduce { acc, bigDecimal ->
+            acc.plus(bigDecimal)
+        }
     }
 }

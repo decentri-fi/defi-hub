@@ -44,7 +44,10 @@ class DefaultStakingMarketRestController(
             }.filter {
                 val token = erC20Resource.getTokenInformation(it.network, it.token.address.lowercase())
                 if (token.type != TokenType.SINGLE) {
-                    token.tokenInformation0!!.address.lowercase() == tokenAddress.lowercase() || token.tokenInformation1!!.address.lowercase() == tokenAddress.lowercase() || it.token.address.lowercase() == tokenAddress.lowercase()
+                    it.token.address.lowercase() == tokenAddress.lowercase() ||
+                            token.underlyingTokens.any { underlyingToken ->
+                                underlyingToken.address.lowercase() == tokenAddress.lowercase()
+                            }
                 } else {
                     it.token.address.lowercase() == tokenAddress.lowercase()
                 }

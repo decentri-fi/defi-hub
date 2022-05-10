@@ -11,8 +11,7 @@ class TokenInformation(
     val decimals: Int,
     val type: TokenType,
     val totalSupply: BigInteger = BigInteger.ZERO,
-    val tokenInformation0: TokenInformation? = null,
-    val tokenInformation1: TokenInformation? = null,
+    val underlyingTokens: List<TokenInformation> = emptyList(),
     val protocol: Protocol? = null
 ) {
     fun toFungibleToken(): FungibleToken {

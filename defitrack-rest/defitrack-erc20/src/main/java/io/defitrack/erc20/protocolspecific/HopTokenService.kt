@@ -3,7 +3,7 @@ package io.defitrack.erc20.protocolspecific
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.ERC20Service
-import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.protocol.HopService
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.contract.HopLpTokenContract
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component
 @Component
 class HopTokenService(
     private val abiResource: ABIResource,
-    private val contractAccessors: List<BlockchainGateway>,
+    private val contractAccessorGateway: ContractAccessorGateway,
     private val hopService: HopService,
     private val erC20Service: ERC20Service
 ) {
@@ -28,7 +28,7 @@ class HopTokenService(
         }!!.let { hopLpToken ->
 
             val saddleToken = HopLpTokenContract(
-                blockchainGateway = getContractAccessor(network),
+                blockchainGateway = contractAccessorGateway.getGateway(network),
                 abiResource.getABI("hop/SaddleToken.json"),
                 address
             )
@@ -39,20 +39,15 @@ class HopTokenService(
             TokenInformation(
                 name = saddleToken.name,
                 symbol = saddleToken.symbol,
-                tokenInformation0 = token0.toToken(),
-                tokenInformation1 = token1.toToken(),
                 address = address,
                 decimals = saddleToken.decimals,
                 totalSupply = saddleToken.totalSupply,
                 type = TokenType.HOP,
-                protocol = Protocol.HOP
+                protocol = Protocol.HOP,
+                underlyingTokens = listOf(
+                    token0.toToken(), token1.toToken(),
+                )
             )
         }
-    }
-
-    fun getContractAccessor(network: Network): BlockchainGateway {
-        return contractAccessors.find {
-            it.network == network
-        } ?: throw IllegalArgumentException("$network not supported")
     }
 }
