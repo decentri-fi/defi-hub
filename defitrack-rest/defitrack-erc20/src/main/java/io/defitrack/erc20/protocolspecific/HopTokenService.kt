@@ -1,7 +1,8 @@
-package io.defitrack.erc20
+package io.defitrack.erc20.protocolspecific
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
+import io.defitrack.erc20.ERC20Service
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.protocol.HopService
 import io.defitrack.protocol.Protocol

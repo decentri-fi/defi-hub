@@ -1,9 +1,12 @@
 package io.defitrack.erc20
 
 import io.defitrack.common.network.Network
+import io.defitrack.erc20.protocolspecific.BalancerTokenService
+import io.defitrack.erc20.protocolspecific.HopTokenService
 import io.defitrack.logo.LogoService
 import io.defitrack.nativetoken.NativeTokenService
 import io.defitrack.pool.LPtokenService
+import io.defitrack.pool.contract.LPTokenContract
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
@@ -21,6 +24,7 @@ class TokenService(
     private val erC20Repository: ERC20Repository,
     private val LPtokenService: LPtokenService,
     private val hopTokenService: HopTokenService,
+    private val balancerTokenService: BalancerTokenService,
     private val nativeTokenService: NativeTokenService,
     private val logoService: LogoService
 ) {
@@ -36,34 +40,41 @@ class TokenService(
         }
     }
 
-    fun getType(symbol: String): TokenType = when {
-        symbol == "SLP" -> {
+    fun getType(lp: LPTokenContract): TokenType = when {
+        lp.symbol == "SLP" -> {
             TokenType.SUSHISWAP
         }
-        symbol == "UNI-V2" -> {
+        lp.symbol == "UNI-V2" -> {
             TokenType.UNISWAP
         }
-        symbol == "WLP" -> {
+        lp.symbol == "WLP" -> {
             TokenType.WAULT
         }
-        symbol == "spLP" -> {
+        lp.symbol == "spLP" -> {
             TokenType.SPOOKY
         }
-        symbol == "SPIRIT-LP" -> {
+        lp.symbol == "SPIRIT-LP" -> {
             TokenType.SPIRIT
         }
-        symbol == "DFYNLP" -> {
+        lp.symbol == "DFYNLP" -> {
             TokenType.DFYN
         }
-        isHopLp(symbol) -> {
+        isBalancerLp(lp.address, lp.blockchainGateway.network) -> {
+            TokenType.BALANCER
+        }
+        isHopLp(lp.symbol) -> {
             TokenType.HOP
         }
-        isKyberDMMLP(symbol) -> {
+        isKyberDMMLP(lp.symbol) -> {
             TokenType.KYBER
         }
         else -> {
             TokenType.SINGLE
         }
+    }
+
+    private fun isBalancerLp(address: String, network: Network): Boolean {
+        return balancerTokenService.isBalancerToken(address, network)
     }
 
     val tokenInformationCache = Cache.Builder().build<String, TokenInformation>()
@@ -93,6 +104,9 @@ class TokenService(
                 }
                 isKyberDMMLP(token.symbol) -> {
                     fromLP(Protocol.DMM, network, token)
+                }
+                isBalancerLp(token.address, network) -> {
+                    balancerTokenService.getTokenInformation(token.address, network)
                 }
                 isHopLp(token.symbol) -> {
                     hopTokenService.getTokenInformation(token.address, network)
@@ -140,7 +154,7 @@ class TokenService(
             address = erc20.address,
             decimals = erc20.decimals,
             totalSupply = lp.totalSupply,
-            type = getType(lp.symbol),
+            type = getType(lp),
             protocol = protocol
         )
     }
