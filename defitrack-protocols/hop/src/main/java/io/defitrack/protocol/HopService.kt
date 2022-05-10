@@ -26,9 +26,9 @@ class HopService(
     val lpCache = Cache.Builder().build<Network, List<HopLpToken>>()
 
     fun getStakingRewards(network: Network): List<String> {
-        return abstractHopServices.filter {
+        return abstractHopServices.firstOrNull {
             it.getNetwork() == network
-        }.firstOrNull()?.getStakingRewards() ?: emptyList()
+        }?.getStakingRewards() ?: emptyList()
     }
 
     fun getDailyVolumes(tokenName: String, network: Network): List<DailyVolume> {

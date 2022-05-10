@@ -62,4 +62,13 @@ open class ERC20Contract(
             (read[0].value as BigInteger).toInt()
         }
     }
+
+    val totalSupply by lazy {
+        val read = read("totalSupply")
+        if (read.isEmpty()) {
+            18
+        }  else {
+            (read[0].value as BigInteger).toInt()
+        }
+    }
 }
