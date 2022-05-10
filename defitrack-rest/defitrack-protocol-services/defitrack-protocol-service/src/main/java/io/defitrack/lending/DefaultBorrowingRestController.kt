@@ -2,6 +2,7 @@ package io.defitrack.lending
 
 import io.defitrack.borrowing.domain.BorrowElement
 import io.defitrack.borrowing.vo.BorrowElementVO
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.toVO
@@ -49,7 +50,7 @@ class DefaultBorrowingRestController(
                 ),
                 rate = rate,
                 name = name,
-                amount = amount,
+                amount = amount.asEth(token.decimals).toDouble(),
                 id = id,
                 token = token
             )

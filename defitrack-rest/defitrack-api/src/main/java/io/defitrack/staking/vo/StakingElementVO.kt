@@ -15,6 +15,6 @@ data class StakingElementVO(
     val vaultType: String,
     val rate: Double?,
     val stakedToken: FungibleToken,
-    val amount: BigInteger,
+    val amount: Double,
     val rewardTokens: List<FungibleToken>
 )

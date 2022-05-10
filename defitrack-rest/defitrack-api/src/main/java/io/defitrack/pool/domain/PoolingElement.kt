@@ -14,4 +14,4 @@ class PoolingElement(
     val protocol: Protocol,
     val tokenType: TokenType = TokenType.SINGLE,
     val id: String,
-    )
+)

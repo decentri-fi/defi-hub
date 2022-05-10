@@ -80,7 +80,7 @@ class DefaultLendingRestController(
                 dollarValue = lendingInDollars,
                 rate = rate,
                 name = name,
-                amount = amount,
+                amount = amount.asEth(token.decimals).toDouble(),
                 id = id,
                 token = token
             )

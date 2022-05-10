@@ -12,6 +12,6 @@ data class LendingElementVO(
     val dollarValue: Double,
     val rate: Double?,
     val name: String,
-    val amount: BigInteger,
+    val amount: Double,
     val token: FungibleToken
 )

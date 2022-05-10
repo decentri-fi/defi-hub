@@ -98,7 +98,7 @@ class DefaultUserStakingRestController(
             contractAddress = market.contractAddress,
             stakedToken = market.stakedToken,
             rewardTokens = market.rewardTokens,
-            amount = amount
+            amount = amount.asEth(market.stakedToken.decimals).toDouble()
         )
     }
 
