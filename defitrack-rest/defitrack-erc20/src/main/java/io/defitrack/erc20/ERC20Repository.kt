@@ -16,7 +16,7 @@ class ERC20Repository(
     private val client: HttpClient
 ) {
 
-    private lateinit var tokenList: List<TokenInfo>
+    private lateinit var tokenList: Map<Network, List<String>>
 
     companion object {
 
@@ -46,11 +46,15 @@ class ERC20Repository(
             "https://raw.githubusercontent.com/defitrack/data/master/tokens/bsc/pancakeswap-extended.json",
         ).flatMap {
             fetchFromTokenList(it)
-        }
+        }.groupBy({
+            it.first
+        }, {
+            it.second
+        })
     }
 
-    private fun fetchFromTokenList(url: String) =
-        runBlocking {
+    private fun fetchFromTokenList(url: String): List<Pair<Network, String>> {
+        return runBlocking {
             val result = client.get<String>(with(HttpRequestBuilder()) {
                 url(url)
                 this
@@ -64,18 +68,15 @@ class ERC20Repository(
             tokens
         }.tokens.mapNotNull { entry ->
             Network.fromChainId(entry.chainId)?.let { network ->
-                TokenInfo(
-                    name = entry.name,
-                    network = network,
-                    address = entry.address,
-                    logo = entry.logoURI,
-                )
+                network to entry.address
             }
         }
+    }
 
-    fun allTokens(network: Network): List<TokenInfo> {
-        return tokenList.filter { it.network == network }.distinctBy {
-            it.address.lowercase()
+    fun allTokens(network: Network): List<String> {
+        val addresses = tokenList[network] ?: emptyList()
+        return addresses.distinctBy {
+            it.lowercase()
         }
     }
 }

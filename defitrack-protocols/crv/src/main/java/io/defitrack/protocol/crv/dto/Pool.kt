@@ -29,10 +29,10 @@ class UnderlyingCoin(
     val id: String,
     val index: Int,
     val balance: BigDecimal,
-    val token: Token
+    val token: CrvToken
 )
 
-class Token(
+class CrvToken(
     val address: String,
     val decimals: Int,
     val name: String? = "?",

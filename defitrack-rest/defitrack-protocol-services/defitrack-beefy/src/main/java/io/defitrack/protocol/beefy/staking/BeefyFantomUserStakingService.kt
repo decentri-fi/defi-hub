@@ -3,7 +3,6 @@ package io.defitrack.protocol.beefy.staking
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ContractAccessorGateway
-import io.defitrack.fantom.config.FantomContractAccessorConfig
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
@@ -54,7 +53,7 @@ class BeefyFantomUserStakingService(
         val markets = stakingMarketService.getStakingMarkets()
 
 
-        return erC20Resource.getBalancesFor(address, markets.map { it.contractAddress }, gateway)
+        return erC20Resource.getBalancesFor(address, markets.map { it.contractAddress }, getNetwork())
             .mapIndexed { index, balance ->
                 vaultToStakingElement(address, balance)(markets[index])
             }.filterNotNull()

@@ -53,7 +53,7 @@ class BeefyBscStakingService(
         val markets = stakingMarketService.getStakingMarkets()
 
 
-        return erC20Resource.getBalancesFor(address, markets.map { it.contractAddress }, gateway)
+        return erC20Resource.getBalancesFor(address, markets.map { it.contractAddress }, getNetwork())
             .mapIndexed { index, balance ->
                 vaultToStakingElement(balance)(markets[index])
             }.filterNotNull()

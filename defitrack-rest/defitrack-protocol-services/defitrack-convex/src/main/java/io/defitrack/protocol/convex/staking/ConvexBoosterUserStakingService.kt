@@ -2,7 +2,6 @@ package io.defitrack.protocol.convex.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.ethereum.config.EthereumContractAccessorConfig
 import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.convex.ConvexService
@@ -35,7 +34,7 @@ class ConvexBoosterUserStakingService(
 
         val poolInfos = booster.poolInfos
 
-        return erC20Resource.getBalancesFor(address, poolInfos.map { it.crvRewards }, gateway)
+        return erC20Resource.getBalancesFor(address, poolInfos.map { it.crvRewards }, getNetwork())
             .mapIndexed { index, balance ->
                 if (balance > BigInteger.ZERO) {
                     val stakedToken = erC20Resource.getTokenInformation(getNetwork(), poolInfos[index].lpToken)

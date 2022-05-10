@@ -2,7 +2,6 @@ package io.defitrack.protocol.mstable
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.ethereum.config.EthereumContractAccessorConfig
 import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.lending.LendingService
 import io.defitrack.lending.domain.LendingElement
@@ -42,7 +41,7 @@ class MStablePolygonLendingService(
             )
         }
 
-        return erC20Resource.getBalancesFor(address, contracts.map { it.address }, gateway)
+        return erC20Resource.getBalancesFor(address, contracts.map { it.address }, getNetwork())
             .mapIndexed { index, balance ->
                 if (balance > BigInteger.ZERO) {
                     val token = erC20Resource.getTokenInformation(getNetwork(), contracts[index].address)

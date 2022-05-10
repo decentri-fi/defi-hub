@@ -2,7 +2,6 @@ package io.defitrack.protocol.beefy.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.arbitrum.config.ArbitrumContractAccessorConfig
 import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.beefy.apy.BeefyAPYService
@@ -32,7 +31,7 @@ class BeefyArbitrumStakingService(
         abiResource.getABI("beefy/VaultV6.json")
     }
 
-    val gateway =contractAccessorGateway.getGateway(getNetwork())
+    val gateway = contractAccessorGateway.getGateway(getNetwork())
 
     override fun getStaking(address: String, vaultId: String): StakingElement? {
         return stakingMarketService.getStakingMarkets().firstOrNull {
@@ -53,7 +52,7 @@ class BeefyArbitrumStakingService(
     override fun getStakings(address: String): List<StakingElement> {
         val markets = stakingMarketService.getStakingMarkets()
 
-        return erC20Resource.getBalancesFor(address, markets.map { it.contractAddress }, gateway)
+        return erC20Resource.getBalancesFor(address, markets.map { it.contractAddress }, getNetwork())
             .mapIndexed { index, balance ->
                 vaultToStakingElement(balance)(markets[index])
             }.filterNotNull()

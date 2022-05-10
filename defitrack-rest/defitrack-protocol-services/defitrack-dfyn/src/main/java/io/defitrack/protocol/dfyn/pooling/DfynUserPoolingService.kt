@@ -2,8 +2,6 @@ package io.defitrack.protocol.dfyn.pooling
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
-import io.defitrack.evm.contract.ContractAccessorGateway
-import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.pool.UserPoolingService
 import io.defitrack.pool.domain.PoolingElement
 import io.defitrack.protocol.Protocol
@@ -18,14 +16,13 @@ import java.math.BigInteger
 class DfynUserPoolingService(
     private val uniswapService: DfynService,
     private val erC20Resource: ERC20Resource,
-    private val contractAccessorGateway: ContractAccessorGateway
 ) : UserPoolingService() {
 
 
     override suspend fun fetchUserPoolings(address: String): List<PoolingElement> {
         val allPairs = uniswapService.getPairs()
 
-        return erC20Resource.getBalancesFor(address, allPairs.map { it.id }, contractAccessorGateway.getGateway(getNetwork()))
+        return erC20Resource.getBalancesFor(address, allPairs.map { it.id }, getNetwork())
             .mapIndexed { index, balance ->
 
 

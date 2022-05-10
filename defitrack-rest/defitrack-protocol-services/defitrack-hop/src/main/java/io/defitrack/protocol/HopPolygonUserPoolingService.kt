@@ -24,7 +24,7 @@ class HopPolygonUserPoolingService(
         return erC20Resource.getBalancesFor(
             address,
             markets.map { it.address },
-            contractAccessorGateway.getGateway(getNetwork())
+            getNetwork()
         )
             .mapIndexed { index, balance ->
                 if (balance > BigInteger.ONE) {

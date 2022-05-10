@@ -34,7 +34,7 @@ class TokenService(
         return withContext(Dispatchers.IO.limitedParallelism(10)) {
             erC20Repository.allTokens(network).map {
                 async {
-                    getTokenInformation(it.address, network)
+                    getTokenInformation(it, network)
                 }
             }.awaitAll()
         }

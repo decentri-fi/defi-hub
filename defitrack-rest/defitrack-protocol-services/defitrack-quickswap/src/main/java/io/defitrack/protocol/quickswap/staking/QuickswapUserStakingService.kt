@@ -3,7 +3,6 @@ package io.defitrack.protocol.quickswap.staking
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ContractAccessorGateway
-import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
 import io.defitrack.protocol.quickswap.QuickswapService
@@ -42,7 +41,7 @@ class QuickswapUserStakingService(
         }
 
 
-        return erC20Resource.getBalancesFor(address, pools.map { it.address }, gateway)
+        return erC20Resource.getBalancesFor(address, pools.map { it.address }, getNetwork())
             .mapIndexed { index, balance ->
                 if (balance > BigInteger.ZERO) {
 

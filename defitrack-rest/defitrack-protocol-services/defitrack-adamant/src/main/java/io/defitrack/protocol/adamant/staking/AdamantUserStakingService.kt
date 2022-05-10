@@ -16,7 +16,7 @@ import java.math.BigInteger
 class AdamantUserStakingService(
     erC20Resource: ERC20Resource,
     private val adamantService: AdamantService,
-    private val contractAccessorGateway: ContractAccessorGateway,
+    contractAccessorGateway: ContractAccessorGateway,
     private val abiResource: ABIResource,
 ) : UserStakingService(
     erC20Resource
@@ -39,7 +39,7 @@ class AdamantUserStakingService(
             )
         }
 
-        return erC20Resource.getBalancesFor(address, adamantVaultContracts.map { it.address }, gateway)
+        return erC20Resource.getBalancesFor(address, adamantVaultContracts.map { it.address }, getNetwork())
             .mapIndexed { index, balance ->
                 if (balance > BigInteger.ZERO) {
                     val vault = adamantVaultContracts[index]

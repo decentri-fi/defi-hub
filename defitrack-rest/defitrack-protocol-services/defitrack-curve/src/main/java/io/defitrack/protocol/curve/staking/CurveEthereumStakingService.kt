@@ -29,31 +29,30 @@ class CurveEthereumStakingService(
         return erC20Resource.getBalancesFor(
             address,
             gauges.map { it.address },
-            contractAccessorGateway.getGateway(getNetwork())
-        )
-            .mapIndexed { index, balance ->
-                if (balance > BigInteger.ZERO) {
-                    val gauge = gauges[index]
-                    val lpToken = erC20Resource.getTokenInformation(getNetwork(), gauge.pool!!.lpToken.address)
+            getNetwork()
+        ).mapIndexed { index, balance ->
+            if (balance > BigInteger.ZERO) {
+                val gauge = gauges[index]
+                val lpToken = erC20Resource.getTokenInformation(getNetwork(), gauge.pool!!.lpToken.address)
 
-                    try {
-                        StakingElement(
-                            network = getNetwork(),
-                            protocol = getProtocol(),
-                            name = (gauge.pool?.name ?: "Curve") + " Gauge",
-                            id = "curve-ethereum-${gauge.address}",
-                            stakedToken = lpToken.toFungibleToken(),
-                            rewardTokens = emptyList(),
-                            vaultType = "curve-gauge",
-                            contractAddress = gauge.address,
-                            amount = balance
-                        )
-                    } catch (ex: Exception) {
-                        logger.debug("Something went wrong trying to fetch curve staking", ex.message)
-                        null
-                    }
-                } else null
-            }.filterNotNull()
+                try {
+                    StakingElement(
+                        network = getNetwork(),
+                        protocol = getProtocol(),
+                        name = (gauge.pool?.name ?: "Curve") + " Gauge",
+                        id = "curve-ethereum-${gauge.address}",
+                        stakedToken = lpToken.toFungibleToken(),
+                        rewardTokens = emptyList(),
+                        vaultType = "curve-gauge",
+                        contractAddress = gauge.address,
+                        amount = balance
+                    )
+                } catch (ex: Exception) {
+                    logger.debug("Something went wrong trying to fetch curve staking", ex.message)
+                    null
+                }
+            } else null
+        }.filterNotNull()
     }
 
     override fun getProtocol(): Protocol {

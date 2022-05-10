@@ -41,7 +41,7 @@ class MStableEthereumLendingService(
             )
         }
 
-        return erC20Resource.getBalancesFor(address, contracts.map { it.address }, gateway)
+        return erC20Resource.getBalancesFor(address, contracts.map { it.address }, getNetwork())
             .mapIndexed { index, balance ->
                 if (balance > BigInteger.ZERO) {
                     val contract = contracts[index]

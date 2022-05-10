@@ -36,7 +36,7 @@ class ConvexPoolsUserStakingService(
             )
         }
 
-        return erC20Resource.getBalancesFor(address, cvxRewardPools.map { it.address }, gateway)
+        return erC20Resource.getBalancesFor(address, cvxRewardPools.map { it.address }, getNetwork())
             .mapIndexed { index, balance ->
                 if (balance > BigInteger.ZERO) {
                     val pool = cvxRewardPools[index]

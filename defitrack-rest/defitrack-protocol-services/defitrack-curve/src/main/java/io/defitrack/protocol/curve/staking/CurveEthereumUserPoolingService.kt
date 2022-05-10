@@ -13,7 +13,6 @@ import java.math.BigInteger
 @Component
 class CurveEthereumUserPoolingService(
     private val curveEthereumPoolingMarketService: CurveEthereumPoolingMarketService,
-    private val contractAccessorGateway: ContractAccessorGateway,
     private val erC20Resource: ERC20Resource
 ) : UserPoolingService() {
 
@@ -22,7 +21,7 @@ class CurveEthereumUserPoolingService(
         return erC20Resource.getBalancesFor(
             address,
             poolingMarkets.map { it.address },
-            contractAccessorGateway.getGateway(getNetwork())
+            getNetwork()
         ).mapIndexed { index, balance ->
             if (balance > BigInteger.ZERO) {
 

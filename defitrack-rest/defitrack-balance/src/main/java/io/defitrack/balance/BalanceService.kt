@@ -31,7 +31,7 @@ abstract class BalanceService(
                 it.address
             }
 
-            return erc20Resource.getBalancesFor(user, tokenAddresses, contractAccessorGateway.getGateway(getNetwork()))
+            return erc20Resource.getBalancesFor(user, tokenAddresses, getNetwork())
                 .mapIndexed { i, balance ->
 
                     if (balance > BigInteger.ZERO) {

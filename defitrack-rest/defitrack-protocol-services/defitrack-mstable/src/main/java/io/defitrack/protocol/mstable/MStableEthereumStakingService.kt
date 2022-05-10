@@ -2,7 +2,6 @@ package io.defitrack.protocol.mstable
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.ethereum.config.EthereumContractAccessorConfig
 import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.protocol.Protocol
 import io.defitrack.staking.UserStakingService
@@ -34,7 +33,7 @@ class MStableEthereumStakingService(
             )
         }
 
-        return erC20Resource.getBalancesFor(address, vaultContracts.map { it.address }, gateway)
+        return erC20Resource.getBalancesFor(address, vaultContracts.map { it.address }, getNetwork())
             .mapIndexed { index, balance ->
                 if (balance > BigInteger.ZERO) {
                     val contract = vaultContracts[index]

@@ -4,7 +4,6 @@ import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.evm.contract.ContractAccessorGateway
-import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
@@ -48,7 +47,7 @@ class BeefyPolygonUserStakingService(
     override fun getStakings(address: String): List<StakingElement> {
         val markets = polygonStakingMarketService.getStakingMarkets()
 
-        return erC20Resource.getBalancesFor(address, markets.map { it.contractAddress }, gateway)
+        return erC20Resource.getBalancesFor(address, markets.map { it.contractAddress }, getNetwork())
             .mapIndexed { index, balance ->
                 vaultToStakingElement(balance)(markets[index])
             }.filterNotNull()
