@@ -2,3 +2,4 @@ erc20
 balance
 abi
 price
+api-gw
