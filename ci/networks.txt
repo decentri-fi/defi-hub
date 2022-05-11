@@ -1,0 +1,8 @@
+arbitrum
+avalanche
+bsc
+ethereum
+fantom
+optimism
+polygon
+polygon-mumbai
