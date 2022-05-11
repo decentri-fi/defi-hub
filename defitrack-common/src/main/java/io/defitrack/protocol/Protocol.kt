@@ -23,6 +23,7 @@ enum class Protocol(
     SUSHISWAP("sushiswap.png", "sushiswap"),
     DMM("dmm.png", "dmm"),
     BALANCER("balancer.png", "balancer"),
+    STARGATE("stargate.png", "stargate"),
     SPOOKY("spooky.png", "spooky"),
     SPIRITSWAP("spirit.png", "spirit"),
     CONVEX("convex.png", "convex");

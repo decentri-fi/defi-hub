@@ -6,9 +6,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import javax.annotation.PostConstruct
 
 @Configuration
+@Profile("!dev")
 class DataPopulator(private val tokenService: TokenService) {
 
     val logger = LoggerFactory.getLogger(this::class.java)
