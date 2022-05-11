@@ -25,7 +25,7 @@ import java.math.RoundingMode
 class AdamantClaimableService(
     private val abiResource: ABIResource,
     private val adamantService: AdamantService,
-    private val contractAccessorGateway: ContractAccessorGateway,
+    contractAccessorGateway: ContractAccessorGateway,
     private val erC20Resource: ERC20Resource,
     private val priceService: PriceResource
 ) : ClaimableService {

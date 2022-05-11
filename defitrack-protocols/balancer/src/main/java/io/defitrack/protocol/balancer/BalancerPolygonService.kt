@@ -51,7 +51,7 @@ class BalancerPolygonService(
         }
     }
 
-    fun getRewards(): List<LiquidityMiningReward> = runBlocking {
+    fun getDeprecatedRewards(): List<LiquidityMiningReward> = runBlocking {
         val lastWeek = findLatestLmWeek()
         IntStream.rangeClosed(1, lastWeek).toList().flatMap { week ->
             getRewardsForWeek(week)

@@ -4,8 +4,10 @@ import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
 import io.defitrack.evm.contract.BlockchainGateway.Companion.toUint256
 import io.defitrack.evm.contract.ERC20Contract
+import io.defitrack.evm.contract.multicall.MultiCallElement
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
+import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
@@ -15,8 +17,8 @@ class BalancerGaugeContract(
     address: String
 ) : ERC20Contract(blockchainGateway, abi, address) {
 
-    fun getClaimableReward(address: String, token: String): BigInteger {
-        return read(
+    fun getClaimableRewardFunction(address: String, token: String): Function {
+        return createFunction(
             "claimable_reward",
             listOf(
                 address.toAddress(),
@@ -25,8 +27,47 @@ class BalancerGaugeContract(
             listOf(
                 TypeReference.create(Uint256::class.java)
             )
-        )[0].value as BigInteger
+        )
     }
+
+    fun getBalances(user: String): List<BalancerGaugeBalance> {
+        val rewardTokens = getRewardTokens()
+        return blockchainGateway.readMultiCall(
+            rewardTokens.map { token ->
+                MultiCallElement(
+                    getClaimableRewardFunction(user, token),
+                    this.address
+                )
+            }
+        ).mapIndexed { index, retVal ->
+            val token = rewardTokens[index]
+            BalancerGaugeBalance(
+                token = token,
+                retVal[0].value as BigInteger
+            )
+        }
+    }
+
+    class BalancerGaugeBalance(
+        val token: String,
+        val balance: BigInteger
+    )
+
+    fun getRewardTokens(): List<String> {
+        return (0..3).mapNotNull {
+            try {
+                val rewardToken = getRewardToken(it)
+                if (rewardToken != "0x0000000000000000000000000000000000000000") {
+                    rewardToken
+                } else {
+                    null
+                }
+            } catch (ex: Exception) {
+                null
+            }
+        }
+    }
+
 
     fun getRewardToken(index: Int): String {
         return read(
