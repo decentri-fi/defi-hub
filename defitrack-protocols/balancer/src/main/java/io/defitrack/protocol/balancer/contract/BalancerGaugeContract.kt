@@ -19,7 +19,7 @@ class BalancerGaugeContract(
 
     fun getClaimableRewardFunction(address: String, token: String): Function {
         return createFunction(
-            "claimable_reward",
+            "claimable_reward_write",
             listOf(
                 address.toAddress(),
                 token.toAddress()

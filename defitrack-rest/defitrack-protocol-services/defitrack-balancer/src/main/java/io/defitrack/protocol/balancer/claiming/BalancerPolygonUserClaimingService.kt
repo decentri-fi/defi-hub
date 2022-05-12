@@ -11,6 +11,8 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.BalancerPolygonService
 import io.defitrack.protocol.balancer.contract.BalancerGaugeContract
 import io.defitrack.token.ERC20Resource
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.math.BigInteger
@@ -32,31 +34,36 @@ class BalancerPolygonUserClaimingService(
         private val logger = LoggerFactory.getLogger(this::class.java)
     }
 
-    override fun claimables(address: String): List<ClaimableElement> {
+    override fun claimables(address: String): List<ClaimableElement> = runBlocking {
         val markets = balancerPolygonService.getGauges()
-        return markets.flatMap { gauge ->
-            BalancerGaugeContract(
-                contractAccessorGateway.getGateway(getNetwork()),
-                gaugeContractAbi,
-                gauge.id
-            ).getBalances(address)
-                .filter { it.balance > BigInteger.ZERO }
-                .map { balanceResult ->
-                    val token = erC20Resource.getTokenInformation(getNetwork(), balanceResult.token)
-                    ClaimableElement(
-                        id = UUID.randomUUID().toString(),
-                        name = token.name + " reward",
-                        address = gauge.id,
-                        type = "balancer-reward",
-                        protocol = getProtocol(),
-                        network = getNetwork(),
-                        claimableToken = ClaimableToken(
-                            name = token.name,
-                            symbol = token.symbol,
-                            amount = balanceResult.balance.asEth(token.decimals).toDouble()
+        markets.map { gauge ->
+            async {
+                println("gauge ${gauge.id}")
+                BalancerGaugeContract(
+                    contractAccessorGateway.getGateway(getNetwork()),
+                    gaugeContractAbi,
+                    gauge.id
+                ).getBalances(address)
+                    .filter { it.balance > BigInteger.ZERO }
+                    .map { balanceResult ->
+                        val token = erC20Resource.getTokenInformation(getNetwork(), balanceResult.token)
+                        ClaimableElement(
+                            id = UUID.randomUUID().toString(),
+                            name = token.name + " reward",
+                            address = gauge.id,
+                            type = "balancer-reward",
+                            protocol = getProtocol(),
+                            network = getNetwork(),
+                            claimableToken = ClaimableToken(
+                                name = token.name,
+                                symbol = token.symbol,
+                                amount = balanceResult.balance.asEth(token.decimals).toDouble()
+                            )
                         )
-                    )
-                }
+                    }
+            }
+        }.flatMap {
+            it.await()
         }
     }
 
