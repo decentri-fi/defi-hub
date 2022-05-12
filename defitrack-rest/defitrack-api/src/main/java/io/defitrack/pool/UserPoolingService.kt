@@ -11,7 +11,6 @@ import kotlin.time.Duration.Companion.minutes
 
 abstract class UserPoolingService : ProtocolService {
 
-
     val cache = Cache.Builder().expireAfterWrite(
         1.minutes
     ).build<String, List<PoolingElement>>()

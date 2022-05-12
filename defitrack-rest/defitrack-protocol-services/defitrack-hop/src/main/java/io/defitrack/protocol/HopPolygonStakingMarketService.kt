@@ -3,10 +3,12 @@ package io.defitrack.protocol
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.contract.HopStakingReward
 import io.defitrack.staking.StakingMarketService
+import io.defitrack.staking.domain.StakingMarketBalanceFetcher
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenInformation
@@ -43,7 +45,11 @@ class HopPolygonStakingMarketService(
                 rewardTokens = listOf(rewardToken.toFungibleToken()),
                 contractAddress = pool.address,
                 vaultType = "hop-staking-rewards",
-                marketSize = getMarketSize(stakedToken, pool)
+                marketSize = getMarketSize(stakedToken, pool),
+                balanceFetcher = StakingMarketBalanceFetcher(
+                    address = pool.address,
+                    function = {user -> pool.balanceOfMethod(user)}
+                )
             )
         }
     }

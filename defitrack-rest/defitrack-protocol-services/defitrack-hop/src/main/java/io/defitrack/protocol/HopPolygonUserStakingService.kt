@@ -1,6 +1,7 @@
 package io.defitrack.protocol
 
 import io.defitrack.common.network.Network
+import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.staking.UserStakingService
 import io.defitrack.staking.domain.StakingElement
 import io.defitrack.token.ERC20Resource
@@ -10,20 +11,23 @@ import java.math.BigInteger
 @Component
 class HopPolygonUserStakingService(
     private val hopPolygonStakingMarketService: HopPolygonStakingMarketService,
+    private val gateway: ContractAccessorGateway,
     erC20Resource: ERC20Resource,
 ) : UserStakingService(erC20Resource) {
     override fun getStakings(address: String): List<StakingElement> {
-        val markets = hopPolygonStakingMarketService.getStakingMarkets()
+        val markets = hopPolygonStakingMarketService.getStakingMarkets().filter {
+            it.balanceFetcher != null
+        }
 
-        return erC20Resource.getBalancesFor(
-            address,
+        return gateway.getGateway(getNetwork()).readMultiCall(
             markets.map {
-                it.contractAddress
-            },
-            getNetwork()
-        ).mapIndexed { index, balance ->
+                it.balanceFetcher!!.toMulticall(address)
+            }
+        ).mapIndexed { index, retVal ->
+            val market = markets[index]
+            val balance = market.balanceFetcher!!.extractBalance(retVal)
+
             if (balance > BigInteger.ONE) {
-                val market = markets[index]
                 stakingElement(
                     id = market.id,
                     vaultName = market.name,
@@ -39,7 +43,6 @@ class HopPolygonUserStakingService(
             }
         }.filterNotNull()
     }
-
 
     override fun getProtocol(): Protocol {
         return Protocol.HOP

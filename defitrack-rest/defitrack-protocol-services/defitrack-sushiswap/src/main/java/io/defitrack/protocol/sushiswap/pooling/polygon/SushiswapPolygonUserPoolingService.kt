@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service
 class SushiswapPolygonUserPoolingService(
     sushiServices: List<SushiswapService>,
 ) : DefaultSushiUserPoolingService(sushiServices) {
-
     override fun getProtocol(): Protocol {
         return Protocol.SUSHISWAP
     }
