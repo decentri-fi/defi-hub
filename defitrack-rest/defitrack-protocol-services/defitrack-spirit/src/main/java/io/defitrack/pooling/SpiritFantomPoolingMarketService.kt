@@ -7,6 +7,7 @@ import io.defitrack.pool.domain.PoolingMarketElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SpiritswapService
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
@@ -26,6 +27,7 @@ class SpiritFantomPoolingMarketService(
             }
             .map {
 
+                val token = erC20Resource.getTokenInformation(getNetwork(), it.id)
                 val token0 = erC20Resource.getTokenInformation(getNetwork(), it.token0.id)
                 val token1 = erC20Resource.getTokenInformation(getNetwork(), it.token1.id)
 
@@ -33,14 +35,16 @@ class SpiritFantomPoolingMarketService(
                     network = service.getNetwork(),
                     protocol = getProtocol(),
                     address = it.id,
-                    name = "Spirit ${it.token0.symbol}-${it.token1.symbol}",
+                    name = token.name,
                     token = listOf(
                         token0.toFungibleToken(),
                         token1.toFungibleToken(),
                     ),
+                    symbol = token.symbol,
                     apr = spiritswapAPRService.getAPR(it.id, service.getNetwork()),
                     id = "spirit-fantom-${it.id}",
-                    marketSize = it.reserveUSD
+                    marketSize = it.reserveUSD,
+                    tokenType = TokenType.SPIRIT
                 )
             }
     }

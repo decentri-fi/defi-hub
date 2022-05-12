@@ -5,6 +5,7 @@ import io.defitrack.pool.PoolingMarketService
 import io.defitrack.pool.domain.PoolingMarketElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
@@ -18,13 +19,15 @@ class IdexPoolingMarketService(
 
         if (it.reserveUsd > BigDecimal.valueOf(10000)) {
             try {
+                val token = erc20Resource.getTokenInformation(getNetwork(), it.liquidityToken)
                 val token0 = erc20Resource.getTokenInformation(getNetwork(), it.tokenA)
                 val token1 = erc20Resource.getTokenInformation(getNetwork(), it.tokenB)
 
-                val element = PoolingMarketElement(
+                PoolingMarketElement(
                     network = getNetwork(),
                     protocol = getProtocol(),
                     address = it.liquidityToken,
+                    symbol = token.symbol,
                     id = "idex-polygon-${it.liquidityToken}",
                     name = "IDEX ${token0.symbol}-${token1.symbol}",
                     token = listOf(
@@ -32,10 +35,9 @@ class IdexPoolingMarketService(
                         token1.toFungibleToken(),
                     ),
                     apr = BigDecimal.ZERO,
-                    marketSize = it.reserveUsd
+                    marketSize = it.reserveUsd,
+                    tokenType = TokenType.IDEX
                 )
-                logger.info("imported ${element.id}")
-                element
             } catch (ex: Exception) {
                 logger.error("something went wrong while importing ${it.liquidityToken}", ex)
                 null

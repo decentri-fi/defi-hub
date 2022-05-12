@@ -22,12 +22,10 @@ class QuickswapService(
     private val client: HttpClient
 ) {
 
-    @OptIn(ExperimentalTime::class)
     val vaultCache = Cache.Builder().expireAfterWrite(
         1.days
     ).build<String, List<String>>()
 
-    @OptIn(ExperimentalTime::class)
     val pairCache = Cache.Builder().expireAfterWrite(
         1.days
     ).build<String, List<QuickswapPair>>()

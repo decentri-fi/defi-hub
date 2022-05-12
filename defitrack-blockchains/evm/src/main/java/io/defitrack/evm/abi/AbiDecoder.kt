@@ -19,7 +19,7 @@ class AbiDecoder {
 
     init {
         this.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        this.mapper.registerModule(KotlinModule())
+        this.mapper.registerModule(KotlinModule.Builder().build())
     }
 
     fun decode(json: String): AbiContract {

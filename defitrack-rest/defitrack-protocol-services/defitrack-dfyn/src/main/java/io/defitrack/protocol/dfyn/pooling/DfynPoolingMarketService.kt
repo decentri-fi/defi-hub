@@ -7,6 +7,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.dfyn.DfynService
 import io.defitrack.protocol.dfyn.apr.DfynAPRService
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
@@ -20,6 +21,7 @@ class DfynPoolingMarketService(
     override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> {
         return dfynService.getPairs().mapNotNull {
             if (it.reserveUSD > BigDecimal.valueOf(100000)) {
+                val token = erc20Resource.getTokenInformation(getNetwork(), it.id)
                 val token0 = erc20Resource.getTokenInformation(getNetwork(), it.token0.id)
                 val token1 = erc20Resource.getTokenInformation(getNetwork(), it.token1.id)
 
@@ -28,13 +30,15 @@ class DfynPoolingMarketService(
                     protocol = getProtocol(),
                     address = it.id,
                     id = "dfyn-polygon-${it.id}",
-                    name = "DFYN ${it.token0.symbol}-${it.token1.symbol}",
+                    name = token.name,
+                    symbol = token.symbol,
                     token = listOf(
                         token0.toFungibleToken(),
                         token1.toFungibleToken()
                     ),
                     apr = dfynAPRService.getAPR(it.id),
-                    marketSize = it.reserveUSD
+                    marketSize = it.reserveUSD,
+                    tokenType = TokenType.DFYN
                 )
             } else {
                 null

@@ -7,6 +7,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.TokenType
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
@@ -23,25 +24,25 @@ class QuickswapPoolingMarketService(
         .filter {
             it.reserveUSD > BigDecimal.valueOf(100000)
         }.map {
-
+            val token = erC20Resource.getTokenInformation(getNetwork(), it.id)
             val token0 = erC20Resource.getTokenInformation(getNetwork(), it.token0.id)
             val token1 = erC20Resource.getTokenInformation(getNetwork(), it.token1.id)
 
-            val element = PoolingMarketElement(
+            PoolingMarketElement(
                 network = getNetwork(),
                 protocol = getProtocol(),
                 address = it.id,
                 id = "quickswap-polygon-${it.id}",
-                name = "QUICKSWAP ${it.token0.symbol}-${it.token1.symbol}",
+                name = token.name,
+                symbol = token.symbol,
                 token = listOf(
                     token0.toFungibleToken(),
                     token1.toFungibleToken(),
                 ),
                 apr = quickswapAPRService.getLPAPR(it.id),
-                marketSize = it.reserveUSD
+                marketSize = it.reserveUSD,
+                tokenType = TokenType.QUICKSWAP
             )
-            logger.debug("imported ${element.id}")
-            element
         }
 
     override fun getProtocol(): Protocol {

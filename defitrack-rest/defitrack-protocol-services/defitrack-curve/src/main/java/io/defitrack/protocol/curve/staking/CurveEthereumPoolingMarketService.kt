@@ -6,6 +6,7 @@ import io.defitrack.pool.domain.PoolingMarketElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.crv.CurveEthereumService
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
@@ -18,9 +19,9 @@ class CurveEthereumPoolingMarketService(
     override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> {
         return curveEthereumService.getPools().map { pool ->
 
-            val tokens = pool.coins.map { coin->
+            val tokens = pool.coins.map { coin ->
                 erc20Resource.getTokenInformation(getNetwork(), coin.underlying.token.address)
-            }
+            }.map { it.toFungibleToken() }
 
             PoolingMarketElement(
                 id = "curve-ethereum-${pool.id}",
@@ -28,9 +29,11 @@ class CurveEthereumPoolingMarketService(
                 protocol = getProtocol(),
                 address = pool.lpToken.address,
                 name = pool.lpToken.name,
-                token = tokens.map { it.toFungibleToken() },
+                token = tokens,
+                symbol = tokens.joinToString("/") { it.symbol },
                 apr = BigDecimal.ZERO,
-                marketSize = BigDecimal.ZERO
+                marketSize = BigDecimal.ZERO,
+                tokenType = TokenType.CURVE
             )
         }
     }

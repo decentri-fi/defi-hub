@@ -6,6 +6,7 @@ import io.defitrack.pool.domain.PoolingMarketElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.dmm.apr.DMMAPRService
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.TokenType
 import org.springframework.stereotype.Service
 
 @Service
@@ -18,6 +19,7 @@ class DMMPolygonPoolingMarketService(
     override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> {
         return dmmPolygonService.getPoolingMarkets().map {
 
+            val token = erc20Resource.getTokenInformation(getNetwork(), it.id)
             val token0 = erc20Resource.getTokenInformation(getNetwork(), it.token0.id)
             val token1 = erc20Resource.getTokenInformation(getNetwork(), it.token1.id)
 
@@ -26,13 +28,15 @@ class DMMPolygonPoolingMarketService(
                 network = getNetwork(),
                 protocol = getProtocol(),
                 address = it.id,
-                name = "DMM ${it.token0.symbol}-${it.token1.symbol}",
+                name = token.name,
+                symbol = token.symbol,
                 token = listOf(
                     token0.toFungibleToken(),
                     token1.toFungibleToken()
                 ),
                 apr = dmmaprService.getAPR(it.pair.id, getNetwork()),
-                marketSize = it.reserveUSD
+                marketSize = it.reserveUSD,
+                tokenType = TokenType.DMM
             )
         }
     }

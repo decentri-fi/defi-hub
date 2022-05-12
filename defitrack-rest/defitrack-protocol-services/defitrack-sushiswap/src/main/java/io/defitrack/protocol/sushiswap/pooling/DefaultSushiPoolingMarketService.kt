@@ -5,6 +5,7 @@ import io.defitrack.pool.domain.PoolingMarketElement
 import io.defitrack.protocol.SushiswapService
 import io.defitrack.protocol.sushiswap.apr.SushiPoolingAPRCalculator
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.TokenType
 import java.math.BigDecimal
 
 abstract class DefaultSushiPoolingMarketService(
@@ -20,6 +21,7 @@ abstract class DefaultSushiPoolingMarketService(
                 it.reserveUSD > BigDecimal.valueOf(100000)
             }
             .map {
+                val token = erC20Resource.getTokenInformation(getNetwork(), it.id)
                 val token0 = erC20Resource.getTokenInformation(getNetwork(), it.token0.id)
                 val token1 = erC20Resource.getTokenInformation(getNetwork(), it.token1.id)
 
@@ -27,14 +29,16 @@ abstract class DefaultSushiPoolingMarketService(
                     network = service.getNetwork(),
                     protocol = getProtocol(),
                     address = it.id,
-                    name = "SUSHI ${it.token0.symbol}-${it.token1.symbol}",
+                    name = token.name,
+                    symbol = token.symbol,
                     token = listOf(
                         token0.toFungibleToken(),
                         token1.toFungibleToken(),
                     ),
                     apr = SushiPoolingAPRCalculator(service, it.id).calculateApr(),
                     id = "sushi-${getNetwork().slug}-${it.id}",
-                    marketSize = it.reserveUSD
+                    marketSize = it.reserveUSD,
+                    tokenType = TokenType.SUSHISWAP
                 )
                 element
             }

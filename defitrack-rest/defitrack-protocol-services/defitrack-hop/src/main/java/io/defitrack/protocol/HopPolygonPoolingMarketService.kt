@@ -51,6 +51,7 @@ class HopPolygonPoolingMarketService(
                 network = getNetwork(),
                 protocol = getProtocol(),
                 address = hopLpToken.lpToken,
+                symbol = htoken.symbol + "-" + canonical.symbol,
                 name = contract.name,
                 token = listOf(
                     htoken.toFungibleToken(),
@@ -63,7 +64,8 @@ class HopPolygonPoolingMarketService(
                     canonical.decimals,
                     getNetwork(),
                     marketSize
-                )
+                ),
+                tokenType = TokenType.HOP
             )
         }
     }

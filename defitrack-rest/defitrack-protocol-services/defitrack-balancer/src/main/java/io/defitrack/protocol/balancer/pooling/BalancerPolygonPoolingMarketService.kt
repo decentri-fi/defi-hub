@@ -5,6 +5,7 @@ import io.defitrack.pool.PoolingMarketService
 import io.defitrack.pool.domain.PoolingMarketElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.BalancerPolygonService
+import io.defitrack.token.TokenType
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 
@@ -26,8 +27,10 @@ class BalancerPolygonPoolingMarketService(private val balancerPolygonService: Ba
                         }
                     } Pool",
                     token = emptyList(),
+                    symbol = it.symbol,
                     apr = BigDecimal.ZERO,
-                    marketSize = it.totalLiquidity
+                    marketSize = it.totalLiquidity,
+                    tokenType = TokenType.BALANCER
                 )
             } else {
                 null

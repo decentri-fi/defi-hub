@@ -27,7 +27,6 @@ class SushiFantomService(
         client
     )
 
-    @OptIn(ExperimentalTime::class)
     private val pairCache =
         Cache.Builder().expireAfterWrite(1.days).build<String, List<SushiswapPair>>()
 

@@ -19,7 +19,7 @@ class HttpClientConfig {
                 acceptContentTypes = acceptContentTypes + ContentType("application", "json+hal")
             }
             install(HttpTimeout) {
-                requestTimeoutMillis = 60000
+                requestTimeoutMillis = 120000
                 connectTimeoutMillis = 60000
                 socketTimeoutMillis = 60000
             }
