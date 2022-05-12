@@ -30,10 +30,15 @@ abstract class PoolingMarketService : ProtocolService {
 
     fun getPoolingMarkets(): List<PoolingMarketElement> = runBlocking(Dispatchers.IO) {
         cache.get("all") {
-            logger.info("Cache empty or expired, fetching fresh elements")
-            val elements = fetchPoolingMarkets()
-            logger.info("Cache successfuly filled with ${elements.size} elements")
-            elements
+            try {
+                logger.info("Cache empty or expired, fetching fresh elements")
+                val elements = fetchPoolingMarkets()
+                logger.info("Cache successfuly filled with ${elements.size} elements")
+                elements
+            } catch (ex: Exception) {
+                logger.error("Unable to fetch pooling markets: {}", ex.message)
+                emptyList()
+            }
         }
     }
 }
