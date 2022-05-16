@@ -44,7 +44,7 @@ class SpookyUserStakingService(
                         vaultName = stakingMarket.name,
                         vaultAddress = stakingMarket.contractAddress,
                         vaultType = stakingMarket.vaultType,
-                        rate = stakingMarket.rate,
+                        apr = stakingMarket.apr,
                         stakedToken = stakingMarket.stakedToken,
                         rewardTokens = stakingMarket.rewardTokens,
                         amount = balance

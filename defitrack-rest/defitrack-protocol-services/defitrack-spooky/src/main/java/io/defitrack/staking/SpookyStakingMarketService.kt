@@ -52,7 +52,7 @@ class SpookyStakingMarketService(
                 contractAddress = masterchef.address,
                 vaultType = "spooky-masterchef",
                 marketSize = BigDecimal.ZERO,
-                rate = aprCalculator.calculateApr()
+                apr = aprCalculator.calculateApr()
             )
         }
     }

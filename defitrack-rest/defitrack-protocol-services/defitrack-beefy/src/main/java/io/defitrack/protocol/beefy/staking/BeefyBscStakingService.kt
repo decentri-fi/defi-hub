@@ -80,7 +80,7 @@ class BeefyBscStakingService(
                 stakingElement(
                     id = market.id,
                     vaultName = market.name,
-                    rate = getAPY(market.id),
+                    apr = getAPY(market.id),
                     stakedToken = want.toFungibleToken(),
                     rewardTokens = listOf(
                         want.toFungibleToken()

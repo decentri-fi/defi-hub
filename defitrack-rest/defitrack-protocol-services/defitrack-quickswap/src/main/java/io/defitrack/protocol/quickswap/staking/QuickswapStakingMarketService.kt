@@ -52,7 +52,7 @@ class QuickswapStakingMarketService(
                 contractAddress = pool.address,
                 vaultType = "quickswap-reward-pool",
                 marketSize = getMarketSize(stakedToken, pool),
-                rate = (quickswapAPRService.getRewardPoolAPR(pool.address) + quickswapAPRService.getLPAPR(
+                apr = (quickswapAPRService.getRewardPoolAPR(pool.address) + quickswapAPRService.getLPAPR(
                     stakedToken.address
                 ))
             )

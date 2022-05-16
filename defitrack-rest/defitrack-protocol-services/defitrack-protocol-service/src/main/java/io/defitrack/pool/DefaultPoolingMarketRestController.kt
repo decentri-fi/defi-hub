@@ -3,7 +3,6 @@ package io.defitrack.pool
 import io.defitrack.common.network.Network
 import io.defitrack.network.toVO
 import io.defitrack.pool.domain.PoolingMarketElement
-import io.defitrack.pool.vo.PoolingMarketElementToken
 import io.defitrack.pool.vo.PoolingMarketElementVO
 import io.defitrack.protocol.toVO
 import io.defitrack.token.ERC20Resource
@@ -43,7 +42,7 @@ class DefaultPoolingMarketRestController(
             .flatMap {
                 it.getPoolingMarkets()
             }.filter {
-                it.token.any { t ->
+                it.tokens.any { t ->
                     t.address.lowercase() == tokenAddress.lowercase()
                 } || it.address.lowercase() == tokenAddress.lowercase()
             }.map { poolingMarketElementVO(it) }
@@ -83,7 +82,7 @@ class DefaultPoolingMarketRestController(
             }.filter { poolingMarketElement ->
                 when {
                     (token.type) != TokenType.SINGLE -> {
-                        poolingMarketElement.token.map { pt ->
+                        poolingMarketElement.tokens.map { pt ->
                             pt.address.lowercase()
                         }.containsAll(
                             token.underlyingTokens.map {
@@ -101,14 +100,7 @@ class DefaultPoolingMarketRestController(
             name = it.name,
             protocol = it.protocol.toVO(),
             network = it.network.toVO(),
-            token = it.token.map { token ->
-                PoolingMarketElementToken(
-                    name = token.name,
-                    symbol = token.symbol,
-                    address = token.address,
-                    logo = token.logo
-                )
-            },
+            tokens = it.tokens,
             id = it.id,
             address = it.address,
             apr = it.apr,

@@ -25,7 +25,7 @@ abstract class UserStakingService(
         stakedToken: FungibleToken,
         vaultType: String,
         vaultAddress: String,
-        rate: BigDecimal = BigDecimal.ZERO,
+        apr: BigDecimal? = null,
         id: String,
         amount: BigInteger
     ): StakingElement {
@@ -35,7 +35,7 @@ abstract class UserStakingService(
                 network = getNetwork(),
                 protocol = getProtocol(),
                 name = vaultName,
-                rate = rate,
+                apr = apr,
                 contractAddress = vaultAddress,
                 vaultType = vaultType,
                 stakedToken = stakedToken,

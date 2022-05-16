@@ -93,7 +93,7 @@ class DefaultUserStakingRestController(
             protocol = market.protocol.toVO(),
             dollarValue = stakedInDollars,
             name = market.name,
-            rate = market.rate.toDouble(),
+            apr = market.apr?.toDouble(),
             vaultType = market.vaultType,
             contractAddress = market.contractAddress,
             stakedToken = market.stakedToken,

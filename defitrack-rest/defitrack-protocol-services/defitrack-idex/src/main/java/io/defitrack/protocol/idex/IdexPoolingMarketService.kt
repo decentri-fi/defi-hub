@@ -30,7 +30,7 @@ class IdexPoolingMarketService(
                     symbol = token.symbol,
                     id = "idex-polygon-${it.liquidityToken}",
                     name = "IDEX ${token0.symbol}-${token1.symbol}",
-                    token = listOf(
+                    tokens = listOf(
                         token0.toFungibleToken(),
                         token1.toFungibleToken(),
                     ),

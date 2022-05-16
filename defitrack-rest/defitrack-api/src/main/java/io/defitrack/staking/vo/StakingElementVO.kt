@@ -13,7 +13,7 @@ data class StakingElementVO(
     val name: String,
     val contractAddress: String,
     val vaultType: String,
-    val rate: Double?,
+    val apr: Double?,
     val stakedToken: FungibleToken,
     val amount: Double,
     val rewardTokens: List<FungibleToken>

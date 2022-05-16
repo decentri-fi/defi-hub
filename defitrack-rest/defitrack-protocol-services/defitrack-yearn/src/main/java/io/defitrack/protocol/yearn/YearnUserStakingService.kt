@@ -59,7 +59,7 @@ class YearnUserStakingService(
                         stakedToken = stakedtoken,
                         vaultType = "yearn-v2",
                         vaultAddress = vaults[index].shareToken.id,
-                        rate = BigDecimal.ZERO,
+                        apr = BigDecimal.ZERO,
                         id = "yearn-ethereum-v2-$index",
                         amount = balance
                     )

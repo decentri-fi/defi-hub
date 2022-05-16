@@ -33,7 +33,7 @@ class UniswapEthereumPoolingMarketService(
                         name = token.name,
                         address = it.id,
                         symbol = token.symbol,
-                        token = listOf(
+                        tokens = listOf(
                             token0.toFungibleToken(),
                             token1.toFungibleToken()
                         ),

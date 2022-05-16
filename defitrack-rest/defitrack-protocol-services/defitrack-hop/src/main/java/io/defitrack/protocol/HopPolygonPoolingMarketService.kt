@@ -53,7 +53,7 @@ class HopPolygonPoolingMarketService(
                 address = hopLpToken.lpToken,
                 symbol = htoken.symbol + "-" + canonical.symbol,
                 name = contract.name,
-                token = listOf(
+                tokens = listOf(
                     htoken.toFungibleToken(),
                     canonical.toFungibleToken()
                 ),

@@ -31,7 +31,7 @@ abstract class DefaultSushiPoolingMarketService(
                     address = it.id,
                     name = token.name,
                     symbol = token.symbol,
-                    token = listOf(
+                    tokens = listOf(
                         token0.toFungibleToken(),
                         token1.toFungibleToken(),
                     ),

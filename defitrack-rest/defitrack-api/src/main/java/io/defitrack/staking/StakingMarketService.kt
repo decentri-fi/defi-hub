@@ -68,7 +68,7 @@ abstract class StakingMarketService : ProtocolService {
             contractAddress = contractAddress,
             vaultType = vaultType,
             marketSize = marketSize,
-            rate = rate
+            apr = rate
         )
     }
 }

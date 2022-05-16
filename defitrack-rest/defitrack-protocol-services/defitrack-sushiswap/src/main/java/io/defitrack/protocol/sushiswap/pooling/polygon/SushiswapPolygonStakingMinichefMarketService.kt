@@ -71,7 +71,7 @@ class SushiswapPolygonStakingMinichefMarketService(
             contractAddress = chef.address,
             vaultType = "sushi-minichefV2",
             marketSize = calculateMarketSize(chef, stakedtoken),
-            rate = MinichefStakingAprCalculator(erC20Resource, priceResource, chef, poolId).calculateApr()
+            apr = MinichefStakingAprCalculator(erC20Resource, priceResource, chef, poolId).calculateApr()
         )
     }
 

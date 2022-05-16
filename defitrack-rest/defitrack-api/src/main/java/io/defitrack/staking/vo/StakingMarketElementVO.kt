@@ -14,6 +14,6 @@ data class StakingMarketElementVO(
     val reward: List<FungibleToken>,
     val contractAddress: String,
     val vaultType: String,
-    val marketSize: BigDecimal,
-    val rate: BigDecimal = BigDecimal.ZERO
+    val marketSize: BigDecimal?,
+    val apr: BigDecimal?
 )

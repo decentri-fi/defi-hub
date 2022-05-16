@@ -14,4 +14,6 @@ class PoolingElement(
     val protocol: Protocol,
     val tokenType: TokenType = TokenType.SINGLE,
     val id: String,
+    val apr: BigDecimal? = null,
+    val marketSize: BigDecimal? = null,
 )

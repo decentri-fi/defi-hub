@@ -2,6 +2,7 @@ package io.defitrack.pool.vo
 
 import io.defitrack.network.NetworkVO
 import io.defitrack.protocol.ProtocolVO
+import io.defitrack.token.FungibleToken
 import java.math.BigDecimal
 
 data class PoolingMarketElementVO(
@@ -10,14 +11,7 @@ data class PoolingMarketElementVO(
     val name: String,
     val protocol: ProtocolVO,
     val network: NetworkVO,
-    val token: List<PoolingMarketElementToken>,
-    val apr: BigDecimal = BigDecimal.ZERO,
-    val marketSize: BigDecimal,
-)
-
-data class PoolingMarketElementToken(
-    val name: String,
-    val symbol: String,
-    val address: String,
-    val logo: String?
+    val tokens: List<FungibleToken>,
+    val apr: BigDecimal?,
+    val marketSize: BigDecimal?,
 )

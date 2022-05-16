@@ -36,7 +36,7 @@ class SpiritFantomPoolingMarketService(
                     protocol = getProtocol(),
                     address = it.id,
                     name = token.name,
-                    token = listOf(
+                    tokens = listOf(
                         token0.toFungibleToken(),
                         token1.toFungibleToken(),
                     ),

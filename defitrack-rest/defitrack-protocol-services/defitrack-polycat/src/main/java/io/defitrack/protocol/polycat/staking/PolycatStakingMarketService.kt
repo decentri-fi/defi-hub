@@ -59,7 +59,7 @@ class PolycatStakingMarketService(
             rewardTokens = listOf(
                 rewardToken.toFungibleToken()
             ),
-            rate = PolygcatStakingAprCalculator(erC20Resource, priceResource, chef, poolId).calculateApr(),
+            apr = PolygcatStakingAprCalculator(erC20Resource, priceResource, chef, poolId).calculateApr(),
             marketSize = calculateMarketSize(stakedtoken, chef),
             contractAddress = chef.address,
             vaultType = "polycat-masterchef"

@@ -58,7 +58,7 @@ class QuickswapUserStakingService(
                         stakedToken = stakedToken.toFungibleToken(),
                         vaultType = "quickswap-staking-rewards",
                         vaultAddress = pool.address,
-                        rate = (quickswapAPRService.getRewardPoolAPR(pool.address) + quickswapAPRService.getLPAPR(
+                        apr = (quickswapAPRService.getRewardPoolAPR(pool.address) + quickswapAPRService.getLPAPR(
                             stakedToken.address
                         )),
                         amount = balance

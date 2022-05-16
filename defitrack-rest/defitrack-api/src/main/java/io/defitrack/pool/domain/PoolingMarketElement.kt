@@ -13,8 +13,8 @@ data class PoolingMarketElement(
     val address: String,
     val name: String,
     val symbol: String,
-    val token: List<FungibleToken>,
-    val apr: BigDecimal = BigDecimal.ZERO,
-    val marketSize: BigDecimal,
+    val tokens: List<FungibleToken>,
+    val apr: BigDecimal? = null,
+    val marketSize: BigDecimal? = null,
     val tokenType: TokenType
 )

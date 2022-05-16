@@ -52,7 +52,7 @@ class SpiritFantomStakingMarketService(
                 contractAddress = masterchef.address,
                 vaultType = "spirit-masterchef",
                 marketSize = BigDecimal.ZERO,
-                rate = aprCalculator.calculateApr()
+                apr = aprCalculator.calculateApr()
             )
         }
     }

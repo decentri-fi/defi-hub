@@ -57,7 +57,7 @@ class QuickswapDualStakingMarketService(
                     contractAddress = pool.address,
                     vaultType = "quickswap-dual-reward-pool",
                     marketSize = getMarketSize(stakedToken, pool),
-                    rate = getApr(pool, stakedToken)
+                    apr = getApr(pool, stakedToken)
                 )
             } catch (ex: Exception) {
                 ex.printStackTrace()

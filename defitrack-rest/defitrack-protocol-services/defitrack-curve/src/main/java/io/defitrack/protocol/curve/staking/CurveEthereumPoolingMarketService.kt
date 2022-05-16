@@ -29,8 +29,8 @@ class CurveEthereumPoolingMarketService(
                 protocol = getProtocol(),
                 address = pool.lpToken.address,
                 name = pool.lpToken.name,
-                token = tokens,
                 symbol = tokens.joinToString("/") { it.symbol },
+                tokens = tokens,
                 apr = BigDecimal.ZERO,
                 marketSize = BigDecimal.ZERO,
                 tokenType = TokenType.CURVE

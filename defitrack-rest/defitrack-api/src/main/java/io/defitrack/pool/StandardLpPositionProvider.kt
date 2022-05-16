@@ -28,12 +28,14 @@ abstract class StandardLpPositionProvider(
                     PoolingElement(
                         lpAddress = pool.address,
                         amount = balance.toBigDecimal().dividePrecisely(BigDecimal.TEN.pow(tokenInfo.decimals)),
-                        name = pool.token.joinToString("/") { it.symbol } + " LP",
+                        name = pool.tokens.joinToString("/") { it.symbol } + " LP",
                         symbol = tokenInfo.symbol,
                         network = getNetwork(),
                         protocol = getProtocol(),
                         tokenType = TokenType.HOP,
-                        id = pool.id
+                        id = pool.id,
+                        apr = pool.apr,
+                        marketSize = pool.marketSize
                     )
                 } else {
                     null

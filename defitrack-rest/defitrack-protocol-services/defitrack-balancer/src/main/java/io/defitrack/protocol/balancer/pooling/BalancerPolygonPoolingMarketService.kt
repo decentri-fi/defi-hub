@@ -26,7 +26,7 @@ class BalancerPolygonPoolingMarketService(private val balancerPolygonService: Ba
                             it.symbol
                         }
                     } Pool",
-                    token = emptyList(),
+                    tokens = emptyList(),
                     symbol = it.symbol,
                     apr = BigDecimal.ZERO,
                     marketSize = it.totalLiquidity,

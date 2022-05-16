@@ -47,7 +47,7 @@ class BeefyFantomStakingMarketService(
                 network = getNetwork(),
                 protocol = getProtocol(),
                 name = "${beefyVault.symbol} Beefy Vault",
-                rate = getAPY(beefyVault),
+                apr = getAPY(beefyVault),
                 stakedToken = want.toFungibleToken(),
                 rewardTokens = listOf(
                     want.toFungibleToken()

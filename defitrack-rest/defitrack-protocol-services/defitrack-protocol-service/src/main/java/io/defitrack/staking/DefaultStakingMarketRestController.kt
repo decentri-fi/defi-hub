@@ -83,6 +83,6 @@ class DefaultStakingMarketRestController(
         contractAddress = it.contractAddress,
         vaultType = it.vaultType,
         marketSize = it.marketSize,
-        rate = it.rate
+        apr = it.apr
     )
 }

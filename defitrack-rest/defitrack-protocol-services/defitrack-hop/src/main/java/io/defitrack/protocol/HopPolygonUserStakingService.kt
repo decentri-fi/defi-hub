@@ -33,7 +33,7 @@ class HopPolygonUserStakingService(
                     vaultName = market.name,
                     vaultAddress = market.contractAddress,
                     vaultType = market.vaultType,
-                    rate = market.rate,
+                    apr = market.apr,
                     stakedToken = market.stakedToken,
                     amount = balance,
                     rewardTokens = market.rewardTokens,
