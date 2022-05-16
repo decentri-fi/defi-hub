@@ -9,4 +9,5 @@ data class BalanceElement(
     val network: NetworkVO,
     val token: FungibleToken,
     val dollarValue: Double,
+    val price: Double
 )

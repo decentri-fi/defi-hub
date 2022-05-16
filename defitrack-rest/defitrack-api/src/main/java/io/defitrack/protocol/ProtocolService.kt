@@ -1,9 +1,8 @@
 package io.defitrack.protocol
 
 import io.defitrack.common.network.Network
-import java.math.BigDecimal
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import java.math.BigInteger
-import java.math.RoundingMode
 
 
 interface ProtocolService {
@@ -11,7 +10,6 @@ interface ProtocolService {
     fun getNetwork(): Network
 
     fun toDecimalValue(balance: BigInteger, decimals: Int): Double {
-        return balance.toBigDecimal()
-            .divide(BigDecimal.TEN.pow(decimals), 18, RoundingMode.HALF_UP).toDouble()
+        return balance.asEth(decimals).toDouble()
     }
 }

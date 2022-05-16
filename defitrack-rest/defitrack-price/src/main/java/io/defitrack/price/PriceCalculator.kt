@@ -3,6 +3,8 @@ package io.defitrack.price
 import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.retry
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.protocol.balancer.BalancerPolygonService
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenInformation
@@ -64,7 +66,7 @@ class PriceCalculator(
 
                 price.times(
                     BigDecimal.TEN.pow(18)
-                ).divide(BigDecimal.TEN.pow(18), 6, RoundingMode.HALF_UP).toDouble()
+                ).dividePrecisely(BigDecimal.TEN.pow(18)).toDouble()
             }
         }
     }
@@ -119,7 +121,9 @@ class PriceCalculator(
     ): BigDecimal {
 
         val userShare =
-            userLPAmount.divide(totalLPAmount.toBigDecimal().divide(BigDecimal.TEN.pow(18)), 18, RoundingMode.HALF_UP)
+            userLPAmount.divide(
+                totalLPAmount.dividePrecisely(BigDecimal.TEN.pow(18))
+            )
 
         return underlyingTokens.map { underlyingToken ->
             val price = getPrice(underlyingToken.symbol)

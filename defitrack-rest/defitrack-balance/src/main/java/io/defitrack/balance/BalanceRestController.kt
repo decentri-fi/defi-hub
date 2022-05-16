@@ -1,7 +1,7 @@
 package io.defitrack.balance
 
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceResource
 import io.defitrack.token.ERC20Resource
@@ -28,6 +28,10 @@ class BalanceRestController(
             }
 
             if (balance > BigDecimal.ZERO) {
+                val price = priceResource.calculatePrice(
+                    it.nativeTokenName(),
+                    1.0
+                )
                 BalanceElement(
                     amount = balance.toDouble(),
                     network = it.getNetwork().toVO(),
@@ -35,10 +39,8 @@ class BalanceRestController(
                         it.getNetwork(),
                         "0x0"
                     ).toFungibleToken(),
-                    dollarValue = priceResource.calculatePrice(
-                        it.nativeTokenName(),
-                        balance.toDouble()
-                    ),
+                    dollarValue = price.times(balance.toDouble()),
+                    price = price
                 )
             } else {
                 null
@@ -55,6 +57,10 @@ class BalanceRestController(
         }
 
         val balance = balanceService.getNativeBalance(address)
+        val price = priceResource.calculatePrice(
+            balanceService.nativeTokenName(),
+            1.0
+        )
 
         return BalanceElement(
             amount = balance.toDouble(),
@@ -63,10 +69,8 @@ class BalanceRestController(
                 network,
                 "0x0"
             ).toFungibleToken(),
-            dollarValue = priceResource.calculatePrice(
-                balanceService.nativeTokenName(),
-                balance.toDouble()
-            ),
+            dollarValue = price.times(balance.toDouble()),
+            price = price
         )
     }
 
@@ -79,13 +83,15 @@ class BalanceRestController(
             emptyList()
         }
     }.map {
-        val normalizedAmount =
-            it.amount.toBigDecimal().dividePrecisely(BigDecimal.TEN.pow(it.token.decimals)).toDouble()
+        val normalizedAmount = it.amount.asEth(it.token.decimals).toDouble()
+        val price = priceResource.calculatePrice(it.token.symbol, 1.0)
+
         BalanceElement(
             amount = normalizedAmount,
             network = it.network.toVO(),
             token = it.token,
-            dollarValue = priceResource.calculatePrice(it.token.symbol, normalizedAmount)
+            dollarValue = price.times(normalizedAmount),
+            price = price
         )
     }
 
@@ -99,13 +105,14 @@ class BalanceRestController(
         }
 
         return balanceService.getTokenBalances(address).map {
-            val normalizedAmount =
-                it.amount.toBigDecimal().dividePrecisely(BigDecimal.TEN.pow(it.token.decimals)).toDouble()
+            val normalizedAmount = it.amount.asEth(it.token.decimals).toDouble()
+            val price = priceResource.calculatePrice(it.token.symbol, 1.0)
             BalanceElement(
                 amount = normalizedAmount,
                 network = it.network.toVO(),
                 token = it.token,
-                dollarValue = priceResource.calculatePrice(it.token.symbol, normalizedAmount)
+                dollarValue = price.times(normalizedAmount),
+                price = price
             )
         }
     }

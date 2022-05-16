@@ -8,7 +8,6 @@ object FormatUtilsExtensions {
     fun BigDecimal.asEth(): Double = FormatUtils.asEth(this)
 
     fun BigInteger.asEth(decimals: Int): BigDecimal = FormatUtils.asEth(this, decimals)
-
     fun Double.asWei(): BigInteger = FormatUtils.asWei(this)
 
     fun Long.asWei() = BigInteger.valueOf(this).times(BigInteger.TEN.pow(18))
