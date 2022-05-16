@@ -6,6 +6,7 @@ import com.google.gson.JsonParser
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.domain.DailyVolume
 import io.defitrack.protocol.domain.HopLpToken
+import io.defitrack.protocol.domain.Tvl
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.request.*
@@ -29,6 +30,29 @@ class HopService(
         return abstractHopServices.firstOrNull {
             it.getNetwork() == network
         }?.getStakingRewards() ?: emptyList()
+    }
+
+    fun getTvls(network: Network): List<Tvl> {
+        val query = """
+           {
+              tvls {
+                token, 
+                amount
+                id
+              }
+            }
+        """.trimIndent()
+        val endpoint = getGraph(network)
+
+        return runBlocking(Dispatchers.IO) {
+            val response = query(endpoint, query)
+            val poolSharesAsString =
+                JsonParser.parseString(response).asJsonObject["data"].asJsonObject["tvls"].toString()
+            return@runBlocking objectMapper.readValue(poolSharesAsString,
+                object : TypeReference<List<Tvl>>() {
+
+                })
+        }
     }
 
     fun getDailyVolumes(tokenName: String, network: Network): List<DailyVolume> {

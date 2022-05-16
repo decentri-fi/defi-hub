@@ -1,8 +1,9 @@
 package io.defitrack.protocol.balancer.pooling
 
+import io.defitrack.common.network.Network
 import io.defitrack.pool.UserPoolingService
 import io.defitrack.pool.domain.PoolingElement
-import io.defitrack.common.network.Network
+import io.defitrack.pool.domain.PoolingMarketElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.BalancerPolygonService
 import io.defitrack.token.TokenType
@@ -19,18 +20,22 @@ class BalancerPolygonUserPoolingService(private val balancerPolygonService: Bala
         }
 
         return poolShares.map { share ->
-            PoolingElement(
-                lpAddress = share.poolId.address,
-                amount = share.balance,
-                name = share.poolId.name,
-                symbol = share.poolId.tokens.joinToString("/") {
-                    it.symbol
-                },
+            val market = PoolingMarketElement(
+                id = "balancer-polygon-${share.poolId.id}",
                 network = getNetwork(),
                 protocol = getProtocol(),
+                address = share.poolId.address,
+                name = share.poolId.name,
+                symbol = share.poolId.symbol,
+                tokens = emptyList(),
                 tokenType = TokenType.BALANCER,
-                id = "balancer-polygon-${share.poolId.id}",
-                )
+                apr = null,
+                marketSize = null
+            )
+            poolingElement(
+                market = market,
+                amount = share.balance,
+            )
         }
     }
 

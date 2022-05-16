@@ -3,9 +3,10 @@ package io.defitrack.pool
 import io.defitrack.network.toVO
 import io.defitrack.pool.domain.PoolingElement
 import io.defitrack.pool.vo.PoolingElementVO
+import io.defitrack.pool.vo.PoolingMarketElementVO.Companion.toVO
 import io.defitrack.price.PriceRequest
-import io.defitrack.protocol.toVO
 import io.defitrack.price.PriceResource
+import io.defitrack.protocol.toVO
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
@@ -52,7 +53,8 @@ class DefaultUserPoolingRestController(
             network = network.toVO(),
             symbol = symbol,
             protocol = protocol.toVO(),
-            id = id
+            id = id,
+            market = market.toVO()
         )
     }
 }

@@ -21,21 +21,22 @@ abstract class StandardLpPositionProvider(
         )
             .mapIndexed { index, balance ->
                 if (balance > BigInteger.ONE) {
-                    val pool = markets[index]
+                    val market = markets[index]
 
-                    val tokenInfo = erC20Resource.getTokenInformation(getNetwork(), pool.address)
+                    val tokenInfo = erC20Resource.getTokenInformation(getNetwork(), market.address)
 
                     PoolingElement(
-                        lpAddress = pool.address,
+                        lpAddress = market.address,
                         amount = balance.toBigDecimal().dividePrecisely(BigDecimal.TEN.pow(tokenInfo.decimals)),
-                        name = pool.tokens.joinToString("/") { it.symbol } + " LP",
+                        name = market.tokens.joinToString("/") { it.symbol } + " LP",
                         symbol = tokenInfo.symbol,
                         network = getNetwork(),
                         protocol = getProtocol(),
                         tokenType = TokenType.HOP,
-                        id = pool.id,
-                        apr = pool.apr,
-                        marketSize = pool.marketSize
+                        id = market.id,
+                        apr = market.apr,
+                        marketSize = market.marketSize,
+                        market = market
                     )
                 } else {
                     null

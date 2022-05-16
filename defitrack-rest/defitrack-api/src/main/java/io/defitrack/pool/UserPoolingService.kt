@@ -35,7 +35,8 @@ abstract class UserPoolingService : ProtocolService {
             network = getNetwork(),
             protocol = getProtocol(),
             tokenType = market.tokenType,
-            id = market.id
+            id = market.id,
+            market = market
         )
     }
 
