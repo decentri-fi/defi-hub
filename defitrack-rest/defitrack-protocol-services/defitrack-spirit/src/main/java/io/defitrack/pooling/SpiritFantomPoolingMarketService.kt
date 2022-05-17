@@ -1,6 +1,6 @@
 package io.defitrack.pooling
 
-import io.defitrack.SpiritswapAPRService
+import io.defitrack.apr.SpiritswapAPRService
 import io.defitrack.common.network.Network
 import io.defitrack.pool.PoolingMarketService
 import io.defitrack.pool.domain.PoolingMarketElement

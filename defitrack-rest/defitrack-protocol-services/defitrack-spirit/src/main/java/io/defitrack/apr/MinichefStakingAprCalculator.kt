@@ -1,8 +1,5 @@
-package io.defitrack.staking
+package io.defitrack.apr
 
-import io.defitrack.apr.Reward
-import io.defitrack.apr.StakedAsset
-import io.defitrack.apr.StakingAprCalculator
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.reward.MasterchefLpContract

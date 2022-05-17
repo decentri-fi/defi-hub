@@ -12,13 +12,4 @@ class BeefyArbitrumUserStakingService(
     beefyArbitrumStakingMarketService: BeefyArbitrumStakingMarketService,
     contractAccessorGateway: ContractAccessorGateway,
     erC20Resource: ERC20Resource
-) : DefaultUserStakingService(erC20Resource, beefyArbitrumStakingMarketService, contractAccessorGateway) {
-
-    override fun getProtocol(): Protocol {
-        return Protocol.BEEFY
-    }
-
-    override fun getNetwork(): Network {
-        return Network.ARBITRUM
-    }
-}
+) : DefaultUserStakingService(erC20Resource, beefyArbitrumStakingMarketService, contractAccessorGateway)

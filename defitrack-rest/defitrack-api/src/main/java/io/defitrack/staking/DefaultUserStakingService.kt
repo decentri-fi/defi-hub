@@ -1,6 +1,8 @@
 package io.defitrack.staking
 
+import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.protocol.Protocol
 import io.defitrack.staking.domain.StakingElement
 import io.defitrack.token.ERC20Resource
 import java.math.BigInteger
@@ -38,5 +40,13 @@ abstract class DefaultUserStakingService(
                 null
             }
         }.filterNotNull()
+    }
+
+    override fun getProtocol(): Protocol {
+        return stakingMarketService.getProtocol()
+    }
+
+    override fun getNetwork(): Network {
+        return stakingMarketService.getNetwork()
     }
 }

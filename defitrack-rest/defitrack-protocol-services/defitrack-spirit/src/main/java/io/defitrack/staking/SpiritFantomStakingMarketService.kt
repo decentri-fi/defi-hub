@@ -1,12 +1,14 @@
 package io.defitrack.staking
 
 import io.defitrack.abi.ABIResource
+import io.defitrack.apr.MinichefStakingAprCalculator
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SpiritFantomService
 import io.defitrack.protocol.reward.MasterchefLpContract
+import io.defitrack.staking.domain.StakingMarketBalanceFetcher
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Component
@@ -52,7 +54,11 @@ class SpiritFantomStakingMarketService(
                 contractAddress = masterchef.address,
                 vaultType = "spirit-masterchef",
                 marketSize = BigDecimal.ZERO,
-                apr = aprCalculator.calculateApr()
+                apr = aprCalculator.calculateApr(),
+                balanceFetcher = StakingMarketBalanceFetcher(
+                    masterchef.address,
+                    { user -> masterchef.userInfoFunction(index, user) }
+                )
             )
         }
     }
