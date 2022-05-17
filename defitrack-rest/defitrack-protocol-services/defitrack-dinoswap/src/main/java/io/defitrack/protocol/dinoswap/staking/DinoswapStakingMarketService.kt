@@ -2,20 +2,28 @@ package io.defitrack.protocol.dinoswap.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.price.PriceRequest
+import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.dinoswap.DinoswapFossilFarmsContract
 import io.defitrack.protocol.dinoswap.DinoswapService
 import io.defitrack.staking.StakingMarketService
+import io.defitrack.staking.domain.StakingMarketBalanceFetcher
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
+import java.math.BigInteger
 
 @Service
 class DinoswapStakingMarketService(
     private val dinoswapService: DinoswapService,
     private val abiResource: ABIResource,
     private val tokenService: ERC20Resource,
+    private val erC20Resource: ERC20Resource,
+    private val priceResource: PriceResource,
     private val contractAccessorGateway: ContractAccessorGateway
 ) : StakingMarketService() {
 
@@ -44,6 +52,15 @@ class DinoswapStakingMarketService(
         val stakedtoken =
             tokenService.getTokenInformation(getNetwork(), chef.getLpTokenForPoolId(poolId))
         val rewardToken = tokenService.getTokenInformation(getNetwork(), chef.rewardToken)
+
+        val marketBalance = erC20Resource.getBalance(getNetwork(), stakedtoken.address, chef.address)
+        val marketSize = priceResource.calculatePrice(PriceRequest(
+            stakedtoken.address,
+            getNetwork(),
+            marketBalance.asEth(stakedtoken.decimals),
+            stakedtoken.type
+        ))
+
         return StakingMarketElement(
             id = "dinoswap-${chef.address}-${poolId}",
             network = getNetwork(),
@@ -54,7 +71,12 @@ class DinoswapStakingMarketService(
                 rewardToken.toFungibleToken()
             ),
             contractAddress = chef.address,
-            vaultType = "dinoswap-fossilfarm"
+            vaultType = "dinoswap-fossilfarm",
+            balanceFetcher = StakingMarketBalanceFetcher(
+                address = chef.address,
+                function = { user -> chef.userInfoFunction(user, poolId)}
+            ),
+            marketSize = marketSize.toBigDecimal()
         )
     }
 

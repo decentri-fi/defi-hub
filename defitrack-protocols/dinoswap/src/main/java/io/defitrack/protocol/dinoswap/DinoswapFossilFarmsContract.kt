@@ -6,6 +6,7 @@ import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
 import io.defitrack.evm.contract.BlockchainGateway.Companion.toUint256
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
+import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
@@ -76,6 +77,17 @@ class DinoswapFossilFarmsContract(
         return UserInfo(
             amount = result[0].value as BigInteger,
             rewardDebt = result[1].value as BigInteger
+        )
+    }
+
+    fun userInfoFunction(address: String, poolIndex: Int): Function {
+        return createFunction(
+            "userInfo",
+            inputs = listOf(poolIndex.toBigInteger().toUint256(), address.toAddress()),
+            outputs = listOf(
+                TypeReference.create(Uint256::class.java),
+                TypeReference.create(Uint256::class.java),
+            )
         )
     }
 }

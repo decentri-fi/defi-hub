@@ -44,7 +44,6 @@ class PriceCalculator(
                     return@retry 0.0
                 }
 
-                val asERC = erc20Service.getTokenInformation(priceRequest.network, priceRequest.address)
                 val token = erc20Service.getTokenInformation(priceRequest.network, priceRequest.address)
 
                 val tokenType = (priceRequest.type ?: token.type)
@@ -57,7 +56,7 @@ class PriceCalculator(
                     }
                     else -> {
                         calculateTokenWorth(
-                            asERC.symbol,
+                            token.symbol,
                             priceRequest.amount
                         )
                     }
@@ -91,6 +90,7 @@ class PriceCalculator(
             )
         } catch (ex: Exception) {
             logger.error("Unable to calculate price for ${priceRequest.address}")
+            ex.printStackTrace()
             BigDecimal.ZERO
         }
     }
@@ -120,8 +120,7 @@ class PriceCalculator(
         underlyingTokens: List<TokenInformation>
     ): BigDecimal {
 
-        val userShare =
-            userLPAmount.divide(
+        val userShare = userLPAmount.dividePrecisely(
                 totalLPAmount.dividePrecisely(BigDecimal.TEN.pow(18))
             )
 
@@ -130,7 +129,7 @@ class PriceCalculator(
             val underlyingTokenBalance = erc20Service.getBalance(network, underlyingToken.address, lpAddress)
             val userTokenAmount = underlyingTokenBalance.toBigDecimal().times(userShare)
 
-            userTokenAmount.div(
+            userTokenAmount.dividePrecisely(
                 BigDecimal.TEN.pow(underlyingToken.decimals)
             ).times(price)
         }.reduce { acc, bigDecimal ->
