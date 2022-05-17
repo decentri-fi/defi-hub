@@ -8,11 +8,11 @@ import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 
 @Service
-class QuickswapUserStakingService(
+class DQuickUserStakingService(
+    dQuickStakingMarketService: DQuickStakingMarketService,
     contractAccessorGateway: ContractAccessorGateway,
-    quickswapStakingMarketService: QuickswapStakingMarketService,
-    erC20Resource: ERC20Resource,
-) : DefaultUserStakingService(erC20Resource, quickswapStakingMarketService, contractAccessorGateway) {
+    erC20Resource: ERC20Resource
+) : DefaultUserStakingService(erC20Resource, dQuickStakingMarketService, contractAccessorGateway) {
 
     override fun getProtocol(): Protocol {
         return Protocol.QUICKSWAP

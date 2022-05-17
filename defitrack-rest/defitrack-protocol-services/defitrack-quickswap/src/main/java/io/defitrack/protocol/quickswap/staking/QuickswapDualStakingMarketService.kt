@@ -10,6 +10,7 @@ import io.defitrack.protocol.quickswap.QuickswapDualRewardPoolContract
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
 import io.defitrack.staking.StakingMarketService
+import io.defitrack.staking.domain.StakingMarketBalanceFetcher
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenInformation
@@ -57,7 +58,11 @@ class QuickswapDualStakingMarketService(
                     contractAddress = pool.address,
                     vaultType = "quickswap-dual-reward-pool",
                     marketSize = getMarketSize(stakedToken, pool),
-                    apr = getApr(pool, stakedToken)
+                    apr = getApr(pool, stakedToken),
+                    balanceFetcher = StakingMarketBalanceFetcher(
+                        pool.address,
+                        { user -> pool.balanceOfMethod(user) }
+                    )
                 )
             } catch (ex: Exception) {
                 ex.printStackTrace()

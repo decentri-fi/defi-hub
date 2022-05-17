@@ -3,6 +3,7 @@ package io.defitrack.protocol.quickswap
 import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
+import io.defitrack.evm.contract.ERC20Contract
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.generated.Uint256
@@ -12,14 +13,10 @@ class QuickswapRewardPoolContract(
     solidityBasedContractAccessor: BlockchainGateway,
     abi: String,
     address: String,
-) : EvmContract(
+) : ERC20Contract(
     solidityBasedContractAccessor,
     abi, address
 ) {
-
-    val totalSupply by lazy {
-        read("totalSupply")[0].value as BigInteger
-    }
 
     val periodFinish by lazy {
         read(

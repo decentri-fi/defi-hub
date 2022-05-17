@@ -10,6 +10,7 @@ import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
 import io.defitrack.staking.StakingMarketService
+import io.defitrack.staking.domain.StakingMarketBalanceFetcher
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenInformation
@@ -54,7 +55,11 @@ class QuickswapStakingMarketService(
                 marketSize = getMarketSize(stakedToken, pool),
                 apr = (quickswapAPRService.getRewardPoolAPR(pool.address) + quickswapAPRService.getLPAPR(
                     stakedToken.address
-                ))
+                )),
+                balanceFetcher = StakingMarketBalanceFetcher(
+                    pool.address,
+                    { user -> pool.balanceOfMethod(user) }
+                )
             )
         }
     }

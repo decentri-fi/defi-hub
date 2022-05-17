@@ -7,6 +7,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.contract.DQuickContract
 import io.defitrack.staking.StakingMarketService
+import io.defitrack.staking.domain.StakingMarketBalanceFetcher
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
@@ -27,7 +28,10 @@ class DQuickStakingMarketService(
 
     override suspend fun fetchStakingMarkets(): List<StakingMarketElement> {
 
-        val dquickInfo = erC20Resource.getTokenInformation(getNetwork(), dquick.address).toFungibleToken()
+        val stakedToken = erC20Resource.getTokenInformation(getNetwork(), dquick.address).toFungibleToken()
+        val quickToken =
+            erC20Resource.getTokenInformation(getNetwork(), "0x831753dd7087cac61ab5644b308642cc1c33dc13")
+                .toFungibleToken()
 
         return listOf(
             StakingMarketElement(
@@ -35,12 +39,16 @@ class DQuickStakingMarketService(
                 network = getNetwork(),
                 protocol = getProtocol(),
                 name = "Dragon's Lair",
-                stakedToken = dquickInfo,
+                stakedToken = quickToken,
                 rewardTokens = listOf(
-                    dquickInfo
+                    stakedToken
                 ),
                 contractAddress = dquick.address,
                 vaultType = "quickswap-dquick",
+                balanceFetcher = StakingMarketBalanceFetcher(
+                    stakedToken.address,
+                    { user -> dquick.balanceOfMethod(user) }
+                )
             )
         )
     }
