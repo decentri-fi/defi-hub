@@ -7,6 +7,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.BalancerPolygonService
 import io.defitrack.protocol.balancer.contract.BalancerGaugeContract
 import io.defitrack.staking.StakingMarketService
+import io.defitrack.staking.domain.StakingMarketBalanceFetcher
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenInformation
@@ -29,6 +30,12 @@ class BalancerPolygonStakingMarketService(
         return try {
             balancerPolygonService.getGauges().map {
                 val stakedToken = erC20Resource.getTokenInformation(getNetwork(), it.poolAddress)
+                val gauge = BalancerGaugeContract(
+                    contractAccessorGateway.getGateway(getNetwork()),
+                    balancerGaugeContractAbi,
+                    it.id
+                )
+
                 StakingMarketElement(
                     id = "bal-${it.id}",
                     network = getNetwork(),
@@ -36,16 +43,16 @@ class BalancerPolygonStakingMarketService(
                     name = stakedToken.symbol + " Gauge",
                     stakedToken = stakedToken.toFungibleToken(),
                     rewardTokens = getRewardTokens(
-                        BalancerGaugeContract(
-                            contractAccessorGateway.getGateway(getNetwork()),
-                            balancerGaugeContractAbi,
-                            it.id
-                        )
+                        gauge
                     ).map { reward ->
                         reward.toFungibleToken()
                     },
                     contractAddress = it.id,
-                    vaultType = "balancerGauge"
+                    vaultType = "balancerGauge",
+                    balanceFetcher = StakingMarketBalanceFetcher(
+                        gauge.address,
+                        {user -> gauge.balanceOfMethod(user)}
+                    )
                 )
             }
         } catch (ex: Exception) {

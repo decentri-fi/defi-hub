@@ -38,7 +38,6 @@ class BalancerPolygonUserClaimingService(
         val markets = balancerPolygonService.getGauges()
         markets.map { gauge ->
             async {
-                println("gauge ${gauge.id}")
                 BalancerGaugeContract(
                     contractAccessorGateway.getGateway(getNetwork()),
                     gaugeContractAbi,
