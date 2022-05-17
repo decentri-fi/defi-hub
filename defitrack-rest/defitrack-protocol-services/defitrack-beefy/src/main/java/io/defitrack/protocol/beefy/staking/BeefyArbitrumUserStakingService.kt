@@ -8,17 +8,17 @@ import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 
 @Service
-class BeefyBscStakingService(
+class BeefyArbitrumUserStakingService(
+    beefyArbitrumStakingMarketService: BeefyArbitrumStakingMarketService,
     contractAccessorGateway: ContractAccessorGateway,
-    stakingMarketService: BeefyBscStakingMarketService,
     erC20Resource: ERC20Resource
-) : DefaultUserStakingService(erC20Resource, stakingMarketService, contractAccessorGateway) {
+) : DefaultUserStakingService(erC20Resource, beefyArbitrumStakingMarketService, contractAccessorGateway) {
 
     override fun getProtocol(): Protocol {
         return Protocol.BEEFY
     }
 
     override fun getNetwork(): Network {
-        return Network.BSC
+        return Network.ARBITRUM
     }
 }

@@ -12,6 +12,7 @@ import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
 import io.defitrack.protocol.beefy.domain.BeefyVault
 import io.defitrack.staking.StakingMarketService
+import io.defitrack.staking.domain.StakingMarketBalanceFetcher
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenInformation
@@ -22,75 +23,19 @@ import java.math.BigDecimal.ZERO
 @Service
 class BeefyBscStakingMarketService(
     contractAccessorGateway: ContractAccessorGateway,
-    private val abiResource: ABIResource,
-    private val beefyAPYService: BeefyAPYService,
-    private val beefyPolygonService: BeefyService,
-    private val erC20Resource: ERC20Resource,
-    private val priceService: PriceResource
-) : StakingMarketService() {
-
-    val vaultV6ABI by lazy {
-        abiResource.getABI("beefy/VaultV6.json")
-    }
-
-    val gateway = contractAccessorGateway.getGateway(getNetwork())
-
-    override suspend fun fetchStakingMarkets(): List<StakingMarketElement> {
-        return beefyPolygonService.beefyBscVaults
-            .map(this::beefyVaultToVaultContract)
-            .mapNotNull { beefyVault ->
-                toStakingMarketElement(beefyVault)
-            }
-    }
-
-    private fun toStakingMarketElement(beefyVault: BeefyVaultContract): StakingMarketElement? {
-        return try {
-
-            val want = erC20Resource.getTokenInformation(getNetwork(), beefyVault.want)
-
-            StakingMarketElement(
-                id = beefyVault.vaultId,
-                network = getNetwork(),
-                protocol = getProtocol(),
-                name = "${beefyVault.symbol} Beefy Vault",
-                apr = getAPY(beefyVault),
-                stakedToken = want.toFungibleToken(),
-                rewardTokens = listOf(
-                    want.toFungibleToken()
-                ),
-                contractAddress = beefyVault.address,
-                marketSize = getMarketSize(want, beefyVault),
-                vaultType = "beefyVaultV6"
-            )
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            logger.error("Error trying to fetch vault metadata ${beefyVault.vaultId}: ${ex.message}")
-            null
-        }
-    }
-
-    private fun getMarketSize(
-        want: TokenInformation,
-        beefyVault: BeefyVaultContract
-    ) = BigDecimal.valueOf(
-        priceService.calculatePrice(
-            PriceRequest(
-                want.address,
-                getNetwork(),
-                beefyVault.balance.toBigDecimal()
-                    .dividePrecisely(BigDecimal.TEN.pow(want.decimals)),
-                want.type
-            )
-        )
-    )
-
-    private fun getAPY(beefyVault: BeefyVaultContract): BigDecimal {
-        return try {
-            (beefyAPYService.getAPYS().getOrDefault(beefyVault.vaultId, null)) ?: ZERO
-        } catch (ex: Exception) {
-            ZERO
-        }
-    }
+    abiResource: ABIResource,
+    beefyAPYService: BeefyAPYService,
+    beefyService: BeefyService,
+    erC20Resource: ERC20Resource,
+    priceService: PriceResource
+) : BeefyStakingMarketService(
+    contractAccessorGateway,
+    abiResource,
+    beefyAPYService,
+    beefyService.beefyBscVaults,
+    erC20Resource,
+    priceService
+) {
 
     override fun getProtocol(): Protocol {
         return Protocol.BEEFY
@@ -99,12 +44,4 @@ class BeefyBscStakingMarketService(
     override fun getNetwork(): Network {
         return Network.BSC
     }
-
-    private fun beefyVaultToVaultContract(beefyVault: BeefyVault) =
-        BeefyVaultContract(
-            gateway,
-            vaultV6ABI,
-            beefyVault.earnContractAddress,
-            beefyVault.id
-        )
 }
