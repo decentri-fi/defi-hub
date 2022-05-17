@@ -1,7 +1,9 @@
 package io.defitrack.pool
 
+import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.pool.domain.PoolingElement
+import io.defitrack.protocol.Protocol
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import java.math.BigDecimal
@@ -42,5 +44,13 @@ abstract class StandardLpPositionProvider(
                     null
                 }
             }.filterNotNull()
+    }
+
+    override fun getProtocol(): Protocol {
+        return poolingMarketService.getProtocol()
+    }
+
+    override fun getNetwork(): Network {
+        return poolingMarketService.getNetwork()
     }
 }

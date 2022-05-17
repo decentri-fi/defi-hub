@@ -10,13 +10,4 @@ import org.springframework.stereotype.Service
 class DfynUserPoolingService(
     dfynPoolingMarketService: DfynPoolingMarketService,
     erC20Resource: ERC20Resource,
-) : StandardLpPositionProvider(dfynPoolingMarketService, erC20Resource) {
-
-    override fun getProtocol(): Protocol {
-        return Protocol.DFYN
-    }
-
-    override fun getNetwork(): Network {
-        return Network.POLYGON
-    }
-}
+) : StandardLpPositionProvider(dfynPoolingMarketService, erC20Resource)

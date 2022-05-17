@@ -7,10 +7,11 @@ import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SpookyFantomService
 import io.defitrack.protocol.reward.MasterchefLpContract
+import io.defitrack.staking.domain.StakingMarketBalanceFetcher
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.MarketSizeService
 import org.springframework.stereotype.Component
-import java.math.BigDecimal
 
 @Component
 class SpookyStakingMarketService(
@@ -18,7 +19,8 @@ class SpookyStakingMarketService(
     private val abiResource: ABIResource,
     private val erC20Resource: ERC20Resource,
     private val priceResource: PriceResource,
-    private val contractAccessorGateway: ContractAccessorGateway
+    private val contractAccessorGateway: ContractAccessorGateway,
+    private val marketSizeService: MarketSizeService
 ) : StakingMarketService() {
 
     override suspend fun fetchStakingMarkets(): List<StakingMarketElement> {
@@ -51,8 +53,16 @@ class SpookyStakingMarketService(
                 ),
                 contractAddress = masterchef.address,
                 vaultType = "spooky-masterchef",
-                marketSize = BigDecimal.ZERO,
-                apr = aprCalculator.calculateApr()
+                marketSize = marketSizeService.getMarketSize(
+                    stakedToken.toFungibleToken(),
+                    masterchef.address,
+                    getNetwork()
+                ),
+                apr = aprCalculator.calculateApr(),
+                balanceFetcher = StakingMarketBalanceFetcher(
+                    masterchef.address,
+                    { user -> masterchef.userInfoFunction(index, user) }
+                )
             )
         }
     }

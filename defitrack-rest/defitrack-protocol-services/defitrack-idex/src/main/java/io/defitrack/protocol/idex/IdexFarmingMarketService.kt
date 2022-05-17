@@ -5,6 +5,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.protocol.Protocol
 import io.defitrack.staking.StakingMarketService
+import io.defitrack.staking.domain.StakingMarketBalanceFetcher
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Component
@@ -33,7 +34,6 @@ class IdexFarmingMarketService(
             (0 until chef.poolLength).mapNotNull { poolId ->
                 try {
                     val farm = toStakingMarketElement(chef, poolId)
-                    logger.debug("imported ${farm.id}")
                     farm
                 } catch (ex: Exception) {
                     logger.debug("something went wrong trying to import idex pool", ex)
@@ -68,7 +68,11 @@ class IdexFarmingMarketService(
                 rewardToken.toFungibleToken()
             ),
             contractAddress = chef.address,
-            vaultType = "idex-farm"
+            vaultType = "idex-farm",
+            balanceFetcher = StakingMarketBalanceFetcher(
+                chef.address,
+                { user -> chef.userInfoFunction(poolId, user) }
+            )
         )
     }
 }

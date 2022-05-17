@@ -10,13 +10,4 @@ import org.springframework.stereotype.Service
 class QuickswapUserPoolingService(
     quickswapPoolingMarketService: QuickswapPoolingMarketService,
     erC20Resource: ERC20Resource
-) : StandardLpPositionProvider(quickswapPoolingMarketService, erC20Resource) {
-
-    override fun getProtocol(): Protocol {
-        return Protocol.QUICKSWAP
-    }
-
-    override fun getNetwork(): Network {
-        return Network.POLYGON
-    }
-}
+) : StandardLpPositionProvider(quickswapPoolingMarketService, erC20Resource)

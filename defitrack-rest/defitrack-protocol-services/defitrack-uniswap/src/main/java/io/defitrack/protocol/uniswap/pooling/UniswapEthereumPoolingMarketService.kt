@@ -20,8 +20,8 @@ class UniswapEthereumPoolingMarketService(
     override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> {
         return uniswapServices.filter {
             it.getNetwork() == getNetwork()
-        }.flatMap {
-            it.getPairs().mapNotNull {
+        }.flatMap { service ->
+            service.getPairs().mapNotNull {
                 try {
                     val token = erC20Resource.getTokenInformation(getNetwork(), it.id)
                     val token0 = erC20Resource.getTokenInformation(getNetwork(), it.token0.id)

@@ -10,6 +10,7 @@ import io.defitrack.price.PriceResource
 import io.defitrack.protocol.contract.HopLpTokenContract
 import io.defitrack.protocol.contract.HopSwapContract
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.MarketSizeService
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
@@ -21,7 +22,7 @@ class HopPolygonPoolingMarketService(
     private val contractAccessorGateway: ContractAccessorGateway,
     private val abiResource: ABIResource,
     private val priceResource: PriceResource,
-    private val erC20Resource: ERC20Resource
+    private val erC20Resource: ERC20Resource,
 ) : PoolingMarketService() {
 
 

@@ -9,6 +9,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.AaveMainnetService
 import io.defitrack.protocol.aave.domain.AaveReserve
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.MarketSizeService
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -17,7 +18,7 @@ import java.math.BigDecimal
 class AaveMainnetLendingMarketService(
     private val aaveMainnetService: AaveMainnetService,
     private val erC20Resource: ERC20Resource,
-    private val priceResource: PriceResource
+    private val priceResource: PriceResource,
 ) : LendingMarketService() {
 
     override suspend fun fetchLendingMarkets(): List<LendingMarketElement> {
