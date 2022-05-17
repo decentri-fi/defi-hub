@@ -7,6 +7,7 @@ import io.defitrack.evm.contract.BlockchainGateway.Companion.toUint256
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
+import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.generated.Uint128
 import org.web3j.abi.datatypes.generated.Uint256
 import org.web3j.abi.datatypes.generated.Uint64
@@ -17,10 +18,24 @@ class MiniChefV2Contract(
     abi: String, address: String
 ) : EvmContract(blockchainGateway, abi, address) {
 
-
     fun accSushiPerShare(poolIndex: Int): BigInteger {
         return poolInfos[poolIndex].accSushiPerShare
     }
+
+    fun userInfoFunction(poolId: Int, user: String): Function {
+        return createFunction(
+            "userInfo",
+            listOf(
+                poolId.toBigInteger().toUint256(),
+                user.toAddress()
+            ),
+            listOf(
+                TypeReference.create(Uint256::class.java),
+                TypeReference.create(Uint256::class.java)
+            )
+        )
+    }
+
 
     val poolInfos: List<MinichefPoolInfo> by lazy {
         val multicalls = (0 until poolLength).map { poolIndex ->

@@ -1,4 +1,4 @@
-package io.defitrack.protocol.sushiswap.pooling.polygon
+package io.defitrack.protocol.sushiswap.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
@@ -6,10 +6,11 @@ import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.SushiPolygonService
+import io.defitrack.protocol.SushiArbitrumService
 import io.defitrack.protocol.reward.MiniChefV2Contract
 import io.defitrack.protocol.sushiswap.apr.MinichefStakingAprCalculator
 import io.defitrack.staking.StakingMarketService
+import io.defitrack.staking.domain.StakingMarketBalanceFetcher
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenInformation
@@ -19,7 +20,7 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 @Component
-class SushiswapPolygonStakingMinichefMarketService(
+class SushiswapArbitrumStakingMinichefMarketService(
     private val abiResource: ABIResource,
     private val erC20Resource: ERC20Resource,
     private val priceResource: PriceResource,
@@ -31,7 +32,7 @@ class SushiswapPolygonStakingMinichefMarketService(
     }
 
     override suspend fun fetchStakingMarkets(): List<StakingMarketElement> {
-        return SushiPolygonService.getMiniChefs().map {
+        return SushiArbitrumService.getMiniChefs().map {
             MiniChefV2Contract(
                 contractAccessorGateway.getGateway(getNetwork()),
                 minichefABI,
@@ -49,7 +50,7 @@ class SushiswapPolygonStakingMinichefMarketService(
     }
 
     override fun getNetwork(): Network {
-        return Network.POLYGON
+        return Network.ARBITRUM
     }
 
     private suspend fun toStakingMarketElement(
@@ -60,7 +61,7 @@ class SushiswapPolygonStakingMinichefMarketService(
             erC20Resource.getTokenInformation(getNetwork(), chef.getLpTokenForPoolId(poolId))
         val rewardToken = erC20Resource.getTokenInformation(getNetwork(), chef.rewardToken)
         return StakingMarketElement(
-            id = "sushi-${chef.address}-${poolId}",
+            id = "sushi-arbi-${chef.address}-${poolId}",
             network = getNetwork(),
             name = stakedtoken.name + " Farm",
             protocol = getProtocol(),
@@ -71,7 +72,11 @@ class SushiswapPolygonStakingMinichefMarketService(
             contractAddress = chef.address,
             vaultType = "sushi-minichefV2",
             marketSize = calculateMarketSize(chef, stakedtoken),
-            apr = MinichefStakingAprCalculator(erC20Resource, priceResource, chef, poolId).calculateApr()
+            apr = MinichefStakingAprCalculator(erC20Resource, priceResource, chef, poolId).calculateApr(),
+            balanceFetcher = StakingMarketBalanceFetcher(
+                chef.address,
+                { user -> chef.userInfoFunction(poolId, user) }
+            )
         )
     }
 
