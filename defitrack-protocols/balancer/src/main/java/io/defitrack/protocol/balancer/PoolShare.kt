@@ -26,3 +26,4 @@ class PoolToken(
     val address: String,
     val balance: BigDecimal,
 )
+
