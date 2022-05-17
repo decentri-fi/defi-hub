@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration
 class BscContractAccessorConfig(
     private val abiDecoder: AbiDecoder,
     private val httpClient: HttpClient,
-    @Value("\${io.defitrack.services.bsc.endpoint:http://defitrack-bsc:8080}") private val endpoint: String,
+    @Value("\${io.defitrack.services.bsc.endpoint:http://defitrack-binance:8080}") private val endpoint: String,
 ) {
 
     @Bean
