@@ -2,6 +2,7 @@ package io.defitrack.protocol
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.pool.PoolingMarketService
 import io.defitrack.pool.domain.PoolingMarketElement
@@ -9,9 +10,14 @@ import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.contract.HopLpTokenContract
 import io.defitrack.protocol.contract.HopSwapContract
+import io.defitrack.protocol.domain.HopLpToken
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.MarketSizeService
 import io.defitrack.token.TokenType
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
@@ -26,11 +32,21 @@ class HopPolygonPoolingMarketService(
 ) : PoolingMarketService() {
 
 
-    override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> {
+    override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> = coroutineScope {
         val gateway = contractAccessorGateway.getGateway(getNetwork())
 
-        return hopService.getLps(getNetwork()).map { hopLpToken ->
+        hopService.getLps(getNetwork()).map { hopLpToken ->
+            async(Dispatchers.IO.limitedParallelism(10)) {
+                toPoolingMarketElement(gateway, hopLpToken)
+            }
+        }.awaitAll().filterNotNull()
+    }
 
+    private fun toPoolingMarketElement(
+        gateway: BlockchainGateway,
+        hopLpToken: HopLpToken
+    ): PoolingMarketElement? {
+        return try {
             val contract = HopLpTokenContract(
                 blockchainGateway = gateway,
                 abiResource.getABI("hop/SaddleToken.json"),
@@ -68,6 +84,9 @@ class HopPolygonPoolingMarketService(
                 ),
                 tokenType = TokenType.HOP
             )
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            null
         }
     }
 

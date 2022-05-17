@@ -3,7 +3,6 @@ package io.defitrack.protocol
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ContractAccessorGateway
-import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.contract.HopStakingReward
@@ -12,6 +11,10 @@ import io.defitrack.staking.domain.StakingMarketBalanceFetcher
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenInformation
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -24,9 +27,17 @@ class HopPolygonStakingMarketService(
     private val contractAccessorGateway: ContractAccessorGateway,
     private val priceResource: PriceResource
 ) : StakingMarketService() {
-    override suspend fun fetchStakingMarkets(): List<StakingMarketElement> {
-        return hopService.getStakingRewards(getNetwork()).map { stakingReward ->
+    override suspend fun fetchStakingMarkets(): List<StakingMarketElement> = coroutineScope {
+        hopService.getStakingRewards(getNetwork()).map { stakingReward ->
+            async(Dispatchers.IO.limitedParallelism(10)) {
+                toStakingMarket(stakingReward)
 
+            }
+        }.awaitAll().filterNotNull()
+    }
+
+    private fun toStakingMarket(stakingReward: String): StakingMarketElement? {
+        return try {
             val pool = HopStakingReward(
                 contractAccessorGateway.getGateway(getNetwork()),
                 abiResource.getABI("quickswap/StakingRewards.json"),
@@ -36,7 +47,7 @@ class HopPolygonStakingMarketService(
             val stakedToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingTokenAddress)
             val rewardToken = erC20Resource.getTokenInformation(getNetwork(), pool.rewardsTokenAddress)
 
-            StakingMarketElement(
+            return StakingMarketElement(
                 id = "hop-polygon-${pool.address}",
                 network = getNetwork(),
                 protocol = getProtocol(),
@@ -48,9 +59,12 @@ class HopPolygonStakingMarketService(
                 marketSize = getMarketSize(stakedToken, pool),
                 balanceFetcher = StakingMarketBalanceFetcher(
                     address = pool.address,
-                    function = {user -> pool.balanceOfMethod(user)}
+                    function = { user -> pool.balanceOfMethod(user) }
                 )
             )
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            null
         }
     }
 
