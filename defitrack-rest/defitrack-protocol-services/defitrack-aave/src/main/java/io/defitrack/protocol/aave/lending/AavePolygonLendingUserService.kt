@@ -1,20 +1,19 @@
 package io.defitrack.protocol.aave.lending
 
 import io.defitrack.common.network.Network
-import io.defitrack.lending.LendingService
+import io.defitrack.lending.LendingUserService
 import io.defitrack.lending.domain.LendingElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.AavePolygonService
 import io.defitrack.token.ERC20Resource
-import io.defitrack.token.FungibleToken
 import org.springframework.stereotype.Service
 import java.math.BigInteger
 
 @Service
-class AavePolygonLendingService(
+class AavePolygonLendingUserService(
     private val aavePolygonService: AavePolygonService,
     private val erC20Resource: ERC20Resource
-) : LendingService {
+) : LendingUserService {
 
     override fun getProtocol(): Protocol = Protocol.AAVE
 

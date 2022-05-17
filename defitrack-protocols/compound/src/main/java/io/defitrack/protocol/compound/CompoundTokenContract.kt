@@ -4,6 +4,7 @@ import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
+import io.defitrack.evm.contract.ERC20Contract
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.generated.Uint256
@@ -14,22 +15,11 @@ class CompoundTokenContract(
     ethereumContractAccessor: BlockchainGateway,
     abi: String,
     address: String,
-) : EvmContract(
+) : ERC20Contract(
     ethereumContractAccessor, abi, address
 ) {
 
-    val symbol: String by lazy {
-        read(
-            "symbol"
-        )[0].value as String
-    }
 
-
-    val name: String by lazy {
-        read(
-            "name"
-        )[0].value as String
-    }
 
     val cash: BigInteger by lazy {
         read(
@@ -52,26 +42,6 @@ class CompoundTokenContract(
         } catch (ex: Exception) {
             "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
         }
-    }
-
-    val decimals: BigInteger by lazy {
-        try {
-            read(
-                "decimals"
-            )[0].value as BigInteger
-        } catch (ex: Exception) {
-            BigInteger.valueOf(18)
-        }
-    }
-
-    fun balanceOf(address: String): BigInteger {
-        return read(
-            "balanceOf",
-            inputs = listOf(address.toAddress()),
-            outputs = listOf(
-                TypeReference.create(Uint256::class.java)
-            )
-        )[0].value as BigInteger
     }
 
     fun underlyingBalanceOf(address: String): BigInteger {

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/lending")
 class DefaultLendingRestController(
-    private val lendingServices: List<LendingService>,
+    private val lendingUserServices: List<LendingUserService>,
     private val priceResource: PriceResource
 ) {
 
@@ -30,7 +30,7 @@ class DefaultLendingRestController(
     @GetMapping("/{userId}/positions")
     fun getPoolingMarkets(@PathVariable("userId") address: String): List<LendingElementVO> =
         runBlocking(Dispatchers.IO) {
-            lendingServices.flatMap {
+            lendingUserServices.flatMap {
                 try {
                     it.getLendings(address)
                 } catch (ex: Exception) {
@@ -46,7 +46,7 @@ class DefaultLendingRestController(
         @RequestParam("lendingElementId") lendingElementId: String,
         @RequestParam("network") network: Network
     ): LendingElementVO? {
-        return lendingServices.filter {
+        return lendingUserServices.filter {
             it.getNetwork() == network
         }.firstNotNullOfOrNull {
             try {

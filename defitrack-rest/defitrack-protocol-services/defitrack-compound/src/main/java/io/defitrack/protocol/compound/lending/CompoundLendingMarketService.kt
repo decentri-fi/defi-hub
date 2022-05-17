@@ -2,9 +2,10 @@ package io.defitrack.protocol.compound.lending
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.ethereum.config.EthereumContractAccessorConfig
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.lending.LendingMarketService
+import io.defitrack.lending.domain.BalanceFetcher
 import io.defitrack.lending.domain.LendingMarketElement
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
@@ -14,8 +15,13 @@ import io.defitrack.protocol.compound.CompoundService
 import io.defitrack.protocol.compound.CompoundTokenContract
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
+import java.math.BigInteger
 import java.math.RoundingMode
 
 @Component
@@ -35,8 +41,16 @@ class CompoundLendingMarketService(
         abiResource.getABI("compound/ctoken.json")
     }
 
-    override suspend fun fetchLendingMarkets(): List<LendingMarketElement> {
-        return getTokenContracts().mapNotNull {
+    override suspend fun fetchLendingMarkets(): List<LendingMarketElement> = coroutineScope {
+        getTokenContracts().map {
+            async(Dispatchers.IO.limitedParallelism(5)) {
+                toLendingMarket(it)
+            }
+        }.awaitAll().filterNotNull()
+    }
+
+    private fun toLendingMarket(it: CompoundTokenContract): LendingMarketElement? {
+        return try {
             it.underlyingAddress?.let { tokenAddress ->
                 erC20Resource.getTokenInformation(getNetwork(), tokenAddress)
             }?.let { underlyingToken ->
@@ -60,9 +74,20 @@ class CompoundLendingMarketService(
                             TokenType.SINGLE
                         )
                     ),
-                    poolType = "compound-lendingpool"
+                    poolType = "compound-lendingpool",
+                    balanceFetcher = BalanceFetcher(
+                        it.address,
+                        { user -> it.balanceOfMethod(user) },
+                        { retVal ->
+                            val tokenBalance = retVal[0].value as BigInteger
+                            tokenBalance.times(it.exchangeRate).asEth(18).toBigInteger()
+                        }
+                    )
                 )
             }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            null
         }
     }
 

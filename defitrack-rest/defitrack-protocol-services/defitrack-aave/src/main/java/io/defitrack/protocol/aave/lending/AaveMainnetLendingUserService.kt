@@ -1,7 +1,7 @@
 package io.defitrack.protocol.aave.lending
 
 import io.defitrack.common.network.Network
-import io.defitrack.lending.LendingService
+import io.defitrack.lending.LendingUserService
 import io.defitrack.lending.domain.LendingElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.AaveMainnetService
@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service
 import java.math.BigInteger
 
 @Service
-class AaveMainnetLendingService(
+class AaveMainnetLendingUserService(
     private val aaveMainnetService: AaveMainnetService,
     private val erC20Resource: ERC20Resource
-) : LendingService {
+) : LendingUserService {
 
     override fun getProtocol(): Protocol = Protocol.AAVE
 
