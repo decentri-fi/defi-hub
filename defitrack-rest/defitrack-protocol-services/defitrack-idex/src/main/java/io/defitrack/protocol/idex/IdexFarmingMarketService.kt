@@ -8,6 +8,10 @@ import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.StakingMarketBalanceFetcher
 import io.defitrack.staking.domain.StakingMarketElement
 import io.defitrack.token.ERC20Resource
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 
 @Component
@@ -23,24 +27,25 @@ class IdexFarmingMarketService(
         abiResource.getABI("idex/IdexFarm.json")
     }
 
-    override suspend fun fetchStakingMarkets(): List<StakingMarketElement> {
-        return idexService.idexFarm().map {
+    override suspend fun fetchStakingMarkets(): List<StakingMarketElement> = coroutineScope {
+        idexService.idexFarm().map {
             IdexFarmContract(
                 contractAccessorGateway.getGateway(getNetwork()),
                 minichefABI,
                 it
             )
         }.flatMap { chef ->
-            (0 until chef.poolLength).mapNotNull { poolId ->
-                try {
-                    val farm = toStakingMarketElement(chef, poolId)
-                    farm
-                } catch (ex: Exception) {
-                    logger.debug("something went wrong trying to import idex pool", ex)
-                    null
+            (0 until chef.poolLength).map { poolId ->
+                async(Dispatchers.IO.limitedParallelism(10)) {
+                    try {
+                        toStakingMarketElement(chef, poolId)
+                    } catch (ex: Exception) {
+                        logger.debug("something went wrong trying to import idex pool", ex)
+                        null
+                    }
                 }
             }
-        }
+        }.awaitAll().filterNotNull()
     }
 
     override fun getProtocol(): Protocol {
