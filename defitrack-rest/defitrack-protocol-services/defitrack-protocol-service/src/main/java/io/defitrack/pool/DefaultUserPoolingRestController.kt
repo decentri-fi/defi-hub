@@ -7,6 +7,10 @@ import io.defitrack.pool.vo.PoolingMarketElementVO.Companion.toVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.toVO
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
@@ -24,16 +28,20 @@ class DefaultUserPoolingRestController(
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     @GetMapping("/{userId}/positions")
-    fun getUserPoolings(@PathVariable("userId") address: String): List<PoolingElementVO> {
-        return userPoolingServices.flatMap {
-            try {
-                it.userPoolings(address)
-            } catch (ex: Exception) {
-                logger.error("Something went wrong trying to fetch the user poolings: ${ex.message}")
-                emptyList()
+    fun getUserPoolings(@PathVariable("userId") address: String): List<PoolingElementVO> = runBlocking{
+        userPoolingServices.map {
+            async {
+                try {
+                    it.userPoolings(address)
+                } catch (ex: Exception) {
+                    logger.error("Something went wrong trying to fetch the user poolings: ${ex.message}")
+                    emptyList()
+                }
             }
-        }.map {
-            it.toVO()
+        }.awaitAll().flatMap {
+            it.map { poolingElement ->
+                poolingElement.toVO()
+            }
         }
     }
 
