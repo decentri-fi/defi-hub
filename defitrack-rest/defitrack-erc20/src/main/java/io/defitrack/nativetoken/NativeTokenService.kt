@@ -63,7 +63,7 @@ class NativeTokenService(private val logoService: LogoService) {
                 symbol = "AVAX",
                 type = TokenType.NATIVE
             )
-            Network.BSC -> TokenInformation(
+            Network.BINANCE -> TokenInformation(
                 address = nullAddress,
                 name = "BNB",
                 decimals = 18,

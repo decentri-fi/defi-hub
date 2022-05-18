@@ -20,7 +20,7 @@
         <module>defitrack-arbitrum</module>
         <module>defitrack-fantom</module>
         <module>defitrack-avalanche</module>
-        <module>defitrack-bsc</module>
+        <module>defitrack-binance</module>
         <module>defitrack-polygon-mumbai</module>
     </modules>
 </project>

@@ -18,7 +18,7 @@
         <module>ethereum</module>
         <module>polygon</module>
         <module>polygon-mumbai</module>
-        <module>bsc</module>
+        <module>binance</module>
         <module>arbitrum</module>
         <module>avalanche</module>
         <module>fantom</module>

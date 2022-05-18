@@ -12,14 +12,14 @@ import org.springframework.context.annotation.Configuration
 class BscContractAccessorConfig(
     private val abiDecoder: AbiDecoder,
     private val httpClient: HttpClient,
-    @Value("\${io.defitrack.services.bsc.endpoint:http://defitrack-binance:8080}") private val endpoint: String,
+    @Value("\${io.defitrack.services.binance.endpoint:http://defitrack-binance:8080}") private val endpoint: String,
 ) {
 
     @Bean
     fun bscContractAccessor(): BlockchainGateway {
         return BlockchainGateway(
             abiDecoder,
-            Network.BSC,
+            Network.BINANCE,
             "0x41263cba59eb80dc200f3e2544eda4ed6a90e76c",
             httpClient,
             endpoint

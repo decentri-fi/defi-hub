@@ -1,6 +1,6 @@
 arbitrum
 avalanche
-bsc
+binance
 ethereum
 fantom
 optimism

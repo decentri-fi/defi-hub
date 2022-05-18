@@ -9,7 +9,6 @@ import io.ktor.client.*
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import kotlin.time.Duration.Companion.days
-import kotlin.time.ExperimentalTime
 
 @Component
 class SushiBscService(
@@ -39,6 +38,6 @@ class SushiBscService(
     override fun getUserPoolings(user: String) = sushiswapService.getUserPoolings(user)
 
     override fun getNetwork(): Network {
-        return Network.BSC
+        return Network.BINANCE
     }
 }

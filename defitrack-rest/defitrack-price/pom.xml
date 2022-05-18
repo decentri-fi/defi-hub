@@ -30,7 +30,7 @@
         </dependency>
         <dependency>
             <groupId>io.defitrack</groupId>
-            <artifactId>bsc</artifactId>
+            <artifactId>binance</artifactId>
         </dependency>
         <dependency>
             <groupId>io.defitrack</groupId>

@@ -6,7 +6,7 @@ enum class Network(val logo: String, val chainId: Int, val slug: String) {
     ARBITRUM("arbitrum.png", 42161, "arbitrum"),
     FANTOM("fantom.png", 250, "fantom"),
     AVALANCHE("avalanche.png", 43114, "avalanche"),
-    BSC("bsc.svg", 56, "binance"),
+    BINANCE("bsc.svg", 56, "binance"),
     POLYGON("polygon.png", 137, "polygon"),
     POLYGON_MUMBAI("polygon.png", 80001, "polygon_mumbai");
 

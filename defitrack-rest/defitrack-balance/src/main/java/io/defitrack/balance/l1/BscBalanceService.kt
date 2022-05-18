@@ -12,7 +12,7 @@ class BscBalanceService(
     erc20Resource: ERC20Resource,
 ) : BalanceService(contractAccessorGateway, erc20Resource) {
 
-    override fun getNetwork(): Network = Network.BSC
+    override fun getNetwork(): Network = Network.BINANCE
 
     override fun nativeTokenName(): String {
         return "BNB"
