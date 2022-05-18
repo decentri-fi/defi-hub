@@ -1,4 +1,4 @@
-package io.defitrack.protocol.dmm
+package io.defitrack.protocol.dmm.pooling
 
 import io.defitrack.pool.StandardLpPositionProvider
 import io.defitrack.token.ERC20Resource

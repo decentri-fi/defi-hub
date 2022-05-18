@@ -18,7 +18,7 @@ class DefaultStakingMarketRestController(
 ) {
 
     @GetMapping("/all-markets", params = ["network"])
-    fun searchByToken(
+    fun stakingMarketsByNetwork(
         @RequestParam("network") network: Network
     ): List<StakingMarketElementVO> {
         return stakingMarketServices
