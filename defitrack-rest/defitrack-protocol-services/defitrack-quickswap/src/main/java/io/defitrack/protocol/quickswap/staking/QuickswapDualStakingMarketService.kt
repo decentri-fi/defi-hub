@@ -71,11 +71,10 @@ class QuickswapDualStakingMarketService(
         }
     }
 
-    private fun getApr(
+    private suspend fun getApr(
         pool: QuickswapDualRewardPoolContract,
         stakedTokenInformation: TokenInformation
     ): BigDecimal {
-
         return (quickswapAPRService.getDualPoolAPR(pool.address) + quickswapAPRService.getLPAPR(
             stakedTokenInformation.address
         ))
