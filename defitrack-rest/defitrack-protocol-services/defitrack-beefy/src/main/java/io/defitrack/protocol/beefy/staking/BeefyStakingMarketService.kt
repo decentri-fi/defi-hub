@@ -33,9 +33,11 @@ abstract class BeefyStakingMarketService(
     }
 
     override suspend fun fetchStakingMarkets(): List<StakingMarketElement> = coroutineScope {
-        vaults.mapNotNull {
-            toStakingMarketElement(it)
-        }
+        vaults.map {
+            async(Dispatchers.IO.limitedParallelism(5)) {
+                toStakingMarketElement(it)
+            }
+        }.awaitAll().filterNotNull()
     }
 
     private fun toStakingMarketElement(beefyVault: BeefyVault): StakingMarketElement? {
