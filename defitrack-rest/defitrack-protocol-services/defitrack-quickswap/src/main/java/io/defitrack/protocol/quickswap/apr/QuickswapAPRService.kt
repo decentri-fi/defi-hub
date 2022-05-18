@@ -108,8 +108,8 @@ class QuickswapAPRService(
         }
     }
 
-    fun getLPAPR(address: String): BigDecimal = runBlocking {
-        cache.get("lp-$address") {
+    suspend fun getLPAPR(address: String): BigDecimal {
+        return cache.get("lp-$address") {
             try {
                 val pairData = quickswapService.getPairDayData(address)
                 if (pairData.size <= 1) {
