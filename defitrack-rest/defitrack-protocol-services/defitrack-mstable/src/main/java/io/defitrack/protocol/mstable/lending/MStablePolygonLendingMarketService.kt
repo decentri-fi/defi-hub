@@ -1,16 +1,18 @@
-package io.defitrack.protocol.mstable
+package io.defitrack.protocol.mstable.lending
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.lending.LendingMarketService
+import io.defitrack.lending.domain.BalanceFetcher
 import io.defitrack.lending.domain.LendingMarketElement
-import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.mstable.MStableEthereumSavingsContract
+import io.defitrack.protocol.mstable.MStablePolygonService
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 
-@Service
+@Deprecated("not a lending market")
 class MStablePolygonLendingMarketService(
     private val mStableService: MStablePolygonService,
     private val abiResource: ABIResource,
@@ -40,7 +42,11 @@ class MStablePolygonLendingMarketService(
                 token = token.toFungibleToken(),
                 marketSize = 0.0,
                 rate = 0.0,
-                poolType = "mstable"
+                poolType = "mstable",
+                balanceFetcher = BalanceFetcher(
+                    address = it.address,
+                    { user -> it.balanceOfMethod(user) }
+                )
             )
         }
     }
