@@ -20,9 +20,9 @@ import java.math.BigDecimal
 
 @Service
 class AavePolygonLendingMarketService(
-    private val contractAccessorGateway: ContractAccessorGateway,
+    contractAccessorGateway: ContractAccessorGateway,
+    abiResource: ABIResource,
     private val aavePolygonService: AavePolygonService,
-    private val abiResource: ABIResource,
     private val erC20Resource: ERC20Resource,
     private val priceResource: PriceResource
 ) : LendingMarketService() {
