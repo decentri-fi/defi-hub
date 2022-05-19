@@ -1,9 +1,9 @@
 package io.defitrack.protocol.compound
 
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
-import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
+import io.defitrack.evm.contract.BlockchainGateway.Companion.toUint256
 import io.defitrack.evm.contract.ERC20Contract
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Function
@@ -20,6 +20,13 @@ class CompoundTokenContract(
 ) {
 
 
+    fun mintFunction(amount: BigInteger): Function {
+        return createFunction(
+            "mint",
+            listOf(amount.toUint256()),
+            emptyList()
+        )
+    }
 
     val cash: BigInteger by lazy {
         read(
@@ -34,7 +41,7 @@ class CompoundTokenContract(
     }
 
 
-    val underlyingAddress: String? by lazy {
+    val underlyingAddress: String by lazy {
         try {
             read(
                 "underlying"
@@ -45,7 +52,8 @@ class CompoundTokenContract(
     }
 
     fun underlyingBalanceOf(address: String): BigInteger {
-        return balanceOf(address).times(exchangeRate).toBigDecimal().dividePrecisely(BigDecimal.TEN.pow(18)).toBigInteger()
+        return balanceOf(address).times(exchangeRate).toBigDecimal().dividePrecisely(BigDecimal.TEN.pow(18))
+            .toBigInteger()
     }
 
     val exchangeRate by lazy {

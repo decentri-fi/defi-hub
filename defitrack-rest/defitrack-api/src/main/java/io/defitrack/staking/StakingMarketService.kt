@@ -1,7 +1,6 @@
 package io.defitrack.staking
 
 import io.defitrack.protocol.ProtocolService
-import io.defitrack.staking.command.PrepareInvestmentCommand
 import io.defitrack.staking.domain.StakingMarket
 import io.defitrack.token.FungibleToken
 import io.github.reactivecircus.cache4k.Cache

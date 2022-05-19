@@ -13,6 +13,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.compound.CompoundComptrollerContract
 import io.defitrack.protocol.compound.CompoundService
 import io.defitrack.protocol.compound.CompoundTokenContract
+import io.defitrack.protocol.compound.lending.invest.CompoundLendingInvestmentPreparer
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.Dispatchers
@@ -41,6 +42,8 @@ class CompoundLendingMarketService(
         abiResource.getABI("compound/ctoken.json")
     }
 
+    val gateway = contractAccessorGateway.getGateway(getNetwork())
+
     override suspend fun fetchLendingMarkets(): List<LendingMarket> = coroutineScope {
         getTokenContracts().map {
             async(Dispatchers.IO.limitedParallelism(5)) {
@@ -49,24 +52,24 @@ class CompoundLendingMarketService(
         }.awaitAll().filterNotNull()
     }
 
-    private fun toLendingMarket(it: CompoundTokenContract): LendingMarket? {
+    private fun toLendingMarket(ctokenContract: CompoundTokenContract): LendingMarket? {
         return try {
-            it.underlyingAddress?.let { tokenAddress ->
+            ctokenContract.underlyingAddress.let { tokenAddress ->
                 erC20Resource.getTokenInformation(getNetwork(), tokenAddress)
-            }?.let { underlyingToken ->
+            }.let { underlyingToken ->
                 LendingMarket(
-                    id = "compound-ethereum-${it.address}",
+                    id = "compound-ethereum-${ctokenContract.address}",
                     network = getNetwork(),
                     protocol = getProtocol(),
-                    name = it.name,
-                    rate = getSupplyRate(compoundTokenContract = it),
-                    address = it.address,
+                    name = ctokenContract.name,
+                    rate = getSupplyRate(compoundTokenContract = ctokenContract),
+                    address = ctokenContract.address,
                     token = underlyingToken.toFungibleToken(),
                     marketSize = priceResource.calculatePrice(
                         PriceRequest(
                             underlyingToken.address,
                             getNetwork(),
-                            it.cash.add(it.totalBorrows).toBigDecimal().divide(
+                            ctokenContract.cash.add(ctokenContract.totalBorrows).toBigDecimal().divide(
                                 BigDecimal.TEN.pow(underlyingToken.decimals),
                                 18,
                                 RoundingMode.HALF_UP
@@ -76,12 +79,17 @@ class CompoundLendingMarketService(
                     ).toBigDecimal(),
                     poolType = "compound-lendingpool",
                     balanceFetcher = BalanceFetcher(
-                        it.address,
-                        { user -> it.balanceOfMethod(user) },
+                        ctokenContract.address,
+                        { user -> ctokenContract.balanceOfMethod(user) },
                         { retVal ->
                             val tokenBalance = retVal[0].value as BigInteger
-                            tokenBalance.times(it.exchangeRate).asEth(18).toBigInteger()
+                            tokenBalance.times(ctokenContract.exchangeRate).asEth(18).toBigInteger()
                         }
+                    ),
+                    investmentPreparer = CompoundLendingInvestmentPreparer(
+                        getComptroller(),
+                        ctokenContract,
+                        erC20Resource
                     )
                 )
             }
@@ -111,17 +119,20 @@ class CompoundLendingMarketService(
     }
 
     private fun getTokenContracts(): List<CompoundTokenContract> {
-        val gateway = contractAccessorGateway.getGateway(getNetwork())
+        return getComptroller().getMarkets().map { market ->
+            CompoundTokenContract(
+                gateway,
+                cTokenABI,
+                market
+            )
+        }
+    }
+
+    private fun getComptroller(): CompoundComptrollerContract {
         return CompoundComptrollerContract(
             gateway,
             comptrollerABI,
             compoundService.getComptroller()
-        ).getMarkets().map {
-            CompoundTokenContract(
-                gateway,
-                cTokenABI,
-                it
-            )
-        }
+        )
     }
 }

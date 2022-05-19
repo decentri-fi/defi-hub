@@ -14,7 +14,6 @@ import kotlin.time.Duration.Companion.hours
 abstract class LendingMarketService : ProtocolService {
 
     val logger: Logger = LoggerFactory.getLogger(this.javaClass)
-
     val cache = Cache.Builder().expireAfterWrite(4.hours).build<String, List<LendingMarket>>()
 
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
@@ -34,9 +33,9 @@ abstract class LendingMarketService : ProtocolService {
     fun getLendingMarkets(): List<LendingMarket> = runBlocking(Dispatchers.IO) {
         cache.get("all") {
             logger.info("Cache empty or expired, fetching fresh elements")
-            val elements = fetchLendingMarkets()
-            logger.info("Cache successfuly filled with ${elements.size} elements")
-            elements
+            fetchLendingMarkets().also {
+                logger.info("Cache successfuly filled with ${it.size} elements")
+            }
         }
     }
 }

@@ -11,7 +11,8 @@ data class LendingMarketElementVO(
     val token: LendingMarketElementToken,
     val rate: Double?,
     val poolType: String,
-    val marketSize: BigDecimal?
+    val marketSize: BigDecimal?,
+    val prepareInvestmentSupported: Boolean
 )
 
 data class LendingMarketElementToken(

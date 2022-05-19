@@ -1,4 +1,4 @@
-package io.defitrack.staking.command
+package io.defitrack.invest
 
 import java.math.BigInteger
 

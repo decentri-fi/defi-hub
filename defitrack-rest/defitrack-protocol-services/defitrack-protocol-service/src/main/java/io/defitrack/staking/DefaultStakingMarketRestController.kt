@@ -3,7 +3,7 @@ package io.defitrack.staking
 import io.defitrack.common.network.Network
 import io.defitrack.network.toVO
 import io.defitrack.protocol.toVO
-import io.defitrack.staking.command.PrepareInvestmentCommand
+import io.defitrack.invest.PrepareInvestmentCommand
 import io.defitrack.staking.domain.StakingMarket
 import io.defitrack.staking.vo.StakingMarketVO
 import io.defitrack.staking.vo.TransactionPreparationVO
@@ -82,7 +82,7 @@ class DefaultStakingMarketRestController(
         }
 
     @PostMapping(value = ["/markets/{id}"], params = ["network"])
-    fun prepareStakingMarket(
+    fun prepareInvestment(
         @PathVariable("id") id: String,
         @RequestParam("network") network: Network,
         @RequestBody prepareInvestmentCommand: PrepareInvestmentCommand

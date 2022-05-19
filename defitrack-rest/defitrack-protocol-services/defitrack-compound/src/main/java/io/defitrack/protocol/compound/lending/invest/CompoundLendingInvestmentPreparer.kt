@@ -1,7 +1,8 @@
-package io.defitrack.protocol.quickswap.staking.invest
+package io.defitrack.protocol.compound.lending.invest
 
-import io.defitrack.protocol.quickswap.contract.DQuickContract
 import io.defitrack.invest.PrepareInvestmentCommand
+import io.defitrack.protocol.compound.CompoundComptrollerContract
+import io.defitrack.protocol.compound.CompoundTokenContract
 import io.defitrack.staking.domain.InvestmentPreparer
 import io.defitrack.token.ERC20Resource
 import io.defitrack.transaction.PreparedTransaction
@@ -10,12 +11,12 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 
-class DQuickStakingInvestmentPreparer(
-    val erC20Resource: ERC20Resource,
-    val dQuickContract: DQuickContract
+class CompoundLendingInvestmentPreparer(
+    private val comptroller: CompoundComptrollerContract,
+    private val ctoken: CompoundTokenContract,
+    private val erC20Resource: ERC20Resource
 ) : InvestmentPreparer {
 
-    val quick = "0x831753dd7087cac61ab5644b308642cc1c33dc13"
 
     override suspend fun prepare(prepareInvestmentCommand: PrepareInvestmentCommand): List<PreparedTransaction> {
         return listOf(
@@ -23,7 +24,6 @@ class DQuickStakingInvestmentPreparer(
             getInvestmentTransaction(prepareInvestmentCommand)
         ).awaitAll().filterNotNull()
     }
-
 
     suspend fun getAllowanceTransaction(prepareInvestmentCommand: PrepareInvestmentCommand): Deferred<PreparedTransaction?> =
         coroutineScope {
@@ -33,9 +33,9 @@ class DQuickStakingInvestmentPreparer(
                 if (allowance < requiredBalance) {
                     PreparedTransaction(
                         function = erC20Resource.getFullApproveFunction(
-                            dQuickContract.blockchainGateway.network,
-                            quick,
-                            dQuickContract.address
+                            comptroller.blockchainGateway.network,
+                            ctoken.underlyingAddress,
+                            ctoken.address
                         )
                     )
                 } else {
@@ -43,21 +43,6 @@ class DQuickStakingInvestmentPreparer(
                 }
             }
         }
-
-    private fun getWantBalance(prepareInvestmentCommand: PrepareInvestmentCommand) =
-        prepareInvestmentCommand.amount ?: erC20Resource.getBalance(
-            dQuickContract.blockchainGateway.network,
-            quick,
-            prepareInvestmentCommand.user
-        )
-
-    private fun getAllowance(prepareInvestmentCommand: PrepareInvestmentCommand) =
-        erC20Resource.getAllowance(
-            dQuickContract.blockchainGateway.network,
-            quick,
-            prepareInvestmentCommand.user,
-            dQuickContract.address
-        )
 
     suspend fun getInvestmentTransaction(prepareInvestmentCommand: PrepareInvestmentCommand): Deferred<PreparedTransaction?> =
         coroutineScope {
@@ -68,14 +53,29 @@ class DQuickStakingInvestmentPreparer(
                 if (allowance >= requiredBalance) {
                     prepareInvestmentCommand.amount?.let { amount ->
                         PreparedTransaction(
-                            function = dQuickContract.enterFunction(amount)
+                            function = ctoken.mintFunction(amount)
                         )
                     } ?: PreparedTransaction(
-                        function = dQuickContract.enterFunction(requiredBalance)
+                        function = ctoken.mintFunction(requiredBalance)
                     )
                 } else {
                     null
                 }
             }
         }
+
+    private fun getWantBalance(prepareInvestmentCommand: PrepareInvestmentCommand) =
+        prepareInvestmentCommand.amount ?: erC20Resource.getBalance(
+            comptroller.blockchainGateway.network,
+            ctoken.underlyingAddress,
+            prepareInvestmentCommand.user
+        )
+
+    private fun getAllowance(prepareInvestmentCommand: PrepareInvestmentCommand) =
+        erC20Resource.getAllowance(
+            comptroller.blockchainGateway.network,
+            ctoken.underlyingAddress,
+            prepareInvestmentCommand.user,
+            ctoken.address
+        )
 }

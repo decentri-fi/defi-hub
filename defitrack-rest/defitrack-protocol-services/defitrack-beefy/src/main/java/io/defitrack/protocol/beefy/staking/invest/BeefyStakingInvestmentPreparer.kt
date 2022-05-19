@@ -1,7 +1,7 @@
 package io.defitrack.protocol.beefy.staking.invest
 
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
-import io.defitrack.staking.command.PrepareInvestmentCommand
+import io.defitrack.invest.PrepareInvestmentCommand
 import io.defitrack.staking.domain.InvestmentPreparer
 import io.defitrack.token.ERC20Resource
 import io.defitrack.transaction.PreparedTransaction
