@@ -3,8 +3,10 @@ package io.defitrack.staking
 import io.defitrack.common.network.Network
 import io.defitrack.network.toVO
 import io.defitrack.protocol.toVO
+import io.defitrack.staking.command.PrepareInvestmentCommand
 import io.defitrack.staking.domain.StakingMarket
-import io.defitrack.staking.vo.StakingMarketElementVO
+import io.defitrack.staking.vo.StakingMarketVO
+import io.defitrack.staking.vo.TransactionPreparationVO
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import org.springframework.http.ResponseEntity
@@ -20,7 +22,7 @@ class DefaultStakingMarketRestController(
     @GetMapping("/all-markets", params = ["network"])
     fun stakingMarketsByNetwork(
         @RequestParam("network") network: Network
-    ): List<StakingMarketElementVO> {
+    ): List<StakingMarketVO> {
         return stakingMarketServices
             .filter {
                 it.getNetwork() == network
@@ -35,7 +37,7 @@ class DefaultStakingMarketRestController(
     fun searchByToken(
         @RequestParam("token") tokenAddress: String,
         @RequestParam("network") network: Network
-    ): List<StakingMarketElementVO> {
+    ): List<StakingMarketVO> {
         return stakingMarketServices
             .filter {
                 it.getNetwork() == network
@@ -60,20 +62,42 @@ class DefaultStakingMarketRestController(
     fun getById(
         @PathVariable("id") id: String,
         @RequestParam("network") network: Network
-    ): ResponseEntity<StakingMarketElementVO> {
-        return stakingMarketServices
-            .filter {
-                it.getNetwork() == network
-            }.flatMap {
-                it.getStakingMarkets()
-            }.firstOrNull {
-                it.id == id
-            }?.let {
-                ResponseEntity.ok(toVO(it))
-            } ?: ResponseEntity.notFound().build()
+    ): ResponseEntity<StakingMarketVO> {
+        return getStakingMarketById(network, id)?.let {
+            ResponseEntity.ok(toVO(it))
+        } ?: ResponseEntity.notFound().build()
     }
 
-    private fun toVO(it: StakingMarket) = StakingMarketElementVO(
+    private fun getStakingMarketById(
+        network: Network,
+        id: String
+    ) = stakingMarketServices
+        .filter {
+            it.getNetwork() == network
+        }.flatMap {
+            it.getStakingMarkets()
+        }.firstOrNull {
+            it.id == id
+        }
+
+    @PostMapping(value = ["/markets/{id}"], params = ["network"])
+    fun prepareStakingMarket(
+        @PathVariable("id") id: String,
+        @RequestParam("network") network: Network,
+        @RequestBody prepareInvestmentCommand: PrepareInvestmentCommand
+    ): ResponseEntity<TransactionPreparationVO> {
+        return getStakingMarketById(
+            network, id
+        )?.investmentPreparer?.prepare?.invoke(prepareInvestmentCommand)?.let { transactions ->
+            ResponseEntity.ok(
+                TransactionPreparationVO(
+                    transactions
+                )
+            )
+        } ?: ResponseEntity.badRequest().build()
+    }
+
+    private fun toVO(it: StakingMarket) = StakingMarketVO(
         id = it.id,
         network = it.network.toVO(),
         protocol = it.protocol.toVO(),
@@ -83,6 +107,7 @@ class DefaultStakingMarketRestController(
         contractAddress = it.contractAddress,
         vaultType = it.vaultType,
         marketSize = it.marketSize,
-        apr = it.apr
+        apr = it.apr,
+        prepareInvestmentSupported = it.investmentPreparer != null
     )
 }

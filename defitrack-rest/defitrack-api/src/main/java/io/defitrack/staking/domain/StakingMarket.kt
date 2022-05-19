@@ -17,5 +17,6 @@ data class StakingMarket(
     val vaultType: String,
     val marketSize: BigDecimal? = null,
     val apr: BigDecimal? = null,
-    val balanceFetcher: StakingMarketBalanceFetcher? = null
+    val balanceFetcher: StakingMarketBalanceFetcher? = null,
+    val investmentPreparer: InvestmentPreparer? = null
 )
