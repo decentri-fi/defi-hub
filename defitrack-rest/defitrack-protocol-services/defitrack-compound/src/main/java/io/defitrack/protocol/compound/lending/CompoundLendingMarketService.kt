@@ -6,7 +6,7 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.lending.LendingMarketService
 import io.defitrack.lending.domain.BalanceFetcher
-import io.defitrack.lending.domain.LendingMarketElement
+import io.defitrack.lending.domain.LendingMarket
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
@@ -41,7 +41,7 @@ class CompoundLendingMarketService(
         abiResource.getABI("compound/ctoken.json")
     }
 
-    override suspend fun fetchLendingMarkets(): List<LendingMarketElement> = coroutineScope {
+    override suspend fun fetchLendingMarkets(): List<LendingMarket> = coroutineScope {
         getTokenContracts().map {
             async(Dispatchers.IO.limitedParallelism(5)) {
                 toLendingMarket(it)
@@ -49,17 +49,17 @@ class CompoundLendingMarketService(
         }.awaitAll().filterNotNull()
     }
 
-    private fun toLendingMarket(it: CompoundTokenContract): LendingMarketElement? {
+    private fun toLendingMarket(it: CompoundTokenContract): LendingMarket? {
         return try {
             it.underlyingAddress?.let { tokenAddress ->
                 erC20Resource.getTokenInformation(getNetwork(), tokenAddress)
             }?.let { underlyingToken ->
-                LendingMarketElement(
+                LendingMarket(
                     id = "compound-ethereum-${it.address}",
                     network = getNetwork(),
                     protocol = getProtocol(),
                     name = it.name,
-                    rate = getSupplyRate(compoundTokenContract = it).toDouble(),
+                    rate = getSupplyRate(compoundTokenContract = it),
                     address = it.address,
                     token = underlyingToken.toFungibleToken(),
                     marketSize = priceResource.calculatePrice(
@@ -73,7 +73,7 @@ class CompoundLendingMarketService(
                             ),
                             TokenType.SINGLE
                         )
-                    ),
+                    ).toBigDecimal(),
                     poolType = "compound-lendingpool",
                     balanceFetcher = BalanceFetcher(
                         it.address,

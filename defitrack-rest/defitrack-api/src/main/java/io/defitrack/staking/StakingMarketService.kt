@@ -1,7 +1,7 @@
 package io.defitrack.staking
 
 import io.defitrack.protocol.ProtocolService
-import io.defitrack.staking.domain.StakingMarketElement
+import io.defitrack.staking.domain.StakingMarket
 import io.defitrack.token.FungibleToken
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +18,7 @@ abstract class StakingMarketService : ProtocolService {
     val logger: Logger = LoggerFactory.getLogger(this.javaClass)
 
     val cache =
-        Cache.Builder().expireAfterWrite(4.hours).build<String, List<StakingMarketElement>>()
+        Cache.Builder().expireAfterWrite(4.hours).build<String, List<StakingMarket>>()
 
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
     fun init() {
@@ -32,7 +32,7 @@ abstract class StakingMarketService : ProtocolService {
         }
     }
 
-    fun getStakingMarkets(): List<StakingMarketElement> = runBlocking(Dispatchers.IO) {
+    fun getStakingMarkets(): List<StakingMarket> = runBlocking(Dispatchers.IO) {
         cache.get("all") {
             try {
                 logger.info("Cache empty or expired, fetching fresh elements")
@@ -46,7 +46,7 @@ abstract class StakingMarketService : ProtocolService {
         }
     }
 
-    protected abstract suspend fun fetchStakingMarkets(): List<StakingMarketElement>
+    protected abstract suspend fun fetchStakingMarkets(): List<StakingMarket>
 
     fun stakingMarket(
         id: String,
@@ -57,8 +57,8 @@ abstract class StakingMarketService : ProtocolService {
         vaultType: String,
         marketSize: BigDecimal = BigDecimal.ZERO,
         rate: BigDecimal = BigDecimal.ZERO
-    ): StakingMarketElement {
-        return StakingMarketElement(
+    ): StakingMarket {
+        return StakingMarket(
             id = id,
             network = getNetwork(),
             protocol = getProtocol(),

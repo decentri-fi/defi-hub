@@ -7,7 +7,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.convex.ConvexService
 import io.defitrack.protocol.convex.contract.CvxLockerContract
 import io.defitrack.staking.UserStakingService
-import io.defitrack.staking.domain.StakingElement
+import io.defitrack.staking.domain.StakingPosition
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import java.math.BigInteger
@@ -25,7 +25,7 @@ class ConvexVoteLockedStakingService(
         abiResource.getABI("convex/CvxLocker.json")
     }
 
-    override fun getStakings(address: String): List<StakingElement> {
+    override fun getStakings(address: String): List<StakingPosition> {
         val cvxRewardPools = listOf(convexService.lockedRewardPool()).map {
             CvxLockerContract(
                 contractAccessorGateway.getGateway(getNetwork()),

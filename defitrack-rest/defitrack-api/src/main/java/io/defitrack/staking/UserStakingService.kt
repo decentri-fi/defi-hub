@@ -1,8 +1,8 @@
 package io.defitrack.staking
 
 import io.defitrack.protocol.ProtocolService
-import io.defitrack.staking.domain.StakingElement
-import io.defitrack.staking.domain.StakingMarketElement
+import io.defitrack.staking.domain.StakingPosition
+import io.defitrack.staking.domain.StakingMarket
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.FungibleToken
 import java.math.BigDecimal
@@ -12,8 +12,8 @@ abstract class UserStakingService(
     val erC20Resource: ERC20Resource
 ) : ProtocolService {
 
-    abstract fun getStakings(address: String): List<StakingElement>
-    open fun getStaking(address: String, stakingMarketId: String): StakingElement? {
+    abstract fun getStakings(address: String): List<StakingPosition>
+    open fun getStaking(address: String, stakingMarketId: String): StakingPosition? {
         return getStakings(address).firstOrNull {
             it.market.id == stakingMarketId
         }
@@ -28,9 +28,9 @@ abstract class UserStakingService(
         apr: BigDecimal? = null,
         id: String,
         amount: BigInteger
-    ): StakingElement {
-        return StakingElement(
-            market = StakingMarketElement(
+    ): StakingPosition {
+        return StakingPosition(
+            market = StakingMarket(
                 id = id,
                 network = getNetwork(),
                 protocol = getProtocol(),

@@ -9,7 +9,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SpiritFantomService
 import io.defitrack.protocol.reward.MasterchefLpContract
 import io.defitrack.staking.domain.StakingMarketBalanceFetcher
-import io.defitrack.staking.domain.StakingMarketElement
+import io.defitrack.staking.domain.StakingMarket
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
@@ -23,7 +23,7 @@ class SpiritFantomStakingMarketService(
     private val contractAccessorGateway: ContractAccessorGateway
 ) : StakingMarketService() {
 
-    override suspend fun fetchStakingMarkets(): List<StakingMarketElement> {
+    override suspend fun fetchStakingMarkets(): List<StakingMarket> {
         val masterchef = MasterchefLpContract(
             contractAccessorGateway.getGateway(getNetwork()),
             abiResource.getABI("spirit/Masterchef.json"),
@@ -42,7 +42,7 @@ class SpiritFantomStakingMarketService(
                 index,
                 stakedToken
             )
-            StakingMarketElement(
+            StakingMarket(
                 id = "fantom-spirit-${masterchef.address}-${index}",
                 network = getNetwork(),
                 protocol = getProtocol(),

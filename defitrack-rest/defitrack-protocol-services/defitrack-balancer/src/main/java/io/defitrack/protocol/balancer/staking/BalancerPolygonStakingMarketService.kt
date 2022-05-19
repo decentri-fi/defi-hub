@@ -8,7 +8,7 @@ import io.defitrack.protocol.balancer.BalancerPolygonService
 import io.defitrack.protocol.balancer.contract.BalancerGaugeContract
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.StakingMarketBalanceFetcher
-import io.defitrack.staking.domain.StakingMarketElement
+import io.defitrack.staking.domain.StakingMarket
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenInformation
 import org.springframework.stereotype.Component
@@ -26,7 +26,7 @@ class BalancerPolygonStakingMarketService(
         abiResource.getABI("balancer/gauge.json")
     }
 
-    override suspend fun fetchStakingMarkets(): List<StakingMarketElement> {
+    override suspend fun fetchStakingMarkets(): List<StakingMarket> {
         return try {
             balancerPolygonService.getGauges().map {
                 val stakedToken = erC20Resource.getTokenInformation(getNetwork(), it.poolAddress)
@@ -36,7 +36,7 @@ class BalancerPolygonStakingMarketService(
                     it.id
                 )
 
-                StakingMarketElement(
+                StakingMarket(
                     id = "bal-${it.id}",
                     network = getNetwork(),
                     protocol = getProtocol(),

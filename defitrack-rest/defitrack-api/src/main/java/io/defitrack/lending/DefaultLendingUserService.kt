@@ -2,7 +2,7 @@ package io.defitrack.lending
 
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ContractAccessorGateway
-import io.defitrack.lending.domain.LendingElement
+import io.defitrack.lending.domain.LendingPosition
 import io.defitrack.protocol.Protocol
 import kotlinx.coroutines.runBlocking
 import java.math.BigInteger
@@ -12,7 +12,7 @@ abstract class DefaultLendingUserService(
     val gateway: ContractAccessorGateway,
 ) : LendingUserService {
 
-    override suspend fun getLendings(address: String): List<LendingElement> {
+    override suspend fun getLendings(address: String): List<LendingPosition> {
 
         val markets = lendingMarketService.fetchLendingMarkets().filter {
             it.balanceFetcher != null
@@ -27,14 +27,9 @@ abstract class DefaultLendingUserService(
             val balance = market.balanceFetcher!!.extractBalance(retVal)
 
             if (balance > BigInteger.ZERO) {
-                LendingElement(
-                    id = "compound-ethereum-${market.address}",
-                    network = getNetwork(),
-                    protocol = getProtocol(),
-                    name = market.name,
-                    rate = market.rate,
+                LendingPosition(
+                    market = market,
                     amount = balance,
-                    token = market.token
                 )
             } else {
                 null
@@ -42,9 +37,9 @@ abstract class DefaultLendingUserService(
         }.filterNotNull()
     }
 
-    override fun getLending(address: String, vaultId: String): LendingElement? = runBlocking {
+    override fun getLending(address: String, marketId: String): LendingPosition? = runBlocking {
         getLendings(address).firstOrNull {
-            it.id == vaultId
+            it.market.id == marketId
         }
     }
 

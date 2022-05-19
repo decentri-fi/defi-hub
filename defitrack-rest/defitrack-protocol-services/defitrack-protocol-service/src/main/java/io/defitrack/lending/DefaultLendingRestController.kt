@@ -4,7 +4,7 @@ import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.retry
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.lending.domain.LendingElement
+import io.defitrack.lending.domain.LendingPosition
 import io.defitrack.lending.vo.LendingElementVO
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
@@ -62,27 +62,27 @@ class DefaultLendingRestController(
         }?.toVO()
     }
 
-    fun LendingElement.toVO(): LendingElementVO {
+    fun LendingPosition.toVO(): LendingElementVO {
         return with(this) {
 
             val lendingInDollars = priceResource.calculatePrice(
                 PriceRequest(
-                    address = token.address,
-                    network = network,
-                    amount = amount.asEth(token.decimals),
+                    address = market.token.address,
+                    network = market.network,
+                    amount = amount.asEth(market.token.decimals),
                     type = null
                 )
             )
 
             LendingElementVO(
-                network = network.toVO(),
-                protocol = protocol.toVO(),
+                network = market.network.toVO(),
+                protocol = market.protocol.toVO(),
                 dollarValue = lendingInDollars,
-                rate = rate,
-                name = name,
-                amount = amount.asEth(token.decimals).toDouble(),
-                id = id,
-                token = token
+                rate = market.rate?.toDouble(),
+                name = market.name,
+                amount = amount.asEth(market.token.decimals).toDouble(),
+                id = market.id,
+                token = market.token
             )
         }
     }

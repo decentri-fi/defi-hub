@@ -6,7 +6,7 @@ import io.defitrack.token.FungibleToken
 import java.math.BigDecimal
 
 
-data class StakingMarketElement(
+data class StakingMarket(
     val id: String,
     val network: Network,
     val protocol: Protocol,

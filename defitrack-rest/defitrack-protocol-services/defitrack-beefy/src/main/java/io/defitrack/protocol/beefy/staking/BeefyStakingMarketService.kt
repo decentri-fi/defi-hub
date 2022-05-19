@@ -9,7 +9,7 @@ import io.defitrack.protocol.beefy.contract.BeefyVaultContract
 import io.defitrack.protocol.beefy.domain.BeefyVault
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.StakingMarketBalanceFetcher
-import io.defitrack.staking.domain.StakingMarketElement
+import io.defitrack.staking.domain.StakingMarket
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenInformation
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +32,7 @@ abstract class BeefyStakingMarketService(
         abiResource.getABI("beefy/VaultV6.json")
     }
 
-    override suspend fun fetchStakingMarkets(): List<StakingMarketElement> = coroutineScope {
+    override suspend fun fetchStakingMarkets(): List<StakingMarket> = coroutineScope {
         vaults.map {
             async(Dispatchers.IO.limitedParallelism(5)) {
                 toStakingMarketElement(it)
@@ -40,7 +40,7 @@ abstract class BeefyStakingMarketService(
         }.awaitAll().filterNotNull()
     }
 
-    private fun toStakingMarketElement(beefyVault: BeefyVault): StakingMarketElement? {
+    private fun toStakingMarketElement(beefyVault: BeefyVault): StakingMarket? {
         return try {
             val contract = BeefyVaultContract(
                 contractAccessorGateway.getGateway(getNetwork()),
@@ -49,7 +49,7 @@ abstract class BeefyStakingMarketService(
                 beefyVault.id
             )
             val want = erC20Resource.getTokenInformation(getNetwork(), contract.want)
-            StakingMarketElement(
+            StakingMarket(
                 id = contract.vaultId,
                 network = getNetwork(),
                 protocol = getProtocol(),

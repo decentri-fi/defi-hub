@@ -5,18 +5,19 @@ import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.FungibleToken
 import org.web3j.abi.datatypes.Type
+import java.math.BigDecimal
 import java.math.BigInteger
 
 
-data class LendingMarketElement(
+data class LendingMarket(
     val id: String,
     val network: Network,
     val protocol: Protocol,
     val address: String,
     val name: String,
     val token: FungibleToken,
-    val marketSize: Double,
-    val rate: Double,
+    val marketSize: BigDecimal? = null,
+    val rate: BigDecimal? = null,
     val poolType: String,
     val balanceFetcher: BalanceFetcher? = null
 )

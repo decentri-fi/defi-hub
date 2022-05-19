@@ -8,7 +8,7 @@ import io.defitrack.protocol.mstable.MStableEthereumBoostedSavingsVaultContract
 import io.defitrack.protocol.mstable.MStableEthereumService
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.StakingMarketBalanceFetcher
-import io.defitrack.staking.domain.StakingMarketElement
+import io.defitrack.staking.domain.StakingMarket
 import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -27,7 +27,7 @@ class MStableEthereumStakingMarketService(
         abiResource.getABI("mStable/BoostedSavingsVault.json")
     }
 
-    override suspend fun fetchStakingMarkets(): List<StakingMarketElement> = coroutineScope{
+    override suspend fun fetchStakingMarkets(): List<StakingMarket> = coroutineScope{
         val gateway = contractAccessorGateway.getGateway(getNetwork())
 
         mStableEthereumService.getBoostedSavingsVaults().map {
@@ -48,10 +48,10 @@ class MStableEthereumStakingMarketService(
         }.awaitAll().filterNotNull()
     }
 
-    private fun toStakingMarket(contract: MStableEthereumBoostedSavingsVaultContract): StakingMarketElement {
+    private fun toStakingMarket(contract: MStableEthereumBoostedSavingsVaultContract): StakingMarket {
         val stakingToken = erC20Resource.getTokenInformation(getNetwork(), contract.stakingToken)
         val rewardsToken = erC20Resource.getTokenInformation(getNetwork(), contract.rewardsToken)
-        return StakingMarketElement(
+        return StakingMarket(
             id = "mstable-ethereum-${contract.address}",
             name = contract.name,
             stakedToken = stakingToken.toFungibleToken(),

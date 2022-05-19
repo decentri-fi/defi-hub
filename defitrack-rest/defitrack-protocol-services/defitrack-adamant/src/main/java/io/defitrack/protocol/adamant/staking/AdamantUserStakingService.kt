@@ -7,7 +7,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.adamant.AdamantService
 import io.defitrack.protocol.adamant.AdamantVaultContract
 import io.defitrack.staking.UserStakingService
-import io.defitrack.staking.domain.StakingElement
+import io.defitrack.staking.domain.StakingPosition
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import java.math.BigInteger
@@ -28,7 +28,7 @@ class AdamantUserStakingService(
 
     val gateway = contractAccessorGateway.getGateway(getNetwork())
 
-    override fun getStakings(address: String): List<StakingElement> {
+    override fun getStakings(address: String): List<StakingPosition> {
 
         val adamantVaultContracts = adamantService.adamantGenericVaults().map {
             AdamantVaultContract(

@@ -7,7 +7,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.polycat.PolycatMasterChefContract
 import io.defitrack.protocol.polycat.PolycatService
 import io.defitrack.staking.UserStakingService
-import io.defitrack.staking.domain.StakingElement
+import io.defitrack.staking.domain.StakingPosition
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import java.math.BigInteger
@@ -24,7 +24,7 @@ class PolycatStakingService(
         abiResource.getABI("polycat/MasterChef.json")
     }
 
-    override fun getStakings(address: String): List<StakingElement> {
+    override fun getStakings(address: String): List<StakingPosition> {
 
         val polycatMasterChefContracts = polycatService.getPolycatFarms().map {
             PolycatMasterChefContract(

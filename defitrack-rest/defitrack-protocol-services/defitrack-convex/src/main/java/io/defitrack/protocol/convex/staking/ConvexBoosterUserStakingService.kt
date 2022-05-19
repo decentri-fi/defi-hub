@@ -7,7 +7,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.convex.ConvexService
 import io.defitrack.protocol.convex.contract.ConvexBoosterContract
 import io.defitrack.staking.UserStakingService
-import io.defitrack.staking.domain.StakingElement
+import io.defitrack.staking.domain.StakingPosition
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Component
 import java.math.BigInteger
@@ -23,7 +23,7 @@ class ConvexBoosterUserStakingService(
 ) {
 
 
-    override fun getStakings(address: String): List<StakingElement> {
+    override fun getStakings(address: String): List<StakingPosition> {
         val gateway = contractAccessorGateway.getGateway(getNetwork())
 
         val booster = ConvexBoosterContract(

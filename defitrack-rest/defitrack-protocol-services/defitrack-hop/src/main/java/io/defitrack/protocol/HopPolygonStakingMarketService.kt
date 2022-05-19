@@ -8,7 +8,7 @@ import io.defitrack.price.PriceResource
 import io.defitrack.protocol.contract.HopStakingReward
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.StakingMarketBalanceFetcher
-import io.defitrack.staking.domain.StakingMarketElement
+import io.defitrack.staking.domain.StakingMarket
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenInformation
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +27,7 @@ class HopPolygonStakingMarketService(
     private val contractAccessorGateway: ContractAccessorGateway,
     private val priceResource: PriceResource
 ) : StakingMarketService() {
-    override suspend fun fetchStakingMarkets(): List<StakingMarketElement> = coroutineScope {
+    override suspend fun fetchStakingMarkets(): List<StakingMarket> = coroutineScope {
         hopService.getStakingRewards(getNetwork()).map { stakingReward ->
             async(Dispatchers.IO.limitedParallelism(10)) {
                 toStakingMarket(stakingReward)
@@ -36,7 +36,7 @@ class HopPolygonStakingMarketService(
         }.awaitAll().filterNotNull()
     }
 
-    private fun toStakingMarket(stakingReward: String): StakingMarketElement? {
+    private fun toStakingMarket(stakingReward: String): StakingMarket? {
         return try {
             val pool = HopStakingReward(
                 contractAccessorGateway.getGateway(getNetwork()),
@@ -47,7 +47,7 @@ class HopPolygonStakingMarketService(
             val stakedToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingTokenAddress)
             val rewardToken = erC20Resource.getTokenInformation(getNetwork(), pool.rewardsTokenAddress)
 
-            return StakingMarketElement(
+            return StakingMarket(
                 id = "hop-polygon-${pool.address}",
                 network = getNetwork(),
                 protocol = getProtocol(),

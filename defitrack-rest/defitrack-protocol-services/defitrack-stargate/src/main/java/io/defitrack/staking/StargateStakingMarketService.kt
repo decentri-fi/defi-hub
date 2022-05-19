@@ -6,9 +6,8 @@ import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.StargateOptimismService
 import io.defitrack.protocol.contract.LPStakingContract
-import io.defitrack.staking.domain.StakingMarketElement
+import io.defitrack.staking.domain.StakingMarket
 import io.defitrack.token.ERC20Resource
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
 @Component
@@ -23,7 +22,7 @@ class StargateStakingMarketService(
         abiResource.getABI("stargate/LPStaking.json")
     }
 
-    override suspend fun fetchStakingMarkets(): List<StakingMarketElement> {
+    override suspend fun fetchStakingMarkets(): List<StakingMarket> {
         val lpStakingContract = LPStakingContract(
             accessorGateway.getGateway(getNetwork()),
             lpStakingContractAbi,

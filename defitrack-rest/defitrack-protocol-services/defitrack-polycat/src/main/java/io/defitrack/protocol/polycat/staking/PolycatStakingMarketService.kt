@@ -10,7 +10,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.polycat.PolycatMasterChefContract
 import io.defitrack.protocol.polycat.PolycatService
 import io.defitrack.staking.StakingMarketService
-import io.defitrack.staking.domain.StakingMarketElement
+import io.defitrack.staking.domain.StakingMarket
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenInformation
 import org.springframework.stereotype.Service
@@ -29,7 +29,7 @@ class PolycatStakingMarketService(
         abiResource.getABI("polycat/MasterChef.json")
     }
 
-    override suspend fun fetchStakingMarkets(): List<StakingMarketElement> {
+    override suspend fun fetchStakingMarkets(): List<StakingMarket> {
         return polycatService.getPolycatFarms().map {
             PolycatMasterChefContract(
                 contractAccessorGateway.getGateway(getNetwork()),
@@ -46,11 +46,11 @@ class PolycatStakingMarketService(
     private fun toStakingMarketElement(
         chef: PolycatMasterChefContract,
         poolId: Int
-    ): StakingMarketElement {
+    ): StakingMarket {
         val stakedtoken =
             erC20Resource.getTokenInformation(getNetwork(), chef.poolInfo(poolId).lpToken)
         val rewardToken = erC20Resource.getTokenInformation(getNetwork(), chef.rewardToken)
-        return StakingMarketElement(
+        return StakingMarket(
             id = "polycat-${chef.address}-${poolId}",
             network = getNetwork(),
             name = stakedtoken.name + " Farm",

@@ -9,9 +9,9 @@ data class LendingMarketElementVO(
     val protocol: ProtocolVO,
     val network: NetworkVO,
     val token: LendingMarketElementToken,
-    val rate: Double,
+    val rate: Double?,
     val poolType: String,
-    val marketSize: BigDecimal = BigDecimal.ZERO
+    val marketSize: BigDecimal?
 )
 
 data class LendingMarketElementToken(

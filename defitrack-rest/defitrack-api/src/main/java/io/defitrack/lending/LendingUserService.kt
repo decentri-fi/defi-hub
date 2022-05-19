@@ -1,15 +1,15 @@
 package io.defitrack.lending
 
-import io.defitrack.lending.domain.LendingElement
+import io.defitrack.lending.domain.LendingPosition
 import io.defitrack.protocol.ProtocolService
 import kotlinx.coroutines.runBlocking
 
 interface LendingUserService : ProtocolService {
-    suspend fun getLendings(address: String): List<LendingElement>
+    suspend fun getLendings(address: String): List<LendingPosition>
 
-    fun getLending(address: String, vaultId: String): LendingElement? = runBlocking {
+    fun getLending(address: String, marketId: String): LendingPosition? = runBlocking {
         getLendings(address).firstOrNull {
-            it.id == vaultId
+            it.market.id == marketId
         }
     }
 }

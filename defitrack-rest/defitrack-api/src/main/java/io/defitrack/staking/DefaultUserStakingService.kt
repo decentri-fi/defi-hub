@@ -3,7 +3,7 @@ package io.defitrack.staking
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.protocol.Protocol
-import io.defitrack.staking.domain.StakingElement
+import io.defitrack.staking.domain.StakingPosition
 import io.defitrack.token.ERC20Resource
 import java.math.BigInteger
 
@@ -12,7 +12,7 @@ abstract class DefaultUserStakingService(
     val stakingMarketService: StakingMarketService,
     val gateway: ContractAccessorGateway
 ) : UserStakingService(erC20Resource) {
-    override fun getStakings(address: String): List<StakingElement> {
+    override fun getStakings(address: String): List<StakingPosition> {
         val markets = stakingMarketService.getStakingMarkets().filter {
             it.balanceFetcher != null
         }

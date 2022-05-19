@@ -8,7 +8,7 @@ import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.toVO
-import io.defitrack.staking.domain.StakingElement
+import io.defitrack.staking.domain.StakingPosition
 import io.defitrack.staking.vo.StakingElementVO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -76,7 +76,7 @@ class DefaultUserStakingRestController(
     }
 
 
-    fun StakingElement.toVO(): StakingElementVO {
+    fun StakingPosition.toVO(): StakingElementVO {
 
         val stakedInDollars = priceResource.calculatePrice(
             PriceRequest(

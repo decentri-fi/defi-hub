@@ -2,7 +2,6 @@ package io.defitrack.protocol.dinoswap.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.price.PriceRequest
@@ -12,10 +11,9 @@ import io.defitrack.protocol.dinoswap.DinoswapFossilFarmsContract
 import io.defitrack.protocol.dinoswap.DinoswapService
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.StakingMarketBalanceFetcher
-import io.defitrack.staking.domain.StakingMarketElement
+import io.defitrack.staking.domain.StakingMarket
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
-import java.math.BigInteger
 
 @Service
 class DinoswapStakingMarketService(
@@ -31,7 +29,7 @@ class DinoswapStakingMarketService(
         abiResource.getABI("dinoswap/FossilFarms.json")
     }
 
-    override suspend fun fetchStakingMarkets(): List<StakingMarketElement> {
+    override suspend fun fetchStakingMarkets(): List<StakingMarket> {
         return dinoswapService.getDinoFossilFarms().map {
             DinoswapFossilFarmsContract(
                 contractAccessorGateway.getGateway(getNetwork()),
@@ -48,7 +46,7 @@ class DinoswapStakingMarketService(
     private fun toStakingMarketElement(
         chef: DinoswapFossilFarmsContract,
         poolId: Int
-    ): StakingMarketElement {
+    ): StakingMarket {
         val stakedtoken =
             tokenService.getTokenInformation(getNetwork(), chef.getLpTokenForPoolId(poolId))
         val rewardToken = tokenService.getTokenInformation(getNetwork(), chef.rewardToken)
@@ -61,7 +59,7 @@ class DinoswapStakingMarketService(
             stakedtoken.type
         ))
 
-        return StakingMarketElement(
+        return StakingMarket(
             id = "dinoswap-${chef.address}-${poolId}",
             network = getNetwork(),
             name = stakedtoken.name + " Farm",

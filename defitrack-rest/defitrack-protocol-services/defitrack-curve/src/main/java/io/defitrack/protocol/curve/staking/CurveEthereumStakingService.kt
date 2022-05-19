@@ -5,7 +5,7 @@ import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.crv.CurveEthereumService
 import io.defitrack.staking.UserStakingService
-import io.defitrack.staking.domain.StakingElement
+import io.defitrack.staking.domain.StakingPosition
 import io.defitrack.token.ERC20Resource
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -21,7 +21,7 @@ class CurveEthereumStakingService(
 
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun getStakings(address: String): List<StakingElement> {
+    override fun getStakings(address: String): List<StakingPosition> {
         val gauges = curveEthereumService.getGauges().filter {
             it.pool != null
         }

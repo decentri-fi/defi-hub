@@ -3,7 +3,7 @@ package io.defitrack.staking
 import io.defitrack.common.network.Network
 import io.defitrack.network.toVO
 import io.defitrack.protocol.toVO
-import io.defitrack.staking.domain.StakingMarketElement
+import io.defitrack.staking.domain.StakingMarket
 import io.defitrack.staking.vo.StakingMarketElementVO
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
@@ -73,7 +73,7 @@ class DefaultStakingMarketRestController(
             } ?: ResponseEntity.notFound().build()
     }
 
-    private fun toVO(it: StakingMarketElement) = StakingMarketElementVO(
+    private fun toVO(it: StakingMarket) = StakingMarketElementVO(
         id = it.id,
         network = it.network.toVO(),
         protocol = it.protocol.toVO(),

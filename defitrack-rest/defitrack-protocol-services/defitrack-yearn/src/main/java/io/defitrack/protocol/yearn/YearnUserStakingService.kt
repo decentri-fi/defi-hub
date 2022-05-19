@@ -7,7 +7,7 @@ import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.staking.UserStakingService
-import io.defitrack.staking.domain.StakingElement
+import io.defitrack.staking.domain.StakingPosition
 import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
@@ -27,7 +27,7 @@ class YearnUserStakingService(
     val erc20ABI = abiResource.getABI("general/ERC20.json")
 
 
-    override fun getStakings(address: String): List<StakingElement> {
+    override fun getStakings(address: String): List<StakingPosition> {
         val ethereumContractAccessor = contractAccessorGateway.getGateway(getNetwork())
 
         return runBlocking {

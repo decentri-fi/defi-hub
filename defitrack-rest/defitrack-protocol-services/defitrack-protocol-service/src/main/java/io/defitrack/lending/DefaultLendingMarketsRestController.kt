@@ -1,7 +1,7 @@
 package io.defitrack.lending
 
 import io.defitrack.common.network.Network
-import io.defitrack.lending.domain.LendingMarketElement
+import io.defitrack.lending.domain.LendingMarket
 import io.defitrack.lending.vo.LendingMarketElementToken
 import io.defitrack.lending.vo.LendingMarketElementVO
 import io.defitrack.network.toVO
@@ -42,7 +42,7 @@ class DefaultLendingMarketsRestController(
             }.map { it.toVO() }
     }
 
-    fun LendingMarketElement.toVO(): LendingMarketElementVO {
+    fun LendingMarket.toVO(): LendingMarketElementVO {
         return LendingMarketElementVO(
             name = name,
             protocol = protocol.toVO(),
@@ -53,9 +53,9 @@ class DefaultLendingMarketsRestController(
                 address = token.address,
                 logo = token.logo
             ),
-            rate = rate,
+            rate = rate?.toDouble(),
             poolType = poolType,
-            marketSize = BigDecimal.valueOf(marketSize)
+            marketSize = marketSize
         )
     }
 }

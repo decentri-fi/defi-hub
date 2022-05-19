@@ -5,7 +5,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.lending.LendingMarketService
 import io.defitrack.lending.domain.BalanceFetcher
-import io.defitrack.lending.domain.LendingMarketElement
+import io.defitrack.lending.domain.LendingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.mstable.MStableEthereumSavingsContract
 import io.defitrack.protocol.mstable.MStableEthereumService
@@ -13,7 +13,6 @@ import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import org.springframework.stereotype.Service
 
 @Deprecated("not a lending market")
 class MStableEthereumLendingMarketService(
@@ -27,7 +26,7 @@ class MStableEthereumLendingMarketService(
         abiResource.getABI("mStable/SavingsContract.json")
     }
 
-    override suspend fun fetchLendingMarkets(): List<LendingMarketElement> = coroutineScope {
+    override suspend fun fetchLendingMarkets(): List<LendingMarket> = coroutineScope {
         mStableService.getSavingsContracts().map {
             MStableEthereumSavingsContract(
                 contractAccessorGateway.getGateway(getNetwork()),
@@ -46,17 +45,15 @@ class MStableEthereumLendingMarketService(
         }.awaitAll().filterNotNull()
     }
 
-    private fun toLendingMarket(it: MStableEthereumSavingsContract): LendingMarketElement {
+    private fun toLendingMarket(it: MStableEthereumSavingsContract): LendingMarket {
         val token = tokenService.getTokenInformation(getNetwork(), it.underlying)
-        return LendingMarketElement(
+        return LendingMarket(
             id = "mstable-polygon-${it.address}",
             network = getNetwork(),
             protocol = getProtocol(),
             address = it.address,
             name = token.name,
             token = token.toFungibleToken(),
-            marketSize = 0.0,
-            rate = 0.0,
             poolType = "mstable",
             balanceFetcher = BalanceFetcher(
                 address = it.address,

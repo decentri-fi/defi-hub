@@ -6,7 +6,7 @@ import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.protocol.Protocol
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.StakingMarketBalanceFetcher
-import io.defitrack.staking.domain.StakingMarketElement
+import io.defitrack.staking.domain.StakingMarket
 import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -27,7 +27,7 @@ class IdexFarmingMarketService(
         abiResource.getABI("idex/IdexFarm.json")
     }
 
-    override suspend fun fetchStakingMarkets(): List<StakingMarketElement> = coroutineScope {
+    override suspend fun fetchStakingMarkets(): List<StakingMarket> = coroutineScope {
         idexService.idexFarm().map {
             IdexFarmContract(
                 contractAccessorGateway.getGateway(getNetwork()),
@@ -59,11 +59,11 @@ class IdexFarmingMarketService(
     private fun toStakingMarketElement(
         chef: IdexFarmContract,
         poolId: Int
-    ): StakingMarketElement {
+    ): StakingMarket {
         val stakedtoken =
             tokenService.getTokenInformation(getNetwork(), chef.getLpTokenForPoolId(poolId))
         val rewardToken = tokenService.getTokenInformation(getNetwork(), chef.rewardToken)
-        return StakingMarketElement(
+        return StakingMarket(
             id = "idex-${chef.address}-${poolId}",
             network = getNetwork(),
             name = stakedtoken.name + " Farm",
