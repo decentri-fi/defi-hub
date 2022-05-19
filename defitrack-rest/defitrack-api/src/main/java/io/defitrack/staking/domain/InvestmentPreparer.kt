@@ -70,7 +70,8 @@ abstract class InvestmentPreparer(private val erC20Resource: ERC20Resource) {
                             getNetwork(),
                             getToken(),
                             getEntryContract()
-                        )
+                        ),
+                        to = getEntryContract()
                     )
                 } else {
                     null
