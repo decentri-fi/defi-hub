@@ -22,6 +22,7 @@ import org.web3j.abi.TypeReference
 import org.web3j.abi.Utils
 import org.web3j.abi.datatypes.*
 import org.web3j.abi.datatypes.generated.Int128
+import org.web3j.abi.datatypes.generated.Uint16
 import org.web3j.abi.datatypes.generated.Uint256
 import org.web3j.abi.datatypes.generated.Uint8
 import org.web3j.protocol.core.methods.response.EthCall
@@ -213,6 +214,10 @@ open class BlockchainGateway(
 
         fun BigInteger.toUint8(): Uint8 {
             return Uint8(this)
+        }
+
+        fun BigInteger.toUint16(): Uint16 {
+            return Uint16(this)
         }
 
         fun BigInteger.Int128(): Int128 {

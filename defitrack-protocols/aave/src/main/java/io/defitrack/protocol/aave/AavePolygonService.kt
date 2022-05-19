@@ -17,6 +17,14 @@ class AavePolygonService(
         theGraphGatewayProvider.createTheGraphGateway("https://api.thegraph.com/subgraphs/name/aave/aave-v2-matic")
 
 
+    fun getLendingPoolAddressesProvider(): String {
+        return "0xd05e3E715d945B59290df0ae8eF85c1BdB684744"
+    }
+
+    fun getLendingPoolDataProviderContract(): String {
+        return "0x7551b5D2763519d4e37e8B81929D336De671d46d"
+    }
+
     suspend fun getUserReserves(user: String): List<UserReserve> {
         val query = """
            { 
