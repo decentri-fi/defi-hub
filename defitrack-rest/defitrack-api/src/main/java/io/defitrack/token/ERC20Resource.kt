@@ -4,6 +4,7 @@ import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.retry
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
+import io.defitrack.evm.contract.BlockchainGateway.Companion.MAX_UINT256
 import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.contract.multicall.MultiCallElement
@@ -43,6 +44,29 @@ class ERC20Resource(
         return runBlocking(Dispatchers.IO) {
             retry(limitAttempts(3)) { client.get("$erc20ResourceLocation/${network.name}/$address/token") }
         }
+    }
+
+    fun getApproveFunction(
+        network: Network,
+        token: String,
+        spender: String,
+        amount: BigInteger
+    ): org.web3j.abi.datatypes.Function {
+        return with(contractAccessorGateway.getGateway(network)) {
+            ERC20Contract(
+                this,
+                erc20ABI,
+                token
+            ).approveFunction(spender, amount)
+        }
+    }
+
+    fun getFullApproveFunction(
+        network: Network,
+        token: String,
+        spender: String
+    ): org.web3j.abi.datatypes.Function {
+        return getApproveFunction(network, token, spender, MAX_UINT256.value)
     }
 
     fun getAllowance(network: Network, token: String, owner: String, spender: String): BigInteger {

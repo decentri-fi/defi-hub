@@ -35,13 +35,6 @@ open class ERC20Contract(
         )
     }
 
-    fun depositAllFunction(): Function {
-        return createFunction("depositAll", emptyList(), emptyList())
-    }
-
-    fun depositFunction(amount: BigInteger): Function {
-        return createFunction("deposit", listOf(amount.toUint256()), emptyList())
-    }
 
     fun balanceOfMethod(address: String): Function {
         return createFunction(

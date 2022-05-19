@@ -1,6 +1,6 @@
-package io.defitrack.protocol.beefy.staking.invest
+package io.defitrack.protocol.quickswap.staking.invest
 
-import io.defitrack.protocol.beefy.contract.BeefyVaultContract
+import io.defitrack.protocol.quickswap.contract.DQuickContract
 import io.defitrack.staking.command.PrepareInvestmentCommand
 import io.defitrack.staking.domain.InvestmentPreparer
 import io.defitrack.token.ERC20Resource
@@ -10,11 +10,12 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 
-
-class BeefyStakingInvestmentPreparer(
-    private val beefyVault: BeefyVaultContract,
-    private val erC20Resource: ERC20Resource
+class DQuickStakingInvestmentPreparer(
+    val erC20Resource: ERC20Resource,
+    val dQuickContract: DQuickContract
 ) : InvestmentPreparer {
+
+    val quick = "0x831753dd7087cac61ab5644b308642cc1c33dc13"
 
     override suspend fun prepare(prepareInvestmentCommand: PrepareInvestmentCommand): List<PreparedTransaction> {
         return listOf(
@@ -23,28 +24,18 @@ class BeefyStakingInvestmentPreparer(
         ).awaitAll().filterNotNull()
     }
 
+
     suspend fun getAllowanceTransaction(prepareInvestmentCommand: PrepareInvestmentCommand): Deferred<PreparedTransaction?> =
         coroutineScope {
             async {
-                val want = beefyVault.want
-                val allowance = erC20Resource.getAllowance(
-                    beefyVault.blockchainGateway.network,
-                    want,
-                    prepareInvestmentCommand.user,
-                    beefyVault.address
-                )
-                val requiredBalance =
-                    prepareInvestmentCommand.amount ?: erC20Resource.getBalance(
-                        beefyVault.blockchainGateway.network,
-                        want,
-                        prepareInvestmentCommand.user
-                    )
+                val allowance = getAllowance(prepareInvestmentCommand)
+                val requiredBalance = getWantBalance(prepareInvestmentCommand)
                 if (allowance < requiredBalance) {
                     PreparedTransaction(
                         function = erC20Resource.getFullApproveFunction(
-                            beefyVault.blockchainGateway.network,
-                            want,
-                            beefyVault.address
+                            dQuickContract.blockchainGateway.network,
+                            quick,
+                            dQuickContract.address
                         )
                     )
                 } else {
@@ -53,28 +44,34 @@ class BeefyStakingInvestmentPreparer(
             }
         }
 
+    private fun getWantBalance(prepareInvestmentCommand: PrepareInvestmentCommand) =
+        prepareInvestmentCommand.amount ?: erC20Resource.getBalance(
+            dQuickContract.blockchainGateway.network,
+            quick,
+            prepareInvestmentCommand.user
+        )
+
+    private fun getAllowance(prepareInvestmentCommand: PrepareInvestmentCommand) =
+        erC20Resource.getAllowance(
+            dQuickContract.blockchainGateway.network,
+            quick,
+            prepareInvestmentCommand.user,
+            dQuickContract.address
+        )
+
     suspend fun getInvestmentTransaction(prepareInvestmentCommand: PrepareInvestmentCommand): Deferred<PreparedTransaction?> =
         coroutineScope {
             async {
-                val allowance = erC20Resource.getAllowance(
-                    beefyVault.blockchainGateway.network,
-                    beefyVault.want,
-                    prepareInvestmentCommand.user,
-                    beefyVault.address
-                )
-                val requiredBalance =
-                    prepareInvestmentCommand.amount ?: erC20Resource.getBalance(
-                        beefyVault.blockchainGateway.network,
-                        beefyVault.want,
-                        prepareInvestmentCommand.user
-                    )
+                val allowance = getAllowance(prepareInvestmentCommand)
+                val requiredBalance = getWantBalance(prepareInvestmentCommand)
+
                 if (allowance >= requiredBalance) {
                     prepareInvestmentCommand.amount?.let { amount ->
                         PreparedTransaction(
-                            function = beefyVault.depositFunction(amount)
+                            function = dQuickContract.enterFunction(amount)
                         )
                     } ?: PreparedTransaction(
-                        function = beefyVault.depositAllFunction()
+                        function = dQuickContract.enterFunction(requiredBalance)
                     )
                 } else {
                     null

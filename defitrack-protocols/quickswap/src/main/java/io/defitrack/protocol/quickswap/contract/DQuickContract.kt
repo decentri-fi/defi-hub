@@ -6,6 +6,7 @@ import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
 import io.defitrack.evm.contract.BlockchainGateway.Companion.toUint256
 import io.defitrack.evm.contract.ERC20Contract
 import org.web3j.abi.TypeReference
+import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
@@ -24,6 +25,10 @@ class DQuickContract(
                 TypeReference.create(Uint256::class.java)
             )
         )[0].value as BigInteger
+    }
+
+    fun enterFunction(amount: BigInteger): Function {
+        return createFunction("enter", listOf(amount.toUint256()), emptyList())
     }
 
     fun dquickForQuick(amount: BigInteger): BigInteger {

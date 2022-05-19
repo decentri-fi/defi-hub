@@ -2,8 +2,10 @@ package io.defitrack.protocol.beefy.contract
 
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.BlockchainGateway.Companion.toUint256
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
+import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
@@ -22,6 +24,14 @@ class BeefyVaultContract(
             "balance",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger
+    }
+
+    fun depositAllFunction(): Function {
+        return createFunction("depositAll", emptyList(), emptyList())
+    }
+
+    fun depositFunction(amount: BigInteger): Function {
+        return createFunction("deposit", listOf(amount.toUint256()), emptyList())
     }
 
     val getPricePerFullShare by lazy {
