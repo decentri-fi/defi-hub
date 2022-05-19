@@ -21,7 +21,7 @@ import java.math.BigInteger
 @RestController
 @RequestMapping("/staking")
 class DefaultUserStakingRestController(
-    private val stakingServices: List<UserStakingService>,
+    private val stakingServices: List<StakingPositionService>,
     private val priceResource: PriceResource
 ) {
 

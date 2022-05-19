@@ -1,6 +1,6 @@
 package io.defitrack.lending
 
-import io.defitrack.borrowing.domain.BorrowElement
+import io.defitrack.borrowing.domain.BorrowPosition
 import io.defitrack.borrowing.vo.BorrowElementVO
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.network.toVO
@@ -39,7 +39,7 @@ class DefaultBorrowingRestController(
             }.map { it.toVO() }
         }
 
-    fun BorrowElement.toVO(): BorrowElementVO {
+    fun BorrowPosition.toVO(): BorrowElementVO {
         return with(this) {
             BorrowElementVO(
                 network = network.toVO(),

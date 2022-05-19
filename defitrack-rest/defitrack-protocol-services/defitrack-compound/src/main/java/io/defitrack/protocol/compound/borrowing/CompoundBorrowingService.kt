@@ -1,9 +1,8 @@
 package io.defitrack.protocol.compound.borrowing
 
 import io.defitrack.abi.ABIResource
-import io.defitrack.borrowing.domain.BorrowElement
+import io.defitrack.borrowing.domain.BorrowPosition
 import io.defitrack.common.network.Network
-import io.defitrack.ethereum.config.EthereumContractAccessorConfig
 import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.protocol.Protocol
@@ -68,7 +67,7 @@ class CompoundBorrowingService(
         )
     }
 
-    override suspend fun getBorrows(address: String): List<BorrowElement> {
+    override suspend fun getBorrows(address: String): List<BorrowPosition> {
         val tokenContracts = getTokenContracts()
         return gateway.readMultiCall(
             tokenContracts.map {
@@ -86,7 +85,7 @@ class CompoundBorrowingService(
                 }
                 val token = underlying?.toFungibleToken() ?: erC20Service.getTokenInformation(getNetwork(), "0x0")
                     .toFungibleToken()
-                BorrowElement(
+                BorrowPosition(
                     id = "compound-ethereum-${token.address}",
                     network = getNetwork(),
                     protocol = getProtocol(),

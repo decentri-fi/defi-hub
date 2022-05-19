@@ -1,7 +1,7 @@
 package io.defitrack.protocol.aave.borrowing
 
 import io.defitrack.borrowing.BorrowService
-import io.defitrack.borrowing.domain.BorrowElement
+import io.defitrack.borrowing.domain.BorrowPosition
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.AavePolygonService
@@ -15,11 +15,11 @@ class AavePolygonBorrowingService(
     private val erC20Resource: ERC20Resource
 ) : BorrowService {
 
-    override suspend fun getBorrows(address: String): List<BorrowElement> {
+    override suspend fun getBorrows(address: String): List<BorrowPosition> {
         return aavePolygonService.getUserReserves(address).mapNotNull {
             if ((it.currentStableDebt > BigInteger.ONE || it.currentVariableDebt > BigInteger.ONE)) {
                 val token = erC20Resource.getTokenInformation(getNetwork(), it.reserve.underlyingAsset)
-                BorrowElement(
+                BorrowPosition(
                     id = "aave-polygon-${it.reserve.id}",
                     protocol = getProtocol(),
                     network = getNetwork(),

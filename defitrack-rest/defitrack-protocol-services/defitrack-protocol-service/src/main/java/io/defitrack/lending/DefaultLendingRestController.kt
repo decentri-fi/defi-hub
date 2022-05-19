@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/lending")
 class DefaultLendingRestController(
-    private val lendingUserServices: List<LendingUserService>,
+    private val lendingUserServices: List<LendingPositionService>,
     private val priceResource: PriceResource
 ) {
 
