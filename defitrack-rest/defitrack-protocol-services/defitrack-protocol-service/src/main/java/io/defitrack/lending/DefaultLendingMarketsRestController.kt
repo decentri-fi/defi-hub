@@ -1,12 +1,11 @@
 package io.defitrack.lending
 
 import io.defitrack.common.network.Network
+import io.defitrack.invest.PrepareInvestmentCommand
 import io.defitrack.lending.domain.LendingMarket
-import io.defitrack.lending.vo.LendingMarketElementToken
-import io.defitrack.lending.vo.LendingMarketElementVO
+import io.defitrack.lending.vo.LendingMarketVO
 import io.defitrack.network.toVO
 import io.defitrack.protocol.toVO
-import io.defitrack.invest.PrepareInvestmentCommand
 import io.defitrack.staking.vo.TransactionPreparationVO
 import kotlinx.coroutines.runBlocking
 import org.springframework.http.ResponseEntity
@@ -19,7 +18,7 @@ class DefaultLendingMarketsRestController(
 ) {
 
     @GetMapping(value = ["/all-markets"])
-    fun getAllMarkets(): List<LendingMarketElementVO> {
+    fun getAllMarkets(): List<LendingMarketVO> {
         return lendingMarketServices.flatMap {
             it.getLendingMarkets()
         }.map {
@@ -31,7 +30,7 @@ class DefaultLendingMarketsRestController(
     fun searchByToken(
         @RequestParam("token") token: String,
         @RequestParam("network") network: Network
-    ): List<LendingMarketElementVO> {
+    ): List<LendingMarketVO> {
         return lendingMarketServices
             .filter {
                 it.getNetwork() == network
@@ -72,17 +71,13 @@ class DefaultLendingMarketsRestController(
         } ?: ResponseEntity.badRequest().build()
     }
 
-    fun LendingMarket.toVO(): LendingMarketElementVO {
-        return LendingMarketElementVO(
+    fun LendingMarket.toVO(): LendingMarketVO {
+        return LendingMarketVO(
+            id = id,
             name = name,
             protocol = protocol.toVO(),
             network = network.toVO(),
-            token = LendingMarketElementToken(
-                name = token.name,
-                symbol = token.symbol,
-                address = token.address,
-                logo = token.logo
-            ),
+            token = token,
             rate = rate?.toDouble(),
             poolType = poolType,
             marketSize = marketSize,

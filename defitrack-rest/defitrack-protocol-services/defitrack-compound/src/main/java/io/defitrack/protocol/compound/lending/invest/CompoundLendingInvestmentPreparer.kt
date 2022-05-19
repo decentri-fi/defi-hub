@@ -31,7 +31,7 @@ class CompoundLendingInvestmentPreparer(
         coroutineScope {
             async {
                 val allowance = getAllowance(prepareInvestmentCommand)
-                val requiredBalance = getWantBalance(prepareInvestmentCommand)
+                val requiredBalance = getInvestmentAmount(prepareInvestmentCommand)
 
                 if (allowance >= requiredBalance) {
                     prepareInvestmentCommand.amount?.let { amount ->

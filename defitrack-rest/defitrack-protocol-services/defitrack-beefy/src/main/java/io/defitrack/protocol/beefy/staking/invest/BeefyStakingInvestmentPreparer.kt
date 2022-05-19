@@ -8,7 +8,6 @@ import io.defitrack.token.ERC20Resource
 import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 
 
@@ -33,7 +32,7 @@ class BeefyStakingInvestmentPreparer(
         coroutineScope {
             async {
                 val allowance = getAllowance(prepareInvestmentCommand)
-                val requiredBalance = getWantBalance(prepareInvestmentCommand)
+                val requiredBalance = getInvestmentAmount(prepareInvestmentCommand)
                 if (allowance >= requiredBalance) {
                     prepareInvestmentCommand.amount?.let { amount ->
                         PreparedTransaction(
