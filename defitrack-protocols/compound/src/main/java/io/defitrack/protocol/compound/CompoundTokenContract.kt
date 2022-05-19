@@ -19,7 +19,6 @@ class CompoundTokenContract(
     ethereumContractAccessor, abi, address
 ) {
 
-
     fun mintFunction(amount: BigInteger): Function {
         return createFunction(
             "mint",

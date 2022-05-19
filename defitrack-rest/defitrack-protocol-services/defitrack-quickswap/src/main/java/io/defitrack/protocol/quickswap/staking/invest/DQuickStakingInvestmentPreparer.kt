@@ -1,7 +1,8 @@
 package io.defitrack.protocol.quickswap.staking.invest
 
-import io.defitrack.protocol.quickswap.contract.DQuickContract
+import io.defitrack.common.network.Network
 import io.defitrack.invest.PrepareInvestmentCommand
+import io.defitrack.protocol.quickswap.contract.DQuickContract
 import io.defitrack.staking.domain.InvestmentPreparer
 import io.defitrack.token.ERC20Resource
 import io.defitrack.transaction.PreparedTransaction
@@ -11,9 +12,9 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 
 class DQuickStakingInvestmentPreparer(
-    val erC20Resource: ERC20Resource,
+    erC20Resource: ERC20Resource,
     val dQuickContract: DQuickContract
-) : InvestmentPreparer {
+) : InvestmentPreparer(erC20Resource) {
 
     val quick = "0x831753dd7087cac61ab5644b308642cc1c33dc13"
 
@@ -24,42 +25,19 @@ class DQuickStakingInvestmentPreparer(
         ).awaitAll().filterNotNull()
     }
 
+    override fun getToken(): String {
+        return quick
+    }
 
-    suspend fun getAllowanceTransaction(prepareInvestmentCommand: PrepareInvestmentCommand): Deferred<PreparedTransaction?> =
-        coroutineScope {
-            async {
-                val allowance = getAllowance(prepareInvestmentCommand)
-                val requiredBalance = getWantBalance(prepareInvestmentCommand)
-                if (allowance < requiredBalance) {
-                    PreparedTransaction(
-                        function = erC20Resource.getFullApproveFunction(
-                            dQuickContract.blockchainGateway.network,
-                            quick,
-                            dQuickContract.address
-                        )
-                    )
-                } else {
-                    null
-                }
-            }
-        }
+    override fun getEntryContract(): String {
+        return dQuickContract.address
+    }
 
-    private fun getWantBalance(prepareInvestmentCommand: PrepareInvestmentCommand) =
-        prepareInvestmentCommand.amount ?: erC20Resource.getBalance(
-            dQuickContract.blockchainGateway.network,
-            quick,
-            prepareInvestmentCommand.user
-        )
+    override fun getNetwork(): Network {
+        return dQuickContract.blockchainGateway.network
+    }
 
-    private fun getAllowance(prepareInvestmentCommand: PrepareInvestmentCommand) =
-        erC20Resource.getAllowance(
-            dQuickContract.blockchainGateway.network,
-            quick,
-            prepareInvestmentCommand.user,
-            dQuickContract.address
-        )
-
-    suspend fun getInvestmentTransaction(prepareInvestmentCommand: PrepareInvestmentCommand): Deferred<PreparedTransaction?> =
+    override suspend fun getInvestmentTransaction(prepareInvestmentCommand: PrepareInvestmentCommand): Deferred<PreparedTransaction?> =
         coroutineScope {
             async {
                 val allowance = getAllowance(prepareInvestmentCommand)

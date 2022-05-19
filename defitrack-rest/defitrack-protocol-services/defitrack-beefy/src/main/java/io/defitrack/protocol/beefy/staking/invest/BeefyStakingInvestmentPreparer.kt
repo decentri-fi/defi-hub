@@ -1,7 +1,8 @@
 package io.defitrack.protocol.beefy.staking.invest
 
-import io.defitrack.protocol.beefy.contract.BeefyVaultContract
+import io.defitrack.common.network.Network
 import io.defitrack.invest.PrepareInvestmentCommand
+import io.defitrack.protocol.beefy.contract.BeefyVaultContract
 import io.defitrack.staking.domain.InvestmentPreparer
 import io.defitrack.token.ERC20Resource
 import io.defitrack.transaction.PreparedTransaction
@@ -13,61 +14,26 @@ import kotlinx.coroutines.coroutineScope
 
 class BeefyStakingInvestmentPreparer(
     private val beefyVault: BeefyVaultContract,
-    private val erC20Resource: ERC20Resource
-) : InvestmentPreparer {
+    erC20Resource: ERC20Resource
+) : InvestmentPreparer(erC20Resource) {
 
-    override suspend fun prepare(prepareInvestmentCommand: PrepareInvestmentCommand): List<PreparedTransaction> {
-        return listOf(
-            getAllowanceTransaction(prepareInvestmentCommand),
-            getInvestmentTransaction(prepareInvestmentCommand)
-        ).awaitAll().filterNotNull()
+    override fun getToken(): String {
+        return beefyVault.want
     }
 
-    suspend fun getAllowanceTransaction(prepareInvestmentCommand: PrepareInvestmentCommand): Deferred<PreparedTransaction?> =
-        coroutineScope {
-            async {
-                val want = beefyVault.want
-                val allowance = erC20Resource.getAllowance(
-                    beefyVault.blockchainGateway.network,
-                    want,
-                    prepareInvestmentCommand.user,
-                    beefyVault.address
-                )
-                val requiredBalance =
-                    prepareInvestmentCommand.amount ?: erC20Resource.getBalance(
-                        beefyVault.blockchainGateway.network,
-                        want,
-                        prepareInvestmentCommand.user
-                    )
-                if (allowance < requiredBalance) {
-                    PreparedTransaction(
-                        function = erC20Resource.getFullApproveFunction(
-                            beefyVault.blockchainGateway.network,
-                            want,
-                            beefyVault.address
-                        )
-                    )
-                } else {
-                    null
-                }
-            }
-        }
+    override fun getEntryContract(): String {
+        return beefyVault.address
+    }
 
-    suspend fun getInvestmentTransaction(prepareInvestmentCommand: PrepareInvestmentCommand): Deferred<PreparedTransaction?> =
+    override fun getNetwork(): Network {
+        return beefyVault.blockchainGateway.network
+    }
+
+    override suspend fun getInvestmentTransaction(prepareInvestmentCommand: PrepareInvestmentCommand): Deferred<PreparedTransaction?> =
         coroutineScope {
             async {
-                val allowance = erC20Resource.getAllowance(
-                    beefyVault.blockchainGateway.network,
-                    beefyVault.want,
-                    prepareInvestmentCommand.user,
-                    beefyVault.address
-                )
-                val requiredBalance =
-                    prepareInvestmentCommand.amount ?: erC20Resource.getBalance(
-                        beefyVault.blockchainGateway.network,
-                        beefyVault.want,
-                        prepareInvestmentCommand.user
-                    )
+                val allowance = getAllowance(prepareInvestmentCommand)
+                val requiredBalance = getWantBalance(prepareInvestmentCommand)
                 if (allowance >= requiredBalance) {
                     prepareInvestmentCommand.amount?.let { amount ->
                         PreparedTransaction(

@@ -87,7 +87,6 @@ class CompoundLendingMarketService(
                         }
                     ),
                     investmentPreparer = CompoundLendingInvestmentPreparer(
-                        getComptroller(),
                         ctokenContract,
                         erC20Resource
                     )
