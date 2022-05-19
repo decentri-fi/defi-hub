@@ -86,7 +86,7 @@ class DefaultStakingMarketRestController(
         @PathVariable("id") id: String,
         @RequestParam("network") network: Network,
         @RequestBody prepareInvestmentCommand: PrepareInvestmentCommand
-    ): ResponseEntity<TransactionPreparationVO> = runBlocking{
+    ): ResponseEntity<TransactionPreparationVO> = runBlocking {
         getStakingMarketById(
             network, id
         )?.investmentPreparer?.prepare(prepareInvestmentCommand)?.let { transactions ->
