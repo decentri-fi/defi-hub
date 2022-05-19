@@ -1,6 +1,8 @@
 package io.defitrack.evm.contract
 
 import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
+import io.defitrack.evm.contract.BlockchainGateway.Companion.toUint256
+import io.defitrack.evm.contract.BlockchainGateway.Companion.uint256
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.web3j.abi.TypeReference
@@ -17,12 +19,36 @@ open class ERC20Contract(
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
+    fun allowance(owner: String, spender: String): BigInteger {
+        return read(
+            "allowance",
+            listOf(owner.toAddress(), spender.toAddress()),
+            listOf(uint256())
+        )[0].value as BigInteger
+    }
+
+    fun approveFunction(spender: String, amount: BigInteger): Function {
+        return createFunction(
+            "approve",
+            listOf(spender.toAddress(), amount.toUint256()),
+            listOf()
+        )
+    }
+
+    fun depositAllFunction(): Function {
+        return createFunction("depositAll", emptyList(), emptyList())
+    }
+
+    fun depositFunction(amount: BigInteger): Function {
+        return createFunction("deposit", listOf(amount.toUint256()), emptyList())
+    }
+
     fun balanceOfMethod(address: String): Function {
         return createFunction(
             "balanceOf",
             inputs = listOf(address.toAddress()),
             outputs = listOf(
-                TypeReference.create(Uint256::class.java)
+                uint256()
             )
         )
     }
@@ -58,7 +84,7 @@ open class ERC20Contract(
         val read = read("decimals")
         if (read.isEmpty()) {
             18
-        }  else {
+        } else {
             (read[0].value as BigInteger).toInt()
         }
     }
@@ -67,7 +93,7 @@ open class ERC20Contract(
         val read = read("totalSupply")
         if (read.isEmpty()) {
             18
-        }  else {
+        } else {
             (read[0].value as BigInteger).toInt()
         }
     }

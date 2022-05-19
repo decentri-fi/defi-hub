@@ -1,3 +1,7 @@
 package io.defitrack.transaction
 
-class PreparedTransaction(val index: Int, val encodedTransaction: String)
+import org.web3j.abi.FunctionEncoder
+
+class PreparedTransaction(val function: org.web3j.abi.datatypes.Function) {
+    val encodedFunction = FunctionEncoder.encode(function)
+}

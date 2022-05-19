@@ -4,5 +4,5 @@ import java.math.BigInteger
 
 class PrepareInvestmentCommand(
     val user: String,
-    val amount: BigInteger
+    val amount: BigInteger? = null
 )

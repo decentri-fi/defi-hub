@@ -7,9 +7,10 @@ import io.defitrack.price.PriceResource
 import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
 import io.defitrack.protocol.beefy.domain.BeefyVault
+import io.defitrack.protocol.beefy.staking.invest.BeefyStakingInvestmentPreparer
 import io.defitrack.staking.StakingMarketService
-import io.defitrack.staking.domain.StakingMarketBalanceFetcher
 import io.defitrack.staking.domain.StakingMarket
+import io.defitrack.staking.domain.StakingMarketBalanceFetcher
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenInformation
 import kotlinx.coroutines.Dispatchers
@@ -65,7 +66,8 @@ abstract class BeefyStakingMarketService(
                 balanceFetcher = StakingMarketBalanceFetcher(
                     contract.address,
                     { user -> contract.balanceOfMethod(user) }
-                )
+                ),
+                investmentPreparer = BeefyStakingInvestmentPreparer(contract, erC20Resource)
             )
         } catch (ex: Exception) {
             logger.error("Error trying to fetch vault metadata", ex)

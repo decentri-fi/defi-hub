@@ -45,6 +45,16 @@ class ERC20Resource(
         }
     }
 
+    fun getAllowance(network: Network, token: String, owner: String, spender: String): BigInteger {
+        return with(contractAccessorGateway.getGateway(network)) {
+            ERC20Contract(
+                this,
+                erc20ABI,
+                token
+            ).allowance(owner, spender)
+        }
+    }
+
     fun getBalancesFor(
         address: String,
         tokens: List<String>,

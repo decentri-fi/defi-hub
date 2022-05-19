@@ -9,6 +9,7 @@ import io.defitrack.staking.vo.StakingMarketVO
 import io.defitrack.staking.vo.TransactionPreparationVO
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
+import kotlinx.coroutines.runBlocking
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -85,10 +86,10 @@ class DefaultStakingMarketRestController(
         @PathVariable("id") id: String,
         @RequestParam("network") network: Network,
         @RequestBody prepareInvestmentCommand: PrepareInvestmentCommand
-    ): ResponseEntity<TransactionPreparationVO> {
-        return getStakingMarketById(
+    ): ResponseEntity<TransactionPreparationVO> = runBlocking{
+        getStakingMarketById(
             network, id
-        )?.investmentPreparer?.prepare?.invoke(prepareInvestmentCommand)?.let { transactions ->
+        )?.investmentPreparer?.prepare(prepareInvestmentCommand)?.let { transactions ->
             ResponseEntity.ok(
                 TransactionPreparationVO(
                     transactions

@@ -227,6 +227,14 @@ open class BlockchainGateway(
             return fromDataTypes(this, false)
         }
 
+        fun uint256(): TypeReference<Uint256> {
+            return TypeReference.create(Uint256::class.java)
+        }
+
+        fun bool(): TypeReference<Bool> {
+            return TypeReference.create(Bool::class.java)
+        }
+
         fun String.toAddress(): Address {
             return Address(this)
         }
@@ -234,5 +242,7 @@ open class BlockchainGateway(
         fun Boolean.toBool(): Bool {
             return Bool(this)
         }
+
+        val MAX_UINT256 = BigInteger.TWO.pow(64).minus(BigInteger.ONE).toUint256()
     }
 }
