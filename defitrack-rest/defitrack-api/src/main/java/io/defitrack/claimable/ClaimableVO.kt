@@ -2,20 +2,18 @@ package io.defitrack.claimable
 
 import io.defitrack.network.NetworkVO
 import io.defitrack.protocol.ProtocolVO
+import io.defitrack.token.FungibleToken
+import io.defitrack.transaction.PreparedTransaction
 
-class ClaimableElementVO(
+class ClaimableVO(
     val id: String,
     val address: String,
     val name: String,
     val type: String,
     val protocol: ProtocolVO,
     val network: NetworkVO,
-    val claimableToken: ClaimableTokenVO
-)
-
-class ClaimableTokenVO(
-    val name: String,
-    val symbol: String,
-    val amount: Double?,
-    val dollarValue: Double
+    val dollarValue: Double,
+    val amount: Double,
+    val token: FungibleToken,
+    val claimTransaction: List<PreparedTransaction>
 )

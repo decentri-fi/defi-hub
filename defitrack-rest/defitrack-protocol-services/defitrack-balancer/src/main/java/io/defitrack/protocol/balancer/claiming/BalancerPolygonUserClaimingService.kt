@@ -1,11 +1,9 @@
 package io.defitrack.protocol.balancer.claiming
 
 import io.defitrack.abi.ABIResource
-import io.defitrack.claimable.ClaimableElement
+import io.defitrack.claimable.Claimable
 import io.defitrack.claimable.ClaimableService
-import io.defitrack.claimable.ClaimableToken
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.BalancerPolygonService
@@ -34,7 +32,7 @@ class BalancerPolygonUserClaimingService(
         private val logger = LoggerFactory.getLogger(this::class.java)
     }
 
-    override fun claimables(address: String): List<ClaimableElement> = runBlocking {
+    override suspend fun claimables(address: String): List<Claimable> = runBlocking {
         val markets = balancerPolygonService.getGauges()
         markets.map { gauge ->
             async {
@@ -46,18 +44,15 @@ class BalancerPolygonUserClaimingService(
                     .filter { it.balance > BigInteger.ZERO }
                     .map { balanceResult ->
                         val token = erC20Resource.getTokenInformation(getNetwork(), balanceResult.token)
-                        ClaimableElement(
+                        Claimable(
                             id = UUID.randomUUID().toString(),
                             name = token.name + " reward",
                             address = gauge.id,
                             type = "balancer-reward",
                             protocol = getProtocol(),
                             network = getNetwork(),
-                            claimableToken = ClaimableToken(
-                                name = token.name,
-                                symbol = token.symbol,
-                                amount = balanceResult.balance.asEth(token.decimals).toDouble()
-                            )
+                            claimableToken = token.toFungibleToken(),
+                            amount = balanceResult.balance
                         )
                     }
             }

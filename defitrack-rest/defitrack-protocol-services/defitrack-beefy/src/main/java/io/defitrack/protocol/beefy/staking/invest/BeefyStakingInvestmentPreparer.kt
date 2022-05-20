@@ -36,10 +36,12 @@ class BeefyStakingInvestmentPreparer(
                 if (allowance >= requiredBalance) {
                     prepareInvestmentCommand.amount?.let { amount ->
                         PreparedTransaction(
-                            function = beefyVault.depositFunction(amount)
+                            function = beefyVault.depositFunction(amount),
+                            to = getEntryContract()
                         )
                     } ?: PreparedTransaction(
-                        function = beefyVault.depositAllFunction()
+                        function = beefyVault.depositAllFunction(),
+                        to = getEntryContract()
                     )
                 } else {
                     null

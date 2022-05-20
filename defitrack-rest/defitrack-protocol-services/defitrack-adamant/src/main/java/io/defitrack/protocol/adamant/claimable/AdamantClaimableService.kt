@@ -1,53 +1,47 @@
 package io.defitrack.protocol.adamant.claimable
 
 import io.defitrack.abi.ABIResource
-import io.defitrack.claimable.ClaimableElement
+import io.defitrack.claimable.Claimable
 import io.defitrack.claimable.ClaimableService
-import io.defitrack.claimable.ClaimableToken
+import io.defitrack.claimable.PrepareClaimCommand
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
+import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.evm.contract.multicall.MultiCallElement
-import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.adamant.AdamantService
 import io.defitrack.protocol.adamant.AdamantVaultContract
 import io.defitrack.protocol.adamant.StrategyContract
+import io.defitrack.protocol.adamant.staking.AdamantVaultMarketService
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.generated.Uint256
-import java.math.BigDecimal
 import java.math.BigInteger
-import java.math.RoundingMode
 
 @Service
 class AdamantClaimableService(
     private val abiResource: ABIResource,
-    private val adamantService: AdamantService,
+    private val adamantVaultMarketService: AdamantVaultMarketService,
     contractAccessorGateway: ContractAccessorGateway,
-    private val erC20Resource: ERC20Resource,
-    private val priceService: PriceResource
+    private val erC20Resource: ERC20Resource
 ) : ClaimableService {
 
     val genericVaultABI = abiResource.getABI("adamant/GenericVault.json")
 
     val gateway = contractAccessorGateway.getGateway(getNetwork())
 
-    override fun claimables(address: String): List<ClaimableElement> {
+    override suspend fun claimables(address: String): List<Claimable> {
 
-        val vaultContracts = adamantService.adamantGenericVaults().map {
+        val markets = adamantVaultMarketService.getStakingMarkets().map {
             AdamantVaultContract(
                 gateway,
                 genericVaultABI,
-                it.vaultAddress,
-                it.lpAddress
+                it.contractAddress,
             )
-        }
-
+        }.take(100)
 
         return gateway.readMultiCall(
-            vaultContracts.map {
+            markets.map {
                 MultiCallElement(
                     it.createFunction(
                         "getPendingReward",
@@ -60,41 +54,36 @@ class AdamantClaimableService(
                 )
             }
         ).mapIndexed { index, result ->
-            val balance = result[0].value as BigInteger
-            if (balance > BigInteger.ONE) {
-                val vault = vaultContracts[index]
+            try {
+                val balance = result[0].value as BigInteger
+                if (balance > BigInteger.ONE) {
+                    val vault = markets[index]
 
-                val strategy = StrategyContract(
-                    gateway,
-                    abiResource.getABI("adamant/IStrategy.json"),
-                    vault.strategy
-                )
+                    val token = erC20Resource.getTokenInformation(getNetwork(), vault.token)
+                    val pendingReward = vault.getPendingReward(address)
 
-                val token = erC20Resource.getTokenInformation(getNetwork(), strategy.feeDistToken)
-                val pendingReward = vault.getPendingReward(address)
-                val addyPrice = priceService.getPrice("ADDY")
-
-                val amountInUsd = priceService.calculatePrice(
-                    token.symbol,
-                    pendingReward.toBigDecimal().divide(BigDecimal.TEN.pow(token.decimals), 18, RoundingMode.HALF_UP)
-                        .toDouble()
-                )
-
-                ClaimableElement(
-                    name = "Adamant Vault",
-                    address = vault.address,
-                    type = "adamant-vault",
-                    protocol = getProtocol(),
-                    network = getNetwork(),
-                    id = "adamant-vault-claim-${vault.address}",
-                    claimableToken = ClaimableToken(
-                        name = "Addy",
-                        symbol = "ADDY",
-                        amount = amountInUsd.toBigDecimal().divide(addyPrice, 4, RoundingMode.HALF_UP)
-                            .times(BigDecimal.valueOf(2L)).toDouble()
+                    Claimable(
+                        name = "Adamant Vault",
+                        address = vault.address,
+                        type = "adamant-vault",
+                        protocol = getProtocol(),
+                        network = getNetwork(),
+                        id = "adamant-vault-claim-${vault.address}",
+                        claimableToken = token.toFungibleToken(),
+                        amount = pendingReward,
+                        claimTransaction = AdamantVaultClaimPreparer(
+                            vault
+                        ).prepare(
+                            PrepareClaimCommand(
+                                user = address
+                            )
+                        )
                     )
-                )
-            } else {
+                } else {
+                    null
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
                 null
             }
         }.filterNotNull()

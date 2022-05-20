@@ -35,7 +35,6 @@ class AdamantStakingPositionService(
                 gateway,
                 genericVault,
                 it.vaultAddress,
-                it.lpAddress
             )
         }
 
@@ -43,7 +42,7 @@ class AdamantStakingPositionService(
             .mapIndexed { index, balance ->
                 if (balance > BigInteger.ZERO) {
                     val vault = adamantVaultContracts[index]
-                    val stakedToken = erC20Resource.getTokenInformation(getNetwork(), vault.lpAddress)
+                    val stakedToken = erC20Resource.getTokenInformation(getNetwork(), vault.token)
 
                     stakingElement(
                         vaultName = "Adamant ${stakedToken.name} Vault",

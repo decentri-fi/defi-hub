@@ -36,10 +36,12 @@ class CompoundLendingInvestmentPreparer(
                 if (allowance >= requiredBalance) {
                     prepareInvestmentCommand.amount?.let { amount ->
                         PreparedTransaction(
-                            function = ctoken.mintFunction(amount)
+                            function = ctoken.mintFunction(amount),
+                            to = getEntryContract()
                         )
                     } ?: PreparedTransaction(
-                        function = ctoken.mintFunction(requiredBalance)
+                        function = ctoken.mintFunction(requiredBalance),
+                        to = getEntryContract()
                     )
                 } else {
                     null

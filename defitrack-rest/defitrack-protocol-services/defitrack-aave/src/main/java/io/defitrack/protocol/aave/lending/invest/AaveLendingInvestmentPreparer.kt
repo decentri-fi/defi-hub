@@ -27,13 +27,15 @@ class AaveLendingInvestmentPreparer(
                     prepareInvestmentCommand.amount?.let { amount ->
                         PreparedTransaction(
                             function = lendingPoolContract.depositFunction(
-                                prepareInvestmentCommand.user, token, requiredBalance
-                            )
+                                prepareInvestmentCommand.user, token, requiredBalance,
+                            ),
+                            to = getEntryContract()
                         )
                     } ?: PreparedTransaction(
                         function = lendingPoolContract.depositFunction(
                             prepareInvestmentCommand.user, token, requiredBalance
-                        )
+                        ),
+                        to = getEntryContract()
                     )
                 } else {
                     null

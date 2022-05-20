@@ -46,10 +46,12 @@ class DQuickStakingInvestmentPreparer(
                 if (allowance >= requiredBalance) {
                     prepareInvestmentCommand.amount?.let { amount ->
                         PreparedTransaction(
-                            function = dQuickContract.enterFunction(amount)
+                            function = dQuickContract.enterFunction(amount),
+                            to = getEntryContract()
                         )
                     } ?: PreparedTransaction(
-                        function = dQuickContract.enterFunction(requiredBalance)
+                        function = dQuickContract.enterFunction(requiredBalance),
+                        to = getEntryContract()
                     )
                 } else {
                     null

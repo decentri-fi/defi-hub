@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.client.*
 import io.ktor.client.request.*
-import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 
@@ -21,13 +20,8 @@ class AdamantService(
         return@runBlocking objectMapper.readValue(response,
             object : TypeReference<List<AdamantVault>>() {
 
-            })
-    }
-
-    fun query(query: String): String = runBlocking {
-        client.request(vaultListLocation) {
-            method = HttpMethod.Post
-            body = objectMapper.writeValueAsString(mapOf("query" to query))
+            }).filter {
+                !it.poolName.startsWith("ETH (") //these are different types of vaults
         }
     }
 }

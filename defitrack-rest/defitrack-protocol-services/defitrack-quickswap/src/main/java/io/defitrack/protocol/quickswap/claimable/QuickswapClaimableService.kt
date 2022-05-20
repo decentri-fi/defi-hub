@@ -1,12 +1,11 @@
 package io.defitrack.protocol.quickswap.claimable
 
 import io.defitrack.abi.ABIResource
-import io.defitrack.claimable.ClaimableElement
+import io.defitrack.claimable.Claimable
 import io.defitrack.claimable.ClaimableService
-import io.defitrack.claimable.ClaimableToken
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
+import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
@@ -29,7 +28,7 @@ class QuickswapClaimableService(
         abiService.getABI("quickswap/StakingRewards.json")
     }
 
-    override fun claimables(address: String): List<ClaimableElement> {
+    override suspend fun claimables(address: String): List<Claimable> {
         val gateway = contractAccessorGateway.getGateway(getNetwork())
 
         val pools = quickswapService.getVaultAddresses().map {
@@ -59,18 +58,16 @@ class QuickswapClaimableService(
                 val reward = erC20Resource.getTokenInformation(getNetwork(), pool.rewardsTokenAddress)
 
                 val stakingToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingTokenAddress)
-                ClaimableElement(
+                Claimable(
                     id = "quickswap-reward-$pool.address",
                     address = pool.address,
                     type = "quickswap-reward-vault",
                     name = "${stakingToken.name} Rewards",
                     protocol = getProtocol(),
                     network = getNetwork(),
-                    claimableToken = ClaimableToken(
-                        reward.name,
-                        reward.symbol,
-                        toDecimalValue(earned, reward.decimals)
-                    )
+                    amount = earned,
+                    claimableToken = reward.toFungibleToken(),
+                    claimTransaction = emptyList()
                 )
             } else {
                 null

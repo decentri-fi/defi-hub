@@ -1,8 +1,7 @@
 package io.defitrack.protocol.balancer.claiming
 
-import io.defitrack.claimable.ClaimableElement
+import io.defitrack.claimable.Claimable
 import io.defitrack.claimable.ClaimableService
-import io.defitrack.claimable.ClaimableToken
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.BalancerPolygonService
@@ -39,23 +38,20 @@ class BalancerPolygonDeprecatedUserClaimingService(
         }
     }
 
-    override fun claimables(address: String): List<ClaimableElement> {
+    override suspend fun claimables(address: String): List<Claimable> {
         return getAll().filter {
             it.user.lowercase() == address.lowercase()
         }.map {
             val token = erC20Resource.getTokenInformation(getNetwork(), it.token)
-            ClaimableElement(
+            Claimable(
                 "balancer-polygon-${it.week}-${it.token}",
                 "${token.symbol} reward",
                 it.token,
                 "balancer-lp-reward",
                 getProtocol(),
                 getNetwork(),
-                ClaimableToken(
-                    token.name,
-                    token.symbol,
-                    it.amount.toDouble()
-                )
+                token.toFungibleToken(),
+                it.amount.toBigInteger()
             )
         }
     }
