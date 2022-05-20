@@ -5,6 +5,7 @@ import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
 import io.defitrack.evm.contract.BlockchainGateway.Companion.toUint256
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.contract.multicall.MultiCallElement
+import io.defitrack.token.FungibleToken
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Function
@@ -38,12 +39,11 @@ class BalancerGaugeContract(
         )
     }
 
-    fun getBalances(user: String): List<BalancerGaugeBalance> {
-        val rewardTokens = getRewardTokens()
+    fun getBalances(user: String, rewardTokens: List<FungibleToken>): List<BalancerGaugeBalance> {
         return blockchainGateway.readMultiCall(
             rewardTokens.map { token ->
                 MultiCallElement(
-                    getClaimableRewardFunction(user, token),
+                    getClaimableRewardFunction(user, token.address),
                     this.address
                 )
             }
@@ -57,7 +57,7 @@ class BalancerGaugeContract(
     }
 
     class BalancerGaugeBalance(
-        val token: String,
+        val token: FungibleToken,
         val balance: BigInteger
     )
 
