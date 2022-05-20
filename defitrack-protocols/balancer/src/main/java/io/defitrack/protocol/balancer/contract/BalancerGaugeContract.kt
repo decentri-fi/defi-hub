@@ -30,6 +30,14 @@ class BalancerGaugeContract(
         )
     }
 
+    fun getClaimRewardsFunction(): Function {
+        return createFunction(
+            "claim_rewards",
+            emptyList(),
+            emptyList()
+        )
+    }
+
     fun getBalances(user: String): List<BalancerGaugeBalance> {
         val rewardTokens = getRewardTokens()
         return blockchainGateway.readMultiCall(

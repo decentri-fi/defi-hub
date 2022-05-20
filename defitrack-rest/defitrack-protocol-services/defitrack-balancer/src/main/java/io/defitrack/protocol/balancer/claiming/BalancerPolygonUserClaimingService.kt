@@ -3,14 +3,18 @@ package io.defitrack.protocol.balancer.claiming
 import io.defitrack.abi.ABIResource
 import io.defitrack.claimable.Claimable
 import io.defitrack.claimable.ClaimableService
+import io.defitrack.claimable.PrepareClaimCommand
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.BalancerPolygonService
 import io.defitrack.protocol.balancer.contract.BalancerGaugeContract
+import io.defitrack.protocol.balancer.staking.BalancerPolygonStakingMarketService
 import io.defitrack.token.ERC20Resource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.math.BigInteger
@@ -18,7 +22,7 @@ import java.util.*
 
 @Service
 class BalancerPolygonUserClaimingService(
-    private val balancerPolygonService: BalancerPolygonService,
+    private val balancerPolygonStakingMarketService: BalancerPolygonStakingMarketService,
     private val contractAccessorGateway: ContractAccessorGateway,
     private val erC20Resource: ERC20Resource,
     abiResource: ABIResource
@@ -32,34 +36,42 @@ class BalancerPolygonUserClaimingService(
         private val logger = LoggerFactory.getLogger(this::class.java)
     }
 
-    override suspend fun claimables(address: String): List<Claimable> = runBlocking {
-        val markets = balancerPolygonService.getGauges()
-        markets.map { gauge ->
-            async {
-                BalancerGaugeContract(
+    override suspend fun claimables(address: String): List<Claimable> =
+        withContext(Dispatchers.IO.limitedParallelism(10)) {
+            balancerPolygonStakingMarketService.getStakingMarkets().map { liquidityGauge ->
+                val gaugeContract = BalancerGaugeContract(
                     contractAccessorGateway.getGateway(getNetwork()),
                     gaugeContractAbi,
-                    gauge.id
-                ).getBalances(address)
+                    liquidityGauge.id
+                )
+                gaugeContract.getBalances(address)
                     .filter { it.balance > BigInteger.ZERO }
                     .map { balanceResult ->
-                        val token = erC20Resource.getTokenInformation(getNetwork(), balanceResult.token)
-                        Claimable(
-                            id = UUID.randomUUID().toString(),
-                            name = token.name + " reward",
-                            address = gauge.id,
-                            type = "balancer-reward",
-                            protocol = getProtocol(),
-                            network = getNetwork(),
-                            claimableToken = token.toFungibleToken(),
-                            amount = balanceResult.balance
-                        )
+                        async {
+                            try {
+                                val token = erC20Resource.getTokenInformation(getNetwork(), balanceResult.token)
+                                Claimable(
+                                    id = UUID.randomUUID().toString(),
+                                    name = token.name + " reward",
+                                    address = liquidityGauge.id,
+                                    type = "balancer-reward",
+                                    protocol = getProtocol(),
+                                    network = getNetwork(),
+                                    claimableToken = token.toFungibleToken(),
+                                    amount = balanceResult.balance,
+                                    claimTransaction = BalancerClaimPreparer(
+                                        gaugeContract
+                                    ).prepare(PrepareClaimCommand(user = address))
+                                )
+                            } catch (ex: Exception) {
+                                null
+                            }
+                        }
                     }
-            }
-        }.flatMap {
-            it.await()
+            }.flatMap {
+                it.awaitAll()
+            }.filterNotNull()
         }
-    }
 
     override fun getProtocol(): Protocol {
         return Protocol.BALANCER
