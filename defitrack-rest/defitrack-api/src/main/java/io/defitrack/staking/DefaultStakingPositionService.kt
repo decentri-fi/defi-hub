@@ -7,7 +7,7 @@ import io.defitrack.staking.domain.StakingPosition
 import io.defitrack.token.ERC20Resource
 import java.math.BigInteger
 
-abstract class DefaultStakingPositionPositionService(
+abstract class DefaultStakingPositionService(
     erC20Resource: ERC20Resource,
     val stakingMarketService: StakingMarketService,
     val gateway: ContractAccessorGateway
@@ -26,15 +26,9 @@ abstract class DefaultStakingPositionPositionService(
             val balance = market.balanceFetcher!!.extractBalance(retVal)
 
             if (balance > BigInteger.ONE) {
-                stakingElement(
-                    id = market.id,
-                    vaultName = market.name,
-                    vaultAddress = market.contractAddress,
-                    vaultType = market.vaultType,
-                    apr = market.apr,
-                    stakedToken = market.stakedToken,
-                    amount = balance,
-                    rewardTokens = market.rewardTokens,
+                StakingPosition(
+                    market,
+                    balance
                 )
             } else {
                 null

@@ -38,6 +38,16 @@ class AdamantVaultContract(
         read("balance")[0].value as BigInteger
     }
 
+    fun balanceOfMethod(address: String): Function {
+        return createFunction(
+            "balanceOf",
+            inputs = listOf(address.toAddress()),
+            outputs = listOf(
+                BlockchainGateway.uint256()
+            )
+        )
+    }
+
     val token by lazy {
         read("token")[0].value as String
     }

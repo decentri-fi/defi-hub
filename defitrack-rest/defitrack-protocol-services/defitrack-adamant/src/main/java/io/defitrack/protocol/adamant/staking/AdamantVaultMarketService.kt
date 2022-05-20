@@ -8,8 +8,12 @@ import io.defitrack.protocol.adamant.AdamantService
 import io.defitrack.protocol.adamant.AdamantVaultContract
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.StakingMarket
+import io.defitrack.staking.domain.StakingMarketBalanceFetcher
 import io.defitrack.token.ERC20Resource
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Service
 
 @Service
@@ -29,34 +33,41 @@ class AdamantVaultMarketService(
     }
 
 
-    override suspend fun fetchStakingMarkets(): List<StakingMarket> = withContext(Dispatchers.IO.limitedParallelism(10)) {
-        adamantService.adamantGenericVaults().map {
-            AdamantVaultContract(
-                contractAccessorGateway.getGateway(getNetwork()),
-                genericVault,
-                it.vaultAddress
-            )
-        }.map { vault ->
-            async {
-                try {
-                    val token = erC20Resource.getTokenInformation(getNetwork(), vault.token)
-                    stakingMarket(
-                        name = "${token.name} vault",
-                        id = "adamant-polygon-${vault.address}",
-                        stakedToken = token.toFungibleToken(),
-                        rewardTokens = listOf(
-                            token.toFungibleToken(),
-                            addy.toFungibleToken()
-                        ),
-                        contractAddress = vault.address,
-                        vaultType = "adamant-generic-vault",
-                    )
-                } catch (ex: Exception) {
-                    null
+    override suspend fun fetchStakingMarkets(): List<StakingMarket> =
+        withContext(Dispatchers.IO.limitedParallelism(10)) {
+            adamantService.adamantGenericVaults().map {
+                AdamantVaultContract(
+                    contractAccessorGateway.getGateway(getNetwork()),
+                    genericVault,
+                    it.vaultAddress
+                )
+            }.map { vault ->
+                async {
+                    try {
+                        val token = erC20Resource.getTokenInformation(getNetwork(), vault.token)
+                        StakingMarket(
+                            name = "${token.name} vault",
+                            id = "adamant-polygon-${vault.address}",
+                            stakedToken = token.toFungibleToken(),
+                            rewardTokens = listOf(
+                                token.toFungibleToken(),
+                                addy.toFungibleToken()
+                            ),
+                            contractAddress = vault.address,
+                            vaultType = "adamant-generic-vault",
+                            network = getNetwork(),
+                            protocol = getProtocol(),
+                            balanceFetcher = StakingMarketBalanceFetcher(
+                                vault.address,
+                                { user -> vault.balanceOfMethod(user) }
+                            )
+                        )
+                    } catch (ex: Exception) {
+                        null
+                    }
                 }
-            }
-        }.awaitAll().filterNotNull()
-    }
+            }.awaitAll().filterNotNull()
+        }
 
     override fun getProtocol(): Protocol {
         return Protocol.ADAMANT
