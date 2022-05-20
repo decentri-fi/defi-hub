@@ -30,6 +30,10 @@ class AdamantClaimableService(
 
     val gateway = contractAccessorGateway.getGateway(getNetwork())
 
+    val addy by lazy {
+        erC20Resource.getTokenInformation(getNetwork(), "0xc3fdbadc7c795ef1d6ba111e06ff8f16a20ea539")
+    }
+
     override suspend fun claimables(address: String): List<Claimable> {
 
         val markets = adamantVaultMarketService.getStakingMarkets().map {
@@ -59,7 +63,6 @@ class AdamantClaimableService(
                 if (balance > BigInteger.ONE) {
                     val vault = markets[index]
 
-                    val token = erC20Resource.getTokenInformation(getNetwork(), vault.token)
                     val pendingReward = vault.getPendingReward(address)
 
                     Claimable(
@@ -69,7 +72,7 @@ class AdamantClaimableService(
                         protocol = getProtocol(),
                         network = getNetwork(),
                         id = "adamant-vault-claim-${vault.address}",
-                        claimableToken = token.toFungibleToken(),
+                        claimableToken = addy.toFungibleToken(),
                         amount = pendingReward,
                         claimTransaction = AdamantVaultClaimPreparer(
                             vault
