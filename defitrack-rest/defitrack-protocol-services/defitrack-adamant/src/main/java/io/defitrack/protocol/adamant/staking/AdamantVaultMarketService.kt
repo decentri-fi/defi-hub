@@ -9,10 +9,7 @@ import io.defitrack.protocol.adamant.AdamantVaultContract
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.StakingMarket
 import io.defitrack.token.ERC20Resource
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.*
 import org.springframework.stereotype.Service
 
 @Service
@@ -32,7 +29,7 @@ class AdamantVaultMarketService(
     }
 
 
-    override suspend fun fetchStakingMarkets(): List<StakingMarket> = coroutineScope {
+    override suspend fun fetchStakingMarkets(): List<StakingMarket> = withContext(Dispatchers.IO.limitedParallelism(10)) {
         adamantService.adamantGenericVaults().map {
             AdamantVaultContract(
                 contractAccessorGateway.getGateway(getNetwork()),
@@ -40,7 +37,7 @@ class AdamantVaultMarketService(
                 it.vaultAddress
             )
         }.map { vault ->
-            async(Dispatchers.IO.limitedParallelism(4)) {
+            async {
                 try {
                     val token = erC20Resource.getTokenInformation(getNetwork(), vault.token)
                     stakingMarket(
