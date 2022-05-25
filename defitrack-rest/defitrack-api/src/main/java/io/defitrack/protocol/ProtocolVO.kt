@@ -4,13 +4,15 @@ package io.defitrack.protocol
 class ProtocolVO(
     val name: String,
     val logo: String,
-    val slug: String
+    val slug: String,
+    val primitives: List<DefiPrimitive>
 )
 
 fun Protocol.toVO(): ProtocolVO {
     return ProtocolVO(
         name = this.name,
         logo = this.getImage(),
-        slug = this.slug
+        slug = this.slug,
+        primitives = this.primitives
     )
 }
