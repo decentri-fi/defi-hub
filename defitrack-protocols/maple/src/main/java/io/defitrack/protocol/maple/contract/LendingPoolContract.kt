@@ -41,6 +41,7 @@ class LendingPoolContract(blockchainGateway: BlockchainGateway, abi: String, add
                 uint256(),
                 uint256(),
                 uint256(),
+                uint256()
             )
         )
     }
@@ -62,12 +63,12 @@ class LendingPoolContract(blockchainGateway: BlockchainGateway, abi: String, add
         )
         return with(retVal) {
             UserAccountData(
-                this[0].value as BigInteger,
-                this[1].value as BigInteger,
-                this[2].value as BigInteger,
-                this[3].value as BigInteger,
-                this[4].value as BigInteger,
-                this[5].value as BigInteger
+                this[0].value as string,
+                this[1].value as string,
+                this[2].value as string,
+                this[3].value as string,
+                this[4].value as string,
+                this[5].value as string
             )
         }
     }
