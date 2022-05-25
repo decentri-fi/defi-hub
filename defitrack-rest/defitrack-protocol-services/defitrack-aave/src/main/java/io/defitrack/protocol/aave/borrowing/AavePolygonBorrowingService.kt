@@ -4,19 +4,19 @@ import io.defitrack.borrowing.BorrowService
 import io.defitrack.borrowing.domain.BorrowPosition
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.aave.AavePolygonService
+import io.defitrack.protocol.aave.AaveV2PolygonService
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import java.math.BigInteger
 
 @Service
 class AavePolygonBorrowingService(
-    private val aavePolygonService: AavePolygonService,
+    private val aaveV2PolygonService: AaveV2PolygonService,
     private val erC20Resource: ERC20Resource
 ) : BorrowService {
 
     override suspend fun getBorrows(address: String): List<BorrowPosition> {
-        return aavePolygonService.getUserReserves(address).mapNotNull {
+        return aaveV2PolygonService.getUserReserves(address).mapNotNull {
             if ((it.currentStableDebt > BigInteger.ONE || it.currentVariableDebt > BigInteger.ONE)) {
                 val token = erC20Resource.getTokenInformation(getNetwork(), it.reserve.underlyingAsset)
                 BorrowPosition(

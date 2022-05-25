@@ -8,7 +8,7 @@ import io.defitrack.lending.domain.LendingMarket
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.aave.AavePolygonService
+import io.defitrack.protocol.aave.AaveV2PolygonService
 import io.defitrack.protocol.aave.contract.LendingPoolAddressProviderContract
 import io.defitrack.protocol.aave.contract.LendingPoolContract
 import io.defitrack.protocol.aave.domain.AaveReserve
@@ -22,7 +22,7 @@ import java.math.BigDecimal
 class AavePolygonLendingMarketService(
     contractAccessorGateway: ContractAccessorGateway,
     abiResource: ABIResource,
-    private val aavePolygonService: AavePolygonService,
+    private val aaveV2PolygonService: AaveV2PolygonService,
     private val erC20Resource: ERC20Resource,
     private val priceResource: PriceResource
 ) : LendingMarketService() {
@@ -30,7 +30,7 @@ class AavePolygonLendingMarketService(
     val lendingPoolAddressesProviderContract = LendingPoolAddressProviderContract(
         contractAccessorGateway.getGateway(getNetwork()),
         abiResource.getABI("aave/LendingPoolAddressesProvider.json"),
-        aavePolygonService.getLendingPoolAddressesProvider()
+        aaveV2PolygonService.getLendingPoolAddressesProvider()
     )
 
     val lendingPoolContract = LendingPoolContract(
@@ -40,7 +40,7 @@ class AavePolygonLendingMarketService(
     )
 
     override suspend fun fetchLendingMarkets(): List<LendingMarket> {
-        return aavePolygonService.getReserves().map {
+        return aaveV2PolygonService.getReserves().map {
             val token = erC20Resource.getTokenInformation(getNetwork(), it.underlyingAsset)
             LendingMarket(
                 id = "polygon-aave-${it.symbol}",
@@ -54,7 +54,8 @@ class AavePolygonLendingMarketService(
                 poolType = "aave-v2",
                 investmentPreparer = AaveLendingInvestmentPreparer(
                     token.address,
-                    lendingPoolContract, erC20Resource
+                    lendingPoolContract,
+                    erC20Resource
                 )
             )
         }

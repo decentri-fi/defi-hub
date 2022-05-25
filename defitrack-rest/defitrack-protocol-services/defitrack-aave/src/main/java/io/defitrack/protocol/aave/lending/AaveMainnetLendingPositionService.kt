@@ -5,14 +5,14 @@ import io.defitrack.lending.LendingPositionService
 import io.defitrack.lending.domain.LendingMarket
 import io.defitrack.lending.domain.LendingPosition
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.aave.AaveMainnetService
+import io.defitrack.protocol.aave.AaveV2MainnetService
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import java.math.BigInteger
 
 @Service
 class AaveMainnetLendingPositionService(
-    private val aaveMainnetService: AaveMainnetService,
+    private val aaveV2MainnetService: AaveV2MainnetService,
     private val erC20Resource: ERC20Resource
 ) : LendingPositionService {
 
@@ -21,7 +21,7 @@ class AaveMainnetLendingPositionService(
     override fun getNetwork(): Network = Network.ETHEREUM
 
     override suspend fun getLendings(address: String): List<LendingPosition> {
-        return aaveMainnetService.getUserReserves(address).mapNotNull {
+        return aaveV2MainnetService.getUserReserves(address).mapNotNull {
             if (it.currentATokenBalance > BigInteger.ZERO) {
                 val token = erC20Resource.getTokenInformation(getNetwork(), it.reserve.underlyingAsset)
                 LendingPosition(

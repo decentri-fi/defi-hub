@@ -8,7 +8,7 @@ import io.defitrack.thegraph.TheGraphGatewayProvider
 import org.springframework.stereotype.Component
 
 @Component
-class AaveMainnetService(
+class AaveV2MainnetService(
     graphGatewayProvider: TheGraphGatewayProvider,
     private val objectMapper: ObjectMapper,
 ) {
@@ -16,6 +16,9 @@ class AaveMainnetService(
     val thegraph =
         graphGatewayProvider.createTheGraphGateway("https://api.thegraph.com/subgraphs/name/aave/protocol-v2")
 
+    fun getLendingPoolAddressesProvider(): String {
+        return "0xb53c1a33016b2dc2ff3653530bff1848a515c8c5"
+    }
 
     suspend fun getUserReserves(user: String): List<UserReserve> {
         val query = """

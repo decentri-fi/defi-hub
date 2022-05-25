@@ -20,9 +20,10 @@ abstract class LendingMarketService : ProtocolService {
     fun init() {
         try {
             cache.invalidateAll()
-            Executors.newSingleThreadExecutor().submit {
+            val result = Executors.newSingleThreadExecutor().submit {
                 getLendingMarkets()
             }
+            result.get()
         } catch (ex: Exception) {
             logger.error("something went wrong trying to populate the cache", ex)
         }

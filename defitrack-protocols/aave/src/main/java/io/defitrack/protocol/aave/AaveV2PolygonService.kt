@@ -8,7 +8,7 @@ import io.defitrack.thegraph.TheGraphGatewayProvider
 import org.springframework.stereotype.Component
 
 @Component
-class AavePolygonService(
+class AaveV2PolygonService(
     theGraphGatewayProvider: TheGraphGatewayProvider,
     private val objectMapper: ObjectMapper,
 ) {
