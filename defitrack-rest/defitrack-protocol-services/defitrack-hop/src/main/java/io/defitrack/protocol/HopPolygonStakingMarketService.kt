@@ -36,7 +36,7 @@ class HopPolygonStakingMarketService(
         }.awaitAll().filterNotNull()
     }
 
-    private fun toStakingMarket(stakingReward: String): StakingMarket? {
+    private suspend fun toStakingMarket(stakingReward: String): StakingMarket? {
         return try {
             val pool = HopStakingReward(
                 contractAccessorGateway.getGateway(getNetwork()),
@@ -68,7 +68,7 @@ class HopPolygonStakingMarketService(
         }
     }
 
-    private fun getMarketSize(
+    private suspend fun getMarketSize(
         stakedTokenInformation: TokenInformation,
         pool: HopStakingReward
     ) = BigDecimal.valueOf(

@@ -41,7 +41,7 @@ abstract class BeefyStakingMarketService(
         }.awaitAll().filterNotNull()
     }
 
-    private fun toStakingMarketElement(beefyVault: BeefyVault): StakingMarket? {
+    private suspend fun toStakingMarketElement(beefyVault: BeefyVault): StakingMarket? {
         return try {
             val contract = BeefyVaultContract(
                 contractAccessorGateway.getGateway(getNetwork()),
@@ -75,7 +75,7 @@ abstract class BeefyStakingMarketService(
         }
     }
 
-    private fun getMarketSize(
+    private suspend fun getMarketSize(
         want: TokenInformation,
         beefyVault: BeefyVaultContract
     ) = BigDecimal.valueOf(

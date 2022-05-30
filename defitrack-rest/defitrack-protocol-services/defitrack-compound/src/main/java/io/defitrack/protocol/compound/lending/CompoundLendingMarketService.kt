@@ -16,10 +16,7 @@ import io.defitrack.protocol.compound.CompoundTokenContract
 import io.defitrack.protocol.compound.lending.invest.CompoundLendingInvestmentPreparer
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.*
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -44,15 +41,15 @@ class CompoundLendingMarketService(
 
     val gateway = contractAccessorGateway.getGateway(getNetwork())
 
-    override suspend fun fetchLendingMarkets(): List<LendingMarket> = coroutineScope {
+    override suspend fun fetchLendingMarkets(): List<LendingMarket> = withContext(Dispatchers.IO.limitedParallelism(5)) {
         getTokenContracts().map {
-            async(Dispatchers.IO.limitedParallelism(5)) {
+            async {
                 toLendingMarket(it)
             }
         }.awaitAll().filterNotNull()
     }
 
-    private fun toLendingMarket(ctokenContract: CompoundTokenContract): LendingMarket? {
+    private suspend fun toLendingMarket(ctokenContract: CompoundTokenContract): LendingMarket? {
         return try {
             ctokenContract.underlyingAddress.let { tokenAddress ->
                 erC20Resource.getTokenInformation(getNetwork(), tokenAddress)

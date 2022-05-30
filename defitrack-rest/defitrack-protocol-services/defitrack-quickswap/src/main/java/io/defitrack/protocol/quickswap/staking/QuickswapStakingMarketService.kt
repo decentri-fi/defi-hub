@@ -64,7 +64,7 @@ class QuickswapStakingMarketService(
         }
     }
 
-    private fun getMarketSize(
+    private suspend fun getMarketSize(
         stakedTokenInformation: TokenInformation,
         pool: QuickswapRewardPoolContract
     ) = BigDecimal.valueOf(

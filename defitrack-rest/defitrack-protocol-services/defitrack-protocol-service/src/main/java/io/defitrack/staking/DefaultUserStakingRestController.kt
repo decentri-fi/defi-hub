@@ -26,9 +26,9 @@ class DefaultUserStakingRestController(
 ) {
 
     @GetMapping("/{userId}/positions")
-    fun getUserStakings(@PathVariable("userId") address: String): List<StakingElementVO> {
+    fun getUserStakings(@PathVariable("userId") address: String): List<StakingElementVO> = runBlocking {
         if (WalletUtils.isValidAddress(address)) {
-            return stakingServices.flatMap {
+            stakingServices.flatMap {
                 try {
                     runBlocking(Dispatchers.IO) {
                         retry(limitAttempts(3)) {
@@ -45,7 +45,7 @@ class DefaultUserStakingRestController(
                 it.toVO()
             }
         } else {
-            return emptyList()
+            emptyList()
         }
     }
 
@@ -54,9 +54,9 @@ class DefaultUserStakingRestController(
         @PathVariable("userId") address: String,
         @RequestParam("stakingElementId") stakingElementId: String,
         @RequestParam("network") network: Network
-    ): StakingElementVO? {
+    ): StakingElementVO? = runBlocking {
         if (WalletUtils.isValidAddress(address)) {
-            return stakingServices.filter {
+            stakingServices.filter {
                 it.getNetwork() == network
             }.firstNotNullOfOrNull {
                 try {
@@ -71,12 +71,12 @@ class DefaultUserStakingRestController(
                 }
             }?.toVO()
         } else {
-            return null
+            null
         }
     }
 
 
-    fun StakingPosition.toVO(): StakingElementVO {
+    suspend fun StakingPosition.toVO(): StakingElementVO {
 
         val stakedInDollars = priceResource.calculatePrice(
             PriceRequest(

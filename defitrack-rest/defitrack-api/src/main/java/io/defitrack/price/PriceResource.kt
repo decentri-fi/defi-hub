@@ -43,8 +43,8 @@ class PriceResource(
         return amount.times(price.toDouble())
     }
 
-    fun calculatePrice(priceRequest: PriceRequest?): Double = runBlocking {
-        priceRequest?.let {
+    suspend fun calculatePrice(priceRequest: PriceRequest?): Double {
+        return priceRequest?.let {
             try {
                 client.post(priceResourceLocation) {
                     this.header("Content-Type", "application/json")

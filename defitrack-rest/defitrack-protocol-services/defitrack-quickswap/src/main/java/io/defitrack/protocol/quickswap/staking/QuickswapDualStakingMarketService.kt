@@ -80,7 +80,7 @@ class QuickswapDualStakingMarketService(
         ))
     }
 
-    private fun getMarketSize(
+    private suspend fun getMarketSize(
         stakedTokenInformation: TokenInformation,
         pool: QuickswapDualRewardPoolContract
     ) = BigDecimal.valueOf(
