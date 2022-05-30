@@ -1,4 +1,4 @@
-package io.defitrack.protocol.aave.lending
+package io.defitrack.protocol.aave.v2.lending.market
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
@@ -8,18 +8,18 @@ import io.defitrack.lending.domain.LendingMarket
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.aave.AaveV2PolygonService
-import io.defitrack.protocol.aave.contract.LendingPoolAddressProviderContract
-import io.defitrack.protocol.aave.contract.LendingPoolContract
-import io.defitrack.protocol.aave.domain.AaveReserve
-import io.defitrack.protocol.aave.lending.invest.AaveLendingInvestmentPreparer
+import io.defitrack.protocol.aave.v2.AaveV2PolygonService
+import io.defitrack.protocol.aave.v2.contract.LendingPoolAddressProviderContract
+import io.defitrack.protocol.aave.v2.contract.LendingPoolContract
+import io.defitrack.protocol.aave.v2.domain.AaveReserve
+import io.defitrack.protocol.aave.v2.lending.invest.AaveLendingInvestmentPreparer
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 
 @Service
-class AavePolygonLendingMarketService(
+class AaveV2PolygonLendingMarketService(
     contractAccessorGateway: ContractAccessorGateway,
     abiResource: ABIResource,
     private val aaveV2PolygonService: AaveV2PolygonService,

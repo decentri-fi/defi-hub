@@ -1,4 +1,4 @@
-package io.defitrack.protocol.aave.contract
+package io.defitrack.protocol.aave.v2.contract
 
 import java.math.BigInteger
 

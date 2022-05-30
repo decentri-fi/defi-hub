@@ -1,8 +1,8 @@
-package io.defitrack.protocol.aave.lending.invest
+package io.defitrack.protocol.aave.v2.lending.invest
 
 import io.defitrack.common.network.Network
 import io.defitrack.invest.PrepareInvestmentCommand
-import io.defitrack.protocol.aave.contract.LendingPoolContract
+import io.defitrack.protocol.aave.v2.contract.LendingPoolContract
 import io.defitrack.staking.domain.InvestmentPreparer
 import io.defitrack.token.ERC20Resource
 import io.defitrack.transaction.PreparedTransaction
