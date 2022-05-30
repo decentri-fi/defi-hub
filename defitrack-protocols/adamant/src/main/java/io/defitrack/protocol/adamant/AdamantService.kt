@@ -16,9 +16,9 @@ class AdamantService(
 
     val vaultListLocation = "https://raw.githubusercontent.com/eepdev/vaults/main/current_vaults.json"
 
-    fun adamantGenericVaults(): List<AdamantVault> = runBlocking {
+    suspend fun adamantGenericVaults(): List<AdamantVault> {
         val response: String = client.get(vaultListLocation).body()
-        return@runBlocking objectMapper.readValue(response,
+        return objectMapper.readValue(response,
             object : TypeReference<List<AdamantVault>>() {
 
             }).filter {
