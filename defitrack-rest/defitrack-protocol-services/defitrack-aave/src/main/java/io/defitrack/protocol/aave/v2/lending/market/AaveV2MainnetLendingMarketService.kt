@@ -14,7 +14,6 @@ import io.defitrack.protocol.aave.v2.contract.LendingPoolContract
 import io.defitrack.protocol.aave.v2.domain.AaveReserve
 import io.defitrack.protocol.aave.v2.lending.invest.AaveLendingInvestmentPreparer
 import io.defitrack.token.ERC20Resource
-import io.defitrack.token.TokenType
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 
@@ -61,12 +60,13 @@ class AaveV2MainnetLendingMarketService(
     }
 
     private fun calculateMarketSize(reserve: AaveReserve): Double {
+        val underlying = erC20Resource.getTokenInformation(getNetwork(), reserve.underlyingAsset)
         return priceResource.calculatePrice(
             PriceRequest(
-                reserve.underlyingAsset,
+                underlying.address,
                 getNetwork(),
                 reserve.totalLiquidity.toBigDecimal().divide(BigDecimal.TEN.pow(reserve.decimals)),
-                TokenType.SINGLE
+                underlying.type
             )
         )
     }

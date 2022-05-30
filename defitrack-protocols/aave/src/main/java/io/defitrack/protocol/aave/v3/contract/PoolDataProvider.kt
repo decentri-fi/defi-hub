@@ -30,6 +30,14 @@ class PoolDataProvider(
         )
     }
 
+    fun getATokenTotalSupply(asset: String): BigInteger {
+        return read(
+            "getATokenTotalSupply",
+            listOf(asset.toAddress()),
+            listOf(uint256())
+        )[0].value as BigInteger
+    }
+
     fun getReserveData(asset: String): ReserveData {
         val result = read(
             "getReserveData",
