@@ -1,9 +1,9 @@
-package io.defitrack.protocol.aave
+package io.defitrack.protocol.aave.v2
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.defitrack.protocol.aave.domain.AaveReserve
-import io.defitrack.protocol.aave.domain.UserReserve
+import io.defitrack.protocol.aave.v2.domain.AaveReserve
+import io.defitrack.protocol.aave.v2.domain.UserReserve
 import io.defitrack.thegraph.TheGraphGatewayProvider
 import org.springframework.stereotype.Component
 

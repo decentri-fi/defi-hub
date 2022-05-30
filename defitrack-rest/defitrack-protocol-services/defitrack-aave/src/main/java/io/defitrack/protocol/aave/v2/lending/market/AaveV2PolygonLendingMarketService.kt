@@ -1,4 +1,4 @@
-package io.defitrack.protocol.aave.lending
+package io.defitrack.protocol.aave.v2.lending.market
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
@@ -8,29 +8,29 @@ import io.defitrack.lending.domain.LendingMarket
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.aave.AaveV2MainnetService
-import io.defitrack.protocol.aave.contract.LendingPoolAddressProviderContract
-import io.defitrack.protocol.aave.contract.LendingPoolContract
-import io.defitrack.protocol.aave.domain.AaveReserve
-import io.defitrack.protocol.aave.lending.invest.AaveLendingInvestmentPreparer
+import io.defitrack.protocol.aave.v2.AaveV2PolygonService
+import io.defitrack.protocol.aave.v2.contract.LendingPoolAddressProviderContract
+import io.defitrack.protocol.aave.v2.contract.LendingPoolContract
+import io.defitrack.protocol.aave.v2.domain.AaveReserve
+import io.defitrack.protocol.aave.v2.lending.invest.AaveLendingInvestmentPreparer
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 
 @Service
-class AaveV2MainnetLendingMarketService(
-    abiResource: ABIResource,
+class AaveV2PolygonLendingMarketService(
     contractAccessorGateway: ContractAccessorGateway,
-    private val aaveV2MainnetService: AaveV2MainnetService,
+    abiResource: ABIResource,
+    private val aaveV2PolygonService: AaveV2PolygonService,
     private val erC20Resource: ERC20Resource,
-    private val priceResource: PriceResource,
+    private val priceResource: PriceResource
 ) : LendingMarketService() {
 
     val lendingPoolAddressesProviderContract = LendingPoolAddressProviderContract(
         contractAccessorGateway.getGateway(getNetwork()),
         abiResource.getABI("aave/LendingPoolAddressesProvider.json"),
-        aaveV2MainnetService.getLendingPoolAddressesProvider()
+        aaveV2PolygonService.getLendingPoolAddressesProvider()
     )
 
     val lendingPoolContract = LendingPoolContract(
@@ -40,17 +40,18 @@ class AaveV2MainnetLendingMarketService(
     )
 
     override suspend fun fetchLendingMarkets(): List<LendingMarket> {
-        return aaveV2MainnetService.getReserves().map {
+        return aaveV2PolygonService.getReserves().map {
             val token = erC20Resource.getTokenInformation(getNetwork(), it.underlyingAsset)
             LendingMarket(
-                id = "ethereum-aave-${it.symbol}",
+                id = "polygon-aave-${it.symbol}",
                 address = it.underlyingAsset,
                 token = token.toFungibleToken(),
                 name = it.name + " Aave Pool",
                 protocol = getProtocol(),
                 network = getNetwork(),
-                poolType = "aave-v2",
+                rate = it.lendingRate.toBigDecimal(),
                 marketSize = calculateMarketSize(it).toBigDecimal(),
+                poolType = "aave-v2",
                 investmentPreparer = AaveLendingInvestmentPreparer(
                     token.address,
                     lendingPoolContract,
@@ -73,5 +74,5 @@ class AaveV2MainnetLendingMarketService(
 
     override fun getProtocol(): Protocol = Protocol.AAVE
 
-    override fun getNetwork(): Network = Network.ETHEREUM
+    override fun getNetwork(): Network = Network.POLYGON
 }

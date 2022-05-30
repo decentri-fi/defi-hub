@@ -1,8 +1,8 @@
-package io.defitrack.protocol.aave.lending.invest
+package io.defitrack.protocol.aave.v3.lending.invest
 
 import io.defitrack.common.network.Network
 import io.defitrack.invest.PrepareInvestmentCommand
-import io.defitrack.protocol.aave.contract.LendingPoolContract
+import io.defitrack.protocol.aave.v3.contract.PoolContract
 import io.defitrack.staking.domain.InvestmentPreparer
 import io.defitrack.token.ERC20Resource
 import io.defitrack.transaction.PreparedTransaction
@@ -11,9 +11,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 
 
-class AaveLendingInvestmentPreparer(
-    private val token: String,
-    private val lendingPoolContract: LendingPoolContract,
+class AaveV3LendingInvestmentPreparer(
+    private val underlying: String,
+    private val poolContract: PoolContract,
     erC20Resource: ERC20Resource
 ) : InvestmentPreparer(erC20Resource) {
 
@@ -26,14 +26,14 @@ class AaveLendingInvestmentPreparer(
                 if (allowance >= requiredBalance) {
                     prepareInvestmentCommand.amount?.let { amount ->
                         PreparedTransaction(
-                            function = lendingPoolContract.depositFunction(
-                                prepareInvestmentCommand.user, token, requiredBalance,
+                            function = poolContract.getSupplyFunction(
+                                underlying, requiredBalance, prepareInvestmentCommand.user
                             ),
                             to = getEntryContract()
                         )
                     } ?: PreparedTransaction(
-                        function = lendingPoolContract.depositFunction(
-                            prepareInvestmentCommand.user, token, requiredBalance
+                        function = poolContract.getSupplyFunction(
+                            underlying, requiredBalance, prepareInvestmentCommand.user
                         ),
                         to = getEntryContract()
                     )
@@ -44,14 +44,14 @@ class AaveLendingInvestmentPreparer(
         }
 
     override fun getToken(): String {
-        return token
+        return underlying
     }
 
     override fun getEntryContract(): String {
-        return lendingPoolContract.address
+        return poolContract.address
     }
 
     override fun getNetwork(): Network {
-        return lendingPoolContract.blockchainGateway.network
+        return poolContract.blockchainGateway.network
     }
 }

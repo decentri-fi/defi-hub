@@ -24,6 +24,7 @@ import org.web3j.abi.datatypes.*
 import org.web3j.abi.datatypes.generated.Int128
 import org.web3j.abi.datatypes.generated.Uint16
 import org.web3j.abi.datatypes.generated.Uint256
+import org.web3j.abi.datatypes.generated.Uint40
 import org.web3j.abi.datatypes.generated.Uint8
 import org.web3j.protocol.core.methods.response.EthCall
 import java.math.BigDecimal
@@ -235,6 +236,15 @@ open class BlockchainGateway(
         fun uint256(): TypeReference<Uint256> {
             return TypeReference.create(Uint256::class.java)
         }
+
+        fun address(): TypeReference<Address> {
+            return TypeReference.create(Address::class.java)
+        }
+
+        fun uint40(): TypeReference<Uint40> {
+            return TypeReference.create(Uint40::class.java)
+        }
+
 
         fun bool(): TypeReference<Bool> {
             return TypeReference.create(Bool::class.java)
