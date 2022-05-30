@@ -1,32 +1,32 @@
-package io.defitrack.protocol.aave.lending
+package io.defitrack.protocol.aave.v2.lending.position
 
 import io.defitrack.common.network.Network
 import io.defitrack.lending.LendingPositionService
 import io.defitrack.lending.domain.LendingMarket
 import io.defitrack.lending.domain.LendingPosition
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.aave.AaveV2MainnetService
+import io.defitrack.protocol.aave.v2.AaveV2PolygonService
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import java.math.BigInteger
 
 @Service
-class AaveMainnetLendingPositionService(
-    private val aaveV2MainnetService: AaveV2MainnetService,
+class AavePolygonLendingPositionService(
+    private val aaveV2PolygonService: AaveV2PolygonService,
     private val erC20Resource: ERC20Resource
 ) : LendingPositionService {
 
     override fun getProtocol(): Protocol = Protocol.AAVE
 
-    override fun getNetwork(): Network = Network.ETHEREUM
+    override fun getNetwork(): Network = Network.POLYGON
 
     override suspend fun getLendings(address: String): List<LendingPosition> {
-        return aaveV2MainnetService.getUserReserves(address).mapNotNull {
+        return aaveV2PolygonService.getUserReserves(address).mapNotNull {
             if (it.currentATokenBalance > BigInteger.ZERO) {
                 val token = erC20Resource.getTokenInformation(getNetwork(), it.reserve.underlyingAsset)
                 LendingPosition(
                     market = LendingMarket(
-                        id = "ethereum-aave-${it.reserve.symbol}",
+                        id = "polygon-aave-${it.reserve.symbol}",
                         protocol = getProtocol(),
                         network = getNetwork(),
                         rate = it.reserve.lendingRate.toBigDecimal(),
@@ -36,6 +36,7 @@ class AaveMainnetLendingPositionService(
                         poolType = "aave-lending"
                     ),
                     amount = it.currentATokenBalance,
+
                 )
             } else null
         }
