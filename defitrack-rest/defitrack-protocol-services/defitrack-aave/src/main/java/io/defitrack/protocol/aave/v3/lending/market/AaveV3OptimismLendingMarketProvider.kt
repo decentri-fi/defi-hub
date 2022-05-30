@@ -12,9 +12,9 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.v3.AaveV3OptimismDataProvider
 import io.defitrack.protocol.aave.v3.contract.PoolContract
 import io.defitrack.protocol.aave.v3.contract.PoolDataProvider
+import io.defitrack.protocol.aave.v3.lending.invest.AaveV3LendingInvestmentPreparer
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Component
-import java.math.BigDecimal
 
 @Component
 class AaveV3OptimismLendingMarketProvider(
@@ -40,7 +40,7 @@ class AaveV3OptimismLendingMarketProvider(
     override suspend fun fetchLendingMarkets(): List<LendingMarket> {
         return pool.reservesList.map {
 
-             val reserveData = poolDataProvider.getReserveData(it)
+            val reserveData = poolDataProvider.getReserveData(it)
             val reserveTokenAddresses = poolDataProvider.getReserveTokensAddresses(it)
             val aToken = erC20Resource.getTokenInformation(getNetwork(), reserveTokenAddresses.aTokenAddress)
             val underlying = erC20Resource.getTokenInformation(getNetwork(), it)
@@ -55,6 +55,11 @@ class AaveV3OptimismLendingMarketProvider(
                 token = underlying.toFungibleToken(),
                 poolType = "aave-v3",
                 rate = reserveData.liquidityRate.asEth(27),
+                investmentPreparer = AaveV3LendingInvestmentPreparer(
+                    underlying.address,
+                    pool,
+                    erC20Resource
+                ),
                 marketSize = priceResource.calculatePrice(
                     PriceRequest(
                         underlying.address,
