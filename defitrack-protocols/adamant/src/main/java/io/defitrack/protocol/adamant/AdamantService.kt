@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 
 @Component
