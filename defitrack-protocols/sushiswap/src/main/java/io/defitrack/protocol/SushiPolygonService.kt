@@ -4,13 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.sushi.domain.PairDayData
 import io.defitrack.protocol.sushi.domain.SushiswapPair
+import io.defitrack.thegraph.TheGraphGatewayProvider
 import io.ktor.client.*
 import org.springframework.stereotype.Component
 
 @Component
 class SushiPolygonService(
     objectMapper: ObjectMapper,
-    client: HttpClient
+    graphGatewayProvider: TheGraphGatewayProvider
 ) : SushiswapService {
 
     companion object {
@@ -20,7 +21,7 @@ class SushiPolygonService(
     private val sushiswapService = SushiswapGraphGateway(
         objectMapper,
         "https://api.thegraph.com/subgraphs/name/sushiswap/matic-exchange",
-        client
+        graphGatewayProvider
     )
 
     override fun getPairs(): List<SushiswapPair> = sushiswapService.getPairs()

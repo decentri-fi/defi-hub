@@ -10,6 +10,7 @@ import io.defitrack.evm.abi.AbiDecoder
 import io.defitrack.evm.abi.domain.AbiContractFunction
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
@@ -41,10 +42,8 @@ open class BlockchainGateway(
 ) {
 
     fun getNativeBalance(address: String): BigDecimal = runBlocking {
-        httpClient.get<BigInteger>(
-            "$endpoint/balance/$address"
-
-        ).toBigDecimal().dividePrecisely(
+        val balance: BigInteger = httpClient.get("$endpoint/balance/$address").body()
+        balance.toBigDecimal().dividePrecisely(
             BigDecimal.TEN.pow(18)
         )
     }
@@ -109,13 +108,14 @@ open class BlockchainGateway(
         retry(limitAttempts(5) + binaryExponentialBackoff(1000, 10000)) {
             httpClient.post("$endpoint/contract/call") {
                 contentType(ContentType.Application.Json)
-                this.body =
+                setBody(
                     ContractInteractionCommand(
                         from = from,
                         contract = contract,
                         function = encodedFunction
                     )
-            }
+                )
+            }.body()
         }
     }
 

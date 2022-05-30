@@ -4,17 +4,16 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.sushi.domain.PairDayData
 import io.defitrack.protocol.sushi.domain.SushiswapPair
+import io.defitrack.thegraph.TheGraphGatewayProvider
 import io.github.reactivecircus.cache4k.Cache
-import io.ktor.client.*
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import kotlin.time.Duration.Companion.days
-import kotlin.time.ExperimentalTime
 
 @Component
 class SushiFantomService(
     objectMapper: ObjectMapper,
-    client: HttpClient
+    graphGatewayProvider: TheGraphGatewayProvider
 ) : SushiswapService {
 
     companion object {
@@ -24,7 +23,7 @@ class SushiFantomService(
     private val sushiswapService = SushiswapGraphGateway(
         objectMapper,
         "https://api.thegraph.com/subgraphs/name/sushiswap/fantom-exchange",
-        client
+        graphGatewayProvider
     )
 
     private val pairCache =

@@ -2,22 +2,21 @@ package io.defitrack.protocol
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.gson.JsonParser
 import io.defitrack.protocol.sushi.domain.PairDayData
 import io.defitrack.protocol.sushi.domain.SushiUser
 import io.defitrack.protocol.sushi.domain.SushiswapPair
-import io.ktor.client.*
-import io.ktor.client.request.*
-import io.ktor.http.*
+import io.defitrack.thegraph.TheGraphGatewayProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import java.util.*
 
 class SushiswapGraphGateway(
     private val objectMapper: ObjectMapper,
-    private val endpoint: String,
-    private val client: HttpClient
+    endpoint: String,
+    graphGatewayProvider: TheGraphGatewayProvider,
 ) {
+
+    val graph = graphGatewayProvider.createTheGraphGateway(endpoint)
 
     fun getPairs(): List<SushiswapPair> = runBlocking(Dispatchers.IO) {
         val query = """
@@ -41,9 +40,7 @@ class SushiswapGraphGateway(
         }
     """.trimIndent()
 
-        val response = query(query)
-        val poolSharesAsString =
-            JsonParser.parseString(response).asJsonObject["data"].asJsonObject["pairs"].toString()
+        val poolSharesAsString = graph.performQuery(query).asJsonObject["pairs"].toString()
         return@runBlocking objectMapper.readValue(poolSharesAsString,
             object : TypeReference<List<SushiswapPair>>() {
 
@@ -60,10 +57,8 @@ class SushiswapGraphGateway(
             }
         """.trimIndent()
 
-        val response = query(query)
-        val poolSharesAsString =
-            JsonParser.parseString(response).asJsonObject["data"].asJsonObject["pairDayDatas"].toString()
-        return@runBlocking objectMapper.readValue(poolSharesAsString,
+        val data = graph.performQuery(query).asJsonObject["pairDayDatas"].toString()
+        return@runBlocking objectMapper.readValue(data,
             object : TypeReference<List<PairDayData>>() {
 
             })
@@ -98,21 +93,11 @@ class SushiswapGraphGateway(
                 }
             }
         """.trimIndent()
-
-            val response = query(query)
-            val poolSharesAsString =
-                JsonParser.parseString(response).asJsonObject["data"].asJsonObject["users"].toString()
-            return@runBlocking objectMapper.readValue(poolSharesAsString,
+            val data = graph.performQuery(query).asJsonObject["users"].toString()
+            return@runBlocking objectMapper.readValue(data,
                 object : TypeReference<List<SushiUser>>() {
 
                 })
-        }
-    }
-
-    private suspend fun query(query: String): String {
-        return client.request(endpoint) {
-            method = HttpMethod.Post
-            body = objectMapper.writeValueAsString(mapOf("query" to query))
         }
     }
 }

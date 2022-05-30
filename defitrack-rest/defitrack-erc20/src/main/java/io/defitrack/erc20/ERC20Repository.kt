@@ -3,6 +3,7 @@ package io.defitrack.erc20
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.common.network.Network
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
@@ -55,10 +56,10 @@ class ERC20Repository(
 
     private fun fetchFromTokenList(url: String): List<Pair<Network, String>> {
         return runBlocking {
-            val result = client.get<String>(with(HttpRequestBuilder()) {
+            val result: String = client.get(with(HttpRequestBuilder()) {
                 url(url)
                 this
-            })
+            }).body()
             val tokens = objectMapper.readValue(
                 result,
                 TokenListResponse::class.java

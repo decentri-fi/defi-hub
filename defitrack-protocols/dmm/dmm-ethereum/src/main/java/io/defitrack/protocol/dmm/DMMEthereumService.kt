@@ -1,20 +1,18 @@
 package io.defitrack.protocol.dmm
 
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.gson.JsonParser
-import io.ktor.client.*
-import io.ktor.client.request.*
-import io.ktor.http.*
+import io.defitrack.thegraph.TheGraphGatewayProvider
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 
 @Service
 class DMMEthereumService(
     private val objectMapper: ObjectMapper,
-    private val client: HttpClient
+    graphGatewayProvider: TheGraphGatewayProvider,
 ) {
 
+    val graph =
+        graphGatewayProvider.createTheGraphGateway("https://api.thegraph.com/subgraphs/name/dynamic-amm/dynamic-amm")
 
     fun getPairDayData(pairId: String): List<DMMPairDayData> = runBlocking {
         val query = """
@@ -25,52 +23,8 @@ class DMMEthereumService(
               }
             }
         """.trimIndent()
-
-        val response = query(query)
-        val poolSharesAsString =
-            JsonParser.parseString(response).asJsonObject["data"].asJsonObject["pairDayDatas"].toString()
-        return@runBlocking objectMapper.readValue(poolSharesAsString,
-            object : TypeReference<List<DMMPairDayData>>() {
-
-            })
-    }
-
-
-    fun getUserPoolings(user: String): List<DMMUser> = runBlocking {
-        val query = """
-            { 
-                users(where: {id: "${user.lowercase()}"}) {
-                  id
-                liquidityPositions {
-                  id
-                  liquidityTokenBalance
-                  pool {
-                    id
-                    token0 {
-                      id,
-                      symbol
-                      name
-                      decimals
-                    }
-                    token1 {
-                      id,
-                      symbol
-                      name
-                      decimals
-                    }  
-                  }
-                }
-                }
-            }
-        """.trimIndent()
-
-        val response = query(query)
-        val poolSharesAsString =
-            JsonParser.parseString(response).asJsonObject["data"].asJsonObject["users"].toString()
-        return@runBlocking objectMapper.readValue(poolSharesAsString,
-            object : TypeReference<List<DMMUser>>() {
-
-            })
+        val data = graph.performQuery(query).asJsonObject["pairDayDatas"]
+        return@runBlocking graph.map<List<DMMPairDayData>>(data)
     }
 
     fun getPoolingMarkets(): List<DMMPool> = runBlocking {
@@ -97,20 +51,7 @@ class DMMEthereumService(
               }
             }
         """.trimIndent()
-        val response = query(query)
-        val poolSharesAsString =
-            JsonParser.parseString(response).asJsonObject["data"].asJsonObject["pools"].toString()
-        return@runBlocking objectMapper.readValue(poolSharesAsString,
-            object : TypeReference<List<DMMPool>>() {
-
-            })
-    }
-
-
-    fun query(query: String): String = runBlocking {
-        client.request("https://api.thegraph.com/subgraphs/name/dynamic-amm/dynamic-amm") {
-            method = HttpMethod.Post
-            body = objectMapper.writeValueAsString(mapOf("query" to query))
-        }
+        val data = graph.performQuery(query).asJsonObject["pools"]
+        return@runBlocking graph.map(data)
     }
 }

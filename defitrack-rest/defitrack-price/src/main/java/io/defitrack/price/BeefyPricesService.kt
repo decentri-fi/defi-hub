@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
@@ -24,10 +25,10 @@ class BeefyPricesService(
     fun getPrices(): Map<String, BigDecimal> {
         return runBlocking {
             cache.get("beefy-api-prices") {
-                val result = client.get<String>(with(HttpRequestBuilder()) {
+                val result: String = client.get(with(HttpRequestBuilder()) {
                     url("$beefyAPIEndpoint/prices")
                     this
-                })
+                }).body()
 
                 objectMapper.readValue(
                     result,

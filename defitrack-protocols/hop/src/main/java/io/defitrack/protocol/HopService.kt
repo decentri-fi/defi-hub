@@ -7,10 +7,11 @@ import io.defitrack.common.network.Network
 import io.defitrack.protocol.domain.DailyVolume
 import io.defitrack.protocol.domain.HopLpToken
 import io.defitrack.protocol.domain.Tvl
+import io.defitrack.thegraph.TheGraphGatewayProvider
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
-import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
@@ -19,7 +20,8 @@ import org.springframework.stereotype.Component
 class HopService(
     private val client: HttpClient,
     private val objectMapper: ObjectMapper,
-    private val abstractHopServices: List<AbstractHopService>
+    private val abstractHopServices: List<AbstractHopService>,
+    private val graphGatewayProvider: TheGraphGatewayProvider
 ) {
 
     val addressesUrl = "https://raw.githubusercontent.com/defitrack/data/master/protocols/hop/addresses.json"
@@ -43,11 +45,10 @@ class HopService(
             }
         """.trimIndent()
         val endpoint = getGraph(network)
+        val graph = graphGatewayProvider.createTheGraphGateway(endpoint)
 
         return runBlocking(Dispatchers.IO) {
-            val response = query(endpoint, query)
-            val poolSharesAsString =
-                JsonParser.parseString(response).asJsonObject["data"].asJsonObject["tvls"].toString()
+            val poolSharesAsString = graph.performQuery(query).asJsonObject["tvls"].toString()
             return@runBlocking objectMapper.readValue(poolSharesAsString,
                 object : TypeReference<List<Tvl>>() {
 
@@ -67,11 +68,10 @@ class HopService(
             }
         """.trimIndent()
         val endpoint = getGraph(network)
+        val graph = graphGatewayProvider.createTheGraphGateway(endpoint)
 
         return runBlocking(Dispatchers.IO) {
-            val response = query(endpoint, query)
-            val poolSharesAsString =
-                JsonParser.parseString(response).asJsonObject["data"].asJsonObject["dailyVolumes"].toString()
+            val poolSharesAsString = graph.performQuery(query).asJsonObject["dailyVolumes"].toString()
             return@runBlocking objectMapper.readValue(poolSharesAsString,
                 object : TypeReference<List<DailyVolume>>() {
 
@@ -95,7 +95,7 @@ class HopService(
     fun getLps(network: Network): List<HopLpToken> {
         return runBlocking(Dispatchers.IO) {
             lpCache.get(network) {
-                val response: String = client.get(addressesUrl)
+                val response: String = client.get(addressesUrl).body()
                 val assets = JsonParser.parseString(response).asJsonObject["bridges"].asJsonObject.entrySet()
 
                 assets.flatMap {
@@ -110,13 +110,6 @@ class HopService(
                     )
                 }
             }
-        }
-    }
-
-    private suspend fun query(endpoint: String, query: String): String {
-        return client.request(endpoint) {
-            method = HttpMethod.Post
-            body = objectMapper.writeValueAsString(mapOf("query" to query))
         }
     }
 }
