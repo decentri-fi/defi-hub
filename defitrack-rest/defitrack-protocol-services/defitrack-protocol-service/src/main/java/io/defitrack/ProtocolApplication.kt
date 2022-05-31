@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.EnableScheduling
 @SpringBootApplication
 @EnableCaching
 @EnableScheduling
-class BeefyApplication
+class ProtocolApplication
 fun main(args: Array<String>) {
-    runApplication<BeefyApplication>(*args)
+    runApplication<ProtocolApplication>(*args)
 }
