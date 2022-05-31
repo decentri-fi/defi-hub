@@ -13,7 +13,7 @@ class CompoundComptrollerContract(
 ) {
 
     fun getMarkets(): List<String> {
-        return (read(
+        return (readWithAbi(
             "getAllMarkets",
             inputs = emptyList(),
             outputs = listOf(

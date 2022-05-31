@@ -19,7 +19,7 @@ class BalancerGaugeContract(
 ) : ERC20Contract(blockchainGateway, abi, address) {
 
     fun getClaimableRewardFunction(address: String, token: String): Function {
-        return createFunction(
+        return createFunctionWithAbi(
             "claimable_reward_write",
             listOf(
                 address.toAddress(),
@@ -32,7 +32,7 @@ class BalancerGaugeContract(
     }
 
     fun getClaimRewardsFunction(): Function {
-        return createFunction(
+        return createFunctionWithAbi(
             "claim_rewards",
             emptyList(),
             emptyList()
@@ -78,7 +78,7 @@ class BalancerGaugeContract(
 
 
     fun getRewardToken(index: Int): String {
-        return read(
+        return readWithAbi(
             "reward_tokens",
             listOf(index.toBigInteger().toUint256()),
             listOf(TypeReference.create(Address::class.java))

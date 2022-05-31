@@ -16,7 +16,7 @@ class LendingPoolContract(blockchainGateway: BlockchainGateway, abi: String, add
     ) {
 
     fun depositFunction(user: String, asset: String, amount: BigInteger): Function {
-        return createFunction(
+        return createFunctionWithAbi(
             "deposit",
             listOf(
                 asset.toAddress(),
@@ -29,7 +29,7 @@ class LendingPoolContract(blockchainGateway: BlockchainGateway, abi: String, add
     }
 
     fun getUserAccountDataFunction(user: String): Function {
-        return createFunction(
+        return createFunctionWithAbi(
             method = "getUserAccountData",
             inputs = listOf(
                 user.toAddress()
@@ -46,7 +46,7 @@ class LendingPoolContract(blockchainGateway: BlockchainGateway, abi: String, add
     }
 
     fun getUserAccountData(user: String): UserAccountData {
-        val retVal = read(
+        val retVal = readWithAbi(
             method = "getUserAccountData",
             inputs = listOf(
                 user.toAddress()

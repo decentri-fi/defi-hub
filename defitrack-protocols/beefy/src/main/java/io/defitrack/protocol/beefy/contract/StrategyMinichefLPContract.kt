@@ -15,13 +15,13 @@ class StrategyMinichefLPContract(
     EvmContract(solidityBasedContractAccessor, abi, address) {
 
     val chef by lazy {
-        var read = read(
+        var read = readWithAbi(
             "chef",
             outputs = listOf(TypeReference.create(Address::class.java))
         )
 
         if (read.isEmpty()) {
-            read = read(
+            read = readWithAbi(
                 "minichef",
                 outputs = listOf(TypeReference.create(Address::class.java))
             )
@@ -32,7 +32,7 @@ class StrategyMinichefLPContract(
 
 
     val poolId by lazy {
-        read(
+        readWithAbi(
             "poolId",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger

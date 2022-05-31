@@ -15,31 +15,31 @@ class AdamantVaultContract(
 ) : EvmContract(solidityBasedContractAccessor, abi, address) {
 
     val accRewardPerShare by lazy {
-        read("accRewardPerShare")[0].value as BigInteger
+        readWithAbi("accRewardPerShare")[0].value as BigInteger
     }
 
     val getRatio by lazy {
-        read("getRatio")[0].value as BigInteger
+        readWithAbi("getRatio")[0].value as BigInteger
     }
 
     val totalShares by lazy {
-        read("totalShares")[0].value as BigInteger
+        readWithAbi("totalShares")[0].value as BigInteger
     }
 
     val strategy by lazy {
-        read("strategy")[0].value as String
+        readWithAbi("strategy")[0].value as String
     }
 
     val getRewardMultiplier by lazy {
-        read("getRewardMultiplier")[0].value as BigInteger
+        readWithAbi("getRewardMultiplier")[0].value as BigInteger
     }
 
     val balance by lazy {
-        read("balance")[0].value as BigInteger
+        readWithAbi("balance")[0].value as BigInteger
     }
 
     fun balanceOfMethod(address: String): Function {
-        return createFunction(
+        return createFunctionWithAbi(
             "balanceOf",
             inputs = listOf(address.toAddress()),
             outputs = listOf(
@@ -49,11 +49,11 @@ class AdamantVaultContract(
     }
 
     val token by lazy {
-        read("token")[0].value as String
+        readWithAbi("token")[0].value as String
     }
 
     fun getPendingReward(address: String): BigInteger {
-        return read(
+        return readWithAbi(
             "getPendingReward",
             inputs = listOf(address.toAddress()),
             outputs = listOf(
@@ -63,7 +63,7 @@ class AdamantVaultContract(
     }
 
     fun getTokensStaked(address: String): BigInteger {
-        return read(
+        return readWithAbi(
             "getTokensStaked",
             inputs = listOf(address.toAddress()),
             outputs = listOf(
@@ -73,7 +73,7 @@ class AdamantVaultContract(
     }
 
     fun getClaimFunction(): Function {
-        return createFunction(
+        return createFunctionWithAbi(
             "claim",
             emptyList(),
             emptyList()

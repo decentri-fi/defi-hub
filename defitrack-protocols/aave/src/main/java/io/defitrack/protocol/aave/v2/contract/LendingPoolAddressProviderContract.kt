@@ -11,7 +11,7 @@ class LendingPoolAddressProviderContract(blockchainGateway: BlockchainGateway, a
     ) {
 
     fun lendingPoolAddress(): String {
-        return read(
+        return readWithAbi(
             "getLendingPool",
             emptyList(),
             listOf(TypeReference.create(Address::class.java))
@@ -19,7 +19,7 @@ class LendingPoolAddressProviderContract(blockchainGateway: BlockchainGateway, a
     }
 
     fun priceOracleAddress(): String {
-        return read(
+        return readWithAbi(
             "getPriceOracle",
             emptyList(),
             listOf(TypeReference.create(Address::class.java))

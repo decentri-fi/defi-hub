@@ -14,7 +14,7 @@ class CrvRewardContract(
 
 
     fun earned(address: String): BigInteger {
-        return read(
+        return readWithAbi(
             "earned",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger

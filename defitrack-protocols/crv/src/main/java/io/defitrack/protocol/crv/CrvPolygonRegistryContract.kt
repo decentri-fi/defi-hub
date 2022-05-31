@@ -21,7 +21,7 @@ class CrvPolygonRegistryContract(
 
 
     fun getGaugeController(): String {
-        return read(
+        return readWithAbi(
             "gauge_controller",
             outputs = listOf(
                 TypeReference.create(Address::class.java)
@@ -30,7 +30,7 @@ class CrvPolygonRegistryContract(
     }
 
     fun getPoolCount(): Long {
-        return (read(
+        return (readWithAbi(
             "pool_count",
             outputs = listOf(
                 TypeReference.create(Uint256::class.java)
@@ -39,7 +39,7 @@ class CrvPolygonRegistryContract(
     }
 
     fun getPool(poolId: Long): String {
-        return read(
+        return readWithAbi(
             "pool_list",
             inputs = listOf(
                 BigInteger.valueOf(
@@ -53,7 +53,7 @@ class CrvPolygonRegistryContract(
     }
 
     fun getLpToken(poolAddress: String): String {
-        return read(
+        return readWithAbi(
             "get_lp_token",
             inputs = listOf(poolAddress.toAddress()),
             outputs = listOf(

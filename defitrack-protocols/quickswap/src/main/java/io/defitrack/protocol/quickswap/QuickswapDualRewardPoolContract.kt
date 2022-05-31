@@ -1,6 +1,5 @@
 package io.defitrack.protocol.quickswap
 
-import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
 import io.defitrack.evm.contract.ERC20Contract
@@ -19,7 +18,7 @@ class QuickswapDualRewardPoolContract(
 ) {
 
     val rewardsTokenAddressA by lazy {
-        read(
+        readWithAbi(
             "rewardsTokenA",
             outputs = listOf(TypeReference.create(Address::class.java))
         )[0].value as String
@@ -27,21 +26,21 @@ class QuickswapDualRewardPoolContract(
 
 
     val rewardsTokenAddressB by lazy {
-        read(
+        readWithAbi(
             "rewardsTokenB",
             outputs = listOf(TypeReference.create(Address::class.java))
         )[0].value as String
     }
 
     val stakingTokenAddress by lazy {
-        read(
+        readWithAbi(
             method = "stakingToken",
             outputs = listOf(TypeReference.create(Address::class.java))
         )[0].value as String
     }
 
     val rewardRateA by lazy {
-        read(
+        readWithAbi(
             method = "rewardRateA",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger
@@ -49,14 +48,14 @@ class QuickswapDualRewardPoolContract(
 
 
     val rewardRateB by lazy {
-        read(
+        readWithAbi(
             method = "rewardRateB",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger
     }
 
     fun earnedA(address: String): BigInteger {
-        return read(
+        return readWithAbi(
             "earnedA",
             listOf(address.toAddress()),
             listOf(TypeReference.create(Uint256::class.java))
@@ -64,7 +63,7 @@ class QuickswapDualRewardPoolContract(
     }
 
     fun earnedB(address: String): BigInteger {
-        return read(
+        return readWithAbi(
             "earnedB",
             listOf(address.toAddress()),
             listOf(TypeReference.create(Uint256::class.java))

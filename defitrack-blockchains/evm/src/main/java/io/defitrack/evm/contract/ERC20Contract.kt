@@ -20,7 +20,7 @@ open class ERC20Contract(
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     fun allowance(owner: String, spender: String): BigInteger {
-        return read(
+        return readWithAbi(
             "allowance",
             listOf(owner.toAddress(), spender.toAddress()),
             listOf(uint256())
@@ -28,7 +28,7 @@ open class ERC20Contract(
     }
 
     fun approveFunction(spender: String, amount: BigInteger): Function {
-        return createFunction(
+        return createFunctionWithAbi(
             "approve",
             listOf(spender.toAddress(), amount.toUint256()),
             listOf()
@@ -37,7 +37,7 @@ open class ERC20Contract(
 
 
     fun balanceOfMethod(address: String): Function {
-        return createFunction(
+        return createFunctionWithAbi(
             "balanceOf",
             inputs = listOf(address.toAddress()),
             outputs = listOf(
@@ -47,7 +47,7 @@ open class ERC20Contract(
     }
 
     fun balanceOf(address: String): BigInteger {
-        return read(
+        return readWithAbi(
             "balanceOf",
             inputs = listOf(address.toAddress()),
             outputs = listOf(
@@ -58,14 +58,14 @@ open class ERC20Contract(
 
     val name by lazy {
         try {
-            read("name")[0].value as String
+            readWithAbi("name")[0].value as String
         } catch (ex: Exception) {
             "unknown"
         }
     }
 
     val symbol by lazy {
-        val read = read("symbol")
+        val read = readWithAbi("symbol")
         if (read.isEmpty()) {
             "unknown"
         } else {
@@ -74,7 +74,7 @@ open class ERC20Contract(
     }
 
     val decimals by lazy {
-        val read = read("decimals")
+        val read = readWithAbi("decimals")
         if (read.isEmpty()) {
             18
         } else {
@@ -83,7 +83,7 @@ open class ERC20Contract(
     }
 
     val totalSupply by lazy {
-        val read = read("totalSupply")
+        val read = readWithAbi("totalSupply")
         if (read.isEmpty()) {
             18
         } else {

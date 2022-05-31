@@ -15,7 +15,7 @@ class YearnEthereumVaultV1Contract(
 ) : EvmContract(ethereumContractAccessor, abi, address) {
 
     val name: String by lazy {
-        read(
+        readWithAbi(
             "name",
             inputs = emptyList(),
             outputs = listOf(
@@ -25,7 +25,7 @@ class YearnEthereumVaultV1Contract(
     }
 
     val decimals by lazy {
-        (read(
+        (readWithAbi(
             "decimals",
             inputs = emptyList(),
             outputs = listOf(
@@ -35,7 +35,7 @@ class YearnEthereumVaultV1Contract(
     }
 
     val stakedToken: String by lazy {
-        (read(
+        (readWithAbi(
             "token",
             inputs = emptyList(),
             outputs = listOf(
@@ -45,7 +45,7 @@ class YearnEthereumVaultV1Contract(
     }
 
     val symbol: String by lazy {
-        read(
+        readWithAbi(
             "symbol",
             inputs = emptyList(),
             outputs = listOf(

@@ -15,7 +15,7 @@ class CrvMainnetGauge(
 ) : EvmContract(ethereumContractAccessor, abi, address) {
 
     val name: String by lazy {
-        read(
+        readWithAbi(
             "name",
             inputs = emptyList(),
             outputs = listOf(
@@ -25,7 +25,7 @@ class CrvMainnetGauge(
     }
 
     val symbol: String by lazy {
-        read(
+        readWithAbi(
             "symbol",
             inputs = emptyList(),
             outputs = listOf(
@@ -35,7 +35,7 @@ class CrvMainnetGauge(
     }
 
     val decimals: BigInteger by lazy {
-        read(
+        readWithAbi(
             "decimals",
             inputs = emptyList(),
             outputs = listOf(
@@ -45,7 +45,7 @@ class CrvMainnetGauge(
     }
 
     val lpToken: String by lazy {
-        read(
+        readWithAbi(
             "lp_token",
             inputs = emptyList(),
             outputs = listOf(

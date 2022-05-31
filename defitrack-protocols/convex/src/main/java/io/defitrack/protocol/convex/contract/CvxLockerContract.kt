@@ -20,7 +20,7 @@ class CvxLockerContract(
 ) : EvmContract(blockchainGateway, abi, address) {
 
     fun lockedBalances(address: String) {
-        val retVal = read(
+        val retVal = readWithAbi(
             method = "lockedBalances",
             inputs = listOf(address.toAddress()),
             outputs = listOf(
@@ -33,7 +33,7 @@ class CvxLockerContract(
     }
 
     fun rewardToken(): String {
-        return read(
+        return readWithAbi(
             method = "rewardTokens",
             inputs = listOf(BigInteger.ZERO.toUint256()),
             outputs = listOf(
@@ -43,7 +43,7 @@ class CvxLockerContract(
     }
 
     fun stakingToken(): String {
-        return read(
+        return readWithAbi(
             method = "stakingToken",
             inputs = emptyList(),
             outputs = listOf(
@@ -53,7 +53,7 @@ class CvxLockerContract(
     }
 
     fun balances(address: String): BigInteger {
-        return read(
+        return readWithAbi(
             method = "balances",
             inputs = listOf(address.toAddress()),
             outputs = listOf(

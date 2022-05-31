@@ -24,7 +24,7 @@ class ProtocolDataProviderContract(blockchainGateway: BlockchainGateway, abi: St
     ) {
 
     fun getReserveConfigurationData(address: String): List<Type<*>> {
-        return read(
+        return readWithAbi(
             "getReserveConfigurationData",
             inputs = listOf(address.toAddress()),
             outputs = listOf(
@@ -43,7 +43,7 @@ class ProtocolDataProviderContract(blockchainGateway: BlockchainGateway, abi: St
     }
 
     val allReservesTokens: List<ReserveToken> by lazy {
-        val retValk = read(
+        val retValk = readWithAbi(
             "getAllReservesTokens",
             inputs = emptyList(),
             outputs = listOf(
@@ -68,7 +68,7 @@ class ProtocolDataProviderContract(blockchainGateway: BlockchainGateway, abi: St
         asset: String
     ): MultiCallElement {
         return MultiCallElement(
-            createFunction(
+            createFunctionWithAbi(
                 "getUserReserveData",
                 inputs = listOf(
                     asset.toAddress(),
@@ -90,7 +90,7 @@ class ProtocolDataProviderContract(blockchainGateway: BlockchainGateway, abi: St
     }
 
     fun getReserveData(user: String, asset: ReserveToken): UserReserveData {
-        val retVal = read(
+        val retVal = readWithAbi(
             "getUserReserveData",
             inputs = listOf(
                 asset.address.toAddress(),

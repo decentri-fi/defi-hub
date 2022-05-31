@@ -21,11 +21,7 @@ import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.TypeReference
 import org.web3j.abi.Utils
 import org.web3j.abi.datatypes.*
-import org.web3j.abi.datatypes.generated.Int128
-import org.web3j.abi.datatypes.generated.Uint16
-import org.web3j.abi.datatypes.generated.Uint256
-import org.web3j.abi.datatypes.generated.Uint40
-import org.web3j.abi.datatypes.generated.Uint8
+import org.web3j.abi.datatypes.generated.*
 import org.web3j.protocol.core.methods.response.EthCall
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -77,20 +73,37 @@ open class BlockchainGateway(
         }
     }
 
+
     fun readFunction(
         address: String,
-        function: AbiContractFunction,
+        method: String,
     ): List<Type<*>> {
-        return executeCall(address, createFunction(function, null, null))
+        return executeCall(address, createFunction(method, kotlin.collections.emptyList(), null))
     }
 
     fun readFunction(
         address: String,
+        function: String,
+        inputs: List<Type<*>>,
+        outputs: List<TypeReference<out Type<*>>>? = null
+    ): List<Type<*>> {
+        return executeCall(address, createFunction(function, inputs, outputs))
+    }
+
+    fun readFunctionWithAbi(
+        address: String,
+        function: AbiContractFunction,
+    ): List<Type<*>> {
+        return executeCall(address, createFunctionWithAbi(function, null, null))
+    }
+
+    fun readFunctionWithAbi(
+        address: String,
         function: AbiContractFunction,
         inputs: List<Type<*>>,
-        outputs: List<TypeReference<out Type<*>>?>? = null
+        outputs: List<TypeReference<out Type<*>>>? = null
     ): List<Type<*>> {
-        return executeCall(address, createFunction(function, inputs, outputs)) ?: emptyList()
+        return executeCall(address, createFunctionWithAbi(function, inputs, outputs))
     }
 
     fun executeCall(
@@ -138,9 +151,21 @@ open class BlockchainGateway(
     companion object {
 
         fun createFunction(
+            method: String,
+            inputs: List<Type<*>> = kotlin.collections.emptyList(),
+            outputs: List<TypeReference<out Type<*>>>? = null
+        ): org.web3j.abi.datatypes.Function {
+            return Web3Function(
+                method,
+                inputs,
+                outputs
+            )
+        }
+
+        fun createFunctionWithAbi(
             function: AbiContractFunction,
             inputs: List<Type<*>>?,
-            outputs: List<TypeReference<out Type<*>>?>? = null
+            outputs: List<TypeReference<out Type<*>>>? = null
         ): org.web3j.abi.datatypes.Function {
             return Web3Function(function.name,
                 inputs ?: emptyList(),

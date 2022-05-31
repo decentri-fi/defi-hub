@@ -20,7 +20,7 @@ class CompoundTokenContract(
 ) {
 
     fun mintFunction(amount: BigInteger): Function {
-        return createFunction(
+        return createFunctionWithAbi(
             "mint",
             listOf(amount.toUint256()),
             emptyList()
@@ -28,13 +28,13 @@ class CompoundTokenContract(
     }
 
     val cash: BigInteger by lazy {
-        read(
+        readWithAbi(
             "getCash"
         )[0].value as BigInteger
     }
 
     val totalBorrows: BigInteger by lazy {
-        read(
+        readWithAbi(
             "totalBorrows"
         )[0].value as BigInteger
     }
@@ -42,7 +42,7 @@ class CompoundTokenContract(
 
     val underlyingAddress: String by lazy {
         try {
-            read(
+            readWithAbi(
                 "underlying"
             )[0].value as String
         } catch (ex: Exception) {
@@ -56,7 +56,7 @@ class CompoundTokenContract(
     }
 
     val exchangeRate by lazy {
-        read(
+        readWithAbi(
             "exchangeRateStored",
             outputs = listOf(
                 TypeReference.create(Uint256::class.java)
@@ -65,7 +65,7 @@ class CompoundTokenContract(
     }
 
     fun borrowBalanceStoredFunction(address: String): Function {
-        return createFunction(
+        return createFunctionWithAbi(
             "borrowBalanceStored",
             inputs = listOf(address.toAddress()),
             outputs = listOf(TypeReference.create(Uint256::class.java))
@@ -73,7 +73,7 @@ class CompoundTokenContract(
     }
 
     fun borrowBalanceStored(address: String): BigInteger {
-        return read(
+        return readWithAbi(
             "borrowBalanceStored",
             inputs = listOf(address.toAddress()),
             outputs = listOf(TypeReference.create(Uint256::class.java))
@@ -81,14 +81,14 @@ class CompoundTokenContract(
     }
 
     val supplyRatePerBlock by lazy {
-        read(
+        readWithAbi(
             "supplyRatePerBlock",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger
     }
 
     val borrowRatePerBlock by lazy {
-        read(
+        readWithAbi(
             "borrowRatePerBlock",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger

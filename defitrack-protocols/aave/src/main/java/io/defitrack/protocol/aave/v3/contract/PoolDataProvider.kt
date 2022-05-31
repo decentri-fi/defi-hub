@@ -17,7 +17,7 @@ class PoolDataProvider(
 ) : EvmContract(blockchainGateway, abi, address) {
 
     fun getReserveTokensAddresses(asset: String): ReserveTokenAddresses {
-        val retVal = read(
+        val retVal = readWithAbi(
             "getReserveTokensAddresses",
             listOf(asset.toAddress()),
             listOf(address(), address(), address())
@@ -31,7 +31,7 @@ class PoolDataProvider(
     }
 
     fun getATokenTotalSupply(asset: String): BigInteger {
-        return read(
+        return readWithAbi(
             "getATokenTotalSupply",
             listOf(asset.toAddress()),
             listOf(uint256())
@@ -39,7 +39,7 @@ class PoolDataProvider(
     }
 
     fun getReserveData(asset: String): ReserveData {
-        val result = read(
+        val result = readWithAbi(
             "getReserveData",
             listOf(
                 asset.toAddress()

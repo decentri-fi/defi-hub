@@ -13,7 +13,7 @@ class StrategyPolygonQuickLPContract(
     EvmContract(solidityBasedContractAccessor, abi, address) {
 
     val rewardPool by lazy {
-        read(
+        readWithAbi(
             "rewardPool",
             outputs = listOf(TypeReference.create(Address::class.java))
         )[0].value as String

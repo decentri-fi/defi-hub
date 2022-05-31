@@ -14,24 +14,24 @@ class HopStakingRewards(
 ) : ERC20Contract(blockchainGateway, abi, address) {
 
     val rewardPerToken by lazy {
-        read("rewardPerToken")[0].value as BigInteger
+        readWithAbi("rewardPerToken")[0].value as BigInteger
     }
 
 
     val rewardRate by lazy {
-        read("rewardRate")[0].value as BigInteger
+        readWithAbi("rewardRate")[0].value as BigInteger
     }
 
     val stakingToken by lazy {
-        read("stakingToken")[0].value as String
+        readWithAbi("stakingToken")[0].value as String
     }
 
     val rewardsToken by lazy {
-        read("rewardsToken")[0].value as String
+        readWithAbi("rewardsToken")[0].value as String
     }
 
     fun earned(address: String): BigInteger {
-        return read(
+        return readWithAbi(
             "earned",
             inputs = listOf(address.toAddress()),
             outputs = listOf(

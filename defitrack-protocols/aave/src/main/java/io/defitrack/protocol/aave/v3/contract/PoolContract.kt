@@ -18,7 +18,7 @@ class PoolContract(
 ) : EvmContract(blockchainGateway, abi, address) {
 
     fun getSupplyFunction(asset: String, amount: BigInteger, onBehalfOf: String): Function {
-        return createFunction(
+        return createFunctionWithAbi(
             "supply",
             listOf(
                 asset.toAddress(),
@@ -30,7 +30,7 @@ class PoolContract(
     }
 
     val reservesList by lazy {
-        (read("getReservesList", emptyList(), listOf(
+        (readWithAbi("getReservesList", emptyList(), listOf(
             object : TypeReference<DynamicArray<Address>>() {}
         ))[0].value as List<Address>).map {
             it.value as String

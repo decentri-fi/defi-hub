@@ -1,6 +1,5 @@
 package io.defitrack.protocol.contract
 
-import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
 import io.defitrack.evm.contract.ERC20Contract
@@ -19,35 +18,35 @@ class HopStakingReward(
 ) {
 
     val periodFinish by lazy {
-        read(
+        readWithAbi(
             "periodFinish",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger
     }
 
     val rewardsTokenAddress by lazy {
-        read(
+        readWithAbi(
             "rewardsToken",
             outputs = listOf(TypeReference.create(Address::class.java))
         )[0].value as String
     }
 
     val stakingTokenAddress by lazy {
-        read(
+        readWithAbi(
             method = "stakingToken",
             outputs = listOf(TypeReference.create(Address::class.java))
         )[0].value as String
     }
 
     val rewardRate by lazy {
-        read(
+        readWithAbi(
             method = "rewardRate",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger
     }
 
     fun earned(address: String): BigInteger {
-        return read(
+        return readWithAbi(
             "earned",
             listOf(address.toAddress()),
             listOf(TypeReference.create(Uint256::class.java))

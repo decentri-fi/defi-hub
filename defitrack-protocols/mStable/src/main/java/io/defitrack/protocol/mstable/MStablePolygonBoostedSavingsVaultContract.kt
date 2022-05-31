@@ -15,7 +15,7 @@ class MStablePolygonBoostedSavingsVaultContract(
 
     val symbol: String by lazy {
         try {
-            read(
+            readWithAbi(
                 "symbol"
             )[0].value as String
         } catch (ex: Exception) {
@@ -25,7 +25,7 @@ class MStablePolygonBoostedSavingsVaultContract(
 
     val decimals: Int by lazy {
         try {
-            (read(
+            (readWithAbi(
                 "decimals"
             )[0].value as BigInteger).toInt()
         } catch (ex: Exception) {
@@ -35,7 +35,7 @@ class MStablePolygonBoostedSavingsVaultContract(
 
     val name: String by lazy {
         try {
-            read(
+            readWithAbi(
                 "name"
             )[0].value as String
         } catch (ex: Exception) {
@@ -44,7 +44,7 @@ class MStablePolygonBoostedSavingsVaultContract(
     }
 
     fun rawBalanceOf(address: String): BigInteger {
-        return read(
+        return readWithAbi(
             "rawBalanceOf",
             inputs = listOf(address.toAddress()),
             outputs = listOf(
@@ -55,7 +55,7 @@ class MStablePolygonBoostedSavingsVaultContract(
 
 
     fun unclaimedRewards(address: String): BigInteger {
-        return read(
+        return readWithAbi(
             "unclaimedRewards",
             inputs = listOf(address.toAddress()),
             outputs = listOf(
@@ -65,13 +65,13 @@ class MStablePolygonBoostedSavingsVaultContract(
     }
 
     val rewardsToken by lazy {
-        (read(
+        (readWithAbi(
             "rewardsToken"
         )[0].value as String)
     }
 
     val stakingToken by lazy {
-        (read(
+        (readWithAbi(
             "stakingToken"
         )[0].value as String)
     }

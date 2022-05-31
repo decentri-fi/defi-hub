@@ -21,7 +21,7 @@ class CrvPolygonGaugeControllerContract(
 ) {
 
     fun numberOfGauges(): Int {
-        return (read(
+        return (readWithAbi(
             "n_gauges",
             inputs = emptyList(),
             outputs = listOf(
@@ -31,7 +31,7 @@ class CrvPolygonGaugeControllerContract(
     }
 
     fun getGauge(gaugeNumber: Int): String {
-        return read(
+        return readWithAbi(
             "gauges",
             inputs = listOf(
                 BigInteger.valueOf(gaugeNumber.toLong()).toUint256(),
@@ -50,7 +50,7 @@ class CrvPolygonGauge(
 ) : EvmContract(ethereumContractAccessor, abi, address) {
 
     val name: String by lazy {
-        read(
+        readWithAbi(
             "name",
             inputs = emptyList(),
             outputs = listOf(
@@ -60,7 +60,7 @@ class CrvPolygonGauge(
     }
 
     val symbol: String by lazy {
-        read(
+        readWithAbi(
             "symbol",
             inputs = emptyList(),
             outputs = listOf(
@@ -70,11 +70,11 @@ class CrvPolygonGauge(
     }
 
     val controller by lazy {
-        read("controller", outputs = listOf(TypeReference.create(Address::class.java)))[0].value as String
+        readWithAbi("controller", outputs = listOf(TypeReference.create(Address::class.java)))[0].value as String
     }
 
     val decimals: BigInteger by lazy {
-        read(
+        readWithAbi(
             "decimals",
             inputs = emptyList(),
             outputs = listOf(
@@ -84,7 +84,7 @@ class CrvPolygonGauge(
     }
 
     val lpToken: String by lazy {
-        read(
+        readWithAbi(
             "lp_token",
             inputs = emptyList(),
             outputs = listOf(

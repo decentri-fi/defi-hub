@@ -21,14 +21,14 @@ class MasterchefLpContract(
 ) {
 
     val poolLength by lazy {
-        (read(
+        (readWithAbi(
             "poolLength",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger).toInt()
     }
 
     val totalAllocPoint by lazy {
-        (read(
+        (readWithAbi(
             "totalAllocPoint",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger)
@@ -39,21 +39,21 @@ class MasterchefLpContract(
     }
 
     val rewardToken by lazy {
-        read(
+        readWithAbi(
             "spirit",
             outputs = listOf(TypeReference.create(Address::class.java))
         )[0].value as String
     }
 
     val sushiPerSecond by lazy {
-        read(
+        readWithAbi(
             "spiritPerBlock",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger
     }
 
     fun userInfoFunction(poolId: Int, user: String): Function {
-        return createFunction(
+        return createFunctionWithAbi(
             "userInfo",
             listOf(
                 poolId.toBigInteger().toUint256(),
@@ -70,7 +70,7 @@ class MasterchefLpContract(
     val poolInfos: List<PoolInfo> by lazy {
         val multicalls = (0 until poolLength).map { poolIndex ->
             MultiCallElement(
-                createFunction(
+                createFunctionWithAbi(
                     "poolInfo",
                     inputs = listOf(poolIndex.toBigInteger().toUint256()),
                     outputs = listOf(

@@ -20,21 +20,21 @@ class PolycatMasterChefContract(
 ) {
 
     val poolLength by lazy {
-        (read(
+        (readWithAbi(
             "poolLength",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger).toInt()
     }
 
     val rewardToken by lazy {
-        read(
+        readWithAbi(
             "fish",
             outputs = listOf(TypeReference.create(Address::class.java))
         )[0].value as String
     }
 
     fun claimableAmount(poolIndex: Int, address: String): BigInteger {
-        return read(
+        return readWithAbi(
             "pendingFish",
             inputs = listOf(
                 poolIndex.toBigInteger().toUint256(), address.toAddress()
@@ -52,7 +52,7 @@ class PolycatMasterChefContract(
     val poolInfos by lazy {
         val multicalls = (0 until poolLength).map { poolIndex ->
             MultiCallElement(
-                createFunction(
+                createFunctionWithAbi(
                     "poolInfo",
                     inputs = listOf(poolIndex.toBigInteger().toUint256()),
                     outputs = listOf(
@@ -81,7 +81,7 @@ class PolycatMasterChefContract(
     }
 
     val rewardPerBlock by lazy {
-        read(
+        readWithAbi(
             "fishPerBlock",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger
@@ -89,14 +89,14 @@ class PolycatMasterChefContract(
 
 
     val totalAllocPoint by lazy {
-        read(
+        readWithAbi(
             "totalAllocPoint",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger
     }
 
     fun userInfo(address: String, poolIndex: Int): UserInfo {
-        val result = read(
+        val result = readWithAbi(
             "userInfo",
             inputs = listOf(poolIndex.toBigInteger().toUint256(), address.toAddress()),
             outputs = listOf(

@@ -16,7 +16,7 @@ class CrvPolygonAddressProviderContract(
 ) {
 
     fun getRegistry(): String {
-        return read(
+        return readWithAbi(
             "get_registry",
             outputs = listOf(
                 TypeReference.create(Address::class.java)

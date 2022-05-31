@@ -17,11 +17,11 @@ class LPStakingContract(
 ) {
 
     val stargate by lazy {
-        read("stargate")[0].value as String
+        readWithAbi("stargate")[0].value as String
     }
 
     fun lpBalances(index: Int): BigInteger {
-        return read(
+        return readWithAbi(
             "lpBalances",
             inputs = listOf(index.toBigInteger().toUint256()),
             outputs = listOf(
@@ -34,7 +34,7 @@ class LPStakingContract(
 
         val multicalls = (0 until poolLength).map { poolIndex ->
             MultiCallElement(
-                createFunction(
+                createFunctionWithAbi(
                     "poolInfo",
                     inputs = listOf(poolIndex.toBigInteger().toUint256()),
                     outputs = listOf(
@@ -70,14 +70,14 @@ class LPStakingContract(
 
 
     val poolLength by lazy {
-        (read(
+        (readWithAbi(
             "poolLength",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger).toInt()
     }
 
     val totalAllocPoint by lazy {
-        read(
+        readWithAbi(
             "totalAllocPoint",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger

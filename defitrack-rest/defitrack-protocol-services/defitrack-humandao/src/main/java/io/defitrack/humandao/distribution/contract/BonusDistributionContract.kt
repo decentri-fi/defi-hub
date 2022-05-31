@@ -12,7 +12,7 @@ class BonusDistributionContract(
 ) : EvmContract(blockchainGateway, abi, address) {
 
     fun isClaimed(index: Long): Boolean {
-        return read(
+        return readWithAbi(
             method = "isClaimed",
             inputs = listOf(
                 BigInteger.valueOf(index).toUint256()
