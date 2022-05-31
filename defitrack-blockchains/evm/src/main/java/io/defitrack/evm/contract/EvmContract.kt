@@ -111,4 +111,8 @@ abstract class EvmContract(
             outputs = outputs
         )
     }
+
+    inline fun <reified T : Any> read(function: String): T {
+        return readWithAbi(function)[0].value as T
+    }
 }

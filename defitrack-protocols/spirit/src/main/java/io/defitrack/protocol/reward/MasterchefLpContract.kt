@@ -5,11 +5,7 @@ import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
 import io.defitrack.evm.contract.BlockchainGateway.Companion.toUint256
 import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.multicall.MultiCallElement
-import org.web3j.abi.TypeReference
-import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Function
-import org.web3j.abi.datatypes.generated.Uint16
-import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
 class MasterchefLpContract(
@@ -21,35 +17,20 @@ class MasterchefLpContract(
 ) {
 
     val poolLength by lazy {
-        (readWithAbi(
-            "poolLength",
-            outputs = listOf(TypeReference.create(Uint256::class.java))
-        )[0].value as BigInteger).toInt()
+        val retVal: BigInteger = read("poolLength")
+        retVal.toInt()
     }
 
-    val totalAllocPoint by lazy {
-        (readWithAbi(
-            "totalAllocPoint",
-            outputs = listOf(TypeReference.create(Uint256::class.java))
-        )[0].value as BigInteger)
+    val totalAllocPoint: BigInteger by lazy {
+        read("totalAllocPoint")
     }
 
-    fun getLpTokenForPoolId(poolId: Int): String {
-        return poolInfos[poolId].lpToken
+    val rewardToken: String by lazy {
+        read("spirit")
     }
 
-    val rewardToken by lazy {
-        readWithAbi(
-            "spirit",
-            outputs = listOf(TypeReference.create(Address::class.java))
-        )[0].value as String
-    }
-
-    val sushiPerSecond by lazy {
-        readWithAbi(
-            "spiritPerBlock",
-            outputs = listOf(TypeReference.create(Uint256::class.java))
-        )[0].value as BigInteger
+    val sushiPerSecond: BigInteger by lazy {
+        read("spiritPerBlock")
     }
 
     fun userInfoFunction(poolId: Int, user: String): Function {
@@ -58,10 +39,6 @@ class MasterchefLpContract(
             listOf(
                 poolId.toBigInteger().toUint256(),
                 user.toAddress()
-            ),
-            listOf(
-                TypeReference.create(Uint256::class.java),
-                TypeReference.create(Uint256::class.java)
             )
         )
     }
@@ -73,13 +50,6 @@ class MasterchefLpContract(
                 createFunctionWithAbi(
                     "poolInfo",
                     inputs = listOf(poolIndex.toBigInteger().toUint256()),
-                    outputs = listOf(
-                        TypeReference.create(Address::class.java),
-                        TypeReference.create(Uint256::class.java),
-                        TypeReference.create(Uint256::class.java),
-                        TypeReference.create(Uint256::class.java),
-                        TypeReference.create(Uint16::class.java),
-                    )
                 ),
                 this.address
             )
