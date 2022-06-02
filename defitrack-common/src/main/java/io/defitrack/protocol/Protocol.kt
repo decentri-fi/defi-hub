@@ -10,7 +10,6 @@ enum class Protocol(
     val enabled: Boolean = true,
     val networks: List<Network>
 ) {
-
     BANCOR(
         logo = "bancor.png",
         slug = "bancor",
@@ -204,8 +203,13 @@ enum class Protocol(
         logo = "convex.png",
         slug = "convex",
         website = "https://convexfinance.com/",
-        primitives = listOf(DefiPrimitive.FARMING),
-        networks = listOf(Network.ETHEREUM)
+        primitives = listOf(DefiPrimitive.FARMING)
+    ),
+    MAKERDAO(
+        logo = "makerdao.png",
+        slug = "makerdao",
+        website = "https://makerdao.com/",
+        primitives = listOf(DefiPrimitive.LENDING)
     );
 
     val imageBasePath = "https://github.com/defitrack/data/raw/master/logo/protocol/"
