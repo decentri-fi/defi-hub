@@ -1,6 +1,5 @@
 package io.defitrack.protocol.quickswap.contract
 
-import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
 import io.defitrack.evm.contract.BlockchainGateway.Companion.toUint256
@@ -18,7 +17,7 @@ class DQuickContract(
     contractAccessor, abi, address
 ) {
     fun quickBalance(address: String): BigInteger {
-        return read(
+        return readWithAbi(
             "QUICKBalance",
             inputs = listOf(address.toAddress()),
             outputs = listOf(
@@ -28,11 +27,11 @@ class DQuickContract(
     }
 
     fun enterFunction(amount: BigInteger): Function {
-        return createFunction("enter", listOf(amount.toUint256()), emptyList())
+        return createFunctionWithAbi("enter", listOf(amount.toUint256()), emptyList())
     }
 
     fun dquickForQuick(amount: BigInteger): BigInteger {
-        return read(
+        return readWithAbi(
             "dQUICKForQuick",
             inputs = listOf(amount.toUint256()),
             outputs = listOf(

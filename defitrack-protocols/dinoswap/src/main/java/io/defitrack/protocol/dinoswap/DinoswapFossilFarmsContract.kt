@@ -19,21 +19,21 @@ class DinoswapFossilFarmsContract(
 ) {
 
     val poolLength by lazy {
-        (read(
+        (readWithAbi(
             "poolLength",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger).toInt()
     }
 
     val rewardToken by lazy {
-        read(
+        readWithAbi(
             "dino",
             outputs = listOf(TypeReference.create(Address::class.java))
         )[0].value as String
     }
 
     fun claimableAmount(poolIndex: Int, address: String): BigInteger {
-        return read(
+        return readWithAbi(
             "pendingDino",
             inputs = listOf(
                 poolIndex.toBigInteger().toUint256(), address.toAddress()
@@ -45,7 +45,7 @@ class DinoswapFossilFarmsContract(
     }
 
     fun getLpTokenForPoolId(poolIndex: Int): String {
-        return read(
+        return readWithAbi(
             "poolInfo",
             inputs = listOf(poolIndex.toBigInteger().toUint256()),
             outputs = listOf(
@@ -58,14 +58,14 @@ class DinoswapFossilFarmsContract(
     }
 
     val rewardPerBlock by lazy {
-        read(
+        readWithAbi(
             "dinoPerBlock",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger
     }
 
     fun userInfo(address: String, poolIndex: Int): UserInfo {
-        val result = read(
+        val result = readWithAbi(
             "userInfo",
             inputs = listOf(poolIndex.toBigInteger().toUint256(), address.toAddress()),
             outputs = listOf(
@@ -81,7 +81,7 @@ class DinoswapFossilFarmsContract(
     }
 
     fun userInfoFunction(address: String, poolIndex: Int): Function {
-        return createFunction(
+        return createFunctionWithAbi(
             "userInfo",
             inputs = listOf(poolIndex.toBigInteger().toUint256(), address.toAddress()),
             outputs = listOf(

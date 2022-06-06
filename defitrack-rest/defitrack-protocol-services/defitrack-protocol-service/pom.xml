@@ -5,6 +5,8 @@
 
     <artifactId>defitrack-protocol-service</artifactId>
 
+    <packaging>jar</packaging>
+
     <parent>
         <groupId>io.defitrack</groupId>
         <artifactId>defitrack-protocol-services</artifactId>

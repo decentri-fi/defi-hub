@@ -41,7 +41,7 @@ class QuickswapClaimableService(
 
         return gateway.readMultiCall(pools.map { contract ->
             MultiCallElement(
-                contract.createFunction(
+                contract.createFunctionWithAbi(
                     "earned",
                     listOf(address.toAddress()),
                     listOf(

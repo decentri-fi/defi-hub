@@ -16,7 +16,7 @@ class CvxRewardPoolContract(
 ) : EvmContract(solidityBasedContractAccessor, abi, address) {
 
     fun earned(address: String): BigInteger {
-        return read(
+        return readWithAbi(
             "earned",
             inputs = listOf(address.toAddress()),
             outputs = listOf(
@@ -26,7 +26,7 @@ class CvxRewardPoolContract(
     }
 
     fun stakingToken(): String {
-        return read(
+        return readWithAbi(
             "stakingToken",
             outputs = listOf(
                 TypeReference.create(Address::class.java)
@@ -35,7 +35,7 @@ class CvxRewardPoolContract(
     }
 
     fun rewardToken(): String {
-        return read(
+        return readWithAbi(
             "stakingToken",
             outputs = listOf(
                 TypeReference.create(Address::class.java)

@@ -11,6 +11,6 @@ class HopSwapContract(
 ) : EvmContract(blockchainGateway, abi, address) {
 
     val virtualPrice by lazy {
-        read("getVirtualPrice")[0].value as BigInteger
+        readWithAbi("getVirtualPrice")[0].value as BigInteger
     }
 }

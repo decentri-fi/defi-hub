@@ -20,36 +20,36 @@ class BeefyVaultContract(
     ) {
 
     val balance by lazy {
-        read(
+        readWithAbi(
             "balance",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger
     }
 
     fun depositAllFunction(): Function {
-        return createFunction("depositAll", emptyList(), emptyList())
+        return createFunctionWithAbi("depositAll", emptyList(), emptyList())
     }
 
     fun depositFunction(amount: BigInteger): Function {
-        return createFunction("deposit", listOf(amount.toUint256()), emptyList())
+        return createFunctionWithAbi("deposit", listOf(amount.toUint256()), emptyList())
     }
 
     val getPricePerFullShare by lazy {
-        read(
+        readWithAbi(
             "getPricePerFullShare",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger
     }
 
     val strategy by lazy {
-        read(
+        readWithAbi(
             "strategy",
             outputs = listOf(TypeReference.create(Address::class.java))
         )[0].value as String
     }
 
     val want: String by lazy {
-        var read = read(
+        var read = readWithAbi(
             "want",
             inputs = emptyList(),
             outputs = listOf(
@@ -57,7 +57,7 @@ class BeefyVaultContract(
             )
         )
         if (read.isEmpty()) {
-            read = read(
+            read = readWithAbi(
                 "wmatic",
                 inputs = emptyList(),
                 outputs = listOf(
@@ -66,7 +66,7 @@ class BeefyVaultContract(
             )
         }
         if (read.isEmpty()) {
-            read = read(
+            read = readWithAbi(
                 "token",
                 inputs = emptyList(),
                 outputs = listOf(
@@ -75,7 +75,7 @@ class BeefyVaultContract(
             )
         }
         if (read.isEmpty()) {
-            read = read(
+            read = readWithAbi(
                 "wbnb",
                 inputs = emptyList(),
                 outputs = listOf(

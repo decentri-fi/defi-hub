@@ -15,8 +15,17 @@ pipeline {
              steps {
                  echo "-=- packaging project -=-"
                  sh "./mvnw package -DskipTests"
-                 sh "bash ci/package.sh"
              }
+        }
+        stage('Docker Package') {
+            when {
+                allOf {
+                    branch 'main'
+                }
+            }
+            steps {
+                sh "bash ci/package.sh"
+            }
         }
     }
 }

@@ -1,9 +1,7 @@
 package io.defitrack.protocol.mstable
 
-import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
-import java.math.BigInteger
 
 class MStableEthereumSavingsContract(
     ethereumContractAccessor: BlockchainGateway,
@@ -12,7 +10,7 @@ class MStableEthereumSavingsContract(
 ) : ERC20Contract(ethereumContractAccessor, abi, address) {
 
     val underlying: String by lazy {
-        read(
+        readWithAbi(
             "underlying"
         )[0].value as String
     }

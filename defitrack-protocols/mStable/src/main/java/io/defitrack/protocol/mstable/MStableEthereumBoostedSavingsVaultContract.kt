@@ -1,6 +1,5 @@
 package io.defitrack.protocol.mstable
 
-import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
 import io.defitrack.evm.contract.ERC20Contract
@@ -17,7 +16,7 @@ class MStableEthereumBoostedSavingsVaultContract(
 
 
     fun rawBalanceOfFunction(address: String): Function {
-        return createFunction(
+        return createFunctionWithAbi(
             "rawBalanceOf",
             inputs = listOf(address.toAddress()),
             outputs = listOf(
@@ -27,7 +26,7 @@ class MStableEthereumBoostedSavingsVaultContract(
     }
 
     fun unclaimedRewards(address: String): BigInteger {
-        return read(
+        return readWithAbi(
             "unclaimedRewards",
             inputs = listOf(address.toAddress()),
             outputs = listOf(
@@ -37,13 +36,13 @@ class MStableEthereumBoostedSavingsVaultContract(
     }
 
     val rewardsToken by lazy {
-        (read(
+        (readWithAbi(
             "rewardsToken"
         )[0].value as String)
     }
 
     val stakingToken by lazy {
-        (read(
+        (readWithAbi(
             "stakingToken"
         )[0].value as String)
     }

@@ -10,6 +10,6 @@ class StrategyContract(
 ) : EvmContract(solidityBasedContractAccessor, abi, address) {
 
     val feeDistToken by lazy {
-        read("getFeeDistToken")[0].value as String
+        readWithAbi("getFeeDistToken")[0].value as String
     }
 }

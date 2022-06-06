@@ -11,19 +11,19 @@ class CrvMainnetLpTokenContract(
 ) : EvmContract(ethereumContractAccessor, abi, address) {
 
     val symbol: String by lazy {
-        read(
+        readWithAbi(
             "symbol"
         )[0].value as String
     }
 
     val name: String by lazy {
-        read(
+        readWithAbi(
             "name"
         )[0].value as String
     }
 
     val decimals: BigInteger by lazy {
-        read(
+        readWithAbi(
             "decimals"
         )[0].value as BigInteger
     }

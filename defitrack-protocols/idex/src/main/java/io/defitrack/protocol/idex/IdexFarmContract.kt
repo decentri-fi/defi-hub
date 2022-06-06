@@ -17,7 +17,7 @@ class IdexFarmContract(
 
 
     fun userInfoFunction(poolId: Int, user: String): Function {
-        return createFunction(
+        return createFunctionWithAbi(
             "userInfo",
             listOf(
                 poolId.toBigInteger().toUint256(),
@@ -32,21 +32,21 @@ class IdexFarmContract(
 
 
     val poolLength by lazy {
-        (read(
+        (readWithAbi(
             "poolLength",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger).toInt()
     }
 
     val rewardPerBlock by lazy {
-        read(
+        readWithAbi(
             "rewardTokenPerBlock",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger
     }
 
     fun getLpTokenForPoolId(poolIndex: Int): String {
-        return read(
+        return readWithAbi(
             "poolInfo",
             inputs = listOf(poolIndex.toBigInteger().toUint256()),
             outputs = listOf(
@@ -59,7 +59,7 @@ class IdexFarmContract(
     }
 
     val rewardToken by lazy {
-        read(
+        readWithAbi(
             "rewardToken",
             outputs = listOf(TypeReference.create(Address::class.java))
         )[0].value as String

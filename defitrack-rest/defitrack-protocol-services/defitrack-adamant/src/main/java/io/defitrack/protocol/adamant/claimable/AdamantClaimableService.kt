@@ -10,7 +10,6 @@ import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.adamant.AdamantVaultContract
-import io.defitrack.protocol.adamant.StrategyContract
 import io.defitrack.protocol.adamant.staking.AdamantVaultMarketService
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
@@ -47,7 +46,7 @@ class AdamantClaimableService(
         return gateway.readMultiCall(
             markets.map {
                 MultiCallElement(
-                    it.createFunction(
+                    it.createFunctionWithAbi(
                         "getPendingReward",
                         listOf(address.toAddress()),
                         listOf(

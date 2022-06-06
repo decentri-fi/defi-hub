@@ -17,28 +17,28 @@ class QuickswapVaultChefContract(
 ) {
 
     val poolLength by lazy {
-        (read(
+        (readWithAbi(
             "poolLength",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger).toInt()
     }
 
     val totalSupply by lazy {
-        (read(
+        (readWithAbi(
             "totalSupply",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         ))[0].value as BigInteger
     }
 
     val rewardTokenAddress by lazy {
-        read(
+        readWithAbi(
             "rewardToken",
             outputs = listOf(TypeReference.create(Address::class.java))
         )[0].value as String
     }
 
     fun claimableAmount(poolIndex: Int, address: String): BigInteger {
-        return read(
+        return readWithAbi(
             "pendingReward",
             inputs = listOf(
                 poolIndex.toBigInteger().toUint256(), address.toAddress()
@@ -50,7 +50,7 @@ class QuickswapVaultChefContract(
     }
 
     fun strategy(poolIndex: Int): String {
-        return read(
+        return readWithAbi(
             "poolInfo",
             inputs = listOf(poolIndex.toBigInteger().toUint256()),
             outputs = listOf(
@@ -61,7 +61,7 @@ class QuickswapVaultChefContract(
     }
 
     fun getLpTokenAddressForPoolId(poolIndex: Int): String {
-        return read(
+        return readWithAbi(
             "poolInfo",
             inputs = listOf(poolIndex.toBigInteger().toUint256()),
             outputs = listOf(
@@ -88,7 +88,7 @@ class QuickswapVaultChefContract(
     }
 
     fun userInfo(address: String, poolIndex: Int): UserInfo {
-        val result = read(
+        val result = readWithAbi(
             "userInfo",
             inputs = listOf(poolIndex.toBigInteger().toUint256(), address.toAddress()),
             outputs = listOf(
@@ -116,14 +116,14 @@ class IStrategy(
 ) {
 
     val wantLockedTotal by lazy {
-        read(
+        readWithAbi(
             "wantLockedTotal",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger
     }
 
     val sharesTotal by lazy {
-        read(
+        readWithAbi(
             "sharesTotal",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger

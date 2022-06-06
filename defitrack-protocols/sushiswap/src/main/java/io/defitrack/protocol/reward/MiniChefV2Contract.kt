@@ -23,7 +23,7 @@ class MiniChefV2Contract(
     }
 
     fun userInfoFunction(poolId: Int, user: String): Function {
-        return createFunction(
+        return createFunctionWithAbi(
             "userInfo",
             listOf(
                 poolId.toBigInteger().toUint256(),
@@ -40,7 +40,7 @@ class MiniChefV2Contract(
     val poolInfos: List<MinichefPoolInfo> by lazy {
         val multicalls = (0 until poolLength).map { poolIndex ->
             MultiCallElement(
-                createFunction(
+                createFunctionWithAbi(
                     "poolInfo",
                     inputs = listOf(poolIndex.toBigInteger().toUint256()),
                     outputs = listOf(
@@ -70,14 +70,14 @@ class MiniChefV2Contract(
     }
 
     val poolLength by lazy {
-        (read(
+        (readWithAbi(
             "poolLength",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger).toInt()
     }
 
     fun claimableAmount(poolIndex: Int, address: String): BigInteger {
-        return read(
+        return readWithAbi(
             "pendingSushi",
             inputs = listOf(
                 poolIndex.toBigInteger().toUint256(), address.toAddress()
@@ -91,7 +91,7 @@ class MiniChefV2Contract(
     val lps: List<String> by lazy {
         val multicalls = (0 until poolLength).map { poolIndex ->
             MultiCallElement(
-                createFunction(
+                createFunctionWithAbi(
                     "lpToken",
                     inputs = listOf(poolIndex.toBigInteger().toUint256()),
                     outputs = listOf(
@@ -110,7 +110,7 @@ class MiniChefV2Contract(
     fun getLpTokenForPoolId(poolIndex: Int): String = lps[poolIndex]
 
     val rewardToken by lazy {
-        read(
+        readWithAbi(
             "SUSHI",
             outputs = listOf(TypeReference.create(Address::class.java))
         )[0].value as String
@@ -118,14 +118,14 @@ class MiniChefV2Contract(
 
 
     val sushiPerSecond by lazy {
-        read(
+        readWithAbi(
             "sushiPerSecond",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger
     }
 
     val totalAllocPoint by lazy {
-        read(
+        readWithAbi(
             "totalAllocPoint",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger

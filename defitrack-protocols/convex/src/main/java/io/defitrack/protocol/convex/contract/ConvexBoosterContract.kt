@@ -17,7 +17,7 @@ class ConvexBoosterContract(
 ) : EvmContract(blockchainGateway, abi, address) {
 
     val poolLength by lazy {
-        (read(
+        (readWithAbi(
             "poolLength",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger).toInt()
@@ -26,7 +26,7 @@ class ConvexBoosterContract(
     val poolInfos: List<PoolInfo> by lazy {
         val multicalls = (0 until poolLength).map { poolIndex ->
             MultiCallElement(
-                createFunction(
+                createFunctionWithAbi(
                     "poolInfo",
                     inputs = listOf(poolIndex.toBigInteger().toUint256()),
                     outputs = listOf(

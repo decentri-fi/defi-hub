@@ -11,22 +11,22 @@ class HopLpTokenContract(
 ) : EvmContract(blockchainGateway, abi, address) {
 
     val name by lazy {
-        read("name")[0].value as String
+        readWithAbi("name")[0].value as String
     }
 
     val symbol by lazy {
-        read("symbol")[0].value as String
+        readWithAbi("symbol")[0].value as String
     }
 
     val swap by lazy {
-        read("swap")[0].value as String
+        readWithAbi("swap")[0].value as String
     }
 
     val decimals by lazy {
-        (read("decimals")[0].value as BigInteger).toInt()
+        (readWithAbi("decimals")[0].value as BigInteger).toInt()
     }
 
     val totalSupply by lazy {
-        read("totalSupply")[0].value as BigInteger
+        readWithAbi("totalSupply")[0].value as BigInteger
     }
 }
