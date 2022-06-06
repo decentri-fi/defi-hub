@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.protocol.beefy.domain.BeefyVault
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
@@ -23,8 +24,8 @@ class BeefyService(
     @PostConstruct
     fun startup() {
         runBlocking {
-            val vaultsAsList =
-                client.get<String>("https://api.beefy.finance/vaults")
+            val vaultsAsList: String =
+                client.get("https://api.beefy.finance/vaults").body()
             val vaults = objectMapper.readValue(vaultsAsList, object : TypeReference<List<BeefyVault>>() {})
 
             beefyPolygonVaults.addAll(

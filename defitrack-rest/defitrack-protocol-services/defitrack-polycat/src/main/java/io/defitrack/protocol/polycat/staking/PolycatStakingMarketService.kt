@@ -43,7 +43,7 @@ class PolycatStakingMarketService(
         }
     }
 
-    private fun toStakingMarketElement(
+    private suspend fun toStakingMarketElement(
         chef: PolycatMasterChefContract,
         poolId: Int
     ): StakingMarket {
@@ -66,7 +66,7 @@ class PolycatStakingMarketService(
         )
     }
 
-    private fun calculateMarketSize(stakedtoken: TokenInformation, chef: PolycatMasterChefContract): BigDecimal {
+    private suspend fun calculateMarketSize(stakedtoken: TokenInformation, chef: PolycatMasterChefContract): BigDecimal {
 
         val balance = erC20Resource.getBalance(
             getNetwork(),

@@ -2,6 +2,7 @@ package io.defitrack.abi
 
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.runBlocking
 import org.springframework.beans.factory.annotation.Value
@@ -17,7 +18,8 @@ class ABIResource(
     fun getABI(abi: String): String {
         return runBlocking {
             cache.get(abi) {
-                client.get<Abi>("$abiResourceLocation?id=${abi}").content
+                val response: Abi = client.get("$abiResourceLocation?id=${abi}").body()
+                response.content
             }
         }
     }

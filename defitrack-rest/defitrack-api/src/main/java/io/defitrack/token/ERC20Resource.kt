@@ -9,6 +9,7 @@ import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -30,19 +31,19 @@ class ERC20Resource(
 
     fun getAllTokens(network: Network): List<TokenInformation> {
         return runBlocking(Dispatchers.IO) {
-            retry(limitAttempts(3)) { client.get("$erc20ResourceLocation/${network.name}") }
+            retry(limitAttempts(3)) { client.get("$erc20ResourceLocation/${network.name}").body() }
         }
     }
 
     fun getBalance(network: Network, tokenAddress: String, user: String): BigInteger {
         return runBlocking(Dispatchers.IO) {
-            client.get("$erc20ResourceLocation/${network.name}/$tokenAddress/$user")
+            client.get("$erc20ResourceLocation/${network.name}/$tokenAddress/$user").body()
         }
     }
 
     fun getTokenInformation(network: Network, address: String): TokenInformation {
         return runBlocking(Dispatchers.IO) {
-            retry(limitAttempts(3)) { client.get("$erc20ResourceLocation/${network.name}/$address/token") }
+            retry(limitAttempts(3)) { client.get("$erc20ResourceLocation/${network.name}/$address/token").body() }
         }
     }
 

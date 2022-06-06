@@ -1,6 +1,7 @@
 package io.defitrack.protocol.idex
 
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -14,7 +15,7 @@ class IdexService(private val client: HttpClient) {
     }
 
     fun getLPs(): List<IdexLP> = runBlocking(Dispatchers.IO) {
-        client.get("$idexAPI/v1/liquidityPools")
+        client.get("$idexAPI/v1/liquidityPools").body()
     }
 
     fun idexFarm(): List<String> {

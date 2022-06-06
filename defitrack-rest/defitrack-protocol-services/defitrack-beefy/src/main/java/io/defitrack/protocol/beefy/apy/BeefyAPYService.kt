@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
@@ -18,7 +19,6 @@ class BeefyAPYService(
     private val client: HttpClient
 ) {
 
-    @OptIn(ExperimentalTime::class)
     val cache = Cache.Builder()
         .expireAfterWrite(1.hours)
         .build<String, Map<String, BigDecimal>>()
@@ -26,10 +26,10 @@ class BeefyAPYService(
     fun getAPYS(): Map<String, BigDecimal> {
         return runBlocking {
             cache.get("beefy-api-apys") {
-                val result = client.get<String>(with(HttpRequestBuilder()) {
+                val result: String = client.get(with(HttpRequestBuilder()) {
                     url("$beefyAPIEndpoint/apy")
                     this
-                })
+                }).body()
                 objectMapper.readValue(
                     result,
                     object : TypeReference<Map<String, BigDecimal>>() {})

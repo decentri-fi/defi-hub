@@ -11,6 +11,7 @@ import io.defitrack.humandao.distribution.vo.BonusDistributionStatus
 import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.polygonmumbai.config.PolygonMumbaiContractAccessorConfig
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
@@ -95,7 +96,7 @@ class BonusDistributionService(
         return runBlocking {
             val url =
                 "https://raw.githubusercontent.com/humandao-org/BonusDistributorContracts/master/data/${network.slug}/merkle.json"
-            val result: String = client.get(url)
+            val result: String = client.get(url).body()
             objectMapper.readValue(result, MerkleConfig::class.java)
         }
     }

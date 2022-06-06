@@ -80,7 +80,7 @@ class SushiswapFantomStakingMinichefMarketService(
         )
     }
 
-    private fun calculateMarketSize(chef: MiniChefV2Contract, stakedTokenInformation: TokenInformation): BigDecimal {
+    private suspend fun calculateMarketSize(chef: MiniChefV2Contract, stakedTokenInformation: TokenInformation): BigDecimal {
         val balance = erC20Resource.getBalance(getNetwork(), stakedTokenInformation.address, chef.address)
         return BigDecimal.valueOf(
             priceResource.calculatePrice(

@@ -2,23 +2,22 @@ package io.defitrack.protocol.dfyn
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.gson.JsonParser
 import io.defitrack.protocol.dfyn.domain.Pair
 import io.defitrack.protocol.dfyn.domain.PairDayData
+import io.defitrack.thegraph.TheGraphGatewayProvider
 import io.github.reactivecircus.cache4k.Cache
-import io.ktor.client.*
-import io.ktor.client.request.*
-import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Component
 import kotlin.time.Duration.Companion.days
 
 @Component
 class DfynService(
     private val objectMapper: ObjectMapper,
-    private val client: HttpClient
+    graphGatewayProvider: TheGraphGatewayProvider
 ) {
+
+    val endpoint = "https://api.thegraph.com/subgraphs/name/ss-sonic/dfyn-v5"
+    val graph = graphGatewayProvider.createTheGraphGateway(endpoint)
 
     fun getPairDayData(pairId: String): List<PairDayData> = runBlocking {
         val query = """
@@ -30,10 +29,8 @@ class DfynService(
             }
         """.trimIndent()
 
-        val response = query(query)
-        val poolSharesAsString =
-            JsonParser.parseString(response).asJsonObject["data"].asJsonObject["pairDayDatas"].toString()
-        return@runBlocking objectMapper.readValue(poolSharesAsString,
+        val data = graph.performQuery(query).asJsonObject["pairDayDatas"].toString()
+        return@runBlocking objectMapper.readValue(data,
             object : TypeReference<List<PairDayData>>() {
 
             })
@@ -64,21 +61,11 @@ class DfynService(
               }
             }
         """.trimIndent()
-
-            val response = query(query)
-            val poolSharesAsString =
-                JsonParser.parseString(response).asJsonObject["data"].asJsonObject["pairs"].toString()
+            val poolSharesAsString = graph.performQuery(query).asJsonObject["pairs"].toString()
             objectMapper.readValue(poolSharesAsString,
                 object : TypeReference<List<Pair>>() {
 
                 })
-        }
-    }
-
-    fun query(query: String): String = runBlocking {
-        client.request("https://api.thegraph.com/subgraphs/name/ss-sonic/dfyn-v5") {
-            method = HttpMethod.Post
-            body = objectMapper.writeValueAsString(mapOf("query" to query))
         }
     }
 }

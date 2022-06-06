@@ -40,7 +40,7 @@ abstract class StakingAprCalculator(
     abstract fun getRewardsPerSecond(): List<Reward>
     abstract fun getStakedTokens(): List<StakedAsset>
 
-    private fun calculateStakedTokenInUsd(stakedAsset: StakedAsset): BigDecimal = BigDecimal.valueOf(
+    private suspend fun calculateStakedTokenInUsd(stakedAsset: StakedAsset): BigDecimal = BigDecimal.valueOf(
         priceResource.calculatePrice(
             PriceRequest(
                 stakedAsset.address,
@@ -51,7 +51,7 @@ abstract class StakingAprCalculator(
         )
     )
 
-    private fun calculateRewardsPerYearInUsd(reward: Reward): BigDecimal {
+    private suspend fun calculateRewardsPerYearInUsd(reward: Reward): BigDecimal {
         return if (reward.blocksPerSecond > 0) {
             val amount = reward.amount.times(secondsPerYear)
                 .divide(BigDecimal.valueOf(reward.blocksPerSecond.toLong()), 18, RoundingMode.HALF_UP)

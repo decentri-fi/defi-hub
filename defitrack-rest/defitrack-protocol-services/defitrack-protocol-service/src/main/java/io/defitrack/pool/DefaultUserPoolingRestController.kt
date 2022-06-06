@@ -45,7 +45,7 @@ class DefaultUserPoolingRestController(
         }
     }
 
-    fun PoolingElement.toVO(): PoolingElementVO {
+    suspend fun PoolingElement.toVO(): PoolingElementVO {
         return PoolingElementVO(
             lpAddress = lpAddress,
             amount = amount.toDouble(),
