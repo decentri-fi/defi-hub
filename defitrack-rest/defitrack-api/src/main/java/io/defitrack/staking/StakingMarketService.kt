@@ -1,7 +1,9 @@
 package io.defitrack.staking
 
 import io.defitrack.protocol.ProtocolService
+import io.defitrack.staking.domain.InvestmentPreparer
 import io.defitrack.staking.domain.StakingMarket
+import io.defitrack.staking.domain.StakingMarketBalanceFetcher
 import io.defitrack.token.FungibleToken
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.Dispatchers
@@ -56,7 +58,9 @@ abstract class StakingMarketService : ProtocolService {
         contractAddress: String,
         vaultType: String,
         marketSize: BigDecimal = BigDecimal.ZERO,
-        rate: BigDecimal = BigDecimal.ZERO
+        rate: BigDecimal = BigDecimal.ZERO,
+        balanceFetcher: StakingMarketBalanceFetcher? = null,
+        investmentPreparer: InvestmentPreparer? = null
     ): StakingMarket {
         return StakingMarket(
             id = id,
@@ -68,7 +72,9 @@ abstract class StakingMarketService : ProtocolService {
             contractAddress = contractAddress,
             vaultType = vaultType,
             marketSize = marketSize,
-            apr = rate
+            apr = rate,
+            balanceFetcher = balanceFetcher,
+            investmentPreparer = investmentPreparer
         )
     }
 }

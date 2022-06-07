@@ -2,6 +2,7 @@ package io.defitrack.protocol.adamant
 
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
+import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Function
@@ -12,7 +13,7 @@ class AdamantVaultContract(
     solidityBasedContractAccessor: BlockchainGateway,
     abi: String,
     address: String,
-) : EvmContract(solidityBasedContractAccessor, abi, address) {
+) : ERC20Contract(solidityBasedContractAccessor, abi, address) {
 
     val accRewardPerShare by lazy {
         readWithAbi("accRewardPerShare")[0].value as BigInteger
@@ -36,16 +37,6 @@ class AdamantVaultContract(
 
     val balance by lazy {
         readWithAbi("balance")[0].value as BigInteger
-    }
-
-    fun balanceOfMethod(address: String): Function {
-        return createFunctionWithAbi(
-            "balanceOf",
-            inputs = listOf(address.toAddress()),
-            outputs = listOf(
-                BlockchainGateway.uint256()
-            )
-        )
     }
 
     val token by lazy {

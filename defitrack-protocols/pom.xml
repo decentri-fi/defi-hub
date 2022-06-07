@@ -34,6 +34,7 @@
         <module>aave</module>
         <module>crv</module>
         <module>mStable</module>
+        <module>ribbon</module>
         <module>yearn</module>
         <module>compound</module>
         <module>beefy</module>

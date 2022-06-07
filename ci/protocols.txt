@@ -1,5 +1,6 @@
 aave
 adamant
+apeswap
 balancer
 beefy
 compound
@@ -14,6 +15,7 @@ idex
 mstable
 polycat
 quickswap
+ribbon
 spirit
 spooky
 stargate

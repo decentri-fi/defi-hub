@@ -27,15 +27,6 @@ open class ERC20Contract(
         )[0].value as BigInteger
     }
 
-    fun approveFunction(spender: String, amount: BigInteger): Function {
-        return createFunctionWithAbi(
-            "approve",
-            listOf(spender.toAddress(), amount.toUint256()),
-            listOf()
-        )
-    }
-
-
     fun balanceOfMethod(address: String): Function {
         return createFunctionWithAbi(
             "balanceOf",
@@ -43,6 +34,14 @@ open class ERC20Contract(
             outputs = listOf(
                 uint256()
             )
+        )
+    }
+
+    fun approveFunction(spender: String, amount: BigInteger): Function {
+        return createFunctionWithAbi(
+            "approve",
+            listOf(spender.toAddress(), amount.toUint256()),
+            listOf()
         )
     }
 

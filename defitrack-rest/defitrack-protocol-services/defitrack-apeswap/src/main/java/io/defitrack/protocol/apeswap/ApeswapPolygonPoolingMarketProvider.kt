@@ -31,7 +31,7 @@ class ApeswapPolygonPoolingMarketProvider(
                        name = liquidityToken.name,
                        symbol = liquidityToken.symbol,
                        tokens = liquidityToken.underlyingTokens.map { it.toFungibleToken() },
-                       tokenType = TokenType.APE
+                       tokenType = TokenType.APE,
                    )
                } catch (ex: Exception) {
                    null
