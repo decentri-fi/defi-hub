@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component
 class ApeswapPolygonGraphProvider(
     graphGatewayProvider: TheGraphGatewayProvider
 ) : GraphProvider(
-    "https://api.thegraph.com/subgraphs/name/steegecs/apeswap-matic",
+    "https://api.thegraph.com/subgraphs/name/messari/apeswap-polygon",
     graphGatewayProvider
 ) {
 
