@@ -33,6 +33,7 @@
         <module>defitrack-polycat</module>
         <module>defitrack-quickswap</module>
         <module>defitrack-sushiswap</module>
+        <module>defitrack-ribbon</module>
         <module>defitrack-stargate</module>
         <module>defitrack-uniswap</module>
         <module>defitrack-yearn</module>
