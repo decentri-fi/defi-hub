@@ -79,7 +79,8 @@ enum class Protocol(
         slug = "uniswap",
         website = "https://uniswap.org",
         primitives = listOf(element = DefiPrimitive.POOLING)
-    ), DFYN(
+    ),
+    DFYN(
         logo = "dfyn.svg",
         slug = "dfyn",
         website = "https://dfyn.network",
@@ -102,7 +103,8 @@ enum class Protocol(
         slug = "dmm",
         website = "https://kyberswap.com",
         primitives = listOf(DefiPrimitive.POOLING)
-    ), BALANCER(
+    ),
+    BALANCER(
         logo = "balancer.png",
         slug = "balancer",
         website = "https://balancer.fi",
@@ -113,7 +115,8 @@ enum class Protocol(
         slug = "stargate",
         website = "https://stargate.finance",
         primitives = listOf(DefiPrimitive.FARMING)
-    ), SPOOKY(
+    ),
+    SPOOKY(
         logo = "spooky.png",
         slug = "spooky",
         website = "https://spooky.fi",
@@ -124,14 +127,39 @@ enum class Protocol(
         slug = "spirit",
         website = "https://www.spiritswap.finance",
         primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING)
-    ), CONVEX(
+    ),
+    RIBBON(
+        logo = "ribbon.png",
+        slug = "ribbon",
+        website = "https://ribbon.finance",
+        primitives = listOf(DefiPrimitive.FARMING)
+    ),
+    LOOKSRARE(
+        logo = "looksrare.png",
+        slug = "looksrare",
+        website = "https://looksrare.org",
+        primitives = listOf(DefiPrimitive.FARMING)
+    ),
+    APESWAP(
+        logo = "apeswap.png",
+        slug = "apeswap",
+        website = "https://apeswap.finance",
+        primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING)
+    ),
+    DODO(
+        logo = "dodo.png",
+        slug = "dodo",
+        website = "https://dodoex.io",
+        primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING)
+    ),
+    CONVEX(
         logo = "convex.png",
         slug = "convex",
         website = "https://convexfinance.com/",
         primitives = listOf(DefiPrimitive.FARMING)
     );
 
-    val imageBasePath = "https://static.defitrack.io/images/protocols/"
+    val imageBasePath = "https://github.com/defitrack/data/raw/master/logo/protocol/"
 
     fun getImage(): String = imageBasePath + logo
 }
