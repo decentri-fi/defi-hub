@@ -8,7 +8,9 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.StakingMarket
 import io.defitrack.token.ERC20Resource
+import org.springframework.stereotype.Component
 
+@Component
 class RibbonEthereumStakingMarketProvider(
     private val ribbonEthereumGraphProvider: RibbonEthereumGraphProvider,
     private val erC20Resource: ERC20Resource,
