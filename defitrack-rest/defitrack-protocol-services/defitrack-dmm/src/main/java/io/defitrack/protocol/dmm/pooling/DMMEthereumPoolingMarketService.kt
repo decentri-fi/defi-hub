@@ -4,7 +4,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.pool.PoolingMarketService
 import io.defitrack.pool.domain.PoolingMarketElement
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.dmm.DMMEthereumService
+import io.defitrack.protocol.dmm.DMMEthereumGraphProvider
 import io.defitrack.protocol.dmm.apr.DMMAPRService
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class DMMEthereumPoolingMarketService(
-    private val dmmPolygonService: DMMEthereumService,
+    private val dmmPolygonService: DMMEthereumGraphProvider,
     private val dmmaprService: DMMAPRService,
     private val erc20Resource: ERC20Resource
 ) : PoolingMarketService() {

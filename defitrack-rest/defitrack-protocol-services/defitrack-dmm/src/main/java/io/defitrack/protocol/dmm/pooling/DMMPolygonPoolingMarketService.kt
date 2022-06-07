@@ -4,7 +4,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.pool.PoolingMarketService
 import io.defitrack.pool.domain.PoolingMarketElement
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.dmm.DMMPolygonService
+import io.defitrack.protocol.dmm.DMMPolygonGraphProvider
 import io.defitrack.protocol.dmm.apr.DMMAPRService
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
@@ -15,13 +15,13 @@ import org.springframework.stereotype.Service
 
 @Service
 class DMMPolygonPoolingMarketService(
-    private val dmmPolygonService: DMMPolygonService,
+    private val dmmPolygonGraphProvider: DMMPolygonGraphProvider,
     private val dmmaprService: DMMAPRService,
     private val erc20Resource: ERC20Resource
 ) : PoolingMarketService() {
 
     override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> = coroutineScope {
-        dmmPolygonService.getPoolingMarkets().map {
+        dmmPolygonGraphProvider.getPoolingMarkets().map {
             async {
                 try {
                     val token = erc20Resource.getTokenInformation(getNetwork(), it.id)

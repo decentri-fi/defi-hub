@@ -1,20 +1,17 @@
 package io.defitrack.protocol.dmm
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import io.defitrack.thegraph.GraphProvider
 import io.defitrack.thegraph.TheGraphGatewayProvider
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 
 @Service
-class DMMEthereumService(
-    private val objectMapper: ObjectMapper,
+class DMMPolygonGraphProvider(
     graphGatewayProvider: TheGraphGatewayProvider,
+) : GraphProvider(
+    "https://api.thegraph.com/subgraphs/name/ducquangkstn/dmm-subgraph-matic",
+    graphGatewayProvider
 ) {
-
-    val graph =
-        graphGatewayProvider.createTheGraphGateway("https://api.thegraph.com/subgraphs/name/dynamic-amm/dynamic-amm")
-
-    fun getPairDayData(pairId: String): List<DMMPairDayData> = runBlocking {
+    suspend fun getPairDayData(pairId: String): List<DMMPairDayData> {
         val query = """
            {
                 pairDayDatas(first: 8, orderBy: date, orderDirection: desc where: {pairAddress: "$pairId"}) {
@@ -23,19 +20,20 @@ class DMMEthereumService(
               }
             }
         """.trimIndent()
-        val data = graph.performQuery(query).asJsonObject["pairDayDatas"]
-        return@runBlocking graph.map<List<DMMPairDayData>>(data)
+
+        return query(query, "pairDayDatas")
     }
 
-    fun getPoolingMarkets(): List<DMMPool> = runBlocking {
+
+    suspend fun getPoolingMarkets(): List<DMMPool> {
         val query = """
             {
             	pools(first: 500, where: { reserveUSD_gt: 1000 }) {
                 id
+                reserveUSD
                 pair {
                     id
                 }
-                reserveUSD
                 token0 {
                     id,
                     symbol
@@ -51,7 +49,7 @@ class DMMEthereumService(
               }
             }
         """.trimIndent()
-        val data = graph.performQuery(query).asJsonObject["pools"]
-        return@runBlocking graph.map(data)
+
+        return query(query, "pools")
     }
 }
