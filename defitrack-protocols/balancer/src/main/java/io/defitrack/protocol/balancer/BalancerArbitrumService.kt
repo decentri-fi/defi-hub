@@ -1,9 +1,8 @@
 package io.defitrack.protocol.balancer
 
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.defitrack.thegraph.GraphProvider
 import io.defitrack.thegraph.TheGraphGatewayProvider
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import java.util.*
 
@@ -11,12 +10,12 @@ import java.util.*
 class BalancerArbitrumService(
     private val objectMapper: ObjectMapper,
     graphGatewayProvider: TheGraphGatewayProvider
+) : GraphProvider(
+    "https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-arbitrum-v2",
+    graphGatewayProvider
 ) {
 
-    val endpoint = "https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-arbitrum-v2"
-    val graph = graphGatewayProvider.createTheGraphGateway(endpoint)
-
-    fun getBalances(address: String): List<PoolShare> = runBlocking {
+    suspend fun getBalances(address: String): List<PoolShare> {
         val query = """
             {
               poolShares(where: {userAddress: "${address.lowercase(Locale.getDefault())}"}) {
@@ -43,10 +42,7 @@ class BalancerArbitrumService(
               }
            }
         """.trimIndent()
-        val data = graph.performQuery(query).asJsonObject["poolShares"].toString()
-        return@runBlocking objectMapper.readValue(data,
-            object : TypeReference<List<PoolShare>>() {
 
-            })
+        return query(query, "poolShares")
     }
 }
