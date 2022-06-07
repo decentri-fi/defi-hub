@@ -10,7 +10,7 @@ enum class Network(val logo: String, val chainId: Int, val slug: String, val has
     POLYGON("polygon.png", 137, "polygon"),
     POLYGON_MUMBAI("polygon.png", 80001, "polygon_mumbai", hasMicroService = false);
 
-    val imageBasePath = "https://static.defitrack.io/images/networks/"
+    val imageBasePath = "https://github.com/defitrack/data/raw/master/logo/network/"
 
     fun getImage(): String = imageBasePath + logo
 
