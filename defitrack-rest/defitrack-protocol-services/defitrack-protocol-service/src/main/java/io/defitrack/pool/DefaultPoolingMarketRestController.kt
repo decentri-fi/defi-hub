@@ -24,9 +24,11 @@ class DefaultPoolingMarketRestController(
     }
 
     @GetMapping(value = ["/all-markets"])
-    fun allMarkets(): List<PoolingMarketElement> {
+    fun allMarkets(): List<PoolingMarketElementVO> {
         return poolingMarketServices.flatMap {
             it.getPoolingMarkets()
+        }.map {
+            poolingMarketElementVO(it)
         }
     }
 

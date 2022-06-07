@@ -10,8 +10,6 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import javax.annotation.PostConstruct
 
-@Configuration
-@Profile("!dev")
 class DataPopulator(private val tokenService: TokenService) {
 
     val logger = LoggerFactory.getLogger(this::class.java)
