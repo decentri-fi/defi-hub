@@ -14,7 +14,7 @@ class HopAPRService(
     private val priceResource: PriceResource
 ) {
 
-    fun getAPR(
+    suspend fun getAPR(
         tokenName: String,
         tokenAddress: String,
         tokenDecimals: Int,

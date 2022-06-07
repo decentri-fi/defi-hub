@@ -1,11 +1,8 @@
 package io.defitrack.price
 
-import io.defitrack.common.network.Network
-import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.token.ERC20Resource
-import io.defitrack.token.FungibleToken
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
@@ -18,7 +15,7 @@ import kotlin.time.Duration.Companion.minutes
 class PriceResource(
     @Value("\${priceResourceLocation:http://defitrack-price:8080}") val priceResourceLocation: String,
     private val client: HttpClient
-    ) {
+) {
 
     companion object {
         private val logger = LoggerFactory.getLogger(this::class.java)
@@ -32,7 +29,7 @@ class PriceResource(
         return runBlocking {
             cache.get(symbol) {
                 try {
-                    client.get("$priceResourceLocation/$symbol")
+                    client.get("$priceResourceLocation/$symbol").body()
                 } catch (ex: Exception) {
                     logger.error("unable to fetch price for $symbol", ex)
                     BigDecimal.ZERO
@@ -46,13 +43,13 @@ class PriceResource(
         return amount.times(price.toDouble())
     }
 
-    fun calculatePrice(priceRequest: PriceRequest?): Double = runBlocking {
-        priceRequest?.let {
+    suspend fun calculatePrice(priceRequest: PriceRequest?): Double {
+        return priceRequest?.let {
             try {
                 client.post(priceResourceLocation) {
                     this.header("Content-Type", "application/json")
-                    this.body = priceRequest
-                }
+                    setBody(priceRequest)
+                }.body()
             } catch (ex: Exception) {
                 logger.error("unable to fetch price for ${it.address}")
                 ex.printStackTrace()

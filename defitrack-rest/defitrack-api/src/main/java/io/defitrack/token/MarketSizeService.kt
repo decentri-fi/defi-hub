@@ -13,7 +13,7 @@ class MarketSizeService(
     private val priceResource: PriceResource
 ) {
 
-    fun getMarketSize(
+    suspend fun getMarketSize(
         token: FungibleToken,
         location: String,
         network: Network

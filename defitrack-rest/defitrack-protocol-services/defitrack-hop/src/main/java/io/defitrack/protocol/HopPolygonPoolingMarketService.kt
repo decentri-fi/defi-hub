@@ -42,7 +42,7 @@ class HopPolygonPoolingMarketService(
         }.awaitAll().filterNotNull()
     }
 
-    private fun toPoolingMarketElement(
+    private suspend fun toPoolingMarketElement(
         gateway: BlockchainGateway,
         hopLpToken: HopLpToken
     ): PoolingMarketElement? {
@@ -90,7 +90,7 @@ class HopPolygonPoolingMarketService(
         }
     }
 
-    private fun getPrice(
+    private suspend fun getPrice(
         canonicalTokenAddress: String,
         contract: HopLpTokenContract,
         swapContract: HopSwapContract

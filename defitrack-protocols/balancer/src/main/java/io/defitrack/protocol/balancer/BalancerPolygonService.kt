@@ -7,6 +7,7 @@ import io.defitrack.protocol.balancer.domain.LiquidityGauge
 import io.defitrack.protocol.balancer.domain.LiquidityMiningReward
 import io.defitrack.thegraph.TheGraphGatewayProvider
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -43,7 +44,9 @@ class BalancerPolygonService(
         return try {
             while (true) {
                 int++
-                httpClient.get<String>("https://raw.githubusercontent.com/balancer-labs/bal-mining-scripts/master/reports/$int/_totals.json")
+                val response: String =
+                    httpClient.get("https://raw.githubusercontent.com/balancer-labs/bal-mining-scripts/master/reports/$int/_totals.json")
+                        .body()
             }
             int - 1 //unused but necessary
         } catch (ex: Exception) {
@@ -68,7 +71,7 @@ class BalancerPolygonService(
         try {
             val response: String = httpClient.get(
                 "https://raw.githubusercontent.com/balancer-labs/bal-mining-scripts/master/reports/$week/__polygon_$token.json"
-            )
+            ).body()
 
             JsonParser.parseString(response).asJsonObject.entrySet().map { entry ->
                 LiquidityMiningReward(

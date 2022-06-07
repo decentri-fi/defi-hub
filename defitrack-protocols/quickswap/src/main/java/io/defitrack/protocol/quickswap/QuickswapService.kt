@@ -2,25 +2,29 @@ package io.defitrack.protocol.quickswap
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.gson.JsonParser
 import io.defitrack.protocol.quickswap.dto.PairDayData
 import io.defitrack.protocol.quickswap.dto.QuickLpPools
 import io.defitrack.protocol.quickswap.dto.QuickswapPair
+import io.defitrack.thegraph.TheGraphGatewayProvider
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
-import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import kotlin.time.Duration.Companion.days
-import kotlin.time.ExperimentalTime
 
 
 @Component
 class QuickswapService(
     private val objectMapper: ObjectMapper,
-    private val client: HttpClient
+    private val client: HttpClient,
+    graphGatewayProvider: TheGraphGatewayProvider
 ) {
+
+    val graphUrl = "https://api.thegraph.com/subgraphs/name/henrydapp/quickswap"
+
+    val graph = graphGatewayProvider.createTheGraphGateway(graphUrl)
 
     val vaultCache = Cache.Builder().expireAfterWrite(
         1.days
@@ -46,7 +50,7 @@ class QuickswapService(
             vaultCache.get("quickswap-normal-vaults") {
                 val maticVaultsEndpoint =
                     "https://raw.githubusercontent.com/beefyfinance/beefy-api/master/src/data/matic/quickLpPools.json"
-                val result = client.get<String>(maticVaultsEndpoint)
+                val result: String = client.get(maticVaultsEndpoint).body()
 
                 objectMapper.readValue(
                     result,
@@ -63,7 +67,7 @@ class QuickswapService(
             vaultCache.get("quickswap-dual-vaults") {
                 val maticVaultsEndpoint =
                     "https://raw.githubusercontent.com/beefyfinance/beefy-api/master/src/data/matic/quickDualLpPools.json"
-                val result = client.get<String>(maticVaultsEndpoint)
+                val result: String = client.get(maticVaultsEndpoint).body()
 
                 objectMapper.readValue(
                     result,
@@ -85,9 +89,7 @@ class QuickswapService(
             }
         """.trimIndent()
 
-        val response = query(query)
-        val poolSharesAsString =
-            JsonParser.parseString(response).asJsonObject["data"].asJsonObject["pairDayDatas"].toString()
+        val poolSharesAsString = graph.performQuery(query).asJsonObject["pairDayDatas"].toString()
         return@runBlocking objectMapper.readValue(poolSharesAsString,
             object : TypeReference<List<PairDayData>>() {
 
@@ -117,20 +119,11 @@ class QuickswapService(
             }
         """.trimIndent()
 
-            val response = query(query)
-            val poolSharesAsString =
-                JsonParser.parseString(response).asJsonObject["data"].asJsonObject["pairs"].toString()
+            val poolSharesAsString = graph.performQuery(query).asJsonObject["pairs"].toString()
             objectMapper.readValue(poolSharesAsString,
                 object : TypeReference<List<QuickswapPair>>() {
 
                 })
-        }
-    }
-
-    fun query(query: String): String = runBlocking {
-        client.request("https://api.thegraph.com/subgraphs/name/henrydapp/quickswap") {
-            method = HttpMethod.Post
-            body = objectMapper.writeValueAsString(mapOf("query" to query))
         }
     }
 }

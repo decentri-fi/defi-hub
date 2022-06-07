@@ -1,4 +1,4 @@
-FROM openjdk:15.0.2-slim
+FROM openjdk:17-alpine
 
 ADD target/defitrack-polycat-0.0.1-SNAPSHOT.jar defitrack.jar
 

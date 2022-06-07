@@ -3,6 +3,7 @@ package io.defitrack.protocol.dmm
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.JsonParser
+import io.defitrack.thegraph.TheGraphGatewayProvider
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -12,8 +13,9 @@ import org.springframework.stereotype.Service
 @Service
 class DMMPolygonService(
     private val objectMapper: ObjectMapper,
-    private val client: HttpClient
+    graphGatewayProvider: TheGraphGatewayProvider,
 ) {
+    val graph = graphGatewayProvider.createTheGraphGateway("https://api.thegraph.com/subgraphs/name/ducquangkstn/dmm-subgraph-matic")
 
     fun getPairDayData(pairId: String): List<DMMPairDayData> = runBlocking {
         val query = """
@@ -25,9 +27,7 @@ class DMMPolygonService(
             }
         """.trimIndent()
 
-        val response = query(query)
-        val poolSharesAsString =
-            JsonParser.parseString(response).asJsonObject["data"].asJsonObject["pairDayDatas"].toString()
+        val poolSharesAsString = graph.performQuery(query).asJsonObject["pairDayDatas"].toString()
         return@runBlocking objectMapper.readValue(poolSharesAsString,
             object : TypeReference<List<DMMPairDayData>>() {
 
@@ -59,9 +59,7 @@ class DMMPolygonService(
               }
             }
         """.trimIndent()
-        val response = query(query)
-        val poolSharesAsString =
-            JsonParser.parseString(response).asJsonObject["data"].asJsonObject["pools"].toString()
+        val poolSharesAsString = graph.performQuery(query).asJsonObject["pools"].toString()
         return@runBlocking objectMapper.readValue(poolSharesAsString,
             object : TypeReference<List<DMMPool>>() {
 
@@ -95,20 +93,10 @@ class DMMPolygonService(
                 }
             }
         """.trimIndent()
-
-        val response = query(query)
-        val poolSharesAsString =
-            JsonParser.parseString(response).asJsonObject["data"].asJsonObject["users"].toString()
+        val poolSharesAsString = graph.performQuery(query).asJsonObject["users"].toString()
         return@runBlocking objectMapper.readValue(poolSharesAsString,
             object : TypeReference<List<DMMUser>>() {
 
             })
-    }
-
-    fun query(query: String): String = runBlocking {
-        client.request("https://api.thegraph.com/subgraphs/name/ducquangkstn/dmm-subgraph-matic\n") {
-            method = HttpMethod.Post
-            body = objectMapper.writeValueAsString(mapOf("query" to query))
-        }
     }
 }

@@ -43,7 +43,7 @@ class DinoswapStakingMarketService(
         }
     }
 
-    private fun toStakingMarketElement(
+    private suspend fun toStakingMarketElement(
         chef: DinoswapFossilFarmsContract,
         poolId: Int
     ): StakingMarket {

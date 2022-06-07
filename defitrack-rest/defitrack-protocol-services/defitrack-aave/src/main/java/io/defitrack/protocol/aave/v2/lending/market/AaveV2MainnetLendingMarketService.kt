@@ -59,7 +59,7 @@ class AaveV2MainnetLendingMarketService(
         }
     }
 
-    private fun calculateMarketSize(reserve: AaveReserve): Double {
+    private suspend fun calculateMarketSize(reserve: AaveReserve): Double {
         val underlying = erC20Resource.getTokenInformation(getNetwork(), reserve.underlyingAsset)
         return priceResource.calculatePrice(
             PriceRequest(

@@ -1,4 +1,4 @@
-FROM openjdk:15.0.2
+FROM openjdk:17-alpine
 
 VOLUME /tmp
 ADD target/defitrack-abi-0.0.1-SNAPSHOT.jar defitrack.jar

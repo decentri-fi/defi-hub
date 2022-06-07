@@ -61,7 +61,7 @@ class AaveV2PolygonLendingMarketService(
         }
     }
 
-    private fun calculateMarketSize(reserve: AaveReserve): Double {
+    private suspend fun calculateMarketSize(reserve: AaveReserve): Double {
         return priceResource.calculatePrice(
             PriceRequest(
                 reserve.underlyingAsset,

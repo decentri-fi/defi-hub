@@ -45,8 +45,8 @@ class DefaultLendingRestController(
         @PathVariable("userId") address: String,
         @RequestParam("lendingElementId") lendingElementId: String,
         @RequestParam("network") network: Network
-    ): LendingElementVO? {
-        return lendingUserServices.filter {
+    ): LendingElementVO? = runBlocking{
+        lendingUserServices.filter {
             it.getNetwork() == network
         }.firstNotNullOfOrNull {
             try {
@@ -62,7 +62,7 @@ class DefaultLendingRestController(
         }?.toVO()
     }
 
-    fun LendingPosition.toVO(): LendingElementVO {
+    suspend fun LendingPosition.toVO(): LendingElementVO {
         return with(this) {
 
             val lendingInDollars = priceResource.calculatePrice(

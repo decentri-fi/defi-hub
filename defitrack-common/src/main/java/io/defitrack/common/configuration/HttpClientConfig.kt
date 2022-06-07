@@ -1,22 +1,23 @@
 package io.defitrack.common.configuration
 
 import io.ktor.client.*
-import io.ktor.client.engine.apache.*
-import io.ktor.client.features.*
-import io.ktor.client.features.json.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.http.*
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+
+import io.ktor.client.engine.okhttp.*
+import io.ktor.serialization.gson.*
 
 @Configuration
 class HttpClientConfig {
 
     @Bean
     fun provideClient(): HttpClient {
-        return HttpClient(Apache) {
-            install(JsonFeature) {
-                serializer = GsonSerializer()
-                acceptContentTypes = acceptContentTypes + ContentType("application", "json+hal")
+        return HttpClient(OkHttp) {
+            install(ContentNegotiation) {
+                gson()
             }
             install(HttpTimeout) {
                 requestTimeoutMillis = 120000
