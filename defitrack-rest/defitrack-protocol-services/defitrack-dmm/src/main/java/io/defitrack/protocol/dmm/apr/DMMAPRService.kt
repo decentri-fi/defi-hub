@@ -1,9 +1,9 @@
 package io.defitrack.protocol.dmm.apr
 
 import io.defitrack.common.network.Network
-import io.defitrack.protocol.dmm.DMMEthereumService
+import io.defitrack.protocol.dmm.DMMEthereumGraphProvider
 import io.defitrack.protocol.dmm.DMMPairDayData
-import io.defitrack.protocol.dmm.DMMPolygonService
+import io.defitrack.protocol.dmm.DMMPolygonGraphProvider
 import io.defitrack.protocol.dmm.DMMPool
 import io.github.reactivecircus.cache4k.Cache
 import org.springframework.stereotype.Component
@@ -13,8 +13,8 @@ import kotlin.time.Duration.Companion.hours
 
 @Component
 class DMMAPRService(
-    private val dmmPolygonService: DMMPolygonService,
-    private val dmmEthereumService: DMMEthereumService
+    private val dmmPolygonGraphProvider: DMMPolygonGraphProvider,
+    private val dmmEthereumGraphProvider: DMMEthereumGraphProvider
 ) {
 
     val cache = Cache.Builder().expireAfterWrite(10.hours).build<String, BigDecimal>()
@@ -44,18 +44,18 @@ class DMMAPRService(
         }
     }
 
-    private fun getPairData(address: String, network: Network): List<DMMPairDayData> {
+    private suspend fun getPairData(address: String, network: Network): List<DMMPairDayData> {
         return when (network) {
-            Network.POLYGON -> dmmPolygonService.getPairDayData(address)
-            Network.ETHEREUM -> return dmmEthereumService.getPairDayData(address)
+            Network.POLYGON -> dmmPolygonGraphProvider.getPairDayData(address)
+            Network.ETHEREUM -> return dmmEthereumGraphProvider.getPairDayData(address)
             else -> emptyList()
         }
     }
 
-    fun getPools(network: Network): List<DMMPool> {
+    suspend fun getPools(network: Network): List<DMMPool> {
         return when (network) {
-            Network.POLYGON -> return dmmPolygonService.getPoolingMarkets()
-            Network.ETHEREUM -> return dmmEthereumService.getPoolingMarkets()
+            Network.POLYGON -> return dmmPolygonGraphProvider.getPoolingMarkets()
+            Network.ETHEREUM -> return dmmEthereumGraphProvider.getPoolingMarkets()
             else -> emptyList()
         }
     }

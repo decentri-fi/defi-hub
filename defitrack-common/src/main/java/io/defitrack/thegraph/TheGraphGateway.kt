@@ -1,12 +1,12 @@
 package io.defitrack.thegraph
 
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.JsonElement
 import com.google.gson.JsonParser
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 
 class TheGraphGateway(
@@ -15,12 +15,6 @@ class TheGraphGateway(
     private val baseUrl: String
 ) {
 
-    inline fun <reified T>map(data: JsonElement): T {
-        return objectMapper.readValue(data.toString(),
-            object : TypeReference<T>() {
-
-            })
-    }
 
     suspend fun performQuery(query: String): JsonElement {
         val response = query(query)
@@ -28,10 +22,12 @@ class TheGraphGateway(
     }
 
     private suspend fun query(query: String): String {
-        val response: String = httpClient.request(baseUrl) {
-            method = HttpMethod.Post
-            setBody(objectMapper.writeValueAsString(mapOf("query" to query)))
-        }.body()
+        val response: String = httpClient.post(baseUrl) {
+            headers {
+                append("Content-Type", "application/json")
+            }
+            setBody(GraphRequest(query))
+        }.bodyAsText()
         return response
     }
 }
