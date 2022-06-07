@@ -19,6 +19,7 @@
         <module>dinoswap</module>
         <module>hop</module>
         <module>apeswap</module>
+        <module>dodo</module>
         <module>stargate</module>
         <module>convex</module>
         <module>uniswap</module>
