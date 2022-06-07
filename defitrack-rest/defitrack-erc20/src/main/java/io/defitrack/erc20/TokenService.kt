@@ -59,6 +59,9 @@ class TokenService(
         lp.symbol == "DFYNLP" -> {
             TokenType.DFYN
         }
+        lp.symbol == "APE-LP" -> {
+            TokenType.APE
+        }
         isBalancerLp(lp.address, lp.blockchainGateway.network) -> {
             TokenType.BALANCER
         }
@@ -98,6 +101,9 @@ class TokenService(
                 }
                 (token.symbol == "DFYNLP") -> {
                     fromLP(Protocol.DFYN, network, token)
+                }
+                (token.symbol == "APE-LP") -> {
+                    fromLP(Protocol.APESWAP, network, token)
                 }
                 (token.symbol == "SPIRIT-LP") -> {
                     fromLP(Protocol.SPIRITSWAP, network, token)
