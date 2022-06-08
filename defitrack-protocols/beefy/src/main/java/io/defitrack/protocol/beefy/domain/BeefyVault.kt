@@ -11,7 +11,6 @@ class BeefyVault(
     val earnedToken: String,
     val earnedTokenAddress: String,
     val earnContractAddress: String,
-    val pricePerFullShare: BigInteger,
     val status: String,
     val platform: String,
     val chain: String,
