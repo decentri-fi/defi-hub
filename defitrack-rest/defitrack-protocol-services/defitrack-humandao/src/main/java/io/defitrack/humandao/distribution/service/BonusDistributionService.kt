@@ -13,6 +13,7 @@ import io.defitrack.polygonmumbai.config.PolygonMumbaiContractAccessorConfig
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
@@ -96,7 +97,7 @@ class BonusDistributionService(
         return runBlocking {
             val url =
                 "https://raw.githubusercontent.com/humandao-org/BonusDistributorContracts/master/data/${network.slug}/merkle.json"
-            val result: String = client.get(url).body()
+            val result: String = client.get(url).bodyAsText()
             objectMapper.readValue(result, MerkleConfig::class.java)
         }
     }

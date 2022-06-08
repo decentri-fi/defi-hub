@@ -12,6 +12,7 @@ import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
@@ -95,7 +96,7 @@ class HopService(
     fun getLps(network: Network): List<HopLpToken> {
         return runBlocking(Dispatchers.IO) {
             lpCache.get(network) {
-                val response: String = client.get(addressesUrl).body()
+                val response: String = client.get(addressesUrl).bodyAsText()
                 val assets = JsonParser.parseString(response).asJsonObject["bridges"].asJsonObject.entrySet()
 
                 assets.flatMap {

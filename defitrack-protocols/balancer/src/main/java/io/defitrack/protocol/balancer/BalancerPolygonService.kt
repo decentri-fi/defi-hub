@@ -9,6 +9,7 @@ import io.defitrack.thegraph.TheGraphGatewayProvider
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
@@ -71,7 +72,7 @@ class BalancerPolygonService(
         try {
             val response: String = httpClient.get(
                 "https://raw.githubusercontent.com/balancer-labs/bal-mining-scripts/master/reports/$week/__polygon_$token.json"
-            ).body()
+            ).bodyAsText()
 
             JsonParser.parseString(response).asJsonObject.entrySet().map { entry ->
                 LiquidityMiningReward(

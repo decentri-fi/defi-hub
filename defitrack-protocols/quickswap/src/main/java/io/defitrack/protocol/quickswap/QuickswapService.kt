@@ -10,6 +10,7 @@ import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import kotlin.time.Duration.Companion.days
@@ -50,7 +51,7 @@ class QuickswapService(
             vaultCache.get("quickswap-normal-vaults") {
                 val maticVaultsEndpoint =
                     "https://raw.githubusercontent.com/beefyfinance/beefy-api/master/src/data/matic/quickLpPools.json"
-                val result: String = client.get(maticVaultsEndpoint).body()
+                val result: String = client.get(maticVaultsEndpoint).bodyAsText()
 
                 objectMapper.readValue(
                     result,
@@ -67,14 +68,7 @@ class QuickswapService(
             vaultCache.get("quickswap-dual-vaults") {
                 val maticVaultsEndpoint =
                     "https://raw.githubusercontent.com/beefyfinance/beefy-api/master/src/data/matic/quickDualLpPools.json"
-                val result: String = client.get(maticVaultsEndpoint).body()
-
-                objectMapper.readValue(
-                    result,
-                    object : TypeReference<List<QuickLpPools>>() {
-                    }).map {
-                    it.rewardPool
-                }
+                client.get(maticVaultsEndpoint).body()
             }
         }
     }

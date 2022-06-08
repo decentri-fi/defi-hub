@@ -6,6 +6,7 @@ import io.defitrack.protocol.beefy.domain.BeefyVault
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import javax.annotation.PostConstruct
@@ -25,7 +26,7 @@ class BeefyService(
     fun startup() {
         runBlocking {
             val vaultsAsList: String =
-                client.get("https://api.beefy.finance/vaults").body()
+                client.get("https://api.beefy.finance/vaults").bodyAsText()
             val vaults = objectMapper.readValue(vaultsAsList, object : TypeReference<List<BeefyVault>>() {})
 
             beefyPolygonVaults.addAll(

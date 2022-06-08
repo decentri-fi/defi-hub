@@ -1,9 +1,7 @@
 package io.defitrack.price
 
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.JsonParser
-import io.defitrack.common.network.Network
 import io.defitrack.price.coingecko.CoingeckoToken
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
@@ -41,10 +39,7 @@ class CoinGeckoPriceService(
 
     suspend fun getCoingeckoTokens(): Set<CoingeckoToken> {
         return tokenCache.get("all") {
-            val response: String = httpClient.get(coinlistLocation).body()
-            objectMapper.readValue(response, object : TypeReference<Set<CoingeckoToken>>() {
-
-            })
+            httpClient.get(coinlistLocation).body()
         }
     }
 
@@ -61,7 +56,8 @@ class CoinGeckoPriceService(
             } else {
                 getTokenBySymbol(symbol)?.let { token ->
                     val response: String =
-                        httpClient.get("https://api.coingecko.com/api/v3/simple/price?ids=${token.id}&vs_currencies=usd").bodyAsText()
+                        httpClient.get("https://api.coingecko.com/api/v3/simple/price?ids=${token.id}&vs_currencies=usd")
+                            .bodyAsText()
                     val jsonObject = JsonParser.parseString(response)
                     jsonObject.asJsonObject[token.id].asJsonObject["usd"].asBigDecimal
                 }
