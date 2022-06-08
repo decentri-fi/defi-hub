@@ -7,6 +7,6 @@ import org.springframework.stereotype.Component
 class DodoPolygonGraphProvider(
     graphGatewayProvider: TheGraphGatewayProvider
 ) : DodoGraphProvider(
-    "https://api.thegraph.com/subgraphs/name/stan36/messari-dodov2-polygon",
+    "https://api.thegraph.com/subgraphs/name/dodoex/dodoex-v2-polygon",
     graphGatewayProvider
 )

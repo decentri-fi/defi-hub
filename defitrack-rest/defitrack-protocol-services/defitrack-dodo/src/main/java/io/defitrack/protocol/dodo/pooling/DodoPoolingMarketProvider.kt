@@ -12,7 +12,7 @@ abstract class DodoPoolingMarketProvider(
 ) : PoolingMarketService() {
     override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> {
         return dodoGraphProvider.getPools().map { pool ->
-            val underlying = pool.inputTokens.map {
+            val underlying = listOf(pool.baseToken, pool.quoteToken).map {
                 val tokens = erC20Resource.getTokenInformation(getNetwork(), it.id)
                 tokens.toFungibleToken()
             }
