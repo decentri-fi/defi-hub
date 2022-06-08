@@ -1,5 +1,6 @@
 package io.defitrack.price
 
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.JsonParser
 import io.defitrack.price.coingecko.CoingeckoToken
@@ -14,6 +15,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
+import java.nio.charset.Charset
 import javax.annotation.PostConstruct
 import kotlin.time.Duration.Companion.days
 
@@ -39,7 +41,8 @@ class CoinGeckoPriceService(
 
     suspend fun getCoingeckoTokens(): Set<CoingeckoToken> {
         return tokenCache.get("all") {
-            httpClient.get(coinlistLocation).body()
+            val result = httpClient.get(coinlistLocation).bodyAsText(Charset.defaultCharset())
+            objectMapper.readValue(result, object: TypeReference<Set<CoingeckoToken>>() {})
         }
     }
 
