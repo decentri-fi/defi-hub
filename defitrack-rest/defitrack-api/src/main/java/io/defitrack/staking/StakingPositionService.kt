@@ -12,8 +12,8 @@ abstract class StakingPositionService(
     val erC20Resource: ERC20Resource
 ) : ProtocolService {
 
-    abstract fun getStakings(address: String): List<StakingPosition>
-    open fun getStaking(address: String, stakingMarketId: String): StakingPosition? {
+    abstract suspend fun getStakings(address: String): List<StakingPosition>
+    open suspend fun getStaking(address: String, stakingMarketId: String): StakingPosition? {
         return getStakings(address).firstOrNull {
             it.market.id == stakingMarketId
         }

@@ -1,4 +1,4 @@
-package io.defitrack.protocol.mstable
+package io.defitrack.protocol.mstable.contract
 
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract

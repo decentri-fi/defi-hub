@@ -1,22 +1,19 @@
 package io.defitrack.protocol.crv
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
-import io.defitrack.protocol.crv.dto.Gauge
-import io.defitrack.protocol.crv.dto.Pool
+import io.defitrack.protocol.crv.domain.Gauge
+import io.defitrack.protocol.crv.domain.Pool
+import io.defitrack.thegraph.GraphProvider
 import io.defitrack.thegraph.TheGraphGatewayProvider
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 
 @Service
 class CurveEthereumService(
-    private val objectMapper: ObjectMapper,
     theGraphGatewayProvider: TheGraphGatewayProvider
+) : GraphProvider(
+    "https://api.thegraph.com/subgraphs/name/curvefi/curve", theGraphGatewayProvider
 ) {
 
-    val theGraph = theGraphGatewayProvider.createTheGraphGateway("https://api.thegraph.com/subgraphs/name/curvefi/curve")
-
-    fun getPools(): List<Pool> = runBlocking {
+    suspend fun getPools(): List<Pool> {
         val query = """
             {
             	pools {
@@ -51,15 +48,10 @@ class CurveEthereumService(
             }
         """.trimIndent()
 
-        val poolSharesAsString =
-            theGraph.performQuery(query).asJsonObject["pools"].toString()
-        return@runBlocking objectMapper.readValue(poolSharesAsString,
-            object : TypeReference<List<Pool>>() {
-
-            })
+        return query(query, "pools")
     }
 
-    fun getGauges(): List<Gauge> = runBlocking {
+    suspend fun getGauges(): List<Gauge> {
         val query = """
             {
             	gauges {
@@ -103,12 +95,6 @@ class CurveEthereumService(
             }
         """.trimIndent()
 
-
-        val poolSharesAsString =
-            theGraph.performQuery(query).asJsonObject["gauges"].toString()
-        return@runBlocking objectMapper.readValue(poolSharesAsString,
-            object : TypeReference<List<Gauge>>() {
-
-            })
+        return query(query, "gauges")
     }
 }

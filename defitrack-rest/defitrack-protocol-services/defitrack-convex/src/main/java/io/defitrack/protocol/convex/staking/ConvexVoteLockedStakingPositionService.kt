@@ -25,7 +25,7 @@ class ConvexVoteLockedStakingPositionService(
         abiResource.getABI("convex/CvxLocker.json")
     }
 
-    override fun getStakings(address: String): List<StakingPosition> {
+    override suspend fun getStakings(address: String): List<StakingPosition> {
         val cvxRewardPools = listOf(convexService.lockedRewardPool()).map {
             CvxLockerContract(
                 contractAccessorGateway.getGateway(getNetwork()),

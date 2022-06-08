@@ -1,16 +1,17 @@
-package io.defitrack.protocol.dinoswap
+package io.defitrack.protocol.polycat.contract
 
 import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
 import io.defitrack.evm.contract.BlockchainGateway.Companion.toUint256
+import io.defitrack.evm.contract.multicall.MultiCallElement
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
-import org.web3j.abi.datatypes.Function
+import org.web3j.abi.datatypes.generated.Uint16
 import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
-class DinoswapFossilFarmsContract(
+class PolycatMasterChefContract(
     contractAccessor: BlockchainGateway,
     abi: String,
     address: String,
@@ -27,14 +28,14 @@ class DinoswapFossilFarmsContract(
 
     val rewardToken by lazy {
         readWithAbi(
-            "dino",
+            "fish",
             outputs = listOf(TypeReference.create(Address::class.java))
         )[0].value as String
     }
 
     fun claimableAmount(poolIndex: Int, address: String): BigInteger {
         return readWithAbi(
-            "pendingDino",
+            "pendingFish",
             inputs = listOf(
                 poolIndex.toBigInteger().toUint256(), address.toAddress()
             ),
@@ -44,22 +45,52 @@ class DinoswapFossilFarmsContract(
         )[0].value as BigInteger
     }
 
-    fun getLpTokenForPoolId(poolIndex: Int): String {
-        return readWithAbi(
-            "poolInfo",
-            inputs = listOf(poolIndex.toBigInteger().toUint256()),
-            outputs = listOf(
-                TypeReference.create(Address::class.java),
-                TypeReference.create(Uint256::class.java),
-                TypeReference.create(Uint256::class.java),
-                TypeReference.create(Uint256::class.java)
+    fun poolInfo(poolId: Int): PoolInfo {
+        return poolInfos[poolId]
+    }
+
+    val poolInfos by lazy {
+        val multicalls = (0 until poolLength).map { poolIndex ->
+            MultiCallElement(
+                createFunctionWithAbi(
+                    "poolInfo",
+                    inputs = listOf(poolIndex.toBigInteger().toUint256()),
+                    outputs = listOf(
+                        TypeReference.create(Address::class.java),
+                        TypeReference.create(Uint256::class.java),
+                        TypeReference.create(Uint256::class.java),
+                        TypeReference.create(Uint256::class.java),
+                        TypeReference.create(Uint16::class.java),
+                    )
+                ),
+                this.address
             )
-        )[0].value as String
+        }
+        val results = blockchainGateway.readMultiCall(
+            multicalls
+        )
+        results.map { retVal ->
+            PoolInfo(
+                retVal[0].value as String,
+                retVal[1].value as BigInteger,
+                retVal[2].value as BigInteger,
+                retVal[3].value as BigInteger,
+                retVal[4].value as BigInteger,
+            )
+        }
     }
 
     val rewardPerBlock by lazy {
         readWithAbi(
-            "dinoPerBlock",
+            "fishPerBlock",
+            outputs = listOf(TypeReference.create(Uint256::class.java))
+        )[0].value as BigInteger
+    }
+
+
+    val totalAllocPoint by lazy {
+        readWithAbi(
+            "totalAllocPoint",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger
     }
@@ -77,17 +108,6 @@ class DinoswapFossilFarmsContract(
         return UserInfo(
             amount = result[0].value as BigInteger,
             rewardDebt = result[1].value as BigInteger
-        )
-    }
-
-    fun userInfoFunction(address: String, poolIndex: Int): Function {
-        return createFunctionWithAbi(
-            "userInfo",
-            inputs = listOf(poolIndex.toBigInteger().toUint256(), address.toAddress()),
-            outputs = listOf(
-                TypeReference.create(Uint256::class.java),
-                TypeReference.create(Uint256::class.java),
-            )
         )
     }
 }

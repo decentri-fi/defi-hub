@@ -1,4 +1,4 @@
-package io.defitrack.protocol.polycat
+package io.defitrack.protocol.polycat.contract
 
 import java.math.BigInteger
 

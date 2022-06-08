@@ -21,7 +21,7 @@ class CurveEthereumStakingPositionService(
 
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun getStakings(address: String): List<StakingPosition> {
+    override suspend fun getStakings(address: String): List<StakingPosition> {
         val gauges = curveEthereumService.getGauges().filter {
             it.pool != null
         }

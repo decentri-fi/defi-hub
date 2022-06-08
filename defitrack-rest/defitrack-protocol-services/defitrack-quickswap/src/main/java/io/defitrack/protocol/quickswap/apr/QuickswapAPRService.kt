@@ -3,9 +3,8 @@ package io.defitrack.protocol.quickswap.apr
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ContractAccessorGateway
-import io.defitrack.polygon.config.PolygonContractAccessorConfig
 import io.defitrack.price.PriceResource
-import io.defitrack.protocol.quickswap.QuickswapDualRewardPoolContract
+import io.defitrack.protocol.quickswap.contract.QuickswapDualRewardPoolContract
 import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.github.reactivecircus.cache4k.Cache
@@ -52,7 +51,7 @@ class QuickswapAPRService(
         }
     }
 
-    private fun calculateDualRewardPool(address: String): BigDecimal {
+    private suspend fun calculateDualRewardPool(address: String): BigDecimal {
         val contract = QuickswapDualRewardPoolContract(
             contractAccessorGateway.getGateway(Network.POLYGON),
             stakingDualRewards,
@@ -83,7 +82,7 @@ class QuickswapAPRService(
         }
     }
 
-    private fun calculateSingleRewardPool(address: String): BigDecimal {
+    private suspend fun calculateSingleRewardPool(address: String): BigDecimal {
         val contract = QuickswapRewardPoolContract(
             contractAccessorGateway.getGateway(Network.POLYGON),
             stakingRewardsABI,

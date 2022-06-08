@@ -1,4 +1,4 @@
-package io.defitrack.protocol.quickswap
+package io.defitrack.protocol.quickswap.contract
 
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress

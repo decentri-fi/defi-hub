@@ -16,7 +16,7 @@ class AdamantStakingPositionService(
     erC20Resource
 ) {
 
-    override fun getStakings(address: String): List<StakingPosition> {
+    override suspend fun getStakings(address: String): List<StakingPosition> {
 
         val markets = adamantVaultMarketService.getStakingMarkets()
 

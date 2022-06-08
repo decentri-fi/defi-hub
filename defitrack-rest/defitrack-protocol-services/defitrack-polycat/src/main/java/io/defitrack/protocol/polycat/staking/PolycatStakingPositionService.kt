@@ -4,7 +4,7 @@ import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.polycat.PolycatMasterChefContract
+import io.defitrack.protocol.polycat.contract.PolycatMasterChefContract
 import io.defitrack.protocol.polycat.PolycatService
 import io.defitrack.staking.StakingPositionService
 import io.defitrack.staking.domain.StakingPosition
@@ -24,7 +24,7 @@ class PolycatStakingPositionService(
         abiResource.getABI("polycat/MasterChef.json")
     }
 
-    override fun getStakings(address: String): List<StakingPosition> {
+    override suspend fun getStakings(address: String): List<StakingPosition> {
 
         val polycatMasterChefContracts = polycatService.getPolycatFarms().map {
             PolycatMasterChefContract(

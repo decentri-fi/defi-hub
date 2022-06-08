@@ -4,7 +4,7 @@ import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.mstable.MStableEthereumBoostedSavingsVaultContract
+import io.defitrack.protocol.mstable.contract.MStableEthereumBoostedSavingsVaultContract
 import io.defitrack.protocol.mstable.MStableEthereumService
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.StakingMarketBalanceFetcher

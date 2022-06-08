@@ -1,20 +1,15 @@
 package io.defitrack.protocol.aave.v2
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.protocol.aave.v2.domain.AaveReserve
 import io.defitrack.protocol.aave.v2.domain.UserReserve
+import io.defitrack.thegraph.GraphProvider
 import io.defitrack.thegraph.TheGraphGatewayProvider
 import org.springframework.stereotype.Component
 
 @Component
 class AaveV2MainnetService(
     graphGatewayProvider: TheGraphGatewayProvider,
-    private val objectMapper: ObjectMapper,
-) {
-
-    val thegraph =
-        graphGatewayProvider.createTheGraphGateway("https://api.thegraph.com/subgraphs/name/aave/protocol-v2")
+) : GraphProvider("https://api.thegraph.com/subgraphs/name/aave/protocol-v2", graphGatewayProvider) {
 
     fun getLendingPoolAddressesProvider(): String {
         return "0xb53c1a33016b2dc2ff3653530bff1848a515c8c5"
@@ -40,12 +35,7 @@ class AaveV2MainnetService(
             }
         """.trimIndent()
 
-        val userReservesAsString =
-            thegraph.performQuery(query).asJsonObject["userReserves"].toString()
-        return objectMapper.readValue(userReservesAsString,
-            object : TypeReference<List<UserReserve>>() {
-
-            })
+        return query(query, "userReserves")
     }
 
     suspend fun getReserves(): List<AaveReserve> {
@@ -64,11 +54,6 @@ class AaveV2MainnetService(
             }
         """.trimIndent()
 
-        val reservesAsString =
-            thegraph.performQuery(query).asJsonObject["reserves"].toString()
-        return objectMapper.readValue(reservesAsString,
-            object : TypeReference<List<AaveReserve>>() {
-
-            })
+        return query(query, "reserves")
     }
 }

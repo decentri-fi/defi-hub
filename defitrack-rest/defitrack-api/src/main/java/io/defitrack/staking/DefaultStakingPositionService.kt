@@ -12,7 +12,7 @@ abstract class DefaultStakingPositionService(
     val stakingMarketService: StakingMarketService,
     val gateway: ContractAccessorGateway
 ) : StakingPositionService(erC20Resource) {
-    override fun getStakings(address: String): List<StakingPosition> {
+    override suspend fun getStakings(address: String): List<StakingPosition> {
         val markets = stakingMarketService.getStakingMarkets().filter {
             it.balanceFetcher != null
         }

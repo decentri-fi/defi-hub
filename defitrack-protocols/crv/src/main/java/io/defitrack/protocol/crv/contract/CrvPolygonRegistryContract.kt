@@ -1,4 +1,4 @@
-package io.defitrack.protocol.crv
+package io.defitrack.protocol.crv.contract
 
 import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.BlockchainGateway

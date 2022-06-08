@@ -7,7 +7,7 @@ import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.dinoswap.DinoswapFossilFarmsContract
+import io.defitrack.protocol.dinoswap.contract.DinoswapFossilFarmsContract
 import io.defitrack.protocol.dinoswap.DinoswapService
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.StakingMarketBalanceFetcher

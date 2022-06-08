@@ -2,9 +2,10 @@ package io.defitrack.protocol.quickswap
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.defitrack.protocol.quickswap.dto.PairDayData
-import io.defitrack.protocol.quickswap.dto.QuickLpPools
-import io.defitrack.protocol.quickswap.dto.QuickswapPair
+import io.defitrack.protocol.quickswap.domain.PairDayData
+import io.defitrack.protocol.quickswap.domain.QuickLpPools
+import io.defitrack.protocol.quickswap.domain.QuickswapPair
+import io.defitrack.thegraph.GraphProvider
 import io.defitrack.thegraph.TheGraphGatewayProvider
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
@@ -21,11 +22,9 @@ class QuickswapService(
     private val objectMapper: ObjectMapper,
     private val client: HttpClient,
     graphGatewayProvider: TheGraphGatewayProvider
+) : GraphProvider(
+    "https://api.thegraph.com/subgraphs/name/henrydapp/quickswap", graphGatewayProvider
 ) {
-
-    val graphUrl = "https://api.thegraph.com/subgraphs/name/henrydapp/quickswap"
-
-    val graph = graphGatewayProvider.createTheGraphGateway(graphUrl)
 
     val vaultCache = Cache.Builder().expireAfterWrite(
         1.days
@@ -73,7 +72,7 @@ class QuickswapService(
         }
     }
 
-    fun getPairDayData(pairId: String): List<PairDayData> = runBlocking {
+    suspend fun getPairDayData(pairId: String): List<PairDayData> {
         val query = """
            {
                 pairDayDatas(first: 8, orderBy: date, orderDirection: desc where: {pairAddress: "$pairId"}) {
@@ -83,15 +82,11 @@ class QuickswapService(
             }
         """.trimIndent()
 
-        val poolSharesAsString = graph.performQuery(query).asJsonObject["pairDayDatas"].toString()
-        return@runBlocking objectMapper.readValue(poolSharesAsString,
-            object : TypeReference<List<PairDayData>>() {
-
-            })
+        return query(query, "pairDayDatas")
     }
 
-    fun getPairs(): List<QuickswapPair> = runBlocking {
-        pairCache.get("all-pairs") {
+    suspend fun getPairs(): List<QuickswapPair> {
+        return pairCache.get("all-pairs") {
             val query = """
             {
             	pairs(first: 500, orderDirection: desc, orderBy: reserveUSD) {
@@ -113,11 +108,7 @@ class QuickswapService(
             }
         """.trimIndent()
 
-            val poolSharesAsString = graph.performQuery(query).asJsonObject["pairs"].toString()
-            objectMapper.readValue(poolSharesAsString,
-                object : TypeReference<List<QuickswapPair>>() {
-
-                })
+            query(query, "pairs")
         }
     }
 }

@@ -6,7 +6,7 @@ import io.defitrack.pool.domain.PoolingMarketElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
-import io.defitrack.protocol.quickswap.dto.QuickswapPair
+import io.defitrack.protocol.quickswap.domain.QuickswapPair
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.Dispatchers

@@ -17,7 +17,7 @@ class DinoswapStakingPositionService(
 ) : StakingPositionService(erC20Resource) {
 
 
-    override fun getStakings(address: String): List<StakingPosition> {
+    override suspend fun getStakings(address: String): List<StakingPosition> {
         val markets = dinoswapStakingMarketService.getStakingMarkets()
 
         return contractAccessorGateway.getGateway(getNetwork()).readMultiCall(

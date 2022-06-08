@@ -1,29 +1,58 @@
-package io.defitrack.protocol.mstable
+package io.defitrack.protocol.mstable.contract
 
+import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
-import io.defitrack.evm.contract.ERC20Contract
 import org.web3j.abi.TypeReference
-import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
-class MStableEthereumBoostedSavingsVaultContract(
+class MStablePolygonBoostedSavingsVaultContract(
     ethereumContractAccessor: BlockchainGateway,
     abi: String,
     address: String,
-) : ERC20Contract(ethereumContractAccessor, abi, address) {
+) : EvmContract(ethereumContractAccessor, abi, address) {
 
+    val symbol: String by lazy {
+        try {
+            readWithAbi(
+                "symbol"
+            )[0].value as String
+        } catch (ex: Exception) {
+            """v-unkknown"""
+        }
+    }
 
-    fun rawBalanceOfFunction(address: String): Function {
-        return createFunctionWithAbi(
+    val decimals: Int by lazy {
+        try {
+            (readWithAbi(
+                "decimals"
+            )[0].value as BigInteger).toInt()
+        } catch (ex: Exception) {
+            18
+        }
+    }
+
+    val name: String by lazy {
+        try {
+            readWithAbi(
+                "name"
+            )[0].value as String
+        } catch (ex: Exception) {
+            """unknown Vault"""
+        }
+    }
+
+    fun rawBalanceOf(address: String): BigInteger {
+        return readWithAbi(
             "rawBalanceOf",
             inputs = listOf(address.toAddress()),
             outputs = listOf(
                 TypeReference.create(Uint256::class.java)
             )
-        )
+        )[0].value as BigInteger
     }
+
 
     fun unclaimedRewards(address: String): BigInteger {
         return readWithAbi(

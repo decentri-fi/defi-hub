@@ -1,4 +1,4 @@
-package io.defitrack.protocol.quickswap.dto
+package io.defitrack.protocol.quickswap.domain
 
 import java.math.BigDecimal
 

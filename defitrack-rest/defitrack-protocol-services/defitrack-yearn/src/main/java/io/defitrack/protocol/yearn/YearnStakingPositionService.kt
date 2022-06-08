@@ -27,7 +27,7 @@ class YearnStakingPositionService(
     val erc20ABI = abiResource.getABI("general/ERC20.json")
 
 
-    override fun getStakings(address: String): List<StakingPosition> {
+    override suspend fun getStakings(address: String): List<StakingPosition> {
         val ethereumContractAccessor = contractAccessorGateway.getGateway(getNetwork())
 
         return runBlocking {

@@ -23,7 +23,7 @@ class ConvexBoosterStakingPositionService(
 ) {
 
 
-    override fun getStakings(address: String): List<StakingPosition> {
+    override suspend fun getStakings(address: String): List<StakingPosition> {
         val gateway = contractAccessorGateway.getGateway(getNetwork())
 
         val booster = ConvexBoosterContract(

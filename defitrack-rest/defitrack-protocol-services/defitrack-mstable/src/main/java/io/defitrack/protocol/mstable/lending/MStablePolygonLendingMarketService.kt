@@ -7,7 +7,7 @@ import io.defitrack.lending.LendingMarketService
 import io.defitrack.lending.domain.BalanceFetcher
 import io.defitrack.lending.domain.LendingMarket
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.mstable.MStableEthereumSavingsContract
+import io.defitrack.protocol.mstable.contract.MStableEthereumSavingsContract
 import io.defitrack.protocol.mstable.MStablePolygonService
 import io.defitrack.token.ERC20Resource
 
