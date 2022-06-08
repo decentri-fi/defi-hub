@@ -13,10 +13,7 @@ import io.defitrack.staking.domain.StakingMarket
 import io.defitrack.staking.domain.StakingMarketBalanceFetcher
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenInformation
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.*
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -33,9 +30,9 @@ abstract class BeefyStakingMarketService(
         abiResource.getABI("beefy/VaultV6.json")
     }
 
-    override suspend fun fetchStakingMarkets(): List<StakingMarket> = coroutineScope {
+    override suspend fun fetchStakingMarkets(): List<StakingMarket> = withContext(Dispatchers.IO.limitedParallelism(5)) {
         vaults.map {
-            async(Dispatchers.IO.limitedParallelism(5)) {
+            async {
                 toStakingMarketElement(it)
             }
         }.awaitAll().filterNotNull()
