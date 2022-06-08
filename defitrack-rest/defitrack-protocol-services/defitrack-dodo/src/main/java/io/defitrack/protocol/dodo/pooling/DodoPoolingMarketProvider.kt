@@ -2,6 +2,8 @@ package io.defitrack.protocol.dodo.pooling
 
 import io.defitrack.pool.PoolingMarketService
 import io.defitrack.pool.domain.PoolingMarketElement
+import io.defitrack.price.PriceRequest
+import io.defitrack.price.PriceResource
 import io.defitrack.protocol.DodoGraphProvider
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
@@ -9,23 +11,40 @@ import io.defitrack.token.TokenType
 abstract class DodoPoolingMarketProvider(
     private val erC20Resource: ERC20Resource,
     private val dodoGraphProvider: DodoGraphProvider,
+    private val priceResource: PriceResource
 ) : PoolingMarketService() {
     override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> {
         return dodoGraphProvider.getPools().map { pool ->
-            val underlying = listOf(pool.baseToken, pool.quoteToken).map {
-                val tokens = erC20Resource.getTokenInformation(getNetwork(), it.id)
-                tokens.toFungibleToken()
-            }
+
+            val baseToken = erC20Resource.getTokenInformation(getNetwork(), pool.baseToken.id)
+            val quoteToken = erC20Resource.getTokenInformation(getNetwork(), pool.quoteToken.id)
 
             PoolingMarketElement(
                 id = "dodo-ethereum-${pool.id}",
                 network = getNetwork(),
                 protocol = getProtocol(),
                 address = pool.id,
-                name = underlying.joinToString("/") { it.symbol } + " LP",
-                symbol = underlying.joinToString("/") { it.symbol },
-                tokens = underlying,
-                tokenType = TokenType.DODO
+                name = baseToken.symbol + "/" + quoteToken.symbol + " LP",
+                symbol = baseToken.symbol + "/" + quoteToken.symbol,
+                tokens = listOf(baseToken, quoteToken).map { it.toFungibleToken() },
+                tokenType = TokenType.DODO,
+                marketSize = priceResource.calculatePrice(
+                    PriceRequest(
+                        baseToken.address,
+                        getNetwork(),
+                        pool.baseReserve,
+                        baseToken.type
+                    )
+                ).toBigDecimal().plus(
+                    priceResource.calculatePrice(
+                        PriceRequest(
+                            quoteToken.address,
+                            getNetwork(),
+                            pool.quoteReserve,
+                            baseToken.type
+                        )
+                    ).toBigDecimal()
+                )
             )
         }
     }

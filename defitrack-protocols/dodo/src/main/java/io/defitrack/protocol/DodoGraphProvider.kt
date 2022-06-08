@@ -20,9 +20,11 @@ abstract class DodoGraphProvider(url: String, graphGatewayProvider: TheGraphGate
               }
                 volumeUSD
                 isTradeAllowed
+                baseReserve
+                quoteReserve
             }
         }
         """.trimIndent()
-        return query(query, "liquidityPools")
+        return query(query, "pairs")
     }
 }

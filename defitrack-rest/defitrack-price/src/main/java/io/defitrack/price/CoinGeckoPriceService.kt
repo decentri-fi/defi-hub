@@ -9,6 +9,7 @@ import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
@@ -47,15 +48,6 @@ class CoinGeckoPriceService(
         }
     }
 
-
-    suspend fun getTokenByAddress(network: Network, address: String): CoingeckoToken? {
-        return getCoingeckoTokens().firstOrNull { token ->
-            token.platforms.entries.any {
-                it.value.uppercase() == address.uppercase() && network.slug == it.key
-            }
-        }
-    }
-
     suspend fun getTokenBySymbol(symbol: String): CoingeckoToken? {
         return getCoingeckoTokens().firstOrNull { token ->
             token.symbol.uppercase() == symbol.uppercase()
@@ -69,7 +61,7 @@ class CoinGeckoPriceService(
             } else {
                 getTokenBySymbol(symbol)?.let { token ->
                     val response: String =
-                        httpClient.get("https://api.coingecko.com/api/v3/simple/price?ids=${token.id}&vs_currencies=usd").body()
+                        httpClient.get("https://api.coingecko.com/api/v3/simple/price?ids=${token.id}&vs_currencies=usd").bodyAsText()
                     val jsonObject = JsonParser.parseString(response)
                     jsonObject.asJsonObject[token.id].asJsonObject["usd"].asBigDecimal
                 }
