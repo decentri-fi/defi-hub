@@ -1,4 +1,4 @@
-package io.defitrack.protocol.yearn
+package io.defitrack.protocol.yearn.domain
 
 
 class YearnV2Vault(

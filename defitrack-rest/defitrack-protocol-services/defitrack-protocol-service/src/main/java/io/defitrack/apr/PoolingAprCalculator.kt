@@ -11,7 +11,7 @@ abstract class PoolingAprCalculator {
 
     private val cache = Cache.Builder().expireAfterWrite(10.hours).build<String, BigDecimal>()
 
-    fun calculateApr(): BigDecimal = runBlocking {
+    suspend fun calculateApr(): BigDecimal = runBlocking {
         cache.get("apr") {
             val yearlyRewards = getYearlyRewards()
             val tvl = getTvl()
@@ -23,6 +23,6 @@ abstract class PoolingAprCalculator {
         }
     }
 
-    abstract fun getYearlyRewards(): BigDecimal
-    abstract fun getTvl(): BigDecimal
+    abstract suspend fun getYearlyRewards(): BigDecimal
+    abstract suspend fun getTvl(): BigDecimal
 }

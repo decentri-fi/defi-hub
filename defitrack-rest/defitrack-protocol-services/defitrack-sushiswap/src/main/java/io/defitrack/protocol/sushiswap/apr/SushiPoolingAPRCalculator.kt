@@ -8,7 +8,7 @@ class SushiPoolingAPRCalculator(
     private val sushiswapService: SushiswapService,
     private val poolAddress: String
 ) : PoolingAprCalculator() {
-    override fun getYearlyRewards(): BigDecimal {
+    override suspend fun getYearlyRewards(): BigDecimal {
 
         val pairData = sushiswapService.getPairDayData(poolAddress)
         return if (pairData.size <= 1) {
@@ -21,7 +21,7 @@ class SushiPoolingAPRCalculator(
         }
     }
 
-    override fun getTvl(): BigDecimal {
+    override suspend fun getTvl(): BigDecimal {
         return sushiswapService.getPairs().find {
             it.id == poolAddress
         }?.reserveUSD ?: BigDecimal.ZERO

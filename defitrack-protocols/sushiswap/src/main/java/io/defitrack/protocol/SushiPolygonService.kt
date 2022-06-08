@@ -19,16 +19,15 @@ class SushiPolygonService(
     }
 
     private val sushiswapService = SushiswapGraphGateway(
-        objectMapper,
         "https://api.thegraph.com/subgraphs/name/sushiswap/matic-exchange",
         graphGatewayProvider
     )
 
-    override fun getPairs(): List<SushiswapPair> = sushiswapService.getPairs()
+    override suspend fun getPairs(): List<SushiswapPair> = sushiswapService.getPairs()
 
-    override fun getPairDayData(pairId: String): List<PairDayData> = sushiswapService.getPairDayData(pairId)
+    override suspend fun getPairDayData(pairId: String): List<PairDayData> = sushiswapService.getPairDayData(pairId)
 
-    override fun getUserPoolings(user: String) = sushiswapService.getUserPoolings(user)
+    override suspend fun getUserPoolings(user: String) = sushiswapService.getUserPoolings(user)
 
     override fun getNetwork(): Network {
         return Network.POLYGON

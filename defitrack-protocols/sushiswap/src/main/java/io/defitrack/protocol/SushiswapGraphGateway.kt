@@ -1,24 +1,18 @@
 package io.defitrack.protocol
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.protocol.sushi.domain.PairDayData
 import io.defitrack.protocol.sushi.domain.SushiUser
 import io.defitrack.protocol.sushi.domain.SushiswapPair
+import io.defitrack.thegraph.GraphProvider
 import io.defitrack.thegraph.TheGraphGatewayProvider
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import java.util.*
 
 class SushiswapGraphGateway(
-    private val objectMapper: ObjectMapper,
-    endpoint: String,
+    url: String,
     graphGatewayProvider: TheGraphGatewayProvider,
-) {
+) : GraphProvider(url, graphGatewayProvider) {
 
-    val graph = graphGatewayProvider.createTheGraphGateway(endpoint)
-
-    fun getPairs(): List<SushiswapPair> = runBlocking(Dispatchers.IO) {
+    suspend fun getPairs(): List<SushiswapPair> {
         val query = """
         {
             pairs(first: 500, orderDirection: desc, orderBy: volumeUSD) {
@@ -40,14 +34,10 @@ class SushiswapGraphGateway(
         }
     """.trimIndent()
 
-        val poolSharesAsString = graph.performQuery(query).asJsonObject["pairs"].toString()
-        return@runBlocking objectMapper.readValue(poolSharesAsString,
-            object : TypeReference<List<SushiswapPair>>() {
-
-            })
+        return query(query, "pairs")
     }
 
-    fun getPairDayData(pairId: String): List<PairDayData> = runBlocking {
+    suspend fun getPairDayData(pairId: String): List<PairDayData> {
         val query = """
            {
                 pairDayDatas(first: 8, orderBy: date, orderDirection: desc where: {pair: "$pairId"}) {
@@ -57,16 +47,11 @@ class SushiswapGraphGateway(
             }
         """.trimIndent()
 
-        val data = graph.performQuery(query).asJsonObject["pairDayDatas"].toString()
-        return@runBlocking objectMapper.readValue(data,
-            object : TypeReference<List<PairDayData>>() {
-
-            })
+        return query(query, "pairDayDatas")
     }
 
-    fun getUserPoolings(user: String): List<SushiUser> {
-        return runBlocking {
-            val query = """
+    suspend fun getUserPoolings(user: String): List<SushiUser> {
+        val query = """
             { 
                 users(where: {id: "${user.lowercase(Locale.getDefault())}"}) {
                   id
@@ -93,11 +78,6 @@ class SushiswapGraphGateway(
                 }
             }
         """.trimIndent()
-            val data = graph.performQuery(query).asJsonObject["users"].toString()
-            return@runBlocking objectMapper.readValue(data,
-                object : TypeReference<List<SushiUser>>() {
-
-                })
-        }
+        return query(query, "users")
     }
 }

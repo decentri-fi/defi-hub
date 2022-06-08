@@ -1,23 +1,19 @@
 package io.defitrack.uniswap
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.common.network.Network
+import io.defitrack.thegraph.GraphProvider
 import io.defitrack.thegraph.TheGraphGatewayProvider
 import io.defitrack.uniswap.domain.PairDayData
 import io.defitrack.uniswap.domain.UniswapPair
 import io.github.reactivecircus.cache4k.Cache
-import kotlinx.coroutines.runBlocking
 import kotlin.time.Duration.Companion.days
 
 abstract class AbstractUniswapV2Service(
-    private val objectMapper: ObjectMapper,
+    url: String,
     graphGatewayProvider: TheGraphGatewayProvider
-) {
+) : GraphProvider(url, graphGatewayProvider) {
 
-    val gateway = graphGatewayProvider.createTheGraphGateway(getGraphUrl())
-
-    fun getPairDayData(pairId: String): List<PairDayData> = runBlocking {
+    suspend fun getPairDayData(pairId: String): List<PairDayData> {
         val query = """
            {
                 pairDayDatas(first: 8, orderBy: date, orderDirection: desc where: {pairAddress: "$pairId"}) {
@@ -27,19 +23,14 @@ abstract class AbstractUniswapV2Service(
             }
         """.trimIndent()
 
-        val response = gateway.performQuery(query)
-        val poolSharesAsString = response.asJsonObject["pairDayDatas"].toString()
-        return@runBlocking objectMapper.readValue(poolSharesAsString,
-            object : TypeReference<List<PairDayData>>() {
-
-            })
+        return query(query, "pairDayDatas")
     }
 
     private val pairCache =
         Cache.Builder().expireAfterWrite(1.days).build<String, List<UniswapPair>>()
 
-    fun getPairs(): List<UniswapPair> = runBlocking {
-        pairCache.get("all") {
+    suspend fun getPairs(): List<UniswapPair> {
+        return pairCache.get("all") {
             val query = """
             {
             	pairs(first: 500, orderDirection: desc, orderBy: reserveUSD) {
@@ -61,15 +52,8 @@ abstract class AbstractUniswapV2Service(
             }
         """.trimIndent()
 
-            val response = gateway.performQuery(query)
-            val poolSharesAsString = response.asJsonObject["pairs"].toString()
-            objectMapper.readValue(poolSharesAsString,
-                object : TypeReference<List<UniswapPair>>() {
-
-                })
+            query(query, "pairs")
         }
     }
-
-    abstract fun getGraphUrl(): String
     abstract fun getNetwork(): Network
 }

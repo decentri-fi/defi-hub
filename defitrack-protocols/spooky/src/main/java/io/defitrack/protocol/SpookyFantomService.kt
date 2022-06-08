@@ -10,13 +10,12 @@ import kotlin.time.Duration.Companion.days
 
 @Component
 class SpookyFantomService(
-    objectMapper: ObjectMapper,
     theGraphGatewayProvider: TheGraphGatewayProvider
 ) : SpookyswapService {
 
     private val spookyService = SpookyGraphGateway(
-        objectMapper,
-        theGraphGatewayProvider.createTheGraphGateway("https://api.thegraph.com/subgraphs/name/sushiswap/fantom-exchange"),
+        "https://api.thegraph.com/subgraphs/name/sushiswap/fantom-exchange",
+        theGraphGatewayProvider
     )
 
     fun getMasterchef() = "0x2b2929e785374c651a81a63878ab22742656dcdd"

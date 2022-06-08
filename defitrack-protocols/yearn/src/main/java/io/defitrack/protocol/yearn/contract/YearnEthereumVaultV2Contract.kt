@@ -1,4 +1,4 @@
-package io.defitrack.protocol.yearn
+package io.defitrack.protocol.yearn.contract
 
 import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.BlockchainGateway

@@ -1,17 +1,17 @@
 package io.defitrack.protocol
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.protocol.sushi.domain.PairDayData
 import io.defitrack.protocol.sushi.domain.SushiUser
 import io.defitrack.protocol.sushi.domain.SushiswapPair
-import io.defitrack.thegraph.TheGraphGateway
+import io.defitrack.thegraph.GraphProvider
+import io.defitrack.thegraph.TheGraphGatewayProvider
 import java.util.*
 
 class SpookyGraphGateway(
-    private val objectMapper: ObjectMapper,
-    private val theGraphGateway: TheGraphGateway
-) {
+    url: String,
+    theGraphGatewayProvider: TheGraphGatewayProvider
+
+) : GraphProvider(url, theGraphGatewayProvider) {
 
     suspend fun getPairs(): List<SushiswapPair> {
         val query = """
@@ -35,12 +35,7 @@ class SpookyGraphGateway(
         }
     """.trimIndent()
 
-        val poolSharesAsString = theGraphGateway.performQuery(query).asJsonObject["pairs"].toString()
-
-        return objectMapper.readValue(poolSharesAsString,
-            object : TypeReference<List<SushiswapPair>>() {
-
-            })
+        return query(query, "pairs")
     }
 
     suspend fun getPairDayData(pairId: String): List<PairDayData> {
@@ -53,11 +48,7 @@ class SpookyGraphGateway(
             }
         """.trimIndent()
 
-        val poolSharesAsString = theGraphGateway.performQuery(query).asJsonObject["pairDayDatas"].toString()
-        return objectMapper.readValue(poolSharesAsString,
-            object : TypeReference<List<PairDayData>>() {
-
-            })
+        return query(query, "pairDayDatas")
     }
 
     suspend fun getUserPoolings(user: String): List<SushiUser> {
@@ -89,10 +80,6 @@ class SpookyGraphGateway(
             }
         """.trimIndent()
 
-        val usersAsString = theGraphGateway.performQuery(query).asJsonObject["users"].toString()
-        return objectMapper.readValue(usersAsString,
-            object : TypeReference<List<SushiUser>>() {
-
-            })
+        return query(query, "users")
     }
 }

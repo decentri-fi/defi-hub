@@ -12,7 +12,6 @@ import kotlin.time.Duration.Companion.days
 
 @Component
 class SushiArbitrumService(
-    objectMapper: ObjectMapper,
     graphGatewayProvider: TheGraphGatewayProvider
 ) : SushiswapService {
 
@@ -21,7 +20,6 @@ class SushiArbitrumService(
     }
 
     private val sushiswapService = SushiswapGraphGateway(
-        objectMapper,
         "https://api.thegraph.com/subgraphs/name/sushiswap/arbitrum-exchange",
         graphGatewayProvider
     )
@@ -29,7 +27,7 @@ class SushiArbitrumService(
     private val pairCache =
         Cache.Builder().expireAfterWrite(1.days).build<String, List<SushiswapPair>>()
 
-    override fun getPairs(): List<SushiswapPair> {
+    override suspend fun getPairs(): List<SushiswapPair> {
         return runBlocking {
             pairCache.get("all") {
                 sushiswapService.getPairs()
@@ -37,9 +35,9 @@ class SushiArbitrumService(
         }
     }
 
-    override fun getPairDayData(pairId: String): List<PairDayData> = sushiswapService.getPairDayData(pairId)
+    override suspend fun getPairDayData(pairId: String): List<PairDayData> = sushiswapService.getPairDayData(pairId)
 
-    override fun getUserPoolings(user: String) = sushiswapService.getUserPoolings(user)
+    override suspend fun getUserPoolings(user: String) = sushiswapService.getUserPoolings(user)
 
     override fun getNetwork(): Network {
         return Network.ARBITRUM
