@@ -3,9 +3,8 @@ package io.defitrack.protocol
 import org.springframework.stereotype.Component
 
 @Component
-class StargateOptimismService : StargateService {
-
+class StargateBinanceService : StargateService {
     override fun getLpFarm(): String {
-        return "0x4a364f8c717cAAD9A442737Eb7b8A55cc6cf18D8"
+        return "0x3052A0F6ab15b4AE1df39962d5DdEFacA86DaB47"
     }
 }

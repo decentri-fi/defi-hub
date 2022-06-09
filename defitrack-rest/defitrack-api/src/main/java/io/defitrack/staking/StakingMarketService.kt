@@ -57,8 +57,8 @@ abstract class StakingMarketService : ProtocolService {
         rewardTokens: List<FungibleToken>,
         contractAddress: String,
         vaultType: String,
-        marketSize: BigDecimal = BigDecimal.ZERO,
-        rate: BigDecimal = BigDecimal.ZERO,
+        marketSize: BigDecimal? = null,
+        rate: BigDecimal? = null,
         balanceFetcher: StakingMarketBalanceFetcher? = null,
         investmentPreparer: InvestmentPreparer? = null
     ): StakingMarket {
