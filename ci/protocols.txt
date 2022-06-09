@@ -18,6 +18,7 @@ polycat
 polygon-protocol
 quickswap
 ribbon
+looksrare
 spirit
 spooky
 stargate
