@@ -1,6 +1,7 @@
 package io.defitrack.protocol.beefy.staking
 
 import io.defitrack.abi.ABIResource
+import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
@@ -13,8 +14,12 @@ import io.defitrack.staking.domain.StakingMarket
 import io.defitrack.staking.domain.StakingMarketBalanceFetcher
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenInformation
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.withContext
 import java.math.BigDecimal
+import java.math.BigInteger
 import java.math.RoundingMode
 
 abstract class BeefyStakingMarketService(
@@ -30,13 +35,14 @@ abstract class BeefyStakingMarketService(
         abiResource.getABI("beefy/VaultV6.json")
     }
 
-    override suspend fun fetchStakingMarkets(): List<StakingMarket> = withContext(Dispatchers.IO.limitedParallelism(5)) {
-        vaults.map {
-            async {
-                toStakingMarketElement(it)
-            }
-        }.awaitAll().filterNotNull()
-    }
+    override suspend fun fetchStakingMarkets(): List<StakingMarket> =
+        withContext(Dispatchers.IO.limitedParallelism(5)) {
+            vaults.map {
+                async {
+                    toStakingMarketElement(it)
+                }
+            }.awaitAll().filterNotNull()
+        }
 
     private suspend fun toStakingMarketElement(beefyVault: BeefyVault): StakingMarket? {
         return try {
@@ -64,10 +70,18 @@ abstract class BeefyStakingMarketService(
                     contract.address,
                     { user -> contract.balanceOfMethod(user) }
                 ),
+                underlyingBalanceFetcher = StakingMarketBalanceFetcher(
+                    contract.address,
+                    { user -> contract.balanceOfMethod(user) },
+                    extractBalance = { result ->
+                        ((result[0].value as BigInteger).times(contract.getPricePerFullShare)).dividePrecisely(
+                            BigDecimal.TEN.pow(18)
+                        ).toBigInteger()
+                    }
+                ),
                 investmentPreparer = BeefyStakingInvestmentPreparer(contract, erC20Resource)
             )
         } catch (ex: Exception) {
-            logger.error("Error trying to fetch vault metadata", ex)
             null
         }
     }

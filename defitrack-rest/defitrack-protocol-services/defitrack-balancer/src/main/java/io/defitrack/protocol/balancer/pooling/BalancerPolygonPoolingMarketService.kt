@@ -4,17 +4,17 @@ import io.defitrack.common.network.Network
 import io.defitrack.pool.PoolingMarketService
 import io.defitrack.pool.domain.PoolingMarketElement
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.balancer.BalancerPolygonService
+import io.defitrack.protocol.balancer.polygon.BalancerPolygonPoolGraphProvider
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 
 @Service
-class BalancerPolygonPoolingMarketService(private val balancerPolygonService: BalancerPolygonService) :
+class BalancerPolygonPoolingMarketService(private val balancerPolygonPoolGraphProvider: BalancerPolygonPoolGraphProvider) :
     PoolingMarketService() {
 
     override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> {
-        return balancerPolygonService.getPools().mapNotNull {
+        return balancerPolygonPoolGraphProvider.getPools().mapNotNull {
             if (it.totalLiquidity > BigDecimal.valueOf(100000)) {
                 PoolingMarketElement(
                     id = "balancer-polygon-${it.id}",

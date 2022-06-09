@@ -5,7 +5,7 @@ import com.github.michaelbull.retry.retry
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.price.hop.HopPriceService
-import io.defitrack.protocol.balancer.BalancerPolygonService
+import io.defitrack.protocol.balancer.polygon.BalancerPolygonPoolGraphProvider
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
@@ -19,7 +19,7 @@ import java.math.RoundingMode
 @Service
 class PriceCalculator(
     private val erc20Service: ERC20Resource,
-    private val balancerTokenService: BalancerPolygonService,
+    private val balancerTokenService: BalancerPolygonPoolGraphProvider,
     private val hopPriceService: HopPriceService,
     private val priceProvider: PriceProvider
 ) {
@@ -68,7 +68,7 @@ class PriceCalculator(
         }
     }
 
-    private fun calculateBalancerPrice(priceRequest: PriceRequest) =
+    private suspend fun calculateBalancerPrice(priceRequest: PriceRequest) =
         balancerTokenService.getPool(priceRequest.address)?.let { pool ->
             pool.totalLiquidity.divide(pool.totalShares, 18, RoundingMode.HALF_UP)
                 .times(priceRequest.amount)

@@ -3,14 +3,14 @@ package io.defitrack.erc20.protocolspecific
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.ERC20Service
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.balancer.BalancerPolygonService
+import io.defitrack.protocol.balancer.polygon.BalancerPolygonPoolGraphProvider
 import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 
 @Component
 class BalancerTokenService(
-    balancerPolygonService: BalancerPolygonService,
+    balancerPolygonService: BalancerPolygonPoolGraphProvider,
     private val erC20Service: ERC20Service
 ) {
 
@@ -18,7 +18,7 @@ class BalancerTokenService(
         Network.POLYGON to balancerPolygonService
     )
 
-    fun isBalancerToken(
+    suspend fun isBalancerToken(
         address: String,
         network: Network
     ): Boolean {
@@ -27,7 +27,7 @@ class BalancerTokenService(
         } ?: false
     }
 
-    fun getBalancerService(network: Network): BalancerPolygonService? {
+    fun getBalancerService(network: Network): BalancerPolygonPoolGraphProvider? {
         return balancerServices[network]
     }
 

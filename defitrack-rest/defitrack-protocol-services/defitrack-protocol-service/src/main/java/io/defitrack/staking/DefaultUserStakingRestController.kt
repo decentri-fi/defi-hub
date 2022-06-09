@@ -78,11 +78,13 @@ class DefaultUserStakingRestController(
 
     suspend fun StakingPosition.toVO(): StakingElementVO {
 
+        val stakedAmount = underlyingAmount ?: amount
+
         val stakedInDollars = priceResource.calculatePrice(
             PriceRequest(
                 address = market.stakedToken.address,
                 network = market.network,
-                amount = amount.asEth(market.stakedToken.decimals),
+                amount = stakedAmount.asEth(market.stakedToken.decimals),
                 type = market.stakedToken.type
             )
         )
@@ -98,7 +100,8 @@ class DefaultUserStakingRestController(
             contractAddress = market.contractAddress,
             stakedToken = market.stakedToken,
             rewardTokens = market.rewardTokens,
-            amount = amount.asEth(market.stakedToken.decimals).toDouble()
+            amount = amount.asEth(market.stakedToken.decimals).toDouble(),
+            underlyingAmount = underlyingAmount?.asEth(market.stakedToken.decimals)?.toDouble()
         )
     }
 

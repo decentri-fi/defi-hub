@@ -1,16 +1,16 @@
-package io.defitrack.protocol.balancer
+package io.defitrack.protocol.balancer.polygon
 
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.JsonParser
-import io.defitrack.protocol.balancer.domain.LiquidityGauge
+import io.defitrack.protocol.balancer.Pool
+import io.defitrack.protocol.balancer.PoolShare
 import io.defitrack.protocol.balancer.domain.LiquidityMiningReward
+import io.defitrack.thegraph.GraphProvider
 import io.defitrack.thegraph.TheGraphGatewayProvider
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import java.util.*
@@ -18,16 +18,14 @@ import java.util.stream.IntStream
 import kotlin.streams.toList
 
 @Component
-class BalancerPolygonService(
+class BalancerPolygonPoolGraphProvider(
     private val objectMapper: ObjectMapper,
     private val httpClient: HttpClient,
     theGraphGatewayProvider: TheGraphGatewayProvider,
+) : GraphProvider(
+    "https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-polygon-v2-beta",
+    theGraphGatewayProvider
 ) {
-
-    private val graph =
-        theGraphGatewayProvider.createTheGraphGateway("https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-polygon-v2-beta")
-    private val gaugeGraph =
-        theGraphGatewayProvider.createTheGraphGateway("https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-gauges-polygon")
 
     companion object {
         val lmTokens = listOf(
@@ -87,23 +85,8 @@ class BalancerPolygonService(
         }
     }
 
-    fun getGauges(): List<LiquidityGauge> = runBlocking {
-        val query = """
-            {
-            	liquidityGauges {
-                poolAddress
-                id
-              }
-            }
-        """.trimIndent()
-        val pools = gaugeGraph.performQuery(query).asJsonObject["liquidityGauges"].toString()
-        objectMapper.readValue(pools,
-            object : TypeReference<List<LiquidityGauge>>() {
 
-            })
-    }
-
-    fun getPools(): List<Pool> = runBlocking {
+    suspend fun getPools(): List<Pool> {
         val query = """
             {
                pools(first: 50, orderBy: totalLiquidity, orderDirection: desc) {
@@ -125,14 +108,10 @@ class BalancerPolygonService(
             }
         """.trimIndent()
 
-        val pools = graph.performQuery(query).asJsonObject["pools"].toString()
-        return@runBlocking objectMapper.readValue(pools,
-            object : TypeReference<List<Pool>>() {
-
-            })
+        return query(query, "pools")
     }
 
-    fun getPool(poolAddress: String): Pool? = runBlocking {
+    suspend fun getPool(poolAddress: String): Pool? {
         val query = """
             {
               pools(where: {address: "$poolAddress"}) {
@@ -154,14 +133,10 @@ class BalancerPolygonService(
             }
         """.trimIndent()
 
-        val pools = graph.performQuery(query).asJsonObject["pools"].toString()
-        return@runBlocking objectMapper.readValue(pools,
-            object : TypeReference<List<Pool>>() {
-
-            }).firstOrNull()
+        return query<List<Pool>>(query, "pools").firstOrNull()
     }
 
-    fun getBalances(address: String): List<PoolShare> = runBlocking(Dispatchers.IO) {
+    suspend fun getBalances(address: String): List<PoolShare> {
         val query = """
             {
               poolShares(where: {userAddress: "${address.lowercase(Locale.getDefault())}"}) {
@@ -189,10 +164,6 @@ class BalancerPolygonService(
            }
         """.trimIndent()
 
-        val poolShares = graph.performQuery(query).asJsonObject["poolShares"].toString()
-        return@runBlocking objectMapper.readValue(poolShares,
-            object : TypeReference<List<PoolShare>>() {
-
-            })
+        return query(query, "poolShares")
     }
 }

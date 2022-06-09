@@ -5,17 +5,17 @@ import io.defitrack.pool.UserPoolingService
 import io.defitrack.pool.domain.PoolingElement
 import io.defitrack.pool.domain.PoolingMarketElement
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.balancer.BalancerPolygonService
+import io.defitrack.protocol.balancer.polygon.BalancerPolygonPoolGraphProvider
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
 @Component
-class BalancerPolygonUserPoolingService(private val balancerPolygonService: BalancerPolygonService) :
+class BalancerPolygonUserPoolingService(private val balancerPolygonPoolGraphProvider: BalancerPolygonPoolGraphProvider) :
     UserPoolingService() {
 
     override suspend fun fetchUserPoolings(address: String): List<PoolingElement> {
-        val poolShares = balancerPolygonService.getBalances(address).filter {
+        val poolShares = balancerPolygonPoolGraphProvider.getBalances(address).filter {
             it.balance > BigDecimal.ZERO
         }
 

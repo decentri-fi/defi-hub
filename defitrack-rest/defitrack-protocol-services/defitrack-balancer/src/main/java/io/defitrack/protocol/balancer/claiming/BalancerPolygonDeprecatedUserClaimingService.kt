@@ -4,7 +4,7 @@ import io.defitrack.claimable.Claimable
 import io.defitrack.claimable.ClaimableService
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.balancer.BalancerPolygonService
+import io.defitrack.protocol.balancer.polygon.BalancerPolygonPoolGraphProvider
 import io.defitrack.protocol.balancer.domain.LiquidityMiningReward
 import io.defitrack.token.ERC20Resource
 import io.github.reactivecircus.cache4k.Cache
@@ -14,7 +14,7 @@ import org.springframework.scheduling.annotation.Scheduled
 import kotlin.time.Duration.Companion.days
 
 class BalancerPolygonDeprecatedUserClaimingService(
-    private val balancerPolygonService: BalancerPolygonService,
+    private val balancerPolygonPoolGraphProvider: BalancerPolygonPoolGraphProvider,
     private val erC20Resource: ERC20Resource
 ) : ClaimableService {
 
@@ -58,7 +58,7 @@ class BalancerPolygonDeprecatedUserClaimingService(
 
     private fun getAll() = runBlocking {
         cache.get("all") {
-            balancerPolygonService.getDeprecatedRewards()
+            balancerPolygonPoolGraphProvider.getDeprecatedRewards()
         }
     }
 

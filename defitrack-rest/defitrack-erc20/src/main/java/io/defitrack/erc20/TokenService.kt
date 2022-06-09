@@ -40,7 +40,7 @@ class TokenService(
         }
     }
 
-    fun getType(lp: LPTokenContract): TokenType = when {
+    suspend fun getType(lp: LPTokenContract): TokenType = when {
         lp.symbol == "SLP" -> {
             TokenType.SUSHISWAP
         }
@@ -76,7 +76,7 @@ class TokenService(
         }
     }
 
-    private fun isBalancerLp(address: String, network: Network): Boolean {
+    private suspend fun isBalancerLp(address: String, network: Network): Boolean {
         return balancerTokenService.isBalancerToken(address, network)
     }
 

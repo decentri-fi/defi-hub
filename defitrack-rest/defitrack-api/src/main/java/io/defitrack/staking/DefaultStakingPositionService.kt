@@ -26,9 +26,21 @@ abstract class DefaultStakingPositionService(
             val balance = market.balanceFetcher!!.extractBalance(retVal)
 
             if (balance > BigInteger.ONE) {
+
+                val underlyingBalance = market.underlyingBalanceFetcher?.let {
+                    try {
+                        val underlyingRetVal =
+                            gateway.getGateway(getNetwork()).executeCall(it.address, it.function(address))
+                        it.extractBalance(underlyingRetVal)
+                    } catch (ex: Exception) {
+                        null
+                    }
+                }
+
                 StakingPosition(
                     market,
-                    balance
+                    balance,
+                    underlyingBalance
                 )
             } else {
                 null

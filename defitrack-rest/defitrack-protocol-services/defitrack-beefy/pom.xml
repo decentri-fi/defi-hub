@@ -25,6 +25,18 @@
             <groupId>io.defitrack</groupId>
             <artifactId>fantom</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>polygon</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>arbitrum</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>binance</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
