@@ -1,4 +1,4 @@
-package io.defitrack.protocol.curve.staking
+package io.defitrack.protocol.curve.pooling
 
 import io.defitrack.common.network.Network
 import io.defitrack.pool.PoolingMarketService
