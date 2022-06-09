@@ -15,6 +15,7 @@ humandao
 idex
 mstable
 polycat
+polygon-protocol
 quickswap
 ribbon
 spirit

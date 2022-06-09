@@ -8,6 +8,12 @@ enum class Protocol(
     val enabled: Boolean = true
 ) {
 
+    POLYGON(
+        logo = "polygon.png",
+        slug = "polygon_protocol",
+        website = "https://polygon.technology",
+        primitives = listOf(DefiPrimitive.FARMING),
+    ),
     AAVE(
         logo = "aave.png",
         slug = "aave",

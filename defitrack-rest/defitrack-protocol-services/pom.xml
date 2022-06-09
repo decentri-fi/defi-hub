@@ -32,6 +32,7 @@
         <module>defitrack-idex</module>
         <module>defitrack-mstable</module>
         <module>defitrack-polycat</module>
+        <module>defitrack-polygon-protocol</module>
         <module>defitrack-quickswap</module>
         <module>defitrack-sushiswap</module>
         <module>defitrack-ribbon</module>
