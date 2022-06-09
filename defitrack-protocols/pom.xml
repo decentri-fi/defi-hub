@@ -28,6 +28,7 @@
         <module>spirit</module>
         <module>spooky</module>
         <module>dmm</module>
+        <module>iron-bank</module>
         <module>idex</module>
         <module>quickswap</module>
         <module>sushiswap</module>

@@ -51,6 +51,11 @@
             </dependency>
             <dependency>
                 <groupId>io.defitrack</groupId>
+                <artifactId>iron-bank</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.defitrack</groupId>
                 <artifactId>beefy</artifactId>
                 <version>${project.version}</version>
             </dependency>
