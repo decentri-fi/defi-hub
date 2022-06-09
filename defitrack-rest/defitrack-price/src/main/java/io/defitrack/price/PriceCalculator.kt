@@ -4,12 +4,11 @@ import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.retry
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
-import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.price.hop.HopPriceService
 import io.defitrack.protocol.balancer.BalancerPolygonService
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -20,24 +19,20 @@ import java.math.RoundingMode
 @Service
 class PriceCalculator(
     private val erc20Service: ERC20Resource,
-    private val beefyPriceService: BeefyPricesService,
-    private val coinGeckoPriceService: CoinGeckoPriceService,
     private val balancerTokenService: BalancerPolygonService,
-    private val externalPriceServices: List<ExternalPriceService>
+    private val hopPriceService: HopPriceService,
+    private val priceProvider: PriceProvider
 ) {
 
     val logger = LoggerFactory.getLogger(this::class.java)
 
-    val synonyms = mapOf(
-        "WETH" to "ETH",
-        "WMATIC" to "MATIC",
-        "miMATIC" to "MAI",
-        "WBTC" to "BTC"
-    )
-
     fun calculatePrice(
         priceRequest: PriceRequest?
     ): Double {
+        if (priceRequest?.amount == BigDecimal.ZERO) {
+            return 0.0
+        }
+
         return runBlocking {
             retry(limitAttempts(5)) {
                 if (priceRequest == null) {
@@ -53,6 +48,9 @@ class PriceCalculator(
                     }
                     tokenType == TokenType.BALANCER -> {
                         calculateBalancerPrice(priceRequest)
+                    }
+                    tokenType == TokenType.HOP -> {
+                        hopPriceService.calculateHopPrice(priceRequest)
                     }
                     else -> {
                         calculateTokenWorth(
@@ -75,6 +73,7 @@ class PriceCalculator(
             pool.totalLiquidity.divide(pool.totalShares, 18, RoundingMode.HALF_UP)
                 .times(priceRequest.amount)
         } ?: BigDecimal.ZERO
+
 
     private fun calculateLpPrice(
         priceRequest: PriceRequest,
@@ -99,18 +98,10 @@ class PriceCalculator(
         symbol: String,
         amount: BigDecimal,
     ): BigDecimal {
-        val tokenPrice = getPrice(symbol)
+        val tokenPrice = priceProvider.getPrice(symbol)
         return amount.times(tokenPrice)
     }
 
-    fun getPrice(symbol: String): BigDecimal {
-        return externalPriceServices.find {
-            it.appliesTo(symbol)
-        }?.getPrice() ?: beefyPriceService.getPrices()
-            .getOrDefault(synonyms.getOrDefault(symbol.uppercase(), symbol.uppercase()), null) ?: runBlocking(
-            Dispatchers.IO
-        ) { coinGeckoPriceService.getPrice(symbol) } ?: BigDecimal.ZERO
-    }
 
     fun calculateLPWorth(
         network: Network,
@@ -121,11 +112,11 @@ class PriceCalculator(
     ): BigDecimal {
 
         val userShare = userLPAmount.dividePrecisely(
-                totalLPAmount.dividePrecisely(BigDecimal.TEN.pow(18))
-            )
+            totalLPAmount.dividePrecisely(BigDecimal.TEN.pow(18))
+        )
 
         return underlyingTokens.map { underlyingToken ->
-            val price = getPrice(underlyingToken.symbol)
+            val price = priceProvider.getPrice(underlyingToken.symbol)
             val underlyingTokenBalance = erc20Service.getBalance(network, underlyingToken.address, lpAddress)
             val userTokenAmount = underlyingTokenBalance.toBigDecimal().times(userShare)
 

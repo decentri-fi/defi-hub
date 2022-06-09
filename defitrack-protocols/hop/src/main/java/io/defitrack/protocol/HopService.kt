@@ -107,6 +107,7 @@ class HopService(
                     HopLpToken(
                         lpToken = it.value.asJsonObject["l2SaddleLpToken"].asString,
                         hToken = it.value.asJsonObject["l2HopBridgeToken"].asString,
+                        swapAddress = it.value.asJsonObject["l2SaddleSwap"].asString,
                         canonicalToken = it.value.asJsonObject["l2CanonicalToken"].asString,
                     )
                 }

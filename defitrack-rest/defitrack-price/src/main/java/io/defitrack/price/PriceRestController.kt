@@ -5,11 +5,14 @@ import java.math.BigDecimal
 
 @RestController
 @RequestMapping("/")
-class PriceRestController(private val priceCalculator: PriceCalculator) {
+class PriceRestController(
+    private val priceCalculator: PriceCalculator,
+    private val priceProvider: PriceProvider
+) {
 
     @GetMapping("/{tokenName}")
     fun getPriceByName(@PathVariable("tokenName") tokenName: String): BigDecimal {
-        return priceCalculator.getPrice(tokenName)
+        return priceProvider.getPrice(tokenName)
     }
 
     @PostMapping

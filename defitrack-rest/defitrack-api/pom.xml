@@ -25,14 +25,6 @@
             <artifactId>evm</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.defitrack</groupId>
-            <artifactId>balancer</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
-            <artifactId>quickswap</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
