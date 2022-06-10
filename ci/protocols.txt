@@ -9,7 +9,7 @@ curve
 dfyn
 dinoswap
 dodo
-dmm
+kyberswap
 hop
 humandao
 idex
