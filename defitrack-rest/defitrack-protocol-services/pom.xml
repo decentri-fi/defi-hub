@@ -23,6 +23,7 @@
         <module>defitrack-curve</module>
         <module>defitrack-dfyn</module>
         <module>defitrack-dinoswap</module>
+        <module>defitrack-iron-bank</module>
         <module>defitrack-dodo</module>
         <module>defitrack-dmm</module>
         <module>defitrack-hop</module>

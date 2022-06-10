@@ -18,6 +18,13 @@ enum class Protocol(
         primitives = listOf(DefiPrimitive.FARMING),
         networks = listOf(Network.ETHEREUM)
     ),
+    IRON_BANK(
+        logo = "iron-bank.png",
+        slug = "iron_bank",
+        website = "https://ib.xyz/",
+        primitives = listOf(DefiPrimitive.LENDING, DefiPrimitive.BORROWING),
+        networks = listOf(Network.ETHEREUM, Network.AVALANCHE, Network.FANTOM)
+    ),
     AAVE(
         logo = "aave.png",
         slug = "aave",
