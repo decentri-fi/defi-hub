@@ -106,12 +106,12 @@
             </dependency>
             <dependency>
                 <groupId>io.defitrack</groupId>
-                <artifactId>dmm-polygon</artifactId>
+                <artifactId>kyberswap-polygon</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.defitrack</groupId>
-                <artifactId>dmm-ethereum</artifactId>
+                <artifactId>kyberswap-ethereum</artifactId>
                 <version>${project.version}</version>
             </dependency>            <dependency>
                 <groupId>io.defitrack</groupId>

@@ -130,9 +130,9 @@ enum class Protocol(
         primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
         networks = listOf(Network.POLYGON, Network.AVALANCHE, Network.ARBITRUM, Network.FANTOM, Network.ETHEREUM)
     ),
-    DMM(
+    KYBER_SWAP(
         logo = "dmm.png",
-        slug = "dmm",
+        slug = "kyberswap",
         website = "https://kyberswap.com",
         primitives = listOf(DefiPrimitive.POOLING),
         networks = listOf(Network.ETHEREUM, Network.POLYGON)
