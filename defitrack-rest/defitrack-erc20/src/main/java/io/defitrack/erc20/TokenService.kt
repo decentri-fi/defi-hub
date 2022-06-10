@@ -109,7 +109,7 @@ class TokenService(
                     fromLP(Protocol.SPIRITSWAP, network, token)
                 }
                 isKyberDMMLP(token.symbol) -> {
-                    fromLP(Protocol.DMM, network, token)
+                    fromLP(Protocol.KYBER_SWAP, network, token)
                 }
                 isBalancerLp(token.address, network) -> {
                     balancerTokenService.getTokenInformation(token.address, network)

@@ -5,7 +5,7 @@ import io.defitrack.thegraph.TheGraphGatewayProvider
 import org.springframework.stereotype.Service
 
 @Service
-class DMMEthereumGraphProvider(
+class KyberswapEthereumGraphProvider(
     graphGatewayProvider: TheGraphGatewayProvider,
 ) : GraphProvider(
     "https://api.thegraph.com/subgraphs/name/dynamic-amm/dynamic-amm",

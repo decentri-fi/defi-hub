@@ -5,7 +5,7 @@ import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 
 @Service
-class DMMEthereumUserPoolingService(
-    dmmEthereumPoolingMarketService: DMMEthereumPoolingMarketService,
+class KyberswapPolygonPoolingPositionProvider(
+    kyberswapPolygonPoolingMarketProvider: KyberswapPolygonPoolingMarketProvider,
     erC20Resource: ERC20Resource
-) : StandardLpPositionProvider(dmmEthereumPoolingMarketService, erC20Resource)
+) : StandardLpPositionProvider(kyberswapPolygonPoolingMarketProvider, erC20Resource)

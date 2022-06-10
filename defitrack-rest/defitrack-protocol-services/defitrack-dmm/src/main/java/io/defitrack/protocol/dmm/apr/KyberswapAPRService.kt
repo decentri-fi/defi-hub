@@ -1,7 +1,7 @@
 package io.defitrack.protocol.dmm.apr
 
 import io.defitrack.common.network.Network
-import io.defitrack.protocol.dmm.DMMEthereumGraphProvider
+import io.defitrack.protocol.dmm.KyberswapEthereumGraphProvider
 import io.defitrack.protocol.dmm.DMMPairDayData
 import io.defitrack.protocol.dmm.DMMPolygonGraphProvider
 import io.defitrack.protocol.dmm.DMMPool
@@ -12,9 +12,9 @@ import java.math.RoundingMode
 import kotlin.time.Duration.Companion.hours
 
 @Component
-class DMMAPRService(
+class KyberswapAPRService(
     private val dmmPolygonGraphProvider: DMMPolygonGraphProvider,
-    private val dmmEthereumGraphProvider: DMMEthereumGraphProvider
+    private val kyberswapEthereumGraphProvider: KyberswapEthereumGraphProvider
 ) {
 
     val cache = Cache.Builder().expireAfterWrite(10.hours).build<String, BigDecimal>()
@@ -47,7 +47,7 @@ class DMMAPRService(
     private suspend fun getPairData(address: String, network: Network): List<DMMPairDayData> {
         return when (network) {
             Network.POLYGON -> dmmPolygonGraphProvider.getPairDayData(address)
-            Network.ETHEREUM -> return dmmEthereumGraphProvider.getPairDayData(address)
+            Network.ETHEREUM -> return kyberswapEthereumGraphProvider.getPairDayData(address)
             else -> emptyList()
         }
     }
@@ -55,7 +55,7 @@ class DMMAPRService(
     suspend fun getPools(network: Network): List<DMMPool> {
         return when (network) {
             Network.POLYGON -> return dmmPolygonGraphProvider.getPoolingMarkets()
-            Network.ETHEREUM -> return dmmEthereumGraphProvider.getPoolingMarkets()
+            Network.ETHEREUM -> return kyberswapEthereumGraphProvider.getPoolingMarkets()
             else -> emptyList()
         }
     }
