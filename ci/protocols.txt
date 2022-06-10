@@ -19,6 +19,7 @@ polygon-protocol
 quickswap
 ribbon
 looksrare
+iron-bank
 spirit
 spooky
 stargate
