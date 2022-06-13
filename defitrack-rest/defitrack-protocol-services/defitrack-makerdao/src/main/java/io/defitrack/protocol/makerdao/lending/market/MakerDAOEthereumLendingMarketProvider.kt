@@ -9,19 +9,19 @@ import io.defitrack.lending.domain.LendingMarket
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.makerdao.v3.MakerDAODataProvider
-import io.defitrack.protocol.makerdao.v3.contract.PoolContract
-import io.defitrack.protocol.makerdao.v3.contract.PoolDataProvider
-import io.defitrack.protocol.makerdao.v3.lending.invest.MakerDAOLendingInvestmentPreparer
+import io.defitrack.protocol.makerdao.MakerDAODataProvider
+import io.defitrack.protocol.makerdao.contract.PoolContract
+import io.defitrack.protocol.makerdao.contract.PoolDataProvider
+import io.defitrack.protocol.makerdao.lending.invest.MakerDAOLendingInvestmentPreparer
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Component
 
 @Component
-class MakerDAOLendingMarketProvider(
+class MakerDAOEthereumLendingMarketProvider(
     contractAccessorGateway: ContractAccessorGateway,
     private val abiResource: ABIResource,
     private val erC20Resource: ERC20Resource,
-    private val makerDAODataProvider: MakerDAODataProvider,
+    private val makerDAODataProvider: MakerDAOEthereumDataProvider,
     private val priceResource: PriceResource
 ) : LendingMarketService() {
 
