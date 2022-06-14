@@ -27,7 +27,7 @@ class DefaultUserPoolingRestController(
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     @GetMapping("/{userId}/positions")
-    fun getUserPoolings(@PathVariable("userId") address: String): List<PoolingElementVO> = runBlocking{
+    fun getUserPoolings(@PathVariable("userId") address: String): List<PoolingElementVO> = runBlocking {
         userPoolingServices.map {
             async {
                 try {

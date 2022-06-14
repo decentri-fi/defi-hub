@@ -1,10 +1,8 @@
 package io.defitrack.pool
 
 import io.defitrack.common.network.Network
-import io.defitrack.network.toVO
-import io.defitrack.pool.domain.PoolingMarketElement
 import io.defitrack.pool.vo.PoolingMarketVO
-import io.defitrack.protocol.toVO
+import io.defitrack.pool.vo.PoolingMarketVO.Companion.toVO
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import org.slf4j.Logger
@@ -18,7 +16,6 @@ class DefaultPoolingMarketRestController(
     private val poolingMarketServices: List<PoolingMarketService>,
     private val erC20Resource: ERC20Resource
 ) {
-
     companion object {
         val logger: Logger = LoggerFactory.getLogger(this::class.java)
     }
@@ -96,17 +93,4 @@ class DefaultPoolingMarketRestController(
                 }
             }.map { it.toVO() }
     }
-
-    fun PoolingMarketElement.toVO() =
-        PoolingMarketVO(
-            name = name,
-            protocol = protocol.toVO(),
-            network = network.toVO(),
-            tokens = tokens,
-            id = id,
-            address = address,
-            apr = apr,
-            marketSize = marketSize,
-            prepareInvestmentSupported = investmentPreparer != null
-        )
 }

@@ -18,4 +18,19 @@ data class PoolingMarketVO(
     val apr: BigDecimal?,
     val marketSize: BigDecimal?,
     val prepareInvestmentSupported: Boolean
-)
+) {
+    companion object {
+        fun PoolingMarketElement.toVO() =
+            PoolingMarketVO(
+                name = name,
+                protocol = protocol.toVO(),
+                network = network.toVO(),
+                tokens = tokens,
+                id = id,
+                address = address,
+                apr = apr,
+                marketSize = marketSize,
+                prepareInvestmentSupported = investmentPreparer != null
+            )
+    }
+}
