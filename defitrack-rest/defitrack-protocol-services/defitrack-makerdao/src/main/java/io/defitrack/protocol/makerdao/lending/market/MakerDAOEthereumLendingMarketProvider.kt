@@ -17,24 +17,25 @@ import org.springframework.stereotype.Component
 
 @Component
 class MakerDAOEthereumLendingMarketProvider(
-    contractAccessorGateway: ContractAccessorGateway,
-    private val erC20Resource: ERC20Resource,
-    private val makerDAOEthereumGraphProvider: makerDAOEthereumGraphProvider,
+    private val erc20Resource: ERC20Resource,
+    private val makerDAOEthereumGraphProvider: MakerDAOEthereumGraphProvider,
     private val priceResource: PriceResource
 ) : LendingMarketService() {
 
-    override suspend fun fetchLendingMarkets(): List<LendingMarket>  = coroutineScope {
+    override suspend fun fetchLendingMarkets(): List<LendingMarket> = coroutineScope {
         makerDAOEthereumGraphProvider.getLendingMarkets().map {
             async {
                 try {
                     val token = erc20Resource.getTokenInformation(getNetwork(), it.id)
-                    val token0 = erc20Resource.getTokenInformation(getNetwork(), it.token0.id)
-                    val token1 = erc20Resource.getTokenInformation(getNetwork(), it.token1.id)
 
                     LendingMarket(
                         id = "makerdao-ethereum-${it.id}",
                         network = getNetwork(),
                         protocol = getProtocol(),
+                        address = "a",
+                        name = "b",
+                        poolType = "c",
+                        token = token.toFungibleToken()
                     )
                 } catch (ex: Exception) {
                     ex.printStackTrace()
