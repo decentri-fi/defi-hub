@@ -9,7 +9,7 @@ import io.defitrack.lending.domain.LendingMarket
 class MakerDAOEthereumGraphProvider(
     graphGatewayProvider: TheGraphGatewayProvider,
 ) : GraphProvider(
-    "https://api.thegraph.com/subgraphs/name/dynamic-amm/dynamic-amm",
+    "https://api.thegraph.com/subgraphs/name/messari/makerdao-ethereum",
     graphGatewayProvider
 ) {
 
