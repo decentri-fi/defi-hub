@@ -2,7 +2,7 @@ package io.defitrack.protocol.mstable.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.mstable.contract.MStableEthereumBoostedSavingsVaultContract
 import io.defitrack.protocol.mstable.MStableEthereumService
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class MStableEthereumStakingMarketService(
-    private val contractAccessorGateway: ContractAccessorGateway,
+    private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val mStableEthereumService: MStableEthereumService,
     private val abiResource: ABIResource,
     private val erC20Resource: ERC20Resource
@@ -28,7 +28,7 @@ class MStableEthereumStakingMarketService(
     }
 
     override suspend fun fetchStakingMarkets(): List<StakingMarket> = coroutineScope{
-        val gateway = contractAccessorGateway.getGateway(getNetwork())
+        val gateway = blockchainGatewayProvider.getGateway(getNetwork())
 
         mStableEthereumService.getBoostedSavingsVaults().map {
             MStableEthereumBoostedSavingsVaultContract(

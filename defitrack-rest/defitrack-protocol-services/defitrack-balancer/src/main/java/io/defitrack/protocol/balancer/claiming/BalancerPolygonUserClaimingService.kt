@@ -5,7 +5,7 @@ import io.defitrack.claimable.Claimable
 import io.defitrack.claimable.ClaimableService
 import io.defitrack.claimable.PrepareClaimCommand
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerGaugeContract
 import io.defitrack.protocol.balancer.staking.BalancerPolygonStakingMarketService
@@ -20,7 +20,7 @@ import java.util.*
 @Service
 class BalancerPolygonUserClaimingService(
     private val balancerPolygonStakingMarketService: BalancerPolygonStakingMarketService,
-    private val contractAccessorGateway: ContractAccessorGateway,
+    private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val erC20Resource: ERC20Resource,
     abiResource: ABIResource
 ) : ClaimableService {
@@ -38,7 +38,7 @@ class BalancerPolygonUserClaimingService(
             balancerPolygonStakingMarketService.getStakingMarkets().flatMap { liquidityGauge ->
                 try {
                     val gaugeContract = BalancerGaugeContract(
-                        contractAccessorGateway.getGateway(getNetwork()),
+                        blockchainGatewayProvider.getGateway(getNetwork()),
                         gaugeContractAbi,
                         liquidityGauge.id
                     )

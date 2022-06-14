@@ -1,7 +1,7 @@
 package io.defitrack.protocol.dinoswap.staking
 
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.staking.StakingPositionService
 import io.defitrack.staking.domain.StakingPosition
@@ -13,14 +13,14 @@ import java.math.BigInteger
 class DinoswapStakingPositionService(
     private val dinoswapStakingMarketService: DinoswapStakingMarketService,
     erC20Resource: ERC20Resource,
-    private val contractAccessorGateway: ContractAccessorGateway
+    private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) : StakingPositionService(erC20Resource) {
 
 
     override suspend fun getStakings(address: String): List<StakingPosition> {
         val markets = dinoswapStakingMarketService.getStakingMarkets()
 
-        return contractAccessorGateway.getGateway(getNetwork()).readMultiCall(
+        return blockchainGatewayProvider.getGateway(getNetwork()).readMultiCall(
             markets.map {
                 it.balanceFetcher!!.toMulticall(address)
             }

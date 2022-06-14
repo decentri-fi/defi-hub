@@ -3,7 +3,7 @@ package io.defitrack.erc20.protocolspecific
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.ERC20Service
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.HopService
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.contract.HopLpTokenContract
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component
 @Component
 class HopTokenService(
     private val abiResource: ABIResource,
-    private val contractAccessorGateway: ContractAccessorGateway,
+    private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val hopService: HopService,
     private val erC20Service: ERC20Service
 ) {
@@ -28,7 +28,7 @@ class HopTokenService(
         }!!.let { hopLpToken ->
 
             val saddleToken = HopLpTokenContract(
-                blockchainGateway = contractAccessorGateway.getGateway(network),
+                blockchainGateway = blockchainGatewayProvider.getGateway(network),
                 abiResource.getABI("hop/SaddleToken.json"),
                 address
             )

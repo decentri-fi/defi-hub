@@ -3,7 +3,7 @@ package io.defitrack.staking
 import io.defitrack.abi.ABIResource
 import io.defitrack.apr.MinichefStakingAprCalculator
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SpiritFantomService
@@ -20,12 +20,12 @@ class SpiritFantomStakingMarketService(
     private val abiResource: ABIResource,
     private val erC20Resource: ERC20Resource,
     private val priceResource: PriceResource,
-    private val contractAccessorGateway: ContractAccessorGateway
+    private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) : StakingMarketService() {
 
     override suspend fun fetchStakingMarkets(): List<StakingMarket> {
         val masterchef = MasterchefLpContract(
-            contractAccessorGateway.getGateway(getNetwork()),
+            blockchainGatewayProvider.getGateway(getNetwork()),
             abiResource.getABI("spirit/Masterchef.json"),
             spiritFantomService.getMasterchef()
         )

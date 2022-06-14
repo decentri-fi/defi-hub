@@ -5,7 +5,7 @@ import io.defitrack.claimable.Claimable
 import io.defitrack.claimable.ClaimableService
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
@@ -19,7 +19,7 @@ import java.math.BigInteger
 @Service
 class QuickswapClaimableService(
     private val quickswapService: QuickswapService,
-    private val contractAccessorGateway: ContractAccessorGateway,
+    private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val abiService: ABIResource,
     private val erC20Resource: ERC20Resource
 ) : ClaimableService {
@@ -29,7 +29,7 @@ class QuickswapClaimableService(
     }
 
     override suspend fun claimables(address: String): List<Claimable> {
-        val gateway = contractAccessorGateway.getGateway(getNetwork())
+        val gateway = blockchainGatewayProvider.getGateway(getNetwork())
 
         val pools = quickswapService.getVaultAddresses().map {
             QuickswapRewardPoolContract(

@@ -11,6 +11,13 @@ enum class Protocol(
     val networks: List<Network>
 ) {
 
+    BANCOR(
+        logo = "bancor.png",
+        slug = "bancor",
+        website = "https://bancor.network",
+        primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
+        networks = listOf(Network.ETHEREUM)
+    ),
     POLYGON(
         logo = "polygon.png",
         slug = "polygon_protocol",

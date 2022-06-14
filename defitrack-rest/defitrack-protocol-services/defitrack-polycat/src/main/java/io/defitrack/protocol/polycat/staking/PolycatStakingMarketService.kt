@@ -3,7 +3,7 @@ package io.defitrack.protocol.polycat.staking
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
@@ -22,7 +22,7 @@ class PolycatStakingMarketService(
     private val abiResource: ABIResource,
     private val erC20Resource: ERC20Resource,
     private val priceResource: PriceResource,
-    private val contractAccessorGateway: ContractAccessorGateway
+    private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) : StakingMarketService() {
 
     val masterChefABI by lazy {
@@ -32,7 +32,7 @@ class PolycatStakingMarketService(
     override suspend fun fetchStakingMarkets(): List<StakingMarket> {
         return polycatService.getPolycatFarms().map {
             PolycatMasterChefContract(
-                contractAccessorGateway.getGateway(getNetwork()),
+                blockchainGatewayProvider.getGateway(getNetwork()),
                 masterChefABI,
                 it
             )

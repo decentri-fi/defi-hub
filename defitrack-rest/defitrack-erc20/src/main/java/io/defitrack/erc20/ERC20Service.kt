@@ -2,7 +2,7 @@ package io.defitrack.erc20
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.ERC20Contract
 import io.github.reactivecircus.cache4k.Cache
 import org.slf4j.LoggerFactory
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
 @Service
 class ERC20Service(
     private val abiService: ABIResource,
-    private val contractAccessorGateway: ContractAccessorGateway
+    private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) {
 
     val erc20Buffer = Cache.Builder().build<String, ERC20Contract>()
@@ -28,7 +28,7 @@ class ERC20Service(
             val key = network.name + "-" + address.lowercase()
             return erc20Buffer.get(key) {
                 ERC20Contract(
-                    contractAccessorGateway.getGateway(network),
+                    blockchainGatewayProvider.getGateway(network),
                     erc20ABI,
                     correctAddress
                 )
@@ -48,7 +48,7 @@ class ERC20Service(
     }
 
     fun getBalance(network: Network, address: String, userAddress: String) = ERC20Contract(
-        contractAccessorGateway.getGateway(network),
+        blockchainGatewayProvider.getGateway(network),
         erc20ABI,
         address
     ).balanceOf(userAddress)

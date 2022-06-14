@@ -12,5 +12,5 @@ class PoolingElementVO(
     val protocol: ProtocolVO,
     val dollarValue: Double,
     val id: String,
-    val market: PoolingMarketElementVO
+    val market: PoolingMarketVO
 )

@@ -6,7 +6,7 @@ import io.defitrack.claimable.ClaimableService
 import io.defitrack.claimable.PrepareClaimCommand
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.adamant.AdamantVaultContract
@@ -21,13 +21,13 @@ import java.math.BigInteger
 class AdamantClaimableService(
     private val abiResource: ABIResource,
     private val adamantVaultMarketService: AdamantVaultMarketService,
-    contractAccessorGateway: ContractAccessorGateway,
+    blockchainGatewayProvider: BlockchainGatewayProvider,
     private val erC20Resource: ERC20Resource
 ) : ClaimableService {
 
     val genericVaultABI = abiResource.getABI("adamant/GenericVault.json")
 
-    val gateway = contractAccessorGateway.getGateway(getNetwork())
+    val gateway = blockchainGatewayProvider.getGateway(getNetwork())
 
     val addy by lazy {
         erC20Resource.getTokenInformation(getNetwork(), "0xc3fdbadc7c795ef1d6ba111e06ff8f16a20ea539")

@@ -16,6 +16,7 @@
         <module>protocol-dependencies</module>
         <module>protocol</module>
         <module>adamant</module>
+        <module>bancor</module>
         <module>dinoswap</module>
         <module>hop</module>
         <module>apeswap</module>

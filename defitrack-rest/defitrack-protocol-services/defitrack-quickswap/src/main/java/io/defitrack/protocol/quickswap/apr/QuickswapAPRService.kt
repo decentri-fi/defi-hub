@@ -2,7 +2,7 @@ package io.defitrack.protocol.quickswap.apr
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.quickswap.contract.QuickswapDualRewardPoolContract
 import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
@@ -19,7 +19,7 @@ import kotlin.time.Duration.Companion.hours
 class QuickswapAPRService(
     private val quickswapService: QuickswapService,
     private val abiResource: ABIResource,
-    private val contractAccessorGateway: ContractAccessorGateway,
+    private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val priceResource: PriceResource,
 ) {
 
@@ -53,7 +53,7 @@ class QuickswapAPRService(
 
     private suspend fun calculateDualRewardPool(address: String): BigDecimal {
         val contract = QuickswapDualRewardPoolContract(
-            contractAccessorGateway.getGateway(Network.POLYGON),
+            blockchainGatewayProvider.getGateway(Network.POLYGON),
             stakingDualRewards,
             address
         )
@@ -84,7 +84,7 @@ class QuickswapAPRService(
 
     private suspend fun calculateSingleRewardPool(address: String): BigDecimal {
         val contract = QuickswapRewardPoolContract(
-            contractAccessorGateway.getGateway(Network.POLYGON),
+            blockchainGatewayProvider.getGateway(Network.POLYGON),
             stakingRewardsABI,
             address
         )

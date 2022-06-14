@@ -2,7 +2,7 @@ package io.defitrack.protocol.quickswap.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
@@ -21,7 +21,7 @@ import java.math.RoundingMode
 @Service
 class QuickswapStakingMarketService(
     private val quickswapService: QuickswapService,
-    private val contractAccessorGateway: ContractAccessorGateway,
+    private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val abiService: ABIResource,
     private val priceResource: PriceResource,
     private val erC20Resource: ERC20Resource,
@@ -35,7 +35,7 @@ class QuickswapStakingMarketService(
     override suspend fun fetchStakingMarkets(): List<StakingMarket> {
         return quickswapService.getVaultAddresses().map {
             QuickswapRewardPoolContract(
-                contractAccessorGateway.getGateway(getNetwork()),
+                blockchainGatewayProvider.getGateway(getNetwork()),
                 stakingRewardsABI,
                 it
             )

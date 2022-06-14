@@ -2,7 +2,7 @@ package io.defitrack.protocol.mstable.lending
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.lending.LendingMarketService
 import io.defitrack.lending.domain.BalanceFetcher
 import io.defitrack.lending.domain.LendingMarket
@@ -16,7 +16,7 @@ class MStablePolygonLendingMarketService(
     private val mStableService: MStablePolygonService,
     private val abiResource: ABIResource,
     private val tokenService: ERC20Resource,
-    private val contractAccessorGateway: ContractAccessorGateway
+    private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) : LendingMarketService() {
 
     val savingsContractABI by lazy {
@@ -26,7 +26,7 @@ class MStablePolygonLendingMarketService(
     override suspend fun fetchLendingMarkets(): List<LendingMarket> {
         return mStableService.getSavingsContracts().map {
             MStableEthereumSavingsContract(
-                contractAccessorGateway.getGateway(getNetwork()),
+                blockchainGatewayProvider.getGateway(getNetwork()),
                 savingsContractABI,
                 it
             )

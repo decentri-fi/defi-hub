@@ -9,7 +9,7 @@ import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.toVO
 import io.defitrack.staking.domain.StakingPosition
-import io.defitrack.staking.vo.StakingElementVO
+import io.defitrack.staking.vo.StakingPositionVO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
@@ -26,7 +26,7 @@ class DefaultUserStakingRestController(
 ) {
 
     @GetMapping("/{userId}/positions")
-    fun getUserStakings(@PathVariable("userId") address: String): List<StakingElementVO> = runBlocking {
+    fun getUserStakings(@PathVariable("userId") address: String): List<StakingPositionVO> = runBlocking {
         if (WalletUtils.isValidAddress(address)) {
             stakingServices.flatMap {
                 try {
@@ -54,7 +54,7 @@ class DefaultUserStakingRestController(
         @PathVariable("userId") address: String,
         @RequestParam("stakingElementId") stakingElementId: String,
         @RequestParam("network") network: Network
-    ): StakingElementVO? = runBlocking {
+    ): StakingPositionVO? = runBlocking {
         if (WalletUtils.isValidAddress(address)) {
             stakingServices.filter {
                 it.getNetwork() == network
@@ -76,7 +76,7 @@ class DefaultUserStakingRestController(
     }
 
 
-    suspend fun StakingPosition.toVO(): StakingElementVO {
+    suspend fun StakingPosition.toVO(): StakingPositionVO {
 
         val stakedAmount = underlyingAmount ?: amount
 
@@ -89,7 +89,7 @@ class DefaultUserStakingRestController(
             )
         )
 
-        return StakingElementVO(
+        return StakingPositionVO(
             id = market.id,
             network = market.network.toVO(),
             protocol = market.protocol.toVO(),

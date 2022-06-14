@@ -1,6 +1,6 @@
 package io.defitrack.protocol.apeswap
 
-import io.defitrack.protocol.apeswap.domain.LiquidityPool
+import io.defitrack.messari.LiquidityPool
 import io.defitrack.thegraph.GraphProvider
 import io.defitrack.thegraph.TheGraphGatewayProvider
 import org.springframework.stereotype.Component
@@ -21,6 +21,7 @@ class ApeswapPolygonGraphProvider(
                 name
                 symbol,
                 totalValueLockedUSD
+                rewardTokens
               }
             }
         """.trimIndent()

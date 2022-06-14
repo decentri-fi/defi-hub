@@ -1,8 +1,7 @@
 package io.defitrack.staking
 
 import io.defitrack.abi.ABIResource
-import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.StargateService
 import io.defitrack.protocol.contract.LPStakingContract
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Component
 @Component
 abstract class StargateStakingMarketService(
     private val stargateOptimismService: StargateService,
-    private val accessorGateway: ContractAccessorGateway,
+    private val accessorGateway: BlockchainGatewayProvider,
     private val abiResource: ABIResource,
     private val erC20Resource: ERC20Resource
 ) : StakingMarketService() {

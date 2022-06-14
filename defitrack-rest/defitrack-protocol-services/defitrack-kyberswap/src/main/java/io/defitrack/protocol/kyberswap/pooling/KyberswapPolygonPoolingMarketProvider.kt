@@ -41,7 +41,7 @@ class KyberswapPolygonPoolingMarketProvider(
                         ),
                         apr = kyberswapAPRService.getAPR(it.pair.id, getNetwork()),
                         marketSize = it.reserveUSD,
-                        tokenType = TokenType.DMM
+                        tokenType = TokenType.KYBER
                     )
                 } catch (ex: Exception) {
                     ex.printStackTrace()

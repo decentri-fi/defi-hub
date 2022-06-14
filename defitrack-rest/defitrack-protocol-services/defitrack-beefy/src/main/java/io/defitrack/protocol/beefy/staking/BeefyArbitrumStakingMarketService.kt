@@ -2,7 +2,7 @@ package io.defitrack.protocol.beefy.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.beefy.BeefyService
@@ -12,14 +12,14 @@ import org.springframework.stereotype.Service
 
 @Service
 class BeefyArbitrumStakingMarketService(
-    contractAccessorGateway: ContractAccessorGateway,
+    blockchainGatewayProvider: BlockchainGatewayProvider,
     abiResource: ABIResource,
     beefyAPYService: BeefyAPYService,
     beefyService: BeefyService,
     erC20Resource: ERC20Resource,
     priceService: PriceResource
 ) : BeefyStakingMarketService(
-    contractAccessorGateway,
+    blockchainGatewayProvider,
     abiResource,
     beefyAPYService,
     beefyService.beefyArbitrumVaults,
