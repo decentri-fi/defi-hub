@@ -16,7 +16,7 @@ class MakerDAOEthereumGraphProvider(
     suspend fun getLendingMarkets(): List<LendingMarket> {
         val query = """
             {
-            	pools(first: 500, where: { reserveUSD_gt: 1000 }) {
+                pools(first: 500, where: { reserveUSD_gt: 1000 }) {
                 id
                 pair {
                     id
