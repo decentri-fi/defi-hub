@@ -2,7 +2,7 @@ package io.defitrack.protocol.adamant.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.adamant.AdamantService
 import io.defitrack.protocol.adamant.AdamantVaultContract
@@ -21,7 +21,7 @@ class AdamantVaultMarketService(
     private val adamantService: AdamantService,
     private val abiResource: ABIResource,
     private val erC20Resource: ERC20Resource,
-    private val contractAccessorGateway: ContractAccessorGateway
+    private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) : StakingMarketService() {
 
     val genericVault by lazy {
@@ -37,7 +37,7 @@ class AdamantVaultMarketService(
         withContext(Dispatchers.IO.limitedParallelism(10)) {
             adamantService.adamantGenericVaults().map {
                 AdamantVaultContract(
-                    contractAccessorGateway.getGateway(getNetwork()),
+                    blockchainGatewayProvider.getGateway(getNetwork()),
                     genericVault,
                     it.vaultAddress
                 )

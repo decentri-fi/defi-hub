@@ -1,11 +1,11 @@
 package io.defitrack.protocol.compound.lending
 
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.lending.DefaultLendingPositionService
 import org.springframework.stereotype.Service
 
 @Service
 class IronBankFantomLendingPositionService(
     lendingMarketService: IronBankFantomLendingMarketService,
-    gateway: ContractAccessorGateway,
+    gateway: BlockchainGatewayProvider,
 ) : DefaultLendingPositionService(lendingMarketService, gateway)

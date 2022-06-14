@@ -2,7 +2,7 @@ package io.defitrack.protocol.quickswap.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.contract.DQuickContract
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service
 @Service
 class DQuickStakingMarketService(
     private val quickswapService: QuickswapService,
-    private val contractAccessorGateway: ContractAccessorGateway,
+    private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val abiResource: ABIResource,
     private val erC20Resource: ERC20Resource,
 ) : StakingMarketService() {
@@ -54,7 +54,7 @@ class DQuickStakingMarketService(
     }
 
     private fun dquickContract() = DQuickContract(
-        contractAccessorGateway.getGateway(getNetwork()),
+        blockchainGatewayProvider.getGateway(getNetwork()),
         dquickStakingABI,
         quickswapService.getDQuickContract(),
     )

@@ -2,7 +2,7 @@ package io.defitrack.protocol.balancer.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerGaugeContract
 import io.defitrack.protocol.balancer.polygon.BalancerGaugePolygonGraphProvider
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component
 class BalancerPolygonStakingMarketService(
     private val balancerPolygonPoolGraphProvider: BalancerGaugePolygonGraphProvider,
     private val erC20Resource: ERC20Resource,
-    private val contractAccessorGateway: ContractAccessorGateway,
+    private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val abiResource: ABIResource
 ) :
     StakingMarketService() {
@@ -35,7 +35,7 @@ class BalancerPolygonStakingMarketService(
                 try {
                     val stakedToken = erC20Resource.getTokenInformation(getNetwork(), it.poolAddress)
                     val gauge = BalancerGaugeContract(
-                        contractAccessorGateway.getGateway(getNetwork()),
+                        blockchainGatewayProvider.getGateway(getNetwork()),
                         balancerGaugeContractAbi,
                         it.id
                     )

@@ -1,14 +1,14 @@
 package io.defitrack.balance
 
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.token.ERC20Resource
 import org.slf4j.LoggerFactory
 import java.math.BigDecimal
 import java.math.BigInteger
 
 abstract class BalanceService(
-    val contractAccessorGateway: ContractAccessorGateway,
+    val blockchainGatewayProvider: BlockchainGatewayProvider,
     val erc20Resource: ERC20Resource
 ) {
 
@@ -18,7 +18,7 @@ abstract class BalanceService(
 
     fun getNativeBalance(address: String): BigDecimal {
         return try {
-            return contractAccessorGateway.getGateway(getNetwork()).getNativeBalance(address)
+            return blockchainGatewayProvider.getGateway(getNetwork()).getNativeBalance(address)
         } catch (ex: Exception) {
             logger.error(ex.message)
             BigDecimal.ZERO

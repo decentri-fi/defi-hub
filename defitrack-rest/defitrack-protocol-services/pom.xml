@@ -17,6 +17,7 @@
         <module>defitrack-adamant</module>
         <module>defitrack-apeswap</module>
         <module>defitrack-balancer</module>
+        <module>defitrack-bancor</module>
         <module>defitrack-beefy</module>
         <module>defitrack-compound</module>
         <module>defitrack-convex</module>

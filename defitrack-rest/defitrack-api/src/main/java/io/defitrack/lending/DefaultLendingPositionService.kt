@@ -1,7 +1,7 @@
 package io.defitrack.lending
 
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.lending.domain.LendingPosition
 import io.defitrack.protocol.Protocol
 import kotlinx.coroutines.runBlocking
@@ -9,7 +9,7 @@ import java.math.BigInteger
 
 abstract class DefaultLendingPositionService(
     val lendingMarketService: LendingMarketService,
-    val gateway: ContractAccessorGateway,
+    val gateway: BlockchainGatewayProvider,
 ) : LendingPositionService {
 
     override suspend fun getLendings(address: String): List<LendingPosition> {

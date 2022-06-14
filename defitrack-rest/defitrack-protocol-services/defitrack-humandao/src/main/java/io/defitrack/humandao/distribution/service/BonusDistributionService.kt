@@ -3,15 +3,11 @@ package io.defitrack.humandao.distribution.service
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.ethereum.config.EthereumContractAccessorConfig
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.humandao.distribution.contract.BonusDistributionContract
 import io.defitrack.humandao.distribution.vo.BonusDistributionStatus
-import io.defitrack.polygon.config.PolygonContractAccessorConfig
-import io.defitrack.polygonmumbai.config.PolygonMumbaiContractAccessorConfig
 import io.ktor.client.*
-import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.runBlocking
@@ -24,7 +20,7 @@ import java.math.RoundingMode
 class BonusDistributionService(
     private val client: HttpClient,
     private val objectMapper: ObjectMapper,
-    private val contractAccessorGateway: ContractAccessorGateway,
+    private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val abiResource: ABIResource
 ) {
 
@@ -59,17 +55,17 @@ class BonusDistributionService(
 
     val erc20Map: Map<Network, ERC20Contract> = mapOf(
         Network.POLYGON to ERC20Contract(
-            contractAccessorGateway.getGateway(Network.POLYGON),
+            blockchainGatewayProvider.getGateway(Network.POLYGON),
             erc20ABI,
             "0x72928d5436ff65e57f72d5566dcd3baedc649a88"
         ),
         Network.ETHEREUM to ERC20Contract(
-            contractAccessorGateway.getGateway(Network.ETHEREUM),
+            blockchainGatewayProvider.getGateway(Network.ETHEREUM),
             erc20ABI,
             "0xdac657ffd44a3b9d8aba8749830bf14beb66ff2d"
         )        ,
         Network.POLYGON_MUMBAI to ERC20Contract(
-            contractAccessorGateway.getGateway(Network.POLYGON_MUMBAI),
+            blockchainGatewayProvider.getGateway(Network.POLYGON_MUMBAI),
             erc20ABI,
             "0xf8afb97235074ab1d2bb574df577d2b89519f330"
         )
@@ -77,17 +73,17 @@ class BonusDistributionService(
 
     val bonusDistributorContractMap: Map<Network, BonusDistributionContract> = mapOf(
         Network.POLYGON to BonusDistributionContract(
-            contractAccessorGateway.getGateway(Network.POLYGON),
+            blockchainGatewayProvider.getGateway(Network.POLYGON),
             bonusDistributorABI,
             "0x5d04ec89c918383fb0810f2ad6c956cb2e41b3db"
         ),
         Network.ETHEREUM to BonusDistributionContract(
-            contractAccessorGateway.getGateway(Network.ETHEREUM),
+            blockchainGatewayProvider.getGateway(Network.ETHEREUM),
             bonusDistributorABI,
             "0xD53b145739352c1BCc7079cDdA0cf6EDfbd8F015"
         ),
         Network.POLYGON_MUMBAI to BonusDistributionContract(
-            contractAccessorGateway.getGateway(Network.POLYGON),
+            blockchainGatewayProvider.getGateway(Network.POLYGON),
             bonusDistributorABI,
             "0x7fcA16Cb535DEf014b8984e9AAE55f2c23DB8C2f"
         )

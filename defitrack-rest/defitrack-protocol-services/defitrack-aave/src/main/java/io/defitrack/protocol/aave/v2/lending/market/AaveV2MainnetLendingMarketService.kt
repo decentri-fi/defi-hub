@@ -2,7 +2,7 @@ package io.defitrack.protocol.aave.v2.lending.market
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.lending.LendingMarketService
 import io.defitrack.lending.domain.LendingMarket
 import io.defitrack.price.PriceRequest
@@ -20,20 +20,20 @@ import java.math.BigDecimal
 @Service
 class AaveV2MainnetLendingMarketService(
     abiResource: ABIResource,
-    contractAccessorGateway: ContractAccessorGateway,
+    blockchainGatewayProvider: BlockchainGatewayProvider,
     private val aaveV2MainnetService: AaveV2MainnetService,
     private val erC20Resource: ERC20Resource,
     private val priceResource: PriceResource,
 ) : LendingMarketService() {
 
     val lendingPoolAddressesProviderContract = LendingPoolAddressProviderContract(
-        contractAccessorGateway.getGateway(getNetwork()),
+        blockchainGatewayProvider.getGateway(getNetwork()),
         abiResource.getABI("aave/LendingPoolAddressesProvider.json"),
         aaveV2MainnetService.getLendingPoolAddressesProvider()
     )
 
     val lendingPoolContract = LendingPoolContract(
-        contractAccessorGateway.getGateway(getNetwork()),
+        blockchainGatewayProvider.getGateway(getNetwork()),
         abiResource.getABI("aave/LendingPool.json"),
         lendingPoolAddressesProviderContract.lendingPoolAddress()
     )

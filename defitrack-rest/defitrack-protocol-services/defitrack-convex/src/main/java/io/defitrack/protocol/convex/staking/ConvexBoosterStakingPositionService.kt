@@ -2,7 +2,7 @@ package io.defitrack.protocol.convex.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.convex.ConvexService
 import io.defitrack.protocol.convex.contract.ConvexBoosterContract
@@ -15,7 +15,7 @@ import java.math.BigInteger
 @Component
 class ConvexBoosterStakingPositionService(
     private val convexService: ConvexService,
-    private val contractAccessorGateway: ContractAccessorGateway,
+    private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val abiResource: ABIResource,
     erC20Resource: ERC20Resource,
 ) : StakingPositionService(
@@ -24,7 +24,7 @@ class ConvexBoosterStakingPositionService(
 
 
     override suspend fun getStakings(address: String): List<StakingPosition> {
-        val gateway = contractAccessorGateway.getGateway(getNetwork())
+        val gateway = blockchainGatewayProvider.getGateway(getNetwork())
 
         val booster = ConvexBoosterContract(
             gateway,

@@ -5,7 +5,7 @@ import com.github.michaelbull.retry.retry
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGateway.Companion.MAX_UINT256
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.ktor.client.*
@@ -21,7 +21,7 @@ import java.math.BigInteger
 class ERC20Resource(
     private val client: HttpClient,
     private val abiResource: ABIResource,
-    private val contractAccessorGateway: ContractAccessorGateway,
+    private val blockchainGatewayProvider: BlockchainGatewayProvider,
     @Value("\${erc20ResourceLocation:http://defitrack-erc20:8080}") private val erc20ResourceLocation: String
 ) {
 
@@ -53,7 +53,7 @@ class ERC20Resource(
         spender: String,
         amount: BigInteger
     ): org.web3j.abi.datatypes.Function {
-        return with(contractAccessorGateway.getGateway(network)) {
+        return with(blockchainGatewayProvider.getGateway(network)) {
             ERC20Contract(
                 this,
                 erc20ABI,
@@ -71,7 +71,7 @@ class ERC20Resource(
     }
 
     fun getAllowance(network: Network, token: String, owner: String, spender: String): BigInteger {
-        return with(contractAccessorGateway.getGateway(network)) {
+        return with(blockchainGatewayProvider.getGateway(network)) {
             ERC20Contract(
                 this,
                 erc20ABI,
@@ -85,7 +85,7 @@ class ERC20Resource(
         tokens: List<String>,
         network: Network,
     ): List<BigInteger> {
-        with(contractAccessorGateway.getGateway(network)) {
+        with(blockchainGatewayProvider.getGateway(network)) {
             return readMultiCall(tokens.map {
                 MultiCallElement(
                     ERC20Contract(

@@ -2,7 +2,7 @@ package io.defitrack.protocol.beefy.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.beefy.apy.BeefyAPYService
@@ -23,7 +23,7 @@ import java.math.BigInteger
 import java.math.RoundingMode
 
 abstract class BeefyStakingMarketService(
-    private val contractAccessorGateway: ContractAccessorGateway,
+    private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val abiResource: ABIResource,
     private val beefyAPYService: BeefyAPYService,
     private val vaults: List<BeefyVault>,
@@ -47,7 +47,7 @@ abstract class BeefyStakingMarketService(
     private suspend fun toStakingMarketElement(beefyVault: BeefyVault): StakingMarket? {
         return try {
             val contract = BeefyVaultContract(
-                contractAccessorGateway.getGateway(getNetwork()),
+                blockchainGatewayProvider.getGateway(getNetwork()),
                 vaultV6ABI,
                 beefyVault.earnContractAddress,
                 beefyVault.id

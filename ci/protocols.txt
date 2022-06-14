@@ -2,6 +2,7 @@ aave
 adamant
 apeswap
 balancer
+bancor
 beefy
 compound
 convex

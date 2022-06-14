@@ -1,7 +1,7 @@
 package io.defitrack.protocol.curve.staking
 
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.crv.CurveEthereumService
 import io.defitrack.staking.StakingPositionService
@@ -15,7 +15,7 @@ import java.math.BigInteger
 @Service
 class CurveEthereumStakingPositionService(
     private val curveEthereumService: CurveEthereumService,
-    private val contractAccessorGateway: ContractAccessorGateway,
+    private val blockchainGatewayProvider: BlockchainGatewayProvider,
     erC20Resource: ERC20Resource,
 ) : StakingPositionService(erC20Resource) {
 

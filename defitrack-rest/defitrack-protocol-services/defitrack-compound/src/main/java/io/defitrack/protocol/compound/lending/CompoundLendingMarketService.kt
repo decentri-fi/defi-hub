@@ -3,7 +3,7 @@ package io.defitrack.protocol.compound.lending
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.lending.LendingMarketService
 import io.defitrack.lending.domain.BalanceFetcher
 import io.defitrack.lending.domain.LendingMarket
@@ -24,7 +24,7 @@ import java.math.RoundingMode
 
 @Component
 class CompoundLendingMarketService(
-    private val contractAccessorGateway: ContractAccessorGateway,
+    private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val abiResource: ABIResource,
     private val erC20Resource: ERC20Resource,
     private val compoundEthereumService: CompoundEthereumService,
@@ -39,7 +39,7 @@ class CompoundLendingMarketService(
         abiResource.getABI("compound/ctoken.json")
     }
 
-    val gateway = contractAccessorGateway.getGateway(getNetwork())
+    val gateway = blockchainGatewayProvider.getGateway(getNetwork())
 
     override suspend fun fetchLendingMarkets(): List<LendingMarket> = withContext(Dispatchers.IO.limitedParallelism(5)) {
         getTokenContracts().map {

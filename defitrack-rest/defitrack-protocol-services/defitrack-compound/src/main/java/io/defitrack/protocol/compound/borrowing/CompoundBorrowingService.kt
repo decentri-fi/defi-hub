@@ -3,7 +3,7 @@ package io.defitrack.protocol.compound.borrowing
 import io.defitrack.abi.ABIResource
 import io.defitrack.borrowing.domain.BorrowPosition
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.compound.CompoundComptrollerContract
@@ -19,7 +19,7 @@ import java.math.RoundingMode
 class CompoundBorrowingService(
     private val compoundEthereumService: CompoundEthereumService,
     private val abiResource: ABIResource,
-    private val contractAccessorGateway: ContractAccessorGateway,
+    private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val erC20Service: ERC20Resource
 ) : io.defitrack.borrowing.BorrowService {
 
@@ -31,7 +31,7 @@ class CompoundBorrowingService(
         abiResource.getABI("compound/ctoken.json")
     }
 
-    val gateway = contractAccessorGateway.getGateway(getNetwork())
+    val gateway = blockchainGatewayProvider.getGateway(getNetwork())
 
     fun getBorrowRate(compoundTokenContract: CompoundTokenContract): BigDecimal {
         val blocksPerDay = 6463

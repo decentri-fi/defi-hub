@@ -1,5 +1,6 @@
 package io.defitrack.protocol.bancor.domain
 
+import io.defitrack.messari.LiquidityPool
 import io.defitrack.thegraph.GraphProvider
 import io.defitrack.thegraph.TheGraphGatewayProvider
 import org.springframework.stereotype.Component
@@ -12,7 +13,7 @@ class BancorEthereumGraphProvider(
     theGraphGatewayProvider
 ) {
 
-    suspend fun getLiquidityPools() {
+    suspend fun getLiquidityPools(): List<LiquidityPool> {
         val query = """
              {
             	liquidityPools(first: 50, orderBy: totalValueLockedUSD, orderDirection: desc) {
@@ -20,7 +21,6 @@ class BancorEthereumGraphProvider(
                 name
                 symbol,
                 totalValueLockedUSD
-                rewardTokens
               }
             }
         """.trimIndent()

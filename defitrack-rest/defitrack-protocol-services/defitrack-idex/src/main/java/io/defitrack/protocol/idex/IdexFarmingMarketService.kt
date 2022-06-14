@@ -2,7 +2,7 @@ package io.defitrack.protocol.idex
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.staking.StakingMarketService
 import io.defitrack.staking.domain.StakingMarketBalanceFetcher
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component
 class IdexFarmingMarketService(
     private val abiResource: ABIResource,
     private val tokenService: ERC20Resource,
-    private val contractAccessorGateway: ContractAccessorGateway,
+    private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val idexService: IdexService
 ) : StakingMarketService() {
 
@@ -30,7 +30,7 @@ class IdexFarmingMarketService(
     override suspend fun fetchStakingMarkets(): List<StakingMarket> = coroutineScope {
         idexService.idexFarm().map {
             IdexFarmContract(
-                contractAccessorGateway.getGateway(getNetwork()),
+                blockchainGatewayProvider.getGateway(getNetwork()),
                 minichefABI,
                 it
             )

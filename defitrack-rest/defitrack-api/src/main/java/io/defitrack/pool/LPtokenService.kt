@@ -2,7 +2,7 @@ package io.defitrack.pool
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.pool.contract.LPTokenContract
 import io.github.reactivecircus.cache4k.Cache
 import org.springframework.stereotype.Service
@@ -11,7 +11,7 @@ import java.util.*
 @Service
 class LPtokenService(
     private val abiService: ABIResource,
-    private val contractAccessorGateway: ContractAccessorGateway
+    private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) {
 
     private val cache = Cache.Builder().build<String, LPTokenContract>()
@@ -24,7 +24,7 @@ class LPtokenService(
         val key = "${network.name}-${address.lowercase(Locale.getDefault())}"
         return cache.get(key) {
             LPTokenContract(
-                contractAccessorGateway.getGateway(network),
+                blockchainGatewayProvider.getGateway(network),
                 lpABI,
                 address = address
             )

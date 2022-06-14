@@ -1,12 +1,12 @@
 package io.defitrack.staking
 
-import io.defitrack.evm.contract.ContractAccessorGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Component
 
 @Component
 class SpookyStakingPositionService(
     spookyStakingMarketService: SpookyStakingMarketService,
-    contractAccessorGateway: ContractAccessorGateway,
+    blockchainGatewayProvider: BlockchainGatewayProvider,
     erC20Resource: ERC20Resource,
-) : DefaultStakingPositionService(erC20Resource, spookyStakingMarketService, contractAccessorGateway)
+) : DefaultStakingPositionService(erC20Resource, spookyStakingMarketService, blockchainGatewayProvider)
