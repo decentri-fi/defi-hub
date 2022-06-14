@@ -3,11 +3,10 @@ package io.defitrack.pool
 import io.defitrack.network.toVO
 import io.defitrack.pool.domain.PoolingElement
 import io.defitrack.pool.vo.PoolingElementVO
-import io.defitrack.pool.vo.PoolingMarketElementVO.Companion.toVO
+import io.defitrack.pool.vo.PoolingMarketVO.Companion.toVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.toVO
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking

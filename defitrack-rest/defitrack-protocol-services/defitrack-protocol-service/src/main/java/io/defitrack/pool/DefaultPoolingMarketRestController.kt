@@ -3,7 +3,7 @@ package io.defitrack.pool
 import io.defitrack.common.network.Network
 import io.defitrack.network.toVO
 import io.defitrack.pool.domain.PoolingMarketElement
-import io.defitrack.pool.vo.PoolingMarketElementVO
+import io.defitrack.pool.vo.PoolingMarketVO
 import io.defitrack.protocol.toVO
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
@@ -24,11 +24,11 @@ class DefaultPoolingMarketRestController(
     }
 
     @GetMapping(value = ["/all-markets"])
-    fun allMarkets(): List<PoolingMarketElementVO> {
+    fun allMarkets(): List<PoolingMarketVO> {
         return poolingMarketServices.flatMap {
             it.getPoolingMarkets()
         }.map {
-            poolingMarketElementVO(it)
+            it.toVO()
         }
     }
 
@@ -36,7 +36,7 @@ class DefaultPoolingMarketRestController(
     fun searchByToken(
         @RequestParam("token") tokenAddress: String,
         @RequestParam("network") network: Network
-    ): List<PoolingMarketElementVO> {
+    ): List<PoolingMarketVO> {
         return poolingMarketServices
             .filter {
                 it.getNetwork() == network
@@ -47,14 +47,14 @@ class DefaultPoolingMarketRestController(
                 it.tokens.any { t ->
                     t.address.lowercase() == tokenAddress.lowercase()
                 } || it.address.lowercase() == tokenAddress.lowercase()
-            }.map { poolingMarketElementVO(it) }
+            }.map { it.toVO() }
     }
 
     @GetMapping(value = ["/markets/{id}"], params = ["network"])
     fun getById(
         @PathVariable("id") id: String,
         @RequestParam("network") network: Network
-    ): ResponseEntity<PoolingMarketElementVO> {
+    ): ResponseEntity<PoolingMarketVO> {
         return poolingMarketServices
             .filter {
                 it.getNetwork() == network
@@ -63,7 +63,7 @@ class DefaultPoolingMarketRestController(
             }.firstOrNull {
                 it.id == id
             }?.let {
-                ResponseEntity.ok(poolingMarketElementVO(it))
+                ResponseEntity.ok(it.toVO())
             } ?: ResponseEntity.notFound().build()
     }
 
@@ -71,7 +71,7 @@ class DefaultPoolingMarketRestController(
     fun findAlternatives(
         @RequestParam("token") tokenAddress: String,
         @RequestParam("network") network: Network
-    ): List<PoolingMarketElementVO> {
+    ): List<PoolingMarketVO> {
         val token = erC20Resource.getTokenInformation(
             network, tokenAddress,
         )
@@ -94,18 +94,19 @@ class DefaultPoolingMarketRestController(
                     }
                     else -> false
                 }
-            }.map { poolingMarketElementVO(it) }
+            }.map { it.toVO() }
     }
 
-    private fun poolingMarketElementVO(it: PoolingMarketElement) =
-        PoolingMarketElementVO(
-            name = it.name,
-            protocol = it.protocol.toVO(),
-            network = it.network.toVO(),
-            tokens = it.tokens,
-            id = it.id,
-            address = it.address,
-            apr = it.apr,
-            marketSize = it.marketSize
+    fun PoolingMarketElement.toVO() =
+        PoolingMarketVO(
+            name = name,
+            protocol = protocol.toVO(),
+            network = network.toVO(),
+            tokens = tokens,
+            id = id,
+            address = address,
+            apr = apr,
+            marketSize = marketSize,
+            prepareInvestmentSupported = investmentPreparer != null
         )
 }

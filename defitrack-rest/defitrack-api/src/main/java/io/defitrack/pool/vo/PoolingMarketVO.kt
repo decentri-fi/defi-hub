@@ -8,7 +8,7 @@ import io.defitrack.protocol.toVO
 import io.defitrack.token.FungibleToken
 import java.math.BigDecimal
 
-data class PoolingMarketElementVO(
+data class PoolingMarketVO(
     val id: String,
     val address: String,
     val name: String,
@@ -17,18 +17,5 @@ data class PoolingMarketElementVO(
     val tokens: List<FungibleToken>,
     val apr: BigDecimal?,
     val marketSize: BigDecimal?,
-) {
-    companion object {
-        fun PoolingMarketElement.toVO() =
-            PoolingMarketElementVO(
-                name = name,
-                protocol = protocol.toVO(),
-                network = network.toVO(),
-                tokens = tokens,
-                id = id,
-                address = address,
-                apr = apr,
-                marketSize = marketSize
-            )
-    }
-}
+    val prepareInvestmentSupported: Boolean
+)
