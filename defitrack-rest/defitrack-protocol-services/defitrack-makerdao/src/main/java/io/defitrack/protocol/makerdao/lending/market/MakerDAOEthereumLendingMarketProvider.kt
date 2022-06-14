@@ -1,75 +1,47 @@
-package io.defitrack.protocol.makerdao.v3.lending.market
+package io.defitrack.protocol.makerdao.lending.market
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.evm.contract.ContractAccessorGateway
 import io.defitrack.lending.LendingMarketService
 import io.defitrack.lending.domain.LendingMarket
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.makerdao.MakerDAODataProvider
-import io.defitrack.protocol.makerdao.contract.PoolContract
-import io.defitrack.protocol.makerdao.contract.PoolDataProvider
-import io.defitrack.protocol.makerdao.lending.invest.MakerDAOLendingInvestmentPreparer
+import io.defitrack.protocol.makerdao.MakerDAOEthereumGraphProvider
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.TokenType
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import org.springframework.stereotype.Service
 import org.springframework.stereotype.Component
 
 @Component
 class MakerDAOEthereumLendingMarketProvider(
     contractAccessorGateway: ContractAccessorGateway,
-    private val abiResource: ABIResource,
     private val erC20Resource: ERC20Resource,
-    private val makerDAODataProvider: MakerDAOEthereumDataProvider,
+    private val makerDAOEthereumGraphProvider: makerDAOEthereumGraphProvider,
     private val priceResource: PriceResource
 ) : LendingMarketService() {
 
-    val pool = PoolContract(
-        contractAccessorGateway.getGateway(getNetwork()),
-        abiResource.getABI("makerdao/v3/Pool.json"),
-        makerDAODataProvider.getPoolAddress()
-    )
+    override suspend fun fetchLendingMarkets(): List<LendingMarket>  = coroutineScope {
+        makerDAOEthereumGraphProvider.getLendingMarkets().map {
+            async {
+                try {
+                    val token = erc20Resource.getTokenInformation(getNetwork(), it.id)
+                    val token0 = erc20Resource.getTokenInformation(getNetwork(), it.token0.id)
+                    val token1 = erc20Resource.getTokenInformation(getNetwork(), it.token1.id)
 
-    val poolDataProvider = PoolDataProvider(
-        contractAccessorGateway.getGateway(getNetwork()),
-        abiResource.getABI("makerdao/v3/makerdaoProtocolDataProvider.json"),
-        makerDAODataProvider.getPoolDataProvider()
-    )
-
-    override suspend fun fetchLendingMarkets(): List<LendingMarket> {
-        return pool.reservesList.map {
-
-            val reserveData = poolDataProvider.getReserveData(it)
-            val reserveTokenAddresses = poolDataProvider.getReserveTokensAddresses(it)
-            val aToken = erC20Resource.getTokenInformation(getNetwork(), reserveTokenAddresses.aTokenAddress)
-            val underlying = erC20Resource.getTokenInformation(getNetwork(), it)
-            val totalSupply = poolDataProvider.getATokenTotalSupply(it)
-
-            LendingMarket(
-                id = "makerdao-v3-optimism-${aToken.address}",
-                name = aToken.name,
-                network = getNetwork(),
-                protocol = getProtocol(),
-                address = aToken.address,
-                token = underlying.toFungibleToken(),
-                poolType = "makerdao-v3",
-                rate = reserveData.liquidityRate.asEth(27),
-                investmentPreparer = MakerDAOLendingInvestmentPreparer(
-                    underlying.address,
-                    pool,
-                    erC20Resource
-                ),
-                marketSize = priceResource.calculatePrice(
-                    PriceRequest(
-                        underlying.address,
-                        getNetwork(),
-                        totalSupply.asEth(aToken.decimals),
-                        underlying.type
+                    LendingMarket(
+                        id = "makerdao-ethereum-${it.id}",
+                        network = getNetwork(),
+                        protocol = getProtocol(),
                     )
-                ).toBigDecimal()
-            )
-        }
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                    null
+                }
+            }
+        }.awaitAll().filterNotNull()
     }
 
     override fun getProtocol() = Protocol.MAKERDAO
