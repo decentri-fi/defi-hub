@@ -19,7 +19,7 @@
         </dependency>
         <dependency>
             <groupId>io.defitrack</groupId>
-            <artifactId>evm</artifactId>
+            <artifactId>defitrack-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
