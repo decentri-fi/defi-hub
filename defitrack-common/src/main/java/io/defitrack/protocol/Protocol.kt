@@ -203,14 +203,15 @@ enum class Protocol(
         logo = "convex.png",
         slug = "convex",
         website = "https://convexfinance.com/",
-        primitives = listOf(DefiPrimitive.FARMING)
+        primitives = listOf(DefiPrimitive.FARMING),
+        networks = listOf(Network.ETHEREUM)
     ),
     MAKERDAO(
         logo = "makerdao.png",
         slug = "makerdao",
         website = "https://makerdao.com/",
         primitives = listOf(DefiPrimitive.LENDING),
-	networks = listOf(Network.ETHEREUM)
+        networks = listOf(Network.ETHEREUM)
     );
 
     val imageBasePath = "https://github.com/defitrack/data/raw/master/logo/protocol/"
