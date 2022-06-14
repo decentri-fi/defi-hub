@@ -6,8 +6,9 @@ import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.pool.PoolingMarketService
 import io.defitrack.pool.domain.PoolingMarketElement
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.bancor.domain.BancorEthereumGraphProvider
-import io.defitrack.protocol.bancor.domain.PoolTokenContract
+import io.defitrack.protocol.bancor.BancorEthereumGraphProvider
+import io.defitrack.protocol.bancor.contract.BancorNetworkContract
+import io.defitrack.protocol.bancor.contract.PoolTokenContract
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
@@ -28,6 +29,15 @@ class BancorEthereumPoolingMarketProvider(
     val poolTokenContractAbi by lazy {
         abiResource.getABI("bancor/PoolToken.json")
     }
+    val bancorNetworkAbi by lazy {
+        abiResource.getABI("bancor/BancorNetwork.json")
+    }
+
+    val bancorNetworkContract by lazy {
+        BancorNetworkContract(
+            gateway, bancorNetworkAbi, bancorEthereumGraphProvider.bancorNetwork()
+        )
+    }
 
     override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> = coroutineScope {
         bancorEthereumGraphProvider.getLiquidityPools().map {
@@ -40,7 +50,8 @@ class BancorEthereumPoolingMarketProvider(
                         it.id
                     )
 
-
+                    val underlying = erC20Resource.getTokenInformation(getNetwork(), poolTokenContract.reserveToken)
+                        .toFungibleToken()
                     PoolingMarketElement(
                         id = "bancor-ethereum-${it.id}",
                         network = getNetwork(),
@@ -49,11 +60,13 @@ class BancorEthereumPoolingMarketProvider(
                         name = token.name,
                         symbol = token.symbol,
                         tokens = listOf(
-                            erC20Resource.getTokenInformation(getNetwork(), poolTokenContract.reserveToken)
-                                .toFungibleToken()
+                            underlying
                         ),
                         tokenType = TokenType.BANCOR,
-                        marketSize = it.totalValueLockedUSD
+                        marketSize = it.totalValueLockedUSD,
+                        investmentPreparer = BancorPoolInvestmentPreparer(
+                            erC20Resource, bancorNetworkContract, underlying.address
+                        )
                     )
                 } catch (ex: Exception) {
                     ex.printStackTrace()

@@ -2,6 +2,7 @@ package io.defitrack.pool.domain
 
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
+import io.defitrack.staking.domain.InvestmentPreparer
 import io.defitrack.token.FungibleToken
 import io.defitrack.token.TokenType
 import java.math.BigDecimal
@@ -16,5 +17,6 @@ data class PoolingMarketElement(
     val tokens: List<FungibleToken>,
     val apr: BigDecimal? = null,
     val marketSize: BigDecimal? = null,
-    val tokenType: TokenType
+    val tokenType: TokenType,
+    val investmentPreparer: InvestmentPreparer? = null
 )

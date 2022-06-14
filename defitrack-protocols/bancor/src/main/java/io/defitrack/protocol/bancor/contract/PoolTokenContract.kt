@@ -1,4 +1,4 @@
-package io.defitrack.protocol.bancor.domain
+package io.defitrack.protocol.bancor.contract
 
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
