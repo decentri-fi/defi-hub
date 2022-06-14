@@ -113,10 +113,6 @@
                 <groupId>io.defitrack</groupId>
                 <artifactId>kyberswap-ethereum</artifactId>
                 <version>${project.version}</version>
-            </dependency>            <dependency>
-                <groupId>io.defitrack</groupId>
-                <artifactId>dracula</artifactId>
-                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.defitrack</groupId>
@@ -125,7 +121,7 @@
             </dependency>
             <dependency>
                 <groupId>io.defitrack</groupId>
-                <artifactId>jarvis</artifactId>
+                <artifactId>bancor</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

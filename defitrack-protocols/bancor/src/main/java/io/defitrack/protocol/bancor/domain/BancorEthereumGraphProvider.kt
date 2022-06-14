@@ -1,21 +1,20 @@
-package io.defitrack.protocol.apeswap
+package io.defitrack.protocol.bancor.domain
 
-import io.defitrack.messari.LiquidityPool
 import io.defitrack.thegraph.GraphProvider
 import io.defitrack.thegraph.TheGraphGatewayProvider
 import org.springframework.stereotype.Component
 
 @Component
-class ApeswapPolygonGraphProvider(
-    graphGatewayProvider: TheGraphGatewayProvider
+class BancorEthereumGraphProvider(
+    theGraphGatewayProvider: TheGraphGatewayProvider
 ) : GraphProvider(
-    "https://api.thegraph.com/subgraphs/name/messari/apeswap-polygon",
-    graphGatewayProvider
+    "https://api.thegraph.com/subgraphs/name/0xbe1/bancor-v3-mainnet",
+    theGraphGatewayProvider
 ) {
 
-    suspend fun getPools(): List<LiquidityPool> {
+    suspend fun getLiquidityPools() {
         val query = """
-            {
+             {
             	liquidityPools(first: 50, orderBy: totalValueLockedUSD, orderDirection: desc) {
                 id
                 name
