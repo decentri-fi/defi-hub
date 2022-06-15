@@ -3,7 +3,7 @@ package io.defitrack.protocol.makerdao
 import io.defitrack.thegraph.GraphProvider
 import io.defitrack.thegraph.TheGraphGatewayProvider
 import org.springframework.stereotype.Service
-import io.defitrack.lending.domain.LendingMarket
+import io.defitrack.protocol.makerdao.domain.Market
 
 @Service
 class MakerDAOEthereumGraphProvider(
@@ -13,7 +13,7 @@ class MakerDAOEthereumGraphProvider(
     graphGatewayProvider
 ) {
 
-    suspend fun getLendingMarkets(): List<LendingMarket> {
+    suspend fun getLendingMarkets(): List<Market> {
         val query = """
             {
                 markets( where: { isActive: true }) {
