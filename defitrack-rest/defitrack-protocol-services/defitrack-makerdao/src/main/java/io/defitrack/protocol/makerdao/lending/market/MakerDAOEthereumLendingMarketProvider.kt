@@ -32,9 +32,10 @@ class MakerDAOEthereumLendingMarketProvider(
                         id = "makerdao-ethereum-${it.id}",
                         network = getNetwork(),
                         protocol = getProtocol(),
-                        address = "a",
-                        name = "b",
-                        poolType = "c",
+                        address = it.id,
+                        name = it.name,
+                        rate = it.rates[0].rate.toBigDecimal(),
+                        poolType = "makerdao-lending",
                         token = token.toFungibleToken()
                     )
                 } catch (ex: Exception) {
