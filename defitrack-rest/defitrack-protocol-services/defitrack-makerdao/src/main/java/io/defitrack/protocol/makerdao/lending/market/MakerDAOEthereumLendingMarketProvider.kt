@@ -34,7 +34,7 @@ class MakerDAOEthereumLendingMarketProvider(
                         protocol = getProtocol(),
                         address = it.id,
                         name = it.name,
-                        rate = it.rates[0].rate.toBigDecimal(),
+                        rate = it.rates.firstOrNull()?.rate?.toBigDecimal(),
                         poolType = "makerdao-lending",
                         token = token.toFungibleToken()
                     )
