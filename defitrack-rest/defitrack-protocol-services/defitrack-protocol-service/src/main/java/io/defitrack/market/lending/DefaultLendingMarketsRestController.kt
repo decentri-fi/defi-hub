@@ -54,7 +54,7 @@ class DefaultLendingMarketsRestController(
             it.id == id
         }
 
-    @PostMapping(value = ["/markets/{id}"], params = ["network"])
+    @PostMapping(value = ["/markets/{id}/invest"], params = ["network"])
     fun prepareInvestment(
         @PathVariable("id") id: String,
         @RequestParam("network") network: Network,

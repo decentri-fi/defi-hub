@@ -1,10 +1,13 @@
 package io.defitrack.market.pooling
 
 import io.defitrack.common.network.Network
+import io.defitrack.farming.vo.TransactionPreparationVO
+import io.defitrack.invest.PrepareInvestmentCommand
 import io.defitrack.market.pooling.vo.PoolingMarketVO
 import io.defitrack.market.pooling.vo.PoolingMarketVO.Companion.toVO
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
+import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
@@ -29,6 +32,22 @@ class DefaultPoolingMarketRestController(
         }
     }
 
+
+    @PostMapping(value = ["/markets/{id}/invest"], params = ["network"])
+    fun prepareInvestment(
+        @PathVariable("id") id: String,
+        @RequestParam("network") network: Network,
+        @RequestBody prepareInvestmentCommand: PrepareInvestmentCommand
+    ): ResponseEntity<TransactionPreparationVO> = runBlocking {
+        poolingMarketById(id)?.investmentPreparer?.prepare(prepareInvestmentCommand)?.let { transactions ->
+            ResponseEntity.ok(
+                TransactionPreparationVO(
+                    transactions
+                )
+            )
+        } ?: ResponseEntity.badRequest().build()
+    }
+
     @GetMapping(value = ["/markets"], params = ["token", "network"])
     fun searchByToken(
         @RequestParam("token") tokenAddress: String,
@@ -47,21 +66,21 @@ class DefaultPoolingMarketRestController(
             }.map { it.toVO() }
     }
 
-    @GetMapping(value = ["/markets/{id}"], params = ["network"])
+    @GetMapping(value = ["/markets/{id}"])
     fun getById(
         @PathVariable("id") id: String,
-        @RequestParam("network") network: Network
     ): ResponseEntity<PoolingMarketVO> {
-        return poolingMarketProviders
-            .filter {
-                it.getNetwork() == network
-            }.flatMap {
-                it.getPoolingMarkets()
-            }.firstOrNull {
-                it.id == id
-            }?.let {
-                ResponseEntity.ok(it.toVO())
-            } ?: ResponseEntity.notFound().build()
+        return poolingMarketById(id)?.let {
+            ResponseEntity.ok(it.toVO())
+        } ?: ResponseEntity.notFound().build()
+    }
+
+    private fun poolingMarketById(
+        id: String
+    ) = poolingMarketProviders.flatMap {
+        it.getPoolingMarkets()
+    }.firstOrNull {
+        it.id == id
     }
 
     @GetMapping(value = ["/markets/alternatives"], params = ["token", "network"])
