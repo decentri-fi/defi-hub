@@ -3,8 +3,8 @@ package io.defitrack.protocol.aave.v2.lending.market
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.lending.LendingMarketService
-import io.defitrack.lending.domain.LendingMarket
+import io.defitrack.market.lending.LendingMarketService
+import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol

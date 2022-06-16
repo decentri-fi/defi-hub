@@ -1,8 +1,8 @@
 package io.defitrack.protocol.uniswap.pooling
 
 import io.defitrack.common.network.Network
-import io.defitrack.pool.PoolingMarketService
-import io.defitrack.pool.domain.PoolingMarketElement
+import io.defitrack.market.pooling.PoolingMarketProvider
+import io.defitrack.market.pooling.domain.PoolingMarketElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.uniswap.apr.UniswapAPRService
 import io.defitrack.token.ERC20Resource
@@ -15,7 +15,7 @@ class UniswapEthereumPoolingMarketService(
     private val uniswapServices: List<AbstractUniswapV2Service>,
     private val erC20Resource: ERC20Resource,
     private val uniswapAPRService: UniswapAPRService,
-) : PoolingMarketService() {
+) : PoolingMarketProvider() {
 
     override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> {
         return uniswapServices.filter {

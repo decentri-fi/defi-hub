@@ -1,7 +1,7 @@
 package io.defitrack.protocol.aave.v2.borrowing
 
-import io.defitrack.borrowing.BorrowService
-import io.defitrack.borrowing.domain.BorrowPosition
+import io.defitrack.market.borrowing.BorrowService
+import io.defitrack.market.borrowing.domain.BorrowPosition
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.v2.AaveV2PolygonService

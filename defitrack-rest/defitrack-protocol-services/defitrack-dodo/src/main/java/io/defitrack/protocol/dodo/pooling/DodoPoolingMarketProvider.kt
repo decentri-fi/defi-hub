@@ -1,7 +1,7 @@
 package io.defitrack.protocol.dodo.pooling
 
-import io.defitrack.pool.PoolingMarketService
-import io.defitrack.pool.domain.PoolingMarketElement
+import io.defitrack.market.pooling.PoolingMarketProvider
+import io.defitrack.market.pooling.domain.PoolingMarketElement
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.DodoGraphProvider
@@ -12,7 +12,7 @@ abstract class DodoPoolingMarketProvider(
     private val erC20Resource: ERC20Resource,
     private val dodoGraphProvider: DodoGraphProvider,
     private val priceResource: PriceResource
-) : PoolingMarketService() {
+) : PoolingMarketProvider() {
     override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> {
         return dodoGraphProvider.getPools().map { pool ->
 

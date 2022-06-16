@@ -3,9 +3,9 @@ package io.defitrack.protocol.mstable.lending
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.lending.LendingMarketService
-import io.defitrack.lending.domain.BalanceFetcher
-import io.defitrack.lending.domain.LendingMarket
+import io.defitrack.market.lending.LendingMarketService
+import io.defitrack.market.lending.domain.BalanceFetcher
+import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.mstable.contract.MStableEthereumSavingsContract
 import io.defitrack.protocol.mstable.MStablePolygonService

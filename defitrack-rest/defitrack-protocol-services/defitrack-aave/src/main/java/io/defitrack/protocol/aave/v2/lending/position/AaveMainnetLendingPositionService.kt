@@ -1,9 +1,9 @@
 package io.defitrack.protocol.aave.v2.lending.position
 
 import io.defitrack.common.network.Network
-import io.defitrack.lending.LendingPositionService
-import io.defitrack.lending.domain.LendingMarket
-import io.defitrack.lending.domain.LendingPosition
+import io.defitrack.market.lending.LendingPositionService
+import io.defitrack.market.lending.domain.LendingMarket
+import io.defitrack.market.lending.domain.LendingPosition
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.v2.AaveV2MainnetService
 import io.defitrack.token.ERC20Resource

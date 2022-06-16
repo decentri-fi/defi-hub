@@ -1,8 +1,8 @@
 package io.defitrack.protocol.dfyn.pooling
 
 import io.defitrack.common.network.Network
-import io.defitrack.pool.PoolingMarketService
-import io.defitrack.pool.domain.PoolingMarketElement
+import io.defitrack.market.pooling.PoolingMarketProvider
+import io.defitrack.market.pooling.domain.PoolingMarketElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.dfyn.DfynService
 import io.defitrack.protocol.dfyn.apr.DfynAPRService
@@ -16,7 +16,7 @@ class DfynPoolingMarketService(
     private val dfynService: DfynService,
     private val dfynAPRService: DfynAPRService,
     private val erc20Resource: ERC20Resource
-) : PoolingMarketService() {
+) : PoolingMarketProvider() {
 
     override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> {
         return dfynService.getPairs().mapNotNull {

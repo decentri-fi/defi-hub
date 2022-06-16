@@ -3,8 +3,8 @@ package io.defitrack.protocol.bancor.pool
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.pool.PoolingMarketService
-import io.defitrack.pool.domain.PoolingMarketElement
+import io.defitrack.market.pooling.PoolingMarketProvider
+import io.defitrack.market.pooling.domain.PoolingMarketElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.bancor.BancorEthereumGraphProvider
 import io.defitrack.protocol.bancor.contract.BancorNetworkContract
@@ -22,7 +22,7 @@ class BancorEthereumPoolingMarketProvider(
     private val abiResource: ABIResource,
     private val bancorEthereumGraphProvider: BancorEthereumGraphProvider,
     gatewayProvider: BlockchainGatewayProvider
-) : PoolingMarketService() {
+) : PoolingMarketProvider() {
 
     val gateway = gatewayProvider.getGateway(getNetwork())
 

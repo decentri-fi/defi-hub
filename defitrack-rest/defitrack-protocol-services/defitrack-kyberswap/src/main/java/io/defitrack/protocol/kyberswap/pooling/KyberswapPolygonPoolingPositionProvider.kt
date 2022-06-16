@@ -1,6 +1,6 @@
 package io.defitrack.protocol.kyberswap.pooling
 
-import io.defitrack.pool.StandardLpPositionProvider
+import io.defitrack.market.pooling.StandardLpPositionProvider
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 

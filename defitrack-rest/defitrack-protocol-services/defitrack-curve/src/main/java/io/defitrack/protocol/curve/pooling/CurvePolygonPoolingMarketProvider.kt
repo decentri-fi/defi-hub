@@ -1,8 +1,8 @@
 package io.defitrack.protocol.curve.pooling
 
 import io.defitrack.common.network.Network
-import io.defitrack.pool.PoolingMarketService
-import io.defitrack.pool.domain.PoolingMarketElement
+import io.defitrack.market.pooling.PoolingMarketProvider
+import io.defitrack.market.pooling.domain.PoolingMarketElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.crv.CurvePolygonGraphProvider
 import io.defitrack.token.ERC20Resource
@@ -19,7 +19,7 @@ import java.math.BigInteger
 class CurvePolygonPoolingMarketProvider(
     private val curvePolygonGraphProvider: CurvePolygonGraphProvider,
     private val erC20Resource: ERC20Resource
-) : PoolingMarketService() {
+) : PoolingMarketProvider() {
 
     override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> =
         withContext(Dispatchers.IO.limitedParallelism(10)) {

@@ -1,8 +1,8 @@
 package io.defitrack.protocol.idex
 
 import io.defitrack.common.network.Network
-import io.defitrack.pool.PoolingMarketService
-import io.defitrack.pool.domain.PoolingMarketElement
+import io.defitrack.market.pooling.PoolingMarketProvider
+import io.defitrack.market.pooling.domain.PoolingMarketElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
@@ -17,7 +17,7 @@ import java.math.BigDecimal
 class IdexPoolingMarketService(
     private val idexService: IdexService,
     private val erc20Resource: ERC20Resource
-) : PoolingMarketService() {
+) : PoolingMarketProvider() {
 
     override suspend fun fetchPoolingMarkets() = coroutineScope {
         idexService.getLPs().map {

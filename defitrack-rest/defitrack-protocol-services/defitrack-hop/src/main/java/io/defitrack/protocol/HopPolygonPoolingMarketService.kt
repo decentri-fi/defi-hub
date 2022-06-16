@@ -4,8 +4,8 @@ import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.pool.PoolingMarketService
-import io.defitrack.pool.domain.PoolingMarketElement
+import io.defitrack.market.pooling.PoolingMarketProvider
+import io.defitrack.market.pooling.domain.PoolingMarketElement
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.contract.HopLpTokenContract
@@ -28,7 +28,7 @@ class HopPolygonPoolingMarketService(
     private val abiResource: ABIResource,
     private val priceResource: PriceResource,
     private val erC20Resource: ERC20Resource,
-) : PoolingMarketService() {
+) : PoolingMarketProvider() {
 
 
     override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> = coroutineScope {

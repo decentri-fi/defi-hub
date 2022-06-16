@@ -3,9 +3,9 @@ package io.defitrack.protocol.compound.lending
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.lending.LendingMarketService
-import io.defitrack.lending.domain.BalanceFetcher
-import io.defitrack.lending.domain.LendingMarket
+import io.defitrack.market.lending.LendingMarketService
+import io.defitrack.market.lending.domain.BalanceFetcher
+import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
