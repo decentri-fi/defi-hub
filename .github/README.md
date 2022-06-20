@@ -46,6 +46,7 @@ Code that powers the underlying protocols.
 - Kyberswap (Formerly DMM)
 - Idex
 - Jarvis
+- MakerDAO
 - mStable
 - Polycat
 - Quickswap

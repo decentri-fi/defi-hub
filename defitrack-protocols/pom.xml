@@ -34,6 +34,7 @@
         <module>quickswap</module>
         <module>sushiswap</module>
         <module>aave</module>
+        <module>makerdao</module>
         <module>crv</module>
         <module>mStable</module>
         <module>ribbon</module>

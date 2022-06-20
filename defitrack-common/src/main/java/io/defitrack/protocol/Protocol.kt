@@ -10,7 +10,6 @@ enum class Protocol(
     val enabled: Boolean = true,
     val networks: List<Network>
 ) {
-
     BANCOR(
         logo = "bancor.png",
         slug = "bancor",
@@ -205,6 +204,13 @@ enum class Protocol(
         slug = "convex",
         website = "https://convexfinance.com/",
         primitives = listOf(DefiPrimitive.FARMING),
+        networks = listOf(Network.ETHEREUM)
+    ),
+    MAKERDAO(
+        logo = "makerdao.png",
+        slug = "makerdao",
+        website = "https://makerdao.com/",
+        primitives = listOf(DefiPrimitive.LENDING),
         networks = listOf(Network.ETHEREUM)
     );
 
