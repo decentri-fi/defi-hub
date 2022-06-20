@@ -1,8 +1,8 @@
 package io.defitrack.protocol.makerdao.lending.market
 
 import io.defitrack.common.network.Network
-import io.defitrack.lending.LendingMarketService
-import io.defitrack.lending.domain.LendingMarket
+import io.defitrack.market.lending.LendingMarketService
+import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
