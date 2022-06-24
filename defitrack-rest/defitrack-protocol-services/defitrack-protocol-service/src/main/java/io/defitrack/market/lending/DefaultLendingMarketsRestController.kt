@@ -1,12 +1,12 @@
 package io.defitrack.market.lending
 
 import io.defitrack.common.network.Network
+import io.defitrack.farming.vo.TransactionPreparationVO
 import io.defitrack.invest.PrepareInvestmentCommand
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.lending.vo.LendingMarketVO
 import io.defitrack.network.toVO
 import io.defitrack.protocol.toVO
-import io.defitrack.farming.vo.TransactionPreparationVO
 import kotlinx.coroutines.runBlocking
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -43,25 +43,20 @@ class DefaultLendingMarketsRestController(
 
 
     private fun getLendingMarketById(
-        network: Network,
         id: String
-    ) = lendingMarketServices
-        .filter {
-            it.getNetwork() == network
-        }.flatMap {
-            it.getLendingMarkets()
-        }.firstOrNull {
-            it.id == id
-        }
+    ) = lendingMarketServices.flatMap {
+        it.getLendingMarkets()
+    }.firstOrNull {
+        it.id == id
+    }
 
-    @PostMapping(value = ["/markets/{id}/invest"], params = ["network"])
+    @PostMapping(value = ["/markets/{id}/enter"])
     fun prepareInvestment(
         @PathVariable("id") id: String,
-        @RequestParam("network") network: Network,
         @RequestBody prepareInvestmentCommand: PrepareInvestmentCommand
     ): ResponseEntity<TransactionPreparationVO> = runBlocking {
         getLendingMarketById(
-            network, id
+            id
         )?.investmentPreparer?.prepare(prepareInvestmentCommand)?.let { transactions ->
             ResponseEntity.ok(
                 TransactionPreparationVO(
