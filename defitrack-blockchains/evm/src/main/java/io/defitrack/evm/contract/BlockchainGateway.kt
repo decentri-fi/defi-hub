@@ -22,10 +22,13 @@ import org.apache.commons.lang3.StringUtils
 import org.web3j.abi.FunctionEncoder
 import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.TypeReference
-import org.web3j.abi.Utils
-import org.web3j.abi.datatypes.*
-import org.web3j.abi.datatypes.generated.*
+import org.web3j.abi.datatypes.DynamicArray
+import org.web3j.abi.datatypes.DynamicBytes
+import org.web3j.abi.datatypes.DynamicStruct
+import org.web3j.abi.datatypes.Type
+import org.web3j.abi.datatypes.generated.Uint256
 import org.web3j.protocol.core.methods.response.EthCall
+import org.web3j.protocol.core.methods.response.Log
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.util.Collections.emptyList
@@ -45,6 +48,10 @@ open class BlockchainGateway(
         balance.toBigDecimal().dividePrecisely(
             BigDecimal.TEN.pow(18)
         )
+    }
+
+    fun getLogs(txId: String): List<Log> = runBlocking {
+        httpClient.get("$endpoint/tx/${txId}/logs").body()
     }
 
     open fun readMultiCall(elements: List<MultiCallElement>): List<List<Type<*>>> {
