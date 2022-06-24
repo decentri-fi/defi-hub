@@ -20,7 +20,7 @@ import org.web3j.crypto.WalletUtils
 import java.math.BigInteger
 
 @RestController
-@RequestMapping("/staking")
+@RequestMapping(*["/staking", "/farming"])
 class DefaultFarmingPositionRestController(
     private val stakingServices: List<FarmingPositionProvider>,
     private val priceResource: PriceResource
