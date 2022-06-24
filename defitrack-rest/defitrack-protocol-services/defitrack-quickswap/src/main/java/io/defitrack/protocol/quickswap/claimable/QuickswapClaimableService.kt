@@ -4,7 +4,7 @@ import io.defitrack.abi.ABIResource
 import io.defitrack.claimable.Claimable
 import io.defitrack.claimable.ClaimableService
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
+import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.protocol.Protocol

@@ -1,7 +1,7 @@
 package io.defitrack.protocol.adamant
 
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
+import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.TypeReference

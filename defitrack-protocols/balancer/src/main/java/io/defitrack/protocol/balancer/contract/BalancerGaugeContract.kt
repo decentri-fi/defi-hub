@@ -1,8 +1,8 @@
 package io.defitrack.protocol.balancer.contract
 
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
-import io.defitrack.evm.contract.BlockchainGateway.Companion.toUint256
+import io.defitrack.abi.TypeUtils.Companion.toAddress
+import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.token.FungibleToken
