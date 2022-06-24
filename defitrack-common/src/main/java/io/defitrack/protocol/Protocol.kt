@@ -19,7 +19,7 @@ enum class Protocol(
     ),
     POLYGON(
         logo = "polygon.png",
-        slug = "polygon_protocol",
+        slug = "polygon-protocol",
         website = "https://polygon.technology",
         primitives = listOf(DefiPrimitive.FARMING),
         networks = listOf(Network.ETHEREUM)
