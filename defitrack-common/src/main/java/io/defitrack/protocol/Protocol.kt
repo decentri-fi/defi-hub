@@ -26,7 +26,7 @@ enum class Protocol(
     ),
     IRON_BANK(
         logo = "iron-bank.png",
-        slug = "iron_bank",
+        slug = "iron-bank",
         website = "https://ib.xyz/",
         primitives = listOf(DefiPrimitive.LENDING, DefiPrimitive.BORROWING),
         networks = listOf(Network.ETHEREUM, Network.AVALANCHE, Network.FANTOM)
