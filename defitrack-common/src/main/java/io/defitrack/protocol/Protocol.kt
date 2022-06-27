@@ -212,7 +212,15 @@ enum class Protocol(
         website = "https://makerdao.com/",
         primitives = listOf(DefiPrimitive.LENDING),
         networks = listOf(Network.ETHEREUM)
+    ),
+    MAPLEFINANCE(
+        logo = "maple-finance.png",
+        slug = "maplefinance",
+        website = "https://maple.finance/",
+        primitives = listOf(DefiPrimitive.LENDING),
+        networks = listOf(Network.ETHEREUM)
     );
+
 
     val imageBasePath = "https://github.com/defitrack/data/raw/master/logo/protocol/"
 
