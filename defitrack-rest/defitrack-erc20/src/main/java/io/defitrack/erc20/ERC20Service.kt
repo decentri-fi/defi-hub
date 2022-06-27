@@ -43,6 +43,7 @@ class ERC20Service(
             }
         } catch (ex: Exception) {
             logger.error("Unable to fetch erc20 info", ex)
+            ex.printStackTrace()
             throw ex
         }
     }

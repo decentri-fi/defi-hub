@@ -2,6 +2,7 @@ package io.defitrack.erc20
 
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.protocolspecific.BalancerTokenService
+import io.defitrack.erc20.protocolspecific.CurveTokenService
 import io.defitrack.erc20.protocolspecific.HopTokenService
 import io.defitrack.logo.LogoService
 import io.defitrack.nativetoken.NativeTokenService
@@ -23,6 +24,7 @@ class TokenService(
     private val erC20Repository: ERC20Repository,
     private val LPtokenService: LPtokenService,
     private val hopTokenService: HopTokenService,
+    private val curveTokenService: CurveTokenService,
     private val balancerTokenService: BalancerTokenService,
     private val nativeTokenService: NativeTokenService,
     private val logoService: LogoService
@@ -67,12 +69,19 @@ class TokenService(
         isHopLp(lp.symbol) -> {
             TokenType.HOP
         }
+        isCurveToken(lp.name) -> {
+            TokenType.CURVE
+        }
         isKyberDMMLP(lp.symbol) -> {
             TokenType.KYBER
         }
         else -> {
             TokenType.SINGLE
         }
+    }
+
+    private fun isCurveToken(name: String): Boolean {
+        return name.lowercase().startsWith("curve.fi".lowercase())
     }
 
     private suspend fun isBalancerLp(address: String, network: Network): Boolean {
@@ -115,6 +124,9 @@ class TokenService(
                 }
                 isHopLp(token.symbol) -> {
                     hopTokenService.getTokenInformation(token.address, network)
+                }
+                isCurveToken(token.name)  -> {
+                    curveTokenService.getTokenInformation(token.address, network);
                 }
                 else -> {
                     TokenInformation(
