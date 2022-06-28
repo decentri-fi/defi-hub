@@ -4,7 +4,7 @@ import io.defitrack.abi.ABIResource
 import io.defitrack.apr.MinichefStakingAprCalculator
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.market.farming.FarmingMarketService
+import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SpiritFantomService
@@ -16,13 +16,13 @@ import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
 @Component
-class SpiritFantomFarmingMarketService(
+class SpiritFantomFarmingMarketProvider(
     private val spiritFantomService: SpiritFantomService,
     private val abiResource: ABIResource,
     private val erC20Resource: ERC20Resource,
     private val priceResource: PriceResource,
     private val blockchainGatewayProvider: BlockchainGatewayProvider
-) : FarmingMarketService() {
+) : FarmingMarketProvider() {
 
     override suspend fun fetchStakingMarkets(): List<FarmingMarket> {
         val masterchef = MasterchefLpContract(

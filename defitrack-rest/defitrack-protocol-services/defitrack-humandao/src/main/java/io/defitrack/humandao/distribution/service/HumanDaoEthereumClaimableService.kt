@@ -5,6 +5,8 @@ import io.defitrack.claimable.ClaimableService
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.ERC20Resource
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -15,7 +17,9 @@ class HumanDaoEthereumClaimableService(
     private val erC20Resource: ERC20Resource
 ) : ClaimableService {
 
-    val hdao by lazy { erC20Resource.getTokenInformation(getNetwork(), "0xdac657ffd44a3b9d8aba8749830bf14beb66ff2d") }
+    val hdao by lazy { runBlocking(Dispatchers.IO) {
+        erC20Resource.getTokenInformation(getNetwork(), "0xdac657ffd44a3b9d8aba8749830bf14beb66ff2d")
+    } }
 
     override suspend fun claimables(address: String): List<Claimable> {
         val status = bonusDistributionService.getBonusDistributionStatus(getNetwork(), address)

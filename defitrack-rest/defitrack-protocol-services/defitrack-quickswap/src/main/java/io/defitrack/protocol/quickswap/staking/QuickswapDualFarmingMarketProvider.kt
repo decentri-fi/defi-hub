@@ -9,7 +9,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.contract.QuickswapDualRewardPoolContract
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
-import io.defitrack.market.farming.FarmingMarketService
+import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.token.ERC20Resource
@@ -19,14 +19,14 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 @Service
-class QuickswapDualFarmingMarketService(
+class QuickswapDualFarmingMarketProvider(
     private val quickswapService: QuickswapService,
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val abiService: ABIResource,
     private val priceResource: PriceResource,
     private val quickswapAPRService: QuickswapAPRService,
     private val erC20Resource: ERC20Resource,
-) : FarmingMarketService() {
+) : FarmingMarketProvider() {
 
     val stakingRewardsABI by lazy {
         abiService.getABI("quickswap/DualStakingRewards.json")

@@ -5,6 +5,8 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceResource
 import io.defitrack.token.ERC20Resource
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import org.springframework.web.bind.annotation.*
 import java.math.BigDecimal
 
@@ -19,7 +21,7 @@ class BalanceRestController(
 
     @Deprecated("use the network-specific call")
     @GetMapping("/{address}/native-balance")
-    fun getBalance(@PathVariable("address") address: String): List<BalanceElement> =
+    fun getBalance(@PathVariable("address") address: String): List<BalanceElement> = runBlocking(Dispatchers.IO) {
         balanceServices.mapNotNull {
             val balance = try {
                 it.getNativeBalance(address)
@@ -46,12 +48,13 @@ class BalanceRestController(
                 null
             }
         }
+    }
 
     @GetMapping(value = ["/{address}/native-balance"], params = ["network"])
     fun getBalanceByNetwork(
         @PathVariable("address") address: String,
         @RequestParam("network") network: Network
-    ): BalanceElement {
+    ): BalanceElement = runBlocking(Dispatchers.IO) {
         val balanceService = balanceServices.first {
             it.getNetwork() == network
         }
@@ -62,7 +65,7 @@ class BalanceRestController(
             1.0
         )
 
-        return BalanceElement(
+        BalanceElement(
             amount = balance.toDouble(),
             network = network.toVO(),
             token = erC20Resource.getTokenInformation(
@@ -75,36 +78,38 @@ class BalanceRestController(
     }
 
     @GetMapping("/{address}/token-balances")
-    fun getTokenBalance(@PathVariable("address") address: String): List<BalanceElement> = balanceServices.flatMap {
-        try {
-            it.getTokenBalances(address)
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            emptyList()
-        }
-    }.map {
-        val normalizedAmount = it.amount.asEth(it.token.decimals).toDouble()
-        val price = priceResource.calculatePrice(it.token.symbol, 1.0)
+    fun getTokenBalance(@PathVariable("address") address: String): List<BalanceElement> = runBlocking(Dispatchers.IO) {
+        balanceServices.flatMap {
+            try {
+                it.getTokenBalances(address)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                emptyList()
+            }
+        }.map {
+            val normalizedAmount = it.amount.asEth(it.token.decimals).toDouble()
+            val price = priceResource.calculatePrice(it.token.symbol, 1.0)
 
-        BalanceElement(
-            amount = normalizedAmount,
-            network = it.network.toVO(),
-            token = it.token,
-            dollarValue = price.times(normalizedAmount),
-            price = price
-        )
+            BalanceElement(
+                amount = normalizedAmount,
+                network = it.network.toVO(),
+                token = it.token,
+                dollarValue = price.times(normalizedAmount),
+                price = price
+            )
+        }
     }
 
     @GetMapping(value = ["/{address}/token-balances"], params = ["network"])
     fun getTokenBalanceByNetwork(
         @PathVariable("address") address: String,
         @RequestParam("network") network: Network
-    ): List<BalanceElement> {
+    ): List<BalanceElement> = runBlocking(Dispatchers.IO){
         val balanceService = balanceServices.first {
             it.getNetwork() == network
         }
 
-        return balanceService.getTokenBalances(address).map {
+        balanceService.getTokenBalances(address).map {
             val normalizedAmount = it.amount.asEth(it.token.decimals).toDouble()
             val price = priceResource.calculatePrice(it.token.symbol, 1.0)
             BalanceElement(

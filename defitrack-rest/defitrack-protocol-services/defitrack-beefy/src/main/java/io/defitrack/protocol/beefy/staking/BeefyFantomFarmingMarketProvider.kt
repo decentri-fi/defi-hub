@@ -11,18 +11,18 @@ import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 
 @Service
-class BeefyPolygonFarmingMarketService(
+class BeefyFantomFarmingMarketProvider(
     blockchainGatewayProvider: BlockchainGatewayProvider,
     abiResource: ABIResource,
     beefyAPYService: BeefyAPYService,
     beefyService: BeefyService,
     erC20Resource: ERC20Resource,
     priceService: PriceResource
-) : BeefyFarmingMarketService(
+) : BeefyFarmingMarketProvider(
     blockchainGatewayProvider,
     abiResource,
     beefyAPYService,
-    beefyService.beefyPolygonVaults,
+    beefyService.beefyFantomVaults,
     erC20Resource,
     priceService
 ) {
@@ -32,6 +32,6 @@ class BeefyPolygonFarmingMarketService(
     }
 
     override fun getNetwork(): Network {
-        return Network.POLYGON
+        return Network.FANTOM
     }
 }

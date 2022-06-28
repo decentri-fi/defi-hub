@@ -11,14 +11,14 @@ import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 
 @Service
-class BeefyArbitrumFarmingMarketService(
+class BeefyArbitrumFarmingMarketProvider(
     blockchainGatewayProvider: BlockchainGatewayProvider,
     abiResource: ABIResource,
     beefyAPYService: BeefyAPYService,
     beefyService: BeefyService,
     erC20Resource: ERC20Resource,
     priceService: PriceResource
-) : BeefyFarmingMarketService(
+) : BeefyFarmingMarketProvider(
     blockchainGatewayProvider,
     abiResource,
     beefyAPYService,

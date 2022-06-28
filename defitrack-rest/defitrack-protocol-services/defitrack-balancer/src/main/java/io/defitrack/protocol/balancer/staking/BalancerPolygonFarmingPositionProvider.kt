@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class BalancerPolygonFarmingPositionProvider(
-    balancerPolygonStakingMarketService: BalancerPolygonFarmingMarketService,
+    balancerPolygonStakingMarketService: BalancerPolygonFarmingMarketProvider,
     gateway: BlockchainGatewayProvider,
     erC20Resource: ERC20Resource,
 ) : DefaultFarmingPositionProvider(erC20Resource, balancerPolygonStakingMarketService, gateway)

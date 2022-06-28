@@ -7,6 +7,7 @@ import io.defitrack.market.pooling.vo.PoolingMarketVO
 import io.defitrack.market.pooling.vo.PoolingMarketVO.Companion.toVO
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -86,11 +87,11 @@ class DefaultPoolingMarketRestController(
     fun findAlternatives(
         @RequestParam("token") tokenAddress: String,
         @RequestParam("network") network: Network
-    ): List<PoolingMarketVO> {
+    ): List<PoolingMarketVO> = runBlocking(Dispatchers.IO){
         val token = erC20Resource.getTokenInformation(
             network, tokenAddress,
         )
-        return poolingMarketProviders
+        poolingMarketProviders
             .filter {
                 it.getNetwork() == network
             }

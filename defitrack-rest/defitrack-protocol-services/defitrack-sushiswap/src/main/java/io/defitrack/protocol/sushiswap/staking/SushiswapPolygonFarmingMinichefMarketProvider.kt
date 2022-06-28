@@ -6,10 +6,10 @@ import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.SushiFantomService
+import io.defitrack.protocol.SushiPolygonService
 import io.defitrack.protocol.reward.MiniChefV2Contract
 import io.defitrack.protocol.sushiswap.apr.MinichefStakingAprCalculator
-import io.defitrack.market.farming.FarmingMarketService
+import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.token.ERC20Resource
@@ -20,19 +20,19 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 @Component
-class SushiswapFantomFarmingMinichefMarketService(
+class SushiswapPolygonFarmingMinichefMarketProvider(
     private val abiResource: ABIResource,
     private val erC20Resource: ERC20Resource,
     private val priceResource: PriceResource,
     private val blockchainGatewayProvider: BlockchainGatewayProvider
-) : FarmingMarketService() {
+) : FarmingMarketProvider() {
 
     val minichefABI by lazy {
         abiResource.getABI("sushi/MiniChefV2.json")
     }
 
     override suspend fun fetchStakingMarkets(): List<FarmingMarket> {
-        return SushiFantomService.getMiniChefs().map {
+        return SushiPolygonService.getMiniChefs().map {
             MiniChefV2Contract(
                 blockchainGatewayProvider.getGateway(getNetwork()),
                 minichefABI,
@@ -50,7 +50,7 @@ class SushiswapFantomFarmingMinichefMarketService(
     }
 
     override fun getNetwork(): Network {
-        return Network.FANTOM
+        return Network.POLYGON
     }
 
     private suspend fun toStakingMarketElement(
@@ -61,7 +61,7 @@ class SushiswapFantomFarmingMinichefMarketService(
             erC20Resource.getTokenInformation(getNetwork(), chef.getLpTokenForPoolId(poolId))
         val rewardToken = erC20Resource.getTokenInformation(getNetwork(), chef.rewardToken)
         return FarmingMarket(
-            id = "sushi-fantom-${chef.address}-${poolId}",
+            id = "sushi-${chef.address}-${poolId}",
             network = getNetwork(),
             name = stakedtoken.name + " Farm",
             protocol = getProtocol(),

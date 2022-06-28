@@ -9,11 +9,11 @@ import java.math.BigInteger
 
 abstract class DefaultFarmingPositionProvider(
     erC20Resource: ERC20Resource,
-    val farmingMarketService: FarmingMarketService,
+    val farmingMarketProvider: FarmingMarketProvider,
     val gateway: BlockchainGatewayProvider
 ) : FarmingPositionProvider(erC20Resource) {
     override suspend fun getStakings(address: String): List<FarmingPosition> {
-        val markets = farmingMarketService.getStakingMarkets().filter {
+        val markets = farmingMarketProvider.getStakingMarkets().filter {
             it.balanceFetcher != null
         }
 
@@ -49,10 +49,10 @@ abstract class DefaultFarmingPositionProvider(
     }
 
     override fun getProtocol(): Protocol {
-        return farmingMarketService.getProtocol()
+        return farmingMarketProvider.getProtocol()
     }
 
     override fun getNetwork(): Network {
-        return farmingMarketService.getNetwork()
+        return farmingMarketProvider.getNetwork()
     }
 }

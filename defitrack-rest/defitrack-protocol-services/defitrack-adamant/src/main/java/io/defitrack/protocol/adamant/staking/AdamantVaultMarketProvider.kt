@@ -6,30 +6,29 @@ import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.adamant.AdamantService
 import io.defitrack.protocol.adamant.AdamantVaultContract
-import io.defitrack.market.farming.FarmingMarketService
+import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.token.ERC20Resource
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.springframework.stereotype.Service
 
 @Service
-class AdamantVaultMarketService(
+class AdamantVaultMarketProvider(
     private val adamantService: AdamantService,
     private val abiResource: ABIResource,
     private val erC20Resource: ERC20Resource,
     private val blockchainGatewayProvider: BlockchainGatewayProvider
-) : FarmingMarketService() {
+) : FarmingMarketProvider() {
 
     val genericVault by lazy {
         abiResource.getABI("adamant/GenericVault.json")
     }
 
     val addy by lazy {
-        erC20Resource.getTokenInformation(getNetwork(), "0xc3fdbadc7c795ef1d6ba111e06ff8f16a20ea539")
+        runBlocking(Dispatchers.IO) {
+            erC20Resource.getTokenInformation(getNetwork(), "0xc3fdbadc7c795ef1d6ba111e06ff8f16a20ea539")
+        }
     }
 
 

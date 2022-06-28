@@ -9,7 +9,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SushiArbitrumService
 import io.defitrack.protocol.reward.MiniChefV2Contract
 import io.defitrack.protocol.sushiswap.apr.MinichefStakingAprCalculator
-import io.defitrack.market.farming.FarmingMarketService
+import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.token.ERC20Resource
@@ -20,12 +20,12 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 @Component
-class SushiswapArbitrumFarmingMinichefMarketService(
+class SushiswapArbitrumFarmingMinichefMarketProvider(
     private val abiResource: ABIResource,
     private val erC20Resource: ERC20Resource,
     private val priceResource: PriceResource,
     private val blockchainGatewayProvider: BlockchainGatewayProvider
-) : FarmingMarketService() {
+) : FarmingMarketProvider() {
 
     val minichefABI by lazy {
         abiResource.getABI("sushi/MiniChefV2.json")

@@ -6,7 +6,7 @@ import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerGaugeContract
 import io.defitrack.protocol.balancer.polygon.BalancerGaugePolygonGraphProvider
-import io.defitrack.market.farming.FarmingMarketService
+import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.token.ERC20Resource
@@ -17,13 +17,13 @@ import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 
 @Component
-class BalancerPolygonFarmingMarketService(
+class BalancerPolygonFarmingMarketProvider(
     private val balancerPolygonPoolGraphProvider: BalancerGaugePolygonGraphProvider,
     private val erC20Resource: ERC20Resource,
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val abiResource: ABIResource
 ) :
-    FarmingMarketService() {
+    FarmingMarketProvider() {
 
     val balancerGaugeContractAbi by lazy {
         abiResource.getABI("balancer/gauge.json")
@@ -66,7 +66,7 @@ class BalancerPolygonFarmingMarketService(
         }.awaitAll().filterNotNull()
     }
 
-    fun getRewardTokens(balancerGaugeContract: BalancerGaugeContract): List<TokenInformation> {
+    suspend fun getRewardTokens(balancerGaugeContract: BalancerGaugeContract): List<TokenInformation> {
         return (0..3).mapNotNull {
             try {
                 val rewardToken = balancerGaugeContract.getRewardToken(it)

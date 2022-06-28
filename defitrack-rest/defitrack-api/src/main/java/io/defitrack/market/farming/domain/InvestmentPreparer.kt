@@ -34,7 +34,7 @@ abstract class InvestmentPreparer(private val erC20Resource: ERC20Resource) {
         )
 
 
-    fun getInvestmentAmount(
+    suspend fun getInvestmentAmount(
         prepareInvestmentCommand: PrepareInvestmentCommand,
     ) =
         prepareInvestmentCommand.amount ?: erC20Resource.getBalance(

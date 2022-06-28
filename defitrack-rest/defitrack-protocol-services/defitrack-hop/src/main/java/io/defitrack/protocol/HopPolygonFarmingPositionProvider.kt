@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class HopPolygonFarmingPositionProvider(
-    hopPolygonStakingMarketService: HopPolygonFarmingMarketService,
+    hopPolygonStakingMarketService: HopPolygonFarmingMarketProvider,
     gateway: BlockchainGatewayProvider,
     erC20Resource: ERC20Resource,
 ) : DefaultFarmingPositionProvider(erC20Resource, hopPolygonStakingMarketService, gateway)

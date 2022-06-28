@@ -19,6 +19,7 @@ class BeefyService(
 
     val beefyPolygonVaults: MutableList<BeefyVault> = mutableListOf()
     val beefyArbitrumVaults: MutableList<BeefyVault> = mutableListOf()
+    val beefyOptimismVaults: MutableList<BeefyVault> = mutableListOf()
     val beefyBscVaults: MutableList<BeefyVault> = mutableListOf()
     val beefyFantomVaults: MutableList<BeefyVault> = mutableListOf()
 
@@ -38,6 +39,12 @@ class BeefyService(
             beefyArbitrumVaults.addAll(
                 vaults.filter {
                     it.chain == "arbitrum"
+                }
+            )
+
+            beefyArbitrumVaults.addAll(
+                vaults.filter {
+                    it.chain == "optimism"
                 }
             )
 

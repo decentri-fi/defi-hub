@@ -75,7 +75,7 @@ class PriceCalculator(
         } ?: BigDecimal.ZERO
 
 
-    private fun calculateLpPrice(
+    private suspend fun calculateLpPrice(
         priceRequest: PriceRequest,
         tokenInformation: TokenInformation
     ): BigDecimal {
@@ -103,7 +103,7 @@ class PriceCalculator(
     }
 
 
-    fun calculateLPWorth(
+    suspend fun calculateLPWorth(
         network: Network,
         lpAddress: String,
         userLPAmount: BigDecimal,

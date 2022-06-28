@@ -35,7 +35,7 @@ class MinichefStakingAprCalculator(
         )
     }
 
-    override fun getStakedTokens(): List<StakedAsset> {
+    override suspend fun getStakedTokens(): List<StakedAsset> {
         val balance = erC20Resource.getBalance(
             chef.blockchainGateway.network,
             stakedTokenInformation.address,

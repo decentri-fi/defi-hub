@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class MStableEthereumFarmingPositionProvider(
-    mStableEthereumStakingMarketService: MStableEthereumFarmingMarketService,
+    mStableEthereumStakingMarketService: MStableEthereumFarmingMarketProvider,
     erC20Resource: ERC20Resource,
     gateway: BlockchainGatewayProvider
 ) : DefaultFarmingPositionProvider(erC20Resource, mStableEthereumStakingMarketService, gateway)

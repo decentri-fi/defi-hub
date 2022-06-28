@@ -3,7 +3,7 @@ package io.defitrack.farming
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.market.farming.FarmingMarketService
+import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SpookyFantomService
@@ -15,14 +15,14 @@ import io.defitrack.token.MarketSizeService
 import org.springframework.stereotype.Component
 
 @Component
-class SpookyFarmingMarketService(
+class SpookyFarmingMarketProvider(
     private val spookyFantomService: SpookyFantomService,
     private val abiResource: ABIResource,
     private val erC20Resource: ERC20Resource,
     private val priceResource: PriceResource,
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val marketSizeService: MarketSizeService
-) : FarmingMarketService() {
+) : FarmingMarketProvider() {
 
     override suspend fun fetchStakingMarkets(): List<FarmingMarket> {
         val masterchef = MasterchefLpContract(

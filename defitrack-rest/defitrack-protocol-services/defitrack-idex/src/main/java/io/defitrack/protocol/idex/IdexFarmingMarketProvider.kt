@@ -4,7 +4,7 @@ import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
-import io.defitrack.market.farming.FarmingMarketService
+import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.token.ERC20Resource
@@ -15,12 +15,12 @@ import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 
 @Component
-class IdexFarmingMarketService(
+class IdexFarmingMarketProvider(
     private val abiResource: ABIResource,
     private val tokenService: ERC20Resource,
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val idexService: IdexService
-) : FarmingMarketService() {
+) : FarmingMarketProvider() {
 
 
     val minichefABI by lazy {
@@ -56,7 +56,7 @@ class IdexFarmingMarketService(
         return Network.POLYGON
     }
 
-    private fun toStakingMarketElement(
+    private suspend fun toStakingMarketElement(
         chef: IdexFarmContract,
         poolId: Int
     ): FarmingMarket {
