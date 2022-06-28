@@ -3,3 +3,4 @@ balance
 abi
 price
 api-gw
+statistics
