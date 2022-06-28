@@ -1,6 +1,7 @@
-package io.defitrack.farming
+package io.defitrack.statistics.rest
 
-import io.defitrack.farming.domain.MarketStatisticVO
+import io.defitrack.statistics.service.FarmingMarketStatisticsService
+import io.defitrack.statistics.domain.MarketStatisticVO
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.runBlocking
 import org.springframework.web.bind.annotation.GetMapping

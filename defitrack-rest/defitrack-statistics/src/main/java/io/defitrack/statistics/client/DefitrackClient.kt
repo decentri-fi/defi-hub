@@ -1,6 +1,8 @@
-package io.defitrack.farming
+package io.defitrack.statistics.client
 
 import io.defitrack.market.farming.vo.FarmingMarketVO
+import io.defitrack.market.lending.vo.LendingMarketVO
+import io.defitrack.market.pooling.vo.PoolingMarketVO
 import io.defitrack.protocol.ProtocolVO
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -21,8 +23,25 @@ class DefitrackClient(private val httpClient: HttpClient) {
         return try {
             httpClient.get("https://api.defitrack.io/${protocolVO.slug}/farming/all-markets").body()
         } catch (ex: Exception) {
-            ex.printStackTrace()
             logger.error("Unable to get farming markets for ${protocolVO.slug}")
+            emptyList()
+        }
+    }
+
+    suspend fun getPoolingMarkets(protocolVO: ProtocolVO): List<PoolingMarketVO> {
+        return try {
+            httpClient.get("https://api.defitrack.io/${protocolVO.slug}/pooling/all-markets").body()
+        } catch (ex: Exception) {
+            logger.error("Unable to get pooling markets for ${protocolVO.slug}")
+            emptyList()
+        }
+    }
+
+    suspend fun getLendingMarkets(protocolVO: ProtocolVO): List<LendingMarketVO> {
+        return try {
+            httpClient.get("https://api.defitrack.io/${protocolVO.slug}/lending/all-markets").body()
+        } catch (ex: Exception) {
+            logger.error("Unable to get lending markets for ${protocolVO.slug}")
             emptyList()
         }
     }
