@@ -81,12 +81,12 @@ open class ERC20Contract(
         }
     }
 
-    val totalSupply by lazy {
+    val totalSupply: BigInteger by lazy {
         val read = readWithAbi("totalSupply")
-        if (read.isEmpty()) {
-            18
+        return@lazy if (read.isEmpty()) {
+            BigInteger.ZERO
         } else {
-            (read[0].value as BigInteger).toInt()
+            (read[0].value as BigInteger)
         }
     }
 }

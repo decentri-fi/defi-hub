@@ -3,9 +3,8 @@ package io.defitrack.protocol.curve.pooling
 import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarketElement
-import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.crv.CurveEthereumGraphProvider
+import io.defitrack.protocol.crv.CurvePolygonPoolGraphProvider
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.FungibleToken
 import io.defitrack.token.MarketSizeService
@@ -15,14 +14,14 @@ import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
 @Component
-class CurveEthereumPoolingMarketService(
-    private val curveEthereumGraphProvider: CurveEthereumGraphProvider,
+class CurvePolygonPoolingMarketService(
+    private val curvePolygonPoolGraphProvider: CurvePolygonPoolGraphProvider,
     private val erc20Resource: ERC20Resource,
     private val marketSizeService: MarketSizeService,
 ) : PoolingMarketProvider() {
 
     override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> = withContext(Dispatchers.IO.limitedParallelism(10)) {
-        curveEthereumGraphProvider.getPools().map { pool ->
+         curvePolygonPoolGraphProvider.getPools().map { pool ->
             async {
                 try {
                     val tokens = pool.coins.map { coin ->
@@ -32,7 +31,7 @@ class CurveEthereumPoolingMarketService(
                     val lpToken = erc20Resource.getTokenInformation(getNetwork(), pool.address)
 
                     PoolingMarketElement(
-                        id = "curve-ethereum-${pool.lpToken}",
+                        id = "curve-polygon-${pool.lpToken}",
                         network = getNetwork(),
                         protocol = getProtocol(),
                         address = pool.address,
@@ -44,7 +43,7 @@ class CurveEthereumPoolingMarketService(
                         tokenType = TokenType.CURVE
                     )
                 } catch (ex: Exception) {
-                    logger.error("Error trying to import curve pool: ${pool.address}")
+                    logger.error("Unable to import curve pool ${pool.address}")
                     null
                 }
             }
@@ -64,6 +63,6 @@ class CurveEthereumPoolingMarketService(
     }
 
     override fun getNetwork(): Network {
-        return Network.ETHEREUM
+        return Network.POLYGON
     }
 }

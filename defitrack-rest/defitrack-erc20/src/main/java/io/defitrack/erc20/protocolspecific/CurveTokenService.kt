@@ -4,7 +4,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.erc20.ERC20Service
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.crv.CurveEthereumGraphProvider
-import io.defitrack.protocol.crv.CurvePolygonGraphProvider
+import io.defitrack.protocol.crv.CurvePolygonPoolGraphProvider
 import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component
 @Component
 class CurveTokenService(
     private val curveEthereumGraphProvider: CurveEthereumGraphProvider,
-    private val curvePolygonGraphProvider: CurvePolygonGraphProvider,
+    private val curvePolygonPoolGraphProvider: CurvePolygonPoolGraphProvider,
     private val erC20Service: ERC20Service
 ) {
     suspend fun getTokenInformation(address: String, network: Network): TokenInformation {
@@ -24,32 +24,38 @@ class CurveTokenService(
     }
 
     private suspend fun getPolygonCurveInfo(address: String): TokenInformation {
-        return curvePolygonGraphProvider.getPool(address)?.let {
-            val underlyingTokens = it.pool.coins.map { u ->
-                erC20Service.getERC20(Network.POLYGON, u.id).toToken()
+        return curvePolygonPoolGraphProvider.getPoolByLp(address)?.let {
+            val underlyingTokens = it.coins.map { coin ->
+                erC20Service.getERC20(Network.POLYGON, coin).toToken()
             }
+
+            val token = erC20Service.getERC20(Network.POLYGON, address)
+
             TokenInformation(
-                name = it.token.name,
-                address = it.id,
+                name = token.name,
+                address = address,
                 symbol = underlyingTokens.joinToString("/") { it.symbol },
-                decimals = it.token.decimals,
+                decimals = token.decimals,
                 type = TokenType.CURVE,
                 underlyingTokens = underlyingTokens,
-                protocol = Protocol.CURVE
+                protocol = Protocol.CURVE,
             )
         } ?: throw java.lang.IllegalArgumentException("Not possible to get curve info for address $address")
     }
 
     private suspend fun getEthereumCurveInfo(address: String): TokenInformation {
-        return curveEthereumGraphProvider.getPool(address)?.let {
-            val underlyingTokens = it.pool.coins.map { u ->
-                erC20Service.getERC20(Network.ETHEREUM, u.token.id).toToken()
+        return curveEthereumGraphProvider.getPoolByLp(address)?.let {
+            val underlyingTokens = it.coins.map { coin ->
+                erC20Service.getERC20(Network.ETHEREUM, coin).toToken()
             }
+
+            val token = erC20Service.getERC20(Network.ETHEREUM, address)
+
             TokenInformation(
-                name = it.name,
-                address = it.id,
+                name = token.name,
+                address = address,
                 symbol = underlyingTokens.joinToString("/") { it.symbol },
-                decimals = it.decimals,
+                decimals = token.decimals,
                 type = TokenType.CURVE,
                 underlyingTokens = underlyingTokens,
                 protocol = Protocol.CURVE,
