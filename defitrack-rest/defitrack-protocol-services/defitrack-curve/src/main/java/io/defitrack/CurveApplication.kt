@@ -5,9 +5,7 @@ import org.springframework.boot.runApplication
 import org.springframework.cache.annotation.EnableCaching
 
 @SpringBootApplication
-@EnableCaching
 class CurveApplication
-
 fun main(args: Array<String>) {
     runApplication<CurveApplication>(*args)
 }
