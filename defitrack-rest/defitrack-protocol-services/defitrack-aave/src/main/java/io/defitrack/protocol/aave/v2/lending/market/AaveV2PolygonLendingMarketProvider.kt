@@ -15,6 +15,9 @@ import io.defitrack.protocol.aave.v2.domain.AaveReserve
 import io.defitrack.protocol.aave.v2.lending.invest.AaveLendingInvestmentPreparer
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 
@@ -39,26 +42,32 @@ class AaveV2PolygonLendingMarketProvider(
         lendingPoolAddressesProviderContract.lendingPoolAddress()
     )
 
-    override suspend fun fetchLendingMarkets(): List<LendingMarket> {
-        return aaveV2PolygonService.getReserves().map {
-            val token = erC20Resource.getTokenInformation(getNetwork(), it.underlyingAsset)
-            LendingMarket(
-                id = "polygon-aave-${it.symbol}",
-                address = it.underlyingAsset,
-                token = token.toFungibleToken(),
-                name = it.name + " Aave Pool",
-                protocol = getProtocol(),
-                network = getNetwork(),
-                rate = it.lendingRate.toBigDecimal(),
-                marketSize = calculateMarketSize(it).toBigDecimal(),
-                poolType = "aave-v2",
-                investmentPreparer = AaveLendingInvestmentPreparer(
-                    token.address,
-                    lendingPoolContract,
-                    erC20Resource
-                )
-            )
-        }
+    override suspend fun fetchLendingMarkets(): List<LendingMarket> = coroutineScope {
+        aaveV2PolygonService.getReserves().map {
+            async {
+                try {
+                    val token = erC20Resource.getTokenInformation(getNetwork(), it.underlyingAsset)
+                    LendingMarket(
+                        id = "polygon-aave-${it.symbol}",
+                        address = it.underlyingAsset,
+                        token = token.toFungibleToken(),
+                        name = it.name + " Aave Pool",
+                        protocol = getProtocol(),
+                        network = getNetwork(),
+                        rate = it.lendingRate.toBigDecimal(),
+                        marketSize = calculateMarketSize(it).toBigDecimal(),
+                        poolType = "aave-v2",
+                        investmentPreparer = AaveLendingInvestmentPreparer(
+                            token.address,
+                            lendingPoolContract,
+                            erC20Resource
+                        )
+                    )
+                } catch (ex: Exception) {
+                    null
+                }
+            }
+        }.awaitAll().filterNotNull()
     }
 
     private suspend fun calculateMarketSize(reserve: AaveReserve): Double {

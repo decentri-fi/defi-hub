@@ -9,12 +9,12 @@ import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Component
 
 @Component
-class AaveV3OptimismLendingMarketProvider(
+class AaveV3PolygonLendingMarketProvider(
     blockchainGatewayProvider: BlockchainGatewayProvider,
     abiResource: ABIResource,
     erC20Resource: ERC20Resource,
     aaveV3DataProvider: AaveV3DataProvider,
     priceResource: PriceResource
 ) : AaveV3LendingMarketProvider(
-    erC20Resource, priceResource, Network.OPTIMISM, blockchainGatewayProvider, abiResource, aaveV3DataProvider
+    erC20Resource, priceResource, Network.POLYGON, blockchainGatewayProvider, abiResource, aaveV3DataProvider
 )
