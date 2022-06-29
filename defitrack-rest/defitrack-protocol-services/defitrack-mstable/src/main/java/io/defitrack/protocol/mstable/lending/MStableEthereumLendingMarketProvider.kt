@@ -3,7 +3,7 @@ package io.defitrack.protocol.mstable.lending
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.market.lending.LendingMarketService
+import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.BalanceFetcher
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.protocol.Protocol
@@ -15,12 +15,12 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 
 @Deprecated("not a lending market")
-class MStableEthereumLendingMarketService(
+class MStableEthereumLendingMarketProvider(
     private val mStableService: MStableEthereumService,
     private val abiResource: ABIResource,
     private val tokenService: ERC20Resource,
     private val blockchainGatewayProvider: BlockchainGatewayProvider
-) : LendingMarketService() {
+) : LendingMarketProvider() {
 
     val savingsContractABI by lazy {
         abiResource.getABI("mStable/SavingsContract.json")

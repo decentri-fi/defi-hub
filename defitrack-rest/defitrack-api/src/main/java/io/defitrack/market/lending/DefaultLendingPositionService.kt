@@ -8,13 +8,13 @@ import kotlinx.coroutines.runBlocking
 import java.math.BigInteger
 
 abstract class DefaultLendingPositionService(
-    val lendingMarketService: LendingMarketService,
+    val lendingMarketProvider: LendingMarketProvider,
     val gateway: BlockchainGatewayProvider,
 ) : LendingPositionService {
 
     override suspend fun getLendings(address: String): List<LendingPosition> {
 
-        val markets = lendingMarketService.fetchLendingMarkets().filter {
+        val markets = lendingMarketProvider.fetchLendingMarkets().filter {
             it.balanceFetcher != null
         }
 
@@ -44,10 +44,10 @@ abstract class DefaultLendingPositionService(
     }
 
     override fun getProtocol(): Protocol {
-        return lendingMarketService.getProtocol()
+        return lendingMarketProvider.getProtocol()
     }
 
     override fun getNetwork(): Network {
-        return lendingMarketService.getNetwork()
+        return lendingMarketProvider.getNetwork()
     }
 }

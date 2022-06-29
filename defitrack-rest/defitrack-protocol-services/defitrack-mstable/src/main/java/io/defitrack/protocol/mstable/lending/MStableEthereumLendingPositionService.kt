@@ -6,7 +6,7 @@ import io.defitrack.market.lending.DefaultLendingPositionService
 @Deprecated("not a lending market")
 class MStableEthereumLendingPositionService(
     blockchainGatewayProvider: BlockchainGatewayProvider,
-    lendingMarkteService: MStableEthereumLendingMarketService,
+    lendingMarkteService: MStableEthereumLendingMarketProvider,
 ) : DefaultLendingPositionService(
     lendingMarkteService, blockchainGatewayProvider
 )
