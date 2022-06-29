@@ -56,6 +56,9 @@ class AaveV2PolygonService(
                   liquidityRate
                   variableBorrowRate
                   totalLiquidity
+                  aToken {
+                    id
+                  }
               }
             }
         """.trimIndent()
