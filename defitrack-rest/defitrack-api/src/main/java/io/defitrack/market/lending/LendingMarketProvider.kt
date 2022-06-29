@@ -35,7 +35,7 @@ abstract class LendingMarketProvider : ProtocolService {
 
     private suspend fun populate(): List<LendingMarket> {
         logger.info("Cache empty or expired, fetching fresh elements")
-        fetchLendingMarkets().also {
+        return fetchLendingMarkets().also {
             logger.info("Cache successfuly filled with ${it.size} elements")
         }
     }
