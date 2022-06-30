@@ -35,7 +35,11 @@ class DefitrackClient(private val httpClient: HttpClient) {
 
     suspend fun getPoolingMarkets(protocolVO: ProtocolVO): List<PoolingMarketVO> {
         return try {
-            httpClient.get("https://api.defitrack.io/${protocolVO.slug}/pooling/all-markets").body()
+            httpClient.get("https://api.defitrack.io/${protocolVO.slug}/pooling/all-markets") {
+                timeout {
+                    this.requestTimeoutMillis = 3000
+                }
+            }.body()
         } catch (ex: Exception) {
             logger.error("Unable to get pooling markets for ${protocolVO.slug}")
             emptyList()
@@ -44,7 +48,11 @@ class DefitrackClient(private val httpClient: HttpClient) {
 
     suspend fun getLendingMarkets(protocolVO: ProtocolVO): List<LendingMarketVO> {
         return try {
-            httpClient.get("https://api.defitrack.io/${protocolVO.slug}/lending/all-markets").body()
+            httpClient.get("https://api.defitrack.io/${protocolVO.slug}/lending/all-markets") {
+                timeout {
+                    this.requestTimeoutMillis = 3000
+                }
+            }.body()
         } catch (ex: Exception) {
             logger.error("Unable to get lending markets for ${protocolVO.slug}")
             emptyList()
