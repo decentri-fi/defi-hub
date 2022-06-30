@@ -22,7 +22,7 @@ class BeefyOptimismFarmingMarketProvider(
     blockchainGatewayProvider,
     abiResource,
     beefyAPYService,
-    beefyService.beefyArbitrumVaults,
+    beefyService.beefyOptimismVaults,
     erC20Resource,
     priceService
 ) {

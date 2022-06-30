@@ -3,7 +3,7 @@ package io.defitrack.token
 import io.defitrack.protocol.Protocol
 import java.math.BigInteger
 
-class TokenInformation(
+data class TokenInformation(
     val logo: String? = null,
     val name: String,
     val symbol: String,

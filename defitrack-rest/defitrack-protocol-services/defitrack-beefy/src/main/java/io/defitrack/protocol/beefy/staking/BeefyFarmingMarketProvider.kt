@@ -79,6 +79,7 @@ abstract class BeefyFarmingMarketProvider(
                 investmentPreparer = BeefyStakingInvestmentPreparer(contract, erC20Resource)
             )
         } catch (ex: Exception) {
+            logger.error("Unable to get beefy farm ${beefyVault.id}", ex)
             null
         }
     }

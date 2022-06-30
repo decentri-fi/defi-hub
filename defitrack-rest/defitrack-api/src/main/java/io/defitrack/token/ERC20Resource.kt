@@ -11,9 +11,7 @@ import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.web3j.abi.datatypes.Function
@@ -31,8 +29,8 @@ class ERC20Resource(
         abiResource.getABI("general/ERC20.json")
     }
 
-    suspend fun getAllTokens(network: Network): List<TokenInformation> = coroutineScope{
-            retry(limitAttempts(3)) { client.get("$erc20ResourceLocation/${network.name}").body() }
+    suspend fun getAllTokens(network: Network): List<TokenInformation> = coroutineScope {
+        retry(limitAttempts(3)) { client.get("$erc20ResourceLocation/${network.name}").body() }
     }
 
     suspend fun getBalance(network: Network, tokenAddress: String, user: String): BigInteger = coroutineScope {
@@ -48,7 +46,7 @@ class ERC20Resource(
         token: String,
         spender: String,
         amount: BigInteger
-    ): org.web3j.abi.datatypes.Function {
+    ): Function {
         return with(blockchainGatewayProvider.getGateway(network)) {
             ERC20Contract(
                 this,
@@ -62,7 +60,7 @@ class ERC20Resource(
         network: Network,
         token: String,
         spender: String
-    ): org.web3j.abi.datatypes.Function {
+    ): Function {
         return getApproveFunction(network, token, spender, MAX_UINT256.value)
     }
 

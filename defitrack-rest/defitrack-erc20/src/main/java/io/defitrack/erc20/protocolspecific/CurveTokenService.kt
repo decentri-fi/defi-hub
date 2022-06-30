@@ -19,8 +19,15 @@ class CurveTokenService(
         return when (network) {
             Network.ETHEREUM -> getEthereumCurveInfo(address)
             Network.POLYGON -> getPolygonCurveInfo(address)
-            else -> throw java.lang.IllegalArgumentException("Not possible to get curve info for address $address and network $network")
+            else -> getDefaultInfo(address, network)
         }
+    }
+
+    private suspend fun getDefaultInfo(address: String, network: Network): TokenInformation {
+        return erC20Service.getERC20(network, address).toToken().copy(
+            type = TokenType.CURVE,
+            protocol = Protocol.CURVE
+        )
     }
 
     private suspend fun getPolygonCurveInfo(address: String): TokenInformation {

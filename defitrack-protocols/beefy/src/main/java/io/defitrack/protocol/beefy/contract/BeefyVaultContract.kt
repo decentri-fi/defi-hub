@@ -1,8 +1,9 @@
 package io.defitrack.protocol.beefy.contract
 
-import io.defitrack.evm.contract.ERC20Contract
-import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toUint256
+import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ERC20Contract
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Function
@@ -42,26 +43,26 @@ class BeefyVaultContract(
     }
 
     val strategy by lazy {
-        readWithAbi(
+        read(
             "strategy",
-            outputs = listOf(TypeReference.create(Address::class.java))
+            outputs = listOf(TypeUtils.address())
         )[0].value as String
     }
 
     val want: String by lazy {
-        var read = readWithAbi(
+        var read = read(
             "want",
             inputs = emptyList(),
             outputs = listOf(
-                TypeReference.create(Address::class.java)
+                TypeUtils.address()
             )
         )
         if (read.isEmpty()) {
-            read = readWithAbi(
+            read = read(
                 "wmatic",
                 inputs = emptyList(),
                 outputs = listOf(
-                    TypeReference.create(Address::class.java)
+                    TypeUtils.address()
                 )
             )
         }
