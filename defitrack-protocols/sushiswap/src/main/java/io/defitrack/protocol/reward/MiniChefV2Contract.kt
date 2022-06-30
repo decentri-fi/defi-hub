@@ -1,9 +1,9 @@
 package io.defitrack.protocol.reward
 
-import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
+import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
@@ -17,10 +17,6 @@ class MiniChefV2Contract(
     blockchainGateway: BlockchainGateway,
     abi: String, address: String
 ) : EvmContract(blockchainGateway, abi, address) {
-
-    fun accSushiPerShare(poolIndex: Int): BigInteger {
-        return poolInfos[poolIndex].accSushiPerShare
-    }
 
     fun userInfoFunction(poolId: Int, user: String): Function {
         return createFunctionWithAbi(
@@ -37,8 +33,8 @@ class MiniChefV2Contract(
     }
 
 
-    val poolInfos: List<MinichefPoolInfo> by lazy {
-        val multicalls = (0 until poolLength).map { poolIndex ->
+    suspend fun poolInfos(): List<MinichefPoolInfo> {
+        val multicalls = (0 until poolLength()).map { poolIndex ->
             MultiCallElement(
                 createFunctionWithAbi(
                     "poolInfo",
@@ -56,7 +52,7 @@ class MiniChefV2Contract(
         val results = this.blockchainGateway.readMultiCall(
             multicalls
         )
-        results.map { retVal ->
+        return results.map { retVal ->
             MinichefPoolInfo(
                 retVal[0].value as BigInteger,
                 retVal[1].value as BigInteger,
@@ -65,31 +61,19 @@ class MiniChefV2Contract(
         }
     }
 
-    fun poolInfo(poolIndex: Int): MinichefPoolInfo {
-        return poolInfos[poolIndex]
+    suspend fun poolInfo(poolIndex: Int): MinichefPoolInfo {
+        return poolInfos()[poolIndex]
     }
 
-    val poolLength by lazy {
-        (readWithAbi(
+    suspend fun poolLength(): Int {
+        return (readWithAbi(
             "poolLength",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger).toInt()
     }
 
-    fun claimableAmount(poolIndex: Int, address: String): BigInteger {
-        return readWithAbi(
-            "pendingSushi",
-            inputs = listOf(
-                poolIndex.toBigInteger().toUint256(), address.toAddress()
-            ),
-            outputs = listOf(
-                TypeReference.create(Uint256::class.java)
-            )
-        )[0].value as BigInteger
-    }
-
-    val lps: List<String> by lazy {
-        val multicalls = (0 until poolLength).map { poolIndex ->
+    private suspend fun lps(): List<String> {
+        val multicalls = (0 until poolLength()).map { poolIndex ->
             MultiCallElement(
                 createFunctionWithAbi(
                     "lpToken",
@@ -102,30 +86,30 @@ class MiniChefV2Contract(
             )
         }
         val results = this.blockchainGateway.readMultiCall(multicalls)
-        results.map { retVal ->
+        return results.map { retVal ->
             retVal[0].value as String
         }
     }
 
-    fun getLpTokenForPoolId(poolIndex: Int): String = lps[poolIndex]
+    suspend fun getLpTokenForPoolId(poolIndex: Int): String = lps()[poolIndex]
 
-    val rewardToken by lazy {
-        readWithAbi(
+    suspend fun rewardToken(): String {
+        return readWithAbi(
             "SUSHI",
             outputs = listOf(TypeReference.create(Address::class.java))
         )[0].value as String
     }
 
 
-    val sushiPerSecond by lazy {
-        readWithAbi(
+    suspend fun sushiPerSecond(): BigInteger {
+        return readWithAbi(
             "sushiPerSecond",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger
     }
 
-    val totalAllocPoint by lazy {
-        readWithAbi(
+    suspend fun totalAllocPoint(): BigInteger {
+        return readWithAbi(
             "totalAllocPoint",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger

@@ -11,7 +11,7 @@ class PoolTokenContract(
     gateway, abi, address
 ) {
 
-    val reserveToken: String by lazy {
-        readWithAbi("reserveToken")[0].value as String
+    suspend fun reserveToken(): String {
+        return readWithAbi("reserveToken")[0].value as String
     }
 }

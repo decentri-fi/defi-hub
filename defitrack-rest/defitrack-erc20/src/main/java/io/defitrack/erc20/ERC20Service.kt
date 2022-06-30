@@ -34,12 +34,12 @@ class ERC20Service(
                 )
             }.let {
                 ERC20(
-                    name = it.name,
-                    symbol = it.symbol,
-                    decimals = it.decimals,
+                    name = it.name(),
+                    symbol = it.symbol(),
+                    decimals = it.decimals(),
                     network = network,
                     address = correctAddress.lowercase(),
-                    totalSupply = it.totalSupply
+                    totalSupply = it.totalSupply()
                 )
             }
         } catch (ex: Exception) {
@@ -49,7 +49,7 @@ class ERC20Service(
         }
     }
 
-    fun getBalance(network: Network, address: String, userAddress: String) = ERC20Contract(
+    suspend fun getBalance(network: Network, address: String, userAddress: String) = ERC20Contract(
         blockchainGatewayProvider.getGateway(network),
         erc20ABI,
         address

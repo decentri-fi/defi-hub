@@ -25,7 +25,7 @@ class FarmingMarketStatisticsService(
                 defitrackClient.getFarmingMarkets(it)
             }
         }.map {
-            it.first to it.second.await(10000L, emptyList())
+            it.first to it.second.await(3000L, emptyList())
         }
 
         MarketStatisticVO(

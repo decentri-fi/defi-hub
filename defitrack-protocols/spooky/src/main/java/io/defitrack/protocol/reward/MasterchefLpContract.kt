@@ -1,8 +1,8 @@
 package io.defitrack.protocol.reward
 
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import org.web3j.abi.datatypes.Function
@@ -16,25 +16,24 @@ class MasterchefLpContract(
     blockchainGateway, abi, address
 ) {
 
-    val poolLength by lazy {
-        (readWithAbi(
+    suspend fun poolLength(): Int {
+        return (readWithAbi(
             "poolLength"
         )[0].value as BigInteger).toInt()
     }
 
-    val totalAllocPoint by lazy {
-        (readWithAbi(
+    suspend fun totalAllocPoint(): BigInteger {
+        return (readWithAbi(
             "totalAllocPoint",
         )[0].value as BigInteger)
     }
 
-
-    val rewardToken by lazy {
-        readWithAbi("boo")[0].value as String
+    suspend fun rewardToken(): String {
+        return readWithAbi("boo")[0].value as String
     }
 
-    val sushiPerSecond by lazy {
-        readWithAbi("booPerSecond")[0].value as BigInteger
+    suspend fun sushiPerSecond(): BigInteger {
+        return readWithAbi("booPerSecond")[0].value as BigInteger
     }
 
     fun userInfoFunction(poolId: Int, address: String): Function {
@@ -47,8 +46,8 @@ class MasterchefLpContract(
         )
     }
 
-    val poolInfos: List<PoolInfo> by lazy {
-        val multicalls = (0 until poolLength).map { poolIndex ->
+    suspend fun poolInfos(): List<PoolInfo> {
+        val multicalls = (0 until poolLength()).map { poolIndex ->
             MultiCallElement(
                 createFunctionWithAbi(
                     "poolInfo",
@@ -61,7 +60,7 @@ class MasterchefLpContract(
         val results = this.blockchainGateway.readMultiCall(
             multicalls
         )
-        results.map { retVal ->
+        return results.map { retVal ->
             PoolInfo(
                 retVal[0].value as String,
                 retVal[1].value as BigInteger,
@@ -71,7 +70,7 @@ class MasterchefLpContract(
         }
     }
 
-    fun poolInfo(poolIndex: Int): PoolInfo {
-        return poolInfos[poolIndex]
+    suspend fun poolInfo(poolIndex: Int): PoolInfo {
+        return poolInfos()[poolIndex]
     }
 }

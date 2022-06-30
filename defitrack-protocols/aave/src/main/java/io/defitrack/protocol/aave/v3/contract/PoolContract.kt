@@ -1,9 +1,9 @@
 package io.defitrack.protocol.aave.v3.contract
 
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint16
 import io.defitrack.abi.TypeUtils.Companion.toUint256
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
@@ -29,8 +29,8 @@ class PoolContract(
         )
     }
 
-    val reservesList by lazy {
-        (readWithAbi("getReservesList", emptyList(), listOf(
+    suspend fun reservesList(): List<String> {
+        return (readWithAbi("getReservesList", emptyList(), listOf(
             object : TypeReference<DynamicArray<Address>>() {}
         ))[0].value as List<Address>).map {
             it.value as String

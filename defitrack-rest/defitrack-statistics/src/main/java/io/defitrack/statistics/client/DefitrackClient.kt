@@ -6,6 +6,7 @@ import io.defitrack.market.pooling.vo.PoolingMarketVO
 import io.defitrack.protocol.ProtocolVO
 import io.ktor.client.*
 import io.ktor.client.call.*
+import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -21,7 +22,11 @@ class DefitrackClient(private val httpClient: HttpClient) {
 
     suspend fun getFarmingMarkets(protocolVO: ProtocolVO): List<FarmingMarketVO> {
         return try {
-            httpClient.get("https://api.defitrack.io/${protocolVO.slug}/farming/all-markets").body()
+            httpClient.get("https://api.defitrack.io/${protocolVO.slug}/farming/all-markets") {
+                timeout {
+                    this.requestTimeoutMillis = 3000
+                }
+            }.body()
         } catch (ex: Exception) {
             logger.error("Unable to get farming markets for ${protocolVO.slug}")
             emptyList()

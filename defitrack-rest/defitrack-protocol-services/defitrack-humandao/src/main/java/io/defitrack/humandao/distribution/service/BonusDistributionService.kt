@@ -98,7 +98,7 @@ class BonusDistributionService(
         }
     }
 
-    fun getBonusDistributionStatus(network: Network, address: String): BonusDistributionStatus {
+    suspend fun getBonusDistributionStatus(network: Network, address: String): BonusDistributionStatus {
         val config = merkleMap[network]
         if (config == null) {
             return noBonus(address)
@@ -128,11 +128,11 @@ class BonusDistributionService(
         }
     }
 
-    private fun getClaimed(network: Network, index: Int): Boolean {
+    private suspend fun getClaimed(network: Network, index: Int): Boolean {
         return bonusDistributorContractMap[network]?.isClaimed(index.toLong()) ?: false
     }
 
-    private fun calculateFromChain(network: Network, address: String, maxBonusAmount: BigInteger): BigInteger {
+    private suspend fun calculateFromChain(network: Network, address: String, maxBonusAmount: BigInteger): BigInteger {
         return erc20Map[network]?.let { contract ->
             val balance = contract.balanceOf(address)
             val currentBonus = balance.toBigDecimal().divide(BigDecimal(5), 18, RoundingMode.HALF_UP)

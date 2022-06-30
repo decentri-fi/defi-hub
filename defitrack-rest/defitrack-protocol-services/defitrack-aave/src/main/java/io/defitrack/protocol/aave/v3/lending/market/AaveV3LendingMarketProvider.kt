@@ -41,7 +41,7 @@ abstract class AaveV3LendingMarketProvider(
     )
 
     override suspend fun fetchLendingMarkets(): List<LendingMarket> = coroutineScope {
-        pool.reservesList.map {
+        pool.reservesList().map {
             async {
                 try {
 

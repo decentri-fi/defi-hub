@@ -1,8 +1,8 @@
 package io.defitrack.protocol.convex.contract
 
-import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.abi.TypeUtils.Companion.toUint256
+import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
@@ -16,15 +16,15 @@ class ConvexBoosterContract(
     address: String
 ) : EvmContract(blockchainGateway, abi, address) {
 
-    val poolLength by lazy {
-        (readWithAbi(
+    suspend fun poolLength(): Int {
+        return (readWithAbi(
             "poolLength",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger).toInt()
     }
 
-    val poolInfos: List<PoolInfo> by lazy {
-        val multicalls = (0 until poolLength).map { poolIndex ->
+    suspend fun poolInfos(): List<PoolInfo> {
+        val multicalls = (0 until poolLength()).map { poolIndex ->
             MultiCallElement(
                 createFunctionWithAbi(
                     "poolInfo",
@@ -45,7 +45,7 @@ class ConvexBoosterContract(
         val results = this.blockchainGateway.readMultiCall(
             multicalls
         )
-        results.map { retVal ->
+        return results.map { retVal ->
             PoolInfo(
                 retVal[0].value as String,
                 retVal[1].value as String,

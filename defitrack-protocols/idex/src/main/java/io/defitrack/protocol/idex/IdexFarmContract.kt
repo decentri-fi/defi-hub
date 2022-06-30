@@ -1,9 +1,9 @@
 package io.defitrack.protocol.idex
 
-import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
+import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Function
@@ -31,21 +31,21 @@ class IdexFarmContract(
     }
 
 
-    val poolLength by lazy {
-        (readWithAbi(
+    suspend fun poolLength(): Int {
+        return (readWithAbi(
             "poolLength",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger).toInt()
     }
 
-    val rewardPerBlock by lazy {
-        readWithAbi(
+    suspend fun rewardPerBlock(): BigInteger {
+        return readWithAbi(
             "rewardTokenPerBlock",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger
     }
 
-    fun getLpTokenForPoolId(poolIndex: Int): String {
+    suspend fun getLpTokenForPoolId(poolIndex: Int): String {
         return readWithAbi(
             "poolInfo",
             inputs = listOf(poolIndex.toBigInteger().toUint256()),
@@ -58,8 +58,8 @@ class IdexFarmContract(
         )[0].value as String
     }
 
-    val rewardToken by lazy {
-        readWithAbi(
+    suspend fun rewardToken(): String {
+        return readWithAbi(
             "rewardToken",
             outputs = listOf(TypeReference.create(Address::class.java))
         )[0].value as String

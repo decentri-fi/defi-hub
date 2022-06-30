@@ -43,7 +43,7 @@ class AdamantVaultMarketProvider(
             }.map { vault ->
                 async {
                     try {
-                        val token = erC20Resource.getTokenInformation(getNetwork(), vault.token)
+                        val token = erC20Resource.getTokenInformation(getNetwork(), vault.token())
                         FarmingMarket(
                             name = "${token.name} vault",
                             id = "adamant-polygon-${vault.address}",

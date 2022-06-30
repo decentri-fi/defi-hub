@@ -35,8 +35,8 @@ class IdexFarmingMarketProvider(
                 it
             )
         }.flatMap { chef ->
-            (0 until chef.poolLength).map { poolId ->
-                async(Dispatchers.IO.limitedParallelism(10)) {
+            (0 until chef.poolLength()).map { poolId ->
+                async {
                     try {
                         toStakingMarketElement(chef, poolId)
                     } catch (ex: Exception) {
@@ -62,7 +62,7 @@ class IdexFarmingMarketProvider(
     ): FarmingMarket {
         val stakedtoken =
             tokenService.getTokenInformation(getNetwork(), chef.getLpTokenForPoolId(poolId))
-        val rewardToken = tokenService.getTokenInformation(getNetwork(), chef.rewardToken)
+        val rewardToken = tokenService.getTokenInformation(getNetwork(), chef.rewardToken())
         return FarmingMarket(
             id = "idex-${chef.address}-${poolId}",
             network = getNetwork(),

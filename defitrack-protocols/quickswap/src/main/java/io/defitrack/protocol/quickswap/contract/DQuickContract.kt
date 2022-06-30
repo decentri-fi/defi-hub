@@ -1,8 +1,8 @@
 package io.defitrack.protocol.quickswap.contract
 
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Function
@@ -16,7 +16,7 @@ class DQuickContract(
 ) : ERC20Contract(
     contractAccessor, abi, address
 ) {
-    fun quickBalance(address: String): BigInteger {
+    suspend fun quickBalance(address: String): BigInteger {
         return readWithAbi(
             "QUICKBalance",
             inputs = listOf(address.toAddress()),
@@ -30,7 +30,7 @@ class DQuickContract(
         return createFunctionWithAbi("enter", listOf(amount.toUint256()), emptyList())
     }
 
-    fun dquickForQuick(amount: BigInteger): BigInteger {
+    suspend fun dquickForQuick(amount: BigInteger): BigInteger {
         return readWithAbi(
             "dQUICKForQuick",
             inputs = listOf(amount.toUint256()),

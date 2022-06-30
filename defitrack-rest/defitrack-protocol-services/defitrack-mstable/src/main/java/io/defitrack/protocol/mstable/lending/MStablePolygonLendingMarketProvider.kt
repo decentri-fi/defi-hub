@@ -31,7 +31,7 @@ class MStablePolygonLendingMarketProvider(
                 it
             )
         }.map {
-            val token = tokenService.getTokenInformation(getNetwork(), it.underlying)
+            val token = tokenService.getTokenInformation(getNetwork(), it.underlying())
             LendingMarket(
                 id = "mstable-polygon-${it.address}",
                 network = getNetwork(),

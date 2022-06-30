@@ -1,9 +1,9 @@
 package io.defitrack.protocol.compound
 
-import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
+import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Function
@@ -27,21 +27,21 @@ class CompoundTokenContract(
         )
     }
 
-    val cash: BigInteger by lazy {
-        readWithAbi(
+    suspend fun cash(): BigInteger {
+        return readWithAbi(
             "getCash"
         )[0].value as BigInteger
     }
 
-    val totalBorrows: BigInteger by lazy {
-        readWithAbi(
+    suspend fun totalBorrows(): BigInteger {
+        return readWithAbi(
             "totalBorrows"
         )[0].value as BigInteger
     }
 
 
-    val underlyingAddress: String by lazy {
-        try {
+    suspend fun underlyingAddress(): String {
+        return try {
             readWithAbi(
                 "underlying"
             )[0].value as String
@@ -50,13 +50,8 @@ class CompoundTokenContract(
         }
     }
 
-    fun underlyingBalanceOf(address: String): BigInteger {
-        return balanceOf(address).times(exchangeRate).toBigDecimal().dividePrecisely(BigDecimal.TEN.pow(18))
-            .toBigInteger()
-    }
-
-    val exchangeRate by lazy {
-        readWithAbi(
+    suspend fun exchangeRate(): BigInteger {
+        return readWithAbi(
             "exchangeRateStored",
             outputs = listOf(
                 TypeReference.create(Uint256::class.java)
@@ -72,23 +67,15 @@ class CompoundTokenContract(
         )
     }
 
-    fun borrowBalanceStored(address: String): BigInteger {
+    suspend fun supplyRatePerBlock(): BigInteger {
         return readWithAbi(
-            "borrowBalanceStored",
-            inputs = listOf(address.toAddress()),
-            outputs = listOf(TypeReference.create(Uint256::class.java))
-        )[0].value as BigInteger
-    }
-
-    val supplyRatePerBlock by lazy {
-        readWithAbi(
             "supplyRatePerBlock",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger
     }
 
-    val borrowRatePerBlock by lazy {
-        readWithAbi(
+    suspend fun borrowRatePerBlock(): BigInteger {
+        return readWithAbi(
             "borrowRatePerBlock",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger

@@ -18,12 +18,12 @@ class MinichefStakingAprCalculator(
     private val poolId: Int
 ) : StakingAprCalculator(priceResource) {
 
-    fun getNativeReward(): Reward {
+    suspend fun getNativeReward(): Reward {
         val poolInfo = chef.poolInfo(poolId)
-        val allSushiPerSecond = chef.sushiPerSecond
-        val poolBlockRewards = allSushiPerSecond.times(poolInfo.allocPoint).divide(chef.totalAllocPoint)
+        val allSushiPerSecond = chef.sushiPerSecond()
+        val poolBlockRewards = allSushiPerSecond.times(poolInfo.allocPoint).divide(chef.totalAllocPoint())
         return Reward(
-            address = chef.rewardToken,
+            address = chef.rewardToken(),
             network = chef.blockchainGateway.network,
             amount = poolBlockRewards.toBigDecimal().divide(BigDecimal.TEN.pow(18), 18, RoundingMode.HALF_UP),
             tokenType = TokenType.SINGLE
@@ -31,7 +31,7 @@ class MinichefStakingAprCalculator(
     }
 
 
-    override fun getRewardsPerSecond(): List<Reward> {
+    override suspend fun getRewardsPerSecond(): List<Reward> {
         return listOf(
             getNativeReward()
         )

@@ -55,7 +55,7 @@ class HopPolygonPoolingMarketService(
             val swapContract = HopSwapContract(
                 blockchainGateway = gateway,
                 abiResource.getABI("hop/Swap.json"),
-                contract.swap
+                contract.swap()
             )
 
             val htoken = erC20Resource.getTokenInformation(getNetwork(), hopLpToken.hToken)
@@ -68,7 +68,7 @@ class HopPolygonPoolingMarketService(
                 protocol = getProtocol(),
                 address = hopLpToken.lpToken,
                 symbol = htoken.symbol + "-" + canonical.symbol,
-                name = contract.name,
+                name = contract.name(),
                 tokens = listOf(
                     htoken.toFungibleToken(),
                     canonical.toFungibleToken()
@@ -95,8 +95,8 @@ class HopPolygonPoolingMarketService(
         swapContract: HopSwapContract
     ): Double {
 
-        val tokenAmount = contract.totalSupply.toBigDecimal().times(
-            swapContract.virtualPrice.toBigDecimal()
+        val tokenAmount = contract.totalSupply().toBigDecimal().times(
+            swapContract.virtualPrice().toBigDecimal()
         ).divide(BigDecimal.TEN.pow(36))
 
         return priceResource.calculatePrice(

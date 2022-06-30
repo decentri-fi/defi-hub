@@ -40,8 +40,8 @@ class QuickswapFarmingMarketProvider(
                 it
             )
         }.map { pool ->
-            val stakedToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingTokenAddress)
-            val rewardToken = erC20Resource.getTokenInformation(getNetwork(), pool.rewardsTokenAddress)
+            val stakedToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingTokenAddress())
+            val rewardToken = erC20Resource.getTokenInformation(getNetwork(), pool.rewardsTokenAddress())
 
             FarmingMarket(
                 id = "quickswap-polygon-${pool.address}",
@@ -72,7 +72,7 @@ class QuickswapFarmingMarketProvider(
             PriceRequest(
                 address = stakedTokenInformation.address,
                 network = getNetwork(),
-                amount = pool.totalSupply.toBigDecimal().divide(
+                amount = pool.totalSupply().toBigDecimal().divide(
                     BigDecimal.TEN.pow(stakedTokenInformation.decimals), RoundingMode.HALF_UP
                 ),
                 type = stakedTokenInformation.type

@@ -2,8 +2,8 @@ package io.defitrack.protocol.compound.lending.invest
 
 import io.defitrack.common.network.Network
 import io.defitrack.invest.PrepareInvestmentCommand
-import io.defitrack.protocol.compound.IronbankTokenContract
 import io.defitrack.market.farming.domain.InvestmentPreparer
+import io.defitrack.protocol.compound.IronbankTokenContract
 import io.defitrack.token.ERC20Resource
 import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.Deferred
@@ -15,8 +15,8 @@ class CompoundLendingInvestmentPreparer(
     erC20Resource: ERC20Resource
 ) : InvestmentPreparer(erC20Resource) {
 
-    override fun getToken(): String {
-        return iToken.underlyingAddress
+    override suspend fun getToken(): String {
+        return iToken.underlyingAddress()
     }
 
     override fun getEntryContract(): String {

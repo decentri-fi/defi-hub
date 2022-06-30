@@ -15,8 +15,8 @@ class CompoundLendingInvestmentPreparer(
     erC20Resource: ERC20Resource
 ) : InvestmentPreparer(erC20Resource) {
 
-    override fun getToken(): String {
-        return ctoken.underlyingAddress
+    override suspend fun getToken(): String {
+        return ctoken.underlyingAddress()
     }
 
     override fun getEntryContract(): String {

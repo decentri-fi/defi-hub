@@ -32,7 +32,7 @@ abstract class EvmContract(
     }
 
 
-    fun readConstant(method: String): List<Type<*>> {
+    suspend fun readConstant(method: String): List<Type<*>> {
         return blockchainGateway.readFunctionWithAbi(
             address = address,
             function = blockchainGateway.getConstantFunction(
@@ -42,7 +42,7 @@ abstract class EvmContract(
         )
     }
 
-    fun readMultiple(requests: List<ReadRequest>): List<List<Type<*>>> {
+    suspend fun readMultiple(requests: List<ReadRequest>): List<List<Type<*>>> {
         val functions = requests.map {
             val abiFunction = blockchainGateway.getFunction(abi, it.method)
             val function = BlockchainGateway.createFunctionWithAbi(
@@ -56,7 +56,7 @@ abstract class EvmContract(
         return blockchainGateway.readMultiCall(functions)
     }
 
-    fun read(
+    suspend fun readWithoutAbi(
         method: String,
         inputs: List<Type<*>> = emptyList(),
         outputs: List<TypeReference<out Type<*>>>? = null
@@ -69,7 +69,7 @@ abstract class EvmContract(
         )
     }
 
-    fun readWithAbi(
+    suspend fun readWithAbi(
         method: String,
         inputs: List<Type<*>> = emptyList(),
         outputs: List<TypeReference<out Type<*>>>? = null
@@ -85,7 +85,7 @@ abstract class EvmContract(
         )
     }
 
-    fun readConstant(method: String, inputs: List<Type<*>>): List<Type<*>> {
+    suspend fun readConstant(method: String, inputs: List<Type<*>>): List<Type<*>> {
         return blockchainGateway.readFunctionWithAbi(
             address = address,
             inputs = inputs,
@@ -96,7 +96,7 @@ abstract class EvmContract(
         )
     }
 
-    fun readConstant(
+    suspend fun readConstant(
         method: String,
         inputs: List<Type<*>>,
         outputs: List<TypeReference<out Type<*>>>? = null
@@ -112,7 +112,7 @@ abstract class EvmContract(
         )
     }
 
-    inline fun <reified T : Any> read(function: String): T {
+    suspend inline fun <reified T : Any> read(function: String): T {
         return readWithAbi(function)[0].value as T
     }
 }

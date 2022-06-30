@@ -25,7 +25,7 @@ class DQuickStakingInvestmentPreparer(
         ).awaitAll().filterNotNull()
     }
 
-    override fun getToken(): String {
+    override suspend fun getToken(): String {
         return quick
     }
 

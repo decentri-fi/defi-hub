@@ -1,9 +1,9 @@
 package io.defitrack.protocol.polycat.contract
 
-import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
+import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
@@ -19,38 +19,22 @@ class PolycatMasterChefContract(
     contractAccessor, abi, address
 ) {
 
-    val poolLength by lazy {
-        (readWithAbi(
+    suspend fun poolLength(): Int {
+        return (readWithAbi(
             "poolLength",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger).toInt()
     }
 
-    val rewardToken by lazy {
-        readWithAbi(
+    suspend fun rewardToken(): String {
+        return readWithAbi(
             "fish",
             outputs = listOf(TypeReference.create(Address::class.java))
         )[0].value as String
     }
 
-    fun claimableAmount(poolIndex: Int, address: String): BigInteger {
-        return readWithAbi(
-            "pendingFish",
-            inputs = listOf(
-                poolIndex.toBigInteger().toUint256(), address.toAddress()
-            ),
-            outputs = listOf(
-                TypeReference.create(Uint256::class.java)
-            )
-        )[0].value as BigInteger
-    }
-
-    fun poolInfo(poolId: Int): PoolInfo {
-        return poolInfos[poolId]
-    }
-
-    val poolInfos by lazy {
-        val multicalls = (0 until poolLength).map { poolIndex ->
+    suspend fun poolInfos(): List<PoolInfo> {
+        val multicalls = (0 until poolLength()).map { poolIndex ->
             MultiCallElement(
                 createFunctionWithAbi(
                     "poolInfo",
@@ -69,7 +53,7 @@ class PolycatMasterChefContract(
         val results = blockchainGateway.readMultiCall(
             multicalls
         )
-        results.map { retVal ->
+        return results.map { retVal ->
             PoolInfo(
                 retVal[0].value as String,
                 retVal[1].value as BigInteger,
@@ -80,22 +64,26 @@ class PolycatMasterChefContract(
         }
     }
 
-    val rewardPerBlock by lazy {
-        readWithAbi(
+    suspend fun poolInfo(poolId: Int): PoolInfo {
+        return poolInfos()[poolId]
+    }
+
+    suspend fun rewardPerBlock(): BigInteger {
+        return readWithAbi(
             "fishPerBlock",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger
     }
 
 
-    val totalAllocPoint by lazy {
-        readWithAbi(
+    suspend fun totalAllocPoint(): BigInteger {
+        return readWithAbi(
             "totalAllocPoint",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger
     }
 
-    fun userInfo(address: String, poolIndex: Int): UserInfo {
+    suspend fun userInfo(address: String, poolIndex: Int): UserInfo {
         val result = readWithAbi(
             "userInfo",
             inputs = listOf(poolIndex.toBigInteger().toUint256(), address.toAddress()),

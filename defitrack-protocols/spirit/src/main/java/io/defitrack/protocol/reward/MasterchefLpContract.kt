@@ -1,8 +1,8 @@
 package io.defitrack.protocol.reward
 
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import org.web3j.abi.datatypes.Function
@@ -16,21 +16,21 @@ class MasterchefLpContract(
     blockchainGateway, abi, address
 ) {
 
-    val poolLength by lazy {
+    suspend fun poolLength(): Int {
         val retVal: BigInteger = read("poolLength")
-        retVal.toInt()
+        return retVal.toInt()
     }
 
-    val totalAllocPoint: BigInteger by lazy {
-        read("totalAllocPoint")
+    suspend fun totalAllocPoint(): BigInteger {
+        return read("totalAllocPoint")
     }
 
-    val rewardToken: String by lazy {
-        read("spirit")
+    suspend fun rewardToken(): String {
+        return read("spirit")
     }
 
-    val sushiPerSecond: BigInteger by lazy {
-        read("spiritPerBlock")
+    suspend fun sushiPerSecond(): BigInteger {
+        return read("spiritPerBlock")
     }
 
     fun userInfoFunction(poolId: Int, user: String): Function {
@@ -44,8 +44,8 @@ class MasterchefLpContract(
     }
 
 
-    val poolInfos: List<PoolInfo> by lazy {
-        val multicalls = (0 until poolLength).map { poolIndex ->
+    suspend fun poolInfos(): List<PoolInfo> {
+        val multicalls = (0 until poolLength()).map { poolIndex ->
             MultiCallElement(
                 createFunctionWithAbi(
                     "poolInfo",
@@ -58,7 +58,7 @@ class MasterchefLpContract(
         val results = this.blockchainGateway.readMultiCall(
             multicalls
         )
-        results.map { retVal ->
+        return results.map { retVal ->
             PoolInfo(
                 retVal[0].value as String,
                 retVal[1].value as BigInteger,
@@ -69,7 +69,7 @@ class MasterchefLpContract(
         }
     }
 
-    fun poolInfo(poolIndex: Int): PoolInfo {
-        return poolInfos[poolIndex]
+    suspend fun poolInfo(poolIndex: Int): PoolInfo {
+        return poolInfos()[poolIndex]
     }
 }

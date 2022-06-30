@@ -1,11 +1,11 @@
 package io.defitrack.protocol.compound.borrowing
 
 import io.defitrack.abi.ABIResource
-import io.defitrack.market.borrowing.domain.BorrowPosition
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.market.borrowing.BorrowService
+import io.defitrack.market.borrowing.domain.BorrowPosition
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.compound.CompoundComptrollerContract
 import io.defitrack.protocol.compound.CompoundEthereumService
@@ -34,10 +34,10 @@ class CompoundBorrowingService(
 
     val gateway = blockchainGatewayProvider.getGateway(getNetwork())
 
-    fun getBorrowRate(compoundTokenContract: CompoundTokenContract): BigDecimal {
+    suspend fun getBorrowRate(compoundTokenContract: CompoundTokenContract): BigDecimal {
         val blocksPerDay = 6463
         val dailyRate =
-            (compoundTokenContract.borrowRatePerBlock.toBigDecimal().divide(BigDecimal.TEN.pow(18)) * BigDecimal(
+            (compoundTokenContract.borrowRatePerBlock().toBigDecimal().divide(BigDecimal.TEN.pow(18)) * BigDecimal(
                 blocksPerDay
             ))
 
@@ -45,18 +45,7 @@ class CompoundBorrowingService(
             .divide(BigDecimal.TEN.pow(4), 4, RoundingMode.HALF_UP).times(BigDecimal(100))
     }
 
-    fun getSupplyRate(compoundTokenContract: CompoundTokenContract): BigDecimal {
-        val blocksPerDay = 6463
-        val dailyRate =
-            (compoundTokenContract.supplyRatePerBlock.toBigDecimal().divide(BigDecimal.TEN.pow(18)) * BigDecimal(
-                blocksPerDay
-            )) + BigDecimal.ONE
-
-        return dailyRate.pow(365).minus(BigDecimal.ONE).times(BigDecimal.TEN.pow(4))
-            .divide(BigDecimal.TEN.pow(4), 4, RoundingMode.HALF_UP).times(BigDecimal(100))
-    }
-
-    private fun getTokenContracts() = CompoundComptrollerContract(
+    private suspend fun getTokenContracts() = CompoundComptrollerContract(
         gateway,
         comptrollerABI,
         compoundEthereumService.getComptroller()
@@ -81,11 +70,10 @@ class CompoundBorrowingService(
             val balance = retVal[0].value as BigInteger
             if (balance > BigInteger.ZERO) {
                 val compoundTokenContract = tokenContracts[index]
-                val underlying = compoundTokenContract.underlyingAddress?.let { tokenAddress ->
+                val underlying = compoundTokenContract.underlyingAddress().let { tokenAddress ->
                     erC20Service.getTokenInformation(getNetwork(), tokenAddress)
                 }
-                val token = underlying?.toFungibleToken() ?: erC20Service.getTokenInformation(getNetwork(), "0x0")
-                    .toFungibleToken()
+                val token = underlying.toFungibleToken()
                 BorrowPosition(
                     id = "compound-ethereum-${token.address}",
                     network = getNetwork(),

@@ -1,7 +1,7 @@
 package io.defitrack.protocol.contract
 
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.abi.TypeUtils.Companion.toUint256
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import org.web3j.abi.TypeReference
@@ -16,11 +16,11 @@ class LPStakingContract(
     blockchainGateway, abi, address
 ) {
 
-    val stargate by lazy {
-        readWithAbi("stargate")[0].value as String
+    suspend fun stargate(): String {
+        return readWithAbi("stargate")[0].value as String
     }
 
-    fun lpBalances(index: Int): BigInteger {
+    suspend fun lpBalances(index: Int): BigInteger {
         return readWithAbi(
             "lpBalances",
             inputs = listOf(index.toBigInteger().toUint256()),
@@ -30,9 +30,9 @@ class LPStakingContract(
         )[0].value as BigInteger
     }
 
-    val poolInfos by lazy {
+    suspend fun poolInfos(): List<PoolInfo> {
 
-        val multicalls = (0 until poolLength).map { poolIndex ->
+        val multicalls = (0 until poolLength()).map { poolIndex ->
             MultiCallElement(
                 createFunctionWithAbi(
                     "poolInfo",
@@ -51,7 +51,7 @@ class LPStakingContract(
         val results = this.blockchainGateway.readMultiCall(
             multicalls
         )
-        results.map { retVal ->
+        return results.map { retVal ->
             PoolInfo(
                 retVal[0].value as String,
                 retVal[1].value as BigInteger,
@@ -69,18 +69,10 @@ class LPStakingContract(
     )
 
 
-    val poolLength by lazy {
-        (readWithAbi(
+    suspend fun poolLength(): Int {
+        return (readWithAbi(
             "poolLength",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger).toInt()
     }
-
-    val totalAllocPoint by lazy {
-        readWithAbi(
-            "totalAllocPoint",
-            outputs = listOf(TypeReference.create(Uint256::class.java))
-        )[0].value as BigInteger
-    }
-
 }

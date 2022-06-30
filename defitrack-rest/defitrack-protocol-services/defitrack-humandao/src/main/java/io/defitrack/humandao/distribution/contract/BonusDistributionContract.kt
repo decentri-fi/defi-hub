@@ -11,7 +11,7 @@ class BonusDistributionContract(
     blockchainGateway: BlockchainGateway, abi: String, address: String
 ) : EvmContract(blockchainGateway, abi, address) {
 
-    fun isClaimed(index: Long): Boolean {
+    suspend fun isClaimed(index: Long): Boolean {
         return readWithAbi(
             method = "isClaimed",
             inputs = listOf(

@@ -15,47 +15,13 @@ class AdamantVaultContract(
     address: String,
 ) : ERC20Contract(solidityBasedContractAccessor, abi, address) {
 
-    val accRewardPerShare by lazy {
-        readWithAbi("accRewardPerShare")[0].value as BigInteger
+    suspend fun token(): String {
+        return readWithAbi("token")[0].value as String
     }
 
-    val getRatio by lazy {
-        readWithAbi("getRatio")[0].value as BigInteger
-    }
-
-    val totalShares by lazy {
-        readWithAbi("totalShares")[0].value as BigInteger
-    }
-
-    val strategy by lazy {
-        readWithAbi("strategy")[0].value as String
-    }
-
-    val getRewardMultiplier by lazy {
-        readWithAbi("getRewardMultiplier")[0].value as BigInteger
-    }
-
-    val balance by lazy {
-        readWithAbi("balance")[0].value as BigInteger
-    }
-
-    val token by lazy {
-        readWithAbi("token")[0].value as String
-    }
-
-    fun getPendingReward(address: String): BigInteger {
+    suspend fun getPendingReward(address: String): BigInteger {
         return readWithAbi(
             "getPendingReward",
-            inputs = listOf(address.toAddress()),
-            outputs = listOf(
-                TypeReference.create(Uint256::class.java)
-            )
-        )[0].value as BigInteger
-    }
-
-    fun getTokensStaked(address: String): BigInteger {
-        return readWithAbi(
-            "getTokensStaked",
             inputs = listOf(address.toAddress()),
             outputs = listOf(
                 TypeReference.create(Uint256::class.java)

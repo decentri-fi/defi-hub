@@ -12,7 +12,7 @@ class IronBankComptrollerContract(
     blockchainGateway, abi, address
 ) {
 
-    fun getMarkets(): List<String> {
+    suspend fun getMarkets(): List<String> {
         return (readWithAbi(
             "getAllMarkets",
             inputs = emptyList(),

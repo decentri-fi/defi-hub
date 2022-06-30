@@ -20,8 +20,8 @@ class BeefyVaultContract(
         solidityBasedContractAccessor, abi, address
     ) {
 
-    val balance by lazy {
-        readWithAbi(
+    suspend fun balance(): BigInteger {
+        return readWithAbi(
             "balance",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger
@@ -35,22 +35,15 @@ class BeefyVaultContract(
         return createFunctionWithAbi("deposit", listOf(amount.toUint256()), emptyList())
     }
 
-    val getPricePerFullShare by lazy {
-        readWithAbi(
+    suspend fun getPricePerFullShare(): BigInteger {
+        return readWithAbi(
             "getPricePerFullShare",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger
     }
 
-    val strategy by lazy {
-        read(
-            "strategy",
-            outputs = listOf(TypeUtils.address())
-        )[0].value as String
-    }
-
-    val want: String by lazy {
-        var read = read(
+    suspend fun want(): String {
+        var read = readWithoutAbi(
             "want",
             inputs = emptyList(),
             outputs = listOf(
@@ -58,7 +51,7 @@ class BeefyVaultContract(
             )
         )
         if (read.isEmpty()) {
-            read = read(
+            read = readWithoutAbi(
                 "wmatic",
                 inputs = emptyList(),
                 outputs = listOf(
@@ -84,6 +77,6 @@ class BeefyVaultContract(
                 )
             )
         }
-        read[0].value as String
+        return read[0].value as String
     }
 }

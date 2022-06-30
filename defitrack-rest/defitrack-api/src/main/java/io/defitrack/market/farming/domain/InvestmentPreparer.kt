@@ -20,12 +20,12 @@ abstract class InvestmentPreparer(private val erC20Resource: ERC20Resource) {
     }
 
     abstract suspend fun getInvestmentTransaction(prepareInvestmentCommand: PrepareInvestmentCommand): Deferred<PreparedTransaction?>
-    abstract fun getToken(): String
+    abstract suspend fun getToken(): String
     abstract fun getEntryContract(): String
 
     abstract fun getNetwork(): Network
 
-    fun getAllowance(prepareInvestmentCommand: PrepareInvestmentCommand) =
+    suspend fun getAllowance(prepareInvestmentCommand: PrepareInvestmentCommand) =
         erC20Resource.getAllowance(
             getNetwork(),
             getToken(),

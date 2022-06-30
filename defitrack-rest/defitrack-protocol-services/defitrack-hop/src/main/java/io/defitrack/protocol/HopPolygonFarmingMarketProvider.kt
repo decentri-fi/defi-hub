@@ -44,8 +44,8 @@ class HopPolygonFarmingMarketProvider(
                 stakingReward
             )
 
-            val stakedToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingTokenAddress)
-            val rewardToken = erC20Resource.getTokenInformation(getNetwork(), pool.rewardsTokenAddress)
+            val stakedToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingTokenAddress())
+            val rewardToken = erC20Resource.getTokenInformation(getNetwork(), pool.rewardsTokenAddress())
 
             return FarmingMarket(
                 id = "hop-polygon-${pool.address}",
@@ -76,7 +76,7 @@ class HopPolygonFarmingMarketProvider(
             PriceRequest(
                 address = stakedTokenInformation.address,
                 network = getNetwork(),
-                amount = pool.totalSupply.toBigDecimal().divide(
+                amount = pool.totalSupply().toBigDecimal().divide(
                     BigDecimal.TEN.pow(stakedTokenInformation.decimals), RoundingMode.HALF_UP
                 ),
                 type = stakedTokenInformation.type
