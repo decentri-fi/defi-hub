@@ -3,24 +3,18 @@ package io.defitrack.erc20.protocolspecific
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.ERC20Service
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.crv.CurveEthereumGraphProvider
-import io.defitrack.protocol.crv.CurvePolygonPoolGraphProvider
+import io.defitrack.protocol.crv.CurvePoolGraphProvider
 import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 
 @Component
 class CurveTokenService(
-    private val curveEthereumGraphProvider: CurveEthereumGraphProvider,
-    private val curvePolygonPoolGraphProvider: CurvePolygonPoolGraphProvider,
+    private val curvePoolGraphProviders: List<CurvePoolGraphProvider>,
     private val erC20Service: ERC20Service
 ) {
     suspend fun getTokenInformation(address: String, network: Network): TokenInformation {
-        return when (network) {
-            Network.ETHEREUM -> getEthereumCurveInfo(address)
-            Network.POLYGON -> getPolygonCurveInfo(address)
-            else -> getDefaultInfo(address, network)
-        }
+        return getCurveInfo(address, network) ?: getDefaultInfo(address, network)
     }
 
     private suspend fun getDefaultInfo(address: String, network: Network): TokenInformation {
@@ -30,43 +24,34 @@ class CurveTokenService(
         )
     }
 
-    private suspend fun getPolygonCurveInfo(address: String): TokenInformation {
-        return curvePolygonPoolGraphProvider.getPoolByLp(address)?.let {
-            val underlyingTokens = it.coins.map { coin ->
-                erC20Service.getERC20(Network.POLYGON, coin).toToken()
+    private suspend fun getCurveInfo(address: String, network: Network): TokenInformation? {
+        val provider = curvePoolGraphProviders.find {
+            it.network == network
+        }
+
+        val pool = provider?.getPoolByLp(address)
+        return if (pool != null) {
+            try {
+                val underlyingTokens = pool.coins.map { coin ->
+                    erC20Service.getERC20(network, coin).toToken()
+                }
+
+                val token = erC20Service.getERC20(network, address)
+
+                TokenInformation(
+                    name = token.name,
+                    address = address,
+                    symbol = underlyingTokens.joinToString("/") { it.symbol },
+                    decimals = token.decimals,
+                    type = TokenType.CURVE,
+                    underlyingTokens = underlyingTokens,
+                    protocol = Protocol.CURVE,
+                )
+            } catch (ex: Exception) {
+                null
             }
-
-            val token = erC20Service.getERC20(Network.POLYGON, address)
-
-            TokenInformation(
-                name = token.name,
-                address = address,
-                symbol = underlyingTokens.joinToString("/") { it.symbol },
-                decimals = token.decimals,
-                type = TokenType.CURVE,
-                underlyingTokens = underlyingTokens,
-                protocol = Protocol.CURVE,
-            )
-        } ?: throw java.lang.IllegalArgumentException("Not possible to get curve info for address $address")
-    }
-
-    private suspend fun getEthereumCurveInfo(address: String): TokenInformation {
-        return curveEthereumGraphProvider.getPoolByLp(address)?.let {
-            val underlyingTokens = it.coins.map { coin ->
-                erC20Service.getERC20(Network.ETHEREUM, coin).toToken()
-            }
-
-            val token = erC20Service.getERC20(Network.ETHEREUM, address)
-
-            TokenInformation(
-                name = token.name,
-                address = address,
-                symbol = underlyingTokens.joinToString("/") { it.symbol },
-                decimals = token.decimals,
-                type = TokenType.CURVE,
-                underlyingTokens = underlyingTokens,
-                protocol = Protocol.CURVE,
-            )
-        } ?: throw java.lang.IllegalArgumentException("Not possible to get curve info for address $address")
+        } else {
+            null
+        }
     }
 }
