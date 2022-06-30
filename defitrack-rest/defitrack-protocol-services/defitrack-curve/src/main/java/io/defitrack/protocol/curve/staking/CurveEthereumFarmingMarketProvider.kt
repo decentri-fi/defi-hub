@@ -32,11 +32,10 @@ class CurveEthereumFarmingMarketProvider(
                                 erC20Resource.getTokenInformation(getNetwork(), gauge.pool!!.lpToken.address)
 
                             create(
-                                id = "frm-curve-ethereum-${gauge.address}",
+                                identifier = gauge.address,
                                 name = stakedToken.name + " Gauge",
                                 stakedToken = stakedToken.toFungibleToken(),
                                 rewardTokens = emptyList(),
-                                contractAddress = gauge.address,
                                 vaultType = "curve-gauge",
                                 marketSize = marketSizeService.getMarketSize(
                                     stakedToken.toFungibleToken(), gauge.address, getNetwork()

@@ -52,7 +52,6 @@ class SpiritFantomFarmingMarketProvider(
                 rewardTokens = listOf(
                     reward.toFungibleToken()
                 ),
-                contractAddress = masterchef.address,
                 vaultType = "spirit-masterchef",
                 marketSize = BigDecimal.ZERO,
                 apr = aprCalculator.calculateApr(),

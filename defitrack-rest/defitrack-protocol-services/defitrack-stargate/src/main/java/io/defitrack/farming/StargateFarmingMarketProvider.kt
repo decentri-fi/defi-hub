@@ -3,10 +3,10 @@ package io.defitrack.farming
 import io.defitrack.abi.ABIResource
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
+import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.StargateService
 import io.defitrack.protocol.contract.LPStakingContract
-import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Component
 
@@ -35,11 +35,10 @@ abstract class StargateFarmingMarketProvider(
             val rewardTokens = listOf(stargate)
 
             create(
-                id = "$lpStakingContract-$index",
+                identifier = "$lpStakingContract-$index",
                 name = "Stargate ${stakedToken.name} Reward",
                 stakedToken = stakedToken.toFungibleToken(),
                 rewardTokens = rewardTokens.map { it.toFungibleToken() },
-                contractAddress = lpStakingContract.address,
                 vaultType = "stargate-lp-staking"
             )
         }

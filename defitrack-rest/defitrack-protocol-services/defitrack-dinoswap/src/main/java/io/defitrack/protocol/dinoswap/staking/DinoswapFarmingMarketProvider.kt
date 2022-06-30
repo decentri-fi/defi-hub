@@ -61,16 +61,13 @@ class DinoswapFarmingMarketProvider(
             )
         )
 
-        return FarmingMarket(
-            id = "dinoswap-${chef.address}-${poolId}",
-            network = getNetwork(),
+        return create(
+            identifier = "${chef.address}-${poolId}",
             name = stakedtoken.name + " Farm",
-            protocol = getProtocol(),
             stakedToken = stakedtoken.toFungibleToken(),
             rewardTokens = listOf(
                 rewardToken.toFungibleToken()
             ),
-            contractAddress = chef.address,
             vaultType = "dinoswap-fossilfarm",
             balanceFetcher = FarmingPositionFetcher(
                 address = chef.address,

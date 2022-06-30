@@ -35,16 +35,13 @@ class SpookyFarmingMarketProvider(
                 index,
                 stakedToken
             )
-            FarmingMarket(
-                id = "fantom-spooky-${masterchef.address}-${index}",
-                network = getNetwork(),
-                protocol = getProtocol(),
+            create(
+                identifier = "${masterchef.address}-${index}",
                 name = "${stakedToken.name} spooky farm",
                 stakedToken = stakedToken.toFungibleToken(),
                 rewardTokens = listOf(
                     reward.toFungibleToken()
                 ),
-                contractAddress = masterchef.address,
                 vaultType = "spooky-masterchef",
                 marketSize = marketFactory.marketSizeService.getMarketSize(
                     stakedToken.toFungibleToken(),

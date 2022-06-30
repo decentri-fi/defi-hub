@@ -63,16 +63,13 @@ class IdexFarmingMarketProvider(
         val stakedtoken =
             tokenService.getTokenInformation(getNetwork(), chef.getLpTokenForPoolId(poolId))
         val rewardToken = tokenService.getTokenInformation(getNetwork(), chef.rewardToken())
-        return FarmingMarket(
-            id = "idex-${chef.address}-${poolId}",
-            network = getNetwork(),
+        return create(
+            identifier = "${chef.address}-${poolId}",
             name = stakedtoken.name + " Farm",
-            protocol = getProtocol(),
             stakedToken = stakedtoken.toFungibleToken(),
             rewardTokens = listOf(
                 rewardToken.toFungibleToken()
             ),
-            contractAddress = chef.address,
             vaultType = "idex-farm",
             balanceFetcher = FarmingPositionFetcher(
                 chef.address,

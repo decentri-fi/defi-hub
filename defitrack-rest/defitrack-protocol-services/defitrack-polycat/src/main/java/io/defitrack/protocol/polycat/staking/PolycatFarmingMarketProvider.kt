@@ -4,13 +4,13 @@ import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.BlockchainGatewayProvider
+import io.defitrack.market.farming.FarmingMarketProvider
+import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.polycat.contract.PolycatMasterChefContract
 import io.defitrack.protocol.polycat.PolycatService
-import io.defitrack.market.farming.FarmingMarketProvider
-import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.protocol.polycat.contract.PolycatMasterChefContract
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenInformation
 import org.springframework.stereotype.Service
@@ -50,23 +50,23 @@ class PolycatFarmingMarketProvider(
         val stakedtoken =
             erC20Resource.getTokenInformation(getNetwork(), chef.poolInfo(poolId).lpToken)
         val rewardToken = erC20Resource.getTokenInformation(getNetwork(), chef.rewardToken())
-        return FarmingMarket(
-            id = "polycat-${chef.address}-${poolId}",
-            network = getNetwork(),
+        return create(
+            identifier = "${chef.address}-${poolId}",
             name = stakedtoken.name + " Farm",
-            protocol = getProtocol(),
             stakedToken = stakedtoken.toFungibleToken(),
             rewardTokens = listOf(
                 rewardToken.toFungibleToken()
             ),
             apr = PolygcatStakingAprCalculator(erC20Resource, priceResource, chef, poolId).calculateApr(),
             marketSize = calculateMarketSize(stakedtoken, chef),
-            contractAddress = chef.address,
             vaultType = "polycat-masterchef"
         )
     }
 
-    private suspend fun calculateMarketSize(stakedtoken: TokenInformation, chef: PolycatMasterChefContract): BigDecimal {
+    private suspend fun calculateMarketSize(
+        stakedtoken: TokenInformation,
+        chef: PolycatMasterChefContract
+    ): BigDecimal {
 
         val balance = erC20Resource.getBalance(
             getNetwork(),
