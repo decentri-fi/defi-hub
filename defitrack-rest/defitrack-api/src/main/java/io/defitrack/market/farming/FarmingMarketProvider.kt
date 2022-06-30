@@ -1,54 +1,15 @@
 package io.defitrack.market.farming
 
+import io.defitrack.invest.MarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.market.farming.domain.InvestmentPreparer
-import io.defitrack.protocol.ProtocolService
 import io.defitrack.token.FungibleToken
-import io.github.reactivecircus.cache4k.Cache
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-import org.springframework.scheduling.annotation.Scheduled
 import java.math.BigDecimal
-import kotlin.time.Duration.Companion.hours
 
-abstract class FarmingMarketProvider : ProtocolService {
+abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>() {
 
-    val logger: Logger = LoggerFactory.getLogger(this.javaClass)
-
-    val cache =
-        Cache.Builder().expireAfterWrite(4.hours).build<String, List<FarmingMarket>>()
-
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
-    fun init() = runBlocking(Dispatchers.IO) {
-        try {
-            val stakingMarkets = populate()
-            cache.invalidateAll()
-            cache.put("all", stakingMarkets)
-        } catch (ex: Exception) {
-            logger.error("something went wrong trying to populate the cache", ex)
-        }
-    }
-
-    fun getStakingMarkets(): List<FarmingMarket> = runBlocking(Dispatchers.Default) {
-        cache.get("all") ?: emptyList()
-    }
-
-    private suspend fun populate(): List<FarmingMarket> = try {
-        logger.info("Cache empty or expired, fetching fresh elements")
-        val elements = fetchStakingMarkets()
-        logger.info("Cache successfuly filled with ${elements.size} elements")
-        elements
-    } catch (ex: Exception) {
-        logger.error("Unable to fetch staking markets: {}", ex.message)
-        emptyList()
-    }
-
-    protected abstract suspend fun fetchStakingMarkets(): List<FarmingMarket>
-
-    fun stakingMarket(
+    fun create(
         id: String,
         name: String,
         stakedToken: FungibleToken,

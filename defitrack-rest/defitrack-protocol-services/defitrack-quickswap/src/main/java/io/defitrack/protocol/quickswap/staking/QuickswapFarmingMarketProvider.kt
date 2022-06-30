@@ -32,7 +32,7 @@ class QuickswapFarmingMarketProvider(
         abiService.getABI("quickswap/StakingRewards.json")
     }
 
-    override suspend fun fetchStakingMarkets(): List<FarmingMarket> {
+    override suspend fun fetchMarkets(): List<FarmingMarket> {
         return quickswapService.getVaultAddresses().map {
             QuickswapRewardPoolContract(
                 blockchainGatewayProvider.getGateway(getNetwork()),

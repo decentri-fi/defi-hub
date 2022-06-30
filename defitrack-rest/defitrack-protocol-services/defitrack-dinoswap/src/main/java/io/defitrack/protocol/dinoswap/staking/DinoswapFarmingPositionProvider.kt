@@ -18,7 +18,7 @@ class DinoswapFarmingPositionProvider(
 
 
     override suspend fun getStakings(address: String): List<FarmingPosition> {
-        val markets = dinoswapStakingMarketService.getStakingMarkets()
+        val markets = dinoswapStakingMarketService.getMarkets()
 
         return blockchainGatewayProvider.getGateway(getNetwork()).readMultiCall(
             markets.map {

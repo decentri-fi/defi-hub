@@ -2,7 +2,7 @@ package io.defitrack.protocol.quickswap.pooling
 
 import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
-import io.defitrack.market.pooling.domain.PoolingMarketElement
+import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
@@ -25,7 +25,7 @@ class QuickswapPoolingMarketService(
     private val erC20Resource: ERC20Resource
 ) : PoolingMarketProvider() {
 
-    override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> = coroutineScope {
+    override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
         quickswapService.getPairs()
             .filter {
                 it.reserveUSD > BigDecimal.valueOf(100000)
@@ -41,12 +41,12 @@ class QuickswapPoolingMarketService(
             }.awaitAll().filterNotNull()
     }
 
-    private suspend fun toPoolingMarket(it: QuickswapPair): PoolingMarketElement {
+    private suspend fun toPoolingMarket(it: QuickswapPair): PoolingMarket {
         val token = erC20Resource.getTokenInformation(getNetwork(), it.id)
         val token0 = erC20Resource.getTokenInformation(getNetwork(), it.token0.id)
         val token1 = erC20Resource.getTokenInformation(getNetwork(), it.token1.id)
 
-        return PoolingMarketElement(
+        return PoolingMarket(
             network = getNetwork(),
             protocol = getProtocol(),
             address = it.id,

@@ -32,7 +32,7 @@ abstract class BeefyFarmingMarketProvider(
         abiResource.getABI("beefy/VaultV6.json")
     }
 
-    override suspend fun fetchStakingMarkets(): List<FarmingMarket> =
+    override suspend fun fetchMarkets(): List<FarmingMarket> =
         withContext(Dispatchers.IO.limitedParallelism(5)) {
             vaults.map {
                 async {

@@ -35,7 +35,7 @@ class BalancerPolygonUserClaimingService(
 
     override suspend fun claimables(address: String): List<Claimable> =
         withContext(Dispatchers.IO.limitedParallelism(10)) {
-            balancerPolygonStakingMarketService.getStakingMarkets().flatMap { liquidityGauge ->
+            balancerPolygonStakingMarketService.getMarkets().flatMap { liquidityGauge ->
                 try {
                     val gaugeContract = BalancerGaugeContract(
                         blockchainGatewayProvider.getGateway(getNetwork()),

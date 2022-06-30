@@ -26,7 +26,7 @@ class MStableEthereumLendingMarketProvider(
         abiResource.getABI("mStable/SavingsContract.json")
     }
 
-    override suspend fun fetchLendingMarkets(): List<LendingMarket> = coroutineScope {
+    override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
         mStableService.getSavingsContracts().map {
             MStableEthereumSavingsContract(
                 blockchainGatewayProvider.getGateway(getNetwork()),

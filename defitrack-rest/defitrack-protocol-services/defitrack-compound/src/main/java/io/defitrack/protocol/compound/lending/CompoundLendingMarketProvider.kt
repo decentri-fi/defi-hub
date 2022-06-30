@@ -44,7 +44,7 @@ class CompoundLendingMarketProvider(
 
     val gateway = blockchainGatewayProvider.getGateway(getNetwork())
 
-    override suspend fun fetchLendingMarkets(): List<LendingMarket> = coroutineScope {
+    override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
         getTokenContracts().map {
             async {
                 toLendingMarket(it)

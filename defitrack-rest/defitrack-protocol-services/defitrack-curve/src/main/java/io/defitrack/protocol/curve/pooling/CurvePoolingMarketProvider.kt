@@ -2,7 +2,7 @@ package io.defitrack.protocol.curve.pooling
 
 import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
-import io.defitrack.market.pooling.domain.PoolingMarketElement
+import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.crv.CurvePoolGraphProvider
 import io.defitrack.token.ERC20Resource
@@ -19,7 +19,7 @@ class CurvePoolingMarketProvider(
     private val erc20Resource: ERC20Resource,
     private val marketSizeService: MarketSizeService
 ) : PoolingMarketProvider() {
-    override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> =
+    override suspend fun fetchMarkets(): List<PoolingMarket> =
         coroutineScope {
             curvePoolGraphProvider.getPools().map { pool ->
                 async {
@@ -30,7 +30,7 @@ class CurvePoolingMarketProvider(
 
                         val lpToken = erc20Resource.getTokenInformation(getNetwork(), pool.address)
 
-                        PoolingMarketElement(
+                        PoolingMarket(
                             id = "curve-${getNetwork().slug}-${pool.lpToken}",
                             network = getNetwork(),
                             protocol = getProtocol(),

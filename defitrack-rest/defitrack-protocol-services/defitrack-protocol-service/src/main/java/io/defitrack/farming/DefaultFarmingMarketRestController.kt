@@ -31,7 +31,7 @@ class DefaultFarmingMarketRestController(
                     marketService.getNetwork() == it
                 } ?: true
             }.flatMap {
-                it.getStakingMarkets()
+                it.getMarkets()
             }.map {
                 it.toVO()
             }
@@ -46,7 +46,7 @@ class DefaultFarmingMarketRestController(
             .filter {
                 it.getNetwork() == network
             }.flatMap {
-                it.getStakingMarkets()
+                it.getMarkets()
             }.filter {
                 val token = erC20Resource.getTokenInformation(it.network, it.stakedToken.address.lowercase())
                 if (token.type != TokenType.SINGLE) {
@@ -75,7 +75,7 @@ class DefaultFarmingMarketRestController(
         id: String
     ) = farmingMarketProviders
         .flatMap {
-            it.getStakingMarkets()
+            it.getMarkets()
         }.firstOrNull {
             it.id == id
         }

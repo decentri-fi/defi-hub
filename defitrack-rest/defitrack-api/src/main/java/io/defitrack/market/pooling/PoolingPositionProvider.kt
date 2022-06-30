@@ -1,7 +1,7 @@
 package io.defitrack.market.pooling
 
 import io.defitrack.market.pooling.domain.PoolingElement
-import io.defitrack.market.pooling.domain.PoolingMarketElement
+import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.ProtocolService
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +24,7 @@ abstract class PoolingPositionProvider : ProtocolService {
     }
 
     fun poolingElement(
-        market: PoolingMarketElement,
+        market: PoolingMarket,
         amount: BigDecimal,
     ): PoolingElement {
         return PoolingElement(

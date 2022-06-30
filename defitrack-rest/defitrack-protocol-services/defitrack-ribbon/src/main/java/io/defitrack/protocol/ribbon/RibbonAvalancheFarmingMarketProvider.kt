@@ -25,7 +25,7 @@ class RibbonAvalancheFarmingMarketProvider(
 
     val ribbonVaultAbi = abiResource.getABI("ribbon/vault.json")
 
-    override suspend fun fetchStakingMarkets(): List<FarmingMarket> {
+    override suspend fun fetchMarkets(): List<FarmingMarket> {
         return ribbonGraphProvider.getVaults().map {
             val stakedToken = erC20Resource.getTokenInformation(getNetwork(), it.underlyingAsset)
             val vault = RibbonVaultContract(
@@ -33,7 +33,7 @@ class RibbonAvalancheFarmingMarketProvider(
                 ribbonVaultAbi,
                 it.id
             )
-            stakingMarket(
+            create(
                 id = "ribbon-avax-${it.id}",
                 name = it.name,
                 stakedToken = stakedToken.toFungibleToken(),

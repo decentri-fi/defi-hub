@@ -4,7 +4,7 @@ import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.pooling.PoolingMarketProvider
-import io.defitrack.market.pooling.domain.PoolingMarketElement
+import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.bancor.BancorEthereumGraphProvider
 import io.defitrack.protocol.bancor.contract.BancorNetworkContract
@@ -39,7 +39,7 @@ class BancorEthereumPoolingMarketProvider(
         )
     }
 
-    override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> = coroutineScope {
+    override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
         bancorEthereumGraphProvider.getLiquidityPools().map {
             async {
                 try {
@@ -52,7 +52,7 @@ class BancorEthereumPoolingMarketProvider(
 
                     val underlying = erC20Resource.getTokenInformation(getNetwork(), poolTokenContract.reserveToken())
                         .toFungibleToken()
-                    PoolingMarketElement(
+                    PoolingMarket(
                         id = "bancor-ethereum-${it.id}",
                         network = getNetwork(),
                         protocol = getProtocol(),

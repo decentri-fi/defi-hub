@@ -26,7 +26,7 @@ class DQuickFarmingMarketProvider(
 
     val dquick = dquickContract()
 
-    override suspend fun fetchStakingMarkets(): List<FarmingMarket> {
+    override suspend fun fetchMarkets(): List<FarmingMarket> {
 
         val stakedToken = erC20Resource.getTokenInformation(getNetwork(), dquick.address).toFungibleToken()
         val quickToken =

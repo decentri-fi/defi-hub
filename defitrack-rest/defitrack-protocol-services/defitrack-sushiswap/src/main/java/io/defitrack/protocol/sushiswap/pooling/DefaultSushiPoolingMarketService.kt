@@ -1,7 +1,7 @@
 package io.defitrack.protocol.sushiswap.pooling
 
 import io.defitrack.market.pooling.PoolingMarketProvider
-import io.defitrack.market.pooling.domain.PoolingMarketElement
+import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.SushiswapService
 import io.defitrack.protocol.sushiswap.apr.SushiPoolingAPRCalculator
 import io.defitrack.token.ERC20Resource
@@ -13,7 +13,7 @@ abstract class DefaultSushiPoolingMarketService(
     private val erC20Resource: ERC20Resource
 ) : PoolingMarketProvider() {
 
-    override suspend fun fetchPoolingMarkets() = sushiServices.filter { sushiswapService ->
+    override suspend fun fetchMarkets() = sushiServices.filter { sushiswapService ->
         sushiswapService.getNetwork() == getNetwork()
     }.flatMap { service ->
         service.getPairs()
@@ -25,7 +25,7 @@ abstract class DefaultSushiPoolingMarketService(
                 val token0 = erC20Resource.getTokenInformation(getNetwork(), it.token0.id)
                 val token1 = erC20Resource.getTokenInformation(getNetwork(), it.token1.id)
 
-                val element = PoolingMarketElement(
+                val element = PoolingMarket(
                     network = service.getNetwork(),
                     protocol = getProtocol(),
                     address = it.id,

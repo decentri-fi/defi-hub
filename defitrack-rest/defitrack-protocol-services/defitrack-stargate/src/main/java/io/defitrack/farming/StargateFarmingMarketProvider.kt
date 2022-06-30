@@ -22,7 +22,7 @@ abstract class StargateFarmingMarketProvider(
         abiResource.getABI("stargate/LPStaking.json")
     }
 
-    override suspend fun fetchStakingMarkets(): List<FarmingMarket> {
+    override suspend fun fetchMarkets(): List<FarmingMarket> {
         val lpStakingContract = LPStakingContract(
             accessorGateway.getGateway(getNetwork()),
             lpStakingContractAbi,
@@ -34,7 +34,7 @@ abstract class StargateFarmingMarketProvider(
             val stakedToken = erC20Resource.getTokenInformation(getNetwork(), info.lpToken)
             val rewardTokens = listOf(stargate)
 
-            stakingMarket(
+            create(
                 id = "$lpStakingContract-$index",
                 name = "Stargate ${stakedToken.name} Reward",
                 stakedToken = stakedToken.toFungibleToken(),

@@ -27,7 +27,7 @@ class MStableEthereumFarmingMarketProvider(
         abiResource.getABI("mStable/BoostedSavingsVault.json")
     }
 
-    override suspend fun fetchStakingMarkets(): List<FarmingMarket> = coroutineScope{
+    override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope{
         val gateway = blockchainGatewayProvider.getGateway(getNetwork())
 
         mStableEthereumService.getBoostedSavingsVaults().map {

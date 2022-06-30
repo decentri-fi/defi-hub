@@ -44,7 +44,7 @@ class AaveV2MainnetLendingMarketProvider(
         lendingPoolAddressesProviderContract.lendingPoolAddress()
     )
 
-    override suspend fun fetchLendingMarkets(): List<LendingMarket> = coroutineScope {
+    override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
         aaveV2MainnetService.getReserves()
             .filter {
                 it.totalLiquidity > BigInteger.ZERO

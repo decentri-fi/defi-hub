@@ -13,7 +13,7 @@ abstract class DefaultFarmingPositionProvider(
     val gateway: BlockchainGatewayProvider
 ) : FarmingPositionProvider(erC20Resource) {
     override suspend fun getStakings(address: String): List<FarmingPosition> {
-        val markets = farmingMarketProvider.getStakingMarkets().filter {
+        val markets = farmingMarketProvider.getMarkets().filter {
             it.balanceFetcher != null
         }
 

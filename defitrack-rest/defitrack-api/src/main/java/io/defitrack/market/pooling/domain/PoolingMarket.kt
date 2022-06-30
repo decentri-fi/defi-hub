@@ -1,13 +1,14 @@
 package io.defitrack.market.pooling.domain
 
 import io.defitrack.common.network.Network
-import io.defitrack.protocol.Protocol
+import io.defitrack.market.DefiMarket
 import io.defitrack.market.farming.domain.InvestmentPreparer
+import io.defitrack.protocol.Protocol
 import io.defitrack.token.FungibleToken
 import io.defitrack.token.TokenType
 import java.math.BigDecimal
 
-data class PoolingMarketElement(
+data class PoolingMarket(
     val id: String,
     val network: Network,
     val protocol: Protocol,
@@ -19,4 +20,4 @@ data class PoolingMarketElement(
     val marketSize: BigDecimal? = null,
     val tokenType: TokenType,
     val investmentPreparer: InvestmentPreparer? = null
-)
+) : DefiMarket

@@ -14,7 +14,7 @@ abstract class DefaultLendingPositionService(
 
     override suspend fun getLendings(address: String): List<LendingPosition> {
 
-        val markets = lendingMarketProvider.fetchLendingMarkets().filter {
+        val markets = lendingMarketProvider.getMarkets().filter {
             it.balanceFetcher != null
         }
 

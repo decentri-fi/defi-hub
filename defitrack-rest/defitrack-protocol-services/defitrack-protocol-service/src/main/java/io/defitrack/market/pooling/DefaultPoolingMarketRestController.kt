@@ -27,7 +27,7 @@ class DefaultPoolingMarketRestController(
     @GetMapping(value = ["/all-markets"])
     fun allMarkets(): List<PoolingMarketVO> {
         return poolingMarketProviders.flatMap {
-            it.getPoolingMarkets()
+            it.getMarkets()
         }.map {
             it.toVO()
         }
@@ -58,7 +58,7 @@ class DefaultPoolingMarketRestController(
                 it.getNetwork() == network
             }
             .flatMap {
-                it.getPoolingMarkets()
+                it.getMarkets()
             }.filter {
                 it.tokens.any { t ->
                     t.address.lowercase() == tokenAddress.lowercase()
@@ -78,7 +78,7 @@ class DefaultPoolingMarketRestController(
     private fun poolingMarketById(
         id: String
     ) = poolingMarketProviders.flatMap {
-        it.getPoolingMarkets()
+        it.getMarkets()
     }.firstOrNull {
         it.id == id
     }
@@ -87,7 +87,7 @@ class DefaultPoolingMarketRestController(
     fun findAlternatives(
         @RequestParam("token") tokenAddress: String,
         @RequestParam("network") network: Network
-    ): List<PoolingMarketVO> = runBlocking(Dispatchers.IO){
+    ): List<PoolingMarketVO> = runBlocking(Dispatchers.IO) {
         val token = erC20Resource.getTokenInformation(
             network, tokenAddress,
         )
@@ -96,7 +96,7 @@ class DefaultPoolingMarketRestController(
                 it.getNetwork() == network
             }
             .flatMap {
-                it.getPoolingMarkets()
+                it.getMarkets()
             }.filter { poolingMarketElement ->
                 when {
                     (token.type) != TokenType.SINGLE -> {

@@ -1,6 +1,7 @@
 package io.defitrack.market.farming.domain
 
 import io.defitrack.common.network.Network
+import io.defitrack.market.DefiMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.FungibleToken
 import java.math.BigDecimal
@@ -20,4 +21,4 @@ data class FarmingMarket(
     val balanceFetcher: FarmingPositionFetcher? = null,
     val underlyingBalanceFetcher: FarmingPositionFetcher? = null,
     val investmentPreparer: InvestmentPreparer? = null
-)
+) : DefiMarket

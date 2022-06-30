@@ -46,7 +46,7 @@ class DefitrackClient(private val httpClient: HttpClient) {
         }
     }
 
-    suspend fun getLendingMarkets(protocolVO: ProtocolVO): List<LendingMarketVO> {
+    suspend fun getMarkets(protocolVO: ProtocolVO): List<LendingMarketVO> {
         return try {
             httpClient.get("https://api.defitrack.io/${protocolVO.slug}/lending/all-markets") {
                 timeout {

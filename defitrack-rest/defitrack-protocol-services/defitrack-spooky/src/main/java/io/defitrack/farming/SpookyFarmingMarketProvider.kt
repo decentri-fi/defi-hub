@@ -1,44 +1,36 @@
 package io.defitrack.farming
 
-import io.defitrack.abi.ABIResource
+import io.defitrack.MarketFactory
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
-import io.defitrack.price.PriceResource
+import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SpookyFantomService
 import io.defitrack.protocol.reward.MasterchefLpContract
-import io.defitrack.market.farming.domain.FarmingPositionFetcher
-import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.token.ERC20Resource
-import io.defitrack.token.MarketSizeService
 import org.springframework.stereotype.Component
 
 @Component
 class SpookyFarmingMarketProvider(
     private val spookyFantomService: SpookyFantomService,
-    private val abiResource: ABIResource,
-    private val erC20Resource: ERC20Resource,
-    private val priceResource: PriceResource,
-    private val blockchainGatewayProvider: BlockchainGatewayProvider,
-    private val marketSizeService: MarketSizeService
+    private val marketFactory: MarketFactory
 ) : FarmingMarketProvider() {
 
-    override suspend fun fetchStakingMarkets(): List<FarmingMarket> {
+    override suspend fun fetchMarkets(): List<FarmingMarket> {
         val masterchef = MasterchefLpContract(
-            blockchainGatewayProvider.getGateway(getNetwork()),
-            abiResource.getABI("spooky/Masterchef.json"),
+            marketFactory.blockchainGatewayProvider.getGateway(getNetwork()),
+            marketFactory.abiResource.getABI("spooky/Masterchef.json"),
             spookyFantomService.getMasterchef()
         )
 
-        val reward = erC20Resource.getTokenInformation(getNetwork(), masterchef.rewardToken())
+        val reward = marketFactory.erC20Resource.getTokenInformation(getNetwork(), masterchef.rewardToken())
 
         return masterchef.poolInfos().mapIndexed { index, value ->
 
-            val stakedToken = erC20Resource.getTokenInformation(getNetwork(), value.lpToken)
+            val stakedToken = marketFactory.erC20Resource.getTokenInformation(getNetwork(), value.lpToken)
             val aprCalculator = MinichefStakingAprCalculator(
-                erC20Resource,
-                priceResource,
+                marketFactory.erC20Resource,
+                marketFactory.priceResource,
                 masterchef,
                 index,
                 stakedToken
@@ -54,7 +46,7 @@ class SpookyFarmingMarketProvider(
                 ),
                 contractAddress = masterchef.address,
                 vaultType = "spooky-masterchef",
-                marketSize = marketSizeService.getMarketSize(
+                marketSize = marketFactory.marketSizeService.getMarketSize(
                     stakedToken.toFungibleToken(),
                     masterchef.address,
                     getNetwork()

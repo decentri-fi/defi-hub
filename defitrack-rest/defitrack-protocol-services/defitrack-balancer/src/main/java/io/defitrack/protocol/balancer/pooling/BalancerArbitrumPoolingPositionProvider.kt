@@ -3,7 +3,7 @@ package io.defitrack.protocol.balancer.pooling
 import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingPositionProvider
 import io.defitrack.market.pooling.domain.PoolingElement
-import io.defitrack.market.pooling.domain.PoolingMarketElement
+import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.BalancerArbitrumService
 import io.defitrack.token.TokenType
@@ -19,7 +19,7 @@ class BalancerArbitrumPoolingPositionProvider(private val balancerArbitrumServic
             it.balance > BigDecimal.ZERO
         }
         return poolShares.map { share ->
-            val market = PoolingMarketElement(
+            val market = PoolingMarket(
                 id = "balancer-arbitrum-${share.poolId.id}",
                 network = getNetwork(),
                 protocol = getProtocol(),

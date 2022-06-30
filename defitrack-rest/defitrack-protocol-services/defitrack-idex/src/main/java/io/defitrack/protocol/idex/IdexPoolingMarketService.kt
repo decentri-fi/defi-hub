@@ -2,7 +2,7 @@ package io.defitrack.protocol.idex
 
 import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
-import io.defitrack.market.pooling.domain.PoolingMarketElement
+import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
@@ -19,7 +19,7 @@ class IdexPoolingMarketService(
     private val erc20Resource: ERC20Resource
 ) : PoolingMarketProvider() {
 
-    override suspend fun fetchPoolingMarkets() = coroutineScope {
+    override suspend fun fetchMarkets() = coroutineScope {
         idexService.getLPs().map {
             async(Dispatchers.IO.limitedParallelism(10)) {
                 try {
@@ -29,7 +29,7 @@ class IdexPoolingMarketService(
                             val token0 = erc20Resource.getTokenInformation(getNetwork(), it.tokenA)
                             val token1 = erc20Resource.getTokenInformation(getNetwork(), it.tokenB)
 
-                            PoolingMarketElement(
+                            PoolingMarket(
                                 network = getNetwork(),
                                 protocol = getProtocol(),
                                 address = it.liquidityToken,

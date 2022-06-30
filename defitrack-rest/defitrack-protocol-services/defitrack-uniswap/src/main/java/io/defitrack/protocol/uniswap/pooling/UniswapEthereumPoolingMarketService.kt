@@ -2,7 +2,7 @@ package io.defitrack.protocol.uniswap.pooling
 
 import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
-import io.defitrack.market.pooling.domain.PoolingMarketElement
+import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.uniswap.apr.UniswapAPRService
 import io.defitrack.token.ERC20Resource
@@ -17,7 +17,7 @@ class UniswapEthereumPoolingMarketService(
     private val uniswapAPRService: UniswapAPRService,
 ) : PoolingMarketProvider() {
 
-    override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> {
+    override suspend fun fetchMarkets(): List<PoolingMarket> {
         return uniswapServices.filter {
             it.getNetwork() == getNetwork()
         }.flatMap { service ->
@@ -26,7 +26,7 @@ class UniswapEthereumPoolingMarketService(
                     val token = erC20Resource.getTokenInformation(getNetwork(), it.id)
                     val token0 = erC20Resource.getTokenInformation(getNetwork(), it.token0.id)
                     val token1 = erC20Resource.getTokenInformation(getNetwork(), it.token1.id)
-                    PoolingMarketElement(
+                    PoolingMarket(
                         network = getNetwork(),
                         protocol = getProtocol(),
                         id = "uniswap-ethereum-${it.id}",
