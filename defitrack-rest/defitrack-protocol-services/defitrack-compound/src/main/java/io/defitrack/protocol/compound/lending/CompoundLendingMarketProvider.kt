@@ -58,13 +58,10 @@ class CompoundLendingMarketProvider(
                 erC20Resource.getTokenInformation(getNetwork(), tokenAddress)
             }.let { underlyingToken ->
                 val exchangeRate = ctokenContract.exchangeRate()
-                LendingMarket(
-                    id = "compound-ethereum-${ctokenContract.address}",
-                    network = getNetwork(),
-                    protocol = getProtocol(),
+                create(
+                    identifier = ctokenContract.address,
                     name = ctokenContract.name(),
                     rate = getSupplyRate(compoundTokenContract = ctokenContract),
-                    address = ctokenContract.address,
                     token = underlyingToken.toFungibleToken(),
                     marketSize = priceResource.calculatePrice(
                         PriceRequest(

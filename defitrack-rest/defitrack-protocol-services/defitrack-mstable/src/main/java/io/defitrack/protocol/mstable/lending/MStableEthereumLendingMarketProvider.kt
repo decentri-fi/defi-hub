@@ -47,11 +47,8 @@ class MStableEthereumLendingMarketProvider(
 
     private suspend fun toLendingMarket(it: MStableEthereumSavingsContract): LendingMarket {
         val token = tokenService.getTokenInformation(getNetwork(), it.underlying())
-        return LendingMarket(
-            id = "mstable-polygon-${it.address}",
-            network = getNetwork(),
-            protocol = getProtocol(),
-            address = it.address,
+        return create(
+            identifier = it.address,
             name = token.name,
             token = token.toFungibleToken(),
             poolType = "mstable",

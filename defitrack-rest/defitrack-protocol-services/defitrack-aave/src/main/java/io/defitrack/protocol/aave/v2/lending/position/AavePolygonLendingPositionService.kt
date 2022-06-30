@@ -26,13 +26,12 @@ class AavePolygonLendingPositionService(
                 val token = erC20Resource.getTokenInformation(getNetwork(), it.reserve.underlyingAsset)
                 LendingPosition(
                     market = LendingMarket(
-                        id = "polygon-aave-${it.reserve.symbol}",
+                        id = "lnd_polygon-aave-${it.reserve.symbol}",
                         protocol = getProtocol(),
                         network = getNetwork(),
                         rate = it.reserve.lendingRate.toBigDecimal(),
                         name = it.reserve.name,
                         token = token.toFungibleToken(),
-                        address = it.reserve.id,
                         poolType = "aave-lending"
                     ),
                     amount = it.currentATokenBalance,

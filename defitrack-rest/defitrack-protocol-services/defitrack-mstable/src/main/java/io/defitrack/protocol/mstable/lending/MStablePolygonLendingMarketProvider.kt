@@ -7,8 +7,8 @@ import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.BalanceFetcher
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.mstable.contract.MStableEthereumSavingsContract
 import io.defitrack.protocol.mstable.MStablePolygonService
+import io.defitrack.protocol.mstable.contract.MStableEthereumSavingsContract
 import io.defitrack.token.ERC20Resource
 
 @Deprecated("not a lending market")
@@ -32,11 +32,8 @@ class MStablePolygonLendingMarketProvider(
             )
         }.map {
             val token = tokenService.getTokenInformation(getNetwork(), it.underlying())
-            LendingMarket(
-                id = "mstable-polygon-${it.address}",
-                network = getNetwork(),
-                protocol = getProtocol(),
-                address = it.address,
+            create(
+                identifier = it.address,
                 name = token.name,
                 token = token.toFungibleToken(),
                 poolType = "mstable",

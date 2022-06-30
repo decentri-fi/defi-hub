@@ -51,12 +51,9 @@ abstract class AaveV3LendingMarketProvider(
                     val underlying = erC20Resource.getTokenInformation(getNetwork(), it)
                     val totalSupply = poolDataProvider.getATokenTotalSupply(it)
 
-                    LendingMarket(
-                        id = "aave-v3-optimism-${aToken.address}",
+                    create(
+                        identifier = aToken.address,
                         name = aToken.name,
-                        network = getNetwork(),
-                        protocol = getProtocol(),
-                        address = aToken.address,
                         token = underlying.toFungibleToken(),
                         poolType = "aave-v3",
                         rate = reserveData.liquidityRate.asEth(27),

@@ -59,13 +59,10 @@ abstract class IronBankLendingMarketProvider(
             ctokenContract.underlyingAddress().let { tokenAddress ->
                 erC20Resource.getTokenInformation(getNetwork(), tokenAddress)
             }.let { underlyingToken ->
-                LendingMarket(
-                    id = "ironbank-ethereum-${ctokenContract.address}",
-                    network = getNetwork(),
-                    protocol = getProtocol(),
+                create(
+                    identifier = ctokenContract.address,
                     name = ctokenContract.name(),
                     rate = getSupplyRate(compoundTokenContract = ctokenContract),
-                    address = ctokenContract.address,
                     token = underlyingToken.toFungibleToken(),
                     marketSize = priceResource.calculatePrice(
                         PriceRequest(
@@ -93,7 +90,7 @@ abstract class IronBankLendingMarketProvider(
                 )
             }
         } catch (ex: Exception) {
-            ex.printStackTrace()
+            logger.error("Unable to get info for iron bank contract ${ctokenContract.address}")
             null
         }
     }

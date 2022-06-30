@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component
 class MapleFinanceEthereumLendingMarketProvider(
     private val erc20Resource: ERC20Resource,
     private val mapleFinanceEthereumGraphProvider: MapleFinanceEthereumGraphProvider,
-    private val priceResource: PriceResource
 ) : LendingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
@@ -25,11 +24,8 @@ class MapleFinanceEthereumLendingMarketProvider(
                 try {
                     val token = erc20Resource.getTokenInformation(getNetwork(), it.id)
 
-                    LendingMarket(
-                        id = "maplefinance-ethereum-${it.id}",
-                        network = getNetwork(),
-                        protocol = getProtocol(),
-                        address = it.id,
+                    create(
+                        identifier = it.id,
                         name = it.name,
                         rate = it.rates.firstOrNull()?.rate?.toBigDecimal(),
                         poolType = "maplefinance-lending",
