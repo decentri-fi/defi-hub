@@ -3,6 +3,7 @@ package io.defitrack.protocol.polycat.staking
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -64,7 +65,7 @@ class PolycatFarmingMarketProvider(
     }
 
     private suspend fun calculateMarketSize(
-        stakedtoken: TokenInformation,
+        stakedtoken: TokenInformationVO,
         chef: PolycatMasterChefContract
     ): BigDecimal {
 

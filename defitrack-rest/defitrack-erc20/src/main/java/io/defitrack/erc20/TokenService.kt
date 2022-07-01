@@ -5,8 +5,8 @@ import io.defitrack.erc20.protocolspecific.BalancerTokenService
 import io.defitrack.erc20.protocolspecific.CurveTokenService
 import io.defitrack.erc20.protocolspecific.HopTokenService
 import io.defitrack.logo.LogoService
-import io.defitrack.nativetoken.NativeTokenService
 import io.defitrack.market.pooling.contract.LPTokenContract
+import io.defitrack.nativetoken.NativeTokenService
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
@@ -128,7 +128,7 @@ class TokenService(
                 isHopLp(token.symbol) -> {
                     hopTokenService.getTokenInformation(token.address, network)
                 }
-                isCurveToken(token.name)  -> {
+                isCurveToken(token.name) -> {
                     curveTokenService.getTokenInformation(token.address, network);
                 }
                 else -> {
@@ -140,6 +140,7 @@ class TokenService(
                         decimals = token.decimals,
                         totalSupply = BigInteger.ZERO,
                         type = TokenType.SINGLE,
+                        network = network
                     )
                 }
             }
@@ -172,7 +173,8 @@ class TokenService(
             totalSupply = lp.totalSupply(),
             type = getType(lp),
             protocol = protocol,
-            underlyingTokens = listOf(token0, token1)
+            underlyingTokens = listOf(token0, token1),
+            network = network
         )
     }
 }

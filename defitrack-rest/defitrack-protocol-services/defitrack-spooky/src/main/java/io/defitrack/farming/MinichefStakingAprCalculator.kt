@@ -3,6 +3,7 @@ package io.defitrack.farming
 import io.defitrack.apr.Reward
 import io.defitrack.apr.StakedAsset
 import io.defitrack.apr.StakingAprCalculator
+import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.reward.MasterchefLpContract
 import io.defitrack.token.ERC20Resource
@@ -16,7 +17,7 @@ class MinichefStakingAprCalculator(
     priceResource: PriceResource,
     private val chef: MasterchefLpContract,
     private val poolId: Int,
-    private val stakedTokenInformation: TokenInformation
+    private val stakedTokenInformation: TokenInformationVO
 ) : StakingAprCalculator(priceResource) {
 
     suspend fun getNativeReward(): Reward {

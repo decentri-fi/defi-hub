@@ -22,7 +22,8 @@ class NativeTokenService(private val logoService: LogoService) {
                 decimals = 18,
                 symbol = "ETH",
                 type = TokenType.NATIVE,
-                logo = nativeLogo
+                logo = nativeLogo,
+                network = network
             )
             Network.ARBITRUM -> TokenInformation(
                 address = nullAddress,
@@ -30,7 +31,8 @@ class NativeTokenService(private val logoService: LogoService) {
                 decimals = 18,
                 symbol = "ETH",
                 type = TokenType.NATIVE,
-                logo = nativeLogo
+                logo = nativeLogo,
+                network = network
             )
             Network.POLYGON -> TokenInformation(
                 address = nullAddress,
@@ -38,7 +40,8 @@ class NativeTokenService(private val logoService: LogoService) {
                 decimals = 18,
                 symbol = "MATIC",
                 type = TokenType.NATIVE,
-                logo = nativeLogo
+                logo = nativeLogo,
+                network = network
             )
             Network.FANTOM -> TokenInformation(
                 address = nullAddress,
@@ -47,6 +50,7 @@ class NativeTokenService(private val logoService: LogoService) {
                 symbol = "FTM",
                 type = TokenType.NATIVE,
                 logo = nativeLogo,
+                network = network
             )
             Network.OPTIMISM -> TokenInformation(
                 address = nullAddress,
@@ -55,13 +59,15 @@ class NativeTokenService(private val logoService: LogoService) {
                 symbol = "ETH",
                 type = TokenType.NATIVE,
                 logo = nativeLogo,
+                network = network
             )
             Network.AVALANCHE -> TokenInformation(
                 address = nullAddress,
                 name = "Avalanche",
                 decimals = 18,
                 symbol = "AVAX",
-                type = TokenType.NATIVE
+                type = TokenType.NATIVE,
+                network = network
             )
             Network.BINANCE -> TokenInformation(
                 address = nullAddress,
@@ -70,6 +76,7 @@ class NativeTokenService(private val logoService: LogoService) {
                 symbol = "BNB",
                 type = TokenType.NATIVE,
                 logo = nativeLogo,
+                network = network
             )
             Network.POLYGON_MUMBAI -> TokenInformation(
                 address = nullAddress,
@@ -78,6 +85,7 @@ class NativeTokenService(private val logoService: LogoService) {
                 symbol = "MATIC",
                 type = TokenType.NATIVE,
                 logo = nativeLogo,
+                network = network
             )
             else -> throw java.lang.IllegalArgumentException("native token for $network not supported")
         }

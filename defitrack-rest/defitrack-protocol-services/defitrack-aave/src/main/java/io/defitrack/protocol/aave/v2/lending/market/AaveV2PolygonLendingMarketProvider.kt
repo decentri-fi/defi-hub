@@ -3,6 +3,7 @@ package io.defitrack.protocol.aave.v2.lending.market
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
@@ -74,7 +75,7 @@ class AaveV2PolygonLendingMarketProvider(
             }.awaitAll().filterNotNull()
     }
 
-    private suspend fun calculateMarketSize(reserve: AaveReserve, aToken: TokenInformation, underlyingToken: TokenInformation): Double {
+    private suspend fun calculateMarketSize(reserve: AaveReserve, aToken: TokenInformationVO, underlyingToken: TokenInformationVO): Double {
         val underlying = erC20Resource.getTokenInformation(getNetwork(), underlyingToken.address)
         return priceResource.calculatePrice(
             PriceRequest(

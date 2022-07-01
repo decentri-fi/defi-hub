@@ -1,9 +1,11 @@
 package io.defitrack.token
 
+import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
 import java.math.BigInteger
 
 data class TokenInformation(
+    val network: Network,
     val logo: String? = null,
     val name: String,
     val symbol: String,
