@@ -21,28 +21,23 @@ class AaveV3LendingInvestmentPreparer(
     override suspend fun getInvestmentTransaction(prepareInvestmentCommand: PrepareInvestmentCommand): Deferred<PreparedTransaction?> =
         coroutineScope {
             async {
-                val allowance = getAllowance(prepareInvestmentCommand)
                 val requiredBalance = getInvestmentAmount(prepareInvestmentCommand)
 
-                if (allowance >= requiredBalance) {
-                    prepareInvestmentCommand.amount?.let { amount ->
-                        PreparedTransaction(
-                            function = poolContract.getSupplyFunction(
-                                underlying, requiredBalance, prepareInvestmentCommand.user
-                            ),
-                            to = getEntryContract(),
-                            network = getNetwork().toVO()
-                        )
-                    } ?: PreparedTransaction(
+                prepareInvestmentCommand.amount?.let {
+                    PreparedTransaction(
                         function = poolContract.getSupplyFunction(
                             underlying, requiredBalance, prepareInvestmentCommand.user
                         ),
                         to = getEntryContract(),
                         network = getNetwork().toVO()
                     )
-                } else {
-                    null
-                }
+                } ?: PreparedTransaction(
+                    function = poolContract.getSupplyFunction(
+                        underlying, requiredBalance, prepareInvestmentCommand.user
+                    ),
+                    to = getEntryContract(),
+                    network = getNetwork().toVO()
+                )
             }
         }
 

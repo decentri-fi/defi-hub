@@ -41,24 +41,12 @@ class DQuickStakingInvestmentPreparer(
     override suspend fun getInvestmentTransaction(prepareInvestmentCommand: PrepareInvestmentCommand): Deferred<PreparedTransaction?> =
         coroutineScope {
             async {
-                val allowance = getAllowance(prepareInvestmentCommand)
                 val requiredBalance = getInvestmentAmount(prepareInvestmentCommand)
-
-                if (allowance >= requiredBalance) {
-                    prepareInvestmentCommand.amount?.let { amount ->
-                        PreparedTransaction(
-                            function = dQuickContract.enterFunction(amount),
-                            to = getEntryContract(),
-                            network = getNetwork().toVO()
-                        )
-                    } ?: PreparedTransaction(
-                        function = dQuickContract.enterFunction(requiredBalance),
-                        to = getEntryContract(),
-                        network = getNetwork().toVO()
-                    )
-                } else {
-                    null
-                }
+                PreparedTransaction(
+                    function = dQuickContract.enterFunction(requiredBalance),
+                    to = getEntryContract(),
+                    network = getNetwork().toVO()
+                )
             }
         }
 }
