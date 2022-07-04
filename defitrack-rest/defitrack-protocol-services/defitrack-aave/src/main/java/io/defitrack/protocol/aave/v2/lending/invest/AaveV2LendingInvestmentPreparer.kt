@@ -2,8 +2,9 @@ package io.defitrack.protocol.aave.v2.lending.invest
 
 import io.defitrack.common.network.Network
 import io.defitrack.invest.PrepareInvestmentCommand
-import io.defitrack.protocol.aave.v2.contract.LendingPoolContract
 import io.defitrack.market.farming.domain.InvestmentPreparer
+import io.defitrack.network.toVO
+import io.defitrack.protocol.aave.v2.contract.LendingPoolContract
 import io.defitrack.token.ERC20Resource
 import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.Deferred
@@ -11,7 +12,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 
 
-class AaveLendingInvestmentPreparer(
+class AaveV2LendingInvestmentPreparer(
     private val token: String,
     private val lendingPoolContract: LendingPoolContract,
     erC20Resource: ERC20Resource
@@ -20,26 +21,23 @@ class AaveLendingInvestmentPreparer(
     override suspend fun getInvestmentTransaction(prepareInvestmentCommand: PrepareInvestmentCommand): Deferred<PreparedTransaction?> =
         coroutineScope {
             async {
-                val allowance = getAllowance(prepareInvestmentCommand)
                 val requiredBalance = getInvestmentAmount(prepareInvestmentCommand)
 
-                if (allowance >= requiredBalance) {
-                    prepareInvestmentCommand.amount?.let { amount ->
-                        PreparedTransaction(
-                            function = lendingPoolContract.depositFunction(
-                                token, requiredBalance,
-                            ),
-                            to = getEntryContract()
-                        )
-                    } ?: PreparedTransaction(
+                prepareInvestmentCommand.amount?.let {
+                    PreparedTransaction(
                         function = lendingPoolContract.depositFunction(
-                            token, requiredBalance
+                            token, requiredBalance,
                         ),
-                        to = getEntryContract()
+                        to = getEntryContract(),
+                        network = getNetwork().toVO()
                     )
-                } else {
-                    null
-                }
+                } ?: PreparedTransaction(
+                    function = lendingPoolContract.depositFunction(
+                        token, requiredBalance
+                    ),
+                    to = getEntryContract(),
+                    network = getNetwork().toVO()
+                )
             }
         }
 

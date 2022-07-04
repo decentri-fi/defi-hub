@@ -2,8 +2,9 @@ package io.defitrack.protocol.aave.v3.lending.invest
 
 import io.defitrack.common.network.Network
 import io.defitrack.invest.PrepareInvestmentCommand
-import io.defitrack.protocol.aave.v3.contract.PoolContract
 import io.defitrack.market.farming.domain.InvestmentPreparer
+import io.defitrack.network.toVO
+import io.defitrack.protocol.aave.v3.contract.PoolContract
 import io.defitrack.token.ERC20Resource
 import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.Deferred
@@ -29,13 +30,15 @@ class AaveV3LendingInvestmentPreparer(
                             function = poolContract.getSupplyFunction(
                                 underlying, requiredBalance, prepareInvestmentCommand.user
                             ),
-                            to = getEntryContract()
+                            to = getEntryContract(),
+                            network = getNetwork().toVO()
                         )
                     } ?: PreparedTransaction(
                         function = poolContract.getSupplyFunction(
                             underlying, requiredBalance, prepareInvestmentCommand.user
                         ),
-                        to = getEntryContract()
+                        to = getEntryContract(),
+                        network = getNetwork().toVO()
                     )
                 } else {
                     null
