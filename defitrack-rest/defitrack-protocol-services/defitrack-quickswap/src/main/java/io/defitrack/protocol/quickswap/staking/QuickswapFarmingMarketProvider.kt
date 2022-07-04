@@ -9,12 +9,12 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
+import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
 import io.defitrack.token.ERC20Resource
-import io.defitrack.token.TokenInformation
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -57,7 +57,8 @@ class QuickswapFarmingMarketProvider(
                 balanceFetcher = FarmingPositionFetcher(
                     pool.address,
                     { user -> pool.balanceOfMethod(user) }
-                )
+                ),
+                farmType = FarmType.LIQUIDITY_MINING
             )
         }
     }

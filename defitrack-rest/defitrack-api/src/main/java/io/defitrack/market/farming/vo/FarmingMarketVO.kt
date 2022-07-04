@@ -31,7 +31,7 @@ class FarmingMarketVO(
             name = this.name,
             stakedToken = this.stakedToken,
             reward = this.rewardTokens,
-            vaultType = this.vaultType,
+            vaultType = this.contractType,
             marketSize = this.marketSize,
             apr = this.apr,
             prepareInvestmentSupported = this.investmentPreparer != null

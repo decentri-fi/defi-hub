@@ -9,6 +9,7 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
+import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.dinoswap.DinoswapService
 import io.defitrack.protocol.dinoswap.contract.DinoswapFossilFarmsContract
@@ -73,7 +74,8 @@ class DinoswapFarmingMarketProvider(
                 address = chef.address,
                 function = { user -> chef.userInfoFunction(user, poolId) }
             ),
-            marketSize = marketSize.toBigDecimal()
+            marketSize = marketSize.toBigDecimal(),
+            farmType = FarmType.LIQUIDITY_MINING
         )
     }
 

@@ -1,9 +1,11 @@
 package io.defitrack.market.farming
 
+import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.invest.MarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.market.farming.domain.InvestmentPreparer
+import io.defitrack.protocol.FarmType
 import io.defitrack.token.FungibleToken
 import java.math.BigDecimal
 
@@ -18,8 +20,10 @@ abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>() {
         marketSize: BigDecimal? = null,
         apr: BigDecimal? = null,
         balanceFetcher: FarmingPositionFetcher? = null,
+        claimableRewardFetcher: ClaimableRewardFetcher? = null,
         investmentPreparer: InvestmentPreparer? = null,
         underlyingBalanceFetcher: FarmingPositionFetcher? = null,
+        farmType: FarmType
     ): FarmingMarket {
         return FarmingMarket(
             id = "frm_${getNetwork().slug}-${getProtocol().slug}-${identifier}",
@@ -28,12 +32,14 @@ abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>() {
             name = name,
             stakedToken = stakedToken,
             rewardTokens = rewardTokens,
-            vaultType = vaultType,
+            contractType = vaultType,
             marketSize = marketSize,
             apr = apr,
+            farmType = farmType,
             balanceFetcher = balanceFetcher,
             investmentPreparer = investmentPreparer,
-            underlyingBalanceFetcher = underlyingBalanceFetcher
+            underlyingBalanceFetcher = underlyingBalanceFetcher,
+            claimableRewardFetcher = claimableRewardFetcher
         )
     }
 }

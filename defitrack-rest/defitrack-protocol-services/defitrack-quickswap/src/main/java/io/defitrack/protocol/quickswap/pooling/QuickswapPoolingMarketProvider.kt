@@ -19,7 +19,7 @@ import java.math.BigDecimal
 
 @Component
 @EnableScheduling
-class QuickswapPoolingMarketService(
+class QuickswapPoolingMarketProvider(
     private val quickswapService: QuickswapService,
     private val quickswapAPRService: QuickswapAPRService,
     private val erC20Resource: ERC20Resource
@@ -30,7 +30,7 @@ class QuickswapPoolingMarketService(
             .filter {
                 it.reserveUSD > BigDecimal.valueOf(100000)
             }.map {
-                async(Dispatchers.IO.limitedParallelism(5)) {
+                async {
                     try {
                         toPoolingMarket(it)
                     } catch (ex: Exception) {

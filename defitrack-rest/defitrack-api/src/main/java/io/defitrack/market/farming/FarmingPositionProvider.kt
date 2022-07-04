@@ -4,8 +4,6 @@ import io.defitrack.protocol.ProtocolService
 import io.defitrack.market.farming.domain.FarmingPosition
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.token.ERC20Resource
-import io.defitrack.token.FungibleToken
-import java.math.BigDecimal
 import java.math.BigInteger
 
 abstract class FarmingPositionProvider(
@@ -19,27 +17,12 @@ abstract class FarmingPositionProvider(
         }
     }
 
-    fun stakingElement(
-        vaultName: String,
-        rewardTokens: List<FungibleToken>,
-        stakedToken: FungibleToken,
-        vaultType: String,
-        vaultAddress: String,
-        apr: BigDecimal? = null,
-        id: String,
+    fun create(
+        market: FarmingMarket,
         amount: BigInteger
     ): FarmingPosition {
         return FarmingPosition(
-            market = FarmingMarket(
-                id = id,
-                network = getNetwork(),
-                protocol = getProtocol(),
-                name = vaultName,
-                apr = apr,
-                vaultType = vaultType,
-                stakedToken = stakedToken,
-                rewardTokens = rewardTokens,
-            ),
+            market = market,
             amount = amount
         )
     }

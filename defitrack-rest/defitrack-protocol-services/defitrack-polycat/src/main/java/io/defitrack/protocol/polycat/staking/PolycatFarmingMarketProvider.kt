@@ -7,13 +7,14 @@ import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
+import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.polycat.PolycatService
 import io.defitrack.protocol.polycat.contract.PolycatMasterChefContract
 import io.defitrack.token.ERC20Resource
-import io.defitrack.token.TokenInformation
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 
@@ -60,7 +61,16 @@ class PolycatFarmingMarketProvider(
             ),
             apr = PolygcatStakingAprCalculator(erC20Resource, priceResource, chef, poolId).calculateApr(),
             marketSize = calculateMarketSize(stakedtoken, chef),
-            vaultType = "polycat-masterchef"
+            balanceFetcher = FarmingPositionFetcher(
+                address = chef.address,
+                { user ->
+                    chef.userInfoFunction(
+                        user, poolId
+                    )
+                },
+            ),
+            vaultType = "polycat-masterchef",
+            farmType = FarmType.LIQUIDITY_MINING
         )
     }
 

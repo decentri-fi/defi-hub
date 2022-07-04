@@ -7,6 +7,7 @@ import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
+import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.generated.Uint16
 import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
@@ -81,6 +82,17 @@ class PolycatMasterChefContract(
             "totalAllocPoint",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger
+    }
+
+    fun userInfoFunction(user: String, poolIndex: Int): Function {
+        return createFunctionWithAbi(
+            "userInfo",
+            inputs = listOf(poolIndex.toBigInteger().toUint256(), user.toAddress()),
+            outputs = listOf(
+                TypeReference.create(Uint256::class.java),
+                TypeReference.create(Uint256::class.java),
+            )
+        )
     }
 
     suspend fun userInfo(address: String, poolIndex: Int): UserInfo {

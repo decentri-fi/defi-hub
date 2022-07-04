@@ -12,59 +12,59 @@ import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import java.math.BigInteger
 
-@Service
-class ConvexPoolsFarmingPositionProvider(
-    private val convexService: ConvexService,
-    private val abiResource: ABIResource,
-    private val blockchainGatewayProvider: BlockchainGatewayProvider,
-    erC20Resource: ERC20Resource,
-) :
-    FarmingPositionProvider(erC20Resource) {
-
-    val cvxRewardPoolABI by lazy {
-        abiResource.getABI("convex/CvxRewardPool.json")
-    }
-
-    override suspend fun getStakings(address: String): List<FarmingPosition> {
-        val gateway = blockchainGatewayProvider.getGateway(getNetwork())
-        val cvxRewardPools = convexService.providePools().map {
-            CvxRewardPoolContract(
-                gateway,
-                cvxRewardPoolABI,
-                it.address,
-                it.name
-            )
-        }
-
-        return erC20Resource.getBalancesFor(address, cvxRewardPools.map { it.address }, getNetwork())
-            .mapIndexed { index, balance ->
-                if (balance > BigInteger.ZERO) {
-                    val pool = cvxRewardPools[index]
-                    val rewardToken = erC20Resource.getTokenInformation(getNetwork(), pool.rewardToken())
-                    val stakedToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingToken())
-
-                    stakingElement(
-                        vaultName = pool.name,
-                        rewardTokens = listOf(
-                            rewardToken.toFungibleToken()
-                        ),
-                        stakedToken = stakedToken.toFungibleToken(),
-                        vaultType = "convex-reward-pool",
-                        vaultAddress = pool.address,
-                        amount = balance,
-                        id = "cvx-rewardpool-${pool.address}"
-                    )
-                } else {
-                    null
-                }
-            }.filterNotNull()
-    }
-
-    override fun getProtocol(): Protocol {
-        return Protocol.CONVEX
-    }
-
-    override fun getNetwork(): Network {
-        return Network.ETHEREUM
-    }
-}
+//@Service
+//class ConvexPoolsFarmingPositionProvider(
+//    private val convexService: ConvexService,
+//    private val abiResource: ABIResource,
+//    private val blockchainGatewayProvider: BlockchainGatewayProvider,
+//    erC20Resource: ERC20Resource,
+//) :
+//    FarmingPositionProvider(erC20Resource) {
+//
+//    val cvxRewardPoolABI by lazy {
+//        abiResource.getABI("convex/CvxRewardPool.json")
+//    }
+//
+//    override suspend fun getStakings(address: String): List<FarmingPosition> {
+//        val gateway = blockchainGatewayProvider.getGateway(getNetwork())
+//        val cvxRewardPools = convexService.providePools().map {
+//            CvxRewardPoolContract(
+//                gateway,
+//                cvxRewardPoolABI,
+//                it.address,
+//                it.name
+//            )
+//        }
+//
+//        return erC20Resource.getBalancesFor(address, cvxRewardPools.map { it.address }, getNetwork())
+//            .mapIndexed { index, balance ->
+//                if (balance > BigInteger.ZERO) {
+//                    val pool = cvxRewardPools[index]
+//                    val rewardToken = erC20Resource.getTokenInformation(getNetwork(), pool.rewardToken())
+//                    val stakedToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingToken())
+//
+//                    create(
+//                        vaultName = pool.name,
+//                        rewardTokens = listOf(
+//                            rewardToken.toFungibleToken()
+//                        ),
+//                        stakedToken = stakedToken.toFungibleToken(),
+//                        vaultType = "convex-reward-pool",
+//                        vaultAddress = pool.address,
+//                        amount = balance,
+//                        id = "cvx-rewardpool-${pool.address}"
+//                    )
+//                } else {
+//                    null
+//                }
+//            }.filterNotNull()
+//    }
+//
+//    override fun getProtocol(): Protocol {
+//        return Protocol.CONVEX
+//    }
+//
+//    override fun getNetwork(): Network {
+//        return Network.ETHEREUM
+//    }
+//}

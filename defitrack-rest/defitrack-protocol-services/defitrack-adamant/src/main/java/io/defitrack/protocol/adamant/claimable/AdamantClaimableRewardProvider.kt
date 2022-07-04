@@ -2,7 +2,7 @@ package io.defitrack.protocol.adamant.claimable
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.claimable.Claimable
-import io.defitrack.claimable.ClaimableService
+import io.defitrack.claimable.ClaimableRewardProvider
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
@@ -13,12 +13,12 @@ import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 
 @Service
-class AdamantClaimableService(
+class AdamantClaimableRewardProvider(
     private val abiResource: ABIResource,
     private val adamantVaultMarketService: AdamantVaultMarketProvider,
     blockchainGatewayProvider: BlockchainGatewayProvider,
     private val erC20Resource: ERC20Resource
-) : ClaimableService {
+) : ClaimableRewardProvider {
 
     val genericVaultABI = abiResource.getABI("adamant/GenericVault.json")
 

@@ -6,6 +6,7 @@ import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.domain.FarmingPositionFetcher
+import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.adamant.AdamantService
 import io.defitrack.protocol.adamant.AdamantVaultContract
@@ -56,7 +57,8 @@ class AdamantVaultMarketProvider(
                             balanceFetcher = FarmingPositionFetcher(
                                 vault.address,
                                 { user -> vault.balanceOfMethod(user) }
-                            )
+                            ),
+                            farmType = FarmType.VAULT
                         )
                     } catch (ex: Exception) {
                         null

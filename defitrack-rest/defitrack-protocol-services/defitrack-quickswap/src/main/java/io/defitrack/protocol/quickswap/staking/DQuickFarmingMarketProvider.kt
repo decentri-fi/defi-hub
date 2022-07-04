@@ -6,6 +6,7 @@ import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.domain.FarmingPositionFetcher
+import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.contract.DQuickContract
@@ -49,7 +50,8 @@ class DQuickFarmingMarketProvider(
                 ),
                 investmentPreparer = DQuickStakingInvestmentPreparer(
                     erC20Resource, dquick
-                )
+                ),
+                farmType = FarmType.LIQUIDITY_MINING
             )
         )
     }

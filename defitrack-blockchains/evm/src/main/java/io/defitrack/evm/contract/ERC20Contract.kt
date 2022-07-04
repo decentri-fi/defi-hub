@@ -56,19 +56,35 @@ open class ERC20Contract(
     }
 
     suspend fun name(): String {
-        return read("name")
+        return try {
+            read("name")
+        } catch (ex: Exception) {
+            "unknown"
+        }
     }
 
-    suspend fun symbol() : String {
-        return read("symbol")
+    suspend fun symbol(): String {
+        return try {
+            read("symbol")
+        } catch (ex: Exception) {
+            "UNKWN"
+        }
     }
 
     suspend fun decimals(): Int {
-        val d: BigInteger = read("decimals")
-        return d.toInt()
+        return try {
+            val d: BigInteger = read("decimals")
+            return d.toInt()
+        } catch (ex: Exception) {
+            18
+        }
     }
 
     suspend fun totalSupply(): BigInteger {
-        return read("totalSupply")
+        return try {
+            return read("totalSupply")
+        } catch (ex: Exception) {
+            return BigInteger.ZERO
+        }
     }
 }

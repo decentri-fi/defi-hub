@@ -3,12 +3,12 @@ package io.defitrack.protocol.idex
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.protocol.Protocol
 import io.defitrack.market.farming.FarmingMarketProvider
-import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.market.farming.domain.FarmingPositionFetcher
+import io.defitrack.protocol.FarmType
+import io.defitrack.protocol.Protocol
 import io.defitrack.token.ERC20Resource
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -74,7 +74,8 @@ class IdexFarmingMarketProvider(
             balanceFetcher = FarmingPositionFetcher(
                 chef.address,
                 { user -> chef.userInfoFunction(poolId, user) }
-            )
+            ),
+            farmType = FarmType.LIQUIDITY_MINING
         )
     }
 }

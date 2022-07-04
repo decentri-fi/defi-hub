@@ -6,6 +6,7 @@ import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.domain.FarmingPositionFetcher
+import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.mstable.MStableEthereumService
 import io.defitrack.protocol.mstable.contract.MStableEthereumBoostedSavingsVaultContract
@@ -62,7 +63,8 @@ class MStableEthereumFarmingMarketProvider(
             balanceFetcher = FarmingPositionFetcher(
                 address = contract.address,
                 { user -> contract.rawBalanceOfFunction(user) }
-            )
+            ),
+            farmType = FarmType.VAULT
         )
     }
 

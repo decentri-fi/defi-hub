@@ -11,7 +11,6 @@ import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.contract.HopStakingReward
 import io.defitrack.token.ERC20Resource
-import io.defitrack.token.TokenInformation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -58,7 +57,8 @@ class HopPolygonFarmingMarketProvider(
                 balanceFetcher = FarmingPositionFetcher(
                     address = pool.address,
                     function = { user -> pool.balanceOfMethod(user) }
-                )
+                ),
+                farmType = FarmType.LIQUIDITY_MINING
             )
         } catch (ex: Exception) {
             ex.printStackTrace()

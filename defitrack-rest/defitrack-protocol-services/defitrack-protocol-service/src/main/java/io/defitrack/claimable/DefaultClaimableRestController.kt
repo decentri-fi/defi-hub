@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/")
 class DefaultClaimableRestController(
-    private val claimableServices: List<ClaimableService>,
+    private val claimableRewardProviders: List<ClaimableRewardProvider>,
     private val priceResource: PriceResource
 ) {
 
@@ -29,28 +29,27 @@ class DefaultClaimableRestController(
         @PathVariable("address") address: String,
     ): List<ClaimableVO> = runBlocking {
         try {
-            claimableServices.flatMap {
+            claimableRewardProviders.flatMap {
                 it.claimables(address)
             }.map {
-                val amount = it.amount.asEth(it.claimableToken.decimals)
+                val amount = it.amount.asEth(it.claimableTokens.firstOrNull()?.decimals ?: 18)
                 val claimableInDollar = priceResource.calculatePrice(
                     PriceRequest(
-                        address = it.claimableToken.address,
+                        address = it.claimableTokens.first().address,
                         network = it.network,
                         amount = amount,
-                        type = it.claimableToken.type
+                        type = it.claimableTokens.first().type
                     )
                 )
 
                 ClaimableVO(
                     id = it.id,
                     name = it.name,
-                    address = it.address,
                     type = it.type,
                     protocol = it.protocol.toVO(),
                     network = it.network.toVO(),
-                    token = it.claimableToken,
-                    amount = it.amount.asEth(it.claimableToken.decimals).toDouble(),
+                    token = it.claimableTokens.first(),
+                    amount = it.amount.asEth(it.claimableTokens.first().decimals).toDouble(),
                     dollarValue = claimableInDollar,
                     claimTransaction = it.claimTransaction
                 )

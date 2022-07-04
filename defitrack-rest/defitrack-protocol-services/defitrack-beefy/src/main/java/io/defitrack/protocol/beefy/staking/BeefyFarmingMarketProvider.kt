@@ -4,18 +4,21 @@ import io.defitrack.abi.ABIResource
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
+import io.defitrack.market.farming.FarmingMarketProvider
+import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
+import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
 import io.defitrack.protocol.beefy.domain.BeefyVault
 import io.defitrack.protocol.beefy.staking.invest.BeefyStakingInvestmentPreparer
-import io.defitrack.market.farming.FarmingMarketProvider
-import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.token.ERC20Resource
-import io.defitrack.token.TokenInformation
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.withContext
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
@@ -75,7 +78,8 @@ abstract class BeefyFarmingMarketProvider(
                         ).toBigInteger()
                     }
                 ),
-                investmentPreparer = BeefyStakingInvestmentPreparer(contract, erC20Resource)
+                investmentPreparer = BeefyStakingInvestmentPreparer(contract, erC20Resource),
+                farmType = FarmType.VAULT
             )
         } catch (ex: Exception) {
             logger.error("Unable to get beefy farm ${beefyVault.id}")
