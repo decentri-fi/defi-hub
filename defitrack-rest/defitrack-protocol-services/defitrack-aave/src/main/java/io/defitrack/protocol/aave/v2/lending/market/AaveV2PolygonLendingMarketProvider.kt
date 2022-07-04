@@ -6,6 +6,7 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.lending.LendingMarketProvider
+import io.defitrack.market.lending.domain.BalanceFetcher
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
@@ -16,13 +17,10 @@ import io.defitrack.protocol.aave.v2.contract.LendingPoolContract
 import io.defitrack.protocol.aave.v2.domain.AaveReserve
 import io.defitrack.protocol.aave.v2.lending.invest.AaveLendingInvestmentPreparer
 import io.defitrack.token.ERC20Resource
-import io.defitrack.token.TokenInformation
-import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Service
-import java.math.BigDecimal
 import java.math.BigInteger
 
 @Service
@@ -67,6 +65,12 @@ class AaveV2PolygonLendingMarketProvider(
                                 lendingPoolContract,
                                 erC20Resource
                             ),
+                            balanceFetcher = BalanceFetcher(
+                                aToken.address,
+                                { user ->
+                                    erC20Resource.balanceOfFunction(aToken.address, user, getNetwork())
+                                }
+                            )
                         )
                     } catch (ex: Exception) {
                         null
@@ -75,7 +79,11 @@ class AaveV2PolygonLendingMarketProvider(
             }.awaitAll().filterNotNull()
     }
 
-    private suspend fun calculateMarketSize(reserve: AaveReserve, aToken: TokenInformationVO, underlyingToken: TokenInformationVO): Double {
+    private suspend fun calculateMarketSize(
+        reserve: AaveReserve,
+        aToken: TokenInformationVO,
+        underlyingToken: TokenInformationVO
+    ): Double {
         val underlying = erC20Resource.getTokenInformation(getNetwork(), underlyingToken.address)
         return priceResource.calculatePrice(
             PriceRequest(

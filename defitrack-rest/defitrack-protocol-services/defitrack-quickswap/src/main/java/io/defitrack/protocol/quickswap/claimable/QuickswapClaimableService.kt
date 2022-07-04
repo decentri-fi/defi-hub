@@ -59,7 +59,7 @@ class QuickswapClaimableService(
 
                 val stakingToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingTokenAddress())
                 Claimable(
-                    id = "quickswap-reward-$pool.address",
+                    id = "quickswap-reward-${pool.address}",
                     address = pool.address,
                     type = "quickswap-reward-vault",
                     name = "${stakingToken.name} Rewards",
