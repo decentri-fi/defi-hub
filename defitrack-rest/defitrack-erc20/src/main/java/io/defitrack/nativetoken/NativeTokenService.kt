@@ -18,7 +18,7 @@ class NativeTokenService(private val logoService: LogoService) {
         return when (network) {
             Network.ETHEREUM -> TokenInformation(
                 address = nullAddress,
-                name = "Eth",
+                name = "ETH",
                 decimals = 18,
                 symbol = "ETH",
                 type = TokenType.NATIVE,
@@ -27,7 +27,7 @@ class NativeTokenService(private val logoService: LogoService) {
             )
             Network.ARBITRUM -> TokenInformation(
                 address = nullAddress,
-                name = "Eth",
+                name = "ETH",
                 decimals = 18,
                 symbol = "ETH",
                 type = TokenType.NATIVE,
@@ -36,7 +36,7 @@ class NativeTokenService(private val logoService: LogoService) {
             )
             Network.POLYGON -> TokenInformation(
                 address = nullAddress,
-                name = "Matic",
+                name = "MATIC",
                 decimals = 18,
                 symbol = "MATIC",
                 type = TokenType.NATIVE,
@@ -54,7 +54,7 @@ class NativeTokenService(private val logoService: LogoService) {
             )
             Network.OPTIMISM -> TokenInformation(
                 address = nullAddress,
-                name = "Eth",
+                name = "ETH",
                 decimals = 18,
                 symbol = "ETH",
                 type = TokenType.NATIVE,
