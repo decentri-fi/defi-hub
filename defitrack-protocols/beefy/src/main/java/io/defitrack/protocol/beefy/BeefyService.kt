@@ -42,7 +42,7 @@ class BeefyService(
                 }
             )
 
-            beefyArbitrumVaults.addAll(
+            beefyOptimismVaults.addAll(
                 vaults.filter {
                     it.chain == "optimism"
                 }
