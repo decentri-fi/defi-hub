@@ -44,7 +44,7 @@ abstract class IronBankLendingMarketProvider(
 
     val gateway = blockchainGatewayProvider.getGateway(getNetwork())
 
-    override suspend fun fetchLendingMarkets(): List<LendingMarket> =
+    override suspend fun fetchMarkets(): List<LendingMarket> =
         withContext(Dispatchers.IO.limitedParallelism(5)) {
             getTokenContracts().map {
                 async {

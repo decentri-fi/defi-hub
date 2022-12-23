@@ -18,7 +18,7 @@ class AdamantFarmingPositionProvider(
 
     override suspend fun getStakings(address: String): List<FarmingPosition> {
 
-        val markets = adamantVaultMarketService.getStakingMarkets()
+        val markets = adamantVaultMarketService.getMarkets()
 
         return erC20Resource.getBalancesFor(address, markets.map { it.contractAddress }, getNetwork())
             .mapIndexed { index, balance ->

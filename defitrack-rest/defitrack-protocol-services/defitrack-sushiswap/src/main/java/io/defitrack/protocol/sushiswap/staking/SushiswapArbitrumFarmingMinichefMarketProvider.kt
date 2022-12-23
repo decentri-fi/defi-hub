@@ -31,7 +31,7 @@ class SushiswapArbitrumFarmingMinichefMarketProvider(
         abiResource.getABI("sushi/MiniChefV2.json")
     }
 
-    override suspend fun fetchStakingMarkets(): List<FarmingMarket> {
+    override suspend fun fetchMarkets(): List<FarmingMarket> {
         return SushiArbitrumService.getMiniChefs().map {
             MiniChefV2Contract(
                 blockchainGatewayProvider.getGateway(getNetwork()),

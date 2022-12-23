@@ -29,7 +29,7 @@ class PolycatFarmingMarketProvider(
         abiResource.getABI("polycat/MasterChef.json")
     }
 
-    override suspend fun fetchStakingMarkets(): List<FarmingMarket> {
+    override suspend fun fetchMarkets(): List<FarmingMarket> {
         return polycatService.getPolycatFarms().map {
             PolycatMasterChefContract(
                 blockchainGatewayProvider.getGateway(getNetwork()),

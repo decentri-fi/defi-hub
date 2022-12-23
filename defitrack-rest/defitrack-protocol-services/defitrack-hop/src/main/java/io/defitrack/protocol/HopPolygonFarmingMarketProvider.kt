@@ -27,7 +27,7 @@ class HopPolygonFarmingMarketProvider(
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val priceResource: PriceResource
 ) : FarmingMarketProvider() {
-    override suspend fun fetchStakingMarkets(): List<FarmingMarket> = coroutineScope {
+    override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
         hopService.getStakingRewards(getNetwork()).map { stakingReward ->
             async(Dispatchers.IO.limitedParallelism(10)) {
                 toStakingMarket(stakingReward)

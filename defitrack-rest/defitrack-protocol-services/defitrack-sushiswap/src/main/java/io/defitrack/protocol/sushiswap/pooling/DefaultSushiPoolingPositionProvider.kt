@@ -2,7 +2,7 @@ package io.defitrack.protocol.sushiswap.pooling
 
 import io.defitrack.market.pooling.PoolingPositionProvider
 import io.defitrack.market.pooling.domain.PoolingElement
-import io.defitrack.market.pooling.domain.PoolingMarketElement
+import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.SushiswapService
 import io.defitrack.token.TokenType
 import java.math.BigDecimal
@@ -21,7 +21,7 @@ abstract class DefaultSushiPoolingPositionProvider(
                 it.liquidityTokenBalance > BigDecimal.ZERO
             }.map {
 
-                val market = PoolingMarketElement(
+                val market = PoolingMarket(
                     id = "sushiswap-${getNetwork().slug}-${it.pair.id}",
                     network = getNetwork(),
                     protocol = getProtocol(),

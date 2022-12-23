@@ -13,7 +13,7 @@ class MapleFinanceEthereumGraphProvider(
     graphGatewayProvider
 ) {
 
-    suspend fun getLendingMarkets(): List<Market> {
+    suspend fun getMarkets(): List<Market> {
         val query = """
             {
                 markets( where: { isActive: true }) {

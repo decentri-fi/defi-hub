@@ -2,7 +2,7 @@ package io.defitrack.protocol.dfyn.pooling
 
 import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
-import io.defitrack.market.pooling.domain.PoolingMarketElement
+import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.dfyn.DfynService
 import io.defitrack.protocol.dfyn.apr.DfynAPRService
@@ -18,14 +18,14 @@ class DfynPoolingMarketService(
     private val erc20Resource: ERC20Resource
 ) : PoolingMarketProvider() {
 
-    override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> {
+    override suspend fun fetchMarkets(): List<PoolingMarket> {
         return dfynService.getPairs().mapNotNull {
             if (it.reserveUSD > BigDecimal.valueOf(100000)) {
                 val token = erc20Resource.getTokenInformation(getNetwork(), it.id)
                 val token0 = erc20Resource.getTokenInformation(getNetwork(), it.token0.id)
                 val token1 = erc20Resource.getTokenInformation(getNetwork(), it.token1.id)
 
-                PoolingMarketElement(
+                PoolingMarket(
                     network = getNetwork(),
                     protocol = getProtocol(),
                     address = it.id,

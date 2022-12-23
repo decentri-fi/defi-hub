@@ -19,8 +19,8 @@ class MapleFinanceEthereumLendingMarketProvider(
     private val priceResource: PriceResource
 ) : LendingMarketProvider() {
 
-    override suspend fun fetchLendingMarkets(): List<LendingMarket> = coroutineScope {
-        mapleFinanceEthereumGraphProvider.getLendingMarkets().map {
+    override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
+        mapleFinanceEthereumGraphProvider.getMarkets().map {
             async {
                 try {
                     val token = erc20Resource.getTokenInformation(getNetwork(), it.id)

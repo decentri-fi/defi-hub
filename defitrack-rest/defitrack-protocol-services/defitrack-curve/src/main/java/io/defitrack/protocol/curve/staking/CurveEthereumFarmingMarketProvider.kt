@@ -20,7 +20,7 @@ class CurveEthereumFarmingMarketProvider(
     private val marketSizeService: MarketSizeService,
 ) : FarmingMarketProvider() {
 
-    override suspend fun fetchStakingMarkets(): List<FarmingMarket> =
+    override suspend fun fetchMarkets(): List<FarmingMarket> =
         withContext(Dispatchers.IO.limitedParallelism(10)) {
             curveEthereumGaugeGraphProvider.getGauges()
                 .filter { it.pool != null }
@@ -31,7 +31,7 @@ class CurveEthereumFarmingMarketProvider(
                             val stakedToken =
                                 erC20Resource.getTokenInformation(getNetwork(), gauge.pool!!.lpToken.address)
 
-                            stakingMarket(
+                            create(
                                 id = "frm-curve-ethereum-${gauge.address}",
                                 name = stakedToken.name + " Gauge",
                                 stakedToken = stakedToken.toFungibleToken(),

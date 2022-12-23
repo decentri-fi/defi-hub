@@ -14,7 +14,7 @@ open class StandardLpPositionProvider(
     private val erC20Resource: ERC20Resource,
 ) : PoolingPositionProvider() {
     override suspend fun fetchUserPoolings(address: String): List<PoolingElement> {
-        val markets = poolingMarketProvider.getPoolingMarkets()
+        val markets = poolingMarketProvider.getMarkets()
 
         return erC20Resource.getBalancesFor(
             address,

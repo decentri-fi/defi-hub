@@ -5,7 +5,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.pooling.PoolingMarketProvider
-import io.defitrack.market.pooling.domain.PoolingMarketElement
+import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.contract.HopLpTokenContract
@@ -31,7 +31,7 @@ class HopPolygonPoolingMarketService(
 ) : PoolingMarketProvider() {
 
 
-    override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> = coroutineScope {
+    override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
         val gateway = blockchainGatewayProvider.getGateway(getNetwork())
 
         hopService.getLps(getNetwork()).map { hopLpToken ->
@@ -44,7 +44,7 @@ class HopPolygonPoolingMarketService(
     private suspend fun toPoolingMarketElement(
         gateway: BlockchainGateway,
         hopLpToken: HopLpToken
-    ): PoolingMarketElement? {
+    ): PoolingMarket? {
         return try {
             val contract = HopLpTokenContract(
                 blockchainGateway = gateway,
@@ -62,7 +62,7 @@ class HopPolygonPoolingMarketService(
             val canonical = erC20Resource.getTokenInformation(getNetwork(), hopLpToken.canonicalToken)
 
             val marketSize = getPrice(canonical.address, contract, swapContract).toBigDecimal()
-            PoolingMarketElement(
+            PoolingMarket(
                 id = "hop-polygon-${hopLpToken.canonicalToken}",
                 network = getNetwork(),
                 protocol = getProtocol(),

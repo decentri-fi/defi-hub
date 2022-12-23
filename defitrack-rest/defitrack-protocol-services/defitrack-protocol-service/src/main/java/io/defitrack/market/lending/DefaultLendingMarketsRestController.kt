@@ -20,7 +20,7 @@ class DefaultLendingMarketsRestController(
     @GetMapping(value = ["/all-markets"])
     fun getAllMarkets(): List<LendingMarketVO> {
         return lendingMarketProviders.flatMap {
-            it.getLendingMarkets()
+            it.getMarkets()
         }.map {
             it.toVO()
         }
@@ -35,7 +35,7 @@ class DefaultLendingMarketsRestController(
             .filter {
                 it.getNetwork() == network
             }.flatMap {
-                it.getLendingMarkets()
+                it.getMarkets()
             }.filter {
                 it.token.address.lowercase() == token
             }.map { it.toVO() }
@@ -45,7 +45,7 @@ class DefaultLendingMarketsRestController(
     private fun getLendingMarketById(
         id: String
     ) = lendingMarketProviders.flatMap {
-        it.getLendingMarkets()
+        it.getMarkets()
     }.firstOrNull {
         it.id == id
     }

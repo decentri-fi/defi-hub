@@ -19,8 +19,8 @@ class MakerDAOEthereumLendingMarketProvider(
     private val priceResource: PriceResource
 ) : LendingMarketProvider() {
 
-    override suspend fun fetchLendingMarkets(): List<LendingMarket> = coroutineScope {
-        makerDAOEthereumGraphProvider.getLendingMarkets().map {
+    override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
+        makerDAOEthereumGraphProvider.getMarkets().map {
             async {
                 try {
                     val token = erc20Resource.getTokenInformation(getNetwork(), it.id)

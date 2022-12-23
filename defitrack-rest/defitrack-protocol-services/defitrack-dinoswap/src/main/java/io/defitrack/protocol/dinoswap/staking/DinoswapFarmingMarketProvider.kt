@@ -29,7 +29,7 @@ class DinoswapFarmingMarketProvider(
         abiResource.getABI("dinoswap/FossilFarms.json")
     }
 
-    override suspend fun fetchStakingMarkets(): List<FarmingMarket> {
+    override suspend fun fetchMarkets(): List<FarmingMarket> {
         return dinoswapService.getDinoFossilFarms().map {
             DinoswapFossilFarmsContract(
                 blockchainGatewayProvider.getGateway(getNetwork()),

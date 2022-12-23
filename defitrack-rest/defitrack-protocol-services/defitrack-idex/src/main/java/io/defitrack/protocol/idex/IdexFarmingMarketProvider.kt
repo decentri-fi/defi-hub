@@ -27,7 +27,7 @@ class IdexFarmingMarketProvider(
         abiResource.getABI("idex/IdexFarm.json")
     }
 
-    override suspend fun fetchStakingMarkets(): List<FarmingMarket> = coroutineScope {
+    override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
         idexService.idexFarm().map {
             IdexFarmContract(
                 blockchainGatewayProvider.getGateway(getNetwork()),

@@ -1,7 +1,7 @@
 package io.defitrack.market.pooling.vo
 
 import io.defitrack.market.MarketVO
-import io.defitrack.market.pooling.domain.PoolingMarketElement
+import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.network.NetworkVO
 import io.defitrack.network.toVO
 import io.defitrack.protocol.ProtocolVO
@@ -23,7 +23,7 @@ class PoolingMarketVO(
     id, network, protocol, name, prepareInvestmentSupported, marketSize, "pooling"
 ) {
     companion object {
-        fun PoolingMarketElement.toVO() =
+        fun PoolingMarket.toVO() =
             PoolingMarketVO(
                 name = name,
                 protocol = protocol.toVO(),

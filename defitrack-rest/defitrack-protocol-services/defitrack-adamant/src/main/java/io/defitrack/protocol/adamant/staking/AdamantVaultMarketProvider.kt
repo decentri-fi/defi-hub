@@ -32,7 +32,7 @@ class AdamantVaultMarketProvider(
     }
 
 
-    override suspend fun fetchStakingMarkets(): List<FarmingMarket> =
+    override suspend fun fetchMarkets(): List<FarmingMarket> =
         withContext(Dispatchers.IO.limitedParallelism(10)) {
             adamantService.adamantGenericVaults().map {
                 AdamantVaultContract(

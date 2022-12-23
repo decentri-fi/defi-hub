@@ -16,5 +16,5 @@ class PoolingElement(
     val id: String,
     val apr: BigDecimal? = null,
     val marketSize: BigDecimal? = null,
-    val market: PoolingMarketElement
+    val market: PoolingMarket
 )

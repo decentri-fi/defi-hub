@@ -3,7 +3,7 @@ package io.defitrack.pooling
 import io.defitrack.apr.SpiritswapAPRService
 import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
-import io.defitrack.market.pooling.domain.PoolingMarketElement
+import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SpiritswapService
 import io.defitrack.token.ERC20Resource
@@ -18,7 +18,7 @@ class SpiritFantomPoolingMarketService(
     private val erC20Resource: ERC20Resource,
 ) : PoolingMarketProvider() {
 
-    override suspend fun fetchPoolingMarkets() = spiritswapServices.filter {
+    override suspend fun fetchMarkets() = spiritswapServices.filter {
         it.getNetwork() == getNetwork()
     }.flatMap { service ->
         service.getPairs()
@@ -31,7 +31,7 @@ class SpiritFantomPoolingMarketService(
                 val token0 = erC20Resource.getTokenInformation(getNetwork(), it.token0.id)
                 val token1 = erC20Resource.getTokenInformation(getNetwork(), it.token1.id)
 
-                PoolingMarketElement(
+                PoolingMarket(
                     network = service.getNetwork(),
                     protocol = getProtocol(),
                     address = it.id,

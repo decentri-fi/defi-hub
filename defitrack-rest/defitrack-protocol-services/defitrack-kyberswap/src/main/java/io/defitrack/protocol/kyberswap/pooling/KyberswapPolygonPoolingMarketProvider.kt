@@ -2,7 +2,7 @@ package io.defitrack.protocol.kyberswap.pooling
 
 import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
-import io.defitrack.market.pooling.domain.PoolingMarketElement
+import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.kyberswap.KyberswapPolygonGraphProvider
 import io.defitrack.protocol.kyberswap.apr.KyberswapAPRService
@@ -20,7 +20,7 @@ class KyberswapPolygonPoolingMarketProvider(
     private val erc20Resource: ERC20Resource
 ) : PoolingMarketProvider() {
 
-    override suspend fun fetchPoolingMarkets(): List<PoolingMarketElement> = coroutineScope {
+    override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
         kyberswapPolygonGraphProvider.getPoolingMarkets().map {
             async {
                 try {
@@ -28,7 +28,7 @@ class KyberswapPolygonPoolingMarketProvider(
                     val token0 = erc20Resource.getTokenInformation(getNetwork(), it.token0.id)
                     val token1 = erc20Resource.getTokenInformation(getNetwork(), it.token1.id)
 
-                    PoolingMarketElement(
+                    PoolingMarket(
                         id = "kyberswap-polygon-${it.id}",
                         network = getNetwork(),
                         protocol = getProtocol(),

@@ -29,7 +29,7 @@ class BalancerPolygonFarmingMarketProvider(
         abiResource.getABI("balancer/gauge.json")
     }
 
-    override suspend fun fetchStakingMarkets(): List<FarmingMarket> = coroutineScope {
+    override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
         balancerPolygonPoolGraphProvider.getGauges().map {
             async {
                 try {

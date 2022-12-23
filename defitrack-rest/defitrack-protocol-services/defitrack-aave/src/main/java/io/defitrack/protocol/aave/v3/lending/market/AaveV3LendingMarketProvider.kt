@@ -40,7 +40,7 @@ abstract class AaveV3LendingMarketProvider(
         aaveV3DataProvider.poolDataProvider
     )
 
-    override suspend fun fetchLendingMarkets(): List<LendingMarket> = coroutineScope {
+    override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
         pool.reservesList().map {
             async {
                 try {

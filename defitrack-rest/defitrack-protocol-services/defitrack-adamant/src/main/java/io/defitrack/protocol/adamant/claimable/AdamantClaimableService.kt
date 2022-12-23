@@ -39,7 +39,7 @@ class AdamantClaimableService(
 
     override suspend fun claimables(address: String): List<Claimable> {
 
-        val markets = adamantVaultMarketService.getStakingMarkets().map {
+        val markets = adamantVaultMarketService.getMarkets().map {
             AdamantVaultContract(
                 gateway,
                 genericVaultABI,

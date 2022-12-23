@@ -20,7 +20,7 @@ class LendingMarketStatisticsService(
             it.primitives.contains(DefiPrimitive.LENDING)
         }.map {
             it to async {
-                defitrackClient.getLendingMarkets(it)
+                defitrackClient.getMarkets(it)
             }
         }.map {
             it.first to it.second.await(3000L, emptyList())
