@@ -47,6 +47,7 @@
         <module>balancer</module>
         <module>set</module>
         <module>wepiggy</module>
+        <module>olympusdao</module>
     </modules>
 
     <dependencyManagement>
