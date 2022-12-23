@@ -23,7 +23,7 @@ class PoolingMarketStatisticsService(
                 defitrackClient.getPoolingMarkets(it)
             }
         }.map {
-            it.first to it.second.await(10000L, emptyList())
+            it.first to it.second.await(3000L, emptyList())
         }
 
         MarketStatisticVO(
@@ -32,6 +32,8 @@ class PoolingMarketStatisticsService(
             }.count(),
             marketsPerProtocol = marketsPerProtocol.associate {
                 it.first.slug to it.second.count()
+            }.filter {
+                it.value > 0
             }
         )
     }

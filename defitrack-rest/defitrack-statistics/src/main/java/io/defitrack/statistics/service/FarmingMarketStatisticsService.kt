@@ -34,6 +34,8 @@ class FarmingMarketStatisticsService(
             }.count(),
             marketsPerProtocol = marketsPerProtocol.associate {
                 it.first.slug to it.second.count()
+            }.filter {
+                it.value > 0
             }
         )
     }
