@@ -12,10 +12,10 @@ import io.defitrack.token.TokenType
 import org.springframework.stereotype.Service
 
 @Service
-class SetFarmingMarketProvider(
+class SetPoolingMarketProvider(
     private val ethereumSetProvider: EthereumSetProvider,
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
-    private val erC20Resource: ERC20Resource
+    erC20Resource: ERC20Resource
 ) : PoolingMarketProvider(erC20Resource) {
     override suspend fun fetchMarkets(): List<PoolingMarket> {
         val gateway = blockchainGatewayProvider.getGateway(getNetwork())

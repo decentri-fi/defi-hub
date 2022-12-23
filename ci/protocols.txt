@@ -32,3 +32,4 @@ sushiswap
 uniswap
 yearn
 wepiggy
+set
