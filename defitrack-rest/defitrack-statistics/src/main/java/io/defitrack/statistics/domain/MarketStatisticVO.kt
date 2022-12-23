@@ -1,4 +1,4 @@
-package io.defitrack.farming.domain
+package io.defitrack.statistics.domain
 
 class MarketStatisticVO(
     val total: Int,

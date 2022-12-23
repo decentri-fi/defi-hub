@@ -1,20 +1,19 @@
-package io.defitrack.farming
+package io.defitrack.statistics.service
 
-import io.defitrack.farming.domain.MarketStatisticVO
+import io.defitrack.statistics.client.DefitrackClient
 import io.defitrack.protocol.DefiPrimitive
+import io.defitrack.statistics.domain.MarketStatisticVO
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withTimeoutOrNull
 import org.springframework.stereotype.Service
+import io.defitrack.common.utils.AsyncUtils.await
 
 @Service
 class FarmingMarketStatisticsService(
     private val defitrackClient: DefitrackClient
 ) {
-
-    suspend fun <T> Deferred<T>.await(timeout: Long, defaultValue: T) =
-        withTimeoutOrNull(timeout) { await() } ?: defaultValue
 
     suspend fun getStatistics(): MarketStatisticVO = coroutineScope {
         val protocols = defitrackClient.getProtocols()
