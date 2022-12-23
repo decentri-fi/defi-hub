@@ -42,7 +42,7 @@ class CurvePoolingMarketProvider(
                             apr = BigDecimal.ZERO,
                             marketSize = calculateMarketSize(tokens, lpToken.address),
                             tokenType = TokenType.CURVE,
-                            positionFetcher = defaultBalanceFetcher(lpToken.address)
+                            positionFetcher = if(lpToken.name == "unknown") null else defaultBalanceFetcher(lpToken.address)
                         )
                     } catch (ex: Exception) {
                         ex.printStackTrace()

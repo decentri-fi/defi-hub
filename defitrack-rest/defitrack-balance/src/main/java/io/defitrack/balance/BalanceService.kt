@@ -25,7 +25,7 @@ abstract class BalanceService(
         }
     }
 
-    suspend fun  getTokenBalances(user: String): List<TokenBalance> {
+    open suspend fun  getTokenBalances(user: String): List<TokenBalance> {
         return try {
             val tokenAddresses = erc20Resource.getAllTokens(getNetwork()).map {
                 it.address
@@ -33,7 +33,6 @@ abstract class BalanceService(
 
             return erc20Resource.getBalancesFor(user, tokenAddresses, getNetwork())
                 .mapIndexed { i, balance ->
-
                     if (balance > BigInteger.ZERO) {
                         val token = erc20Resource.getTokenInformation(getNetwork(), tokenAddresses[i])
                         TokenBalance(
@@ -46,8 +45,13 @@ abstract class BalanceService(
                     }
                 }.filterNotNull()
         } catch (ex: Exception) {
+            logger.error("Unable to get token balances for {}", this.getNetwork())
             ex.printStackTrace()
             emptyList()
         }
+    }
+
+    fun getBalances() {
+
     }
 }

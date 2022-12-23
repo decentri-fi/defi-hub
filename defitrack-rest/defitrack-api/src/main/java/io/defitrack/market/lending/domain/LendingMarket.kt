@@ -28,7 +28,12 @@ class PositionFetcher(
     val address: String,
     val function: (user: String) -> org.web3j.abi.datatypes.Function,
     val extractBalance: (List<Type<*>>) -> BigInteger = { result ->
-        result[0].value as BigInteger
+        try {
+            result[0].value as BigInteger
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            BigInteger.ZERO
+        }
     }
 ) {
     fun toMulticall(user: String): MultiCallElement {

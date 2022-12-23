@@ -61,6 +61,10 @@ open class BlockchainGateway(
     open suspend fun readMultiCall(elements: List<MultiCallElement>): List<List<Type<*>>> {
         if (elements.isEmpty()) {
             return kotlin.collections.emptyList()
+        } else if (elements.size > 100) {
+            return elements.chunked(100).map {
+                readMultiCall(it)
+            }.flatten()
         }
 
         val encodedFunctions = elements.map {

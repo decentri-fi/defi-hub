@@ -9,6 +9,7 @@ import io.defitrack.evm.contract.BlockchainGateway.Companion.MAX_UINT256
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.contract.multicall.MultiCallElement
+import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -27,12 +28,18 @@ class ERC20Resource(
     @Value("\${erc20ResourceLocation:http://defitrack-erc20:8080}") private val erc20ResourceLocation: String
 ) {
 
+
+    val tokenCache: Cache<String, List<TokenInformationVO>> = Cache.Builder().build()
+
+
     val erc20ABI by lazy {
         abiResource.getABI("general/ERC20.json")
     }
 
     suspend fun getAllTokens(network: Network): List<TokenInformationVO> = withContext(Dispatchers.IO) {
-        retry(limitAttempts(3)) { client.get("$erc20ResourceLocation/${network.name}").body() }
+        tokenCache.get("all") {
+            retry(limitAttempts(3)) { client.get("$erc20ResourceLocation/${network.name}").body() }
+        }
     }
 
     suspend fun getBalance(network: Network, tokenAddress: String, user: String): BigInteger =
