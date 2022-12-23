@@ -44,6 +44,7 @@
         <module>defitrack-stargate</module>
         <module>defitrack-uniswap</module>
         <module>defitrack-yearn</module>
+        <module>defitrack-set</module>
         <module>defitrack-protocol-service</module>
     </modules>
 

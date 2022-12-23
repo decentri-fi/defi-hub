@@ -13,7 +13,7 @@ import kotlinx.coroutines.coroutineScope
 class BalancerClaimPreparer(
     private val gaugeContract: BalancerGaugeContract
 ) : ClaimingPreparer() {
-    override suspend fun getClaimPreparation(prepareInvestmentCommand: PrepareClaimCommand): Deferred<PreparedTransaction> =
+    override suspend fun getClaimPreparation(prepareInvestmentCommand: PrepareClaimCommand?): Deferred<PreparedTransaction> =
         coroutineScope {
             async {
                 PreparedTransaction(

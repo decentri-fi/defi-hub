@@ -43,6 +43,7 @@
         <module>compound</module>
         <module>beefy</module>
         <module>balancer</module>
+        <module>set</module>
     </modules>
 
     <dependencyManagement>
