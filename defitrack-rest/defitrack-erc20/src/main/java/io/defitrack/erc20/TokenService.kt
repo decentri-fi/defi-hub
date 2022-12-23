@@ -31,13 +31,22 @@ class TokenService(
 ) {
 
 
+    val tokenCache: Cache<String, List<TokenInformation>> = Cache.Builder().build()
+
     suspend fun getAllTokensForNetwork(network: Network): List<TokenInformation> {
         return withContext(Dispatchers.IO.limitedParallelism(10)) {
-            erC20Repository.allTokens(network).map {
-                async {
-                    getTokenInformation(it, network)
-                }
-            }.awaitAll()
+            tokenCache.get("all") {
+                erC20Repository.allTokens(network).map {
+                    async {
+                        try {
+                            getTokenInformation(it, network)
+                        } catch (ex: Exception) {
+                            ex.printStackTrace()
+                            null
+                        }
+                    }
+                }.awaitAll().filterNotNull()
+            }
         }
     }
 
