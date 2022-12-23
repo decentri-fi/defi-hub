@@ -46,7 +46,8 @@ class CurveTokenService(
                     type = TokenType.CURVE,
                     underlyingTokens = underlyingTokens,
                     protocol = Protocol.CURVE,
-                    network = network
+                    network = network,
+                    totalSupply = token.totalSupply
                 )
             } catch (ex: Exception) {
                 null
