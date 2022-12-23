@@ -44,10 +44,13 @@ class PriceCalculator(
                 val tokenType = (priceRequest.type ?: token.type)
                 val price = when {
                     tokenType.standardLpToken -> {
-                        calculateLpPrice(priceRequest, token)
+                        calculateLpHoldings(priceRequest, token)
                     }
                     tokenType == TokenType.BALANCER -> {
                         calculateBalancerPrice(priceRequest)
+                    }
+                    tokenType == TokenType.CURVE -> {
+                        calculateLpHoldings(priceRequest, token)
                     }
                     tokenType == TokenType.HOP -> {
                         hopPriceService.calculateHopPrice(priceRequest)
@@ -75,12 +78,12 @@ class PriceCalculator(
         } ?: BigDecimal.ZERO
 
 
-    private suspend fun calculateLpPrice(
+    private suspend fun calculateLpHoldings(
         priceRequest: PriceRequest,
         tokenInformation: TokenInformation
     ): BigDecimal {
         return try {
-            return calculateLPWorth(
+            return calculateLpHoldings(
                 priceRequest.network,
                 tokenInformation.address,
                 priceRequest.amount,
@@ -103,7 +106,7 @@ class PriceCalculator(
     }
 
 
-    suspend fun calculateLPWorth(
+    suspend fun calculateLpHoldings(
         network: Network,
         lpAddress: String,
         userLPAmount: BigDecimal,
