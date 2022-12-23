@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 @Service
 class IdexFarmingPositionProvider(
     erC20Resource: ERC20Resource,
-    idexFarmingMarketService: IdexFarmingMarketService,
+    idexFarmingMarketService: IdexFarmingMarketProvider,
     gateway: BlockchainGatewayProvider
 ) : DefaultFarmingPositionProvider(
     erC20Resource, idexFarmingMarketService, gateway

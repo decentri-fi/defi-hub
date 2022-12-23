@@ -3,11 +3,12 @@ package io.defitrack.farming
 import io.defitrack.common.network.Network
 import io.defitrack.farming.vo.TransactionPreparationVO
 import io.defitrack.invest.PrepareInvestmentCommand
-import io.defitrack.market.farming.FarmingMarketService
+import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.vo.FarmingMarketVO
 import io.defitrack.market.farming.vo.FarmingMarketVO.Companion.toVO
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping(*["/staking", "/farming"])
 class DefaultFarmingMarketRestController(
-    private val farmingMarketServices: List<FarmingMarketService>,
+    private val farmingMarketProviders: List<FarmingMarketProvider>,
     private val erC20Resource: ERC20Resource
 ) {
 
@@ -24,7 +25,7 @@ class DefaultFarmingMarketRestController(
     fun stakingMarkets(
         @RequestParam("network") network: Network?
     ): List<FarmingMarketVO> {
-        return farmingMarketServices
+        return farmingMarketProviders
             .filter { marketService ->
                 network?.let {
                     marketService.getNetwork() == it
@@ -40,8 +41,8 @@ class DefaultFarmingMarketRestController(
     fun searchByToken(
         @RequestParam("token") tokenAddress: String,
         @RequestParam("network") network: Network
-    ): List<FarmingMarketVO> {
-        return farmingMarketServices
+    ): List<FarmingMarketVO>  = runBlocking(Dispatchers.IO) {
+        farmingMarketProviders
             .filter {
                 it.getNetwork() == network
             }.flatMap {
@@ -72,7 +73,7 @@ class DefaultFarmingMarketRestController(
 
     private fun getStakingMarketById(
         id: String
-    ) = farmingMarketServices
+    ) = farmingMarketProviders
         .flatMap {
             it.getStakingMarkets()
         }.firstOrNull {

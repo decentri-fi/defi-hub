@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
 class SpritFantomFarmingPositionProvider(
     erC20Resource: ERC20Resource,
     blockchainGatewayProvider: BlockchainGatewayProvider,
-    spiritFantomStakingMarketService: SpiritFantomFarmingMarketService
+    spiritFantomStakingMarketService: SpiritFantomFarmingMarketProvider
 ) : DefaultFarmingPositionProvider(
     erC20Resource, spiritFantomStakingMarketService, blockchainGatewayProvider
 )

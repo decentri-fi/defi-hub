@@ -12,6 +12,7 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
@@ -29,22 +30,16 @@ class ERC20Resource(
         abiResource.getABI("general/ERC20.json")
     }
 
-    fun getAllTokens(network: Network): List<TokenInformation> {
-        return runBlocking(Dispatchers.IO) {
+    suspend fun getAllTokens(network: Network): List<TokenInformation> = coroutineScope{
             retry(limitAttempts(3)) { client.get("$erc20ResourceLocation/${network.name}").body() }
-        }
     }
 
-    fun getBalance(network: Network, tokenAddress: String, user: String): BigInteger {
-        return runBlocking(Dispatchers.IO) {
-            client.get("$erc20ResourceLocation/${network.name}/$tokenAddress/$user").body()
-        }
+    suspend fun getBalance(network: Network, tokenAddress: String, user: String): BigInteger = coroutineScope {
+        client.get("$erc20ResourceLocation/${network.name}/$tokenAddress/$user").body()
     }
 
-    fun getTokenInformation(network: Network, address: String): TokenInformation {
-        return runBlocking(Dispatchers.IO) {
-            retry(limitAttempts(3)) { client.get("$erc20ResourceLocation/${network.name}/$address/token").body() }
-        }
+    suspend fun getTokenInformation(network: Network, address: String): TokenInformation = coroutineScope {
+        retry(limitAttempts(3)) { client.get("$erc20ResourceLocation/${network.name}/$address/token").body() }
     }
 
     fun getApproveFunction(

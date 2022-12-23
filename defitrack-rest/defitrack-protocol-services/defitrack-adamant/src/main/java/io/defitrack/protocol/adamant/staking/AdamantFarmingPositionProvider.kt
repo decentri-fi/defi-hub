@@ -11,7 +11,7 @@ import java.math.BigInteger
 @Service
 class AdamantFarmingPositionProvider(
     erC20Resource: ERC20Resource,
-    private val adamantVaultMarketService: AdamantVaultMarketService,
+    private val adamantVaultMarketService: AdamantVaultMarketProvider,
 ) : FarmingPositionProvider(
     erC20Resource
 ) {

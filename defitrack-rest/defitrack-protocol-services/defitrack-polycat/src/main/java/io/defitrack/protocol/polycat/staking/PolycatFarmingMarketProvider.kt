@@ -9,7 +9,7 @@ import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.polycat.contract.PolycatMasterChefContract
 import io.defitrack.protocol.polycat.PolycatService
-import io.defitrack.market.farming.FarmingMarketService
+import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenInformation
@@ -17,13 +17,13 @@ import org.springframework.stereotype.Service
 import java.math.BigDecimal
 
 @Service
-class PolycatFarmingMarketService(
+class PolycatFarmingMarketProvider(
     private val polycatService: PolycatService,
     private val abiResource: ABIResource,
     private val erC20Resource: ERC20Resource,
     private val priceResource: PriceResource,
     private val blockchainGatewayProvider: BlockchainGatewayProvider
-) : FarmingMarketService() {
+) : FarmingMarketProvider() {
 
     val masterChefABI by lazy {
         abiResource.getABI("polycat/MasterChef.json")

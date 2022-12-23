@@ -6,8 +6,8 @@ import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 
 @Service
-class BeefyPolygonFarmingPositionProvider(
+class BeefyOptimismFarmingPositionProvider(
+    beefyOptimismFarmingMarketProvider: BeefyOptimismFarmingMarketProvider,
     blockchainGatewayProvider: BlockchainGatewayProvider,
-    polygonStakingMarketService: BeefyPolygonFarmingMarketProvider,
-    erC20Resource: ERC20Resource,
-) : DefaultFarmingPositionProvider(erC20Resource, polygonStakingMarketService, blockchainGatewayProvider)
+    erC20Resource: ERC20Resource
+) : DefaultFarmingPositionProvider(erC20Resource, beefyOptimismFarmingMarketProvider, blockchainGatewayProvider)

@@ -2,7 +2,7 @@ package io.defitrack.farming
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.market.farming.FarmingMarketService
+import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.StargateService
 import io.defitrack.protocol.contract.LPStakingContract
@@ -11,12 +11,12 @@ import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Component
 
 @Component
-abstract class StargateFarmingMarketService(
+abstract class StargateFarmingMarketProvider(
     private val stargateOptimismService: StargateService,
     private val accessorGateway: BlockchainGatewayProvider,
     private val abiResource: ABIResource,
     private val erC20Resource: ERC20Resource
-) : FarmingMarketService() {
+) : FarmingMarketProvider() {
 
     val lpStakingContractAbi by lazy {
         abiResource.getABI("stargate/LPStaking.json")

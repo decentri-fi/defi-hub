@@ -8,6 +8,6 @@ import org.springframework.stereotype.Component
 @Component
 class SushiswapArbitrumFarmingPositionProvider(
     erC20Resource: ERC20Resource,
-    sushiswapArbitrumStakingMinichefMarketService: SushiswapArbitrumFarmingMinichefMarketService,
+    sushiswapArbitrumStakingMinichefMarketService: SushiswapArbitrumFarmingMinichefMarketProvider,
     blockchainGatewayProvider: BlockchainGatewayProvider
 ) : DefaultFarmingPositionProvider(erC20Resource, sushiswapArbitrumStakingMinichefMarketService, blockchainGatewayProvider)

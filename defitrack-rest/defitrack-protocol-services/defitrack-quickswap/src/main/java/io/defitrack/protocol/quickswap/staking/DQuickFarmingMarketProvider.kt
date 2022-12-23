@@ -6,19 +6,19 @@ import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.contract.DQuickContract
-import io.defitrack.market.farming.FarmingMarketService
+import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 
 @Service
-class DQuickFarmingMarketService(
+class DQuickFarmingMarketProvider(
     private val quickswapService: QuickswapService,
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val abiResource: ABIResource,
     private val erC20Resource: ERC20Resource,
-) : FarmingMarketService() {
+) : FarmingMarketProvider() {
 
     val dquickStakingABI by lazy {
         abiResource.getABI("quickswap/dquick.json")

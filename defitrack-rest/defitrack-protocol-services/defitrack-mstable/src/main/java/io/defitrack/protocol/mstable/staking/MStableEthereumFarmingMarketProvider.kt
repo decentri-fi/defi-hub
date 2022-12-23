@@ -6,7 +6,7 @@ import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.mstable.contract.MStableEthereumBoostedSavingsVaultContract
 import io.defitrack.protocol.mstable.MStableEthereumService
-import io.defitrack.market.farming.FarmingMarketService
+import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.token.ERC20Resource
@@ -16,12 +16,12 @@ import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Service
 
 @Service
-class MStableEthereumFarmingMarketService(
+class MStableEthereumFarmingMarketProvider(
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val mStableEthereumService: MStableEthereumService,
     private val abiResource: ABIResource,
     private val erC20Resource: ERC20Resource
-) : FarmingMarketService() {
+) : FarmingMarketProvider() {
 
     val boostedSavingsVaultABI by lazy {
         abiResource.getABI("mStable/BoostedSavingsVault.json")
@@ -48,7 +48,7 @@ class MStableEthereumFarmingMarketService(
         }.awaitAll().filterNotNull()
     }
 
-    private fun toStakingMarket(contract: MStableEthereumBoostedSavingsVaultContract): FarmingMarket {
+    private suspend fun toStakingMarket(contract: MStableEthereumBoostedSavingsVaultContract): FarmingMarket {
         val stakingToken = erC20Resource.getTokenInformation(getNetwork(), contract.stakingToken)
         val rewardsToken = erC20Resource.getTokenInformation(getNetwork(), contract.rewardsToken)
         return FarmingMarket(

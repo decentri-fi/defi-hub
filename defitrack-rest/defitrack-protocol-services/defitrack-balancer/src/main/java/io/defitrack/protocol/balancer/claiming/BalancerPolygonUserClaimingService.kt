@@ -8,7 +8,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerGaugeContract
-import io.defitrack.protocol.balancer.staking.BalancerPolygonFarmingMarketService
+import io.defitrack.protocol.balancer.staking.BalancerPolygonFarmingMarketProvider
 import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -19,7 +19,7 @@ import java.util.*
 
 @Service
 class BalancerPolygonUserClaimingService(
-    private val balancerPolygonStakingMarketService: BalancerPolygonFarmingMarketService,
+    private val balancerPolygonStakingMarketService: BalancerPolygonFarmingMarketProvider,
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val erC20Resource: ERC20Resource,
     abiResource: ABIResource

@@ -8,12 +8,12 @@ import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Component
 
 @Component
-class StargateArbitrumFarmingService(
+class StargateArbitrumFarmingProvider(
     stargateService: StargateArbitrumService,
     accessorGateway: BlockchainGatewayProvider,
     abiResource: ABIResource,
     erC20Resource: ERC20Resource
-) : StargateFarmingMarketService(
+) : StargateFarmingMarketProvider(
     stargateService, accessorGateway, abiResource, erC20Resource
 ) {
     override fun getNetwork(): Network {

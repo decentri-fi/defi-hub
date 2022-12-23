@@ -36,7 +36,7 @@ class PolygcatStakingAprCalculator(
         )
     }
 
-    override fun getStakedTokens(): List<StakedAsset> {
+    override suspend fun getStakedTokens(): List<StakedAsset> {
         val lpAddress = chef.poolInfo(poolId).lpToken
         val token = erc20Resource.getTokenInformation(chef.blockchainGateway.network, lpAddress)
         val balance = erc20Resource.getBalance(

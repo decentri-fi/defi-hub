@@ -17,16 +17,14 @@ abstract class StakingAprCalculator(
     private val secondsPerYear = BigDecimal.valueOf(60 * 60 * 24 * 365)
     private val cache = Cache.Builder().expireAfterWrite(1.hours).build<String, BigDecimal>()
 
-    fun calculateApr(): BigDecimal = runBlocking {
-        cache.get("apr") {
+    suspend fun calculateApr(): BigDecimal {
+        return cache.get("apr") {
             val rewardsPerYear = getRewardsPerSecond().sumOf {
                 calculateRewardsPerYearInUsd(it)
             }
 
-            val fullyStaked by lazy {
-                getStakedTokens().sumOf {
-                    calculateStakedTokenInUsd(it)
-                }
+            val fullyStaked = getStakedTokens().sumOf {
+                calculateStakedTokenInUsd(it)
             }
 
             if (rewardsPerYear.isZero() || fullyStaked.isZero()) {
@@ -38,7 +36,7 @@ abstract class StakingAprCalculator(
     }
 
     abstract fun getRewardsPerSecond(): List<Reward>
-    abstract fun getStakedTokens(): List<StakedAsset>
+    abstract suspend fun getStakedTokens(): List<StakedAsset>
 
     private suspend fun calculateStakedTokenInUsd(stakedAsset: StakedAsset): BigDecimal = BigDecimal.valueOf(
         priceResource.calculatePrice(

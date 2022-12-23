@@ -9,21 +9,21 @@ import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.dinoswap.contract.DinoswapFossilFarmsContract
 import io.defitrack.protocol.dinoswap.DinoswapService
-import io.defitrack.market.farming.FarmingMarketService
+import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 
 @Service
-class DinoswapFarmingMarketService(
+class DinoswapFarmingMarketProvider(
     private val dinoswapService: DinoswapService,
     private val abiResource: ABIResource,
     private val tokenService: ERC20Resource,
     private val erC20Resource: ERC20Resource,
     private val priceResource: PriceResource,
     private val blockchainGatewayProvider: BlockchainGatewayProvider
-) : FarmingMarketService() {
+) : FarmingMarketProvider() {
 
     val fossilFarms by lazy {
         abiResource.getABI("dinoswap/FossilFarms.json")

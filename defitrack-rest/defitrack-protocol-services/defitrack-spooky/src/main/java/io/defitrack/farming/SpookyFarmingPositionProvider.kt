@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class SpookyFarmingPositionProvider(
-    spookyStakingMarketService: SpookyFarmingMarketService,
+    spookyStakingMarketService: SpookyFarmingMarketProvider,
     blockchainGatewayProvider: BlockchainGatewayProvider,
     erC20Resource: ERC20Resource,
 ) : DefaultFarmingPositionProvider(erC20Resource, spookyStakingMarketService, blockchainGatewayProvider)

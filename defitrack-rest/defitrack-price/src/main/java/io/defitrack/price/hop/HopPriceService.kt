@@ -16,7 +16,7 @@ class HopPriceService(
     private val priceProvider: PriceProvider
 ) {
 
-    fun calculateHopPrice(priceRequest: PriceRequest): BigDecimal {
+    suspend fun calculateHopPrice(priceRequest: PriceRequest): BigDecimal {
         return hopService.getLps(priceRequest.network).find {
             it.lpToken.lowercase() == priceRequest.address
         }?.let {

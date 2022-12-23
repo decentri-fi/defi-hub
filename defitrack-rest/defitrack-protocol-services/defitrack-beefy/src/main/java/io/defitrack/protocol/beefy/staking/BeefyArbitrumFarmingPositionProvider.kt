@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class BeefyArbitrumFarmingPositionProvider(
-    beefyArbitrumStakingMarketService: BeefyArbitrumFarmingMarketService,
+    beefyArbitrumStakingMarketService: BeefyArbitrumFarmingMarketProvider,
     blockchainGatewayProvider: BlockchainGatewayProvider,
     erC20Resource: ERC20Resource
 ) : DefaultFarmingPositionProvider(erC20Resource, beefyArbitrumStakingMarketService, blockchainGatewayProvider)

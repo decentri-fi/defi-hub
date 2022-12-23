@@ -11,7 +11,7 @@ import java.math.BigInteger
 
 @Service
 class DinoswapFarmingPositionProvider(
-    private val dinoswapStakingMarketService: DinoswapFarmingMarketService,
+    private val dinoswapStakingMarketService: DinoswapFarmingMarketProvider,
     erC20Resource: ERC20Resource,
     private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) : FarmingPositionProvider(erC20Resource) {

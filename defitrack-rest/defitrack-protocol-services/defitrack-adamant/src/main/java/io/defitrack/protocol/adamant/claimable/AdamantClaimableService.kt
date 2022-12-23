@@ -10,8 +10,10 @@ import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.adamant.AdamantVaultContract
-import io.defitrack.protocol.adamant.staking.AdamantVaultMarketService
+import io.defitrack.protocol.adamant.staking.AdamantVaultMarketProvider
 import io.defitrack.token.ERC20Resource
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.generated.Uint256
@@ -20,7 +22,7 @@ import java.math.BigInteger
 @Service
 class AdamantClaimableService(
     private val abiResource: ABIResource,
-    private val adamantVaultMarketService: AdamantVaultMarketService,
+    private val adamantVaultMarketService: AdamantVaultMarketProvider,
     blockchainGatewayProvider: BlockchainGatewayProvider,
     private val erC20Resource: ERC20Resource
 ) : ClaimableService {
@@ -30,7 +32,9 @@ class AdamantClaimableService(
     val gateway = blockchainGatewayProvider.getGateway(getNetwork())
 
     val addy by lazy {
-        erC20Resource.getTokenInformation(getNetwork(), "0xc3fdbadc7c795ef1d6ba111e06ff8f16a20ea539")
+        runBlocking(Dispatchers.IO) {
+            erC20Resource.getTokenInformation(getNetwork(), "0xc3fdbadc7c795ef1d6ba111e06ff8f16a20ea539")
+        }
     }
 
     override suspend fun claimables(address: String): List<Claimable> {

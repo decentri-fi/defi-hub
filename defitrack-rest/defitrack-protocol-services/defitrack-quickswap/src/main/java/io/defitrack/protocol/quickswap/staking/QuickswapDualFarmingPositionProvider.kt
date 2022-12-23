@@ -8,6 +8,6 @@ import org.springframework.stereotype.Service
 @Service
 class QuickswapDualFarmingPositionProvider(
     blockchainGatewayProvider: BlockchainGatewayProvider,
-    quickswapStakingMarketService: QuickswapDualFarmingMarketService,
+    quickswapStakingMarketService: QuickswapDualFarmingMarketProvider,
     erC20Resource: ERC20Resource,
 ) : DefaultFarmingPositionProvider(erC20Resource, quickswapStakingMarketService, blockchainGatewayProvider)

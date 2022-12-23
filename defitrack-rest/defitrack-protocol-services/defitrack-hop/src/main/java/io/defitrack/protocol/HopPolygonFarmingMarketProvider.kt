@@ -6,7 +6,7 @@ import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.contract.HopStakingReward
-import io.defitrack.market.farming.FarmingMarketService
+import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.token.ERC20Resource
@@ -20,13 +20,13 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 @Component
-class HopPolygonFarmingMarketService(
+class HopPolygonFarmingMarketProvider(
     private val hopService: HopService,
     private val erC20Resource: ERC20Resource,
     private val abiResource: ABIResource,
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val priceResource: PriceResource
-) : FarmingMarketService() {
+) : FarmingMarketProvider() {
     override suspend fun fetchStakingMarkets(): List<FarmingMarket> = coroutineScope {
         hopService.getStakingRewards(getNetwork()).map { stakingReward ->
             async(Dispatchers.IO.limitedParallelism(10)) {

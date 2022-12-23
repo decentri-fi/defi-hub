@@ -9,34 +9,31 @@ import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
 import io.defitrack.protocol.beefy.domain.BeefyVault
 import io.defitrack.protocol.beefy.staking.invest.BeefyStakingInvestmentPreparer
-import io.defitrack.market.farming.FarmingMarketService
+import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenInformation
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
 
-abstract class BeefyFarmingMarketService(
+abstract class BeefyFarmingMarketProvider(
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val abiResource: ABIResource,
     private val beefyAPYService: BeefyAPYService,
     private val vaults: List<BeefyVault>,
     private val erC20Resource: ERC20Resource,
     private val priceService: PriceResource
-) : FarmingMarketService() {
+) : FarmingMarketProvider() {
 
     val vaultV6ABI by lazy {
         abiResource.getABI("beefy/VaultV6.json")
     }
 
     override suspend fun fetchStakingMarkets(): List<FarmingMarket> =
-        withContext(Dispatchers.IO.limitedParallelism(5)) {
+        coroutineScope {
             vaults.map {
                 async {
                     toStakingMarketElement(it)
