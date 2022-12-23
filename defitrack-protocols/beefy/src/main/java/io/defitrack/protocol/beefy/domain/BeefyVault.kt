@@ -1,7 +1,5 @@
 package io.defitrack.protocol.beefy.domain
 
-import java.math.BigInteger
-
 class BeefyVault(
     val id: String,
     val name: String,
@@ -12,6 +10,5 @@ class BeefyVault(
     val earnedTokenAddress: String,
     val earnContractAddress: String,
     val status: String,
-    val platform: String,
     val chain: String,
 )
