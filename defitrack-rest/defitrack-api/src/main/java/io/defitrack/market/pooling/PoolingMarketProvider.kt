@@ -17,10 +17,13 @@ abstract class PoolingMarketProvider : ProtocolService {
     val cache = Cache.Builder().expireAfterWrite(4.hours).build<String, List<PoolingMarketElement>>()
 
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
-    fun init() {
+    fun init() = runBlocking {
         try {
+            logger.info("Cache expired, fetching fresh elements")
+            val markets = populate()
             cache.invalidateAll()
-            getPoolingMarkets()
+            cache.put("all", markets)
+            logger.info("Cache successfuly filled with ${markets.size} elements")
         } catch (ex: Exception) {
             logger.error("something went wrong trying to populate the cache", ex)
         }
@@ -29,16 +32,13 @@ abstract class PoolingMarketProvider : ProtocolService {
     protected abstract suspend fun fetchPoolingMarkets(): List<PoolingMarketElement>
 
     fun getPoolingMarkets(): List<PoolingMarketElement> = runBlocking(Dispatchers.IO) {
-        cache.get("all") {
-            try {
-                logger.info("Cache empty or expired, fetching fresh elements")
-                val elements = fetchPoolingMarkets()
-                logger.info("Cache successfuly filled with ${elements.size} elements")
-                elements
-            } catch (ex: Exception) {
-                logger.error("Unable to fetch pooling markets: {}", ex.message)
-                emptyList()
-            }
-        }
+        cache.get("all") ?: emptyList()
+    }
+
+    private suspend fun populate() = try {
+        fetchPoolingMarkets()
+    } catch (ex: Exception) {
+        logger.error("Unable to fetch pooling markets: {}", ex.message)
+        emptyList()
     }
 }
