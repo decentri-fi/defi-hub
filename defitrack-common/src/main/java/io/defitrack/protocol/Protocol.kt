@@ -214,7 +214,7 @@ enum class Protocol(
         networks = listOf(Network.ETHEREUM)
     ),
     MAPLEFINANCE(
-        logo = "maplefinance.png",
+        logo = "maple-finance.png",
         slug = "maplefinance",
         website = "https://maple.finance/",
         primitives = listOf(DefiPrimitive.LENDING),
