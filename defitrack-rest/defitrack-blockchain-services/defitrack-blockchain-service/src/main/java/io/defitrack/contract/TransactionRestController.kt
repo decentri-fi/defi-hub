@@ -12,8 +12,7 @@ import org.web3j.protocol.core.methods.response.Log
 class TransactionRestController(
     private val web3j: Web3j
 ) {
-
-    @GetMapping("{/txId}/logs")
+    @GetMapping("/{txId}/logs")
     fun getLogs(@PathVariable("txId") txId: String): List<Log> {
         return web3j.ethGetTransactionReceipt(txId).send().transactionReceipt.map {
             it.logs
