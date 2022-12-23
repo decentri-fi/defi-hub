@@ -14,7 +14,7 @@ abstract class EvmContract(
     fun createFunction(
         method: String,
         inputs: List<Type<*>> = emptyList(),
-        outputs: List<TypeReference<out Type<*>>>? = null
+        outputs: List<TypeReference<out Type<*>>>? = emptyList()
     ): Function {
         return BlockchainGateway.createFunction(method, inputs, outputs)
     }

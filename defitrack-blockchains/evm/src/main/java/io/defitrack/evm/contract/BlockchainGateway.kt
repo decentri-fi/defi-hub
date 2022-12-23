@@ -16,7 +16,6 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.apache.commons.codec.binary.Hex
 import org.apache.commons.lang3.StringUtils
@@ -155,7 +154,7 @@ open class BlockchainGateway(
         fun createFunction(
             method: String,
             inputs: List<Type<*>> = kotlin.collections.emptyList(),
-            outputs: List<TypeReference<out Type<*>>>? = null
+            outputs: List<TypeReference<out Type<*>>>? = kotlin.collections.emptyList()
         ): org.web3j.abi.datatypes.Function {
             return Web3Function(
                 method,
