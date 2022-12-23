@@ -2,8 +2,9 @@ package io.defitrack.protocol.quickswap.staking.invest
 
 import io.defitrack.common.network.Network
 import io.defitrack.invest.PrepareInvestmentCommand
-import io.defitrack.protocol.quickswap.contract.DQuickContract
 import io.defitrack.market.farming.domain.InvestmentPreparer
+import io.defitrack.network.toVO
+import io.defitrack.protocol.quickswap.contract.DQuickContract
 import io.defitrack.token.ERC20Resource
 import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.Deferred
@@ -13,7 +14,7 @@ import kotlinx.coroutines.coroutineScope
 
 class DQuickStakingInvestmentPreparer(
     erC20Resource: ERC20Resource,
-    val dQuickContract: DQuickContract
+    val dQuickContract: DQuickContract,
 ) : InvestmentPreparer(erC20Resource) {
 
     val quick = "0x831753dd7087cac61ab5644b308642cc1c33dc13"
@@ -47,11 +48,13 @@ class DQuickStakingInvestmentPreparer(
                     prepareInvestmentCommand.amount?.let { amount ->
                         PreparedTransaction(
                             function = dQuickContract.enterFunction(amount),
-                            to = getEntryContract()
+                            to = getEntryContract(),
+                            network = getNetwork().toVO()
                         )
                     } ?: PreparedTransaction(
                         function = dQuickContract.enterFunction(requiredBalance),
-                        to = getEntryContract()
+                        to = getEntryContract(),
+                        network = getNetwork().toVO()
                     )
                 } else {
                     null

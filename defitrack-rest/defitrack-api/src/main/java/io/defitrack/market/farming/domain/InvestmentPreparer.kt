@@ -3,6 +3,7 @@ package io.defitrack.market.farming.domain
 import io.defitrack.common.network.Network
 import io.defitrack.exception.TransactionPreparationException
 import io.defitrack.invest.PrepareInvestmentCommand
+import io.defitrack.network.toVO
 import io.defitrack.token.ERC20Resource
 import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.Deferred
@@ -11,7 +12,9 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import java.math.BigInteger
 
-abstract class InvestmentPreparer(private val erC20Resource: ERC20Resource) {
+abstract class InvestmentPreparer(
+    private val erC20Resource: ERC20Resource
+) {
     open suspend fun prepare(prepareInvestmentCommand: PrepareInvestmentCommand): List<PreparedTransaction> {
         return listOf(
             getAllowanceTransaction(prepareInvestmentCommand),
@@ -71,7 +74,8 @@ abstract class InvestmentPreparer(private val erC20Resource: ERC20Resource) {
                             getToken(),
                             getEntryContract()
                         ),
-                        to = getToken()
+                        to = getToken(),
+                        network = getNetwork().toVO()
                     )
                 } else {
                     null

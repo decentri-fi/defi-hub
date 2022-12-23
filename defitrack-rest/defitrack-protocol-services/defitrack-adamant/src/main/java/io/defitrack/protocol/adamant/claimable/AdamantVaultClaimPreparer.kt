@@ -3,6 +3,7 @@ package io.defitrack.protocol.adamant.claimable
 import io.defitrack.claimable.ClaimingPreparer
 import io.defitrack.claimable.PrepareClaimCommand
 import io.defitrack.common.network.Network
+import io.defitrack.network.toVO
 import io.defitrack.protocol.adamant.AdamantVaultContract
 import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.Deferred
@@ -17,7 +18,8 @@ class AdamantVaultClaimPreparer(
             async {
                 PreparedTransaction(
                     function = adamantVaultContract.getClaimFunction(),
-                    to = adamantVaultContract.address
+                    to = adamantVaultContract.address,
+                    network = getNetwork().toVO()
                 )
             }
         }

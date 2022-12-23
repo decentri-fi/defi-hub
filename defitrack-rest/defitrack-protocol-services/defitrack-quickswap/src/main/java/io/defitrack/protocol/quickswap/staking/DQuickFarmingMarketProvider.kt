@@ -9,6 +9,7 @@ import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.contract.DQuickContract
+import io.defitrack.protocol.quickswap.staking.invest.DQuickStakingInvestmentPreparer
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 
@@ -45,6 +46,9 @@ class DQuickFarmingMarketProvider(
                 balanceFetcher = FarmingPositionFetcher(
                     stakedToken.address,
                     { user -> dquick.balanceOfMethod(user) }
+                ),
+                investmentPreparer = DQuickStakingInvestmentPreparer(
+                    erC20Resource, dquick
                 )
             )
         )

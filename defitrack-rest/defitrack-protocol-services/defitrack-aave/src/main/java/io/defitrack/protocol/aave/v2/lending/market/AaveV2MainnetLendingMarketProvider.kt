@@ -15,9 +15,8 @@ import io.defitrack.protocol.aave.v2.AaveV2MainnetService
 import io.defitrack.protocol.aave.v2.contract.LendingPoolAddressProviderContract
 import io.defitrack.protocol.aave.v2.contract.LendingPoolContract
 import io.defitrack.protocol.aave.v2.domain.AaveReserve
-import io.defitrack.protocol.aave.v2.lending.invest.AaveLendingInvestmentPreparer
+import io.defitrack.protocol.aave.v2.lending.invest.AaveV2LendingInvestmentPreparer
 import io.defitrack.token.ERC20Resource
-import io.defitrack.token.TokenInformation
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -61,7 +60,7 @@ class AaveV2MainnetLendingMarketProvider(
                             name = it.name + " Aave Pool",
                             poolType = "aave-v2",
                             marketSize = calculateMarketSize(it, aToken, token).toBigDecimal(),
-                            investmentPreparer = AaveLendingInvestmentPreparer(
+                            investmentPreparer = AaveV2LendingInvestmentPreparer(
                                 token.address,
                                 lendingPoolContract,
                                 erC20Resource

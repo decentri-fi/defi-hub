@@ -2,8 +2,9 @@ package io.defitrack.protocol.beefy.staking.invest
 
 import io.defitrack.common.network.Network
 import io.defitrack.invest.PrepareInvestmentCommand
-import io.defitrack.protocol.beefy.contract.BeefyVaultContract
 import io.defitrack.market.farming.domain.InvestmentPreparer
+import io.defitrack.network.toVO
+import io.defitrack.protocol.beefy.contract.BeefyVaultContract
 import io.defitrack.token.ERC20Resource
 import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.Deferred
@@ -31,21 +32,18 @@ class BeefyStakingInvestmentPreparer(
     override suspend fun getInvestmentTransaction(prepareInvestmentCommand: PrepareInvestmentCommand): Deferred<PreparedTransaction?> =
         coroutineScope {
             async {
-                val allowance = getAllowance(prepareInvestmentCommand)
                 val requiredBalance = getInvestmentAmount(prepareInvestmentCommand)
-                if (allowance >= requiredBalance) {
-                    prepareInvestmentCommand.amount?.let { amount ->
-                        PreparedTransaction(
-                            function = beefyVault.depositFunction(amount),
-                            to = getEntryContract()
-                        )
-                    } ?: PreparedTransaction(
-                        function = beefyVault.depositAllFunction(),
-                        to = getEntryContract()
+                prepareInvestmentCommand.amount?.let { amount ->
+                    PreparedTransaction(
+                        function = beefyVault.depositFunction(requiredBalance),
+                        to = getEntryContract(),
+                        network = beefyVault.blockchainGateway.network.toVO()
                     )
-                } else {
-                    null
-                }
+                } ?: PreparedTransaction(
+                    function = beefyVault.depositAllFunction(),
+                    to = getEntryContract(),
+                    network = beefyVault.blockchainGateway.network.toVO()
+                )
             }
         }
 }

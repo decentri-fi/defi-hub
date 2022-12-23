@@ -2,8 +2,9 @@ package io.defitrack.protocol.compound.lending.invest
 
 import io.defitrack.common.network.Network
 import io.defitrack.invest.PrepareInvestmentCommand
-import io.defitrack.protocol.compound.CompoundTokenContract
 import io.defitrack.market.farming.domain.InvestmentPreparer
+import io.defitrack.network.toVO
+import io.defitrack.protocol.compound.CompoundTokenContract
 import io.defitrack.token.ERC20Resource
 import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.Deferred
@@ -30,22 +31,18 @@ class CompoundLendingInvestmentPreparer(
     override suspend fun getInvestmentTransaction(prepareInvestmentCommand: PrepareInvestmentCommand): Deferred<PreparedTransaction?> =
         coroutineScope {
             async {
-                val allowance = getAllowance(prepareInvestmentCommand)
                 val requiredBalance = getInvestmentAmount(prepareInvestmentCommand)
-
-                if (allowance >= requiredBalance) {
-                    prepareInvestmentCommand.amount?.let { amount ->
-                        PreparedTransaction(
-                            function = ctoken.mintFunction(amount),
-                            to = getEntryContract()
-                        )
-                    } ?: PreparedTransaction(
-                        function = ctoken.mintFunction(requiredBalance),
-                        to = getEntryContract()
+                prepareInvestmentCommand.amount?.let { amount ->
+                    PreparedTransaction(
+                        function = ctoken.mintFunction(amount),
+                        to = getEntryContract(),
+                        network = ctoken.blockchainGateway.network.toVO()
                     )
-                } else {
-                    null
-                }
+                } ?: PreparedTransaction(
+                    function = ctoken.mintFunction(requiredBalance),
+                    to = getEntryContract(),
+                    network = ctoken.blockchainGateway.network.toVO()
+                )
             }
         }
 }
