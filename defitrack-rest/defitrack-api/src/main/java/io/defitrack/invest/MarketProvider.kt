@@ -5,6 +5,7 @@ import io.defitrack.protocol.ProtocolService
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import kotlin.time.Duration.Companion.hours
@@ -16,10 +17,9 @@ abstract class MarketProvider<T> : ProtocolService {
 
     protected abstract suspend fun fetchMarkets(): List<T>
 
-    fun refreshCaches() = runBlocking(Dispatchers.IO) {
+    fun refreshCaches() = runBlocking(Dispatchers.Default) {
         try {
             val markets = populate()
-            cache.invalidateAll()
             cache.put("all", markets)
             logger.info("Cache successfuly filled with ${markets.size} elements")
         } catch (ex: Exception) {

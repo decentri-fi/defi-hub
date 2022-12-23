@@ -17,6 +17,10 @@ abstract class DefaultClaimableRewardProvider(
             it.claimableRewardFetcher != null
         }
 
+        if (markets.isEmpty()) {
+            return emptyList()
+        }
+
         return blockchainGatewayProvider.getGateway(getNetwork()).readMultiCall(
             markets.map {
                 it.claimableRewardFetcher!!.toMulticall(address)

@@ -45,19 +45,17 @@ class QuickswapService(
         "0xd26e16f5a9dfb9fe32db7f6386402b8aae1a5dd7"
     )
 
-    fun getVaultAddresses(): List<String> {
-        return runBlocking {
-            vaultCache.get("quickswap-normal-vaults") {
-                val maticVaultsEndpoint =
-                    "https://raw.githubusercontent.com/beefyfinance/beefy-api/master/src/data/matic/quickLpPools.json"
-                val result: String = client.get(maticVaultsEndpoint).bodyAsText()
+    suspend fun getVaultAddresses(): List<String> {
+        return vaultCache.get("quickswap-normal-vaults") {
+            val maticVaultsEndpoint =
+                "https://raw.githubusercontent.com/beefyfinance/beefy-api/master/src/data/matic/quickLpPools.json"
+            val result: String = client.get(maticVaultsEndpoint).bodyAsText()
 
-                objectMapper.readValue(
-                    result,
-                    object : TypeReference<List<QuickLpPools>>() {
-                    }).map {
-                    it.rewardPool
-                }
+            objectMapper.readValue(
+                result,
+                object : TypeReference<List<QuickLpPools>>() {
+                }).map {
+                it.rewardPool
             }
         }
     }

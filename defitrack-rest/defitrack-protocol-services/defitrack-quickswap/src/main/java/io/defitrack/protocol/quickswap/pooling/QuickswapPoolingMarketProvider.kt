@@ -9,10 +9,7 @@ import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
 import io.defitrack.protocol.quickswap.domain.QuickswapPair
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.*
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.stereotype.Component
 import java.math.BigDecimal

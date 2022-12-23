@@ -8,7 +8,6 @@ import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.contract.QuickswapDualRewardPoolContract
 import io.github.reactivecircus.cache4k.Cache
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -35,19 +34,15 @@ class QuickswapAPRService(
         1.hours
     ).build<String, BigDecimal>()
 
-    fun getDualPoolAPR(address: String): BigDecimal {
-        return runBlocking {
-            cache.get("dual-rewardpool-$address") {
-                calculateDualRewardPool(address)
-            }
+    suspend fun getDualPoolAPR(address: String): BigDecimal {
+        return cache.get("dual-rewardpool-$address") {
+            calculateDualRewardPool(address)
         }
     }
 
-    fun getRewardPoolAPR(address: String): BigDecimal {
-        return runBlocking {
-            cache.get("rewardpool-$address") {
-                calculateSingleRewardPool(address)
-            }
+    suspend fun getRewardPoolAPR(address: String): BigDecimal {
+        return cache.get("rewardpool-$address") {
+            calculateSingleRewardPool(address)
         }
     }
 
@@ -71,8 +66,9 @@ class QuickswapAPRService(
             maticRewardsPerYear
         )
 
+        val stakingTokenAddress = contract.stakingTokenAddress()
         val reserveUsd = quickswapService.getPairs().find {
-            it.id.lowercase() == contract.stakingTokenAddress()
+            it.id.lowercase() == stakingTokenAddress
         }?.reserveUSD ?: BigDecimal.ZERO
 
         return if ((usdQuickRewardsPerYear == BigDecimal.ZERO && usdMaticRewardsPerYear == BigDecimal.ZERO) || reserveUsd == BigDecimal.ZERO) {
@@ -96,8 +92,9 @@ class QuickswapAPRService(
             quickRewardsPerYear
         )
 
+        val stakingTokenAddress = contract.stakingTokenAddress()
         val reserveUsd = quickswapService.getPairs().find {
-            it.id.lowercase() == contract.stakingTokenAddress()
+            it.id.lowercase() == stakingTokenAddress
         }?.reserveUSD ?: BigDecimal.ZERO
 
         return if (usdRewardsPerYear == BigDecimal.ZERO || reserveUsd == BigDecimal.ZERO) {

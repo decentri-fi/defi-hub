@@ -6,12 +6,12 @@ import java.math.BigInteger
 
 class ClaimableRewardFetcher(
     val address: String,
-    val function: (user: String) -> org.web3j.abi.datatypes.Function,
+    val function: suspend (user: String) -> org.web3j.abi.datatypes.Function,
     val extract: (List<Type<*>>) -> BigInteger = { result ->
         result[0].value as BigInteger
     }
 ) {
-    fun toMulticall(user: String): MultiCallElement {
+    suspend fun toMulticall(user: String): MultiCallElement {
         return MultiCallElement(
             function(user), address
         )

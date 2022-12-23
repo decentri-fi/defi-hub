@@ -4,8 +4,6 @@ import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
@@ -26,20 +24,18 @@ class PriceResource(
         .expireAfterWrite(10.minutes)
         .build<String, BigDecimal>()
 
-    fun getPrice(symbol: String): BigDecimal {
-        return runBlocking {
-            cache.get(symbol) {
-                try {
-                    client.get("$priceResourceLocation/$symbol").body()
-                } catch (ex: Exception) {
-                    logger.error("unable to fetch price for $symbol", ex)
-                    BigDecimal.ZERO
-                }
+    suspend fun getPrice(symbol: String): BigDecimal {
+        return cache.get(symbol) {
+            try {
+                client.get("$priceResourceLocation/$symbol").body()
+            } catch (ex: Exception) {
+                logger.error("unable to fetch price for $symbol", ex)
+                BigDecimal.ZERO
             }
         }
     }
 
-    fun calculatePrice(name: String, amount: Double): Double {
+    suspend fun calculatePrice(name: String, amount: Double): Double {
         val price = getPrice(name)
         return amount.times(price.toDouble())
     }

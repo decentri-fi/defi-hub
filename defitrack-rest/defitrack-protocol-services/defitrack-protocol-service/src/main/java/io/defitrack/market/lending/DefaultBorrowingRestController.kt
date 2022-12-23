@@ -40,7 +40,7 @@ class DefaultBorrowingRestController(
             }.map { it.toVO() }
         }
 
-    fun BorrowPosition.toVO(): BorrowPositionVO {
+    suspend fun BorrowPosition.toVO(): BorrowPositionVO {
         return with(this) {
             BorrowPositionVO(
                 network = network.toVO(),

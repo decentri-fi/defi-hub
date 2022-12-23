@@ -4,18 +4,20 @@ import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
+import io.defitrack.market.farming.FarmingMarketProvider
+import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
+import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.quickswap.contract.QuickswapDualRewardPoolContract
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
-import io.defitrack.market.farming.FarmingMarketProvider
-import io.defitrack.market.farming.domain.FarmingPositionFetcher
-import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.protocol.FarmType
+import io.defitrack.protocol.quickswap.contract.QuickswapDualRewardPoolContract
 import io.defitrack.token.ERC20Resource
-import io.defitrack.token.TokenInformation
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -34,41 +36,43 @@ class QuickswapDualFarmingMarketProvider(
         abiService.getABI("quickswap/DualStakingRewards.json")
     }
 
-    override suspend fun fetchMarkets(): List<FarmingMarket> {
-        return quickswapService.getDualPools().map {
+    override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
+        quickswapService.getDualPools().map {
             QuickswapDualRewardPoolContract(
                 blockchainGatewayProvider.getGateway(getNetwork()),
                 stakingRewardsABI,
                 it
             )
-        }.mapNotNull { pool ->
-            try {
-                val stakedToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingTokenAddress())
-                val rewardTokenA = erC20Resource.getTokenInformation(getNetwork(), pool.rewardsTokenAddressA())
-                val rewardTokenB = erC20Resource.getTokenInformation(getNetwork(), pool.rewardsTokenAddressB())
+        }.map { pool ->
+            async {
+                try {
+                    val stakedToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingTokenAddress())
+                    val rewardTokenA = erC20Resource.getTokenInformation(getNetwork(), pool.rewardsTokenAddressA())
+                    val rewardTokenB = erC20Resource.getTokenInformation(getNetwork(), pool.rewardsTokenAddressB())
 
-                create(
-                    identifier = pool.address,
-                    name = "${stakedToken.name} Dual Reward Pool",
-                    stakedToken = stakedToken.toFungibleToken(),
-                    rewardTokens = listOf(
-                        rewardTokenA.toFungibleToken(),
-                        rewardTokenB.toFungibleToken()
-                    ),
-                    vaultType = "quickswap-dual-reward-pool",
-                    marketSize = getMarketSize(stakedToken, pool),
-                    apr = getApr(pool, stakedToken),
-                    balanceFetcher = FarmingPositionFetcher(
-                        pool.address,
-                        { user -> pool.balanceOfMethod(user) }
-                    ),
-                    farmType = FarmType.DUAL_REWARD_MINING
-                )
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                null
+                    create(
+                        identifier = pool.address,
+                        name = "${stakedToken.name} Dual Reward Pool",
+                        stakedToken = stakedToken.toFungibleToken(),
+                        rewardTokens = listOf(
+                            rewardTokenA.toFungibleToken(),
+                            rewardTokenB.toFungibleToken()
+                        ),
+                        vaultType = "quickswap-dual-reward-pool",
+                        marketSize = getMarketSize(stakedToken, pool),
+                        apr = getApr(pool, stakedToken),
+                        balanceFetcher = FarmingPositionFetcher(
+                            pool.address,
+                            { user -> pool.balanceOfMethod(user) }
+                        ),
+                        farmType = FarmType.DUAL_REWARD_MINING
+                    )
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                    null
+                }
             }
-        }
+        }.awaitAll().filterNotNull()
     }
 
     private suspend fun getApr(

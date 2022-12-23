@@ -1,6 +1,7 @@
 package io.defitrack.protocol.quickswap.staking
 
 import io.defitrack.abi.ABIResource
+import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
@@ -15,6 +16,9 @@ import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
 import io.defitrack.token.ERC20Resource
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -33,34 +37,46 @@ class QuickswapFarmingMarketProvider(
         abiService.getABI("quickswap/StakingRewards.json")
     }
 
-    override suspend fun fetchMarkets(): List<FarmingMarket> {
-        return quickswapService.getVaultAddresses().map {
+    override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
+        quickswapService.getVaultAddresses().map {
             QuickswapRewardPoolContract(
                 blockchainGatewayProvider.getGateway(getNetwork()),
                 stakingRewardsABI,
                 it
             )
-        }.map { pool ->
-            val stakedToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingTokenAddress())
-            val rewardToken = erC20Resource.getTokenInformation(getNetwork(), pool.rewardsTokenAddress())
-
-            create(
-                identifier = pool.address,
-                name = "${stakedToken.name} Reward Pool",
-                stakedToken = stakedToken.toFungibleToken(),
-                rewardTokens = listOf(rewardToken.toFungibleToken()),
-                vaultType = "quickswap-reward-pool",
-                marketSize = getMarketSize(stakedToken, pool),
-                apr = (quickswapAPRService.getRewardPoolAPR(pool.address) + quickswapAPRService.getLPAPR(
-                    stakedToken.address
-                )),
-                balanceFetcher = FarmingPositionFetcher(
-                    pool.address,
-                    { user -> pool.balanceOfMethod(user) }
-                ),
-                farmType = FarmType.LIQUIDITY_MINING
-            )
-        }
+        }.map { rewardPool ->
+            async {
+                try {
+                    val stakedToken = erC20Resource.getTokenInformation(getNetwork(), rewardPool.stakingTokenAddress())
+                    val rewardToken = erC20Resource.getTokenInformation(getNetwork(), rewardPool.rewardsTokenAddress())
+                    create(
+                        identifier = rewardPool.address,
+                        name = "${stakedToken.name} Reward Pool",
+                        stakedToken = stakedToken.toFungibleToken(),
+                        rewardTokens = listOf(rewardToken.toFungibleToken()),
+                        vaultType = "quickswap-reward-rewardPool",
+                        marketSize = getMarketSize(stakedToken, rewardPool),
+                        apr = (quickswapAPRService.getRewardPoolAPR(rewardPool.address) + quickswapAPRService.getLPAPR(
+                            stakedToken.address
+                        )),
+                        claimableRewardFetcher = ClaimableRewardFetcher(
+                            rewardPool.address,
+                            { user ->
+                                rewardPool.earned(user)
+                            }
+                        ),
+                        balanceFetcher = FarmingPositionFetcher(
+                            rewardPool.address,
+                            { user -> rewardPool.balanceOfMethod(user) }
+                        ),
+                        farmType = FarmType.LIQUIDITY_MINING
+                    )
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                    null
+                }
+            }
+        }.awaitAll().filterNotNull()
     }
 
     private suspend fun getMarketSize(
