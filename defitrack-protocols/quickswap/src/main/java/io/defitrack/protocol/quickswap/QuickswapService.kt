@@ -23,7 +23,7 @@ class QuickswapService(
     private val client: HttpClient,
     graphGatewayProvider: TheGraphGatewayProvider
 ) : GraphProvider(
-    "https://api.thegraph.com/subgraphs/name/henrydapp/quickswap", graphGatewayProvider
+    "https://api.thegraph.com/subgraphs/name/sameepsi/quickswap06", graphGatewayProvider
 ) {
 
     val vaultCache = Cache.Builder().expireAfterWrite(
