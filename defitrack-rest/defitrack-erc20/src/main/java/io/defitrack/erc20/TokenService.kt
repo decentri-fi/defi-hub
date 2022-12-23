@@ -35,7 +35,7 @@ class TokenService(
 
     suspend fun getAllTokensForNetwork(network: Network): List<TokenInformation> {
         return withContext(Dispatchers.IO.limitedParallelism(10)) {
-            tokenCache.get("all") {
+            tokenCache.get("tokens-${network}") {
                 erC20Repository.allTokens(network).map {
                     async {
                         try {

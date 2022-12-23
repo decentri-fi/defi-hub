@@ -37,7 +37,7 @@ class ERC20Resource(
     }
 
     suspend fun getAllTokens(network: Network): List<TokenInformationVO> = withContext(Dispatchers.IO) {
-        tokenCache.get("all") {
+        tokenCache.get("tokens-${network}") {
             retry(limitAttempts(3)) { client.get("$erc20ResourceLocation/${network.name}").body() }
         }
     }
@@ -108,8 +108,7 @@ class ERC20Resource(
                     ).balanceOfMethod(address),
                     it
                 )
-            }
-            ).map {
+            }).map {
                 try {
                     it[0].value as BigInteger
                 } catch (_: Exception) {

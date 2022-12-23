@@ -85,7 +85,11 @@ open class BlockchainGateway(
                 object : TypeReference<DynamicArray<DynamicBytes?>?>() {})
         )
 
-        val data = executeCall(multicallContractAddress, aggregateFunction)[1].value as List<DynamicBytes>
+        val executeCall = executeCall(multicallContractAddress, aggregateFunction)
+        if (executeCall.isEmpty()) {
+            println("empty multicall")
+        }
+        val data = executeCall[1].value as List<DynamicBytes>
 
         return data.map {
             val element = elements[data.indexOf(it)]
