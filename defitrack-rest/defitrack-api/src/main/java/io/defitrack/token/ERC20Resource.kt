@@ -31,7 +31,7 @@ class ERC20Resource(
         abiResource.getABI("general/ERC20.json")
     }
 
-    suspend fun getAllTokens(network: Network): List<TokenInformation> = withContext(Dispatchers.IO) {
+    suspend fun getAllTokens(network: Network): List<TokenInformationVO> = withContext(Dispatchers.IO) {
         retry(limitAttempts(3)) { client.get("$erc20ResourceLocation/${network.name}").body() }
     }
 

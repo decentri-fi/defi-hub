@@ -1,7 +1,6 @@
 package io.defitrack.erc20
 
 import io.defitrack.common.network.Network
-import io.defitrack.token.TokenInformation
 import kotlinx.coroutines.runBlocking
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -17,7 +16,7 @@ class ERC20RestController(
 ) {
 
     @GetMapping("/{network}")
-    fun getAllTokensForAddress(
+    fun getAllTokensForNetwork(
         @PathVariable("network") network: Network,
     ): ResponseEntity<List<TokenInformationVO>> = runBlocking {
         ResponseEntity.ok(
