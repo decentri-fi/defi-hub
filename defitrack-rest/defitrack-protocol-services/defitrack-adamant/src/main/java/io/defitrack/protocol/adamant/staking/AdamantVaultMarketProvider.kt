@@ -1,6 +1,7 @@
 package io.defitrack.protocol.adamant.staking
 
 import io.defitrack.abi.ABIResource
+import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -10,6 +11,7 @@ import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.adamant.AdamantService
 import io.defitrack.protocol.adamant.AdamantVaultContract
+import io.defitrack.protocol.adamant.claimable.AdamantVaultClaimPreparer
 import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.*
 import org.springframework.stereotype.Service
@@ -50,7 +52,6 @@ class AdamantVaultMarketProvider(
                             identifier = vault.address,
                             stakedToken = token.toFungibleToken(),
                             rewardTokens = listOf(
-                                token.toFungibleToken(),
                                 addy.toFungibleToken()
                             ),
                             vaultType = "adamant-generic-vault",
@@ -58,7 +59,16 @@ class AdamantVaultMarketProvider(
                                 vault.address,
                                 { user -> vault.balanceOfMethod(user) }
                             ),
-                            farmType = FarmType.VAULT
+                            farmType = FarmType.VAULT,
+                            claimableRewardFetcher = ClaimableRewardFetcher(
+                                address = vault.address,
+                                function = { user ->
+                                    vault.getPendingRewardFunction(user)
+                                },
+                                preparedTransaction = AdamantVaultClaimPreparer(
+                                    vault
+                                ).prepare()
+                            )
                         )
                     } catch (ex: Exception) {
                         null

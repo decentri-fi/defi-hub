@@ -1,9 +1,9 @@
 package io.defitrack.protocol.adamant
 
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.abi.TypeUtils.Companion.toAddress
+import io.defitrack.abi.TypeUtils.Companion.uint256
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
-import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.generated.Uint256
@@ -19,14 +19,14 @@ class AdamantVaultContract(
         return readWithAbi("token")[0].value as String
     }
 
-    suspend fun getPendingReward(address: String): BigInteger {
-        return readWithAbi(
+    fun getPendingRewardFunction(address: String): Function {
+        return createFunction(
             "getPendingReward",
             inputs = listOf(address.toAddress()),
             outputs = listOf(
-                TypeReference.create(Uint256::class.java)
+                uint256()
             )
-        )[0].value as BigInteger
+        )
     }
 
     fun getClaimFunction(): Function {

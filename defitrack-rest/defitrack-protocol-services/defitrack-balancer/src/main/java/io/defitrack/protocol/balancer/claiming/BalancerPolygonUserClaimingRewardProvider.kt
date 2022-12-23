@@ -11,6 +11,7 @@ import io.defitrack.protocol.balancer.contract.BalancerGaugeContract
 import io.defitrack.protocol.balancer.staking.BalancerPolygonFarmingMarketProvider
 import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -34,7 +35,7 @@ class BalancerPolygonUserClaimingRewardProvider(
     }
 
     override suspend fun claimables(address: String): List<Claimable> =
-        withContext(Dispatchers.IO.limitedParallelism(10)) {
+        coroutineScope {
             balancerPolygonStakingMarketService.getMarkets().flatMap { liquidityGauge ->
                 try {
                     val gaugeContract = BalancerGaugeContract(
@@ -64,7 +65,7 @@ class BalancerPolygonUserClaimingRewardProvider(
                 } catch (ex: Exception) {
                     emptyList()
                 }
-            }.filterNotNull()
+            }
         }
 
     override fun getProtocol(): Protocol {
