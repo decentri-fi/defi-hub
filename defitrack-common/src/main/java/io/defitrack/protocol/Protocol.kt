@@ -17,6 +17,13 @@ enum class Protocol(
         primitives = listOf(DefiPrimitive.FARMING, DefiPrimitive.POOLING),
         networks = listOf(Network.FANTOM)
     ),
+    SET(
+        logo = "set.png",
+        slug = "set",
+        website = "https://setprotocol.com",
+        primitives = listOf(DefiPrimitive.POOLING),
+        networks = listOf(Network.POLYGON, Network.POLYGON)
+    ),
     WEPIGGY(
         logo = "wepiggy.png",
         slug = "wepiggy",
