@@ -4,7 +4,7 @@ Decentrifi is an open source API which allows you to easily integrate DeFi in an
 
 ## Decentrifi Core
 
-Defitrack core is the powerhouse of decentrifi. 
+Decentrifi Defi Hub is the powerhouse of decentrifi. 
 It's the general API that is used by https://decentri.fi and contains all the code
 to interact with various protocols, networks and general web3 things.
 
