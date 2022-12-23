@@ -65,9 +65,11 @@ class AdamantVaultMarketProvider(
                                 function = { user ->
                                     vault.getPendingRewardFunction(user)
                                 },
-                                preparedTransaction = AdamantVaultClaimPreparer(
-                                    vault
-                                ).prepare()
+                                preparedTransaction = {
+                                    AdamantVaultClaimPreparer(
+                                        vault
+                                    ).prepare()
+                                }
                             )
                         )
                     } catch (ex: Exception) {

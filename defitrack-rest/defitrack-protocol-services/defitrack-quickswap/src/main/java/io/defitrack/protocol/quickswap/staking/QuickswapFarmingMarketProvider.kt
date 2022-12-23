@@ -65,9 +65,11 @@ class QuickswapFarmingMarketProvider(
                             { user ->
                                 rewardPool.earned(user)
                             },
-                            preparedTransaction = PreparedTransaction(
-                                getNetwork().toVO(), rewardPool.getRewardFunction(), rewardPool.address
-                            )
+                            preparedTransaction = {
+                                PreparedTransaction(
+                                    getNetwork().toVO(), rewardPool.getRewardFunction(), rewardPool.address
+                                )
+                            }
                         ),
                         balanceFetcher = defaultBalanceFetcher(
                             erC20Resource,

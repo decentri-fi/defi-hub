@@ -11,7 +11,7 @@ class ClaimableRewardFetcher(
     val extract: (List<Type<*>>) -> BigInteger = { result ->
         result[0].value as BigInteger
     },
-    val preparedTransaction: PreparedTransaction,
+    val preparedTransaction: suspend (user: String) -> PreparedTransaction,
 ) {
     suspend fun toMulticall(user: String): MultiCallElement {
         return MultiCallElement(

@@ -1,16 +1,20 @@
 package io.defitrack.protocol.aave.staking
 
+import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
+import io.defitrack.network.toVO
 import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.MarketSizeService
+import io.defitrack.transaction.PreparedTransaction
 import org.springframework.stereotype.Component
+import java.math.BigInteger
 
 @Component
 class AaveStakingMarketProvider(
@@ -31,11 +35,8 @@ class AaveStakingMarketProvider(
             stAave
         )
 
-        val totalStakedSushi = erc20Resource.getBalance(getNetwork(), aave, stAave)
-
-        val ratio = totalStakedSushi.toBigDecimal().dividePrecisely(stAaveContract.totalSupply().toBigDecimal())
-
-
+        val totalStakedAave = erc20Resource.getBalance(getNetwork(), aave, stAave)
+        val ratio = totalStakedAave.toBigDecimal().dividePrecisely(stAaveContract.totalSupply().toBigDecimal())
 
         return listOf(
             create(
@@ -57,8 +58,25 @@ class AaveStakingMarketProvider(
                             stAave, user, getNetwork()
                         )
                     },
+                    { retVal ->
+                        val userStAave = (retVal[0].value as BigInteger).toBigDecimal()
+                        userStAave.times(ratio).toBigInteger()
+                    }
                 ),
-                farmType = FarmType.STAKING
+                farmType = FarmType.STAKING,
+                claimableRewardFetcher = ClaimableRewardFetcher(
+                    address = stAave,
+                    function = { user ->
+                        stAaveContract.getTotalRewardFunction(user)
+                    },
+                    preparedTransaction = { user ->
+                        PreparedTransaction(
+                            getNetwork().toVO(),
+                            stAaveContract.getClaimRewardsFunction(user),
+                            stAave
+                        )
+                    }
+                )
             )
         )
     }

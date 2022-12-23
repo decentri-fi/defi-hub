@@ -235,6 +235,6 @@ open class BlockchainGateway(
         }
 
 
-        val MAX_UINT256 = BigInteger.TWO.pow(64).minus(BigInteger.ONE).toUint256()
+        val MAX_UINT256 = BigInteger.TWO.pow(256).minus(BigInteger.ONE).toUint256()
     }
 }

@@ -38,7 +38,7 @@ abstract class DefaultClaimableRewardProvider(
                     network = getNetwork(),
                     amount = earned,
                     claimableTokens = market.rewardTokens,
-                    claimTransaction = market.claimableRewardFetcher.preparedTransaction,
+                    claimTransaction = market.claimableRewardFetcher.preparedTransaction(address),
                 )
             } else {
                 null
