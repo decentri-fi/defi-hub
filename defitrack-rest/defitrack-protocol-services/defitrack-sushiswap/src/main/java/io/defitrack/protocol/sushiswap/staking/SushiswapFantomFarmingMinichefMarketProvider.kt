@@ -2,6 +2,7 @@ package io.defitrack.protocol.sushiswap.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
+import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -79,7 +80,7 @@ class SushiswapFantomFarmingMinichefMarketProvider(
 
     private suspend fun calculateMarketSize(
         chef: MiniChefV2Contract,
-        stakedTokenInformation: TokenInformation
+        stakedTokenInformation: TokenInformationVO
     ): BigDecimal {
         val balance = erC20Resource.getBalance(getNetwork(), stakedTokenInformation.address, chef.address)
         return BigDecimal.valueOf(

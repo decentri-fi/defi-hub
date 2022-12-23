@@ -47,9 +47,11 @@ class BalancerTokenService(
                         symbol = poolToken.symbol,
                         address = poolToken.address,
                         decimals = poolToken.decimals,
-                        type = TokenType.SINGLE
+                        type = TokenType.SINGLE,
+                        network = network
                     )
-                }
+                },
+                network = network
             )
         } ?: throw java.lang.IllegalArgumentException("Pool with $address not found as balancer pool")
     }

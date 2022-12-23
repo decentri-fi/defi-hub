@@ -2,6 +2,7 @@ package io.defitrack.apr
 
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.reward.MasterchefLpContract
 import io.defitrack.token.TokenInformation
@@ -15,7 +16,7 @@ class MinichefStakingAprCalculator(
     priceResource: PriceResource,
     private val chef: MasterchefLpContract,
     private val poolId: Int,
-    private val stakedTokenInformation: TokenInformation
+    private val stakedTokenInformation: TokenInformationVO
 ) : StakingAprCalculator(priceResource) {
 
     suspend fun getNativeReward(): Reward {

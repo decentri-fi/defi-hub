@@ -2,6 +2,7 @@ package io.defitrack.protocol.beefy.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
+import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
@@ -83,7 +84,7 @@ abstract class BeefyFarmingMarketProvider(
     }
 
     private suspend fun getMarketSize(
-        want: TokenInformation,
+        want: TokenInformationVO,
         beefyVault: BeefyVaultContract
     ) = BigDecimal.valueOf(
         priceService.calculatePrice(

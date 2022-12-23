@@ -2,6 +2,7 @@ package io.defitrack.protocol.quickswap.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
+import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -62,7 +63,7 @@ class QuickswapFarmingMarketProvider(
     }
 
     private suspend fun getMarketSize(
-        stakedTokenInformation: TokenInformation,
+        stakedTokenInformation: TokenInformationVO,
         pool: QuickswapRewardPoolContract
     ) = BigDecimal.valueOf(
         priceResource.calculatePrice(

@@ -4,6 +4,7 @@ import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.retry
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
+import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGateway.Companion.MAX_UINT256
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.ERC20Contract
@@ -39,9 +40,10 @@ class ERC20Resource(
             client.get("$erc20ResourceLocation/${network.name}/$tokenAddress/$user").body()
         }
 
-    suspend fun getTokenInformation(network: Network, address: String): TokenInformation = withContext(Dispatchers.IO) {
-        retry(limitAttempts(3)) { client.get("$erc20ResourceLocation/${network.name}/$address/token").body() }
-    }
+    suspend fun getTokenInformation(network: Network, address: String): TokenInformationVO =
+        withContext(Dispatchers.IO) {
+            retry(limitAttempts(3)) { client.get("$erc20ResourceLocation/${network.name}/$address/token").body() }
+        }
 
     fun getApproveFunction(
         network: Network,

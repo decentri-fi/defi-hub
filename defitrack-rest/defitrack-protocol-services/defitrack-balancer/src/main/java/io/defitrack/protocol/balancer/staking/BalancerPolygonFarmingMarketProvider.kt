@@ -2,6 +2,7 @@ package io.defitrack.protocol.balancer.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
+import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -63,7 +64,7 @@ class BalancerPolygonFarmingMarketProvider(
         }.awaitAll().filterNotNull()
     }
 
-    suspend fun getRewardTokens(balancerGaugeContract: BalancerGaugeContract): List<TokenInformation> {
+    suspend fun getRewardTokens(balancerGaugeContract: BalancerGaugeContract): List<TokenInformationVO> {
         return (0..3).mapNotNull {
             try {
                 val rewardToken = balancerGaugeContract.getRewardToken(it)

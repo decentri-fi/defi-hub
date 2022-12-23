@@ -46,7 +46,8 @@ class HopTokenService(
                 protocol = Protocol.HOP,
                 underlyingTokens = listOf(
                     token0.toToken(), token1.toToken(),
-                )
+                ),
+                network = network
             )
         }
     }

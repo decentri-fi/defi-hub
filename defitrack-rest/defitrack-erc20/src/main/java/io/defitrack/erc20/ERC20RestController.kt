@@ -19,10 +19,10 @@ class ERC20RestController(
     @GetMapping("/{network}")
     fun getAllTokensForAddress(
         @PathVariable("network") network: Network,
-    ): ResponseEntity<List<TokenInformation>> {
-        return ResponseEntity.ok(
-            runBlocking {
-                tokenService.getAllTokensForNetwork(network)
+    ): ResponseEntity<List<TokenInformationVO>> = runBlocking {
+        ResponseEntity.ok(
+            tokenService.getAllTokensForNetwork(network).map {
+                it.toVO()
             }
         )
     }
@@ -40,14 +40,12 @@ class ERC20RestController(
     fun getTokenInformation(
         @PathVariable("network") network: Network,
         @PathVariable("address") address: String
-    ): ResponseEntity<TokenInformation> {
-        return try {
+    ): ResponseEntity<TokenInformationVO> = runBlocking {
+        try {
             ResponseEntity.ok(
-                runBlocking {
-                    tokenService.getTokenInformation(
-                        address, network
-                    )
-                }
+                tokenService.getTokenInformation(
+                    address, network
+                ).toVO()
             )
         } catch (ex: Exception) {
             ResponseEntity.notFound().build()

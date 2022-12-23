@@ -2,6 +2,7 @@ package io.defitrack.protocol.quickswap.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
+import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
@@ -70,7 +71,7 @@ class QuickswapDualFarmingMarketProvider(
 
     private suspend fun getApr(
         pool: QuickswapDualRewardPoolContract,
-        stakedTokenInformation: TokenInformation
+        stakedTokenInformation: TokenInformationVO
     ): BigDecimal {
         return (quickswapAPRService.getDualPoolAPR(pool.address) + quickswapAPRService.getLPAPR(
             stakedTokenInformation.address
@@ -78,7 +79,7 @@ class QuickswapDualFarmingMarketProvider(
     }
 
     private suspend fun getMarketSize(
-        stakedTokenInformation: TokenInformation,
+        stakedTokenInformation: TokenInformationVO,
         pool: QuickswapDualRewardPoolContract
     ) = BigDecimal.valueOf(
         priceResource.calculatePrice(
