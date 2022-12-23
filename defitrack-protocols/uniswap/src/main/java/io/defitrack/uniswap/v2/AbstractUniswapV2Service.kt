@@ -1,10 +1,10 @@
-package io.defitrack.uniswap
+package io.defitrack.uniswap.v2
 
 import io.defitrack.common.network.Network
 import io.defitrack.thegraph.GraphProvider
 import io.defitrack.thegraph.TheGraphGatewayProvider
-import io.defitrack.uniswap.domain.PairDayData
-import io.defitrack.uniswap.domain.UniswapPair
+import io.defitrack.uniswap.v2.domain.PairDayData
+import io.defitrack.uniswap.v2.domain.UniswapPair
 import io.github.reactivecircus.cache4k.Cache
 import kotlin.time.Duration.Companion.days
 
@@ -33,7 +33,7 @@ abstract class AbstractUniswapV2Service(
         return pairCache.get("all") {
             val query = """
             {
-            	pairs(first: 500, orderDirection: desc, orderBy: reserveUSD) {
+            	pairs(orderDirection: desc, orderBy: reserveUSD, where: {reserveUSD_gt: 10000}) {
                 id
                 reserveUSD
                 token0 {

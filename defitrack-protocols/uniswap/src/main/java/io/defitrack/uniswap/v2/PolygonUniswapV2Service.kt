@@ -1,4 +1,4 @@
-package io.defitrack.uniswap
+package io.defitrack.uniswap.v2
 
 import io.defitrack.common.network.Network
 import io.defitrack.thegraph.TheGraphGatewayProvider

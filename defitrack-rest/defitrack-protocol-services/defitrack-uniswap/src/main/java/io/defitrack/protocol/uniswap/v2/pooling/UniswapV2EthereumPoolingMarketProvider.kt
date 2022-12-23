@@ -1,17 +1,17 @@
-package io.defitrack.protocol.uniswap.pooling
+package io.defitrack.protocol.uniswap.v2.pooling
 
 import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.uniswap.apr.UniswapAPRService
+import io.defitrack.protocol.uniswap.v2.apr.UniswapAPRService
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
-import io.defitrack.uniswap.AbstractUniswapV2Service
+import io.defitrack.uniswap.v2.AbstractUniswapV2Service
 import org.springframework.stereotype.Component
 
 @Component
-class UniswapEthereumPoolingMarketProvider(
+class UniswapV2EthereumPoolingMarketProvider(
     private val uniswapServices: List<AbstractUniswapV2Service>,
     erC20Resource: ERC20Resource,
     private val uniswapAPRService: UniswapAPRService,
@@ -29,7 +29,7 @@ class UniswapEthereumPoolingMarketProvider(
                     PoolingMarket(
                         network = getNetwork(),
                         protocol = getProtocol(),
-                        id = "uniswap-ethereum-${it.id}",
+                        id = "uniswap-v2-ethereum-${it.id}",
                         name = token.name,
                         address = it.id,
                         symbol = token.symbol,
@@ -43,6 +43,7 @@ class UniswapEthereumPoolingMarketProvider(
                         positionFetcher = defaultBalanceFetcher(token.address)
                     )
                 } catch (ex: Exception) {
+                    ex.printStackTrace()
                     logger.error("something went wrong trying to import uniswap market ${it.id}")
                     null
                 }

@@ -1,14 +1,13 @@
-package io.defitrack.protocol.uniswap.apr
+package io.defitrack.protocol.uniswap.v2.apr
 
 import io.defitrack.common.network.Network
-import io.defitrack.uniswap.AbstractUniswapV2Service
+import io.defitrack.uniswap.v2.AbstractUniswapV2Service
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.RoundingMode
 import kotlin.time.Duration.Companion.hours
-import kotlin.time.ExperimentalTime
 
 @Component
 class UniswapAPRService(private val abstractUniswapV2Service: List<AbstractUniswapV2Service>) {
