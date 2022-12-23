@@ -50,6 +50,9 @@ class AaveV2MainnetService(
                   liquidityRate
                   variableBorrowRate
                   totalLiquidity
+                  aToken {
+                    id
+                  }
               }
             }
         """.trimIndent()

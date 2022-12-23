@@ -2,6 +2,7 @@ package io.defitrack.protocol.aave.v2.lending.market
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
@@ -14,12 +15,14 @@ import io.defitrack.protocol.aave.v2.contract.LendingPoolContract
 import io.defitrack.protocol.aave.v2.domain.AaveReserve
 import io.defitrack.protocol.aave.v2.lending.invest.AaveLendingInvestmentPreparer
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
+import java.math.BigInteger
 
 @Service
 class AaveV2PolygonLendingMarketProvider(
@@ -43,43 +46,49 @@ class AaveV2PolygonLendingMarketProvider(
     )
 
     override suspend fun fetchLendingMarkets(): List<LendingMarket> = coroutineScope {
-        aaveV2PolygonService.getReserves().map {
-            async {
-                try {
-                    val token = erC20Resource.getTokenInformation(getNetwork(), it.underlyingAsset)
-                    LendingMarket(
-                        id = "polygon-aave-${it.symbol}",
-                        address = it.underlyingAsset,
-                        token = token.toFungibleToken(),
-                        name = it.name + " Aave Pool",
-                        protocol = getProtocol(),
-                        network = getNetwork(),
-                        rate = it.lendingRate.toBigDecimal(),
-                        marketSize = calculateMarketSize(it).toBigDecimal(),
-                        poolType = "aave-v2",
-                        investmentPreparer = AaveLendingInvestmentPreparer(
-                            token.address,
-                            lendingPoolContract,
-                            erC20Resource
+        aaveV2PolygonService.getReserves()
+            .filter {
+                it.totalLiquidity > BigInteger.ZERO
+            }.map {
+                async {
+                    try {
+                        val aToken = erC20Resource.getTokenInformation(getNetwork(), it.aToken.id)
+                        val token = erC20Resource.getTokenInformation(getNetwork(), it.underlyingAsset)
+                        LendingMarket(
+                            id = "polygon-aave-${it.symbol}",
+                            address = it.underlyingAsset,
+                            token = token.toFungibleToken(),
+                            name = it.name + " Aave Pool",
+                            protocol = getProtocol(),
+                            network = getNetwork(),
+                            rate = it.lendingRate.toBigDecimal(),
+                            marketSize = calculateMarketSize(it, aToken, token).toBigDecimal(),
+                            poolType = "aave-v2",
+                            investmentPreparer = AaveLendingInvestmentPreparer(
+                                token.address,
+                                lendingPoolContract,
+                                erC20Resource
+                            ),
                         )
-                    )
-                } catch (ex: Exception) {
-                    null
+                    } catch (ex: Exception) {
+                        null
+                    }
                 }
-            }
-        }.awaitAll().filterNotNull()
+            }.awaitAll().filterNotNull()
     }
 
-    private suspend fun calculateMarketSize(reserve: AaveReserve): Double {
+    private suspend fun calculateMarketSize(reserve: AaveReserve, aToken: TokenInformation, underlyingToken: TokenInformation): Double {
+        val underlying = erC20Resource.getTokenInformation(getNetwork(), underlyingToken.address)
         return priceResource.calculatePrice(
             PriceRequest(
-                reserve.underlyingAsset,
+                underlying.address,
                 getNetwork(),
-                reserve.totalLiquidity.toBigDecimal().divide(BigDecimal.TEN.pow(reserve.decimals)),
-                TokenType.SINGLE
+                reserve.totalLiquidity.asEth(aToken.decimals),
+                underlying.type
             )
         )
     }
+
 
     override fun getProtocol(): Protocol = Protocol.AAVE
 

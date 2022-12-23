@@ -5,6 +5,7 @@ import io.defitrack.protocol.ProtocolService
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
@@ -18,12 +19,14 @@ abstract class LendingMarketProvider : ProtocolService {
 
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
     fun init() = runBlocking(Dispatchers.IO){
-        try {
-            val markets = populate()
-            cache.invalidateAll()
-            cache.put("all", markets)
-        } catch (ex: Exception) {
-            logger.error("something went wrong trying to populate the cache", ex)
+        withContext(Dispatchers.IO.limitedParallelism(5)) {
+            try {
+                val markets = populate()
+                cache.invalidateAll()
+                cache.put("all", markets)
+            } catch (ex: Exception) {
+                logger.error("something went wrong trying to populate the cache", ex)
+            }
         }
     }
 

@@ -13,6 +13,7 @@ class AaveReserve(
     val liquidityRate: BigInteger,
     val variableBorrowRate: BigInteger,
     val totalLiquidity: BigInteger,
+    val aToken: AToken
 ) {
     val lendingRate by lazy {
         liquidityRate.toBigDecimal().divide(BigDecimal.TEN.pow(25), 2, RoundingMode.HALF_UP).toDouble()
@@ -20,4 +21,6 @@ class AaveReserve(
     val borrowRate by lazy {
         variableBorrowRate.toBigDecimal().divide(BigDecimal.TEN.pow(25), 2, RoundingMode.HALF_UP).toDouble()
     }
+
+    class AToken(val id: String)
 }
