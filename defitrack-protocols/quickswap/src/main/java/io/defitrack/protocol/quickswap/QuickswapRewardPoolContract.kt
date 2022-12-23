@@ -7,7 +7,6 @@ import io.defitrack.evm.contract.ERC20Contract
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Function
-import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
 class QuickswapRewardPoolContract(
@@ -30,15 +29,19 @@ class QuickswapRewardPoolContract(
         return read("rewardsToken")
     }
 
-    suspend fun rewardRate(): BigInteger{
+    suspend fun rewardRate(): BigInteger {
         return read("rewardRate")
     }
 
+    fun getRewardFunction(): Function {
+        return createFunction("getReward")
+    }
+
     fun earned(address: String): Function {
-       return createFunction(
-           "earned",
-           listOf(address.toAddress()),
-           listOf(uint256())
-       )
+        return createFunction(
+            "earned",
+            listOf(address.toAddress()),
+            listOf(uint256())
+        )
     }
 }

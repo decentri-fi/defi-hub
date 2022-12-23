@@ -8,6 +8,7 @@ import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.domain.FarmingPositionFetcher
+import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.FarmType
@@ -16,6 +17,7 @@ import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
 import io.defitrack.token.ERC20Resource
+import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -63,7 +65,10 @@ class QuickswapFarmingMarketProvider(
                             rewardPool.address,
                             { user ->
                                 rewardPool.earned(user)
-                            }
+                            },
+                            preparedTransaction = PreparedTransaction(
+                                getNetwork().toVO(), rewardPool.getRewardFunction(), rewardPool.address
+                            )
                         ),
                         balanceFetcher = FarmingPositionFetcher(
                             rewardPool.address,
