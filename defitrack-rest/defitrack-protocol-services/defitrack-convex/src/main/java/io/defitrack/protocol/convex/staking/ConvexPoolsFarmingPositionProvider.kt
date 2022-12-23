@@ -48,7 +48,10 @@ class ConvexPoolsFarmingPositionProvider(
                 vaultType = "cvx-vault",
                 marketSize = null,
                 apr = null,
-                balanceFetcher = null,
+                balanceFetcher = defaultBalanceFetcher(
+                    erC20Resource,
+                    it.address
+                ),
                 farmType = FarmType.STAKING
             )
         }
