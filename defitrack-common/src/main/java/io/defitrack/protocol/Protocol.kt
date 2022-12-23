@@ -11,14 +11,14 @@ enum class Protocol(
     val networks: List<Network>
 ) {
     BEETHOVENX(
-        logo = "beethoven.svg",
+        logo = "beethovenx.png",
         slug = "beethoven",
         website = "https://beets.fi",
         primitives = listOf(DefiPrimitive.FARMING, DefiPrimitive.POOLING),
         networks = listOf(Network.FANTOM)
     ),
     AELIN(
-        logo = "aelin.svg",
+        logo = "aelin.jpeg",
         slug = "aelin",
         website = "https://aelin.xyz",
         primitives = listOf(DefiPrimitive.FARMING),
