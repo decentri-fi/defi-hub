@@ -9,6 +9,7 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
+import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.ribbon.contract.RibbonVaultContract
 import io.defitrack.token.ERC20Resource
@@ -50,7 +51,8 @@ class RibbonAvalancheFarmingMarketProvider(
                 balanceFetcher = FarmingPositionFetcher(
                     it.id,
                     { user -> vault.balanceOfMethod(user) }
-                )
+                ),
+                farmType = FarmType.VAULT
             )
         }
     }

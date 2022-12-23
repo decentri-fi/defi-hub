@@ -13,6 +13,7 @@ import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.protocol.FarmType
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenInformation
 import org.springframework.stereotype.Service
@@ -60,7 +61,8 @@ class QuickswapDualFarmingMarketProvider(
                     balanceFetcher = FarmingPositionFetcher(
                         pool.address,
                         { user -> pool.balanceOfMethod(user) }
-                    )
+                    ),
+                    farmType = FarmType.DUAL_REWARD_MINING
                 )
             } catch (ex: Exception) {
                 ex.printStackTrace()

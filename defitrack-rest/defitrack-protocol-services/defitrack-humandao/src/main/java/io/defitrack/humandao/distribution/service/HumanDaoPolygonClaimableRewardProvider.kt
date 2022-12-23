@@ -1,7 +1,7 @@
 package io.defitrack.humandao.distribution.service
 
 import io.defitrack.claimable.Claimable
-import io.defitrack.claimable.ClaimableService
+import io.defitrack.claimable.ClaimableRewardProvider
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.ERC20Resource
@@ -12,10 +12,10 @@ import java.math.BigDecimal
 import java.math.BigInteger
 
 @Service
-class HumanDaoPolygonClaimableService(
+class HumanDaoPolygonClaimableRewardProvider(
     private val bonusDistributionService: BonusDistributionService,
     private val erC20Resource: ERC20Resource
-) : ClaimableService {
+) : ClaimableRewardProvider {
 
     val hdao by lazy {
         runBlocking(Dispatchers.IO) {
@@ -30,11 +30,10 @@ class HumanDaoPolygonClaimableService(
                 Claimable(
                     "humandao-bonus-distribution",
                     "Bonus Distribution",
-                    address,
                     "humandao-bonus-distribution",
                     getProtocol(),
                     getNetwork(),
-                    claimableToken = hdao.toFungibleToken(),
+                    claimableTokens = listOf(hdao.toFungibleToken()),
                     amount = BigInteger(status.currentBonusAmount)
                 )
             )

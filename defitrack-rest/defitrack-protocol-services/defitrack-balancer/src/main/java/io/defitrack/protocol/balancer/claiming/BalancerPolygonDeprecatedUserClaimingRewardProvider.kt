@@ -1,7 +1,7 @@
 package io.defitrack.protocol.balancer.claiming
 
 import io.defitrack.claimable.Claimable
-import io.defitrack.claimable.ClaimableService
+import io.defitrack.claimable.ClaimableRewardProvider
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.polygon.BalancerPolygonPoolGraphProvider
@@ -13,10 +13,10 @@ import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import kotlin.time.Duration.Companion.days
 
-class BalancerPolygonDeprecatedUserClaimingService(
+class BalancerPolygonDeprecatedUserClaimingRewardProvider(
     private val balancerPolygonPoolGraphProvider: BalancerPolygonPoolGraphProvider,
     private val erC20Resource: ERC20Resource
-) : ClaimableService {
+) : ClaimableRewardProvider {
 
     companion object {
         private val logger = LoggerFactory.getLogger(this::class.java)
@@ -46,11 +46,10 @@ class BalancerPolygonDeprecatedUserClaimingService(
             Claimable(
                 "balancer-polygon-${it.week}-${it.token}",
                 "${token.symbol} reward",
-                it.token,
                 "balancer-lp-reward",
                 getProtocol(),
                 getNetwork(),
-                token.toFungibleToken(),
+                listOf(token.toFungibleToken()),
                 it.amount.toBigInteger()
             )
         }

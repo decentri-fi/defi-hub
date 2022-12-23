@@ -3,6 +3,8 @@ package io.defitrack.protocol.curve.staking
 import io.defitrack.common.network.Network
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.market.farming.domain.FarmingPositionFetcher
+import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.crv.CurveEthereumGaugeGraphProvider
 import io.defitrack.token.ERC20Resource
@@ -39,6 +41,13 @@ class CurveEthereumFarmingMarketProvider(
                                 vaultType = "curve-gauge",
                                 marketSize = marketSizeService.getMarketSize(
                                     stakedToken.toFungibleToken(), gauge.address, getNetwork()
+                                ),
+                                farmType = FarmType.LIQUIDITY_MINING,
+                                underlyingBalanceFetcher = FarmingPositionFetcher(
+                                    gauge.address,
+                                    { user ->
+                                        erC20Resource.balanceOfFunction(gauge.address, user, getNetwork())
+                                    }
                                 )
                             )
                         } catch (ex: Exception) {

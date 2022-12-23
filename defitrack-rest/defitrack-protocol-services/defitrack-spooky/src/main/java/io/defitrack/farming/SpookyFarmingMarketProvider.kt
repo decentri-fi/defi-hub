@@ -5,6 +5,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.domain.FarmingPositionFetcher
+import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SpookyFantomService
 import io.defitrack.protocol.reward.MasterchefLpContract
@@ -52,7 +53,8 @@ class SpookyFarmingMarketProvider(
                 balanceFetcher = FarmingPositionFetcher(
                     masterchef.address,
                     { user -> masterchef.userInfoFunction(index, user) }
-                )
+                ),
+                farmType = FarmType.LIQUIDITY_MINING
             )
         }
     }

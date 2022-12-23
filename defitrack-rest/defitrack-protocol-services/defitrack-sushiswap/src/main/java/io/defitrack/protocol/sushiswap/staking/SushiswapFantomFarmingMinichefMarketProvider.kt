@@ -9,12 +9,12 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
+import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SushiFantomService
 import io.defitrack.protocol.reward.MiniChefV2Contract
 import io.defitrack.protocol.sushiswap.apr.MinichefStakingAprCalculator
 import io.defitrack.token.ERC20Resource
-import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
@@ -74,7 +74,8 @@ class SushiswapFantomFarmingMinichefMarketProvider(
             balanceFetcher = FarmingPositionFetcher(
                 chef.address,
                 { user -> chef.userInfoFunction(poolId, user) }
-            )
+            ),
+            farmType = FarmType.LIQUIDITY_MINING
         )
     }
 

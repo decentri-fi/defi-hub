@@ -7,6 +7,7 @@ import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.domain.FarmingPositionFetcher
+import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerGaugeContract
 import io.defitrack.protocol.balancer.polygon.BalancerGaugePolygonGraphProvider
@@ -54,7 +55,8 @@ class BalancerPolygonFarmingMarketProvider(
                         balanceFetcher = FarmingPositionFetcher(
                             gauge.address,
                             { user -> gauge.balanceOfMethod(user) }
-                        )
+                        ),
+                        farmType = FarmType.STAKING
                     )
                 } catch (ex: Exception) {
                     ex.printStackTrace()

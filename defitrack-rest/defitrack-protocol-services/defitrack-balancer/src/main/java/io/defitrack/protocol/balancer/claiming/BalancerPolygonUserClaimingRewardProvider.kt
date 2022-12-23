@@ -2,7 +2,7 @@ package io.defitrack.protocol.balancer.claiming
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.claimable.Claimable
-import io.defitrack.claimable.ClaimableService
+import io.defitrack.claimable.ClaimableRewardProvider
 import io.defitrack.claimable.PrepareClaimCommand
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
@@ -18,12 +18,12 @@ import java.math.BigInteger
 import java.util.*
 
 @Service
-class BalancerPolygonUserClaimingService(
+class BalancerPolygonUserClaimingRewardProvider(
     private val balancerPolygonStakingMarketService: BalancerPolygonFarmingMarketProvider,
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val erC20Resource: ERC20Resource,
     abiResource: ABIResource
-) : ClaimableService {
+) : ClaimableRewardProvider {
 
     val gaugeContractAbi by lazy {
         abiResource.getABI("balancer/gauge.json")
@@ -53,11 +53,10 @@ class BalancerPolygonUserClaimingService(
                             Claimable(
                                 id = UUID.randomUUID().toString(),
                                 name = balanceResult.token.name + " reward",
-                                address = liquidityGauge.id,
                                 type = "balancer-reward",
                                 protocol = getProtocol(),
                                 network = getNetwork(),
-                                claimableToken = balanceResult.token,
+                                claimableTokens = listOf(balanceResult.token),
                                 amount = balanceResult.balance,
                                 claimTransaction = claimTransaction
                             )
