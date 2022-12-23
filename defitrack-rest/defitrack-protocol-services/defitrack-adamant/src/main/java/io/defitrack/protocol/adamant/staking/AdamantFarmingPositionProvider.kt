@@ -1,12 +1,11 @@
 package io.defitrack.protocol.adamant.staking
 
 import io.defitrack.common.network.Network
-import io.defitrack.protocol.Protocol
 import io.defitrack.market.farming.FarmingPositionProvider
 import io.defitrack.market.farming.domain.FarmingPosition
+import io.defitrack.protocol.Protocol
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
-import java.math.BigInteger
 
 @Service
 class AdamantFarmingPositionProvider(
@@ -17,22 +16,23 @@ class AdamantFarmingPositionProvider(
 ) {
 
     override suspend fun getStakings(address: String): List<FarmingPosition> {
-
-        val markets = adamantVaultMarketService.getMarkets()
-
-        return erC20Resource.getBalancesFor(address, markets.map { it.contractAddress }, getNetwork())
-            .mapIndexed { index, balance ->
-                if (balance > BigInteger.ZERO) {
-                    val vault = markets[index]
-
-                    FarmingPosition(
-                        vault,
-                        balance
-                    )
-                } else {
-                    null
-                }
-            }.filterNotNull()
+        return emptyList()
+//
+//        val markets = adamantVaultMarketService.getMarkets()
+//
+//        return erC20Resource.getBalancesFor(address, markets.map { it.contractAddress }, getNetwork())
+//            .mapIndexed { index, balance ->
+//                if (balance > BigInteger.ZERO) {
+//                    val vault = markets[index]
+//
+//                    FarmingPosition(
+//                        vault,
+//                        balance
+//                    )
+//                } else {
+//                    null
+//                }
+//            }.filterNotNull()
     }
 
     override fun getProtocol(): Protocol {

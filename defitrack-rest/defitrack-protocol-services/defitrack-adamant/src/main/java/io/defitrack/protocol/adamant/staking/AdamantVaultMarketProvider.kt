@@ -3,12 +3,12 @@ package io.defitrack.protocol.adamant.staking
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.adamant.AdamantService
-import io.defitrack.protocol.adamant.AdamantVaultContract
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.domain.FarmingPositionFetcher
+import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.adamant.AdamantService
+import io.defitrack.protocol.adamant.AdamantVaultContract
 import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.*
 import org.springframework.stereotype.Service
@@ -44,18 +44,15 @@ class AdamantVaultMarketProvider(
                 async {
                     try {
                         val token = erC20Resource.getTokenInformation(getNetwork(), vault.token())
-                        FarmingMarket(
+                        create(
                             name = "${token.name} vault",
-                            id = "adamant-polygon-${vault.address}",
+                            identifier = vault.address,
                             stakedToken = token.toFungibleToken(),
                             rewardTokens = listOf(
                                 token.toFungibleToken(),
                                 addy.toFungibleToken()
                             ),
-                            contractAddress = vault.address,
                             vaultType = "adamant-generic-vault",
-                            network = getNetwork(),
-                            protocol = getProtocol(),
                             balanceFetcher = FarmingPositionFetcher(
                                 vault.address,
                                 { user -> vault.balanceOfMethod(user) }

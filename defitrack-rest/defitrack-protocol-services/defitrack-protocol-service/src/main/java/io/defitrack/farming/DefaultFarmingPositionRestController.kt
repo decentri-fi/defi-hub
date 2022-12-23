@@ -98,7 +98,6 @@ class DefaultFarmingPositionRestController(
             name = market.name,
             apr = market.apr?.toDouble(),
             vaultType = market.vaultType,
-            contractAddress = market.contractAddress,
             stakedToken = market.stakedToken,
             rewardTokens = market.rewardTokens,
             amount = amount.asEth(market.stakedToken.decimals).toDouble(),

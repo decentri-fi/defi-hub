@@ -36,7 +36,6 @@ abstract class FarmingPositionProvider(
                 protocol = getProtocol(),
                 name = vaultName,
                 apr = apr,
-                contractAddress = vaultAddress,
                 vaultType = vaultType,
                 stakedToken = stakedToken,
                 rewardTokens = rewardTokens,

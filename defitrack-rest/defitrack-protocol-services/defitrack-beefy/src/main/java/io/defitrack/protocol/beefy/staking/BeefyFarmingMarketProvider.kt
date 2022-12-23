@@ -51,17 +51,14 @@ abstract class BeefyFarmingMarketProvider(
             )
             val want = erC20Resource.getTokenInformation(getNetwork(), contract.want())
             val pricePerFullShare = contract.getPricePerFullShare()
-            FarmingMarket(
-                id = contract.vaultId,
-                network = getNetwork(),
-                protocol = getProtocol(),
+            create(
+                identifier = contract.vaultId,
                 name = "${contract.symbol()} Beefy Vault",
                 apr = getAPY(contract),
                 stakedToken = want.toFungibleToken(),
                 rewardTokens = listOf(
                     want.toFungibleToken()
                 ),
-                contractAddress = contract.address,
                 marketSize = getMarketSize(want, contract),
                 vaultType = "beefyVaultV6",
                 balanceFetcher = FarmingPositionFetcher(

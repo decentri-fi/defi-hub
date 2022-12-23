@@ -3,15 +3,15 @@ package io.defitrack.protocol.sushiswap.staking
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
+import io.defitrack.market.farming.FarmingMarketProvider
+import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SushiPolygonService
 import io.defitrack.protocol.reward.MiniChefV2Contract
 import io.defitrack.protocol.sushiswap.apr.MinichefStakingAprCalculator
-import io.defitrack.market.farming.FarmingMarketProvider
-import io.defitrack.market.farming.domain.FarmingPositionFetcher
-import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
@@ -60,16 +60,13 @@ class SushiswapPolygonFarmingMinichefMarketProvider(
         val stakedtoken =
             erC20Resource.getTokenInformation(getNetwork(), chef.getLpTokenForPoolId(poolId))
         val rewardToken = erC20Resource.getTokenInformation(getNetwork(), chef.rewardToken())
-        return FarmingMarket(
-            id = "sushi-${chef.address}-${poolId}",
-            network = getNetwork(),
+        return create(
+            identifier = "${chef.address}-${poolId}",
             name = stakedtoken.name + " Farm",
-            protocol = getProtocol(),
             stakedToken = stakedtoken.toFungibleToken(),
             rewardTokens = listOf(
                 rewardToken.toFungibleToken()
             ),
-            contractAddress = chef.address,
             vaultType = "sushi-minichefV2",
             marketSize = calculateMarketSize(chef, stakedtoken),
             apr = MinichefStakingAprCalculator(erC20Resource, priceResource, chef, poolId).calculateApr(),
@@ -80,7 +77,10 @@ class SushiswapPolygonFarmingMinichefMarketProvider(
         )
     }
 
-    private suspend fun calculateMarketSize(chef: MiniChefV2Contract, stakedTokenInformation: TokenInformation): BigDecimal {
+    private suspend fun calculateMarketSize(
+        chef: MiniChefV2Contract,
+        stakedTokenInformation: TokenInformation
+    ): BigDecimal {
         val balance = erC20Resource.getBalance(getNetwork(), stakedTokenInformation.address, chef.address)
         return BigDecimal.valueOf(
             priceResource.calculatePrice(

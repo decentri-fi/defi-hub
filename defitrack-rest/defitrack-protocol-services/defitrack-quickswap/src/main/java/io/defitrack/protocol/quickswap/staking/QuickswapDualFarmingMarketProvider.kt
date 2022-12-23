@@ -45,17 +45,14 @@ class QuickswapDualFarmingMarketProvider(
                 val rewardTokenA = erC20Resource.getTokenInformation(getNetwork(), pool.rewardsTokenAddressA())
                 val rewardTokenB = erC20Resource.getTokenInformation(getNetwork(), pool.rewardsTokenAddressB())
 
-                FarmingMarket(
-                    id = "quickswap-polygon-dual-${pool.address}",
-                    network = getNetwork(),
-                    protocol = getProtocol(),
+                create(
+                    identifier = pool.address,
                     name = "${stakedToken.name} Dual Reward Pool",
                     stakedToken = stakedToken.toFungibleToken(),
                     rewardTokens = listOf(
                         rewardTokenA.toFungibleToken(),
                         rewardTokenB.toFungibleToken()
                     ),
-                    contractAddress = pool.address,
                     vaultType = "quickswap-dual-reward-pool",
                     marketSize = getMarketSize(stakedToken, pool),
                     apr = getApr(pool, stakedToken),

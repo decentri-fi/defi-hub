@@ -4,13 +4,13 @@ import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.BlockchainGatewayProvider
+import io.defitrack.market.farming.FarmingMarketProvider
+import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.ribbon.contract.RibbonVaultContract
-import io.defitrack.market.farming.FarmingMarketProvider
-import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Component
 
@@ -34,11 +34,10 @@ class RibbonAvalancheFarmingMarketProvider(
                 it.id
             )
             create(
-                id = "ribbon-avax-${it.id}",
+                identifier = it.id,
                 name = it.name,
                 stakedToken = stakedToken.toFungibleToken(),
                 rewardTokens = listOf(stakedToken.toFungibleToken()),
-                contractAddress = it.id,
                 vaultType = "ribbon-vault",
                 marketSize = priceResource.calculatePrice(
                     PriceRequest(

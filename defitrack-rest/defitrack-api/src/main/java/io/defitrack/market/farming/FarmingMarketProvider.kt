@@ -10,30 +10,30 @@ import java.math.BigDecimal
 abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>() {
 
     fun create(
-        id: String,
         name: String,
+        identifier: String,
         stakedToken: FungibleToken,
         rewardTokens: List<FungibleToken>,
-        contractAddress: String,
         vaultType: String,
         marketSize: BigDecimal? = null,
-        rate: BigDecimal? = null,
+        apr: BigDecimal? = null,
         balanceFetcher: FarmingPositionFetcher? = null,
-        investmentPreparer: InvestmentPreparer? = null
+        investmentPreparer: InvestmentPreparer? = null,
+        underlyingBalanceFetcher: FarmingPositionFetcher? = null,
     ): FarmingMarket {
         return FarmingMarket(
-            id = id,
+            id = "frm_${getNetwork().slug}-${getProtocol().slug}-${identifier}",
             network = getNetwork(),
             protocol = getProtocol(),
             name = name,
             stakedToken = stakedToken,
             rewardTokens = rewardTokens,
-            contractAddress = contractAddress,
             vaultType = vaultType,
             marketSize = marketSize,
-            apr = rate,
+            apr = apr,
             balanceFetcher = balanceFetcher,
-            investmentPreparer = investmentPreparer
+            investmentPreparer = investmentPreparer,
+            underlyingBalanceFetcher = underlyingBalanceFetcher
         )
     }
 }

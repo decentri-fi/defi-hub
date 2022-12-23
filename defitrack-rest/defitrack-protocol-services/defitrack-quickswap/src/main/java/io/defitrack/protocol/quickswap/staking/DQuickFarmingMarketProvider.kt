@@ -3,12 +3,12 @@ package io.defitrack.protocol.quickswap.staking
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
+import io.defitrack.market.farming.FarmingMarketProvider
+import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.contract.DQuickContract
-import io.defitrack.market.farming.FarmingMarketProvider
-import io.defitrack.market.farming.domain.FarmingPositionFetcher
-import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 
@@ -34,16 +34,13 @@ class DQuickFarmingMarketProvider(
                 .toFungibleToken()
 
         return listOf(
-            FarmingMarket(
-                id = "polygon-dquick-${dquick.address.lowercase()}",
-                network = getNetwork(),
-                protocol = getProtocol(),
+            create(
+                identifier = dquick.address.lowercase(),
                 name = "Dragon's Lair",
                 stakedToken = quickToken,
                 rewardTokens = listOf(
                     stakedToken
                 ),
-                contractAddress = dquick.address,
                 vaultType = "quickswap-dquick",
                 balanceFetcher = FarmingPositionFetcher(
                     stakedToken.address,

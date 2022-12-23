@@ -3,12 +3,12 @@ package io.defitrack.protocol.balancer.staking
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.balancer.contract.BalancerGaugeContract
-import io.defitrack.protocol.balancer.polygon.BalancerGaugePolygonGraphProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.domain.FarmingPositionFetcher
+import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.balancer.contract.BalancerGaugeContract
+import io.defitrack.protocol.balancer.polygon.BalancerGaugePolygonGraphProvider
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenInformation
 import kotlinx.coroutines.async
@@ -40,10 +40,8 @@ class BalancerPolygonFarmingMarketProvider(
                         it.id
                     )
 
-                    FarmingMarket(
-                        id = "bal-${it.id}",
-                        network = getNetwork(),
-                        protocol = getProtocol(),
+                    create(
+                        identifier = it.id,
                         name = stakedToken.symbol + " Gauge",
                         stakedToken = stakedToken.toFungibleToken(),
                         rewardTokens = getRewardTokens(
@@ -51,7 +49,6 @@ class BalancerPolygonFarmingMarketProvider(
                         ).map { reward ->
                             reward.toFungibleToken()
                         },
-                        contractAddress = it.id,
                         vaultType = "balancerGauge",
                         balanceFetcher = FarmingPositionFetcher(
                             gauge.address,

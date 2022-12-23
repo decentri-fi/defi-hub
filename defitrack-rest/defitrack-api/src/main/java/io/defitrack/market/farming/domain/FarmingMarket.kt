@@ -14,7 +14,6 @@ data class FarmingMarket(
     val name: String,
     val stakedToken: FungibleToken,
     val rewardTokens: List<FungibleToken>,
-    val contractAddress: String,
     val vaultType: String,
     val marketSize: BigDecimal? = null,
     val apr: BigDecimal? = null,

@@ -34,11 +34,10 @@ class RibbonEthereumFarmingMarketProvider(
                 it.id
             )
             create(
-                id = "ribbon-ethereum-${it.id}",
+                identifier = it.id,
                 name = it.name,
                 stakedToken = stakedToken.toFungibleToken(),
                 rewardTokens = listOf(stakedToken.toFungibleToken()),
-                contractAddress = it.id,
                 vaultType = "ribbon-theta-vault",
                 marketSize = priceResource.calculatePrice(
                     PriceRequest(

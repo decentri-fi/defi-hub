@@ -3,12 +3,12 @@ package io.defitrack.protocol
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
+import io.defitrack.market.farming.FarmingMarketProvider
+import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.contract.HopStakingReward
-import io.defitrack.market.farming.FarmingMarketProvider
-import io.defitrack.market.farming.domain.FarmingPositionFetcher
-import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenInformation
 import kotlinx.coroutines.Dispatchers
@@ -47,14 +47,11 @@ class HopPolygonFarmingMarketProvider(
             val stakedToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingTokenAddress())
             val rewardToken = erC20Resource.getTokenInformation(getNetwork(), pool.rewardsTokenAddress())
 
-            return FarmingMarket(
-                id = "hop-polygon-${pool.address}",
-                network = getNetwork(),
-                protocol = getProtocol(),
+            return create(
+                identifier = pool.address,
                 name = "${stakedToken.name} Staking Rewards",
                 stakedToken = stakedToken.toFungibleToken(),
                 rewardTokens = listOf(rewardToken.toFungibleToken()),
-                contractAddress = pool.address,
                 vaultType = "hop-staking-rewards",
                 marketSize = getMarketSize(stakedToken, pool),
                 balanceFetcher = FarmingPositionFetcher(

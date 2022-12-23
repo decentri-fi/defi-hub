@@ -3,15 +3,15 @@ package io.defitrack.protocol.quickswap.staking
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
+import io.defitrack.market.farming.FarmingMarketProvider
+import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
-import io.defitrack.market.farming.FarmingMarketProvider
-import io.defitrack.market.farming.domain.FarmingPositionFetcher
-import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenInformation
 import org.springframework.stereotype.Service
@@ -43,14 +43,11 @@ class QuickswapFarmingMarketProvider(
             val stakedToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingTokenAddress())
             val rewardToken = erC20Resource.getTokenInformation(getNetwork(), pool.rewardsTokenAddress())
 
-            FarmingMarket(
-                id = "quickswap-polygon-${pool.address}",
-                network = getNetwork(),
-                protocol = getProtocol(),
+            create(
+                identifier = pool.address,
                 name = "${stakedToken.name} Reward Pool",
                 stakedToken = stakedToken.toFungibleToken(),
                 rewardTokens = listOf(rewardToken.toFungibleToken()),
-                contractAddress = pool.address,
                 vaultType = "quickswap-reward-pool",
                 marketSize = getMarketSize(stakedToken, pool),
                 apr = (quickswapAPRService.getRewardPoolAPR(pool.address) + quickswapAPRService.getLPAPR(
