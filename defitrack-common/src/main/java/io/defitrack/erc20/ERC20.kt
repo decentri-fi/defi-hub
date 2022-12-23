@@ -3,6 +3,7 @@ package io.defitrack.erc20
 import io.defitrack.common.network.Network
 import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
+import java.math.BigInteger
 
 class ERC20(
     val name: String,
@@ -10,6 +11,7 @@ class ERC20(
     val decimals: Int,
     val network: Network,
     val address: String,
+    val totalSupply: BigInteger
 ) {
     fun toToken(): TokenInformation = TokenInformation(
         name = name,
@@ -17,5 +19,6 @@ class ERC20(
         decimals = decimals,
         address = address,
         type = TokenType.SINGLE,
+        totalSupply = totalSupply
     )
 }

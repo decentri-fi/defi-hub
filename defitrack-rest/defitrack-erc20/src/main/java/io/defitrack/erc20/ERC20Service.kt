@@ -38,7 +38,8 @@ class ERC20Service(
                     symbol = it.symbol,
                     decimals = it.decimals,
                     network = network,
-                    address = correctAddress.lowercase()
+                    address = correctAddress.lowercase(),
+                    totalSupply = it.totalSupply
                 )
             }
         } catch (ex: Exception) {
