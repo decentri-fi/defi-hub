@@ -33,10 +33,9 @@ class DefaultPoolingMarketRestController(
     }
 
 
-    @PostMapping(value = ["/markets/{id}/invest"], params = ["network"])
+    @PostMapping(value = ["/markets/{id}/invest"])
     fun prepareInvestment(
         @PathVariable("id") id: String,
-        @RequestParam("network") network: Network,
         @RequestBody prepareInvestmentCommand: PrepareInvestmentCommand
     ): ResponseEntity<TransactionPreparationVO> = runBlocking {
         poolingMarketById(id)?.investmentPreparer?.prepare(prepareInvestmentCommand)?.let { transactions ->

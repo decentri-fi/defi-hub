@@ -79,10 +79,9 @@ class DefaultFarmingMarketRestController(
             it.id == id
         }
 
-    @PostMapping(value = ["/markets/{id}/invest"], params = ["network"])
+    @PostMapping(value = ["/markets/{id}/enter"])
     fun prepareInvestment(
         @PathVariable("id") id: String,
-        @RequestParam("network") network: Network,
         @RequestBody prepareInvestmentCommand: PrepareInvestmentCommand
     ): ResponseEntity<TransactionPreparationVO> = runBlocking {
         getStakingMarketById(id)?.investmentPreparer?.prepare(prepareInvestmentCommand)?.let { transactions ->
