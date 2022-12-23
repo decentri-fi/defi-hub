@@ -1,4 +1,8 @@
-# Defitrack Core
+# Defitrack
+
+Defitrack is an open source API which allows you to easily integrate DeFi in any application. It provides a gateway to web3 without having to know any of the underlying cryptographic technology.
+
+## Defitrack Core
 
 Defitrack core is the powerhouse of Defitrack.io. 
 It's the general API that is used by https://defitrack.io and contains all the code
