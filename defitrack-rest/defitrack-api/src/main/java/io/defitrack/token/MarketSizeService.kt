@@ -15,6 +15,12 @@ class MarketSizeService(
     private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) {
 
+    suspend fun getMarketSize(tokens: List<FungibleToken>, location: String, network: Network): BigDecimal {
+        return tokens.sumOf {
+            getMarketSize(it, location, network)
+        }
+    }
+
     suspend fun getMarketSize(
         token: FungibleToken,
         location: String,

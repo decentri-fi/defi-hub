@@ -40,7 +40,7 @@ class CurvePoolingMarketProvider(
                             symbol = lpToken.symbol,
                             tokens = tokens,
                             apr = BigDecimal.ZERO,
-                            marketSize = calculateMarketSize(tokens, lpToken.address),
+                            marketSize = marketSizeService.getMarketSize(tokens, lpToken.address, getNetwork()),
                             tokenType = TokenType.CURVE,
                             positionFetcher = if(lpToken.name == "unknown") null else defaultBalanceFetcher(lpToken.address)
                         )
@@ -52,14 +52,6 @@ class CurvePoolingMarketProvider(
                 }
             }.awaitAll().filterNotNull()
         }
-
-    suspend fun calculateMarketSize(tokens: List<FungibleToken>, holder: String): BigDecimal {
-        return tokens.sumOf { token ->
-            marketSizeService.getMarketSize(
-                token, holder, getNetwork()
-            )
-        }
-    }
 
     override fun getProtocol(): Protocol {
         return Protocol.CURVE
