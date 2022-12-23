@@ -16,6 +16,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
+import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
 
 @Component
@@ -73,6 +74,14 @@ class ERC20Resource(
                 token
             ).allowance(owner, spender)
         }
+    }
+
+    fun balanceOfFunction(token: String, user: String, network: Network): Function {
+        return ERC20Contract(
+            blockchainGatewayProvider.getGateway(network),
+            erc20ABI,
+            token
+        ).balanceOfMethod(user)
     }
 
     fun getBalancesFor(

@@ -5,6 +5,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.lending.LendingMarketProvider
+import io.defitrack.market.lending.domain.BalanceFetcher
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
@@ -71,7 +72,11 @@ abstract class AaveV3LendingMarketProvider(
                                 totalSupply.asEth(aToken.decimals),
                                 underlying.type
                             )
-                        ).toBigDecimal()
+                        ).toBigDecimal(),
+                        balanceFetcher = BalanceFetcher(
+                            aToken.address,
+                            { user -> erC20Resource.balanceOfFunction(aToken.address, user, getNetwork()) },
+                        )
                     )
                 } catch (ex: Exception) {
                     logger.error("Unable to fetch V3 Lending market with address $it")
