@@ -32,7 +32,7 @@ abstract class LendingMarketProvider : ProtocolService {
 
     abstract suspend fun fetchLendingMarkets(): List<LendingMarket>
 
-    fun getLendingMarkets(): List<LendingMarket> = runBlocking(Dispatchers.IO) {
+    fun getLendingMarkets(): List<LendingMarket> = runBlocking(Dispatchers.Default) {
         cache.get("all") ?: emptyList()
     }
 

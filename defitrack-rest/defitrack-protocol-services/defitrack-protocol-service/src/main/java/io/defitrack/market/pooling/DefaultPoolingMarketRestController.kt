@@ -38,7 +38,7 @@ class DefaultPoolingMarketRestController(
     fun prepareInvestment(
         @PathVariable("id") id: String,
         @RequestBody prepareInvestmentCommand: PrepareInvestmentCommand
-    ): ResponseEntity<TransactionPreparationVO> = runBlocking {
+    ): ResponseEntity<TransactionPreparationVO> = runBlocking(Dispatchers.Default) {
         poolingMarketById(id)?.investmentPreparer?.prepare(prepareInvestmentCommand)?.let { transactions ->
             ResponseEntity.ok(
                 TransactionPreparationVO(

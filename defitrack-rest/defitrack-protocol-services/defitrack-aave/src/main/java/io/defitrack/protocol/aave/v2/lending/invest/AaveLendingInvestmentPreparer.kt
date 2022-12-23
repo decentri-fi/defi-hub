@@ -27,13 +27,13 @@ class AaveLendingInvestmentPreparer(
                     prepareInvestmentCommand.amount?.let { amount ->
                         PreparedTransaction(
                             function = lendingPoolContract.depositFunction(
-                                prepareInvestmentCommand.user, token, requiredBalance,
+                                token, requiredBalance,
                             ),
                             to = getEntryContract()
                         )
                     } ?: PreparedTransaction(
                         function = lendingPoolContract.depositFunction(
-                            prepareInvestmentCommand.user, token, requiredBalance
+                            token, requiredBalance
                         ),
                         to = getEntryContract()
                     )
@@ -43,7 +43,7 @@ class AaveLendingInvestmentPreparer(
             }
         }
 
-    override fun getToken(): String {
+    override suspend fun getToken(): String {
         return token
     }
 

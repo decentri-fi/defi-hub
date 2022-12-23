@@ -1,14 +1,12 @@
 package io.defitrack.protocol.convex.contract
 
-import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
+import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
-import org.web3j.abi.datatypes.DynamicBytes
 import org.web3j.abi.datatypes.generated.Uint112
-import org.web3j.abi.datatypes.generated.Uint256
 import org.web3j.abi.datatypes.generated.Uint32
 import java.math.BigInteger
 
@@ -19,20 +17,7 @@ class CvxLockerContract(
     val name: String
 ) : EvmContract(blockchainGateway, abi, address) {
 
-    fun lockedBalances(address: String) {
-        val retVal = readWithAbi(
-            method = "lockedBalances",
-            inputs = listOf(address.toAddress()),
-            outputs = listOf(
-                TypeReference.create(Uint256::class.java),
-                TypeReference.create(Uint256::class.java),
-                TypeReference.create(Uint256::class.java),
-                TypeReference.create(DynamicBytes::class.java)
-            )
-        )
-    }
-
-    fun rewardToken(): String {
+    suspend fun rewardToken(): String {
         return readWithAbi(
             method = "rewardTokens",
             inputs = listOf(BigInteger.ZERO.toUint256()),
@@ -42,7 +27,7 @@ class CvxLockerContract(
         )[0].value as String
     }
 
-    fun stakingToken(): String {
+    suspend fun stakingToken(): String {
         return readWithAbi(
             method = "stakingToken",
             inputs = emptyList(),
@@ -52,7 +37,7 @@ class CvxLockerContract(
         )[0].value as String
     }
 
-    fun balances(address: String): BigInteger {
+    suspend fun balances(address: String): BigInteger {
         return readWithAbi(
             method = "balances",
             inputs = listOf(address.toAddress()),

@@ -2,8 +2,8 @@ package io.defitrack.protocol.bancor.pool
 
 import io.defitrack.common.network.Network
 import io.defitrack.invest.PrepareInvestmentCommand
-import io.defitrack.protocol.bancor.contract.BancorNetworkContract
 import io.defitrack.market.farming.domain.InvestmentPreparer
+import io.defitrack.protocol.bancor.contract.BancorNetworkContract
 import io.defitrack.token.ERC20Resource
 import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.Deferred
@@ -39,7 +39,7 @@ class BancorPoolInvestmentPreparer(
         }
     }
 
-    override fun getToken(): String {
+    override suspend fun getToken(): String {
         return underlyingToken
     }
 

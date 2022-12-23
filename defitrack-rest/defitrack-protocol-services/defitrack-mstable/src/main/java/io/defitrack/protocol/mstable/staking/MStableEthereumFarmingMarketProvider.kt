@@ -49,11 +49,11 @@ class MStableEthereumFarmingMarketProvider(
     }
 
     private suspend fun toStakingMarket(contract: MStableEthereumBoostedSavingsVaultContract): FarmingMarket {
-        val stakingToken = erC20Resource.getTokenInformation(getNetwork(), contract.stakingToken)
-        val rewardsToken = erC20Resource.getTokenInformation(getNetwork(), contract.rewardsToken)
+        val stakingToken = erC20Resource.getTokenInformation(getNetwork(), contract.stakingToken())
+        val rewardsToken = erC20Resource.getTokenInformation(getNetwork(), contract.rewardsToken())
         return FarmingMarket(
             id = "mstable-ethereum-${contract.address}",
-            name = contract.name,
+            name = contract.name(),
             stakedToken = stakingToken.toFungibleToken(),
             rewardTokens = listOf(
                 rewardsToken.toFungibleToken()

@@ -1,6 +1,7 @@
 package io.defitrack.protocol.compound.lending
 
 import io.defitrack.abi.ABIResource
+import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.lending.LendingMarketProvider
@@ -54,14 +55,15 @@ abstract class IronBankLendingMarketProvider(
 
     private suspend fun toLendingMarket(ctokenContract: IronbankTokenContract): LendingMarket? {
         return try {
-            ctokenContract.underlyingAddress.let { tokenAddress ->
+            val exchangeRate = ctokenContract.exchangeRate()
+            ctokenContract.underlyingAddress().let { tokenAddress ->
                 erC20Resource.getTokenInformation(getNetwork(), tokenAddress)
             }.let { underlyingToken ->
                 LendingMarket(
                     id = "ironbank-ethereum-${ctokenContract.address}",
                     network = getNetwork(),
                     protocol = getProtocol(),
-                    name = ctokenContract.name,
+                    name = ctokenContract.name(),
                     rate = getSupplyRate(compoundTokenContract = ctokenContract),
                     address = ctokenContract.address,
                     token = underlyingToken.toFungibleToken(),
@@ -69,10 +71,8 @@ abstract class IronBankLendingMarketProvider(
                         PriceRequest(
                             underlyingToken.address,
                             getNetwork(),
-                            ctokenContract.cash.add(ctokenContract.totalBorrows).toBigDecimal().divide(
+                            ctokenContract.cash().add(ctokenContract.totalBorrows()).toBigDecimal().dividePrecisely(
                                 BigDecimal.TEN.pow(underlyingToken.decimals),
-                                18,
-                                RoundingMode.HALF_UP
                             ),
                             TokenType.SINGLE
                         )
@@ -83,7 +83,7 @@ abstract class IronBankLendingMarketProvider(
                         { user -> ctokenContract.balanceOfMethod(user) },
                         { retVal ->
                             val tokenBalance = retVal[0].value as BigInteger
-                            tokenBalance.times(ctokenContract.exchangeRate).asEth(18).toBigInteger()
+                            tokenBalance.times(exchangeRate).asEth(18).toBigInteger()
                         }
                     ),
                     investmentPreparer = CompoundLendingInvestmentPreparer(
@@ -98,10 +98,10 @@ abstract class IronBankLendingMarketProvider(
         }
     }
 
-    fun getSupplyRate(compoundTokenContract: IronbankTokenContract): BigDecimal {
+    suspend fun getSupplyRate(compoundTokenContract: IronbankTokenContract): BigDecimal {
         val blocksPerDay = 6463
         val dailyRate =
-            (compoundTokenContract.supplyRatePerBlock.toBigDecimal().divide(BigDecimal.TEN.pow(18)) * BigDecimal(
+            (compoundTokenContract.supplyRatePerBlock().toBigDecimal().divide(BigDecimal.TEN.pow(18)) * BigDecimal(
                 blocksPerDay
             )) + BigDecimal.ONE
 
@@ -113,7 +113,7 @@ abstract class IronBankLendingMarketProvider(
         return Protocol.IRON_BANK
     }
 
-    private fun getTokenContracts(): List<IronbankTokenContract> {
+    private suspend fun getTokenContracts(): List<IronbankTokenContract> {
         return getComptroller().getMarkets().map { market ->
             IronbankTokenContract(
                 gateway,

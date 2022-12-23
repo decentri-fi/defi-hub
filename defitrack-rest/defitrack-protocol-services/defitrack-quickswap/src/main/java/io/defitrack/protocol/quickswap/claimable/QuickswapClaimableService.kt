@@ -55,9 +55,9 @@ class QuickswapClaimableService(
             if (earned > BigInteger.ZERO) {
                 val pool = pools[index]
 
-                val reward = erC20Resource.getTokenInformation(getNetwork(), pool.rewardsTokenAddress)
+                val reward = erC20Resource.getTokenInformation(getNetwork(), pool.rewardsTokenAddress())
 
-                val stakingToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingTokenAddress)
+                val stakingToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingTokenAddress())
                 Claimable(
                     id = "quickswap-reward-$pool.address",
                     address = pool.address,

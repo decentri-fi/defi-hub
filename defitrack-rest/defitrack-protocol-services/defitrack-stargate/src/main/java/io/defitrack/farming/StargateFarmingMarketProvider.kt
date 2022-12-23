@@ -28,9 +28,9 @@ abstract class StargateFarmingMarketProvider(
             lpStakingContractAbi,
             stargateOptimismService.getLpFarm()
         )
-        val stargate = erC20Resource.getTokenInformation(getNetwork(), lpStakingContract.stargate)
+        val stargate = erC20Resource.getTokenInformation(getNetwork(), lpStakingContract.stargate())
 
-        return lpStakingContract.poolInfos.mapIndexed { index, info ->
+        return lpStakingContract.poolInfos().mapIndexed { index, info ->
             val stakedToken = erC20Resource.getTokenInformation(getNetwork(), info.lpToken)
             val rewardTokens = listOf(stargate)
 

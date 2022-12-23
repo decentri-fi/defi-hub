@@ -8,6 +8,8 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class TheGraphGateway(
     private val httpClient: HttpClient,
@@ -21,13 +23,13 @@ class TheGraphGateway(
         return JsonParser.parseString(response).asJsonObject["data"]
     }
 
-    private suspend fun query(query: String): String {
+    private suspend fun query(query: String): String = withContext(Dispatchers.IO){
         val response: String = httpClient.post(baseUrl) {
             headers {
                 append("Content-Type", "application/json")
             }
             setBody(GraphRequest(query))
         }.bodyAsText()
-        return response
+        response
     }
 }

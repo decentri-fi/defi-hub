@@ -19,7 +19,7 @@ open class ERC20Contract(
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    fun allowance(owner: String, spender: String): BigInteger {
+    suspend fun allowance(owner: String, spender: String): BigInteger {
         return readWithAbi(
             "allowance",
             listOf(owner.toAddress(), spender.toAddress()),
@@ -45,7 +45,7 @@ open class ERC20Contract(
         )
     }
 
-    fun balanceOf(address: String): BigInteger {
+    suspend fun balanceOf(address: String): BigInteger {
         return readWithAbi(
             "balanceOf",
             inputs = listOf(address.toAddress()),
@@ -55,38 +55,20 @@ open class ERC20Contract(
         )[0].value as BigInteger
     }
 
-    val name by lazy {
-        try {
-            readWithAbi("name")[0].value as String
-        } catch (ex: Exception) {
-            "unknown"
-        }
+    suspend fun name(): String {
+        return read("name")
     }
 
-    val symbol by lazy {
-        val read = readWithAbi("symbol")
-        if (read.isEmpty()) {
-            "unknown"
-        } else {
-            read[0].value as String
-        }
+    suspend fun symbol() : String {
+        return read("symbol")
     }
 
-    val decimals by lazy {
-        val read = readWithAbi("decimals")
-        if (read.isEmpty()) {
-            18
-        } else {
-            (read[0].value as BigInteger).toInt()
-        }
+    suspend fun decimals(): Int {
+        val d: BigInteger = read("decimals")
+        return d.toInt()
     }
 
-    val totalSupply: BigInteger by lazy {
-        val read = readWithAbi("totalSupply")
-        return@lazy if (read.isEmpty()) {
-            BigInteger.ZERO
-        } else {
-            (read[0].value as BigInteger)
-        }
+    suspend fun totalSupply(): BigInteger {
+        return read("totalSupply")
     }
 }

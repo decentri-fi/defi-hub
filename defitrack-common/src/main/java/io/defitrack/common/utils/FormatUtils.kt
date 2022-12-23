@@ -5,41 +5,21 @@ import io.defitrack.common.utils.domain.PrettyAmount
 import org.web3j.utils.Convert
 import java.math.BigDecimal
 import java.math.BigInteger
-import java.math.RoundingMode
 
 object FormatUtils {
-    fun asEth(weiBalance: BigInteger?): Double {
-        return if (weiBalance != null) {
-            BigDecimal(weiBalance).divide(
-                BigDecimal.valueOf(Math.pow(10.0, 18.0)),
-                18,
-                RoundingMode.HALF_DOWN
-            ).toDouble()
-        } else {
-            (-1).toDouble()
-        }
+
+    fun asEth(weiBalance: BigInteger, decimals: Int = 18): BigDecimal {
+        return asEth(weiBalance.toBigDecimal(), decimals)
     }
 
-    fun asEth(weiBalance: BigDecimal?): Double {
-        return weiBalance?.divide(
-            BigDecimal.valueOf(Math.pow(10.0, 18.0)),
-            18,
-            RoundingMode.HALF_DOWN
-        )?.toDouble()
-            ?: (-1).toDouble()
+    fun asEth(weiBalance: BigDecimal, decimals: Int = 18): BigDecimal {
+        return weiBalance.dividePrecisely(BigDecimal.TEN.pow(decimals))
     }
 
-
-    fun asEth(weiBalance: BigInteger?, decimals: Int): BigDecimal {
-        return BigDecimal(weiBalance).dividePrecisely(BigDecimal.TEN.pow(decimals))
-    }
-
-    fun asWei(ethBalance: Double): BigInteger {
-        return BigInteger.valueOf((ethBalance * Math.pow(10.0, 18.0)).toLong())
-    }
-
-    fun asWei(ethBalance: Double, decimals: Int): BigInteger {
-        return BigInteger.valueOf((ethBalance * Math.pow(10.0, decimals.toDouble())).toLong())
+    fun asWei(ethBalance: BigDecimal, decimals: Int = 18): BigInteger {
+        return ethBalance.times(
+            BigDecimal.TEN.pow(decimals)
+        ).toBigInteger()
     }
 
     fun format(value: BigInteger): PrettyAmount {

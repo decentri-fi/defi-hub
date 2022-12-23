@@ -1,12 +1,9 @@
 package io.defitrack.protocol.contract
 
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.evm.contract.ERC20Contract
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
-import org.web3j.abi.datatypes.generated.Uint256
-import java.math.BigInteger
 
 class HopStakingReward(
     solidityBasedContractAccessor: BlockchainGateway,
@@ -17,39 +14,17 @@ class HopStakingReward(
     abi, address
 ) {
 
-    val periodFinish by lazy {
-        readWithAbi(
-            "periodFinish",
-            outputs = listOf(TypeReference.create(Uint256::class.java))
-        )[0].value as BigInteger
-    }
-
-    val rewardsTokenAddress by lazy {
-        readWithAbi(
+    suspend fun rewardsTokenAddress(): String {
+        return readWithAbi(
             "rewardsToken",
             outputs = listOf(TypeReference.create(Address::class.java))
         )[0].value as String
     }
 
-    val stakingTokenAddress by lazy {
-        readWithAbi(
+    suspend fun stakingTokenAddress(): String {
+        return readWithAbi(
             method = "stakingToken",
             outputs = listOf(TypeReference.create(Address::class.java))
         )[0].value as String
-    }
-
-    val rewardRate by lazy {
-        readWithAbi(
-            method = "rewardRate",
-            outputs = listOf(TypeReference.create(Uint256::class.java))
-        )[0].value as BigInteger
-    }
-
-    fun earned(address: String): BigInteger {
-        return readWithAbi(
-            "earned",
-            listOf(address.toAddress()),
-            listOf(TypeReference.create(Uint256::class.java))
-        )[0].value as BigInteger
     }
 }

@@ -4,9 +4,9 @@ import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.price.PriceResource
-import io.defitrack.protocol.quickswap.contract.QuickswapDualRewardPoolContract
 import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
 import io.defitrack.protocol.quickswap.QuickswapService
+import io.defitrack.protocol.quickswap.contract.QuickswapDualRewardPoolContract
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
@@ -58,21 +58,21 @@ class QuickswapAPRService(
             address
         )
         val quickRewardsPerYear =
-            (contract.rewardRateA.times(BigInteger.valueOf(31536000))).toBigDecimal()
+            (contract.rewardRateA().times(BigInteger.valueOf(31536000))).toBigDecimal()
                 .divide(BigDecimal.TEN.pow(18))
         val usdQuickRewardsPerYear = priceResource.getPrice("QUICK").times(
             quickRewardsPerYear
         )
 
         val maticRewardsPerYear =
-            (contract.rewardRateB.times(BigInteger.valueOf(31536000))).toBigDecimal()
+            (contract.rewardRateB().times(BigInteger.valueOf(31536000))).toBigDecimal()
                 .divide(BigDecimal.TEN.pow(18))
         val usdMaticRewardsPerYear = priceResource.getPrice("MATIC").times(
             maticRewardsPerYear
         )
 
         val reserveUsd = quickswapService.getPairs().find {
-            it.id.lowercase() == contract.stakingTokenAddress
+            it.id.lowercase() == contract.stakingTokenAddress()
         }?.reserveUSD ?: BigDecimal.ZERO
 
         return if ((usdQuickRewardsPerYear == BigDecimal.ZERO && usdMaticRewardsPerYear == BigDecimal.ZERO) || reserveUsd == BigDecimal.ZERO) {
@@ -90,14 +90,14 @@ class QuickswapAPRService(
         )
 
         val quickRewardsPerYear =
-            (contract.rewardRate.times(BigInteger.valueOf(31536000))).toBigDecimal()
+            (contract.rewardRate().times(BigInteger.valueOf(31536000))).toBigDecimal()
                 .divide(BigDecimal.TEN.pow(18))
         val usdRewardsPerYear = priceResource.getPrice("DQUICK").times(
             quickRewardsPerYear
         )
 
         val reserveUsd = quickswapService.getPairs().find {
-            it.id.lowercase() == contract.stakingTokenAddress
+            it.id.lowercase() == contract.stakingTokenAddress()
         }?.reserveUSD ?: BigDecimal.ZERO
 
         return if (usdRewardsPerYear == BigDecimal.ZERO || reserveUsd == BigDecimal.ZERO) {

@@ -35,13 +35,13 @@ class PolycatFarmingPositionProvider(
         }
 
         return polycatMasterChefContracts.flatMap { masterChef ->
-            (0 until masterChef.poolLength).mapNotNull { poolIndex ->
+            (0 until masterChef.poolLength()).mapNotNull { poolIndex ->
                 val balance = masterChef.userInfo(address, poolIndex).amount
 
                 if (balance > BigInteger.ZERO) {
                     val stakedtoken =
                         erC20Resource.getTokenInformation(getNetwork(), masterChef.poolInfo(poolIndex).lpToken)
-                    val rewardToken = erC20Resource.getTokenInformation(getNetwork(), masterChef.rewardToken)
+                    val rewardToken = erC20Resource.getTokenInformation(getNetwork(), masterChef.rewardToken())
 
                     stakingElement(
                         id = "polycat-${masterChef.address}-${poolIndex}",

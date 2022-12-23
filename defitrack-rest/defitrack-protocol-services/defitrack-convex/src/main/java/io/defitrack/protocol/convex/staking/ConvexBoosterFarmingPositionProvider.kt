@@ -32,7 +32,7 @@ class ConvexBoosterFarmingPositionProvider(
             convexService.provideBooster()
         )
 
-        val poolInfos = booster.poolInfos
+        val poolInfos = booster.poolInfos()
 
         return erC20Resource.getBalancesFor(address, poolInfos.map { it.crvRewards }, getNetwork())
             .mapIndexed { index, balance ->

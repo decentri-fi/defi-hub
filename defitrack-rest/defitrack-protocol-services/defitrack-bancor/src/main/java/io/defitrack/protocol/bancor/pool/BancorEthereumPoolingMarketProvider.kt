@@ -50,7 +50,7 @@ class BancorEthereumPoolingMarketProvider(
                         it.id
                     )
 
-                    val underlying = erC20Resource.getTokenInformation(getNetwork(), poolTokenContract.reserveToken)
+                    val underlying = erC20Resource.getTokenInformation(getNetwork(), poolTokenContract.reserveToken())
                         .toFungibleToken()
                     PoolingMarketElement(
                         id = "bancor-ethereum-${it.id}",

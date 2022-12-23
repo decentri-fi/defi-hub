@@ -43,7 +43,7 @@ class AaveV3LendingInvestmentPreparer(
             }
         }
 
-    override fun getToken(): String {
+    override suspend fun getToken(): String {
         return underlying
     }
 

@@ -39,7 +39,7 @@ class SushiswapFantomFarmingMinichefMarketProvider(
                 it
             )
         }.flatMap { chef ->
-            (0 until chef.poolLength).map { poolId ->
+            (0 until chef.poolLength()).map { poolId ->
                 toStakingMarketElement(chef, poolId)
             }
         }
@@ -59,7 +59,7 @@ class SushiswapFantomFarmingMinichefMarketProvider(
     ): FarmingMarket {
         val stakedtoken =
             erC20Resource.getTokenInformation(getNetwork(), chef.getLpTokenForPoolId(poolId))
-        val rewardToken = erC20Resource.getTokenInformation(getNetwork(), chef.rewardToken)
+        val rewardToken = erC20Resource.getTokenInformation(getNetwork(), chef.rewardToken())
         return FarmingMarket(
             id = "sushi-fantom-${chef.address}-${poolId}",
             network = getNetwork(),

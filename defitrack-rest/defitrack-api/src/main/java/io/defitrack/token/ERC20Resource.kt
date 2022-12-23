@@ -11,7 +11,8 @@ import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.web3j.abi.datatypes.Function
@@ -29,15 +30,16 @@ class ERC20Resource(
         abiResource.getABI("general/ERC20.json")
     }
 
-    suspend fun getAllTokens(network: Network): List<TokenInformation> = coroutineScope {
+    suspend fun getAllTokens(network: Network): List<TokenInformation> = withContext(Dispatchers.IO) {
         retry(limitAttempts(3)) { client.get("$erc20ResourceLocation/${network.name}").body() }
     }
 
-    suspend fun getBalance(network: Network, tokenAddress: String, user: String): BigInteger = coroutineScope {
-        client.get("$erc20ResourceLocation/${network.name}/$tokenAddress/$user").body()
-    }
+    suspend fun getBalance(network: Network, tokenAddress: String, user: String): BigInteger =
+        withContext(Dispatchers.IO) {
+            client.get("$erc20ResourceLocation/${network.name}/$tokenAddress/$user").body()
+        }
 
-    suspend fun getTokenInformation(network: Network, address: String): TokenInformation = coroutineScope {
+    suspend fun getTokenInformation(network: Network, address: String): TokenInformation = withContext(Dispatchers.IO) {
         retry(limitAttempts(3)) { client.get("$erc20ResourceLocation/${network.name}/$address/token").body() }
     }
 
@@ -64,7 +66,7 @@ class ERC20Resource(
         return getApproveFunction(network, token, spender, MAX_UINT256.value)
     }
 
-    fun getAllowance(network: Network, token: String, owner: String, spender: String): BigInteger {
+    suspend fun getAllowance(network: Network, token: String, owner: String, spender: String): BigInteger {
         return with(blockchainGatewayProvider.getGateway(network)) {
             ERC20Contract(
                 this,
@@ -82,7 +84,7 @@ class ERC20Resource(
         ).balanceOfMethod(user)
     }
 
-    fun getBalancesFor(
+    suspend fun getBalancesFor(
         address: String,
         tokens: List<String>,
         network: Network,

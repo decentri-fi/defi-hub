@@ -33,7 +33,7 @@ abstract class BeefyFarmingMarketProvider(
     }
 
     override suspend fun fetchStakingMarkets(): List<FarmingMarket> =
-        coroutineScope {
+        withContext(Dispatchers.IO.limitedParallelism(5)) {
             vaults.map {
                 async {
                     toStakingMarketElement(it)
@@ -49,12 +49,13 @@ abstract class BeefyFarmingMarketProvider(
                 beefyVault.earnContractAddress,
                 beefyVault.id
             )
-            val want = erC20Resource.getTokenInformation(getNetwork(), contract.want)
+            val want = erC20Resource.getTokenInformation(getNetwork(), contract.want())
+            val pricePerFullShare = contract.getPricePerFullShare()
             FarmingMarket(
                 id = contract.vaultId,
                 network = getNetwork(),
                 protocol = getProtocol(),
-                name = "${contract.symbol} Beefy Vault",
+                name = "${contract.symbol()} Beefy Vault",
                 apr = getAPY(contract),
                 stakedToken = want.toFungibleToken(),
                 rewardTokens = listOf(
@@ -71,7 +72,7 @@ abstract class BeefyFarmingMarketProvider(
                     contract.address,
                     { user -> contract.balanceOfMethod(user) },
                     extractBalance = { result ->
-                        ((result[0].value as BigInteger).times(contract.getPricePerFullShare)).dividePrecisely(
+                        ((result[0].value as BigInteger).times(pricePerFullShare)).dividePrecisely(
                             BigDecimal.TEN.pow(18)
                         ).toBigInteger()
                     }
@@ -79,7 +80,7 @@ abstract class BeefyFarmingMarketProvider(
                 investmentPreparer = BeefyStakingInvestmentPreparer(contract, erC20Resource)
             )
         } catch (ex: Exception) {
-            logger.error("Unable to get beefy farm ${beefyVault.id}", ex)
+            logger.error("Unable to get beefy farm ${beefyVault.id}")
             null
         }
     }
@@ -92,7 +93,7 @@ abstract class BeefyFarmingMarketProvider(
             PriceRequest(
                 want.address,
                 getNetwork(),
-                beefyVault.balance.toBigDecimal()
+                beefyVault.balance().toBigDecimal()
                     .divide(BigDecimal.TEN.pow(want.decimals), 18, RoundingMode.HALF_UP),
                 want.type
             )

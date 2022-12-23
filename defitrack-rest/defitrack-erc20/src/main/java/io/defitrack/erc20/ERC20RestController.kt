@@ -59,16 +59,16 @@ class ERC20RestController(
         @PathVariable("network") network: Network,
         @PathVariable("address") address: String,
         @PathVariable("userAddress") userAddress: String
-    ): ResponseEntity<BigInteger> {
+    ): ResponseEntity<BigInteger> = runBlocking {
 
         if (!WalletUtils.isValidAddress(address)) {
-            return ResponseEntity.badRequest().build()
+            return@runBlocking ResponseEntity.badRequest().build()
         }
         if (!WalletUtils.isValidAddress(userAddress)) {
-            return ResponseEntity.badRequest().build()
+            return@runBlocking ResponseEntity.badRequest().build()
         }
 
-        return try {
+        return@runBlocking try {
             ResponseEntity.ok(erC20Service.getBalance(network, address, userAddress))
         } catch (ex: Exception) {
             ex.printStackTrace()

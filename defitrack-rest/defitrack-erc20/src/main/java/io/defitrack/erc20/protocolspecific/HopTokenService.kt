@@ -37,11 +37,11 @@ class HopTokenService(
             val token1 = erC20Service.getERC20(network, hopLpToken.hToken)
 
             TokenInformation(
-                name = saddleToken.name,
-                symbol = saddleToken.symbol,
+                name = saddleToken.name(),
+                symbol = saddleToken.symbol(),
                 address = address,
-                decimals = saddleToken.decimals,
-                totalSupply = saddleToken.totalSupply,
+                decimals = saddleToken.decimals(),
+                totalSupply = saddleToken.totalSupply(),
                 type = TokenType.HOP,
                 protocol = Protocol.HOP,
                 underlyingTokens = listOf(

@@ -17,7 +17,7 @@ abstract class PoolingMarketProvider : ProtocolService {
     val cache = Cache.Builder().expireAfterWrite(4.hours).build<String, List<PoolingMarketElement>>()
 
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
-    fun init() = runBlocking {
+    fun init() = runBlocking(Dispatchers.IO) {
         try {
             logger.info("Cache expired, fetching fresh elements")
             val markets = populate()
@@ -31,7 +31,7 @@ abstract class PoolingMarketProvider : ProtocolService {
 
     protected abstract suspend fun fetchPoolingMarkets(): List<PoolingMarketElement>
 
-    fun getPoolingMarkets(): List<PoolingMarketElement> = runBlocking(Dispatchers.IO) {
+    fun getPoolingMarkets(): List<PoolingMarketElement> = runBlocking(Dispatchers.Default) {
         cache.get("all") ?: emptyList()
     }
 

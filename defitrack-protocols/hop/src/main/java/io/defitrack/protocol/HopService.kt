@@ -10,7 +10,6 @@ import io.defitrack.protocol.domain.Tvl
 import io.defitrack.thegraph.TheGraphGatewayProvider
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
-import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.Dispatchers
@@ -35,7 +34,7 @@ class HopService(
         }?.getStakingRewards() ?: emptyList()
     }
 
-    fun getTvls(network: Network): List<Tvl> {
+    suspend fun getTvls(network: Network): List<Tvl> {
         val query = """
            {
               tvls {
@@ -48,16 +47,14 @@ class HopService(
         val endpoint = getGraph(network)
         val graph = graphGatewayProvider.createTheGraphGateway(endpoint)
 
-        return runBlocking(Dispatchers.IO) {
-            val poolSharesAsString = graph.performQuery(query).asJsonObject["tvls"].toString()
-            return@runBlocking objectMapper.readValue(poolSharesAsString,
-                object : TypeReference<List<Tvl>>() {
+        val poolSharesAsString = graph.performQuery(query).asJsonObject["tvls"].toString()
+        return objectMapper.readValue(poolSharesAsString,
+            object : TypeReference<List<Tvl>>() {
 
-                })
-        }
+            })
     }
 
-    fun getDailyVolumes(tokenName: String, network: Network): List<DailyVolume> {
+    suspend fun getDailyVolumes(tokenName: String, network: Network): List<DailyVolume> {
         val token = convertTokenName(tokenName)
         val query = """
             {
@@ -71,13 +68,11 @@ class HopService(
         val endpoint = getGraph(network)
         val graph = graphGatewayProvider.createTheGraphGateway(endpoint)
 
-        return runBlocking(Dispatchers.IO) {
-            val poolSharesAsString = graph.performQuery(query).asJsonObject["dailyVolumes"].toString()
-            return@runBlocking objectMapper.readValue(poolSharesAsString,
-                object : TypeReference<List<DailyVolume>>() {
+        val poolSharesAsString = graph.performQuery(query).asJsonObject["dailyVolumes"].toString()
+        return objectMapper.readValue(poolSharesAsString,
+            object : TypeReference<List<DailyVolume>>() {
 
-                })
-        }
+            })
     }
 
     private fun convertTokenName(tokenName: String) = when (tokenName) {

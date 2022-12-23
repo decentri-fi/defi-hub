@@ -2,6 +2,7 @@ package io.defitrack.protocol.compound.lending
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.lending.LendingMarketProvider
@@ -16,7 +17,9 @@ import io.defitrack.protocol.compound.CompoundTokenContract
 import io.defitrack.protocol.compound.lending.invest.CompoundLendingInvestmentPreparer
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
-import kotlinx.coroutines.*
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -24,7 +27,7 @@ import java.math.RoundingMode
 
 @Component
 class CompoundLendingMarketProvider(
-    private val blockchainGatewayProvider: BlockchainGatewayProvider,
+    blockchainGatewayProvider: BlockchainGatewayProvider,
     private val abiResource: ABIResource,
     private val erC20Resource: ERC20Resource,
     private val compoundEthereumService: CompoundEthereumService,
@@ -51,14 +54,15 @@ class CompoundLendingMarketProvider(
 
     private suspend fun toLendingMarket(ctokenContract: CompoundTokenContract): LendingMarket? {
         return try {
-            ctokenContract.underlyingAddress.let { tokenAddress ->
+            ctokenContract.underlyingAddress().let { tokenAddress ->
                 erC20Resource.getTokenInformation(getNetwork(), tokenAddress)
             }.let { underlyingToken ->
+                val exchangeRate = ctokenContract.exchangeRate()
                 LendingMarket(
                     id = "compound-ethereum-${ctokenContract.address}",
                     network = getNetwork(),
                     protocol = getProtocol(),
-                    name = ctokenContract.name,
+                    name = ctokenContract.name(),
                     rate = getSupplyRate(compoundTokenContract = ctokenContract),
                     address = ctokenContract.address,
                     token = underlyingToken.toFungibleToken(),
@@ -66,10 +70,8 @@ class CompoundLendingMarketProvider(
                         PriceRequest(
                             underlyingToken.address,
                             getNetwork(),
-                            ctokenContract.cash.add(ctokenContract.totalBorrows).toBigDecimal().divide(
-                                BigDecimal.TEN.pow(underlyingToken.decimals),
-                                18,
-                                RoundingMode.HALF_UP
+                            ctokenContract.cash().add(ctokenContract.totalBorrows()).toBigDecimal().dividePrecisely(
+                                BigDecimal.TEN.pow(underlyingToken.decimals)
                             ),
                             TokenType.SINGLE
                         )
@@ -80,7 +82,7 @@ class CompoundLendingMarketProvider(
                         { user -> ctokenContract.balanceOfMethod(user) },
                         { retVal ->
                             val tokenBalance = retVal[0].value as BigInteger
-                            tokenBalance.times(ctokenContract.exchangeRate).asEth(18).toBigInteger()
+                            tokenBalance.times(exchangeRate).asEth().toBigInteger()
                         }
                     ),
                     investmentPreparer = CompoundLendingInvestmentPreparer(
@@ -95,10 +97,10 @@ class CompoundLendingMarketProvider(
         }
     }
 
-    fun getSupplyRate(compoundTokenContract: CompoundTokenContract): BigDecimal {
+    suspend fun getSupplyRate(compoundTokenContract: CompoundTokenContract): BigDecimal {
         val blocksPerDay = 6463
         val dailyRate =
-            (compoundTokenContract.supplyRatePerBlock.toBigDecimal().divide(BigDecimal.TEN.pow(18)) * BigDecimal(
+            (compoundTokenContract.supplyRatePerBlock().toBigDecimal().divide(BigDecimal.TEN.pow(18)) * BigDecimal(
                 blocksPerDay
             )) + BigDecimal.ONE
 
@@ -114,7 +116,7 @@ class CompoundLendingMarketProvider(
         return Network.ETHEREUM
     }
 
-    private fun getTokenContracts(): List<CompoundTokenContract> {
+    private suspend fun getTokenContracts(): List<CompoundTokenContract> {
         return getComptroller().getMarkets().map { market ->
             CompoundTokenContract(
                 gateway,

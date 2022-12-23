@@ -16,8 +16,8 @@ class BeefyStakingInvestmentPreparer(
     erC20Resource: ERC20Resource
 ) : InvestmentPreparer(erC20Resource) {
 
-    override fun getToken(): String {
-        return beefyVault.want
+    override suspend fun getToken(): String {
+        return beefyVault.want()
     }
 
     override fun getEntryContract(): String {

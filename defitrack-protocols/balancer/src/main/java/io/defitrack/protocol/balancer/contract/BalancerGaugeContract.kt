@@ -39,7 +39,7 @@ class BalancerGaugeContract(
         )
     }
 
-    fun getBalances(user: String, rewardTokens: List<FungibleToken>): List<BalancerGaugeBalance> {
+    suspend fun getBalances(user: String, rewardTokens: List<FungibleToken>): List<BalancerGaugeBalance> {
         return blockchainGateway.readMultiCall(
             rewardTokens.map { token ->
                 MultiCallElement(
@@ -61,7 +61,7 @@ class BalancerGaugeContract(
         val balance: BigInteger
     )
 
-    fun getRewardTokens(): List<String> {
+    suspend fun getRewardTokens(): List<String> {
         return (0..3).mapNotNull {
             try {
                 val rewardToken = getRewardToken(it)
@@ -77,7 +77,7 @@ class BalancerGaugeContract(
     }
 
 
-    fun getRewardToken(index: Int): String {
+    suspend fun getRewardToken(index: Int): String {
         return readWithAbi(
             "reward_tokens",
             listOf(index.toBigInteger().toUint256()),

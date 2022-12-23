@@ -4,14 +4,14 @@ import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.BlockchainGatewayProvider
+import io.defitrack.market.farming.FarmingMarketProvider
+import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.dinoswap.contract.DinoswapFossilFarmsContract
 import io.defitrack.protocol.dinoswap.DinoswapService
-import io.defitrack.market.farming.FarmingMarketProvider
-import io.defitrack.market.farming.domain.FarmingPositionFetcher
-import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.protocol.dinoswap.contract.DinoswapFossilFarmsContract
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 
@@ -37,7 +37,7 @@ class DinoswapFarmingMarketProvider(
                 it
             )
         }.flatMap { chef ->
-            (0 until chef.poolLength).map { poolId ->
+            (0 until chef.poolLength()).map { poolId ->
                 toStakingMarketElement(chef, poolId)
             }
         }
@@ -49,15 +49,17 @@ class DinoswapFarmingMarketProvider(
     ): FarmingMarket {
         val stakedtoken =
             tokenService.getTokenInformation(getNetwork(), chef.getLpTokenForPoolId(poolId))
-        val rewardToken = tokenService.getTokenInformation(getNetwork(), chef.rewardToken)
+        val rewardToken = tokenService.getTokenInformation(getNetwork(), chef.rewardToken())
 
         val marketBalance = erC20Resource.getBalance(getNetwork(), stakedtoken.address, chef.address)
-        val marketSize = priceResource.calculatePrice(PriceRequest(
-            stakedtoken.address,
-            getNetwork(),
-            marketBalance.asEth(stakedtoken.decimals),
-            stakedtoken.type
-        ))
+        val marketSize = priceResource.calculatePrice(
+            PriceRequest(
+                stakedtoken.address,
+                getNetwork(),
+                marketBalance.asEth(stakedtoken.decimals),
+                stakedtoken.type
+            )
+        )
 
         return FarmingMarket(
             id = "dinoswap-${chef.address}-${poolId}",
@@ -72,7 +74,7 @@ class DinoswapFarmingMarketProvider(
             vaultType = "dinoswap-fossilfarm",
             balanceFetcher = FarmingPositionFetcher(
                 address = chef.address,
-                function = { user -> chef.userInfoFunction(user, poolId)}
+                function = { user -> chef.userInfoFunction(user, poolId) }
             ),
             marketSize = marketSize.toBigDecimal()
         )

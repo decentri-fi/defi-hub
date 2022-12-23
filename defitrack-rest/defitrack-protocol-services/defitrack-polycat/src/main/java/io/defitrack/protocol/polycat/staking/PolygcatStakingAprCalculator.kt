@@ -5,8 +5,8 @@ import io.defitrack.apr.StakedAsset
 import io.defitrack.apr.StakingAprCalculator
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.polycat.contract.PolycatMasterChefContract
-import io.defitrack.token.TokenType
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.TokenType
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -18,19 +18,19 @@ class PolygcatStakingAprCalculator(
 ) : StakingAprCalculator(priceResource) {
 
 
-    fun getNativeReward(): Reward {
+    suspend fun getNativeReward(): Reward {
         val poolInfo = chef.poolInfo(poolId)
-        val allSushiPerSecond = chef.rewardPerBlock
-        val poolBlockRewards = allSushiPerSecond.times(poolInfo.allocPoint).divide(chef.totalAllocPoint)
+        val allSushiPerSecond = chef.rewardPerBlock()
+        val poolBlockRewards = allSushiPerSecond.times(poolInfo.allocPoint).divide(chef.totalAllocPoint())
         return Reward(
-            address = chef.rewardToken,
+            address = chef.rewardToken(),
             network = chef.blockchainGateway.network,
             amount = poolBlockRewards.toBigDecimal().divide(BigDecimal.TEN.pow(18), 18, RoundingMode.HALF_UP),
             tokenType = TokenType.SINGLE
         )
     }
 
-    override fun getRewardsPerSecond(): List<Reward> {
+    override suspend fun getRewardsPerSecond(): List<Reward> {
         return listOf(
             getNativeReward()
         )

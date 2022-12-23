@@ -35,7 +35,7 @@ abstract class StakingAprCalculator(
         }
     }
 
-    abstract fun getRewardsPerSecond(): List<Reward>
+    abstract suspend fun getRewardsPerSecond(): List<Reward>
     abstract suspend fun getStakedTokens(): List<StakedAsset>
 
     private suspend fun calculateStakedTokenInUsd(stakedAsset: StakedAsset): BigDecimal = BigDecimal.valueOf(

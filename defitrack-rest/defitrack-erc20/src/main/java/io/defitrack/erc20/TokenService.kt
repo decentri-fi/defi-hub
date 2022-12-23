@@ -41,42 +41,45 @@ class TokenService(
         }
     }
 
-    suspend fun getType(lp: LPTokenContract): TokenType = when {
-        lp.symbol == "SLP" -> {
-            TokenType.SUSHISWAP
-        }
-        lp.symbol == "UNI-V2" -> {
-            TokenType.UNISWAP
-        }
-        lp.symbol == "WLP" -> {
-            TokenType.WAULT
-        }
-        lp.symbol == "spLP" -> {
-            TokenType.SPOOKY
-        }
-        lp.symbol == "SPIRIT-LP" -> {
-            TokenType.SPIRIT
-        }
-        lp.symbol == "DFYNLP" -> {
-            TokenType.DFYN
-        }
-        lp.symbol == "APE-LP" -> {
-            TokenType.APE
-        }
-        isBalancerLp(lp.address, lp.blockchainGateway.network) -> {
-            TokenType.BALANCER
-        }
-        isHopLp(lp.symbol) -> {
-            TokenType.HOP
-        }
-        isCurveToken(lp.name) -> {
-            TokenType.CURVE
-        }
-        isKyberDMMLP(lp.symbol) -> {
-            TokenType.KYBER
-        }
-        else -> {
-            TokenType.SINGLE
+    suspend fun getType(lp: LPTokenContract): TokenType {
+        val symbol = lp.symbol()
+        return when {
+            symbol == "SLP" -> {
+                TokenType.SUSHISWAP
+            }
+            symbol == "UNI-V2" -> {
+                TokenType.UNISWAP
+            }
+            symbol == "WLP" -> {
+                TokenType.WAULT
+            }
+            symbol == "spLP" -> {
+                TokenType.SPOOKY
+            }
+            symbol == "SPIRIT-LP" -> {
+                TokenType.SPIRIT
+            }
+            symbol == "DFYNLP" -> {
+                TokenType.DFYN
+            }
+            symbol == "APE-LP" -> {
+                TokenType.APE
+            }
+            isBalancerLp(lp.address, lp.blockchainGateway.network) -> {
+                TokenType.BALANCER
+            }
+            isHopLp(symbol) -> {
+                TokenType.HOP
+            }
+            isCurveToken(lp.name()) -> {
+                TokenType.CURVE
+            }
+            isKyberDMMLP(symbol) -> {
+                TokenType.KYBER
+            }
+            else -> {
+                TokenType.SINGLE
+            }
         }
     }
 
@@ -155,10 +158,10 @@ class TokenService(
         val lp = LPtokenService.getLP(network, erc20.address)
 
         val token0 = getTokenInformation(
-            lp.token0, network
+            lp.token0(), network
         )
         val token1 = getTokenInformation(
-            lp.token1, network
+            lp.token1(), network
         )
 
         return TokenInformation(
@@ -166,7 +169,7 @@ class TokenService(
             symbol = "${token0.symbol}-${token1.symbol}",
             address = erc20.address,
             decimals = erc20.decimals,
-            totalSupply = lp.totalSupply,
+            totalSupply = lp.totalSupply(),
             type = getType(lp),
             protocol = protocol,
             underlyingTokens = listOf(token0, token1)

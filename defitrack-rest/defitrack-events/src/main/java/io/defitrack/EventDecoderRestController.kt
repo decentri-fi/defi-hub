@@ -4,9 +4,8 @@ import io.defitrack.common.network.Network
 import io.defitrack.events.DefiEvent
 import io.defitrack.events.EventDecoder
 import io.defitrack.evm.contract.BlockchainGatewayProvider
+import kotlinx.coroutines.runBlocking
 import org.springframework.web.bind.annotation.*
-import org.web3j.protocol.Web3j
-import org.web3j.protocol.http.HttpService
 
 @RestController
 @RequestMapping("/decode")
@@ -19,9 +18,9 @@ class EventDecoderRestController(
     fun decodeTransaction(
         @PathVariable("txId") txId: String,
         @RequestParam("network") network: Network
-    ): List<DefiEvent> {
+    ): List<DefiEvent> = runBlocking {
         val logs = gatewayProvider.getGateway(network).getLogs(txId)
-        return logs.flatMap {
+        logs.flatMap {
             eventDecoders.map { decoder ->
                 if (decoder.appliesTo(it)) {
                     decoder.extract(it)

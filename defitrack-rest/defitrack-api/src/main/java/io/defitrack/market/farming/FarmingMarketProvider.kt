@@ -32,7 +32,7 @@ abstract class FarmingMarketProvider : ProtocolService {
         }
     }
 
-    fun getStakingMarkets(): List<FarmingMarket> = runBlocking(Dispatchers.IO) {
+    fun getStakingMarkets(): List<FarmingMarket> = runBlocking(Dispatchers.Default) {
         cache.get("all") ?: emptyList()
     }
 

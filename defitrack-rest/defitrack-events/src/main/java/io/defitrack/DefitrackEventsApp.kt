@@ -4,8 +4,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class DefitrackStatisticsApp
+class DefitrackEventsApp
 
 fun main(args: Array<String>) {
-    runApplication<DefitrackStatisticsApp>(*args)
+    runApplication<DefitrackEventsApp>(*args)
 }

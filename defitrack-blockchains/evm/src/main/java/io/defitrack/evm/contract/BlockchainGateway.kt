@@ -17,6 +17,7 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.apache.commons.codec.binary.Hex
 import org.apache.commons.lang3.StringUtils
 import org.web3j.abi.FunctionEncoder
@@ -43,18 +44,18 @@ open class BlockchainGateway(
     val endpoint: String
 ) {
 
-    fun getNativeBalance(address: String): BigDecimal = runBlocking {
+    suspend fun getNativeBalance(address: String): BigDecimal = withContext(Dispatchers.IO) {
         val balance: BigInteger = httpClient.get("$endpoint/balance/$address").body()
         balance.toBigDecimal().dividePrecisely(
             BigDecimal.TEN.pow(18)
         )
     }
 
-    fun getLogs(txId: String): List<Log> = runBlocking {
+    suspend fun getLogs(txId: String): List<Log> = withContext(Dispatchers.IO) {
         httpClient.get("$endpoint/tx/${txId}/logs").body()
     }
 
-    open fun readMultiCall(elements: List<MultiCallElement>): List<List<Type<*>>> {
+    open suspend fun readMultiCall(elements: List<MultiCallElement>): List<List<Type<*>>> {
         val encodedFunctions = elements.map {
             DynamicStruct(
                 it.address.toAddress(),
@@ -81,15 +82,7 @@ open class BlockchainGateway(
         }
     }
 
-
-    fun readFunction(
-        address: String,
-        method: String,
-    ): List<Type<*>> {
-        return executeCall(address, createFunction(method, kotlin.collections.emptyList(), null))
-    }
-
-    fun readFunction(
+    suspend fun readFunction(
         address: String,
         function: String,
         inputs: List<Type<*>>,
@@ -98,14 +91,14 @@ open class BlockchainGateway(
         return executeCall(address, createFunction(function, inputs, outputs))
     }
 
-    fun readFunctionWithAbi(
+    suspend fun readFunctionWithAbi(
         address: String,
         function: AbiContractFunction,
     ): List<Type<*>> {
         return executeCall(address, createFunctionWithAbi(function, null, null))
     }
 
-    fun readFunctionWithAbi(
+    suspend fun readFunctionWithAbi(
         address: String,
         function: AbiContractFunction,
         inputs: List<Type<*>>,
@@ -114,7 +107,7 @@ open class BlockchainGateway(
         return executeCall(address, createFunctionWithAbi(function, inputs, outputs))
     }
 
-    fun executeCall(
+    suspend fun executeCall(
         address: String,
         function: org.web3j.abi.datatypes.Function,
     ): List<Type<*>> {
@@ -123,11 +116,11 @@ open class BlockchainGateway(
         return FunctionReturnDecoder.decode(ethCall.value, function.outputParameters)
     }
 
-    fun call(
+    suspend fun call(
         from: String?,
         contract: String,
         encodedFunction: String
-    ): EthCall = runBlocking(Dispatchers.IO) {
+    ): EthCall = withContext(Dispatchers.IO) {
         retry(limitAttempts(5) + binaryExponentialBackoff(1000, 10000)) {
             httpClient.post("$endpoint/contract/call") {
                 contentType(ContentType.Application.Json)

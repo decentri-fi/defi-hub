@@ -37,7 +37,7 @@ class PolycatFarmingMarketProvider(
                 it
             )
         }.flatMap { chef ->
-            (0 until chef.poolLength).map { poolId ->
+            (0 until chef.poolLength()).map { poolId ->
                 toStakingMarketElement(chef, poolId)
             }
         }
@@ -49,7 +49,7 @@ class PolycatFarmingMarketProvider(
     ): FarmingMarket {
         val stakedtoken =
             erC20Resource.getTokenInformation(getNetwork(), chef.poolInfo(poolId).lpToken)
-        val rewardToken = erC20Resource.getTokenInformation(getNetwork(), chef.rewardToken)
+        val rewardToken = erC20Resource.getTokenInformation(getNetwork(), chef.rewardToken())
         return FarmingMarket(
             id = "polycat-${chef.address}-${poolId}",
             network = getNetwork(),
