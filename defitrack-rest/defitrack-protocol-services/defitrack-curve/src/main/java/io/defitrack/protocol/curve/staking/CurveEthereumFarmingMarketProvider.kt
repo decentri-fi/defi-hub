@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service
 
 @Service
 class CurveEthereumFarmingMarketProvider(
-    private val curveEthereumGaugeGraphProvider: CurveEthereumGaugeGraphProvider,
     private val erC20Resource: ERC20Resource,
     private val marketSizeService: MarketSizeService,
     private val blockchainGatewayProvider: BlockchainGatewayProvider
