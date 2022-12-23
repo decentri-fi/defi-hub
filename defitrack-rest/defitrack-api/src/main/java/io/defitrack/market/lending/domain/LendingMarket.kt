@@ -27,7 +27,7 @@ data class LendingMarket(
 class PositionFetcher(
     val address: String,
     val function: (user: String) -> org.web3j.abi.datatypes.Function,
-    val extractBalance: (List<Type<*>>) -> BigInteger = { result ->
+    val extractBalance: suspend (List<Type<*>>) -> BigInteger = { result ->
         try {
             result[0].value as BigInteger
         } catch (ex: Exception) {
