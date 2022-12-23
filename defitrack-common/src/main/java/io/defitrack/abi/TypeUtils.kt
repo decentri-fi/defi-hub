@@ -4,6 +4,7 @@ import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Bool
 import org.web3j.abi.datatypes.Type
+import org.web3j.abi.datatypes.Utf8String
 import org.web3j.abi.datatypes.generated.*
 import java.math.BigInteger
 
@@ -37,6 +38,10 @@ class TypeUtils {
 
         fun address(indexed: Boolean = false): TypeReference<Address> {
             return TypeReference.create(Address::class.java, indexed)
+        }
+
+        fun string(indexed: Boolean = false): TypeReference<Utf8String> {
+            return TypeReference.create(Utf8String::class.java, indexed)
         }
 
         fun uint40(): TypeReference<Uint40> {
