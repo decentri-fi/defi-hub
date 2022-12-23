@@ -6,6 +6,7 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.lending.LendingMarketProvider
+import io.defitrack.market.lending.domain.BalanceFetcher
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
@@ -65,7 +66,13 @@ class AaveV2MainnetLendingMarketProvider(
                                 lendingPoolContract,
                                 erC20Resource
                             ),
-                            rate = it.lendingRate.toBigDecimal()
+                            rate = it.lendingRate.toBigDecimal(),
+                            balanceFetcher = BalanceFetcher(
+                                aToken.address,
+                                { user ->
+                                    erC20Resource.balanceOfFunction(aToken.address, user, getNetwork())
+                                }
+                            )
                         )
                     } catch (ex: Exception) {
                         logger.error("Unable to fetch lending market with address $it", ex)
