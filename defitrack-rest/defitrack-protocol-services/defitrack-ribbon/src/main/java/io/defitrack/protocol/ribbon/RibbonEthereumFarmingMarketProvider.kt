@@ -10,7 +10,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.ribbon.contract.RibbonVaultContract
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.market.farming.domain.FarmingPositionFetcher
+import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.FarmType
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Component
@@ -48,7 +48,7 @@ class RibbonEthereumFarmingMarketProvider(
                         stakedToken.type
                     )
                 ).toBigDecimal(),
-                balanceFetcher = FarmingPositionFetcher(
+                balanceFetcher = PositionFetcher(
                     it.id,
                     { user -> vault.balanceOfMethod(user) }
                 ),

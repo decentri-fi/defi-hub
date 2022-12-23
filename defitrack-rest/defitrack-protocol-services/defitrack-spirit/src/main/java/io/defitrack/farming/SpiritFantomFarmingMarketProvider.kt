@@ -9,8 +9,8 @@ import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SpiritFantomService
 import io.defitrack.protocol.reward.MasterchefLpContract
-import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.FarmType
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Component
@@ -56,7 +56,7 @@ class SpiritFantomFarmingMarketProvider(
                 contractType = "spirit-masterchef",
                 marketSize = BigDecimal.ZERO,
                 apr = aprCalculator.calculateApr(),
-                balanceFetcher = FarmingPositionFetcher(
+                balanceFetcher = PositionFetcher(
                     masterchef.address,
                     { user -> masterchef.userInfoFunction(index, user) }
                 ),

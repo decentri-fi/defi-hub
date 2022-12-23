@@ -81,7 +81,7 @@ class HopPolygonPoolingMarketService(
                     marketSize
                 ),
                 tokenType = TokenType.HOP,
-                balanceFetcher = defaultBalanceFetcher(hopLpToken.lpToken)
+                positionFetcher = defaultBalanceFetcher(hopLpToken.lpToken)
             )
         } catch (ex: Exception) {
             ex.printStackTrace()

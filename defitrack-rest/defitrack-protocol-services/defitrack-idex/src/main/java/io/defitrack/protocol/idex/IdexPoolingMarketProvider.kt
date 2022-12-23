@@ -42,7 +42,7 @@ class IdexPoolingMarketProvider(
                                 apr = BigDecimal.ZERO,
                                 marketSize = it.reserveUsd,
                                 tokenType = TokenType.IDEX,
-                                balanceFetcher = defaultBalanceFetcher(token.address)
+                                positionFetcher = defaultBalanceFetcher(token.address)
                             )
                         } catch (ex: Exception) {
                             logger.error("something went wrong while importing ${it.liquidityToken}", ex)

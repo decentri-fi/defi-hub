@@ -4,7 +4,7 @@ import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.lending.LendingMarketProvider
-import io.defitrack.market.lending.domain.BalanceFetcher
+import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.mstable.MStablePolygonService
@@ -37,7 +37,7 @@ class MStablePolygonLendingMarketProvider(
                 name = token.name,
                 token = token.toFungibleToken(),
                 poolType = "mstable",
-                balanceFetcher = BalanceFetcher(
+                positionFetcher = PositionFetcher(
                     address = it.address,
                     { user -> it.balanceOfMethod(user) }
                 )

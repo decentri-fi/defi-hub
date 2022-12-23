@@ -39,7 +39,7 @@ class DfynPoolingMarketService(
                     apr = dfynAPRService.getAPR(it.id),
                     marketSize = it.reserveUSD,
                     tokenType = TokenType.DFYN,
-                    balanceFetcher = defaultBalanceFetcher(token.address)
+                    positionFetcher = defaultBalanceFetcher(token.address)
                 )
             } else {
                 null

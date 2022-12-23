@@ -7,7 +7,7 @@ import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.market.farming.domain.FarmingPositionFetcher
+import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.FarmType
@@ -61,7 +61,7 @@ class PolycatFarmingMarketProvider(
             ),
             apr = PolygcatStakingAprCalculator(erC20Resource, priceResource, chef, poolId).calculateApr(),
             marketSize = calculateMarketSize(stakedtoken, chef),
-            balanceFetcher = FarmingPositionFetcher(
+            balanceFetcher = PositionFetcher(
                 address = chef.address,
                 { user ->
                     chef.userInfoFunction(

@@ -7,7 +7,6 @@ import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
@@ -70,9 +69,9 @@ class QuickswapFarmingMarketProvider(
                                 getNetwork().toVO(), rewardPool.getRewardFunction(), rewardPool.address
                             )
                         ),
-                        balanceFetcher = FarmingPositionFetcher(
-                            rewardPool.address,
-                            { user -> rewardPool.balanceOfMethod(user) }
+                        balanceFetcher = defaultBalanceFetcher(
+                            erC20Resource,
+                            rewardPool.address
                         ),
                         farmType = FarmType.LIQUIDITY_MINING
                     )

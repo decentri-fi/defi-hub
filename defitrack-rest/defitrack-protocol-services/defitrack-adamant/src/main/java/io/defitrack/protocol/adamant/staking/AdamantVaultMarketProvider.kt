@@ -6,7 +6,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.market.farming.domain.FarmingPositionFetcher
+import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.adamant.AdamantService
@@ -55,7 +55,7 @@ class AdamantVaultMarketProvider(
                                 addy.toFungibleToken()
                             ),
                             vaultType = "adamant-generic-vault",
-                            balanceFetcher = FarmingPositionFetcher(
+                            balanceFetcher = PositionFetcher(
                                 vault.address,
                                 { user -> vault.balanceOfMethod(user) }
                             ),

@@ -39,7 +39,7 @@ abstract class DefaultSushiPoolingMarketService(
                     id = "sushi-${getNetwork().slug}-${it.id}",
                     marketSize = it.reserveUSD,
                     tokenType = TokenType.SUSHISWAP,
-                    balanceFetcher = defaultBalanceFetcher(token.address)
+                    positionFetcher = defaultBalanceFetcher(token.address)
                 )
                 element
             }

@@ -6,13 +6,12 @@ import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.market.farming.domain.FarmingPositionFetcher
+import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerGaugeContract
 import io.defitrack.protocol.balancer.polygon.BalancerGaugePolygonGraphProvider
 import io.defitrack.token.ERC20Resource
-import io.defitrack.token.TokenInformation
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -52,7 +51,7 @@ class BalancerPolygonFarmingMarketProvider(
                             reward.toFungibleToken()
                         },
                         vaultType = "balancerGauge",
-                        balanceFetcher = FarmingPositionFetcher(
+                        balanceFetcher = PositionFetcher(
                             gauge.address,
                             { user -> gauge.balanceOfMethod(user) }
                         ),

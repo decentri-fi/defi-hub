@@ -6,7 +6,7 @@ import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.market.farming.domain.FarmingPositionFetcher
+import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.contract.HopStakingReward
@@ -54,7 +54,7 @@ class HopPolygonFarmingMarketProvider(
                 rewardTokens = listOf(rewardToken.toFungibleToken()),
                 vaultType = "hop-staking-rewards",
                 marketSize = getMarketSize(stakedToken, pool),
-                balanceFetcher = FarmingPositionFetcher(
+                balanceFetcher = PositionFetcher(
                     address = pool.address,
                     function = { user -> pool.balanceOfMethod(user) }
                 ),

@@ -6,7 +6,7 @@ import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.market.farming.domain.FarmingPositionFetcher
+import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.FarmType
@@ -71,7 +71,7 @@ class SushiswapArbitrumFarmingMinichefMarketProvider(
             vaultType = "sushi-minichefV2",
             marketSize = calculateMarketSize(chef, stakedtoken),
             apr = MinichefStakingAprCalculator(erC20Resource, priceResource, chef, poolId).calculateApr(),
-            balanceFetcher = FarmingPositionFetcher(
+            balanceFetcher = PositionFetcher(
                 chef.address,
                 { user -> chef.userInfoFunction(poolId, user) }
             ),

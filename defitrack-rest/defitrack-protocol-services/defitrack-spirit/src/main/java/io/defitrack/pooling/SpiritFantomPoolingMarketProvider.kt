@@ -45,7 +45,7 @@ class SpiritFantomPoolingMarketProvider(
                     id = "spirit-fantom-${it.id}",
                     marketSize = it.reserveUSD,
                     tokenType = TokenType.SPIRIT,
-                    balanceFetcher = defaultBalanceFetcher(token.address)
+                    positionFetcher = defaultBalanceFetcher(token.address)
                 )
             }
     }

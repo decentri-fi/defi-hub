@@ -4,17 +4,18 @@ import io.defitrack.MarketFactory
 import io.defitrack.common.network.Network
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SpookyFantomService
 import io.defitrack.protocol.reward.MasterchefLpContract
+import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Component
 
 @Component
 class SpookyFarmingMarketProvider(
     private val spookyFantomService: SpookyFantomService,
-    private val marketFactory: MarketFactory
+    private val marketFactory: MarketFactory,
+    private val erc20Resource: ERC20Resource
 ) : FarmingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
@@ -50,9 +51,9 @@ class SpookyFarmingMarketProvider(
                     getNetwork()
                 ),
                 apr = aprCalculator.calculateApr(),
-                balanceFetcher = FarmingPositionFetcher(
-                    masterchef.address,
-                    { user -> masterchef.userInfoFunction(index, user) }
+                balanceFetcher = defaultBalanceFetcher(
+                    erc20Resource,
+                    masterchef.address
                 ),
                 farmType = FarmType.LIQUIDITY_MINING
             )

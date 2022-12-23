@@ -31,7 +31,7 @@ class ApeswapPolygonPoolingMarketProvider(
                         symbol = liquidityToken.symbol,
                         tokens = liquidityToken.underlyingTokens.map { it.toFungibleToken() },
                         tokenType = TokenType.APE,
-                        balanceFetcher = defaultBalanceFetcher(liquidityToken.address)
+                        positionFetcher = defaultBalanceFetcher(liquidityToken.address)
                     )
                 } catch (ex: Exception) {
                     null

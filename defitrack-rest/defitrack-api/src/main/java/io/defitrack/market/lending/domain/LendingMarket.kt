@@ -20,11 +20,11 @@ data class LendingMarket(
     val marketSize: BigDecimal? = null,
     val rate: BigDecimal? = null,
     val poolType: String,
-    val balanceFetcher: BalanceFetcher? = null,
+    val positionFetcher: PositionFetcher? = null,
     val investmentPreparer: InvestmentPreparer? = null
 ) : DefiMarket
 
-class BalanceFetcher(
+class PositionFetcher(
     val address: String,
     val function: (user: String) -> org.web3j.abi.datatypes.Function,
     val extractBalance: (List<Type<*>>) -> BigInteger = { result ->

@@ -5,7 +5,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.market.farming.domain.FarmingPositionFetcher
+import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.ERC20Resource
@@ -71,7 +71,7 @@ class IdexFarmingMarketProvider(
                 rewardToken.toFungibleToken()
             ),
             vaultType = "idex-farm",
-            balanceFetcher = FarmingPositionFetcher(
+            balanceFetcher = PositionFetcher(
                 chef.address,
                 { user -> chef.userInfoFunction(poolId, user) }
             ),

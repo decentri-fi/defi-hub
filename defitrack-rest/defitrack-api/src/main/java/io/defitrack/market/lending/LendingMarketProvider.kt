@@ -2,7 +2,7 @@ package io.defitrack.market.lending
 
 import io.defitrack.invest.MarketProvider
 import io.defitrack.market.farming.domain.InvestmentPreparer
-import io.defitrack.market.lending.domain.BalanceFetcher
+import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.token.FungibleToken
 import java.math.BigDecimal
@@ -16,7 +16,7 @@ abstract class LendingMarketProvider : MarketProvider<LendingMarket>() {
         poolType: String,
         marketSize: BigDecimal? = null,
         rate: BigDecimal? = null,
-        balanceFetcher: BalanceFetcher? = null,
+        positionFetcher: PositionFetcher? = null,
         investmentPreparer: InvestmentPreparer? = null
     ): LendingMarket {
         return LendingMarket(
@@ -28,7 +28,7 @@ abstract class LendingMarketProvider : MarketProvider<LendingMarket>() {
             marketSize = marketSize,
             rate = rate,
             poolType = poolType,
-            balanceFetcher = balanceFetcher,
+            positionFetcher = positionFetcher,
             investmentPreparer = investmentPreparer
         )
     }

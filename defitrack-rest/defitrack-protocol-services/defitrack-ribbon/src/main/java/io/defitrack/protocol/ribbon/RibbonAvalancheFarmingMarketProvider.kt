@@ -6,7 +6,7 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.market.farming.domain.FarmingPositionFetcher
+import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.FarmType
@@ -48,7 +48,7 @@ class RibbonAvalancheFarmingMarketProvider(
                         stakedToken.type
                     )
                 ).toBigDecimal(),
-                balanceFetcher = FarmingPositionFetcher(
+                balanceFetcher = PositionFetcher(
                     it.id,
                     { user -> vault.balanceOfMethod(user) }
                 ),

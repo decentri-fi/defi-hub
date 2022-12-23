@@ -15,16 +15,16 @@ abstract class DefaultLendingPositionService(
     override suspend fun getLendings(address: String): List<LendingPosition> {
 
         val markets = lendingMarketProvider.getMarkets().filter {
-            it.balanceFetcher != null
+            it.positionFetcher != null
         }
 
         return gateway.getGateway(getNetwork()).readMultiCall(
             markets.map {
-                it.balanceFetcher!!.toMulticall(address)
+                it.positionFetcher!!.toMulticall(address)
             }
         ).mapIndexed { index, retVal ->
             val market = markets[index]
-            val balance = market.balanceFetcher!!.extractBalance(retVal)
+            val balance = market.positionFetcher!!.extractBalance(retVal)
 
             if (balance > BigInteger.ZERO) {
                 LendingPosition(

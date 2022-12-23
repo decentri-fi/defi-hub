@@ -6,7 +6,7 @@ import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.market.farming.domain.FarmingPositionFetcher
+import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.FarmType
@@ -61,7 +61,7 @@ class QuickswapDualFarmingMarketProvider(
                         vaultType = "quickswap-dual-reward-pool",
                         marketSize = getMarketSize(stakedToken, pool),
                         apr = getApr(pool, stakedToken),
-                        balanceFetcher = FarmingPositionFetcher(
+                        balanceFetcher = PositionFetcher(
                             pool.address,
                             { user -> pool.balanceOfMethod(user) }
                         ),

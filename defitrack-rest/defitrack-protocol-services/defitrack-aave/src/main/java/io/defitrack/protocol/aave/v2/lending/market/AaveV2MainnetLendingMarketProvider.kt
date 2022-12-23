@@ -6,7 +6,7 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.lending.LendingMarketProvider
-import io.defitrack.market.lending.domain.BalanceFetcher
+import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
@@ -66,7 +66,7 @@ class AaveV2MainnetLendingMarketProvider(
                                 erC20Resource
                             ),
                             rate = it.lendingRate.toBigDecimal(),
-                            balanceFetcher = BalanceFetcher(
+                            positionFetcher = PositionFetcher(
                                 aToken.address,
                                 { user ->
                                     erC20Resource.balanceOfFunction(aToken.address, user, getNetwork())

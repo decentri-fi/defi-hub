@@ -12,7 +12,7 @@ class DefaultPoolingPositionProvider(
 ) : PoolingPositionProvider() {
     override suspend fun fetchUserPoolings(address: String): List<PoolingPosition> {
         return poolingMarketProviders.flatMap { provider ->
-            val markets = provider.getMarkets().filter { it.balanceFetcher != null }
+            val markets = provider.getMarkets().filter { it.positionFetcher != null }
 
             if (markets.isEmpty()) {
                 return emptyList()
@@ -20,11 +20,11 @@ class DefaultPoolingPositionProvider(
 
             gateway.getGateway(provider.getNetwork()).readMultiCall(
                 markets.map { market ->
-                    market.balanceFetcher!!.toMulticall(address)
+                    market.positionFetcher!!.toMulticall(address)
                 }
             ).mapIndexed { index, retVal ->
                 val market = markets[index]
-                val balance = market.balanceFetcher!!.extractBalance(retVal)
+                val balance = market.positionFetcher!!.extractBalance(retVal)
 
                 if (balance > BigInteger.ONE) {
                     PoolingPosition(

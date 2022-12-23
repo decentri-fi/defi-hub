@@ -6,7 +6,7 @@ import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.market.farming.domain.FarmingPositionFetcher
+import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.FarmType
@@ -65,7 +65,7 @@ abstract class BeefyFarmingMarketProvider(
                 ),
                 marketSize = getMarketSize(want, contract),
                 vaultType = "beefyVaultV6",
-                balanceFetcher = FarmingPositionFetcher(
+                balanceFetcher = PositionFetcher(
                     contract.address,
                     { user -> contract.balanceOfMethod(user) },
                     extractBalance = { result ->

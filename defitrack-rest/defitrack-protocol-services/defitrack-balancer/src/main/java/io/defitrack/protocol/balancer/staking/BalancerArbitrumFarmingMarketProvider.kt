@@ -6,7 +6,7 @@ import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.market.farming.domain.FarmingPositionFetcher
+import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerGaugeContract
@@ -51,7 +51,7 @@ class BalancerArbitrumFarmingMarketProvider(
                             reward.toFungibleToken()
                         },
                         vaultType = "balancerGauge",
-                        balanceFetcher = FarmingPositionFetcher(
+                        balanceFetcher = PositionFetcher(
                             gauge.address,
                             { user -> gauge.balanceOfMethod(user) }
                         ),

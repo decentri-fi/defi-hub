@@ -3,11 +3,13 @@ package io.defitrack.market.farming
 import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.invest.MarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.market.farming.domain.FarmingPositionFetcher
 import io.defitrack.market.farming.domain.InvestmentPreparer
+import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.FarmType
+import io.defitrack.token.ERC20Resource
 import io.defitrack.token.FungibleToken
 import java.math.BigDecimal
+import java.math.BigInteger
 
 abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>() {
 
@@ -19,7 +21,7 @@ abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>() {
         vaultType: String,
         marketSize: BigDecimal? = null,
         apr: BigDecimal? = null,
-        balanceFetcher: FarmingPositionFetcher? = null,
+        balanceFetcher: PositionFetcher? = null,
         claimableRewardFetcher: ClaimableRewardFetcher? = null,
         investmentPreparer: InvestmentPreparer? = null,
         farmType: FarmType,
@@ -40,6 +42,18 @@ abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>() {
             investmentPreparer = investmentPreparer,
             claimableRewardFetcher = claimableRewardFetcher,
             metadata = metadata
+        )
+    }
+
+    fun defaultBalanceFetcher(erc20Resource: ERC20Resource, address: String): PositionFetcher {
+        return PositionFetcher(
+            address,
+            { user ->
+                erc20Resource.balanceOfFunction(address, user, getNetwork())
+            },
+            { retVal ->
+                retVal[0].value as BigInteger
+            }
         )
     }
 }

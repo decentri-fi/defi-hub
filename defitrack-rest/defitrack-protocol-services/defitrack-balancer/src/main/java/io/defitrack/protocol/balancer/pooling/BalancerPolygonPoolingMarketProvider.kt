@@ -34,7 +34,7 @@ class BalancerPolygonPoolingMarketProvider(
                     apr = BigDecimal.ZERO,
                     marketSize = it.totalLiquidity,
                     tokenType = TokenType.BALANCER,
-                    balanceFetcher = defaultBalanceFetcher(it.address)
+                    positionFetcher = defaultBalanceFetcher(it.address)
                 )
             } else {
                 null

@@ -6,7 +6,7 @@ import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.lending.LendingMarketProvider
-import io.defitrack.market.lending.domain.BalanceFetcher
+import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
@@ -74,7 +74,7 @@ class CompoundLendingMarketProvider(
                         )
                     ).toBigDecimal(),
                     poolType = "compound-lendingpool",
-                    balanceFetcher = BalanceFetcher(
+                    positionFetcher = PositionFetcher(
                         ctokenContract.address,
                         { user -> ctokenContract.balanceOfMethod(user) },
                         { retVal ->

@@ -40,7 +40,7 @@ class UniswapEthereumPoolingMarketProvider(
                         apr = uniswapAPRService.getAPR(it.id, getNetwork()),
                         marketSize = it.reserveUSD,
                         tokenType = TokenType.UNISWAP,
-                        balanceFetcher = defaultBalanceFetcher(token.address)
+                        positionFetcher = defaultBalanceFetcher(token.address)
                     )
                 } catch (ex: Exception) {
                     logger.error("something went wrong trying to import uniswap market ${it.id}")

@@ -57,7 +57,7 @@ class QuickswapPoolingMarketProvider(
             apr = quickswapAPRService.getLPAPR(it.id),
             marketSize = it.reserveUSD,
             tokenType = TokenType.QUICKSWAP,
-            balanceFetcher = defaultBalanceFetcher(token.address)
+            positionFetcher = defaultBalanceFetcher(token.address)
         )
     }
 
