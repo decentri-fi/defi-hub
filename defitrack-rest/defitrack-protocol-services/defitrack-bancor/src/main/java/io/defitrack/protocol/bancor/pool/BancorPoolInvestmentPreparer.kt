@@ -21,14 +21,7 @@ class BancorPoolInvestmentPreparer(
         return coroutineScope {
             async {
                 val requiredBalance = getInvestmentAmount(prepareInvestmentCommand)
-
-                prepareInvestmentCommand.amount?.let { amount ->
-                    PreparedTransaction(
-                        function = bancorNetworkContract.depositFunction(underlyingToken, amount),
-                        to = getEntryContract(),
-                        network = bancorNetworkContract.blockchainGateway.network.toVO()
-                    )
-                } ?: PreparedTransaction(
+                PreparedTransaction(
                     function = bancorNetworkContract.depositFunction(underlyingToken, requiredBalance),
                     to = getEntryContract(),
                     network = bancorNetworkContract.blockchainGateway.network.toVO()

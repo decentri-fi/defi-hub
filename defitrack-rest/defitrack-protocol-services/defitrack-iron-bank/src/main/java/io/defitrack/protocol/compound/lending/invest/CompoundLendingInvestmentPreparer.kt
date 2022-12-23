@@ -32,13 +32,7 @@ class CompoundLendingInvestmentPreparer(
         coroutineScope {
             async {
                 val requiredBalance = getInvestmentAmount(prepareInvestmentCommand)
-                prepareInvestmentCommand.amount?.let { amount ->
-                    PreparedTransaction(
-                        function = iToken.mintFunction(amount),
-                        to = getEntryContract(),
-                        network = iToken.blockchainGateway.network.toVO()
-                    )
-                } ?: PreparedTransaction(
+                PreparedTransaction(
                     function = iToken.mintFunction(requiredBalance),
                     to = getEntryContract(),
                     network = iToken.blockchainGateway.network.toVO()
