@@ -5,6 +5,7 @@ apeswap
 balancer
 bancor
 beefy
+beethovenx
 compound
 convex
 curve

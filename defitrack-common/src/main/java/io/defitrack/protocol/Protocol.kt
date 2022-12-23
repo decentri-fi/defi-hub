@@ -10,6 +10,13 @@ enum class Protocol(
     val enabled: Boolean = true,
     val networks: List<Network>
 ) {
+    BEETHOVENX(
+        logo = "beethoven.svg",
+        slug = "beethoven",
+        website = "https://beets.fi",
+        primitives = listOf(DefiPrimitive.FARMING, DefiPrimitive.POOLING),
+        networks = listOf(Network.FANTOM)
+    ),
     AELIN(
         logo = "aelin.svg",
         slug = "aelin",
