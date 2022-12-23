@@ -31,6 +31,7 @@ abstract class MarketProvider<T> : ProtocolService {
         logger.info("Cache expired, fetching fresh elements")
         fetchMarkets()
     } catch (ex: Exception) {
+        ex.printStackTrace()
         logger.error("Unable to fetch pooling markets: {}", ex.message)
         emptyList()
     }

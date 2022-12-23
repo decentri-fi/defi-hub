@@ -15,7 +15,7 @@ enum class Protocol(
         slug = "aelin",
         website = "https://aelin.xyz",
         primitives = listOf(DefiPrimitive.FARMING),
-        networks = listOf(Network.ETHEREUM)
+        networks = listOf(Network.OPTIMISM)
     ),
     BANCOR(
         logo = "bancor.png",
