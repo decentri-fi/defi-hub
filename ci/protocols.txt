@@ -15,6 +15,7 @@ hop
 humandao
 idex
 makerdao
+maplefinance
 mstable
 polycat
 polygon-protocol
