@@ -15,6 +15,7 @@
     <modules>
         <module>protocol-dependencies</module>
         <module>protocol</module>
+        <module>aelin</module>
         <module>adamant</module>
         <module>bancor</module>
         <module>dinoswap</module>
