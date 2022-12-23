@@ -23,10 +23,7 @@ class QuickswapPoolingMarketProvider(
 ) : PoolingMarketProvider(erC20Resource) {
 
     override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
-        quickswapService.getPairs()
-            .filter {
-                it.reserveUSD > BigDecimal.valueOf(100000)
-            }.map {
+        quickswapService.getPairs().map {
                 async {
                     try {
                         toPoolingMarket(it)
@@ -38,10 +35,12 @@ class QuickswapPoolingMarketProvider(
             }.awaitAll().filterNotNull()
     }
 
-    private suspend fun toPoolingMarket(it: QuickswapPair): PoolingMarket {
-        val token = erc20Resource.getTokenInformation(getNetwork(), it.id)
+    private suspend fun toPoolingMarket(it: QuickswapPair): PoolingMarket? {
         val token0 = erc20Resource.getTokenInformation(getNetwork(), it.token0.id)
         val token1 = erc20Resource.getTokenInformation(getNetwork(), it.token1.id)
+        if(token0.symbol == "UNKWN" || token1.symbol == "UNKWN") return null
+
+        val token = erc20Resource.getTokenInformation(getNetwork(), it.id)
 
         return PoolingMarket(
             network = getNetwork(),
