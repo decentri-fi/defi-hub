@@ -17,7 +17,6 @@ class TheGraphGateway(
     private val baseUrl: String
 ) {
 
-
     suspend fun performQuery(query: String): JsonElement {
         val response = query(query)
         return JsonParser.parseString(response).asJsonObject["data"]
@@ -25,6 +24,7 @@ class TheGraphGateway(
 
     private suspend fun query(query: String): String = withContext(Dispatchers.IO){
         val response: String = httpClient.post(baseUrl) {
+
             headers {
                 append("Content-Type", "application/json")
             }
