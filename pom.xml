@@ -37,7 +37,7 @@
         <coroutines.version>1.6.3</coroutines.version>
         <ktor.version>2.0.2</ktor.version>
         <kotlin-retry.version>1.0.9</kotlin-retry.version>
-        <cache4k.version>0.6.0</cache4k.version>
+        <cache4k.version>0.5.0</cache4k.version>
         <gson.version>2.9.0</gson.version>
     </properties>
 
