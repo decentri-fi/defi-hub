@@ -46,6 +46,7 @@
         <module>beefy</module>
         <module>balancer</module>
         <module>set</module>
+        <module>wepiggy</module>
     </modules>
 
     <dependencyManagement>

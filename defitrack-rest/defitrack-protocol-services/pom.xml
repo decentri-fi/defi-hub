@@ -47,6 +47,7 @@
         <module>defitrack-uniswap</module>
         <module>defitrack-yearn</module>
         <module>defitrack-set</module>
+        <module>defitrack-wepiggy</module>
         <module>defitrack-protocol-service</module>
     </modules>
 

@@ -17,6 +17,13 @@ enum class Protocol(
         primitives = listOf(DefiPrimitive.FARMING, DefiPrimitive.POOLING),
         networks = listOf(Network.FANTOM)
     ),
+    WEPIGGY(
+        logo = "wepiggy.png",
+        slug = "wepiggy",
+        website = "https://wepiggy.com",
+        primitives = listOf(DefiPrimitive.LENDING),
+        networks = listOf(Network.POLYGON)
+    ),
     AELIN(
         logo = "aelin.jpeg",
         slug = "aelin",
