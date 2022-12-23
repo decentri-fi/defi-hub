@@ -2,7 +2,7 @@ package io.defitrack.humandao.distribution.contract
 
 import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.BlockchainGateway.Companion.toUint256
+import io.defitrack.abi.TypeUtils.Companion.toUint256
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Bool
 import java.math.BigInteger

@@ -1,8 +1,8 @@
 package io.defitrack.evm.contract
 
-import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
-import io.defitrack.evm.contract.BlockchainGateway.Companion.toUint256
-import io.defitrack.evm.contract.BlockchainGateway.Companion.uint256
+import io.defitrack.abi.TypeUtils.Companion.toAddress
+import io.defitrack.abi.TypeUtils.Companion.toUint256
+import io.defitrack.abi.TypeUtils.Companion.uint256
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.web3j.abi.TypeReference

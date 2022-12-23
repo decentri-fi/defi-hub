@@ -21,6 +21,8 @@
         <module>defitrack-price</module>
         <module>defitrack-protocol-services</module>
         <module>defitrack-blockchain-services</module>
+        <module>defitrack-statistics</module>
+        <module>defitrack-events</module>
     </modules>
 
     <dependencyManagement>

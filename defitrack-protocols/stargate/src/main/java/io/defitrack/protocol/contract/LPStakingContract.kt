@@ -1,7 +1,7 @@
 package io.defitrack.protocol.contract
 
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.BlockchainGateway.Companion.toUint256
+import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import org.web3j.abi.TypeReference

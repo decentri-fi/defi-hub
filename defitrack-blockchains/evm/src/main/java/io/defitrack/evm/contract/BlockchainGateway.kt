@@ -4,6 +4,8 @@ import com.github.michaelbull.retry.policy.binaryExponentialBackoff
 import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.policy.plus
 import com.github.michaelbull.retry.retry
+import io.defitrack.abi.TypeUtils.Companion.toAddress
+import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.evm.abi.AbiDecoder
@@ -176,15 +178,6 @@ open class BlockchainGateway(
             )
         }
 
-        fun String.decodeAsFunctionResponse(outputs: List<String>): List<Type<Any>>? {
-            return FunctionReturnDecoder.decode(
-                this,
-                Utils.convert(outputs.map {
-                    it.toTypeReference()
-                })
-            )
-        }
-
         fun fromDataTypes(type: String, indexed: Boolean): TypeReference<out Type<*>>? {
             return try {
                 when (type) {
@@ -234,54 +227,6 @@ open class BlockchainGateway(
             }
         }
 
-        fun BigInteger.toUint256(): Uint256 {
-            return Uint256(this)
-        }
-
-        fun BigInteger.toUint8(): Uint8 {
-            return Uint8(this)
-        }
-
-        fun BigInteger.toUint16(): Uint16 {
-            return Uint16(this)
-        }
-
-        fun BigInteger.Int128(): Int128 {
-            return Int128(this)
-        }
-
-        fun BigInteger.toInt128(): Int128 {
-            return Int128(this)
-        }
-
-        fun String.toTypeReference(): TypeReference<out Type<*>>? {
-            return fromDataTypes(this, false)
-        }
-
-        fun uint256(): TypeReference<Uint256> {
-            return TypeReference.create(Uint256::class.java)
-        }
-
-        fun address(): TypeReference<Address> {
-            return TypeReference.create(Address::class.java)
-        }
-
-        fun uint40(): TypeReference<Uint40> {
-            return TypeReference.create(Uint40::class.java)
-        }
-
-
-        fun bool(): TypeReference<Bool> {
-            return TypeReference.create(Bool::class.java)
-        }
-
-        fun String.toAddress(): Address {
-            return Address(this)
-        }
-
-        fun Boolean.toBool(): Bool {
-            return Bool(this)
-        }
 
         val MAX_UINT256 = BigInteger.TWO.pow(64).minus(BigInteger.ONE).toUint256()
     }

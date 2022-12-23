@@ -1,14 +1,14 @@
 package io.defitrack.protocol.aave.v3.contract
 
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.BlockchainGateway.Companion.address
-import io.defitrack.evm.contract.BlockchainGateway.Companion.toAddress
-import io.defitrack.evm.contract.BlockchainGateway.Companion.uint256
-import io.defitrack.evm.contract.BlockchainGateway.Companion.uint40
+import io.defitrack.abi.TypeUtils.Companion.toAddress
+import io.defitrack.abi.TypeUtils.Companion.uint256
+import io.defitrack.abi.TypeUtils.Companion.uint40
 import io.defitrack.evm.contract.EvmContract
 import io.defitrack.protocol.aave.v3.domain.ReserveData
 import io.defitrack.protocol.aave.v3.domain.ReserveTokenAddresses
 import java.math.BigInteger
+import io.defitrack.abi.TypeUtils.Companion.address
 
 class PoolDataProvider(
     blockchainGateway: BlockchainGateway,
