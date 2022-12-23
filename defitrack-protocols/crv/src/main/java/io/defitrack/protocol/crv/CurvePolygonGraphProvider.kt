@@ -10,6 +10,13 @@ class CurvePolygonGraphProvider(
     graphGatewayProvider: TheGraphGatewayProvider
 ) : GraphProvider("https://api.thegraph.com/subgraphs/name/gvladika/curve-polygon", graphGatewayProvider) {
 
+    suspend fun getPool(id: String) : LPToken? {
+        val query = """
+          
+        """.trimIndent()
+        return query(query, "lptoken")
+    }
+
     suspend fun getPools(): List<LPToken> {
         val query = """
             {

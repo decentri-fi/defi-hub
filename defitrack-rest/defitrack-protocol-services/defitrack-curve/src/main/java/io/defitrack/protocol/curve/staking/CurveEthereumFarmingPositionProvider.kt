@@ -3,7 +3,7 @@ package io.defitrack.protocol.curve.staking
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.crv.CurveEthereumService
+import io.defitrack.protocol.crv.CurveEthereumGraphProvider
 import io.defitrack.market.farming.FarmingPositionProvider
 import io.defitrack.market.farming.domain.FarmingPosition
 import io.defitrack.token.ERC20Resource
@@ -14,7 +14,7 @@ import java.math.BigInteger
 
 @Service
 class CurveEthereumFarmingPositionProvider(
-    private val curveEthereumService: CurveEthereumService,
+    private val curveEthereumGraphProvider: CurveEthereumGraphProvider,
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
     erC20Resource: ERC20Resource,
 ) : FarmingPositionProvider(erC20Resource) {
@@ -22,7 +22,7 @@ class CurveEthereumFarmingPositionProvider(
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     override suspend fun getStakings(address: String): List<FarmingPosition> {
-        val gauges = curveEthereumService.getGauges().filter {
+        val gauges = curveEthereumGraphProvider.getGauges().filter {
             it.pool != null
         }
 

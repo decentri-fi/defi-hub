@@ -8,9 +8,14 @@ class LPToken(
     val token: Token
 ) {
 
-    class Pool(val coins: List<Coin>, val balances: List<BigInteger>)
+    class Pool(val coins: List<Coin>)
 
-    class Token(val id: String)
+    class Token(
+        val id: String,
+        val name: String,
+        val symbol: String,
+        val decimals: Int
+    )
 
     class Coin(
         val id: String,
