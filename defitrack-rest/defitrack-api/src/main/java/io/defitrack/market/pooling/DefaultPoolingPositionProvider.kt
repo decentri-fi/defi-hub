@@ -1,22 +1,21 @@
-package io.defitrack.market.farming
+package io.defitrack.market.pooling
 
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.market.farming.domain.FarmingPosition
-import io.defitrack.token.ERC20Resource
+import io.defitrack.market.pooling.domain.PoolingPosition
 import org.springframework.stereotype.Service
 import java.math.BigInteger
 
 @Service
-class DefaultFarmingPositionProvider(
-    erC20Resource: ERC20Resource,
-    val farmingMarketProvider: List<FarmingMarketProvider>,
-    val gateway: BlockchainGatewayProvider
-) : FarmingPositionProvider(erC20Resource) {
-    override suspend fun getStakings(address: String): List<FarmingPosition> {
-        return farmingMarketProvider.flatMap { provider ->
+class DefaultPoolingPositionProvider(
+    private val poolingMarketProviders: List<PoolingMarketProvider>,
+    private val gateway: BlockchainGatewayProvider,
+) : PoolingPositionProvider() {
+    override suspend fun fetchUserPoolings(address: String): List<PoolingPosition> {
+        return poolingMarketProviders.flatMap { provider ->
             val markets = provider.getMarkets().filter { it.balanceFetcher != null }
+
             if (markets.isEmpty()) {
-                return@flatMap emptyList()
+                return emptyList()
             }
 
             gateway.getGateway(provider.getNetwork()).readMultiCall(
@@ -28,9 +27,9 @@ class DefaultFarmingPositionProvider(
                 val balance = market.balanceFetcher!!.extractBalance(retVal)
 
                 if (balance > BigInteger.ONE) {
-                    FarmingPosition(
-                        market,
+                    PoolingPosition(
                         balance,
+                        market,
                     )
                 } else {
                     null

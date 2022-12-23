@@ -6,7 +6,6 @@ import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -14,14 +13,14 @@ import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
 @Component
-class IdexPoolingMarketService(
+class IdexPoolingMarketProvider(
     private val idexService: IdexService,
-    private val erc20Resource: ERC20Resource
-) : PoolingMarketProvider() {
+    erc20Resource: ERC20Resource
+) : PoolingMarketProvider(erc20Resource) {
 
     override suspend fun fetchMarkets() = coroutineScope {
         idexService.getLPs().map {
-            async(Dispatchers.IO.limitedParallelism(10)) {
+            async {
                 try {
                     if (it.reserveUsd > BigDecimal.valueOf(10000)) {
                         try {
@@ -42,7 +41,8 @@ class IdexPoolingMarketService(
                                 ),
                                 apr = BigDecimal.ZERO,
                                 marketSize = it.reserveUsd,
-                                tokenType = TokenType.IDEX
+                                tokenType = TokenType.IDEX,
+                                balanceFetcher = defaultBalanceFetcher(token.address)
                             )
                         } catch (ex: Exception) {
                             logger.error("something went wrong while importing ${it.liquidityToken}", ex)

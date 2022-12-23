@@ -12,5 +12,4 @@ class PoolingPositionVO(
     val protocol: ProtocolVO,
     val dollarValue: Double,
     val id: String,
-    val market: PoolingMarketVO
 )

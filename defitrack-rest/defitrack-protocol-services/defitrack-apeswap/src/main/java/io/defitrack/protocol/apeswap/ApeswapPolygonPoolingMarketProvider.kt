@@ -14,14 +14,14 @@ import org.springframework.stereotype.Component
 @Component
 class ApeswapPolygonPoolingMarketProvider(
     private val apeswapPolygonGraphProvider: ApeswapPolygonGraphProvider,
-    private val erC20Resource: ERC20Resource
-) : PoolingMarketProvider() {
+    erC20Resource: ERC20Resource
+) : PoolingMarketProvider(erC20Resource) {
 
     override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
         apeswapPolygonGraphProvider.getPools().map { pool ->
             async {
                 try {
-                    val liquidityToken = erC20Resource.getTokenInformation(getNetwork(), pool.id)
+                    val liquidityToken = getToken(pool.id)
                     PoolingMarket(
                         id = "ape-polygon-${pool.id}",
                         network = getNetwork(),
@@ -31,6 +31,7 @@ class ApeswapPolygonPoolingMarketProvider(
                         symbol = liquidityToken.symbol,
                         tokens = liquidityToken.underlyingTokens.map { it.toFungibleToken() },
                         tokenType = TokenType.APE,
+                        balanceFetcher = defaultBalanceFetcher(liquidityToken.address)
                     )
                 } catch (ex: Exception) {
                     null

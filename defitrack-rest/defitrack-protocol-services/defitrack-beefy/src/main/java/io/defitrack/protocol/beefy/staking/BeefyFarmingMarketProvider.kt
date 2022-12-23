@@ -67,10 +67,6 @@ abstract class BeefyFarmingMarketProvider(
                 vaultType = "beefyVaultV6",
                 balanceFetcher = FarmingPositionFetcher(
                     contract.address,
-                    { user -> contract.balanceOfMethod(user) }
-                ),
-                underlyingBalanceFetcher = FarmingPositionFetcher(
-                    contract.address,
                     { user -> contract.balanceOfMethod(user) },
                     extractBalance = { result ->
                         ((result[0].value as BigInteger).times(pricePerFullShare)).dividePrecisely(

@@ -16,19 +16,20 @@ import java.math.BigDecimal
 
 class CurvePoolingMarketProvider(
     private val curvePoolGraphProvider: CurvePoolGraphProvider,
-    private val erc20Resource: ERC20Resource,
-    private val marketSizeService: MarketSizeService
-) : PoolingMarketProvider() {
+    private val marketSizeService: MarketSizeService,
+    erc20Resource: ERC20Resource,
+) : PoolingMarketProvider(erc20Resource) {
+
     override suspend fun fetchMarkets(): List<PoolingMarket> =
         coroutineScope {
             curvePoolGraphProvider.getPools().map { pool ->
                 async {
                     try {
                         val tokens = pool.coins.map { coin ->
-                            erc20Resource.getTokenInformation(getNetwork(), coin)
+                            getToken(coin)
                         }.map { it.toFungibleToken() }
 
-                        val lpToken = erc20Resource.getTokenInformation(getNetwork(), pool.address)
+                        val lpToken = getToken(pool.address)
 
                         PoolingMarket(
                             id = "curve-${getNetwork().slug}-${pool.lpToken}",
@@ -40,7 +41,8 @@ class CurvePoolingMarketProvider(
                             tokens = tokens,
                             apr = BigDecimal.ZERO,
                             marketSize = calculateMarketSize(tokens, lpToken.address),
-                            tokenType = TokenType.CURVE
+                            tokenType = TokenType.CURVE,
+                            balanceFetcher = defaultBalanceFetcher(lpToken.address)
                         )
                     } catch (ex: Exception) {
                         ex.printStackTrace()

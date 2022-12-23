@@ -13,7 +13,6 @@ import io.defitrack.protocol.contract.HopSwapContract
 import io.defitrack.protocol.domain.HopLpToken
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -27,15 +26,15 @@ class HopPolygonPoolingMarketService(
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val abiResource: ABIResource,
     private val priceResource: PriceResource,
-    private val erC20Resource: ERC20Resource,
-) : PoolingMarketProvider() {
+    erC20Resource: ERC20Resource,
+) : PoolingMarketProvider(erC20Resource) {
 
 
     override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
         val gateway = blockchainGatewayProvider.getGateway(getNetwork())
 
         hopService.getLps(getNetwork()).map { hopLpToken ->
-            async(Dispatchers.IO.limitedParallelism(10)) {
+            async {
                 toPoolingMarketElement(gateway, hopLpToken)
             }
         }.awaitAll().filterNotNull()
@@ -58,8 +57,8 @@ class HopPolygonPoolingMarketService(
                 contract.swap()
             )
 
-            val htoken = erC20Resource.getTokenInformation(getNetwork(), hopLpToken.hToken)
-            val canonical = erC20Resource.getTokenInformation(getNetwork(), hopLpToken.canonicalToken)
+            val htoken = erc20Resource.getTokenInformation(getNetwork(), hopLpToken.hToken)
+            val canonical = erc20Resource.getTokenInformation(getNetwork(), hopLpToken.canonicalToken)
 
             val marketSize = getPrice(canonical.address, contract, swapContract).toBigDecimal()
             PoolingMarket(
@@ -81,7 +80,8 @@ class HopPolygonPoolingMarketService(
                     getNetwork(),
                     marketSize
                 ),
-                tokenType = TokenType.HOP
+                tokenType = TokenType.HOP,
+                balanceFetcher = defaultBalanceFetcher(hopLpToken.lpToken)
             )
         } catch (ex: Exception) {
             ex.printStackTrace()

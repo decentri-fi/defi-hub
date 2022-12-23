@@ -22,7 +22,6 @@ abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>() {
         balanceFetcher: FarmingPositionFetcher? = null,
         claimableRewardFetcher: ClaimableRewardFetcher? = null,
         investmentPreparer: InvestmentPreparer? = null,
-        underlyingBalanceFetcher: FarmingPositionFetcher? = null,
         farmType: FarmType
     ): FarmingMarket {
         return FarmingMarket(
@@ -38,7 +37,6 @@ abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>() {
             farmType = farmType,
             balanceFetcher = balanceFetcher,
             investmentPreparer = investmentPreparer,
-            underlyingBalanceFetcher = underlyingBalanceFetcher,
             claimableRewardFetcher = claimableRewardFetcher
         )
     }

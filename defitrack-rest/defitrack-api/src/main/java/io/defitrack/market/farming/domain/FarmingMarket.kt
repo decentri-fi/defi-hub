@@ -8,7 +8,6 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.token.FungibleToken
 import java.math.BigDecimal
 
-
 data class FarmingMarket(
     val id: String,
     val network: Network,
@@ -21,7 +20,6 @@ data class FarmingMarket(
     val apr: BigDecimal? = null,
     val farmType: FarmType,
     val balanceFetcher: FarmingPositionFetcher? = null,
-    val underlyingBalanceFetcher: FarmingPositionFetcher? = null,
     val investmentPreparer: InvestmentPreparer? = null,
     val claimableRewardFetcher: ClaimableRewardFetcher? = null
 ) : DefiMarket

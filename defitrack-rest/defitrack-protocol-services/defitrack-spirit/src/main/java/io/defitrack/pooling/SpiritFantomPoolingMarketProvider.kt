@@ -12,11 +12,11 @@ import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
 @Component
-class SpiritFantomPoolingMarketService(
+class SpiritFantomPoolingMarketProvider(
     private val spiritswapServices: List<SpiritswapService>,
     private val spiritswapAPRService: SpiritswapAPRService,
-    private val erC20Resource: ERC20Resource,
-) : PoolingMarketProvider() {
+    erC20Resource: ERC20Resource,
+) : PoolingMarketProvider(erC20Resource) {
 
     override suspend fun fetchMarkets() = spiritswapServices.filter {
         it.getNetwork() == getNetwork()
@@ -27,9 +27,9 @@ class SpiritFantomPoolingMarketService(
             }
             .map {
 
-                val token = erC20Resource.getTokenInformation(getNetwork(), it.id)
-                val token0 = erC20Resource.getTokenInformation(getNetwork(), it.token0.id)
-                val token1 = erC20Resource.getTokenInformation(getNetwork(), it.token1.id)
+                val token = erc20Resource.getTokenInformation(getNetwork(), it.id)
+                val token0 = erc20Resource.getTokenInformation(getNetwork(), it.token0.id)
+                val token1 = erc20Resource.getTokenInformation(getNetwork(), it.token1.id)
 
                 PoolingMarket(
                     network = service.getNetwork(),
@@ -44,7 +44,8 @@ class SpiritFantomPoolingMarketService(
                     apr = spiritswapAPRService.getAPR(it.id, service.getNetwork()),
                     id = "spirit-fantom-${it.id}",
                     marketSize = it.reserveUSD,
-                    tokenType = TokenType.SPIRIT
+                    tokenType = TokenType.SPIRIT,
+                    balanceFetcher = defaultBalanceFetcher(token.address)
                 )
             }
     }

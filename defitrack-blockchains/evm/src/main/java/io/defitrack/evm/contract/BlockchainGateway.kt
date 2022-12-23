@@ -55,6 +55,10 @@ open class BlockchainGateway(
     }
 
     open suspend fun readMultiCall(elements: List<MultiCallElement>): List<List<Type<*>>> {
+        if (elements.isEmpty()) {
+            return kotlin.collections.emptyList()
+        }
+
         val encodedFunctions = elements.map {
             DynamicStruct(
                 it.address.toAddress(),

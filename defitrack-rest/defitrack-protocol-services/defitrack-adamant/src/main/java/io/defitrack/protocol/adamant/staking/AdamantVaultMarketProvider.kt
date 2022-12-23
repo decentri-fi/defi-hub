@@ -36,7 +36,7 @@ class AdamantVaultMarketProvider(
 
 
     override suspend fun fetchMarkets(): List<FarmingMarket> =
-        withContext(Dispatchers.IO.limitedParallelism(10)) {
+        coroutineScope {
             adamantService.adamantGenericVaults().map {
                 AdamantVaultContract(
                     blockchainGatewayProvider.getGateway(getNetwork()),

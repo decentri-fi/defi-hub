@@ -5,14 +5,17 @@ import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.polygon.BalancerPolygonPoolGraphProvider
+import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 
 @Service
-class BalancerPolygonPoolingMarketService(private val balancerPolygonPoolGraphProvider: BalancerPolygonPoolGraphProvider) :
-    PoolingMarketProvider() {
-
+class BalancerPolygonPoolingMarketProvider(
+    private val balancerPolygonPoolGraphProvider: BalancerPolygonPoolGraphProvider,
+    erC20Resource: ERC20Resource,
+) :
+    PoolingMarketProvider(erC20Resource) {
     override suspend fun fetchMarkets(): List<PoolingMarket> {
         return balancerPolygonPoolGraphProvider.getPools().mapNotNull {
             if (it.totalLiquidity > BigDecimal.valueOf(100000)) {
@@ -30,7 +33,8 @@ class BalancerPolygonPoolingMarketService(private val balancerPolygonPoolGraphPr
                     symbol = it.symbol,
                     apr = BigDecimal.ZERO,
                     marketSize = it.totalLiquidity,
-                    tokenType = TokenType.BALANCER
+                    tokenType = TokenType.BALANCER,
+                    balanceFetcher = defaultBalanceFetcher(it.address)
                 )
             } else {
                 null

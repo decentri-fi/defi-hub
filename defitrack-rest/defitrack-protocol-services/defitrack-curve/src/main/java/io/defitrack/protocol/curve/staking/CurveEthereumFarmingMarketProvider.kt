@@ -9,10 +9,9 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.crv.CurveEthereumGaugeGraphProvider
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.MarketSizeService
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Service
 
 @Service
@@ -23,7 +22,7 @@ class CurveEthereumFarmingMarketProvider(
 ) : FarmingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<FarmingMarket> =
-        withContext(Dispatchers.IO.limitedParallelism(10)) {
+        coroutineScope {
             curveEthereumGaugeGraphProvider.getGauges()
                 .filter { it.pool != null }
                 .map { gauge ->
@@ -43,7 +42,7 @@ class CurveEthereumFarmingMarketProvider(
                                     stakedToken.toFungibleToken(), gauge.address, getNetwork()
                                 ),
                                 farmType = FarmType.LIQUIDITY_MINING,
-                                underlyingBalanceFetcher = FarmingPositionFetcher(
+                                balanceFetcher = FarmingPositionFetcher(
                                     gauge.address,
                                     { user ->
                                         erC20Resource.balanceOfFunction(gauge.address, user, getNetwork())

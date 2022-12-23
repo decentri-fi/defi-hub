@@ -1,12 +1,13 @@
 package io.defitrack.market.pooling
 
-import io.defitrack.network.toVO
-import io.defitrack.market.pooling.domain.PoolingElement
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.market.pooling.domain.PoolingPosition
 import io.defitrack.market.pooling.vo.PoolingPositionVO
-import io.defitrack.market.pooling.vo.PoolingMarketVO.Companion.toVO
+import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.toVO
+import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
@@ -21,7 +22,8 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/pooling")
 class DefaultUserPoolingRestController(
     private val poolingPositionProviders: List<PoolingPositionProvider>,
-    private val priceResource: PriceResource
+    private val priceResource: PriceResource,
+    private val erC20Resource: ERC20Resource
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -44,24 +46,24 @@ class DefaultUserPoolingRestController(
         }
     }
 
-    suspend fun PoolingElement.toVO(): PoolingPositionVO {
+    suspend fun PoolingPosition.toVO(): PoolingPositionVO {
+        val lpToken = erC20Resource.getTokenInformation(market.network, market.address)
         return PoolingPositionVO(
-            lpAddress = lpAddress,
+            lpAddress = market.address,
             amount = amount.toDouble(),
-            name = name,
+            name = market.name,
             dollarValue = priceResource.calculatePrice(
                 PriceRequest(
-                    lpAddress,
-                    network,
-                    amount,
-                    tokenType
+                    market.address,
+                    market.network,
+                    amount.asEth(lpToken.decimals),
+                    lpToken.type
                 )
             ),
-            network = network.toVO(),
-            symbol = symbol,
-            protocol = protocol.toVO(),
-            id = id,
-            market = market.toVO()
+            network = market.network.toVO(),
+            symbol = market.symbol,
+            protocol = market.protocol.toVO(),
+            id = market.id,
         )
     }
 }

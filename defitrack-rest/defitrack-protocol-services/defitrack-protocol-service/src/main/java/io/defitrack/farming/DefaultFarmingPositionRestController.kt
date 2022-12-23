@@ -1,17 +1,13 @@
 package io.defitrack.farming
 
-import com.github.michaelbull.retry.policy.limitAttempts
-import com.github.michaelbull.retry.retry
-import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.market.farming.FarmingPositionProvider
+import io.defitrack.market.farming.domain.FarmingPosition
+import io.defitrack.market.farming.vo.FarmingPositionVO
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.toVO
-import io.defitrack.market.farming.domain.FarmingPosition
-import io.defitrack.market.farming.vo.FarmingPositionVO
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -31,12 +27,8 @@ class DefaultFarmingPositionRestController(
         if (WalletUtils.isValidAddress(address)) {
             stakingServices.flatMap {
                 try {
-                    runBlocking(Dispatchers.IO) {
-                        retry(limitAttempts(3)) {
-                            it.getStakings(address).filter {
-                                it.amount > BigInteger.ZERO
-                            }
-                        }
+                    it.getStakings(address).filter {
+                        it.amount > BigInteger.ZERO
                     }
                 } catch (ex: Exception) {
                     logger.error("Something went wrong trying to fetch the user stakings: ${ex.message}")
@@ -50,22 +42,15 @@ class DefaultFarmingPositionRestController(
         }
     }
 
-    @GetMapping(value = ["/{userAddress}/positions"], params = ["stakingElementId", "network"])
+    @GetMapping(value = ["/{userAddress}/positions"], params = ["stakingElementId"])
     fun getStakingById(
         @PathVariable("userAddress") address: String,
         @RequestParam("stakingElementId") stakingElementId: String,
-        @RequestParam("network") network: Network
     ): FarmingPositionVO? = runBlocking {
         if (WalletUtils.isValidAddress(address)) {
-            stakingServices.filter {
-                it.getNetwork() == network
-            }.firstNotNullOfOrNull {
+            stakingServices.firstNotNullOfOrNull {
                 try {
-                    runBlocking(Dispatchers.IO) {
-                        retry(limitAttempts(3)) {
-                            it.getStaking(address, stakingElementId)
-                        }
-                    }
+                    it.getStaking(address, stakingElementId)
                 } catch (ex: Exception) {
                     logger.error("Something went wrong trying to fetch the user farms: ${ex.message}")
                     null
@@ -78,14 +63,11 @@ class DefaultFarmingPositionRestController(
 
 
     suspend fun FarmingPosition.toVO(): FarmingPositionVO {
-
-        val stakedAmount = underlyingAmount ?: amount
-
         val stakedInDollars = priceResource.calculatePrice(
             PriceRequest(
                 address = market.stakedToken.address,
                 network = market.network,
-                amount = stakedAmount.asEth(market.stakedToken.decimals),
+                amount = amount.asEth(market.stakedToken.decimals),
                 type = market.stakedToken.type
             )
         )
@@ -101,7 +83,6 @@ class DefaultFarmingPositionRestController(
             stakedToken = market.stakedToken,
             rewardTokens = market.rewardTokens,
             amount = amount.asEth(market.stakedToken.decimals).toDouble(),
-            underlyingAmount = underlyingAmount?.asEth(market.stakedToken.decimals)?.toDouble()
         )
     }
 

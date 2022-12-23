@@ -11,11 +11,11 @@ import io.defitrack.uniswap.AbstractUniswapV2Service
 import org.springframework.stereotype.Component
 
 @Component
-class UniswapEthereumPoolingMarketService(
+class UniswapEthereumPoolingMarketProvider(
     private val uniswapServices: List<AbstractUniswapV2Service>,
-    private val erC20Resource: ERC20Resource,
+    erC20Resource: ERC20Resource,
     private val uniswapAPRService: UniswapAPRService,
-) : PoolingMarketProvider() {
+) : PoolingMarketProvider(erC20Resource) {
 
     override suspend fun fetchMarkets(): List<PoolingMarket> {
         return uniswapServices.filter {
@@ -23,9 +23,9 @@ class UniswapEthereumPoolingMarketService(
         }.flatMap { service ->
             service.getPairs().mapNotNull {
                 try {
-                    val token = erC20Resource.getTokenInformation(getNetwork(), it.id)
-                    val token0 = erC20Resource.getTokenInformation(getNetwork(), it.token0.id)
-                    val token1 = erC20Resource.getTokenInformation(getNetwork(), it.token1.id)
+                    val token = erc20Resource.getTokenInformation(getNetwork(), it.id)
+                    val token0 = erc20Resource.getTokenInformation(getNetwork(), it.token0.id)
+                    val token1 = erc20Resource.getTokenInformation(getNetwork(), it.token1.id)
                     PoolingMarket(
                         network = getNetwork(),
                         protocol = getProtocol(),
@@ -39,7 +39,8 @@ class UniswapEthereumPoolingMarketService(
                         ),
                         apr = uniswapAPRService.getAPR(it.id, getNetwork()),
                         marketSize = it.reserveUSD,
-                        tokenType = TokenType.UNISWAP
+                        tokenType = TokenType.UNISWAP,
+                        balanceFetcher = defaultBalanceFetcher(token.address)
                     )
                 } catch (ex: Exception) {
                     logger.error("something went wrong trying to import uniswap market ${it.id}")

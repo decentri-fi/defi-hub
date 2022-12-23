@@ -9,18 +9,18 @@ import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
 import io.defitrack.protocol.quickswap.domain.QuickswapPair
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
-import kotlinx.coroutines.*
-import org.springframework.scheduling.annotation.EnableScheduling
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
 @Component
-@EnableScheduling
 class QuickswapPoolingMarketProvider(
     private val quickswapService: QuickswapService,
     private val quickswapAPRService: QuickswapAPRService,
-    private val erC20Resource: ERC20Resource
-) : PoolingMarketProvider() {
+    erC20Resource: ERC20Resource
+) : PoolingMarketProvider(erC20Resource) {
 
     override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
         quickswapService.getPairs()
@@ -39,9 +39,9 @@ class QuickswapPoolingMarketProvider(
     }
 
     private suspend fun toPoolingMarket(it: QuickswapPair): PoolingMarket {
-        val token = erC20Resource.getTokenInformation(getNetwork(), it.id)
-        val token0 = erC20Resource.getTokenInformation(getNetwork(), it.token0.id)
-        val token1 = erC20Resource.getTokenInformation(getNetwork(), it.token1.id)
+        val token = erc20Resource.getTokenInformation(getNetwork(), it.id)
+        val token0 = erc20Resource.getTokenInformation(getNetwork(), it.token0.id)
+        val token1 = erc20Resource.getTokenInformation(getNetwork(), it.token1.id)
 
         return PoolingMarket(
             network = getNetwork(),
@@ -56,7 +56,8 @@ class QuickswapPoolingMarketProvider(
             ),
             apr = quickswapAPRService.getLPAPR(it.id),
             marketSize = it.reserveUSD,
-            tokenType = TokenType.QUICKSWAP
+            tokenType = TokenType.QUICKSWAP,
+            balanceFetcher = defaultBalanceFetcher(token.address)
         )
     }
 

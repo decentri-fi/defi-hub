@@ -18,11 +18,11 @@ import org.springframework.stereotype.Component
 
 @Component
 class BancorEthereumPoolingMarketProvider(
-    private val erC20Resource: ERC20Resource,
+    erC20Resource: ERC20Resource,
     private val abiResource: ABIResource,
     private val bancorEthereumGraphProvider: BancorEthereumGraphProvider,
     gatewayProvider: BlockchainGatewayProvider
-) : PoolingMarketProvider() {
+) : PoolingMarketProvider(erC20Resource) {
 
     val gateway = gatewayProvider.getGateway(getNetwork())
 
@@ -43,14 +43,14 @@ class BancorEthereumPoolingMarketProvider(
         bancorEthereumGraphProvider.getLiquidityPools().map {
             async {
                 try {
-                    val token = erC20Resource.getTokenInformation(getNetwork(), it.id)
+                    val token = getToken(it.id)
                     val poolTokenContract = PoolTokenContract(
                         gateway,
                         poolTokenContractAbi,
                         it.id
                     )
 
-                    val underlying = erC20Resource.getTokenInformation(getNetwork(), poolTokenContract.reserveToken())
+                    val underlying = getToken(poolTokenContract.reserveToken())
                         .toFungibleToken()
                     PoolingMarket(
                         id = "bancor-ethereum-${it.id}",
@@ -65,8 +65,9 @@ class BancorEthereumPoolingMarketProvider(
                         tokenType = TokenType.BANCOR,
                         marketSize = it.totalValueLockedUSD,
                         investmentPreparer = BancorPoolInvestmentPreparer(
-                            erC20Resource, bancorNetworkContract, underlying.address
-                        )
+                            erc20Resource, bancorNetworkContract, underlying.address
+                        ),
+                        balanceFetcher = defaultBalanceFetcher(token.address)
                     )
                 } catch (ex: Exception) {
                     ex.printStackTrace()

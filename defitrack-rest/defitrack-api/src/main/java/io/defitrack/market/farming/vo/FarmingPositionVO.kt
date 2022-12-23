@@ -14,6 +14,5 @@ data class FarmingPositionVO(
     val apr: Double?,
     val stakedToken: FungibleToken,
     val amount: Double,
-    val underlyingAmount: Double?,
     val rewardTokens: List<FungibleToken>
 )
