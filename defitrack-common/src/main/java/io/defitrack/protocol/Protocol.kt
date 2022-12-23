@@ -12,7 +12,7 @@ enum class Protocol(
 ) {
     BEETHOVENX(
         logo = "beethovenx.png",
-        slug = "beethoven",
+        slug = "beethovenx",
         website = "https://beets.fi",
         primitives = listOf(DefiPrimitive.FARMING, DefiPrimitive.POOLING),
         networks = listOf(Network.FANTOM)

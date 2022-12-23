@@ -1,5 +1,6 @@
 package io.defitrack.evm.contract
 
+import io.defitrack.abi.TypeUtils.Companion.string
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
@@ -28,7 +29,7 @@ open class ERC20Contract(
     }
 
     fun balanceOfMethod(address: String): Function {
-        return createFunctionWithAbi(
+        return createFunction(
             "balanceOf",
             inputs = listOf(address.toAddress()),
             outputs = listOf(
@@ -38,7 +39,7 @@ open class ERC20Contract(
     }
 
     fun approveFunction(spender: String, amount: BigInteger): Function {
-        return createFunctionWithAbi(
+        return createFunction(
             "approve",
             listOf(spender.toAddress(), amount.toUint256()),
             listOf()
@@ -46,7 +47,7 @@ open class ERC20Contract(
     }
 
     suspend fun balanceOf(address: String): BigInteger {
-        return readWithAbi(
+        return readWithoutAbi(
             "balanceOf",
             inputs = listOf(address.toAddress()),
             outputs = listOf(
@@ -57,7 +58,7 @@ open class ERC20Contract(
 
     suspend fun name(): String {
         return try {
-            read("name")
+            readWithoutAbi("name", outputs = listOf(string()))[0].value as String
         } catch (ex: Exception) {
             "unknown"
         }
@@ -65,7 +66,7 @@ open class ERC20Contract(
 
     suspend fun symbol(): String {
         return try {
-            read("symbol")
+            readWithoutAbi("symbol", outputs = listOf(string()))[0].value as String
         } catch (ex: Exception) {
             "UNKWN"
         }
@@ -82,9 +83,9 @@ open class ERC20Contract(
 
     suspend fun totalSupply(): BigInteger {
         return try {
-            return read("totalSupply")
+            readWithoutAbi("totalSupply", outputs = listOf(uint256()))[0].value as BigInteger
         } catch (ex: Exception) {
-            return BigInteger.ZERO
+            BigInteger.ZERO
         }
     }
 }
