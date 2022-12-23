@@ -54,13 +54,10 @@ class AaveV2PolygonLendingMarketProvider(
                     try {
                         val aToken = erC20Resource.getTokenInformation(getNetwork(), it.aToken.id)
                         val token = erC20Resource.getTokenInformation(getNetwork(), it.underlyingAsset)
-                        LendingMarket(
-                            id = "polygon-aave-${it.symbol}",
-                            address = it.underlyingAsset,
+                        create(
+                            identifier = it.id,
                             token = token.toFungibleToken(),
                             name = it.name + " Aave Pool",
-                            protocol = getProtocol(),
-                            network = getNetwork(),
                             rate = it.lendingRate.toBigDecimal(),
                             marketSize = calculateMarketSize(it, aToken, token).toBigDecimal(),
                             poolType = "aave-v2",

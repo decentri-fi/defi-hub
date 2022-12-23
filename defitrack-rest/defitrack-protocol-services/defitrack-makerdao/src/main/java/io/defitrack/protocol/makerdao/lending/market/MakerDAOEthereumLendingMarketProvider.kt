@@ -25,11 +25,8 @@ class MakerDAOEthereumLendingMarketProvider(
                 try {
                     val token = erc20Resource.getTokenInformation(getNetwork(), it.id)
 
-                    LendingMarket(
-                        id = "makerdao-ethereum-${it.id}",
-                        network = getNetwork(),
-                        protocol = getProtocol(),
-                        address = it.id,
+                    create(
+                        identifier = it.id,
                         name = it.name,
                         rate = it.rates.firstOrNull()?.rate?.toBigDecimal(),
                         poolType = "makerdao-lending",
