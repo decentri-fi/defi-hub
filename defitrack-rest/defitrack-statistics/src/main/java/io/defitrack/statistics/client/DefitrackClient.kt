@@ -17,12 +17,12 @@ class DefitrackClient(private val httpClient: HttpClient) {
     val logger = LoggerFactory.getLogger(this::class.java)
 
     suspend fun getProtocols(): List<ProtocolVO> {
-        return httpClient.get("https://api.defitrack.io/protocols").body()
+        return httpClient.get("https://api.decentri.fi/protocols").body()
     }
 
     suspend fun getFarmingMarkets(protocolVO: ProtocolVO): List<FarmingMarketVO> {
         return try {
-            httpClient.get("https://api.defitrack.io/${protocolVO.slug}/farming/all-markets") {
+            httpClient.get("https://api.decentri.fi/${protocolVO.slug}/farming/all-markets") {
                 timeout {
                     this.requestTimeoutMillis = 3000
                 }
@@ -35,7 +35,7 @@ class DefitrackClient(private val httpClient: HttpClient) {
 
     suspend fun getPoolingMarkets(protocolVO: ProtocolVO): List<PoolingMarketVO> {
         return try {
-            httpClient.get("https://api.defitrack.io/${protocolVO.slug}/pooling/all-markets") {
+            httpClient.get("https://api.decentri.fi/${protocolVO.slug}/pooling/all-markets") {
                 timeout {
                     this.requestTimeoutMillis = 3000
                 }
@@ -48,7 +48,7 @@ class DefitrackClient(private val httpClient: HttpClient) {
 
     suspend fun getMarkets(protocolVO: ProtocolVO): List<LendingMarketVO> {
         return try {
-            httpClient.get("https://api.defitrack.io/${protocolVO.slug}/lending/all-markets") {
+            httpClient.get("https://api.decentri.fi/${protocolVO.slug}/lending/all-markets") {
                 timeout {
                     this.requestTimeoutMillis = 3000
                 }

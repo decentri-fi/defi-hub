@@ -1,11 +1,11 @@
-# Defitrack
+# Decentrifi
 
-Defitrack is an open source API which allows you to easily integrate DeFi in any application. It provides a gateway to web3 without having to know any of the underlying cryptographic technology.
+Decentrifi is an open source API which allows you to easily integrate DeFi in any application. It provides a gateway to web3 without having to know any of the underlying cryptographic technology.
 
-## Defitrack Core
+## Decentrifi Core
 
-Defitrack core is the powerhouse of Defitrack.io. 
-It's the general API that is used by https://defitrack.io and contains all the code
+Defitrack core is the powerhouse of decentrifi. 
+It's the general API that is used by https://decentri.fi and contains all the code
 to interact with various protocols, networks and general web3 things.
 
 ## Building the project
@@ -21,7 +21,7 @@ Prerequisites:
 
 ## Submodules
 
-### Defitrack Blockchains
+### Decentrifi Blockchains
 
 Code that powers the underlying chains. 
 
@@ -34,7 +34,7 @@ Code that powers the underlying chains.
 - Arbitrum
 - Optimism
 
-### Defitrack Protocols
+### Decentrifi Protocols
 
 Code that powers the underlying protocols.
 
@@ -61,9 +61,9 @@ Code that powers the underlying protocols.
 - Uniswap
 - Yearn
 
-### Defitrack Rest
+### Decentrifi Rest
 
-Module that delivers the different rest endpoints that power https://defitrack.io.
+Module that delivers the different rest endpoints that power https://decentri.fi.
 
 - General API Gateway
 - Price API
