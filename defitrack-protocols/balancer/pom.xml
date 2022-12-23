@@ -20,5 +20,9 @@
             <groupId>io.defitrack</groupId>
             <artifactId>arbitrum</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>optimism</artifactId>
+        </dependency>
     </dependencies>
 </project>
