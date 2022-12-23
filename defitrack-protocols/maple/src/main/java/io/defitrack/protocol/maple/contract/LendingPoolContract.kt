@@ -68,7 +68,8 @@ class LendingPoolContract(blockchainGateway: BlockchainGateway, abi: String, add
                 this[2].value as string,
                 this[3].value as string,
                 this[4].value as string,
-                this[5].value as string
+                this[5].value as string,
+                this[6].value as string
             )
         }
     }
