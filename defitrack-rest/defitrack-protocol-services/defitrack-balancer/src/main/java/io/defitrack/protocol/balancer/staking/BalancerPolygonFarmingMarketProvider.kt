@@ -56,7 +56,8 @@ class BalancerPolygonFarmingMarketProvider(
                             gauge.address,
                             { user -> gauge.balanceOfMethod(user) }
                         ),
-                        farmType = FarmType.STAKING
+                        farmType = FarmType.STAKING,
+                        metadata = mapOf("address" to it.id)
                     )
                 } catch (ex: Exception) {
                     ex.printStackTrace()

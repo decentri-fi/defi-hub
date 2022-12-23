@@ -21,5 +21,6 @@ data class FarmingMarket(
     val farmType: FarmType,
     val balanceFetcher: FarmingPositionFetcher? = null,
     val investmentPreparer: InvestmentPreparer? = null,
-    val claimableRewardFetcher: ClaimableRewardFetcher? = null
+    val claimableRewardFetcher: ClaimableRewardFetcher? = null,
+    val metadata: Map<String, String> = emptyMap()
 ) : DefiMarket

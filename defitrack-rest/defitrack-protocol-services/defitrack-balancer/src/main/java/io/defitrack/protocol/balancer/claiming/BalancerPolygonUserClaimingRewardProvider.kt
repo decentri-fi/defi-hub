@@ -22,16 +22,11 @@ import java.util.*
 class BalancerPolygonUserClaimingRewardProvider(
     private val balancerPolygonStakingMarketService: BalancerPolygonFarmingMarketProvider,
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
-    private val erC20Resource: ERC20Resource,
     abiResource: ABIResource
 ) : ClaimableRewardProvider {
 
     val gaugeContractAbi by lazy {
         abiResource.getABI("balancer/gauge.json")
-    }
-
-    companion object {
-        private val logger = LoggerFactory.getLogger(this::class.java)
     }
 
     override suspend fun claimables(address: String): List<Claimable> =
@@ -41,7 +36,7 @@ class BalancerPolygonUserClaimingRewardProvider(
                     val gaugeContract = BalancerGaugeContract(
                         blockchainGatewayProvider.getGateway(getNetwork()),
                         gaugeContractAbi,
-                        liquidityGauge.id
+                        liquidityGauge.metadata["address"]!!
                     )
 
                     val claimTransaction = BalancerClaimPreparer(
