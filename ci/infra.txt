@@ -1,4 +1,5 @@
 erc20
+ens
 balance
 abi
 price
