@@ -9,7 +9,7 @@ import io.defitrack.token.TokenType
 import java.math.BigDecimal
 import java.math.BigInteger
 
-abstract class StandardLpPositionProvider(
+open class StandardLpPositionProvider(
     private val poolingMarketProvider: PoolingMarketProvider,
     private val erC20Resource: ERC20Resource,
 ) : PoolingPositionProvider() {
