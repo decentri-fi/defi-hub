@@ -4,7 +4,7 @@ import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.market.lending.LendingMarketService
+import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
@@ -23,7 +23,7 @@ class AaveV3OptimismLendingMarketProvider(
     private val erC20Resource: ERC20Resource,
     private val aaveV3OptimismDataProvider: AaveV3OptimismDataProvider,
     private val priceResource: PriceResource
-) : LendingMarketService() {
+) : LendingMarketProvider() {
 
     val pool = PoolContract(
         blockchainGatewayProvider.getGateway(getNetwork()),

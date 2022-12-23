@@ -6,6 +6,6 @@ import org.springframework.stereotype.Service
 
 @Service
 class CompoundLendingPositionService(
-    compoundLendingMarketService: CompoundLendingMarketService,
+    compoundLendingMarketService: CompoundLendingMarketProvider,
     gateway: BlockchainGatewayProvider,
 ) : DefaultLendingPositionService(compoundLendingMarketService, gateway)

@@ -1,18 +1,15 @@
 package io.defitrack.protocol.makerdao.lending.market
 
 import io.defitrack.common.network.Network
-import io.defitrack.market.lending.LendingMarketService
+import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
-import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.makerdao.MakerDAOEthereumGraphProvider
 import io.defitrack.token.ERC20Resource
-import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import org.springframework.stereotype.Service
 import org.springframework.stereotype.Component
 
 @Component
@@ -20,7 +17,7 @@ class MakerDAOEthereumLendingMarketProvider(
     private val erc20Resource: ERC20Resource,
     private val makerDAOEthereumGraphProvider: MakerDAOEthereumGraphProvider,
     private val priceResource: PriceResource
-) : LendingMarketService() {
+) : LendingMarketProvider() {
 
     override suspend fun fetchLendingMarkets(): List<LendingMarket> = coroutineScope {
         makerDAOEthereumGraphProvider.getLendingMarkets().map {

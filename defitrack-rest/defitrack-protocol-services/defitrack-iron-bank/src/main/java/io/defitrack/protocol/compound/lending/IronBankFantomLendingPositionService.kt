@@ -6,6 +6,6 @@ import org.springframework.stereotype.Service
 
 @Service
 class IronBankFantomLendingPositionService(
-    lendingMarketService: IronBankFantomLendingMarketService,
+    lendingMarketService: IronBankFantomLendingMarketProvider,
     gateway: BlockchainGatewayProvider,
 ) : DefaultLendingPositionService(lendingMarketService, gateway)

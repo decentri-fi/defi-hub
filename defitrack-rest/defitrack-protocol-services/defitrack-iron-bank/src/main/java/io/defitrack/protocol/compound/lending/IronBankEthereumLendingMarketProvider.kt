@@ -9,13 +9,13 @@ import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Component
 
 @Component
-class IronBankEthereumLendingMarketService(
+class IronBankEthereumLendingMarketProvider(
     blockchainGatewayProvider: BlockchainGatewayProvider,
     abiResource: ABIResource,
     erC20Resource: ERC20Resource,
     compoundEthereumService: IronBankEthereumService,
     priceResource: PriceResource
-) : IronBankLendingMarketService(
+) : IronBankLendingMarketProvider(
     blockchainGatewayProvider,
     abiResource,
     erC20Resource,

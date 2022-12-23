@@ -1,37 +1,35 @@
 package io.defitrack.protocol.compound.lending
 
 import io.defitrack.abi.ABIResource
+import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.market.lending.LendingMarketService
+import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.BalanceFetcher
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.compound.IronBankComptrollerContract
-import io.defitrack.protocol.compound.IronBankService
-import io.defitrack.protocol.compound.IronbankTokenContract
+import io.defitrack.protocol.compound.CompoundComptrollerContract
+import io.defitrack.protocol.compound.CompoundEthereumService
+import io.defitrack.protocol.compound.CompoundTokenContract
 import io.defitrack.protocol.compound.lending.invest.CompoundLendingInvestmentPreparer
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
 
 @Component
-abstract class IronBankLendingMarketService(
-    blockchainGatewayProvider: BlockchainGatewayProvider,
+class CompoundLendingMarketProvider(
+    private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val abiResource: ABIResource,
     private val erC20Resource: ERC20Resource,
-    private val compoundEthereumService: IronBankService,
+    private val compoundEthereumService: CompoundEthereumService,
     private val priceResource: PriceResource
-) : LendingMarketService() {
+) : LendingMarketProvider() {
 
     val comptrollerABI by lazy {
         abiResource.getABI("compound/comptroller.json")
@@ -43,22 +41,21 @@ abstract class IronBankLendingMarketService(
 
     val gateway = blockchainGatewayProvider.getGateway(getNetwork())
 
-    override suspend fun fetchLendingMarkets(): List<LendingMarket> =
-        withContext(Dispatchers.IO.limitedParallelism(5)) {
-            getTokenContracts().map {
-                async {
-                    toLendingMarket(it)
-                }
-            }.awaitAll().filterNotNull()
-        }
+    override suspend fun fetchLendingMarkets(): List<LendingMarket> = coroutineScope {
+        getTokenContracts().map {
+            async {
+                toLendingMarket(it)
+            }
+        }.awaitAll().filterNotNull()
+    }
 
-    private suspend fun toLendingMarket(ctokenContract: IronbankTokenContract): LendingMarket? {
+    private suspend fun toLendingMarket(ctokenContract: CompoundTokenContract): LendingMarket? {
         return try {
             ctokenContract.underlyingAddress.let { tokenAddress ->
                 erC20Resource.getTokenInformation(getNetwork(), tokenAddress)
             }.let { underlyingToken ->
                 LendingMarket(
-                    id = "ironbank-ethereum-${ctokenContract.address}",
+                    id = "compound-ethereum-${ctokenContract.address}",
                     network = getNetwork(),
                     protocol = getProtocol(),
                     name = ctokenContract.name,
@@ -77,7 +74,7 @@ abstract class IronBankLendingMarketService(
                             TokenType.SINGLE
                         )
                     ).toBigDecimal(),
-                    poolType = "iron-bank-lendingpool",
+                    poolType = "compound-lendingpool",
                     balanceFetcher = BalanceFetcher(
                         ctokenContract.address,
                         { user -> ctokenContract.balanceOfMethod(user) },
@@ -98,7 +95,7 @@ abstract class IronBankLendingMarketService(
         }
     }
 
-    fun getSupplyRate(compoundTokenContract: IronbankTokenContract): BigDecimal {
+    fun getSupplyRate(compoundTokenContract: CompoundTokenContract): BigDecimal {
         val blocksPerDay = 6463
         val dailyRate =
             (compoundTokenContract.supplyRatePerBlock.toBigDecimal().divide(BigDecimal.TEN.pow(18)) * BigDecimal(
@@ -110,12 +107,16 @@ abstract class IronBankLendingMarketService(
     }
 
     override fun getProtocol(): Protocol {
-        return Protocol.IRON_BANK
+        return Protocol.COMPOUND
     }
 
-    private fun getTokenContracts(): List<IronbankTokenContract> {
+    override fun getNetwork(): Network {
+        return Network.ETHEREUM
+    }
+
+    private fun getTokenContracts(): List<CompoundTokenContract> {
         return getComptroller().getMarkets().map { market ->
-            IronbankTokenContract(
+            CompoundTokenContract(
                 gateway,
                 cTokenABI,
                 market
@@ -123,8 +124,8 @@ abstract class IronBankLendingMarketService(
         }
     }
 
-    private fun getComptroller(): IronBankComptrollerContract {
-        return IronBankComptrollerContract(
+    private fun getComptroller(): CompoundComptrollerContract {
+        return CompoundComptrollerContract(
             gateway,
             comptrollerABI,
             compoundEthereumService.getComptroller()

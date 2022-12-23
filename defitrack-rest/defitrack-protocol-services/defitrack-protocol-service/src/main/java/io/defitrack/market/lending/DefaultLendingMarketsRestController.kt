@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/lending")
 class DefaultLendingMarketsRestController(
-    private val lendingMarketServices: List<LendingMarketService>,
+    private val lendingMarketProviders: List<LendingMarketProvider>,
 ) {
 
     @GetMapping(value = ["/all-markets"])
     fun getAllMarkets(): List<LendingMarketVO> {
-        return lendingMarketServices.flatMap {
+        return lendingMarketProviders.flatMap {
             it.getLendingMarkets()
         }.map {
             it.toVO()
@@ -31,7 +31,7 @@ class DefaultLendingMarketsRestController(
         @RequestParam("token") token: String,
         @RequestParam("network") network: Network
     ): List<LendingMarketVO> {
-        return lendingMarketServices
+        return lendingMarketProviders
             .filter {
                 it.getNetwork() == network
             }.flatMap {
@@ -44,7 +44,7 @@ class DefaultLendingMarketsRestController(
 
     private fun getLendingMarketById(
         id: String
-    ) = lendingMarketServices.flatMap {
+    ) = lendingMarketProviders.flatMap {
         it.getLendingMarkets()
     }.firstOrNull {
         it.id == id
