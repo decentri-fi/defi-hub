@@ -47,6 +47,7 @@ Code that powers the underlying protocols.
 - Idex
 - Jarvis
 - MakerDAO
+- MapleFinance
 - mStable
 - Polycat
 - Quickswap
