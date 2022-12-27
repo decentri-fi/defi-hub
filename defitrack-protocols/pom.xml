@@ -49,6 +49,7 @@
         <module>wepiggy</module>
         <module>olympusdao</module>
         <module>chainlink</module>
+        <module>tokemak</module>
     </modules>
 
     <dependencyManagement>
