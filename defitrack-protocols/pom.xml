@@ -50,6 +50,7 @@
         <module>olympusdao</module>
         <module>chainlink</module>
         <module>tokemak</module>
+        <module>qidao</module>
     </modules>
 
     <dependencyManagement>
