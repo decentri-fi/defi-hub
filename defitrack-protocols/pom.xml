@@ -48,6 +48,7 @@
         <module>set</module>
         <module>wepiggy</module>
         <module>olympusdao</module>
+        <module>chainlink</module>
     </modules>
 
     <dependencyManagement>
