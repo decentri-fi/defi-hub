@@ -10,6 +10,13 @@ enum class Protocol(
     val enabled: Boolean = true,
     val networks: List<Network>
 ) {
+    QIDAO(
+        logo = "qidao.png",
+        slug = "qidao",
+        website = "https://mai.finance",
+        primitives = listOf(DefiPrimitive.FARMING),
+        networks = listOf(Network.POLYGON)
+    ),
     TOKEMAK(
         logo = "tokemak.png",
         slug = "tokemak",
