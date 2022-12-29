@@ -5,9 +5,6 @@ import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.crv.CurvePoolGraphProvider
-import io.defitrack.token.ERC20Resource
-import io.defitrack.token.FungibleToken
-import io.defitrack.token.MarketSizeService
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -16,9 +13,7 @@ import java.math.BigDecimal
 
 class CurvePoolingMarketProvider(
     private val curvePoolGraphProvider: CurvePoolGraphProvider,
-    private val marketSizeService: MarketSizeService,
-    erc20Resource: ERC20Resource,
-) : PoolingMarketProvider(erc20Resource) {
+) : PoolingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<PoolingMarket> =
         coroutineScope {
@@ -42,7 +37,7 @@ class CurvePoolingMarketProvider(
                             apr = BigDecimal.ZERO,
                             marketSize = marketSizeService.getMarketSize(tokens, lpToken.address, getNetwork()),
                             tokenType = TokenType.CURVE,
-                            positionFetcher = if(lpToken.name == "unknown") null else defaultBalanceFetcher(lpToken.address)
+                            positionFetcher = if (lpToken.name == "unknown") null else defaultPositionFetcher(lpToken.address)
                         )
                     } catch (ex: Exception) {
                         ex.printStackTrace()

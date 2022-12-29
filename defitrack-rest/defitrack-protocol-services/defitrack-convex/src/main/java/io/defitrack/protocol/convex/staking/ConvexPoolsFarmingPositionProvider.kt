@@ -7,20 +7,15 @@ import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.convex.ConvexService
 import io.defitrack.protocol.convex.contract.CvxRewardPoolContract
-import io.defitrack.market.farming.FarmingPositionProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.market.farming.domain.FarmingPosition
 import io.defitrack.protocol.FarmType
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
-import java.math.BigInteger
 
 @Service
 class ConvexPoolsFarmingPositionProvider(
     private val convexService: ConvexService,
     private val abiResource: ABIResource,
-    private val blockchainGatewayProvider: BlockchainGatewayProvider,
-    private val erC20Resource: ERC20Resource,
 ) : FarmingMarketProvider() {
 
     val cvxRewardPoolABI by lazy {
@@ -28,11 +23,10 @@ class ConvexPoolsFarmingPositionProvider(
     }
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
-        val gateway = blockchainGatewayProvider.getGateway(getNetwork())
 
         return convexService.providePools().map {
             CvxRewardPoolContract(
-                gateway,
+                getBlockchainGateway(),
                 cvxRewardPoolABI,
                 it.address,
                 it.name
@@ -48,8 +42,7 @@ class ConvexPoolsFarmingPositionProvider(
                 vaultType = "cvx-vault",
                 marketSize = null,
                 apr = null,
-                balanceFetcher = defaultBalanceFetcher(
-                    erC20Resource,
+                balanceFetcher = defaultPositionFetcher(
                     it.address
                 ),
                 farmType = FarmType.STAKING

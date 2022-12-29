@@ -18,17 +18,16 @@ import org.springframework.stereotype.Service
 class KyberswapEthereumPoolingMarketProvider(
     private val kyberswapPolygonService: KyberswapEthereumGraphProvider,
     private val kyberswapAPRService: KyberswapAPRService,
-    erC20Resource: ERC20Resource
-) : PoolingMarketProvider(erC20Resource) {
+) : PoolingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<PoolingMarket> =
         withContext(Dispatchers.IO.limitedParallelism(10)) {
             kyberswapPolygonService.getPoolingMarkets().map {
                 async {
                     try {
-                        val token = erc20Resource.getTokenInformation(getNetwork(), it.id)
-                        val token0 = erc20Resource.getTokenInformation(getNetwork(), it.token0.id)
-                        val token1 = erc20Resource.getTokenInformation(getNetwork(), it.token1.id)
+                        val token = erC20Resource.getTokenInformation(getNetwork(), it.id)
+                        val token0 = erC20Resource.getTokenInformation(getNetwork(), it.token0.id)
+                        val token1 = erC20Resource.getTokenInformation(getNetwork(), it.token1.id)
 
                         PoolingMarket(
                             id = "kyberswap-ethereum-${it.id}",
@@ -44,7 +43,7 @@ class KyberswapEthereumPoolingMarketProvider(
                             apr = kyberswapAPRService.getAPR(it.pair.id, getNetwork()),
                             marketSize = it.reserveUSD,
                             tokenType = TokenType.KYBER,
-                            positionFetcher = defaultBalanceFetcher(token.address)
+                            positionFetcher = defaultPositionFetcher(token.address)
                         )
                     } catch (ex: Exception) {
                         ex.printStackTrace()

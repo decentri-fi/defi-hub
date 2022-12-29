@@ -20,8 +20,6 @@ import org.springframework.stereotype.Component
 @Component
 class BalancerPolygonFarmingMarketProvider(
     private val balancerPolygonPoolGraphProvider: BalancerGaugePolygonGraphProvider,
-    private val erC20Resource: ERC20Resource,
-    private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val abiResource: ABIResource
 ) :
     FarmingMarketProvider() {

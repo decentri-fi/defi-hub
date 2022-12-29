@@ -1,4 +1,4 @@
-package io.defitrack.protocol
+package io.defitrack.protocol.contract
 
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256

@@ -18,10 +18,8 @@ import org.springframework.stereotype.Component
 @Component
 class RibbonAvalancheFarmingMarketProvider(
     private val ribbonGraphProvider: RibbonAvalancheGraphProvider,
-    private val erC20Resource: ERC20Resource,
     private val priceResource: PriceResource,
     abiResource: ABIResource,
-    private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) : FarmingMarketProvider() {
 
     val ribbonVaultAbi = abiResource.getABI("ribbon/vault.json")

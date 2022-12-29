@@ -13,18 +13,14 @@ import io.defitrack.token.MarketSizeService
 import org.springframework.stereotype.Component
 
 @Component
-class ChainlinkStakingMarketProvider(
-    private val blockchainGatewayProvider: BlockchainGatewayProvider,
-    private val marketSizeService: MarketSizeService,
-    private val erC20Resource: ERC20Resource
-) : FarmingMarketProvider(
+class ChainlinkStakingMarketProvider : FarmingMarketProvider(
 
 ) {
 
     val link = "0x514910771AF9Ca656af840dff83E8264EcF986CA"
 
     val chainlinkStakingContract = ChainlinkStakingContract(
-        blockchainGatewayProvider.getGateway(getNetwork()),
+        getBlockchainGateway(),
         "0x3feb1e09b4bb0e7f0387cee092a52e85797ab889"
     )
 

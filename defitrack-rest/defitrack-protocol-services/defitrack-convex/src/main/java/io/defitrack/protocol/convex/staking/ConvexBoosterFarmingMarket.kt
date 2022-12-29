@@ -16,13 +16,11 @@ import org.springframework.stereotype.Component
 @Component
 class ConvexBoosterFarmingMarket(
     convexService: ConvexService,
-    blockchainGatewayProvider: BlockchainGatewayProvider,
     abiResource: ABIResource,
-    private val erC20Resource: ERC20Resource,
 ) : FarmingMarketProvider() {
 
     val booster = ConvexBoosterContract(
-        blockchainGatewayProvider.getGateway(getNetwork()),
+        getBlockchainGateway(),
         abiResource.getABI("convex/Booster.json"),
         convexService.provideBooster()
     )

@@ -18,7 +18,6 @@ import org.springframework.stereotype.Component
 class IdexFarmingMarketProvider(
     private val abiResource: ABIResource,
     private val tokenService: ERC20Resource,
-    private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val idexService: IdexService
 ) : FarmingMarketProvider() {
 

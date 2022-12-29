@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component
 @Component
 class YearnFarmingMarketProvider(
     private val yearnService: YearnService,
-    private val erC20Resource: ERC20Resource
 ) : FarmingMarketProvider() {
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         return yearnService.provideYearnV2Vaults().map {

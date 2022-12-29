@@ -7,7 +7,7 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.QidaoFarmV2Contract
+import io.defitrack.protocol.contract.QidaoFarmV2Contract
 import io.defitrack.protocol.QidaoPolygonService
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.MarketSizeService
@@ -16,9 +16,7 @@ import org.springframework.stereotype.Service
 @Service
 class QidaoFarmingMarketProvider(
     private val qidaoPolygonService: QidaoPolygonService,
-    private val marketSizeService: MarketSizeService,
     private val tokenService: ERC20Resource,
-    private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) : FarmingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {

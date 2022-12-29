@@ -22,9 +22,7 @@ import java.math.BigDecimal
 class PolycatFarmingMarketProvider(
     private val polycatService: PolycatService,
     private val abiResource: ABIResource,
-    private val erC20Resource: ERC20Resource,
     private val priceResource: PriceResource,
-    private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) : FarmingMarketProvider() {
 
     val masterChefABI by lazy {

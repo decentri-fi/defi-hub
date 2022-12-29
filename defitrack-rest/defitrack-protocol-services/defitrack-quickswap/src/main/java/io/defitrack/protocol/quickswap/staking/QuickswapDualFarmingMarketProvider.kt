@@ -25,11 +25,9 @@ import java.math.RoundingMode
 @Service
 class QuickswapDualFarmingMarketProvider(
     private val quickswapService: QuickswapService,
-    private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val abiService: ABIResource,
     private val priceResource: PriceResource,
     private val quickswapAPRService: QuickswapAPRService,
-    private val erC20Resource: ERC20Resource,
 ) : FarmingMarketProvider() {
 
     val stakingRewardsABI by lazy {

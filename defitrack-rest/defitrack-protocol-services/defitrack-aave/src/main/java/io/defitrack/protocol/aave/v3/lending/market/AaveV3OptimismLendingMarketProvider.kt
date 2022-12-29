@@ -10,11 +10,9 @@ import org.springframework.stereotype.Component
 
 @Component
 class AaveV3OptimismLendingMarketProvider(
-    blockchainGatewayProvider: BlockchainGatewayProvider,
     abiResource: ABIResource,
-    erC20Resource: ERC20Resource,
     aaveV3DataProvider: AaveV3DataProvider,
     priceResource: PriceResource
 ) : AaveV3LendingMarketProvider(
-    erC20Resource, priceResource, Network.OPTIMISM, blockchainGatewayProvider, abiResource, aaveV3DataProvider
+    priceResource, Network.OPTIMISM, abiResource, aaveV3DataProvider
 )

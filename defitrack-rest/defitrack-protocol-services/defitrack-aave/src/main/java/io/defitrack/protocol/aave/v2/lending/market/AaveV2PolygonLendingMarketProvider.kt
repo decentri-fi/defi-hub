@@ -28,7 +28,6 @@ class AaveV2PolygonLendingMarketProvider(
     blockchainGatewayProvider: BlockchainGatewayProvider,
     abiResource: ABIResource,
     private val aaveV2PolygonService: AaveV2PolygonService,
-    private val erC20Resource: ERC20Resource,
     private val priceResource: PriceResource
 ) : LendingMarketProvider() {
 

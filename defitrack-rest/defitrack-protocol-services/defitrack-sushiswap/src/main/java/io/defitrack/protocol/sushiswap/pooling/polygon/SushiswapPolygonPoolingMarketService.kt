@@ -10,8 +10,7 @@ import org.springframework.stereotype.Component
 @Component
 class SushiswapPolygonPoolingMarketService(
     sushiServices: List<SushiswapService>,
-    erC20Resource: ERC20Resource
-) : DefaultSushiPoolingMarketService(sushiServices, erC20Resource) {
+) : DefaultSushiPoolingMarketService(sushiServices) {
 
     override fun getProtocol(): Protocol {
         return Protocol.SUSHISWAP

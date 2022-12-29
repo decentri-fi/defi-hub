@@ -14,7 +14,6 @@ import java.math.BigInteger
 @Service
 class GOHMMarketProvider(
     private val olympusEthereumService: OlympusEthereumService,
-    private val erC20Resource: ERC20Resource
 ) : FarmingMarketProvider() {
 
     val ohmAddress = "0x64aa3364F17a4D01c6f1751Fd97C2BD3D7e7f1D5"

@@ -20,8 +20,6 @@ import org.springframework.stereotype.Component
 @Component
 class BeethovenXOptimismFarmingMarketProvider(
     private val gaugeProvider: BeethovenXOptimismGaugeGraphProvider,
-    private val erC20Resource: ERC20Resource,
-    private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val abiResource: ABIResource
 ) :
     FarmingMarketProvider() {

@@ -4,7 +4,6 @@ import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
-import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -13,9 +12,8 @@ import org.springframework.stereotype.Component
 
 @Component
 class ApeswapPolygonPoolingMarketProvider(
-    private val apeswapPolygonGraphProvider: ApeswapPolygonGraphProvider,
-    erC20Resource: ERC20Resource
-) : PoolingMarketProvider(erC20Resource) {
+    private val apeswapPolygonGraphProvider: ApeswapPolygonGraphProvider
+) : PoolingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
         apeswapPolygonGraphProvider.getPools().map { pool ->
@@ -31,7 +29,7 @@ class ApeswapPolygonPoolingMarketProvider(
                         symbol = liquidityToken.symbol,
                         tokens = liquidityToken.underlyingTokens.map { it.toFungibleToken() },
                         tokenType = TokenType.APE,
-                        positionFetcher = defaultBalanceFetcher(liquidityToken.address)
+                        positionFetcher = defaultPositionFetcher(liquidityToken.address)
                     )
                 } catch (ex: Exception) {
                     null
