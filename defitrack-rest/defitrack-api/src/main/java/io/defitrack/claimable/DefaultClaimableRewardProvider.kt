@@ -1,56 +1,53 @@
 package io.defitrack.claimable
 
-import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
-import io.defitrack.protocol.Protocol
+import org.springframework.stereotype.Component
 import java.math.BigInteger
 
-abstract class DefaultClaimableRewardProvider(
-    private val farmingMarketProvider: FarmingMarketProvider,
+@Component
+class DefaultClaimableRewardProvider(
+    private val farmingMarketProviders: List<FarmingMarketProvider>,
     private val blockchainGatewayProvider: BlockchainGatewayProvider
-) : ClaimableRewardProvider {
+)  {
 
-    override suspend fun claimables(address: String): List<Claimable> {
-
-        val markets = farmingMarketProvider.getMarkets().filter {
+    suspend fun claimables(address: String): List<Claimable> {
+        val markets = farmingMarketProviders.flatMap {
+            it.getMarkets()
+        }.filter {
             it.claimableRewardFetcher != null
+        }.groupBy {
+            it.network
         }
 
         if (markets.isEmpty()) {
             return emptyList()
         }
 
-        return blockchainGatewayProvider.getGateway(getNetwork()).readMultiCall(
-            markets.map {
-                it.claimableRewardFetcher!!.toMulticall(address)
-            }
-        ).mapIndexed { index, retVal ->
-            val market = markets[index]
-            val earned = market.claimableRewardFetcher!!.extract(retVal)
+        return markets.flatMap { entry ->
+            blockchainGatewayProvider.getGateway(entry.key).readMultiCall(
+                entry.value.map { market ->
+                    market.claimableRewardFetcher!!.toMulticall(address)
+                }
+            ).mapIndexed { index, retVal ->
+                val market = entry.value[index]
+                val earned = market.claimableRewardFetcher!!.extract(retVal)
 
-            if (earned > BigInteger.ONE) {
-                Claimable(
-                    id = "rwrd_${market.id}",
-                    type = market.contractType,
-                    name = market.name,
-                    protocol = getProtocol(),
-                    network = getNetwork(),
-                    amount = earned,
-                    claimableTokens = market.rewardTokens,
-                    claimTransaction = market.claimableRewardFetcher.preparedTransaction(address),
-                )
-            } else {
-                null
-            }
-        }.filterNotNull()
-    }
-
-    override fun getProtocol(): Protocol {
-        return farmingMarketProvider.getProtocol()
-    }
-
-    override fun getNetwork(): Network {
-        return farmingMarketProvider.getNetwork()
+                if (earned > BigInteger.ONE) {
+                    Claimable(
+                        id = "rwrd_${market.id}",
+                        type = market.contractType,
+                        name = market.name,
+                        protocol = market.protocol,
+                        network = market.network,
+                        amount = earned,
+                        claimableTokens = market.rewardTokens,
+                        claimTransaction = market.claimableRewardFetcher.preparedTransaction(address),
+                    )
+                } else {
+                    null
+                }
+            }.filterNotNull()
+        }
     }
 }
