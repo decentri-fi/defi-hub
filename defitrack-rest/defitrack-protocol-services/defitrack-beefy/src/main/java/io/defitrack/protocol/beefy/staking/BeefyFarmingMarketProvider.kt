@@ -24,11 +24,9 @@ import java.math.BigInteger
 import java.math.RoundingMode
 
 abstract class BeefyFarmingMarketProvider(
-    private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val abiResource: ABIResource,
     private val beefyAPYService: BeefyAPYService,
     private val vaults: List<BeefyVault>,
-    private val erC20Resource: ERC20Resource,
     private val priceService: PriceResource
 ) : FarmingMarketProvider() {
 

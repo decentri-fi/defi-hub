@@ -18,9 +18,6 @@ import java.math.BigInteger
 
 @Component
 class AaveStakingMarketProvider(
-    private val erC20Resource: ERC20Resource,
-    private val blockchainGatewayProvider: BlockchainGatewayProvider,
-    private val marketSizeService: MarketSizeService,
     private val erc20Resource: ERC20Resource
 ) : FarmingMarketProvider() {
 

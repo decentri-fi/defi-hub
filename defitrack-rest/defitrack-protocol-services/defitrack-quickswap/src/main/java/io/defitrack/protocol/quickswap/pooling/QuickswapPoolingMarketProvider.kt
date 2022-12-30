@@ -19,8 +19,7 @@ import java.math.BigDecimal
 class QuickswapPoolingMarketProvider(
     private val quickswapService: QuickswapService,
     private val quickswapAPRService: QuickswapAPRService,
-    erC20Resource: ERC20Resource
-) : PoolingMarketProvider(erC20Resource) {
+) : PoolingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
         quickswapService.getPairs().map {
@@ -36,11 +35,11 @@ class QuickswapPoolingMarketProvider(
     }
 
     private suspend fun toPoolingMarket(it: QuickswapPair): PoolingMarket? {
-        val token0 = erc20Resource.getTokenInformation(getNetwork(), it.token0.id)
-        val token1 = erc20Resource.getTokenInformation(getNetwork(), it.token1.id)
+        val token0 = erC20Resource.getTokenInformation(getNetwork(), it.token0.id)
+        val token1 = erC20Resource.getTokenInformation(getNetwork(), it.token1.id)
         if(token0.symbol == "UNKWN" || token1.symbol == "UNKWN") return null
 
-        val token = erc20Resource.getTokenInformation(getNetwork(), it.id)
+        val token = erC20Resource.getTokenInformation(getNetwork(), it.id)
 
         return PoolingMarket(
             network = getNetwork(),
@@ -56,7 +55,7 @@ class QuickswapPoolingMarketProvider(
             apr = quickswapAPRService.getLPAPR(it.id),
             marketSize = it.reserveUSD,
             tokenType = TokenType.QUICKSWAP,
-            positionFetcher = defaultBalanceFetcher(token.address)
+            positionFetcher = defaultPositionFetcher(token.address)
         )
     }
 

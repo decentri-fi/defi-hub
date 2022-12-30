@@ -23,9 +23,7 @@ import java.math.RoundingMode
 @Component
 class SushiswapFantomFarmingMinichefMarketProvider(
     private val abiResource: ABIResource,
-    private val erC20Resource: ERC20Resource,
     private val priceResource: PriceResource,
-    private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) : FarmingMarketProvider() {
 
     val minichefABI by lazy {

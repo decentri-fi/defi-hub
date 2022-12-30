@@ -28,7 +28,6 @@ import java.math.RoundingMode
 class WepiggyLendingMarketProvider(
     blockchainGatewayProvider: BlockchainGatewayProvider,
     private val abiResource: ABIResource,
-    private val erC20Resource: ERC20Resource,
     private val wepiggyPolygonService: WepiggyPolygonService,
     private val priceResource: PriceResource
 ) : LendingMarketProvider() {
@@ -40,8 +39,6 @@ class WepiggyLendingMarketProvider(
     val cTokenABI by lazy {
         abiResource.getABI("compound/ctoken.json")
     }
-
-    val gateway = blockchainGatewayProvider.getGateway(getNetwork())
 
     override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
         getTokenContracts().map {
@@ -112,7 +109,7 @@ class WepiggyLendingMarketProvider(
     private suspend fun getTokenContracts(): List<CompoundTokenContract> {
         return getComptroller().getMarkets().map { market ->
             CompoundTokenContract(
-                gateway,
+                getBlockchainGateway(),
                 cTokenABI,
                 market
             )
@@ -121,7 +118,7 @@ class WepiggyLendingMarketProvider(
 
     private fun getComptroller(): CompoundComptrollerContract {
         return CompoundComptrollerContract(
-            gateway,
+            getBlockchainGateway(),
             comptrollerABI,
             wepiggyPolygonService.getComptroller()
         )

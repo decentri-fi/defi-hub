@@ -15,8 +15,7 @@ import java.math.BigDecimal
 class DfynPoolingMarketService(
     private val dfynService: DfynService,
     private val dfynAPRService: DfynAPRService,
-    erc20Resource: ERC20Resource
-) : PoolingMarketProvider(erc20Resource) {
+) : PoolingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<PoolingMarket> {
         return dfynService.getPairs().mapNotNull {
@@ -39,7 +38,7 @@ class DfynPoolingMarketService(
                     apr = dfynAPRService.getAPR(it.id),
                     marketSize = it.reserveUSD,
                     tokenType = TokenType.DFYN,
-                    positionFetcher = defaultBalanceFetcher(token.address)
+                    positionFetcher = defaultPositionFetcher(token.address)
                 )
             } else {
                 null

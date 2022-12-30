@@ -18,10 +18,8 @@ import org.springframework.stereotype.Component
 @Component
 class RibbonEthereumFarmingMarketProvider(
     private val ribbonEthereumGraphProvider: RibbonEthereumGraphProvider,
-    private val erC20Resource: ERC20Resource,
     private val priceResource: PriceResource,
     private val abiResource: ABIResource,
-    private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) : FarmingMarketProvider() {
 
     val ribbonVaultAbi = abiResource.getABI("ribbon/vault.json")
@@ -30,7 +28,7 @@ class RibbonEthereumFarmingMarketProvider(
         return ribbonEthereumGraphProvider.getVaults().map {
             val stakedToken = erC20Resource.getTokenInformation(getNetwork(), it.underlyingAsset)
             val vault = RibbonVaultContract(
-                blockchainGatewayProvider.getGateway(getNetwork()),
+                getBlockchainGateway(),
                 ribbonVaultAbi,
                 it.id
             )

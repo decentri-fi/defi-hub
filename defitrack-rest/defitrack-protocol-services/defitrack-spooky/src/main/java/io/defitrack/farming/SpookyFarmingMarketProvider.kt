@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component
 class SpookyFarmingMarketProvider(
     private val spookyFantomService: SpookyFantomService,
     private val marketFactory: MarketFactory,
-    private val erc20Resource: ERC20Resource
 ) : FarmingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
@@ -51,10 +50,7 @@ class SpookyFarmingMarketProvider(
                     getNetwork()
                 ),
                 apr = aprCalculator.calculateApr(),
-                balanceFetcher = defaultBalanceFetcher(
-                    erc20Resource,
-                    masterchef.address
-                ),
+                balanceFetcher = defaultPositionFetcher(masterchef.address),
                 farmType = FarmType.LIQUIDITY_MINING
             )
         }

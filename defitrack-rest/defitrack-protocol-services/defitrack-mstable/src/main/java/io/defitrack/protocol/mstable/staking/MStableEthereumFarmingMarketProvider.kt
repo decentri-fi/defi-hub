@@ -18,10 +18,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class MStableEthereumFarmingMarketProvider(
-    private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val mStableEthereumService: MStableEthereumService,
     private val abiResource: ABIResource,
-    private val erC20Resource: ERC20Resource
 ) : FarmingMarketProvider() {
 
     val boostedSavingsVaultABI by lazy {

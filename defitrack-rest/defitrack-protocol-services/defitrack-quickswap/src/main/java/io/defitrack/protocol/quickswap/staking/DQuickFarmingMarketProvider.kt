@@ -17,9 +17,7 @@ import org.springframework.stereotype.Service
 @Service
 class DQuickFarmingMarketProvider(
     private val quickswapService: QuickswapService,
-    private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val abiResource: ABIResource,
-    private val erC20Resource: ERC20Resource,
 ) : FarmingMarketProvider() {
 
     val dquickStakingABI by lazy {

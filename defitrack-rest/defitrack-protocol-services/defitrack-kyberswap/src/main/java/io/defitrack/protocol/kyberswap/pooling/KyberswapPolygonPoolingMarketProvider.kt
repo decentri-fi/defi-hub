@@ -17,16 +17,15 @@ import org.springframework.stereotype.Service
 class KyberswapPolygonPoolingMarketProvider(
     private val kyberswapPolygonGraphProvider: KyberswapPolygonGraphProvider,
     private val kyberswapAPRService: KyberswapAPRService,
-     erc20Resource: ERC20Resource
-) : PoolingMarketProvider(erc20Resource) {
+) : PoolingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
         kyberswapPolygonGraphProvider.getPoolingMarkets().map {
             async {
                 try {
-                    val token = erc20Resource.getTokenInformation(getNetwork(), it.id)
-                    val token0 = erc20Resource.getTokenInformation(getNetwork(), it.token0.id)
-                    val token1 = erc20Resource.getTokenInformation(getNetwork(), it.token1.id)
+                    val token = erC20Resource.getTokenInformation(getNetwork(), it.id)
+                    val token0 = erC20Resource.getTokenInformation(getNetwork(), it.token0.id)
+                    val token1 = erC20Resource.getTokenInformation(getNetwork(), it.token1.id)
 
                     PoolingMarket(
                         id = "kyberswap-polygon-${it.id}",
@@ -42,7 +41,7 @@ class KyberswapPolygonPoolingMarketProvider(
                         apr = kyberswapAPRService.getAPR(it.pair.id, getNetwork()),
                         marketSize = it.reserveUSD,
                         tokenType = TokenType.KYBER,
-                        positionFetcher = defaultBalanceFetcher(token.address)
+                        positionFetcher = defaultPositionFetcher(token.address)
                     )
                 } catch (ex: Exception) {
                     ex.printStackTrace()

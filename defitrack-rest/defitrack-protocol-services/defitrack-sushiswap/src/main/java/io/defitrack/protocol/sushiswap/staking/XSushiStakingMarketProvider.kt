@@ -17,8 +17,6 @@ import java.math.BigInteger
 @Component
 class XSushiStakingMarketProvider(
     private val erc20Resource: ERC20Resource,
-    private val marketSizeService: MarketSizeService,
-    private val blockchainGateway: BlockchainGatewayProvider,
 ): FarmingMarketProvider() {
 
     private val xsushi = "0x8798249c2E607446EfB7Ad49eC89dD1865Ff4272"
@@ -27,9 +25,7 @@ class XSushiStakingMarketProvider(
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
 
-        val gateway = blockchainGateway.getGateway(getNetwork())
-
-        val xSushiContract = XSushiContract(gateway, "", xsushi)
+        val xSushiContract = XSushiContract(getBlockchainGateway(), "", xsushi)
         val sushiToken = erc20Resource.getTokenInformation(getNetwork(), sushi)
         val totalStakedSushi = erc20Resource.getBalance(getNetwork(), sushi, xsushi)
 

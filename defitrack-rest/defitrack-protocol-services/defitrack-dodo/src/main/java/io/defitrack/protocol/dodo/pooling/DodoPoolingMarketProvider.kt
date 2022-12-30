@@ -10,10 +10,9 @@ import io.defitrack.token.MarketSizeService
 import io.defitrack.token.TokenType
 
 abstract class DodoPoolingMarketProvider(
-    erC20Resource: ERC20Resource,
     private val dodoGraphProvider: DodoGraphProvider,
     private val priceResource: PriceResource,
-) : PoolingMarketProvider(erC20Resource) {
+) : PoolingMarketProvider() {
     override suspend fun fetchMarkets(): List<PoolingMarket> {
         return dodoGraphProvider.getPools().map { pool ->
 

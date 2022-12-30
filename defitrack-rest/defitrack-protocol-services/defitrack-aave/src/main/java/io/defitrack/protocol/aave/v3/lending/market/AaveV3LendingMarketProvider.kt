@@ -20,10 +20,8 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 
 abstract class AaveV3LendingMarketProvider(
-    private val erC20Resource: ERC20Resource,
     private val priceResource: PriceResource,
     private val network: Network,
-    blockchainGatewayProvider: BlockchainGatewayProvider,
     abiResource: ABIResource,
     aaveV3DataProvider: AaveV3DataProvider,
 ) : LendingMarketProvider() {
