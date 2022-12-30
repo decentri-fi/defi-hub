@@ -3,14 +3,12 @@ package io.defitrack.protocol
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
-import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.contract.HopStakingReward
-import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -37,7 +35,7 @@ class HopPolygonFarmingMarketProvider(
     private suspend fun toStakingMarket(stakingReward: String): FarmingMarket? {
         return try {
             val pool = HopStakingReward(
-                blockchainGatewayProvider.getGateway(getNetwork()),
+                getBlockchainGateway(),
                 abiResource.getABI("quickswap/StakingRewards.json"),
                 stakingReward
             )

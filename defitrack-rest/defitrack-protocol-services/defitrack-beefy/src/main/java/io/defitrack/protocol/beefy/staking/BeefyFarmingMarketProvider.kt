@@ -3,7 +3,6 @@ package io.defitrack.protocol.beefy.staking
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.erc20.TokenInformationVO
-import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
@@ -14,7 +13,6 @@ import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
 import io.defitrack.protocol.beefy.domain.BeefyVault
 import io.defitrack.protocol.beefy.staking.invest.BeefyStakingInvestmentPreparer
-import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -46,7 +44,7 @@ abstract class BeefyFarmingMarketProvider(
     private suspend fun toStakingMarketElement(beefyVault: BeefyVault): FarmingMarket? {
         return try {
             val contract = BeefyVaultContract(
-                blockchainGatewayProvider.getGateway(getNetwork()),
+                getBlockchainGateway(),
                 vaultV6ABI,
                 beefyVault.earnContractAddress,
                 beefyVault.id

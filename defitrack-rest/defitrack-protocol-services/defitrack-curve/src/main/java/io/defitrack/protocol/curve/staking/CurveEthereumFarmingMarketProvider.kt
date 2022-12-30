@@ -22,10 +22,8 @@ class CurveEthereumFarmingMarketProvider : FarmingMarketProvider() {
     override suspend fun fetchMarkets(): List<FarmingMarket> =
         coroutineScope {
 
-            val gateway = blockchainGatewayProvider.getGateway(getNetwork())
-
             val gaugeController = CurveGaugeControllerContract(
-                blockchainGateway = gateway,
+                blockchainGateway = getBlockchainGateway(),
                 address = "0x2F50D538606Fa9EDD2B11E2446BEb18C9D5846bB"
             )
 
@@ -33,7 +31,7 @@ class CurveEthereumFarmingMarketProvider : FarmingMarketProvider() {
                 async {
                     try {
                         val contract = CurveGaugeContract(
-                            gateway,
+                            getBlockchainGateway(),
                             gauge
                         )
                         val rewardTokens = contract.rewardTokens()

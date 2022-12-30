@@ -3,7 +3,6 @@ package io.defitrack.protocol.sushiswap.staking
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
-import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
@@ -14,7 +13,6 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SushiPolygonService
 import io.defitrack.protocol.reward.MiniChefV2Contract
 import io.defitrack.protocol.sushiswap.apr.MinichefStakingAprCalculator
-import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
@@ -33,7 +31,7 @@ class SushiswapPolygonFarmingMinichefMarketProvider(
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         return SushiPolygonService.getMiniChefs().map {
             MiniChefV2Contract(
-                blockchainGatewayProvider.getGateway(getNetwork()),
+                getBlockchainGateway(),
                 minichefABI,
                 it
             )

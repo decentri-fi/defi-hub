@@ -2,10 +2,9 @@ package io.defitrack.protocol.mstable.lending
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.lending.LendingMarketProvider
-import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.market.lending.domain.LendingMarket
+import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.mstable.MStablePolygonService
 import io.defitrack.protocol.mstable.contract.MStableEthereumSavingsContract
@@ -25,7 +24,7 @@ class MStablePolygonLendingMarketProvider(
     override suspend fun fetchMarkets(): List<LendingMarket> {
         return mStableService.getSavingsContracts().map {
             MStableEthereumSavingsContract(
-                blockchainGatewayProvider.getGateway(getNetwork()),
+                getBlockchainGateway(),
                 savingsContractABI,
                 it
             )

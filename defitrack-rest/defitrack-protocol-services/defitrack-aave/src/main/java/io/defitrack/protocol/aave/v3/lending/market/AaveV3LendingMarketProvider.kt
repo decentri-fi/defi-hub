@@ -3,10 +3,9 @@ package io.defitrack.protocol.aave.v3.lending.market
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.lending.LendingMarketProvider
-import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.market.lending.domain.LendingMarket
+import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
@@ -14,7 +13,6 @@ import io.defitrack.protocol.aave.v3.AaveV3DataProvider
 import io.defitrack.protocol.aave.v3.contract.PoolContract
 import io.defitrack.protocol.aave.v3.contract.PoolDataProvider
 import io.defitrack.protocol.aave.v3.lending.invest.AaveV3LendingInvestmentPreparer
-import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -27,13 +25,13 @@ abstract class AaveV3LendingMarketProvider(
 ) : LendingMarketProvider() {
 
     val pool = PoolContract(
-        blockchainGatewayProvider.getGateway(getNetwork()),
+        getBlockchainGateway(),
         abiResource.getABI("aave/v3/Pool.json"),
         aaveV3DataProvider.poolAddress
     )
 
     val poolDataProvider = PoolDataProvider(
-        blockchainGatewayProvider.getGateway(getNetwork()),
+        getBlockchainGateway(),
         abiResource.getABI("aave/v3/AaveProtocolDataProvider.json"),
         aaveV3DataProvider.poolDataProvider
     )

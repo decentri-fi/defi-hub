@@ -28,7 +28,7 @@ class RibbonAvalancheFarmingMarketProvider(
         return ribbonGraphProvider.getVaults().map {
             val stakedToken = erC20Resource.getTokenInformation(getNetwork(), it.underlyingAsset)
             val vault = RibbonVaultContract(
-                blockchainGatewayProvider.getGateway(getNetwork()),
+                getBlockchainGateway(),
                 ribbonVaultAbi,
                 it.id
             )

@@ -26,7 +26,6 @@ import java.math.RoundingMode
 
 @Component
 class WepiggyLendingMarketProvider(
-    blockchainGatewayProvider: BlockchainGatewayProvider,
     private val abiResource: ABIResource,
     private val wepiggyPolygonService: WepiggyPolygonService,
     private val priceResource: PriceResource

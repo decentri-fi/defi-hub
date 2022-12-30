@@ -2,13 +2,12 @@ package io.defitrack.protocol.mstable.lending
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.lending.LendingMarketProvider
-import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.market.lending.domain.LendingMarket
+import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.mstable.contract.MStableEthereumSavingsContract
 import io.defitrack.protocol.mstable.MStableEthereumService
+import io.defitrack.protocol.mstable.contract.MStableEthereumSavingsContract
 import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -28,7 +27,7 @@ class MStableEthereumLendingMarketProvider(
     override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
         mStableService.getSavingsContracts().map {
             MStableEthereumSavingsContract(
-                blockchainGatewayProvider.getGateway(getNetwork()),
+                getBlockchainGateway(),
                 savingsContractABI,
                 it
             )

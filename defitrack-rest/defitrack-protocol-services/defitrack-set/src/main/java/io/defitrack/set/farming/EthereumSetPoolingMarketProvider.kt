@@ -17,11 +17,10 @@ class EthereumSetPoolingMarketProvider(
 ) : PoolingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<PoolingMarket> {
-        val gateway = blockchainGatewayProvider.getGateway(getNetwork())
         return ethereumSetProvider.getSets().mapNotNull {
             try {
                 val tokenContract = SetTokenContract(
-                    gateway, it
+                    getBlockchainGateway(), it
                 )
                 val positions = tokenContract.getPositions()
                 PoolingMarket(
