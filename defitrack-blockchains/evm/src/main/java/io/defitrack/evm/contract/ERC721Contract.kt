@@ -21,7 +21,7 @@ open class ERC721Contract(
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    suspend fun ownerOfFunction(tokenId: BigInteger): Function {
+    fun ownerOfFunction(tokenId: BigInteger): Function {
         return createFunction(
             "ownerOf",
             inputs = listOf(tokenId.toUint256()),

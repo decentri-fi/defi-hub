@@ -21,7 +21,8 @@ data class LendingMarket(
     val rate: BigDecimal? = null,
     val poolType: String,
     val positionFetcher: PositionFetcher? = null,
-    val investmentPreparer: InvestmentPreparer? = null
+    val investmentPreparer: InvestmentPreparer? = null,
+    val metadata: Map<String, Any> = emptyMap()
 ) : DefiMarket
 
 class PositionFetcher(
