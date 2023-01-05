@@ -97,7 +97,6 @@ class QidaoVaultContract(
     }
 
     fun populateVaultOwners() {
-        logger.info("populating vault owners")
         logger.info("populated ${existingVaults.count()} owners")
     }
 }
