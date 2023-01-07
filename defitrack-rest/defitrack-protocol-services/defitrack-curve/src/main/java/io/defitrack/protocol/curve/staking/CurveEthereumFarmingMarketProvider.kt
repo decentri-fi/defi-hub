@@ -39,11 +39,10 @@ class CurveEthereumFarmingMarketProvider : FarmingMarketProvider() {
                                 it != "0x0000000000000000000000000000000000000000"
                             }
                             .map {
-                                erC20Resource.getTokenInformation(getNetwork(), it).toFungibleToken()
+                                getToken(it).toFungibleToken()
                             }
 
-                        val stakedToken =
-                            erC20Resource.getTokenInformation(getNetwork(), contract.lpToken())
+                        val stakedToken = getToken(contract.lpToken())
 
                         create(
                             identifier = gauge,
@@ -58,7 +57,7 @@ class CurveEthereumFarmingMarketProvider : FarmingMarketProvider() {
                             balanceFetcher = PositionFetcher(
                                 gauge,
                                 { user ->
-                                    erC20Resource.balanceOfFunction(gauge, user, getNetwork())
+                                    getERC20Resource().balanceOfFunction(gauge, user, getNetwork())
                                 }
                             ),
                             claimableRewardFetcher = rewardTokens.takeIf { it.isNotEmpty() }?.let {

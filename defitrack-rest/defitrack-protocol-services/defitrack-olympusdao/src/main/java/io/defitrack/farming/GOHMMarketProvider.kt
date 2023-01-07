@@ -18,7 +18,7 @@ class GOHMMarketProvider(
 
     val ohmAddress = "0x64aa3364F17a4D01c6f1751Fd97C2BD3D7e7f1D5"
     override suspend fun fetchMarkets(): List<FarmingMarket> {
-        val ohm = erC20Resource.getTokenInformation(getNetwork(), ohmAddress)
+        val ohm =  getToken(ohmAddress)
         val gohm = olympusEthereumService.getGOHMContract()
 
         return listOf(
@@ -31,7 +31,7 @@ class GOHMMarketProvider(
                 balanceFetcher = PositionFetcher(
                     gohm.address,
                     { user ->
-                        erC20Resource.balanceOfFunction(gohm.address, user, getNetwork())
+                        getERC20Resource().balanceOfFunction(gohm.address, user, getNetwork())
                     },
                     { retVal ->
                         val gohmAmount = retVal[0].value as BigInteger

@@ -31,7 +31,7 @@ class BeethovenXOptimismPoolingMarketProvider(
                                 it.tokens.joinToString("/", transform = PoolToken::symbol)
                             } Pool",
                             tokens = it.tokens.map { poolToken ->
-                                erC20Resource.getTokenInformation(getNetwork(), poolToken.address).toFungibleToken()
+                                getToken(poolToken.address).toFungibleToken()
                             },
                             symbol = it.symbol,
                             apr = BigDecimal.ZERO,

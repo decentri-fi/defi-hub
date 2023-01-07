@@ -49,7 +49,7 @@ abstract class BeefyFarmingMarketProvider(
                 beefyVault.earnContractAddress,
                 beefyVault.id
             )
-            val want = erC20Resource.getTokenInformation(getNetwork(), contract.want())
+            val want = getToken(contract.want())
             val pricePerFullShare = contract.getPricePerFullShare()
             create(
                 identifier = contract.vaultId,
@@ -70,7 +70,7 @@ abstract class BeefyFarmingMarketProvider(
                         ).toBigInteger()
                     }
                 ),
-                investmentPreparer = BeefyStakingInvestmentPreparer(contract, erC20Resource),
+                investmentPreparer = BeefyStakingInvestmentPreparer(contract, getERC20Resource()),
                 farmType = FarmType.VAULT
             )
         } catch (ex: Exception) {

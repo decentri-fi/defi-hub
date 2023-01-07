@@ -2,14 +2,12 @@ package io.defitrack.protocol.convex.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
+import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.convex.ConvexService
 import io.defitrack.protocol.convex.contract.CvxRewardPoolContract
-import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.protocol.FarmType
-import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 
 @Service
@@ -32,8 +30,8 @@ class ConvexPoolsFarmingPositionProvider(
                 it.name
             )
         }.map {
-            val stakingToken = erC20Resource.getTokenInformation(getNetwork(), it.stakingToken())
-            val rewardToken = erC20Resource.getTokenInformation(getNetwork(), it.rewardToken())
+            val stakingToken = getToken(it.stakingToken())
+            val rewardToken = getToken(it.rewardToken())
             create(
                 name = it.name,
                 identifier = it.name,

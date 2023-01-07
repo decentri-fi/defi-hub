@@ -18,7 +18,7 @@ class PoolTogetherAUSDCTicketMarketProvider(
     val usdcTicketAddress = "0xdd4d117723c257cee402285d3acf218e9a8236e1"
     val usdcAddress = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
     override suspend fun fetchMarkets(): List<PoolingMarket> {
-        val token = erC20Resource.getTokenInformation(getNetwork(), usdcTicketAddress)
+        val token = getToken(usdcTicketAddress)
 
         return listOf(
             PoolingMarket(

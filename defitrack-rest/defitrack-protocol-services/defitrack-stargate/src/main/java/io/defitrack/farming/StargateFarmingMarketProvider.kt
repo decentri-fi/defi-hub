@@ -8,7 +8,6 @@ import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.StargateService
 import io.defitrack.protocol.contract.LPStakingContract
-import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Component
 
 @Component
@@ -28,10 +27,10 @@ abstract class StargateFarmingMarketProvider(
             lpStakingContractAbi,
             stargateOptimismService.getLpFarm()
         )
-        val stargate = erC20Resource.getTokenInformation(getNetwork(), lpStakingContract.stargate())
+        val stargate = getToken(lpStakingContract.stargate())
 
         return lpStakingContract.poolInfos().mapIndexed { index, info ->
-            val stakedToken = erC20Resource.getTokenInformation(getNetwork(), info.lpToken)
+            val stakedToken = getToken(info.lpToken)
             val rewardTokens = listOf(stargate)
 
             create(

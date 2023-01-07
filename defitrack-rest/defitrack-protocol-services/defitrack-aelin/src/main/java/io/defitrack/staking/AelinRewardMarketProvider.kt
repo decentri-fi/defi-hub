@@ -26,7 +26,7 @@ class AelinRewardMarketProvider(
     }
     override suspend fun fetchMarkets(): List<FarmingMarket> {
 
-        val aelin = erC20Resource.getTokenInformation(getNetwork(), aelinAddress)
+        val aelin = getToken(aelinAddress)
 
         return listOf(
             create(
@@ -68,7 +68,7 @@ class AelinRewardMarketProvider(
             quickRewardsPerYear
         )
         val marketsize = marketSizeService.getMarketSize(
-            erC20Resource.getTokenInformation(getNetwork(), aelinAddress).toFungibleToken(),
+            getToken(aelinAddress).toFungibleToken(),
             address,
             getNetwork()
         )

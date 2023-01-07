@@ -14,8 +14,7 @@ class YearnFarmingMarketProvider(
 ) : FarmingMarketProvider() {
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         return yearnService.provideYearnV2Vaults().map {
-            val stakedtoken =
-                erC20Resource.getTokenInformation(getNetwork(), it.token.id).toFungibleToken()
+            val stakedtoken = getToken(it.token.id).toFungibleToken()
             create(
                 name = it.shareToken.name,
                 identifier = it.id,

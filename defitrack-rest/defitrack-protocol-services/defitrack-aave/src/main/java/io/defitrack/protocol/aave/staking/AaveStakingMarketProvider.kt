@@ -9,28 +9,25 @@ import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.network.toVO
 import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
-import io.defitrack.token.ERC20Resource
 import io.defitrack.transaction.PreparedTransaction
 import org.springframework.stereotype.Component
 import java.math.BigInteger
 
 @Component
-class AaveStakingMarketProvider(
-    private val erc20Resource: ERC20Resource
-) : FarmingMarketProvider() {
+class AaveStakingMarketProvider : FarmingMarketProvider() {
 
     private val stAave = "0x4da27a545c0c5b758a6ba100e3a049001de870f5"
     private val aave = "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9"
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
-        val aaveToken = erC20Resource.getTokenInformation(getNetwork(), aave)
+        val aaveToken = getToken(aave)
 
         val stAaveContract = StakedAaveContract(
             getBlockchainGateway(),
             stAave
         )
 
-        val totalStakedAave = erc20Resource.getBalance(getNetwork(), aave, stAave)
+        val totalStakedAave = getERC20Resource().getBalance(getNetwork(), aave, stAave)
         val ratio = totalStakedAave.toBigDecimal().dividePrecisely(stAaveContract.totalSupply().toBigDecimal())
 
         return listOf(
@@ -49,7 +46,7 @@ class AaveStakingMarketProvider(
                 balanceFetcher = PositionFetcher(
                     stAave,
                     { user ->
-                        erC20Resource.balanceOfFunction(
+                        getERC20Resource().balanceOfFunction(
                             stAave, user, getNetwork()
                         )
                     },

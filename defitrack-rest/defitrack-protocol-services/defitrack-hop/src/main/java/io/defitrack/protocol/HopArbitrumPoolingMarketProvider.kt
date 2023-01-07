@@ -51,8 +51,8 @@ class HopArbitrumPoolingMarketProvider(
                 contract.swap()
             )
 
-            val htoken = erC20Resource.getTokenInformation(getNetwork(), hopLpToken.hToken)
-            val canonical = erC20Resource.getTokenInformation(getNetwork(), hopLpToken.canonicalToken)
+            val htoken =  getToken( hopLpToken.hToken)
+            val canonical =  getToken(hopLpToken.canonicalToken)
 
             val marketSize = getPrice(canonical.address, contract, swapContract).toBigDecimal()
             PoolingMarket(

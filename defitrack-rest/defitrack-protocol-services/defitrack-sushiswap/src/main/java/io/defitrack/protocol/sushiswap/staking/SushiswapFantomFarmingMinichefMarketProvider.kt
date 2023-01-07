@@ -54,9 +54,8 @@ class SushiswapFantomFarmingMinichefMarketProvider(
         chef: MiniChefV2Contract,
         poolId: Int
     ): FarmingMarket {
-        val stakedtoken =
-            erC20Resource.getTokenInformation(getNetwork(), chef.getLpTokenForPoolId(poolId))
-        val rewardToken = erC20Resource.getTokenInformation(getNetwork(), chef.rewardToken())
+        val stakedtoken = getToken(chef.getLpTokenForPoolId(poolId))
+        val rewardToken = getToken(chef.rewardToken())
         return create(
             identifier = "${chef.address}-${poolId}",
             name = stakedtoken.name + " Farm",
@@ -66,7 +65,7 @@ class SushiswapFantomFarmingMinichefMarketProvider(
             ),
             vaultType = "sushi-minichefV2",
             marketSize = calculateMarketSize(chef, stakedtoken),
-            apr = MinichefStakingAprCalculator(erC20Resource, priceResource, chef, poolId).calculateApr(),
+            apr = MinichefStakingAprCalculator(getERC20Resource(), priceResource, chef, poolId).calculateApr(),
             balanceFetcher = PositionFetcher(
                 chef.address,
                 { user -> chef.userInfoFunction(poolId, user) }
@@ -79,7 +78,7 @@ class SushiswapFantomFarmingMinichefMarketProvider(
         chef: MiniChefV2Contract,
         stakedTokenInformation: TokenInformationVO
     ): BigDecimal {
-        val balance = erC20Resource.getBalance(getNetwork(), stakedTokenInformation.address, chef.address)
+        val balance = getERC20Resource().getBalance(getNetwork(), stakedTokenInformation.address, chef.address)
         return BigDecimal.valueOf(
             priceResource.calculatePrice(
                 PriceRequest(

@@ -4,7 +4,6 @@ import io.defitrack.common.network.Network
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.QidaoArbitrumService
 import io.defitrack.protocol.QidaoPolygonService
 import io.defitrack.protocol.contract.QidaoVaultContract
 import org.springframework.stereotype.Service
@@ -22,12 +21,12 @@ class QiDaoPolygonVaultProvider(
             )
             vault.populateVaultOwners()
 
-            val collateral = erC20Resource.getTokenInformation(getNetwork(), vault.collateral())
+            val collateral = getToken(vault.collateral())
 
             create(
                 name = vault.name(),
                 identifier = vault.address,
-                token = erC20Resource.getTokenInformation(getNetwork(), collateral.address).toFungibleToken(),
+                token = getToken(collateral.address).toFungibleToken(),
                 marketSize = marketSizeService.getMarketSize(
                     collateral.toFungibleToken(),
                     vault.address,

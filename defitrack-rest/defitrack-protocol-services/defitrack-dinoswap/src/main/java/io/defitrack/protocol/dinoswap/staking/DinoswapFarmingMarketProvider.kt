@@ -49,7 +49,7 @@ class DinoswapFarmingMarketProvider(
             tokenService.getTokenInformation(getNetwork(), chef.getLpTokenForPoolId(poolId))
         val rewardToken = tokenService.getTokenInformation(getNetwork(), chef.rewardToken())
 
-        val marketBalance = erC20Resource.getBalance(getNetwork(), stakedtoken.address, chef.address)
+        val marketBalance = getERC20Resource().getBalance(getNetwork(), stakedtoken.address, chef.address)
         val marketSize = priceResource.calculatePrice(
             PriceRequest(
                 stakedtoken.address,

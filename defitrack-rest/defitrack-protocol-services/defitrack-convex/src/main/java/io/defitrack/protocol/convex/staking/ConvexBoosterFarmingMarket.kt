@@ -2,14 +2,12 @@ package io.defitrack.protocol.convex.staking
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.convex.ConvexService
 import io.defitrack.protocol.convex.contract.ConvexBoosterContract
-import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 
@@ -31,7 +29,7 @@ class ConvexBoosterFarmingMarket(
         val poolInfos = booster.poolInfos()
 
         List(poolInfos.size) { idx ->
-            val stakedToken = erC20Resource.getTokenInformation(getNetwork(), poolInfos[idx].lpToken)
+            val stakedToken = getToken(poolInfos[idx].lpToken)
 
             create(
                 identifier = booster.address + "-" + idx,

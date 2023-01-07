@@ -26,7 +26,7 @@ class AdamantVaultMarketProvider(
 
     val addy by lazy {
         runBlocking(Dispatchers.IO) {
-            erC20Resource.getTokenInformation(getNetwork(), "0xc3fdbadc7c795ef1d6ba111e06ff8f16a20ea539")
+            getToken("0xc3fdbadc7c795ef1d6ba111e06ff8f16a20ea539")
         }
     }
 
@@ -42,7 +42,7 @@ class AdamantVaultMarketProvider(
             }.map { vault ->
                 async {
                     try {
-                        val token = erC20Resource.getTokenInformation(getNetwork(), vault.token())
+                        val token = getToken(vault.token())
                         create(
                             name = "${token.name} vault",
                             identifier = vault.address,
