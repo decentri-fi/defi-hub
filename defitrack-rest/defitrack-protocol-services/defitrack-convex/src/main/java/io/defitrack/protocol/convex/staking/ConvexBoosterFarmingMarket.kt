@@ -19,11 +19,13 @@ class ConvexBoosterFarmingMarket(
     abiResource: ABIResource,
 ) : FarmingMarketProvider() {
 
-    val booster = ConvexBoosterContract(
-        getBlockchainGateway(),
-        abiResource.getABI("convex/Booster.json"),
-        convexService.provideBooster()
-    )
+    val booster by lazy {
+        ConvexBoosterContract(
+            getBlockchainGateway(),
+            abiResource.getABI("convex/Booster.json"),
+            convexService.provideBooster()
+        )
+    }
 
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
         val poolInfos = booster.poolInfos()

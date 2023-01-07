@@ -24,17 +24,21 @@ abstract class AaveV3LendingMarketProvider(
     aaveV3DataProvider: AaveV3DataProvider,
 ) : LendingMarketProvider() {
 
-    val pool = PoolContract(
-        getBlockchainGateway(),
-        abiResource.getABI("aave/v3/Pool.json"),
-        aaveV3DataProvider.poolAddress
-    )
+    val pool by lazy {
+        PoolContract(
+            getBlockchainGateway(),
+            abiResource.getABI("aave/v3/Pool.json"),
+            aaveV3DataProvider.poolAddress
+        )
+    }
 
-    val poolDataProvider = PoolDataProvider(
-        getBlockchainGateway(),
-        abiResource.getABI("aave/v3/AaveProtocolDataProvider.json"),
-        aaveV3DataProvider.poolDataProvider
-    )
+    val poolDataProvider by lazy {
+        PoolDataProvider(
+            getBlockchainGateway(),
+            abiResource.getABI("aave/v3/AaveProtocolDataProvider.json"),
+            aaveV3DataProvider.poolDataProvider
+        )
+    }
 
     override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
         pool.reservesList().map {
