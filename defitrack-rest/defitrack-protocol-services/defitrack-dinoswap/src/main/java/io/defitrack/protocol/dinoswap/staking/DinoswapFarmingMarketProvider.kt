@@ -12,14 +12,15 @@ import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.dinoswap.DinoswapService
 import io.defitrack.protocol.dinoswap.contract.DinoswapFossilFarmsContract
-import io.defitrack.token.ERC20Resource
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Service
 
 @Service
 class DinoswapFarmingMarketProvider(
     private val dinoswapService: DinoswapService,
     private val abiResource: ABIResource,
-    private val tokenService: ERC20Resource,
     private val priceResource: PriceResource,
 ) : FarmingMarketProvider() {
 
@@ -27,8 +28,8 @@ class DinoswapFarmingMarketProvider(
         abiResource.getABI("dinoswap/FossilFarms.json")
     }
 
-    override suspend fun fetchMarkets(): List<FarmingMarket> {
-        return dinoswapService.getDinoFossilFarms().map {
+    override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
+        return@coroutineScope dinoswapService.getDinoFossilFarms().map {
             DinoswapFossilFarmsContract(
                 getBlockchainGateway(),
                 fossilFarms,
@@ -36,18 +37,24 @@ class DinoswapFarmingMarketProvider(
             )
         }.flatMap { chef ->
             (0 until chef.poolLength()).map { poolId ->
-                toStakingMarketElement(chef, poolId)
+                async {
+                    try {
+                        toStakingMarketElement(chef, poolId)
+                    } catch (e: Exception) {
+                        logger.error("Error while fetching market", e)
+                        null
+                    }
+                }
             }
-        }
+        }.awaitAll().filterNotNull()
     }
 
     private suspend fun toStakingMarketElement(
         chef: DinoswapFossilFarmsContract,
         poolId: Int
     ): FarmingMarket {
-        val stakedtoken =
-            tokenService.getTokenInformation(getNetwork(), chef.getLpTokenForPoolId(poolId))
-        val rewardToken = tokenService.getTokenInformation(getNetwork(), chef.rewardToken())
+        val stakedtoken = getToken(chef.getLpTokenForPoolId(poolId))
+        val rewardToken = getToken(chef.rewardToken())
 
         val marketBalance = getERC20Resource().getBalance(getNetwork(), stakedtoken.address, chef.address)
         val marketSize = priceResource.calculatePrice(
