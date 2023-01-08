@@ -53,6 +53,7 @@
         <module>tokemak</module>
         <module>qidao</module>
         <module>pooltogether</module>
+        <module>velodrome</module>
     </modules>
 
     <dependencyManagement>
