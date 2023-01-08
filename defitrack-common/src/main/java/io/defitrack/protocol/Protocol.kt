@@ -11,7 +11,7 @@ enum class Protocol(
     val networks: List<Network>
 ) {
     VELODROME(
-        logo = "velodrome.png",
+        logo = "velodrome.svg",
         slug = "velodrome",
         primitives = listOf(DefiPrimitive.POOLING),
         "https://app.velodrome.finance",
