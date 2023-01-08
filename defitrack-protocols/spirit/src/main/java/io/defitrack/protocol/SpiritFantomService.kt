@@ -15,7 +15,7 @@ class SpiritFantomService(
 ) : SpiritswapService {
 
     private val spiritswapService = SpiritGraphGateway(
-        "https://api.thegraph.com/subgraphs/name/moneyspirits/spiritswap",
+        "https://api.thegraph.com/subgraphs/name/layer3org/spiritswap-analytics",
         graphGatewayProvider
     )
 
