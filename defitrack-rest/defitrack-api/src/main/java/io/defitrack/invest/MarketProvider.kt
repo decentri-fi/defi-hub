@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import java.math.BigDecimal
 import java.math.BigInteger
+import kotlin.system.measureTimeMillis
 import kotlin.time.Duration.Companion.hours
 
 abstract class MarketProvider<T> : ProtocolService {
@@ -35,13 +36,18 @@ abstract class MarketProvider<T> : ProtocolService {
     protected abstract suspend fun fetchMarkets(): List<T>
 
     fun refreshCaches() = runBlocking(Dispatchers.Default) {
-        try {
-            val markets = populate()
-            cache.put("all", markets)
-            logger.info("Cache successfuly filled with ${markets.size} elements")
-        } catch (ex: Exception) {
-            logger.error("something went wrong trying to populate the cache", ex)
+
+        val millis = measureTimeMillis {
+            try {
+                val markets = populate()
+                cache.put("all", markets)
+                logger.info("${markets.size} markets added")
+            } catch (ex: Exception) {
+                logger.error("something went wrong trying to populate the cache", ex)
+            }
         }
+
+        logger.info("cache refresh took ${millis/1000}s")
     }
 
     private suspend fun populate() = try {
