@@ -10,6 +10,13 @@ enum class Protocol(
     val enabled: Boolean = true,
     val networks: List<Network>
 ) {
+    VELODROME(
+        logo = "velodrome.png",
+        slug = "velodrome",
+        primitives = listOf(DefiPrimitive.POOLING),
+        "https://app.velodrome.finance",
+        networks = listOf(Network.OPTIMISM)
+    ),
     SWAPFISH(
         logo = "swapfish.png",
         slug = "swapfish",
