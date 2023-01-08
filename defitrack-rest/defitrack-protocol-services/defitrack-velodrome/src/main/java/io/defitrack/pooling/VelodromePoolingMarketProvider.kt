@@ -6,6 +6,7 @@ import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.PairFactoryContract
 import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.VelodromeOptimismService
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -13,14 +14,15 @@ import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 
 @Component
-class VelodromePoolingMarketProvider : PoolingMarketProvider() {
+class VelodromePoolingMarketProvider(
+    private val velodromeOptimismService: VelodromeOptimismService
+) : PoolingMarketProvider() {
 
-    val pairFactoryAddress = "0x25cbddb98b35ab1ff77413456b31ec81a6b6b746"
 
     override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
         val pairFactoryContract = PairFactoryContract(
             blockchainGateway = getBlockchainGateway(),
-            contractAddress = pairFactoryAddress
+            contractAddress = velodromeOptimismService.getPoolFactory()
         )
 
         return@coroutineScope pairFactoryContract.allPairs().map {
