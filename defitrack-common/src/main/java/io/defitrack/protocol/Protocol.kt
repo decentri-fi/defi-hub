@@ -10,6 +10,13 @@ enum class Protocol(
     val enabled: Boolean = true,
     val networks: List<Network>
 ) {
+    LIDO(
+        logo = "lido.png",
+        slug = "lido",
+        primitives = listOf(DefiPrimitive.FARMING),
+        website = "https://lido.fi/",
+        networks = listOf(Network.ETHEREUM)
+    ),
     VELODROME(
         logo = "velodrome.svg",
         slug = "velodrome",
