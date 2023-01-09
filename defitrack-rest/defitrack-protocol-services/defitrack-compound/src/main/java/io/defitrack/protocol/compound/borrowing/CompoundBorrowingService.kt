@@ -7,9 +7,9 @@ import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.market.borrowing.BorrowService
 import io.defitrack.market.borrowing.domain.BorrowPosition
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.compound.CompoundComptrollerContract
+import io.defitrack.protocol.compound.v2.contract.CompoundComptrollerContract
 import io.defitrack.protocol.compound.CompoundEthereumService
-import io.defitrack.protocol.compound.CompoundTokenContract
+import io.defitrack.protocol.compound.v2.contract.CompoundTokenContract
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
