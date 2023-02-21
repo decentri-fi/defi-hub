@@ -22,7 +22,9 @@ class BancorPoolCollection(
                 object : TypeReference<DynamicArray<Address>>() {}
             )
         )
-        return result[0].value as List<String>
+        return (result[0].value as List<Address>).map {
+            it.value
+        }
     }
 
     suspend fun allPools(): List<String> {

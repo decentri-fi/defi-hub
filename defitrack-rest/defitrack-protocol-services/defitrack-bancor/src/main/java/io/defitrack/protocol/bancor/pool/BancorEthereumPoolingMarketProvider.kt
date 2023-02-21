@@ -2,14 +2,13 @@ package io.defitrack.protocol.bancor.pool
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.bancor.BancorEthereumGraphProvider
+import io.defitrack.protocol.bancor.BancorEthereumProvider
 import io.defitrack.protocol.bancor.contract.BancorNetworkContract
+import io.defitrack.protocol.bancor.contract.BancorPoolCollection
 import io.defitrack.protocol.bancor.contract.PoolTokenContract
-import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -20,51 +19,59 @@ import org.springframework.stereotype.Component
 @Component
 class BancorEthereumPoolingMarketProvider(
     private val abiResource: ABIResource,
-    private val bancorEthereumGraphProvider: BancorEthereumGraphProvider,
+    private val bancorEthreumProvider: BancorEthereumProvider,
 ) : PoolingMarketProvider() {
 
+    val bancorPoolCollection by lazy {
+        runBlocking {
+            BancorPoolCollection(
+                getBlockchainGateway(),
+                bancorEthreumProvider.bancorPoolCollection
+            )
+        }
+    }
 
     val poolTokenContractAbi by lazy {
-       runBlocking {
-           abiResource.getABI("bancor/PoolToken.json")
-       }
+        runBlocking {
+            abiResource.getABI("bancor/PoolToken.json")
+        }
     }
     val bancorNetworkAbi by lazy {
-        runBlocking { abiResource.getABI("bancor/BancorNetwork.json")
+        runBlocking {
+            abiResource.getABI("bancor/BancorNetwork.json")
         }
     }
 
     val bancorNetworkContract by lazy {
         BancorNetworkContract(
-            getBlockchainGateway(), bancorNetworkAbi, bancorEthereumGraphProvider.bancorNetwork()
+            getBlockchainGateway(), bancorNetworkAbi, bancorEthreumProvider.bancorNetwork
         )
     }
 
     override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
-        bancorEthereumGraphProvider.getLiquidityPools().map {
+        bancorPoolCollection.allPools().map { pool ->
             async {
                 try {
-                    val token = getToken(it.id)
+                    val token = getToken(pool)
                     val poolTokenContract = PoolTokenContract(
                         getBlockchainGateway(),
                         poolTokenContractAbi,
-                        it.id
+                        pool
                     )
 
                     val underlying = getToken(poolTokenContract.reserveToken())
                         .toFungibleToken()
                     PoolingMarket(
-                        id = "bancor-ethereum-${it.id}",
+                        id = "bancor-ethereum-${pool}",
                         network = getNetwork(),
                         protocol = getProtocol(),
-                        address = it.id,
+                        address = pool,
                         name = token.name,
                         symbol = token.symbol,
                         tokens = listOf(
                             underlying
                         ),
                         tokenType = TokenType.BANCOR,
-                        marketSize = it.totalValueLockedUSD,
                         investmentPreparer = BancorPoolInvestmentPreparer(
                             getERC20Resource(), bancorNetworkContract, underlying.address
                         ),
