@@ -4,7 +4,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.set.PolygonAbstractSetProvider
+import io.defitrack.protocol.set.PolygonSetProvider
 import io.defitrack.protocol.set.SetTokenContract
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
@@ -14,11 +14,11 @@ import org.springframework.stereotype.Service
 
 @Service
 class PolygonSetPoolingMarketProvider(
-    private val polygonSetProvider: PolygonAbstractSetProvider,
+    private val polygonSetProvider: PolygonSetProvider,
 ) : PoolingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope{
-        return@coroutineScope polygonSetProvider.getSets().mapNotNull {
+        return@coroutineScope polygonSetProvider.getSets().map {
             async {
                 try {
                     val tokenContract = SetTokenContract(

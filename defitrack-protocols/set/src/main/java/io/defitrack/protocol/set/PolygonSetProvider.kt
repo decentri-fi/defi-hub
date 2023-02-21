@@ -5,7 +5,7 @@ import io.ktor.client.*
 import org.springframework.stereotype.Component
 
 @Component
-class PolygonAbstractSetProvider(
+class PolygonSetProvider(
     httpClient: HttpClient
 ) : AbstractSetProvider(
     Network.POLYGON,

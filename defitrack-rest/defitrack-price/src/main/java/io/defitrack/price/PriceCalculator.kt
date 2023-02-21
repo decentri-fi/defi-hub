@@ -8,7 +8,6 @@ import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.price.hop.HopPriceService
 import io.defitrack.protocol.balancer.polygon.BalancerPolygonPoolGraphProvider
 import io.defitrack.token.ERC20Resource
-import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
@@ -47,18 +46,23 @@ class PriceCalculator(
                     tokenType.standardLpToken -> {
                         calculateLpHoldings(priceRequest, token)
                     }
+
                     tokenType == TokenType.BALANCER -> {
                         calculateBalancerPrice(priceRequest)
                     }
+
                     tokenType == TokenType.CURVE -> {
                         calculateLpHoldings(priceRequest, token)
                     }
+
                     tokenType == TokenType.HOP -> {
                         hopPriceService.calculateHopPrice(priceRequest)
                     }
+
                     else -> {
                         calculateTokenWorth(
-                            token.symbol,
+                            priceRequest.network,
+                            token,
                             priceRequest.amount
                         )
                     }
@@ -98,11 +102,12 @@ class PriceCalculator(
         }
     }
 
-    fun calculateTokenWorth(
-        symbol: String,
+    suspend fun calculateTokenWorth(
+        network: Network,
+        token: TokenInformationVO,
         amount: BigDecimal,
     ): BigDecimal {
-        val tokenPrice = priceProvider.getPrice(symbol)
+        val tokenPrice = priceProvider.getPrice(network, token)
         return amount.times(tokenPrice)
     }
 
@@ -120,7 +125,7 @@ class PriceCalculator(
         )
 
         return underlyingTokens.map { underlyingToken ->
-            val price = priceProvider.getPrice(underlyingToken.symbol)
+            val price = priceProvider.getPrice(network, underlyingToken)
             val underlyingTokenBalance = erc20Service.getBalance(network, underlyingToken.address, lpAddress)
             val userTokenAmount = underlyingTokenBalance.toBigDecimal().times(userShare)
 

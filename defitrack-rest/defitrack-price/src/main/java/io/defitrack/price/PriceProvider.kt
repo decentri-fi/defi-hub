@@ -1,7 +1,9 @@
 package io.defitrack.price
 
+import io.defitrack.common.network.Network
+import io.defitrack.erc20.TokenInformationVO
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
@@ -18,12 +20,13 @@ class PriceProvider(
         "WBTC" to "BTC"
     )
 
-    fun getPrice(symbol: String): BigDecimal {
+    suspend fun getPrice(network: Network, token: TokenInformationVO): BigDecimal {
         return externalPriceServices.find {
-            it.appliesTo(symbol)
-        }?.getPrice() ?: beefyPriceService.getPrices()
-            .getOrDefault(synonyms.getOrDefault(symbol.uppercase(), symbol.uppercase()), null) ?: runBlocking(
+            it.appliesTo(network, token)
+        }?.getPrice(network, token) ?: beefyPriceService.getPrices()
+            .getOrDefault(synonyms.getOrDefault(token.symbol.uppercase(), token.symbol.uppercase()), null)
+        ?: withContext(
             Dispatchers.IO
-        ) { coinGeckoPriceService.getPrice(symbol) } ?: BigDecimal.ZERO
+        ) { coinGeckoPriceService.getPrice(token.symbol) } ?: BigDecimal.ZERO
     }
 }
