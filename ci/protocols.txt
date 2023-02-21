@@ -37,4 +37,5 @@ olympusdao
 chainlink
 qidao
 swapfish
+pooltogether
 velodrome

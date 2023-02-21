@@ -42,7 +42,6 @@ class AaveStakingMarketProvider : FarmingMarketProvider() {
                 marketSize = marketSizeService.getMarketSize(
                     aaveToken.toFungibleToken(), stAave, getNetwork()
                 ),
-                apr = null,
                 balanceFetcher = PositionFetcher(
                     stAave,
                     { user ->
