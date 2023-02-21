@@ -39,7 +39,7 @@ class TokenService(
 
     val tokenCache: Cache<String, List<TokenInformation>> = Cache.Builder().build()
 
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
+   // @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
     fun refreshCaches() {
         refreshCache()
     }

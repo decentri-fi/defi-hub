@@ -4,6 +4,7 @@ import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.lending.domain.PositionFetcher
+import io.defitrack.price.PriceResource
 import io.defitrack.protocol.ProtocolService
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.FungibleToken
@@ -28,6 +29,9 @@ abstract class MarketProvider<T> : ProtocolService {
     private lateinit var erC20Resource: ERC20Resource
 
     @Autowired
+    private lateinit var priceResource: PriceResource
+
+    @Autowired
     lateinit var marketSizeService: MarketSizeService
 
     @Autowired
@@ -46,7 +50,7 @@ abstract class MarketProvider<T> : ProtocolService {
             }
         }
 
-        logger.info("cache refresh took ${millis/1000}s")
+        logger.info("cache refresh took ${millis / 1000}s")
     }
 
     private suspend fun populate() = try {
@@ -100,5 +104,9 @@ abstract class MarketProvider<T> : ProtocolService {
 
     fun getERC20Resource(): ERC20Resource {
         return erC20Resource
+    }
+
+    fun getPriceResource(): PriceResource {
+        return priceResource
     }
 }
