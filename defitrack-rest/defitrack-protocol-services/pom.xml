@@ -29,6 +29,7 @@
         <module>defitrack-iron-bank</module>
         <module>defitrack-dodo</module>
         <module>defitrack-kyberswap</module>
+        <module>defitrack-swapfish</module>
         <module>defitrack-hop</module>
         <module>defitrack-looksrare</module>
         <module>defitrack-spooky</module>

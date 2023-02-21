@@ -33,6 +33,7 @@
         <module>kyberswap</module>
         <module>iron-bank</module>
         <module>idex</module>
+        <module>swapfish</module>
         <module>quickswap</module>
         <module>sushiswap</module>
         <module>aave</module>
