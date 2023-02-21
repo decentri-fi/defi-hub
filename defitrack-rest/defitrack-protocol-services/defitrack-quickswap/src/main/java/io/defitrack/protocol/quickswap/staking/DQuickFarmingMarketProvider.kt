@@ -22,7 +22,13 @@ class DQuickFarmingMarketProvider(
         abiResource.getABI("quickswap/dquick.json")
     }
 
-    val dquick = dquickContract()
+    val dquick by lazy {
+        DQuickContract(
+            getBlockchainGateway(),
+            dquickStakingABI,
+            quickswapService.getDQuickContract(),
+        )
+    }
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
 
@@ -51,12 +57,6 @@ class DQuickFarmingMarketProvider(
             )
         )
     }
-
-    private fun dquickContract() = DQuickContract(
-        getBlockchainGateway(),
-        dquickStakingABI,
-        quickswapService.getDQuickContract(),
-    )
 
     override fun getProtocol(): Protocol {
         return Protocol.QUICKSWAP

@@ -21,7 +21,9 @@ class AelinRewardMarketProvider(
 ) : FarmingMarketProvider() {
 
     val aelinAddress = "0x61baadcf22d2565b0f471b291c475db5555e0b76"
-    val rewardPool = StakingRewardsContract(getBlockchainGateway())
+    val rewardPool by lazy {
+        StakingRewardsContract(getBlockchainGateway())
+    }
     override suspend fun fetchMarkets(): List<FarmingMarket> {
 
         val aelin = erC20Resource.getTokenInformation(getNetwork(), aelinAddress)
