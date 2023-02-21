@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service
 
 @Service
 class VelodromeGaugeMarketProvider(
-    private val velodromeOptimismService: VelodromeOptimismService,
     private val velodromeOptimismPoolingMarketProvider: VelodromeOptimismPoolingMarketProvider
 ) : FarmingMarketProvider() {
 
@@ -59,7 +58,8 @@ class VelodromeGaugeMarketProvider(
                             contract.address
                         ),
                         stakedToken = stakedToken.toFungibleToken(),
-                        vaultType = "velodrome-gauge"
+                        vaultType = "velodrome-gauge",
+                        balanceFetcher = defaultPositionFetcher(gauge)
                     )
                 } catch (ex: Exception) {
                     logger.error("Failed to fetch gauge market with pooling market {}", it.address, ex)
