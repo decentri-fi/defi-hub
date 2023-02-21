@@ -11,12 +11,14 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 
 class BalancerClaimPreparer(
-    private val gaugeContract: BalancerGaugeContract
+    private val gaugeContract: BalancerGaugeContract,
+    private val from: String? = null
 ) : ClaimingPreparer() {
     override suspend fun getClaimPreparation(prepareInvestmentCommand: PrepareClaimCommand?): Deferred<PreparedTransaction> =
         coroutineScope {
             async {
                 PreparedTransaction(
+                    from = from,
                     function = gaugeContract.getClaimRewardsFunction(),
                     to = gaugeContract.address,
                     network = getNetwork().toVO()
