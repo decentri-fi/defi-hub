@@ -19,7 +19,7 @@ class TransferEventDecoder : EventDecoder() {
     val transferEvent = Event("Transfer", listOf(address(true), address(true), uint256()))
 
     override fun appliesTo(log: Log): Boolean {
-        return log.appliesTo(transferEvent)
+        return log.appliesTo(transferEvent) && log.topics.size == 3
     }
 
     override suspend fun extract(log: Log, network: Network): DefiEvent {
