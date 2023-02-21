@@ -29,7 +29,7 @@ class LendingMarketStatisticsService(
                 it.primitives.contains(DefiPrimitive.LENDING)
             }.map {
                 it to async {
-                    defitrackClient.getMarkets(it)
+                    defitrackClient.getLendingMarkets(it)
                 }
             }.map {
                 it.first to it.second.await(3000L, emptyList())
@@ -40,7 +40,7 @@ class LendingMarketStatisticsService(
                     it.second
                 }.count(),
                 marketsPerProtocol = marketsPerProtocol.associate {
-                    it.first.slug to it.second.count()
+                    it.first to it.second.count()
                 }.filter {
                     it.value > 0
                 }

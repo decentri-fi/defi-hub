@@ -1,17 +1,14 @@
 package io.defitrack.statistics.service
 
-import io.defitrack.common.utils.AsyncUtils.await
-import io.defitrack.protocol.DefiPrimitive
 import io.defitrack.statistics.client.DefitrackClient
 import io.defitrack.statistics.domain.MarketStatisticVO
 import io.github.reactivecircus.cache4k.Cache
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
-import org.springframework.stereotype.Service
+import kotlinx.coroutines.*
+import org.springframework.stereotype.Component
 import kotlin.time.Duration.Companion.hours
 
-@Service
-class PoolingMarketStatisticsService(
+@Component
+class AggregatedMarketStatisticsService(
     private val defitrackClient: DefitrackClient
 ) {
 
@@ -19,19 +16,27 @@ class PoolingMarketStatisticsService(
         .expireAfterWrite(1.hours)
         .build()
 
-    suspend fun getStatistics(): MarketStatisticVO = coroutineScope {
+
+    suspend fun getStatistics(): MarketStatisticVO = withContext(Dispatchers.IO) {
         cache.get("stats") {
             val protocols = defitrackClient.getProtocols()
 
-            val marketsPerProtocol = protocols.filter {
-                it.primitives.contains(DefiPrimitive.POOLING)
-            }.map {
-                it to async {
-                    defitrackClient.getPoolingMarkets(it)
+            val marketsPerProtocol = protocols
+                .map {
+                    it to listOf(
+                        async {
+                            defitrackClient.getPoolingMarkets(it)
+                        },
+                        async {
+                            defitrackClient.getFarmingMarkets(it)
+                        },
+                        async {
+                            defitrackClient.getLendingMarkets(it)
+                        }
+                    )
+                }.map {
+                    it.first to it.second.awaitAll().flatten()
                 }
-            }.map {
-                it.first to it.second.await(3000L, emptyList())
-            }
 
             MarketStatisticVO(
                 total = marketsPerProtocol.flatMap {
