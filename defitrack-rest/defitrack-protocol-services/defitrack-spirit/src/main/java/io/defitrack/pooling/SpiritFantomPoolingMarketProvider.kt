@@ -15,8 +15,7 @@ import java.math.BigDecimal
 class SpiritFantomPoolingMarketProvider(
     private val spiritswapServices: List<SpiritswapService>,
     private val spiritswapAPRService: SpiritswapAPRService,
-    erC20Resource: ERC20Resource,
-) : PoolingMarketProvider(erC20Resource) {
+) : PoolingMarketProvider() {
 
     override suspend fun fetchMarkets() = spiritswapServices.filter {
         it.getNetwork() == getNetwork()
@@ -27,9 +26,9 @@ class SpiritFantomPoolingMarketProvider(
             }
             .map {
 
-                val token = erc20Resource.getTokenInformation(getNetwork(), it.id)
-                val token0 = erc20Resource.getTokenInformation(getNetwork(), it.token0.id)
-                val token1 = erc20Resource.getTokenInformation(getNetwork(), it.token1.id)
+                val token = getToken(it.id)
+                val token0 = getToken(it.token0.id)
+                val token1 = getToken(it.token1.id)
 
                 PoolingMarket(
                     network = service.getNetwork(),
@@ -45,7 +44,7 @@ class SpiritFantomPoolingMarketProvider(
                     id = "spirit-fantom-${it.id}",
                     marketSize = it.reserveUSD,
                     tokenType = TokenType.SPIRIT,
-                    positionFetcher = defaultBalanceFetcher(token.address)
+                    positionFetcher = defaultPositionFetcher(token.address)
                 )
             }
     }

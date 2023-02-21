@@ -12,9 +12,8 @@ class StargateOptimismFarmingProvider(
     stargateOptimismService: StargateOptimismService,
     accessorGateway: BlockchainGatewayProvider,
     abiResource: ABIResource,
-    erC20Resource: ERC20Resource
 ) : StargateFarmingMarketProvider(
-    stargateOptimismService, accessorGateway, abiResource, erC20Resource
+    stargateOptimismService, accessorGateway, abiResource
 ) {
     override fun getNetwork(): Network {
         return Network.OPTIMISM

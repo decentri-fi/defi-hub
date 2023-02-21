@@ -23,11 +23,9 @@ import java.math.BigDecimal
 class HopOptimismPoolingMarketProvider(
     private val hopService: HopService,
     private val hopAPRService: HopAPRService,
-    private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val abiResource: ABIResource,
     private val priceResource: PriceResource,
-    erC20Resource: ERC20Resource,
-) : PoolingMarketProvider(erC20Resource) {
+) : PoolingMarketProvider() {
 
 
     override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
@@ -57,8 +55,8 @@ class HopOptimismPoolingMarketProvider(
                 contract.swap()
             )
 
-            val htoken = erc20Resource.getTokenInformation(getNetwork(), hopLpToken.hToken)
-            val canonical = erc20Resource.getTokenInformation(getNetwork(), hopLpToken.canonicalToken)
+            val htoken = erC20Resource.getTokenInformation(getNetwork(), hopLpToken.hToken)
+            val canonical = erC20Resource.getTokenInformation(getNetwork(), hopLpToken.canonicalToken)
 
             val marketSize = getPrice(canonical.address, contract, swapContract).toBigDecimal()
             PoolingMarket(
@@ -81,7 +79,7 @@ class HopOptimismPoolingMarketProvider(
                     marketSize
                 ),
                 tokenType = TokenType.HOP,
-                positionFetcher = defaultBalanceFetcher(hopLpToken.lpToken)
+                positionFetcher = defaultPositionFetcher(hopLpToken.lpToken)
             )
         } catch (ex: Exception) {
             ex.printStackTrace()

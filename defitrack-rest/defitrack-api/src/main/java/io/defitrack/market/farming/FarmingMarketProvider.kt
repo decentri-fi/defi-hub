@@ -44,16 +44,4 @@ abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>() {
             metadata = metadata
         )
     }
-
-    fun defaultBalanceFetcher(erc20Resource: ERC20Resource, address: String): PositionFetcher {
-        return PositionFetcher(
-            address,
-            { user ->
-                erc20Resource.balanceOfFunction(address, user, getNetwork())
-            },
-            { retVal ->
-                retVal[0].value as BigInteger
-            }
-        )
-    }
 }

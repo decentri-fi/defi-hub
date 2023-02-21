@@ -29,7 +29,6 @@ import java.math.RoundingMode
 class CompoundLendingMarketProvider(
     blockchainGatewayProvider: BlockchainGatewayProvider,
     private val abiResource: ABIResource,
-    private val erC20Resource: ERC20Resource,
     private val compoundEthereumService: CompoundEthereumService,
     private val priceResource: PriceResource
 ) : LendingMarketProvider() {
@@ -41,8 +40,6 @@ class CompoundLendingMarketProvider(
     val cTokenABI by lazy {
         abiResource.getABI("compound/ctoken.json")
     }
-
-    val gateway = blockchainGatewayProvider.getGateway(getNetwork())
 
     override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
         getTokenContracts().map {
@@ -116,7 +113,7 @@ class CompoundLendingMarketProvider(
     private suspend fun getTokenContracts(): List<CompoundTokenContract> {
         return getComptroller().getMarkets().map { market ->
             CompoundTokenContract(
-                gateway,
+                getBlockchainGateway(),
                 cTokenABI,
                 market
             )
@@ -125,7 +122,7 @@ class CompoundLendingMarketProvider(
 
     private fun getComptroller(): CompoundComptrollerContract {
         return CompoundComptrollerContract(
-            gateway,
+            getBlockchainGateway(),
             comptrollerABI,
             compoundEthereumService.getComptroller()
         )

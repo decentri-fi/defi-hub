@@ -20,8 +20,6 @@ import org.springframework.stereotype.Service
 class AdamantVaultMarketProvider(
     private val adamantService: AdamantService,
     private val abiResource: ABIResource,
-    private val erC20Resource: ERC20Resource,
-    private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) : FarmingMarketProvider() {
 
     val genericVault by lazy {

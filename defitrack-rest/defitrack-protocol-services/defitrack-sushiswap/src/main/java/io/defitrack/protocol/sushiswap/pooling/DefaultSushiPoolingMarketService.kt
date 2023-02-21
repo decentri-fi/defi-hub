@@ -10,8 +10,7 @@ import java.math.BigDecimal
 
 abstract class DefaultSushiPoolingMarketService(
     private val sushiServices: List<SushiswapService>,
-    erC20Resource: ERC20Resource
-) : PoolingMarketProvider(erC20Resource) {
+) : PoolingMarketProvider() {
 
     override suspend fun fetchMarkets() = sushiServices.filter { sushiswapService ->
         sushiswapService.getNetwork() == getNetwork()
@@ -39,7 +38,7 @@ abstract class DefaultSushiPoolingMarketService(
                     id = "sushi-${getNetwork().slug}-${it.id}",
                     marketSize = it.reserveUSD,
                     tokenType = TokenType.SUSHISWAP,
-                    positionFetcher = defaultBalanceFetcher(token.address)
+                    positionFetcher = defaultPositionFetcher(token.address)
                 )
                 element
             }

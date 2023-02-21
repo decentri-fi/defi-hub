@@ -9,10 +9,9 @@ import org.springframework.stereotype.Service
 
 @Service
 class DodoPolygonPoolingMarketProvider(
-    erC20Resource: ERC20Resource,
     dodoPolygonGraphProvider: DodoPolygonGraphProvider,
     priceResource: PriceResource
-) : DodoPoolingMarketProvider(erC20Resource, dodoPolygonGraphProvider, priceResource) {
+) : DodoPoolingMarketProvider(dodoPolygonGraphProvider, priceResource) {
 
     override fun getProtocol(): Protocol {
         return Protocol.DODO

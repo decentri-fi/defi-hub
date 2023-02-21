@@ -20,9 +20,7 @@ import java.math.BigDecimal
 class SpiritFantomFarmingMarketProvider(
     private val spiritFantomService: SpiritFantomService,
     private val abiResource: ABIResource,
-    private val erC20Resource: ERC20Resource,
     private val priceResource: PriceResource,
-    private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) : FarmingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {

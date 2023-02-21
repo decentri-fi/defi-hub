@@ -22,9 +22,7 @@ import java.math.RoundingMode
 @Component
 class HopPolygonFarmingMarketProvider(
     private val hopService: HopService,
-    private val erC20Resource: ERC20Resource,
     private val abiResource: ABIResource,
-    private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val priceResource: PriceResource
 ) : FarmingMarketProvider() {
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {

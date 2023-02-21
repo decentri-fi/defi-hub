@@ -17,17 +17,15 @@ import org.springframework.stereotype.Component
 @Component
 class UniswapV3EthereumPoolingMarketProvider(
     private val uniswapV3Service: UniswapV3Service,
-    private val marketSizeService: MarketSizeService,
-    erC20Resource: ERC20Resource,
-) : PoolingMarketProvider(erC20Resource) {
+) : PoolingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope{
         uniswapV3Service.providePools().map {
             async {
                 try {
-                    val token = erc20Resource.getTokenInformation(getNetwork(), it.id)
-                    val token0 = erc20Resource.getTokenInformation(getNetwork(), it.token0.id)
-                    val token1 = erc20Resource.getTokenInformation(getNetwork(), it.token1.id)
+                    val token = getToken(it.id)
+                    val token0 = getToken(it.token0.id)
+                    val token1 = getToken(it.token1.id)
                     PoolingMarket(
                         network = getNetwork(),
                         protocol = getProtocol(),
@@ -44,7 +42,7 @@ class UniswapV3EthereumPoolingMarketProvider(
                             marketSizeService.getMarketSize(token1.toFungibleToken(), it.id, getNetwork())
                         ),
                         tokenType = TokenType.UNISWAP,
-                        positionFetcher = defaultBalanceFetcher(token.address)
+                        positionFetcher = defaultPositionFetcher(token.address)
                     )
                 } catch (ex: Exception) {
                     ex.printStackTrace()

@@ -15,8 +15,7 @@ import java.math.BigDecimal
 @Component
 class IdexPoolingMarketProvider(
     private val idexService: IdexService,
-    erc20Resource: ERC20Resource
-) : PoolingMarketProvider(erc20Resource) {
+) : PoolingMarketProvider() {
 
     override suspend fun fetchMarkets() = coroutineScope {
         idexService.getLPs().map {
@@ -24,9 +23,9 @@ class IdexPoolingMarketProvider(
                 try {
                     if (it.reserveUsd > BigDecimal.valueOf(10000)) {
                         try {
-                            val token = erc20Resource.getTokenInformation(getNetwork(), it.liquidityToken)
-                            val token0 = erc20Resource.getTokenInformation(getNetwork(), it.tokenA)
-                            val token1 = erc20Resource.getTokenInformation(getNetwork(), it.tokenB)
+                            val token = erC20Resource.getTokenInformation(getNetwork(), it.liquidityToken)
+                            val token0 = erC20Resource.getTokenInformation(getNetwork(), it.tokenA)
+                            val token1 = erC20Resource.getTokenInformation(getNetwork(), it.tokenB)
 
                             PoolingMarket(
                                 network = getNetwork(),
@@ -42,7 +41,7 @@ class IdexPoolingMarketProvider(
                                 apr = BigDecimal.ZERO,
                                 marketSize = it.reserveUsd,
                                 tokenType = TokenType.IDEX,
-                                positionFetcher = defaultBalanceFetcher(token.address)
+                                positionFetcher = defaultPositionFetcher(token.address)
                             )
                         } catch (ex: Exception) {
                             logger.error("something went wrong while importing ${it.liquidityToken}", ex)

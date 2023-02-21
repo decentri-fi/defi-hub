@@ -14,9 +14,7 @@ import org.springframework.stereotype.Service
 @Service
 class EthereumSetPoolingMarketProvider(
     private val ethereumSetProvider: EthereumSetProvider,
-    private val blockchainGatewayProvider: BlockchainGatewayProvider,
-    erC20Resource: ERC20Resource
-) : PoolingMarketProvider(erC20Resource) {
+) : PoolingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<PoolingMarket> {
         val gateway = blockchainGatewayProvider.getGateway(getNetwork())
@@ -39,7 +37,7 @@ class EthereumSetPoolingMarketProvider(
                     apr = null,
                     marketSize = null,
                     tokenType = TokenType.SET,
-                    positionFetcher = defaultBalanceFetcher(it),
+                    positionFetcher = defaultPositionFetcher(it),
                     investmentPreparer = null
                 )
             } catch (ex: Exception) {

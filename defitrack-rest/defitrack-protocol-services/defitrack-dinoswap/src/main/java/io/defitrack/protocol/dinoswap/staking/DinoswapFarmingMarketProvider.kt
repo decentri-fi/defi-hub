@@ -21,9 +21,7 @@ class DinoswapFarmingMarketProvider(
     private val dinoswapService: DinoswapService,
     private val abiResource: ABIResource,
     private val tokenService: ERC20Resource,
-    private val erC20Resource: ERC20Resource,
     private val priceResource: PriceResource,
-    private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) : FarmingMarketProvider() {
 
     val fossilFarms by lazy {
