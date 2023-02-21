@@ -1,5 +1,6 @@
 package io.defitrack.protocol.quickswap.contract
 
+import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
@@ -21,7 +22,7 @@ class QuickswapRewardPoolContract(
     suspend fun stakingTokenAddress(): String {
         return readWithAbi(
             method = "stakingToken",
-            outputs = listOf(TypeReference.create(Address::class.java))
+            outputs = listOf(address())
         )[0].value as String
     }
 

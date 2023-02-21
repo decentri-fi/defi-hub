@@ -1,11 +1,11 @@
 package io.defitrack.protocol.convex.contract
 
+import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.TypeReference
-import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.generated.Uint112
 import org.web3j.abi.datatypes.generated.Uint32
 import java.math.BigInteger
@@ -21,9 +21,7 @@ class CvxLockerContract(
         return readWithAbi(
             method = "rewardTokens",
             inputs = listOf(BigInteger.ZERO.toUint256()),
-            outputs = listOf(
-                TypeReference.create(Address::class.java),
-            )
+            outputs = listOf(address())
         )[0].value as String
     }
 
@@ -31,9 +29,7 @@ class CvxLockerContract(
         return readWithAbi(
             method = "stakingToken",
             inputs = emptyList(),
-            outputs = listOf(
-                TypeReference.create(Address::class.java),
-            )
+            outputs = listOf(address())
         )[0].value as String
     }
 

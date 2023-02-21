@@ -7,9 +7,7 @@ import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Function
-import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
 open class ERC721Contract(
@@ -43,9 +41,7 @@ open class ERC721Contract(
         return readWithoutAbi(
             "balanceOf",
             inputs = listOf(address.toAddress()),
-            outputs = listOf(
-                TypeReference.create(Uint256::class.java)
-            )
+            outputs = listOf(uint256())
         )[0].value as BigInteger
     }
 
@@ -64,7 +60,6 @@ open class ERC721Contract(
             "UNKWN"
         }
     }
-
 
 
     suspend fun totalSupply(): BigInteger {

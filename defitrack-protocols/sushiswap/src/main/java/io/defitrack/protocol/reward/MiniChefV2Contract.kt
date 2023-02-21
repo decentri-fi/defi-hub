@@ -1,17 +1,17 @@
 package io.defitrack.protocol.reward
 
+import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
+import io.defitrack.abi.TypeUtils.Companion.uint128
 import io.defitrack.abi.TypeUtils.Companion.uint256
+import io.defitrack.abi.TypeUtils.Companion.uint64
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import org.web3j.abi.TypeReference
-import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Function
-import org.web3j.abi.datatypes.generated.Uint128
 import org.web3j.abi.datatypes.generated.Uint256
-import org.web3j.abi.datatypes.generated.Uint64
 import java.math.BigInteger
 
 class MiniChefV2Contract(
@@ -52,9 +52,9 @@ class MiniChefV2Contract(
                     "poolInfo",
                     inputs = listOf(poolIndex.toBigInteger().toUint256()),
                     outputs = listOf(
-                        TypeReference.create(Uint128::class.java),
-                        TypeReference.create(Uint64::class.java),
-                        TypeReference.create(Uint64::class.java),
+                        uint128(),
+                        uint64(),
+                        uint64(),
                     )
                 ),
                 this.address
@@ -90,9 +90,7 @@ class MiniChefV2Contract(
                 createFunctionWithAbi(
                     "lpToken",
                     inputs = listOf(poolIndex.toBigInteger().toUint256()),
-                    outputs = listOf(
-                        TypeReference.create(Address::class.java),
-                    )
+                    outputs = listOf(address())
                 ),
                 this.address
             )
@@ -108,11 +106,11 @@ class MiniChefV2Contract(
     suspend fun rewardToken(): String {
         return readWithAbi(
             "SUSHI",
-            outputs = listOf(TypeReference.create(Address::class.java))
+            outputs = listOf(address())
         )[0].value as String
     }
 
-    suspend fun pendingSushiFunction(pid: Int, address: String): Function {
+    fun pendingSushiFunction(pid: Int, address: String): Function {
         return createFunction(
             "pendingSushi",
             inputs = listOf(
@@ -127,14 +125,14 @@ class MiniChefV2Contract(
     suspend fun sushiPerSecond(): BigInteger {
         return readWithAbi(
             "sushiPerSecond",
-            outputs = listOf(TypeReference.create(Uint256::class.java))
+            outputs = listOf(uint256())
         )[0].value as BigInteger
     }
 
     suspend fun totalAllocPoint(): BigInteger {
         return readWithAbi(
             "totalAllocPoint",
-            outputs = listOf(TypeReference.create(Uint256::class.java))
+            outputs = listOf(uint256())
         )[0].value as BigInteger
     }
 }

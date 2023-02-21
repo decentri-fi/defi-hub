@@ -1,13 +1,11 @@
 package io.defitrack.protocol.beefy.contract
 
-import io.defitrack.abi.TypeUtils
+import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toUint256
+import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
-import org.web3j.abi.TypeReference
-import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Function
-import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
 class BeefyVaultContract(
@@ -23,7 +21,7 @@ class BeefyVaultContract(
     suspend fun balance(): BigInteger {
         return readWithAbi(
             "balance",
-            outputs = listOf(TypeReference.create(Uint256::class.java))
+            outputs = listOf(uint256())
         )[0].value as BigInteger
     }
 
@@ -38,7 +36,7 @@ class BeefyVaultContract(
     suspend fun getPricePerFullShare(): BigInteger {
         return readWithAbi(
             "getPricePerFullShare",
-            outputs = listOf(TypeReference.create(Uint256::class.java))
+            outputs = listOf(uint256())
         )[0].value as BigInteger
     }
 
@@ -46,16 +44,14 @@ class BeefyVaultContract(
         var read = readWithoutAbi(
             "want",
             inputs = emptyList(),
-            outputs = listOf(
-                TypeUtils.address()
-            )
+            outputs = listOf(address())
         )
         if (read.isEmpty()) {
             read = readWithoutAbi(
                 "wmatic",
                 inputs = emptyList(),
                 outputs = listOf(
-                    TypeUtils.address()
+                    address()
                 )
             )
         }
@@ -63,18 +59,14 @@ class BeefyVaultContract(
             read = readWithAbi(
                 "token",
                 inputs = emptyList(),
-                outputs = listOf(
-                    TypeReference.create(Address::class.java)
-                )
+                outputs = listOf(address())
             )
         }
         if (read.isEmpty()) {
             read = readWithAbi(
                 "wbnb",
                 inputs = emptyList(),
-                outputs = listOf(
-                    TypeReference.create(Address::class.java)
-                )
+                outputs = listOf(address())
             )
         }
         return read[0].value as String

@@ -1,13 +1,11 @@
 package io.defitrack.protocol.convex.contract
 
 import io.defitrack.abi.TypeUtils
+import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
-import io.defitrack.evm.contract.EvmContract
-import org.web3j.abi.TypeReference
-import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Function
 
 class CvxRewardPoolContract(
@@ -43,9 +41,7 @@ class CvxRewardPoolContract(
     suspend fun stakingToken(): String {
         return readWithAbi(
             "stakingToken",
-            outputs = listOf(
-                TypeReference.create(Address::class.java)
-            )
+            outputs = listOf(address())
         )[0].value as String
     }
 }

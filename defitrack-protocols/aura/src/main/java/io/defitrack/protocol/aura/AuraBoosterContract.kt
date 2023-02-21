@@ -1,14 +1,12 @@
 package io.defitrack.protocol.aura
 
+import io.defitrack.abi.TypeUtils.Companion.address
+import io.defitrack.abi.TypeUtils.Companion.bool
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.multicall.MultiCallElement
-import org.web3j.abi.TypeReference
-import org.web3j.abi.datatypes.Address
-import org.web3j.abi.datatypes.Bool
-import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
 class AuraBoosterContract(
@@ -32,12 +30,12 @@ class AuraBoosterContract(
                     "poolInfo",
                     inputs = listOf(poolIndex.toBigInteger().toUint256()),
                     outputs = listOf(
-                        TypeReference.create(Address::class.java),
-                        TypeReference.create(Address::class.java),
-                        TypeReference.create(Address::class.java),
-                        TypeReference.create(Address::class.java),
-                        TypeReference.create(Address::class.java),
-                        TypeReference.create(Bool::class.java),
+                        address(),
+                        address(),
+                        address(),
+                        address(),
+                        address(),
+                        bool(),
                     )
                 ),
                 this.address

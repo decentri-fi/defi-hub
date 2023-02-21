@@ -1,15 +1,14 @@
 package io.defitrack.protocol.balancer.contract
 
-import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
+import io.defitrack.abi.TypeUtils.Companion.uint256
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.token.FungibleToken
-import org.web3j.abi.TypeReference
-import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Function
-import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
 class BalancerGaugeContract(
@@ -25,9 +24,7 @@ class BalancerGaugeContract(
                 address.toAddress(),
                 token.toAddress()
             ),
-            listOf(
-                TypeReference.create(Uint256::class.java)
-            )
+            listOf(uint256())
         )
     }
 
@@ -81,7 +78,7 @@ class BalancerGaugeContract(
         return readWithAbi(
             "reward_tokens",
             listOf(index.toBigInteger().toUint256()),
-            listOf(TypeReference.create(Address::class.java))
+            listOf(address())
         )[0].value as String
     }
 }

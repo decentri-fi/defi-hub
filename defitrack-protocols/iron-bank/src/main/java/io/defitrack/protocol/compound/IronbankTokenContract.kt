@@ -1,11 +1,10 @@
 package io.defitrack.protocol.compound
 
 import io.defitrack.abi.TypeUtils.Companion.toUint256
+import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
-import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Function
-import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
 class IronbankTokenContract(
@@ -50,16 +49,14 @@ class IronbankTokenContract(
     suspend fun exchangeRate(): BigInteger {
         return readWithAbi(
             "exchangeRateStored",
-            outputs = listOf(
-                TypeReference.create(Uint256::class.java)
-            )
+            outputs = listOf(uint256())
         )[0].value as BigInteger
     }
 
     suspend fun supplyRatePerBlock(): BigInteger {
         return readWithAbi(
             "supplyRatePerBlock",
-            outputs = listOf(TypeReference.create(Uint256::class.java))
+            outputs = listOf(uint256())
         )[0].value as BigInteger
     }
 }

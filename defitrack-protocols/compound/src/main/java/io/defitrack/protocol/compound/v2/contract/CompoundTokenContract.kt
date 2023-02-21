@@ -2,11 +2,10 @@ package io.defitrack.protocol.compound.v2.contract
 
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
+import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
-import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Function
-import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
 class CompoundTokenContract(
@@ -51,9 +50,7 @@ class CompoundTokenContract(
     suspend fun exchangeRate(): BigInteger {
         return readWithAbi(
             "exchangeRateStored",
-            outputs = listOf(
-                TypeReference.create(Uint256::class.java)
-            )
+            outputs = listOf(uint256())
         )[0].value as BigInteger
     }
 
@@ -61,21 +58,21 @@ class CompoundTokenContract(
         return createFunctionWithAbi(
             "borrowBalanceStored",
             inputs = listOf(address.toAddress()),
-            outputs = listOf(TypeReference.create(Uint256::class.java))
+            outputs = listOf(uint256())
         )
     }
 
     suspend fun supplyRatePerBlock(): BigInteger {
         return readWithAbi(
             "supplyRatePerBlock",
-            outputs = listOf(TypeReference.create(Uint256::class.java))
+            outputs = listOf(uint256())
         )[0].value as BigInteger
     }
 
     suspend fun borrowRatePerBlock(): BigInteger {
         return readWithAbi(
             "borrowRatePerBlock",
-            outputs = listOf(TypeReference.create(Uint256::class.java))
+            outputs = listOf(uint256())
         )[0].value as BigInteger
     }
 }

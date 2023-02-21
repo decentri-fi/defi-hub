@@ -1,6 +1,7 @@
 package io.defitrack.protocol.mstable.contract
 
 import io.defitrack.abi.TypeUtils.Companion.toAddress
+import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
 import org.web3j.abi.TypeReference
@@ -19,7 +20,7 @@ class MStableEthereumBoostedSavingsVaultContract(
             "rawBalanceOf",
             inputs = listOf(address.toAddress()),
             outputs = listOf(
-                TypeReference.create(Uint256::class.java)
+                uint256()
             )
         )
     }
