@@ -9,10 +9,11 @@ import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.contract.HopStakingReward
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -24,10 +25,12 @@ class HopOptimismFarmingMarketProvider(
     private val priceResource: PriceResource
 ) : FarmingMarketProvider() {
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
+        val semaphore = Semaphore(10)
         hopService.getStakingRewards(getNetwork()).map { stakingReward ->
-            async(Dispatchers.IO.limitedParallelism(10)) {
-                toStakingMarket(stakingReward)
-
+            async {
+                semaphore.withPermit {
+                    toStakingMarket(stakingReward)
+                }
             }
         }.awaitAll().filterNotNull()
     }
