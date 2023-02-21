@@ -1,14 +1,17 @@
 package io.defitrack.protocol
 
 import io.defitrack.abi.ABIResource
+import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
+import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.contract.HopStakingReward
+import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -34,25 +37,39 @@ class HopPolygonFarmingMarketProvider(
 
     private suspend fun toStakingMarket(stakingReward: String): FarmingMarket? {
         return try {
-            val pool = HopStakingReward(
+            val rewardPool = HopStakingReward(
                 getBlockchainGateway(),
                 abiResource.getABI("quickswap/StakingRewards.json"),
                 stakingReward
             )
 
-            val stakedToken = getToken(pool.stakingTokenAddress())
-            val rewardToken = getToken(pool.rewardsTokenAddress())
+            val stakedToken = getToken(rewardPool.stakingTokenAddress())
+            val rewardToken = getToken(rewardPool.rewardsTokenAddress())
 
             return create(
-                identifier = pool.address,
+                identifier = rewardPool.address,
                 name = "${stakedToken.name} Staking Rewards",
                 stakedToken = stakedToken.toFungibleToken(),
                 rewardTokens = listOf(rewardToken.toFungibleToken()),
                 vaultType = "hop-staking-rewards",
-                marketSize = getMarketSize(stakedToken, pool),
+                marketSize = getMarketSize(stakedToken, rewardPool),
+                claimableRewardFetcher = ClaimableRewardFetcher(
+                    address = rewardPool.address,
+                    { user ->
+                        rewardPool.earnedFunction(user)
+                    },
+                    preparedTransaction = { user ->
+                        PreparedTransaction(
+                            getNetwork().toVO(),
+                            rewardPool.getRewardFn(),
+                            rewardPool.address,
+                            user
+                        )
+                    }
+                ),
                 balanceFetcher = PositionFetcher(
-                    address = pool.address,
-                    function = { user -> pool.balanceOfMethod(user) }
+                    address = rewardPool.address,
+                    function = { user -> rewardPool.balanceOfMethod(user) }
                 ),
                 farmType = FarmType.LIQUIDITY_MINING
             )
