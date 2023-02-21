@@ -18,7 +18,7 @@
         </dependency>
         <dependency>
             <groupId>io.defitrack</groupId>
-            <artifactId>ethereum</artifactId>
+            <artifactId>optimism</artifactId>
         </dependency>
     </dependencies>
 </project>
