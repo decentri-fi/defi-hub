@@ -49,7 +49,6 @@ class BonusDistributionService(
 
     val merkleMap: Map<Network, MerkleConfig> = mapOf(
         Network.POLYGON to fetchMerkleConfig(Network.POLYGON),
-        Network.POLYGON_MUMBAI to fetchMerkleConfig(Network.POLYGON_MUMBAI),
         Network.ETHEREUM to fetchMerkleConfig(Network.ETHEREUM),
     )
 
@@ -64,11 +63,6 @@ class BonusDistributionService(
             erc20ABI,
             "0xdac657ffd44a3b9d8aba8749830bf14beb66ff2d"
         )        ,
-        Network.POLYGON_MUMBAI to ERC20Contract(
-            blockchainGatewayProvider.getGateway(Network.POLYGON_MUMBAI),
-            erc20ABI,
-            "0xf8afb97235074ab1d2bb574df577d2b89519f330"
-        )
     )
 
     val bonusDistributorContractMap: Map<Network, BonusDistributionContract> = mapOf(
@@ -82,11 +76,6 @@ class BonusDistributionService(
             bonusDistributorABI,
             "0xD53b145739352c1BCc7079cDdA0cf6EDfbd8F015"
         ),
-        Network.POLYGON_MUMBAI to BonusDistributionContract(
-            blockchainGatewayProvider.getGateway(Network.POLYGON),
-            bonusDistributorABI,
-            "0x7fcA16Cb535DEf014b8984e9AAE55f2c23DB8C2f"
-        )
     )
 
     private fun fetchMerkleConfig(network: Network): MerkleConfig {

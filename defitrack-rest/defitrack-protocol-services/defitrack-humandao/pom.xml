@@ -25,10 +25,6 @@
             <groupId>io.defitrack</groupId>
             <artifactId>polygon</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
-            <artifactId>polygon-mumbai</artifactId>
-        </dependency>
     </dependencies>
 
     <build>

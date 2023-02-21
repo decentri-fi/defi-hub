@@ -78,15 +78,6 @@ class NativeTokenService(private val logoService: LogoService) {
                 logo = nativeLogo,
                 network = network
             )
-            Network.POLYGON_MUMBAI -> TokenInformation(
-                address = nullAddress,
-                name = "Matic",
-                decimals = 18,
-                symbol = "MATIC",
-                type = TokenType.NATIVE,
-                logo = nativeLogo,
-                network = network
-            )
             else -> throw java.lang.IllegalArgumentException("native token for $network not supported")
         }
     }
