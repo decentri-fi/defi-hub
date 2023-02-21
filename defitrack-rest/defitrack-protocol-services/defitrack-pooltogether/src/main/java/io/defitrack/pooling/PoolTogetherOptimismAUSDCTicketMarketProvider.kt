@@ -11,12 +11,12 @@ import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 
 @Component
-class PoolTogetherAUSDCTicketMarketProvider(
+class PoolTogetherOptimismAUSDCTicketMarketProvider(
     private val priceResource: PriceResource
 ) : PoolingMarketProvider() {
 
-    val usdcTicketAddress = "0xdd4d117723c257cee402285d3acf218e9a8236e1"
-    val usdcAddress = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+    val usdcTicketAddress = "0x62bb4fc73094c83b5e952c2180b23fa7054954c4"
+    val usdcAddress = "0x7f5c764cbc14f9669b88837ca1490cca17c31607"
     override suspend fun fetchMarkets(): List<PoolingMarket> {
         val token = getToken(usdcTicketAddress)
 
@@ -26,8 +26,8 @@ class PoolTogetherAUSDCTicketMarketProvider(
                 network = getNetwork(),
                 protocol = getProtocol(),
                 address = usdcTicketAddress,
-                name = "PoolTogether aUSDC Ticket",
-                symbol = "PTaUSDC",
+                name = "PoolTogether aOptUSDC Ticket",
+                symbol = "PTaOptUSDC",
                 tokens = listOf(
                     token.toFungibleToken()
                 ),
@@ -48,6 +48,6 @@ class PoolTogetherAUSDCTicketMarketProvider(
     }
 
     override fun getNetwork(): Network {
-        return Network.ETHEREUM
+        return Network.OPTIMISM
     }
 }
