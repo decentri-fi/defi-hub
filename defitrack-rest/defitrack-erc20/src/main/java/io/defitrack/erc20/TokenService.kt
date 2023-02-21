@@ -1,10 +1,7 @@
 package io.defitrack.erc20
 
 import io.defitrack.common.network.Network
-import io.defitrack.erc20.protocolspecific.BalancerTokenService
-import io.defitrack.erc20.protocolspecific.CurveTokenService
-import io.defitrack.erc20.protocolspecific.HopTokenService
-import io.defitrack.erc20.protocolspecific.VelodromeTokenService
+import io.defitrack.erc20.protocolspecific.*
 import io.defitrack.logo.LogoService
 import io.defitrack.market.pooling.contract.LPTokenContract
 import io.defitrack.nativetoken.NativeTokenService
@@ -25,6 +22,7 @@ class TokenService(
     private val LPtokenService: LPtokenService,
     private val hopTokenService: HopTokenService,
     private val curveTokenService: CurveTokenService,
+    private val setProtocolTokenService: SetProtocolTokenService,
     private val balancerTokenService: BalancerTokenService,
     private val nativeTokenService: NativeTokenService,
     private val velodromeTokenService: VelodromeTokenService,
@@ -85,12 +83,19 @@ class TokenService(
             isBalancerLp(lp.address, lp.blockchainGateway.network) -> {
                 TokenType.BALANCER
             }
+
+            isSetLp(lp.address, lp.blockchainGateway.network) -> {
+                TokenType.SET
+            }
+
             isVelodromeLp(lp.address, lp.blockchainGateway.network) -> {
                 TokenType.VELODROME
             }
+
             isHopLp(symbol) -> {
                 TokenType.HOP
             }
+
             isCurveToken(lp.name()) -> {
                 TokenType.CURVE
             }
@@ -111,6 +116,10 @@ class TokenService(
 
     private suspend fun isBalancerLp(address: String, network: Network): Boolean {
         return balancerTokenService.isBalancerToken(address, network)
+    }
+
+    private suspend fun isSetLp(address: String, network: Network): Boolean {
+        return setProtocolTokenService.isSetToken(address, network)
     }
 
     private suspend fun isVelodromeLp(address: String, network: Network): Boolean {
@@ -174,6 +183,10 @@ class TokenService(
 
                 isVelodromeLp(token.address, network) -> {
                     fromLP(Protocol.VELODROME, network, token)
+                }
+
+                isSetLp(token.address, network) -> {
+                    setProtocolTokenService.getTokenInformation(token.address, network)
                 }
 
                 isHopLp(token.symbol) -> {

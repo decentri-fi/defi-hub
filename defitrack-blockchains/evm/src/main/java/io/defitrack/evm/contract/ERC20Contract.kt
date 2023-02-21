@@ -74,7 +74,7 @@ open class ERC20Contract(
 
     suspend fun decimals(): Int {
         return try {
-            val d: BigInteger = read("decimals")
+            val d: BigInteger = readWithoutAbi("decimals", outputs = listOf(uint256()))[0].value as BigInteger
             return d.toInt()
         } catch (ex: Exception) {
             18

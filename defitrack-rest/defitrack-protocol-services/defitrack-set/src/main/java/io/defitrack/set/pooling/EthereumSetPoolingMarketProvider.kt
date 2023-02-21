@@ -1,13 +1,11 @@
-package io.defitrack.set.farming
+package io.defitrack.set.pooling
 
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.set.EthereumSetProvider
 import io.defitrack.protocol.set.SetTokenContract
-import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Service
 

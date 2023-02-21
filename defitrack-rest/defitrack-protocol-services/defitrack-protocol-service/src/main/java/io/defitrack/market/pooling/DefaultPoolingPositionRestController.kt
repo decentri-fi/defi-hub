@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/pooling")
-class DefaultUserPoolingRestController(
+class DefaultPoolingPositionRestController(
     private val poolingPositionProviders: List<PoolingPositionProvider>,
     private val priceResource: PriceResource,
     private val erC20Resource: ERC20Resource

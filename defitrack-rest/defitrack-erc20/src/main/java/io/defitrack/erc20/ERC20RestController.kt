@@ -47,6 +47,7 @@ class ERC20RestController(
                 ).toVO()
             )
         } catch (ex: Exception) {
+            ex.printStackTrace()
             ResponseEntity.notFound().build()
         }
     }

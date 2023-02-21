@@ -5,9 +5,9 @@ import io.ktor.client.*
 import org.springframework.stereotype.Component
 
 @Component
-class PolygonSetProvider(
+class PolygonAbstractSetProvider(
     httpClient: HttpClient
-) : SetProvider(
+) : AbstractSetProvider(
     Network.POLYGON,
     "https://raw.githubusercontent.com/defitrack/data/master/protocols/set/set.polygon.tokenlist.json",
     httpClient

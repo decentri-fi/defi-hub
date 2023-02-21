@@ -1,14 +1,11 @@
-package io.defitrack.set.farming
+package io.defitrack.set.pooling
 
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.set.EthereumSetProvider
-import io.defitrack.protocol.set.PolygonSetProvider
+import io.defitrack.protocol.set.PolygonAbstractSetProvider
 import io.defitrack.protocol.set.SetTokenContract
-import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -17,11 +14,11 @@ import org.springframework.stereotype.Service
 
 @Service
 class PolygonSetPoolingMarketProvider(
-    private val polygonSetProvider: PolygonSetProvider,
+    private val polygonSetProvider: PolygonAbstractSetProvider,
 ) : PoolingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope{
-        return@coroutineScope polygonSetProvider.getSetTokens().mapNotNull {
+        return@coroutineScope polygonSetProvider.getSets().mapNotNull {
             async {
                 try {
                     val tokenContract = SetTokenContract(
