@@ -1,10 +1,11 @@
-package io.defitrack.protocol.events
+package io.defitrack.events
 
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.uint256
-import io.defitrack.events.DefiEvent
-import io.defitrack.events.DefiEventType
-import io.defitrack.events.EventDecoder
+import io.defitrack.common.network.Network
+import io.defitrack.event.DefiEvent
+import io.defitrack.event.DefiEventType
+import io.defitrack.event.EventDecoder
 import io.defitrack.protocol.Protocol
 import org.springframework.stereotype.Component
 import org.web3j.abi.EventEncoder
@@ -14,7 +15,7 @@ import java.math.BigInteger
 
 
 @Component
-class HopClaimEventDecoder : EventDecoder {
+class HopClaimEventDecoder : EventDecoder() {
 
     val claimEvent = org.web3j.abi.datatypes.Event("Claim", listOf(address(true), uint256()))
 
@@ -23,7 +24,7 @@ class HopClaimEventDecoder : EventDecoder {
                 && log.topics.map { it.lowercase() }.contains(EventEncoder.encode(claimEvent))
     }
 
-    override fun extract(log: Log): DefiEvent {
+    override suspend fun extract(log: Log, network: Network): DefiEvent {
         val user = FunctionReturnDecoder.decodeIndexedValue(
             log.topics[1], address()
         ).value as String

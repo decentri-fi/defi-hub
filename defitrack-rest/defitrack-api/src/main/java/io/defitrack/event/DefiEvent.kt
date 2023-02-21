@@ -1,5 +1,6 @@
-package io.defitrack.events
+package io.defitrack.event
 
+import io.defitrack.event.DefiEventType
 import io.defitrack.protocol.Protocol
 
 class DefiEvent(

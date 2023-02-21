@@ -1,8 +1,8 @@
 package io.defitrack
 
 import io.defitrack.common.network.Network
-import io.defitrack.events.DefiEvent
-import io.defitrack.events.EventDecoder
+import io.defitrack.event.DefiEvent
+import io.defitrack.event.EventDecoder
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import kotlinx.coroutines.runBlocking
 import org.springframework.web.bind.annotation.*
@@ -23,7 +23,7 @@ class EventDecoderRestController(
         logs.flatMap {
             eventDecoders.map { decoder ->
                 if (decoder.appliesTo(it)) {
-                    decoder.extract(it)
+                    decoder.extract(it, network)
                 } else {
                     null
                 }

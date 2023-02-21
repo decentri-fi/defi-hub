@@ -1,4 +1,4 @@
-package io.defitrack.events
+package io.defitrack.event
 
 import org.web3j.abi.EventEncoder
 import org.web3j.abi.datatypes.Event

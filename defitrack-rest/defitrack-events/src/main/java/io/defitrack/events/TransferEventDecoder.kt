@@ -2,7 +2,11 @@ package io.defitrack.events
 
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.uint256
-import io.defitrack.events.EventUtils.Companion.appliesTo
+import io.defitrack.common.network.Network
+import io.defitrack.event.DefiEvent
+import io.defitrack.event.DefiEventType
+import io.defitrack.event.EventDecoder
+import io.defitrack.event.EventUtils.Companion.appliesTo
 import org.springframework.stereotype.Component
 import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.datatypes.Event
@@ -10,7 +14,7 @@ import org.web3j.protocol.core.methods.response.Log
 import java.math.BigInteger
 
 @Component
-class TransferEventDecoder() : EventDecoder {
+class TransferEventDecoder : EventDecoder() {
 
     val transferEvent = Event("Transfer", listOf(address(true), address(true), uint256()))
 
@@ -18,7 +22,7 @@ class TransferEventDecoder() : EventDecoder {
         return log.appliesTo(transferEvent)
     }
 
-    override fun extract(log: Log): DefiEvent {
+    override suspend fun extract(log: Log, network: Network): DefiEvent {
         val from =
             "from" to FunctionReturnDecoder.decodeIndexedValue(
                 log.topics[1], address()
@@ -33,7 +37,7 @@ class TransferEventDecoder() : EventDecoder {
             transferEvent.nonIndexedParameters
         )[0].value as BigInteger
 
-        val asset = "asset" to log.address
+        val asset = "asset" to getToken(log.address, network)
 
         return DefiEvent(
             type = DefiEventType.TRANSFER,
