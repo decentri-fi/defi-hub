@@ -43,6 +43,10 @@ class TypeUtils {
             return TypeReference.create(Utf8String::class.java, indexed)
         }
 
+        fun bytes32(indexed: Boolean = false): TypeReference<Bytes32> {
+            return TypeReference.create(Bytes32::class.java, indexed)
+        }
+
         fun uint40(): TypeReference<Uint40> {
             return TypeReference.create(Uint40::class.java)
         }

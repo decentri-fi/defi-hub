@@ -18,8 +18,16 @@ class EnsNameService(
     val ethereumProvider = accessorGateway.getGateway(Network.ETHEREUM)
 
     fun getEnsByName(name: String) = runBlocking {
+        val nameHash = NameHash.nameHashAsBytes(name)
+        val resolver = ethereumProvider.readFunction(
+            "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
+            "resolver",
+            outputs = listOf(address()),
+            inputs = listOf(Bytes32(nameHash))
+        )[0].value as String
+
         return@runBlocking ethereumProvider.readFunction(
-            "0x4976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41",
+            resolver,
             "addr",
             outputs = listOf(address()),
             inputs = listOf(Bytes32(NameHash.nameHashAsBytes(name)))
@@ -27,12 +35,21 @@ class EnsNameService(
     }
 
     fun getEnsByAddress(address: String) = runBlocking {
-        val nameHashAsBytes = NameHash.nameHashAsBytes("${Numeric.cleanHexPrefix(address)}.addr.reverse")
+        val reverseName = Numeric.cleanHexPrefix(address) + ".addr.reverse"
+        val nameHash = NameHash.nameHashAsBytes(reverseName)
+        val resolver = ethereumProvider.readFunction(
+            "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
+            "resolver",
+            outputs = listOf(address()),
+            inputs = listOf(Bytes32(nameHash))
+        )[0].value as String
+
+
         return@runBlocking ethereumProvider.readFunction(
-            "0x4976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41",
+            resolver,
             "name",
             outputs = listOf(string()),
-            inputs = listOf(Bytes32(nameHashAsBytes))
+            inputs = listOf(Bytes32(nameHash))
         )[0].value as String
     }
 }
