@@ -15,6 +15,6 @@ class SushiswapTokenIdentifier(
     Protocol.SUSHISWAP, TokenType.SUSHISWAP, erC20Resource, lpContractReader,
 ) {
     override suspend fun isProtocolToken(token: ERC20): Boolean {
-        return token.symbol == "SLP" && token.name === "SushiSwap LP Token"
+        return token.symbol == "SLP" && token.name == "SushiSwap LP Token"
     }
 }
