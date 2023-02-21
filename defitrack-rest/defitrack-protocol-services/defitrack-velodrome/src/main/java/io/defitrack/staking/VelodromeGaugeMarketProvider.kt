@@ -54,6 +54,10 @@ class VelodromeGaugeMarketProvider(
                         rewardTokens = contract.getRewardList().map { reward ->
                             getToken(reward).toFungibleToken()
                         },
+                        marketSize = getMarketSize(
+                            stakedToken.toFungibleToken(),
+                            contract.address
+                        ),
                         stakedToken = stakedToken.toFungibleToken(),
                         vaultType = "velodrome-gauge"
                     )
