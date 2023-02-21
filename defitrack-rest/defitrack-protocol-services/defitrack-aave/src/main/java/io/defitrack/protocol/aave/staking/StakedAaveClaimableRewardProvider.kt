@@ -5,7 +5,7 @@ import io.defitrack.evm.contract.BlockchainGatewayProvider
 import org.springframework.stereotype.Component
 
 @Component
-class AaveClaimableRewardProvider(
+class StakedAaveClaimableRewardProvider(
     aaveStakingMarketProvider: AaveStakingMarketProvider,
     blockchainGatewayProvider: BlockchainGatewayProvider
 ) : DefaultClaimableRewardProvider(aaveStakingMarketProvider, blockchainGatewayProvider)
