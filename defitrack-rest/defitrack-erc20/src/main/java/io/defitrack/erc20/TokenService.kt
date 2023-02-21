@@ -16,7 +16,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Service
-import java.math.BigInteger
 
 @Service
 class TokenService(
@@ -56,36 +55,47 @@ class TokenService(
             symbol == "SLP" -> {
                 TokenType.SUSHISWAP
             }
+
             symbol == "UNI-V2" -> {
                 TokenType.UNISWAP
             }
+
             symbol == "WLP" -> {
                 TokenType.WAULT
             }
+
             symbol == "spLP" -> {
                 TokenType.SPOOKY
             }
+
             symbol == "SPIRIT-LP" -> {
                 TokenType.SPIRIT
             }
+
             symbol == "DFYNLP" -> {
                 TokenType.DFYN
             }
+
             symbol == "APE-LP" -> {
                 TokenType.APE
             }
+
             isBalancerLp(lp.address, lp.blockchainGateway.network) -> {
                 TokenType.BALANCER
             }
+
             isHopLp(symbol) -> {
                 TokenType.HOP
             }
+
             isCurveToken(lp.name()) -> {
                 TokenType.CURVE
             }
+
             isKyberDMMLP(symbol) -> {
                 TokenType.KYBER
             }
+
             else -> {
                 TokenType.SINGLE
             }
@@ -110,36 +120,59 @@ class TokenService(
         return tokenInformationCache.get("${address}-${network}") {
             val token = erc20Service.getERC20(network, address)
             when {
+                (token.name.startsWith("PoolTogether")) -> {
+                    TokenInformation(
+                        logo = logoService.generateLogoUrl(network, address),
+                        name = token.name,
+                        symbol = token.symbol,
+                        address = token.address,
+                        decimals = token.decimals,
+                        totalSupply = token.totalSupply,
+                        type = TokenType.POOLTOGETHER,
+                        network = network
+                    )
+                }
+
                 (token.symbol) == "SLP" -> {
                     fromLP(Protocol.SUSHISWAP, network, token)
                 }
+
                 (token.symbol) == "UNI-V2" -> {
                     fromLP(if (network == Network.POLYGON) Protocol.QUICKSWAP else Protocol.UNISWAP, network, token)
                 }
+
                 (token.symbol) == "spLP" -> {
                     fromLP(Protocol.SPOOKY, network, token)
                 }
+
                 (token.symbol == "DFYNLP") -> {
                     fromLP(Protocol.DFYN, network, token)
                 }
+
                 (token.symbol == "APE-LP") -> {
                     fromLP(Protocol.APESWAP, network, token)
                 }
+
                 (token.symbol == "SPIRIT-LP") -> {
                     fromLP(Protocol.SPIRITSWAP, network, token)
                 }
+
                 isKyberDMMLP(token.symbol) -> {
                     fromLP(Protocol.KYBER_SWAP, network, token)
                 }
+
                 isBalancerLp(token.address, network) -> {
                     balancerTokenService.getTokenInformation(token.address, network)
                 }
+
                 isHopLp(token.symbol) -> {
                     hopTokenService.getTokenInformation(token.address, network)
                 }
+
                 isCurveToken(token.name) -> {
                     curveTokenService.getTokenInformation(token.address, network);
                 }
+
                 else -> {
                     TokenInformation(
                         logo = logoService.generateLogoUrl(network, address),
@@ -147,7 +180,7 @@ class TokenService(
                         symbol = token.symbol,
                         address = token.address,
                         decimals = token.decimals,
-                        totalSupply = BigInteger.ZERO,
+                        totalSupply = token.totalSupply,
                         type = TokenType.SINGLE,
                         network = network
                     )

@@ -10,6 +10,13 @@ enum class Protocol(
     val enabled: Boolean = true,
     val networks: List<Network>
 ) {
+    POOLTOGETHER(
+        logo = "pooltogether.png",
+        slug = "pooltogether",
+        website = "https://pooltogether.com",
+        primitives = listOf(DefiPrimitive.POOLING),
+        networks = listOf(Network.ETHEREUM)
+    ),
     QIDAO(
         logo = "qidao.png",
         slug = "qidao",

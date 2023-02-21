@@ -51,6 +51,7 @@
         <module>chainlink</module>
         <module>tokemak</module>
         <module>qidao</module>
+        <module>pooltogether</module>
     </modules>
 
     <dependencyManagement>
