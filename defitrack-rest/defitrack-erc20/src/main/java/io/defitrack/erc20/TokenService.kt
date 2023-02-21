@@ -1,7 +1,7 @@
 package io.defitrack.erc20
 
 import io.defitrack.common.network.Network
-import io.defitrack.erc20.protocolspecific.*
+import io.defitrack.erc20.protocolspecific.TokenIdentifier
 import io.defitrack.logo.LogoService
 import io.defitrack.nativetoken.NativeTokenService
 import io.defitrack.token.TokenInformation
@@ -21,16 +21,7 @@ import kotlin.system.measureTimeMillis
 class TokenService(
     private val erc20ContractReader: ERC20ContractReader,
     private val erC20Repository: ERC20Repository,
-    private val LpContractReader: LpContractReader,
-    private val hopTokenService: HopTokenService,
-    private val curveTokenService: CurveTokenService,
-    private val setProtocolTokenService: SetProtocolTokenService,
-    private val balancerTokenService: BalancerTokenService,
     private val nativeTokenService: NativeTokenService,
-    private val velodromeTokenService: VelodromeTokenService,
-    private val kyberElasticTokenService: KyberElasticTokenService,
-    private val makerTokenIdentifier: MakerTokenIdentifier,
-    private val poolTogetherTokenIdentifier: PoolTogetherTokenIdentifier,
     private val tokenIdentifiers: List<TokenIdentifier>,
     private val logoService: LogoService
 ) {
@@ -39,7 +30,7 @@ class TokenService(
 
     val tokenCache: Cache<String, List<TokenInformation>> = Cache.Builder().build()
 
-   // @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
+    @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
     fun refreshCaches() {
         refreshCache()
     }
