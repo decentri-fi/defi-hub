@@ -22,5 +22,6 @@
         <module>avalanche</module>
         <module>fantom</module>
         <module>optimism</module>
+        <module>starknet</module>
     </modules>
 </project>
