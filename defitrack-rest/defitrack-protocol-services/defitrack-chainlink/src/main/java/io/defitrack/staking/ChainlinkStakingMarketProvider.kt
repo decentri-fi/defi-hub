@@ -16,10 +16,12 @@ class ChainlinkStakingMarketProvider : FarmingMarketProvider(
 
     val link = "0x514910771AF9Ca656af840dff83E8264EcF986CA"
 
-    val chainlinkStakingContract = ChainlinkStakingContract(
-        getBlockchainGateway(),
-        "0x3feb1e09b4bb0e7f0387cee092a52e85797ab889"
-    )
+    val chainlinkStakingContract by lazy {
+        ChainlinkStakingContract(
+            getBlockchainGateway(),
+            "0x3feb1e09b4bb0e7f0387cee092a52e85797ab889"
+        )
+    }
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         val chainlinkToken = getToken(link).toFungibleToken()
