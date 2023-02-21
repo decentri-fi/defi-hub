@@ -35,7 +35,7 @@ class DefaultPoolingMarketRestController(
     }
 
     @GetMapping(value = ["/all-markets"])
-    fun allMarkets(): List<PoolingMarketVO> = runBlocking(Dispatchers.IO) {
+    fun allMarkets(): List<PoolingMarketVO> = runBlocking {
         poolingMarketProviders.map {
             async {
                 it.getMarkets().map {
@@ -99,7 +99,7 @@ class DefaultPoolingMarketRestController(
     fun findAlternatives(
         @RequestParam("token") tokenAddress: String,
         @RequestParam("network") network: Network
-    ): List<PoolingMarketVO> = runBlocking(Dispatchers.IO) {
+    ): List<PoolingMarketVO> = runBlocking {
         val token = erC20Resource.getTokenInformation(
             network, tokenAddress,
         )

@@ -14,7 +14,12 @@ import io.defitrack.protocol.compound.IronBankService
 import io.defitrack.protocol.compound.IronbankTokenContract
 import io.defitrack.protocol.compound.lending.invest.CompoundLendingInvestmentPreparer
 import io.defitrack.token.TokenType
-import kotlinx.coroutines.*
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -41,10 +46,13 @@ abstract class IronBankLendingMarketProvider(
 
 
     override suspend fun fetchMarkets(): List<LendingMarket> =
-        withContext(Dispatchers.IO.limitedParallelism(5)) {
+        coroutineScope {
+            val semaphore = Semaphore(10)
             getTokenContracts().map {
                 async {
-                    toLendingMarket(it)
+                    semaphore.withPermit {
+                        toLendingMarket(it)
+                    }
                 }
             }.awaitAll().filterNotNull()
         }

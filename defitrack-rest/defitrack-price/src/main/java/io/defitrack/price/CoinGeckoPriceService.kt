@@ -6,11 +6,11 @@ import com.google.gson.JsonParser
 import io.defitrack.price.coingecko.CoingeckoToken
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
-import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -33,16 +33,16 @@ class CoinGeckoPriceService(
     val tokenCache = Cache.Builder().expireAfterWrite(7.days).build<String, Set<CoingeckoToken>>()
 
     @PostConstruct
-    fun init() {
-        runBlocking(Dispatchers.IO) {
-            getCoingeckoTokens()
-        }
+    fun init() = runBlocking {
+        getCoingeckoTokens()
     }
 
     suspend fun getCoingeckoTokens(): Set<CoingeckoToken> {
         return tokenCache.get("all") {
-            val result = httpClient.get(coinlistLocation).bodyAsText(Charset.defaultCharset())
-            objectMapper.readValue(result, object: TypeReference<Set<CoingeckoToken>>() {})
+            val result = withContext(Dispatchers.IO) {
+                httpClient.get(coinlistLocation).bodyAsText(Charset.defaultCharset())
+            }
+            objectMapper.readValue(result, object : TypeReference<Set<CoingeckoToken>>() {})
         }
     }
 

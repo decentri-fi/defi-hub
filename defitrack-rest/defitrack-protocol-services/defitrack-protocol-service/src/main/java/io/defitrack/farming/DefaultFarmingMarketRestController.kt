@@ -41,7 +41,7 @@ class DefaultFarmingMarketRestController(
     fun searchByToken(
         @RequestParam("token") tokenAddress: String,
         @RequestParam("network") network: Network
-    ): List<FarmingMarketVO>  = runBlocking(Dispatchers.IO) {
+    ): List<FarmingMarketVO>  = runBlocking {
         farmingMarketProviders
             .filter {
                 it.getNetwork() == network

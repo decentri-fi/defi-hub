@@ -4,6 +4,8 @@ import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
@@ -24,15 +26,10 @@ class PriceResource(
         .expireAfterWrite(10.minutes)
         .build<String, BigDecimal>()
 
+    @Deprecated("use calculate price")
     suspend fun getPrice(symbol: String): BigDecimal {
-        return cache.get(symbol) {
-            try {
-                client.get("$priceResourceLocation/$symbol").body()
-            } catch (ex: Exception) {
-                logger.error("unable to fetch price for $symbol", ex)
-                BigDecimal.ZERO
-            }
-        }
+        logger.error("Use of deprecated getPrice method")
+        return 0.0.toBigDecimal()
     }
 
     suspend fun calculatePrice(name: String, amount: Double): Double {
@@ -43,10 +40,12 @@ class PriceResource(
     suspend fun calculatePrice(priceRequest: PriceRequest?): Double {
         return priceRequest?.let {
             try {
-                client.post(priceResourceLocation) {
-                    this.header("Content-Type", "application/json")
-                    setBody(priceRequest)
-                }.body()
+                withContext(Dispatchers.IO) {
+                    client.post(priceResourceLocation) {
+                        this.header("Content-Type", "application/json")
+                        setBody(priceRequest)
+                    }.body()
+                }
             } catch (ex: Exception) {
                 logger.error("unable to fetch price for ${it.address}")
                 ex.printStackTrace()

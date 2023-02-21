@@ -28,9 +28,8 @@ class HopPolygonFarmingMarketProvider(
 ) : FarmingMarketProvider() {
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
         hopService.getStakingRewards(getNetwork()).map { stakingReward ->
-            async(Dispatchers.IO.limitedParallelism(10)) {
+            async {
                 toStakingMarket(stakingReward)
-
             }
         }.awaitAll().filterNotNull()
     }

@@ -13,7 +13,7 @@ import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Component
 
 @Component
@@ -88,24 +88,22 @@ class HopService(
         }?.getGraph() ?: throw IllegalArgumentException("$network not supported")
     }
 
-    fun getLps(network: Network): List<HopLpToken> {
-        return runBlocking(Dispatchers.IO) {
-            lpCache.get(network) {
-                val response: String = client.get(addressesUrl).bodyAsText()
-                val assets = JsonParser.parseString(response).asJsonObject["bridges"].asJsonObject.entrySet()
+    suspend fun getLps(network: Network): List<HopLpToken> {
+        return lpCache.get(network) {
+            val response: String = withContext(Dispatchers.IO) { client.get(addressesUrl).bodyAsText() }
+            val assets = JsonParser.parseString(response).asJsonObject["bridges"].asJsonObject.entrySet()
 
-                assets.flatMap {
-                    it.value.asJsonObject.entrySet()
-                }.filter {
-                    it.value.asJsonObject.has("l2SaddleLpToken") && it.key.equals(network.slug)
-                }.map {
-                    HopLpToken(
-                        lpToken = it.value.asJsonObject["l2SaddleLpToken"].asString,
-                        hToken = it.value.asJsonObject["l2HopBridgeToken"].asString,
-                        swapAddress = it.value.asJsonObject["l2SaddleSwap"].asString,
-                        canonicalToken = it.value.asJsonObject["l2CanonicalToken"].asString,
-                    )
-                }
+            assets.flatMap {
+                it.value.asJsonObject.entrySet()
+            }.filter {
+                it.value.asJsonObject.has("l2SaddleLpToken") && it.key.equals(network.slug)
+            }.map {
+                HopLpToken(
+                    lpToken = it.value.asJsonObject["l2SaddleLpToken"].asString,
+                    hToken = it.value.asJsonObject["l2HopBridgeToken"].asString,
+                    swapAddress = it.value.asJsonObject["l2SaddleSwap"].asString,
+                    canonicalToken = it.value.asJsonObject["l2CanonicalToken"].asString,
+                )
             }
         }
     }

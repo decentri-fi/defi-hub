@@ -4,13 +4,14 @@ import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.kyberswap.graph.KyberswapEthereumGraphProvider
 import io.defitrack.protocol.kyberswap.apr.KyberswapAPRService
+import io.defitrack.protocol.kyberswap.graph.KyberswapEthereumGraphProvider
 import io.defitrack.token.TokenType
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import org.springframework.stereotype.Service
 
 @Service
@@ -19,10 +20,11 @@ class KyberswapEthereumPoolingMarketProvider(
     private val kyberswapAPRService: KyberswapAPRService,
 ) : PoolingMarketProvider() {
 
-    override suspend fun fetchMarkets(): List<PoolingMarket> =
-        withContext(Dispatchers.IO.limitedParallelism(10)) {
-            kyberswapPolygonService.getPoolingMarkets().map {
-                async {
+    override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
+        val semaphore = Semaphore(10)
+        kyberswapPolygonService.getPoolingMarkets().map {
+            async {
+                semaphore.withPermit {
                     try {
                         val token = getToken(it.id)
                         val token0 = getToken(it.token0.id)
@@ -49,8 +51,9 @@ class KyberswapEthereumPoolingMarketProvider(
                         null
                     }
                 }
-            }.awaitAll().filterNotNull()
-        }
+            }
+        }.awaitAll().filterNotNull()
+    }
 
     override fun getProtocol(): Protocol {
         return Protocol.KYBER_SWAP

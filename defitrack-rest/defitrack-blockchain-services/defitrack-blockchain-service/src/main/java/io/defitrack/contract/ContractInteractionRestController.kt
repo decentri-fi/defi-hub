@@ -2,7 +2,6 @@ package io.defitrack.contract
 
 import io.defitrack.evm.contract.ContractInteractionCommand
 import io.defitrack.evm.web3j.SimpleRateLimiter
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.springframework.web.bind.annotation.PostMapping
@@ -25,7 +24,7 @@ class ContractInteractionRestController(
 
     @PostMapping("/call")
     fun call(@RequestBody contractInteractionCommand: ContractInteractionCommand): EthCall =
-        runBlocking(Dispatchers.IO) {
+        runBlocking {
             simpleRateLimiter.acquire()
             performCall(contractInteractionCommand)
         }

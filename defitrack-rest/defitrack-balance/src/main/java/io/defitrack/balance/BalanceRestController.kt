@@ -23,7 +23,7 @@ class BalanceRestController(
 
     @Deprecated("use the network-specific call")
     @GetMapping("/{address}/native-balance")
-    fun getBalance(@PathVariable("address") address: String): List<BalanceElement> = runBlocking(Dispatchers.IO) {
+    fun getBalance(@PathVariable("address") address: String): List<BalanceElement> = runBlocking {
         balanceServices.mapNotNull {
             val balance = try {
                 it.getNativeBalance(address)
@@ -56,7 +56,7 @@ class BalanceRestController(
     fun getBalanceByNetwork(
         @PathVariable("address") address: String,
         @RequestParam("network") network: Network
-    ): BalanceElement = runBlocking(Dispatchers.IO) {
+    ): BalanceElement = runBlocking {
         val balanceService = balanceServices.first {
             it.getNetwork() == network
         }

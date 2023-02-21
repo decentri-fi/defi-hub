@@ -29,7 +29,7 @@ class DefaultBorrowingRestController(
 
     @GetMapping("/{userId}/positions")
     fun getPoolingMarkets(@PathVariable("userId") address: String): List<BorrowPositionVO> =
-        runBlocking(Dispatchers.IO) {
+        runBlocking {
             borrowingServices.flatMap {
                 try {
                     it.getBorrows(address)

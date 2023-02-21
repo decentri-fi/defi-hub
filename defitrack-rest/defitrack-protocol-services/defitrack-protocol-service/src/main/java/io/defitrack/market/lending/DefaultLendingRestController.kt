@@ -29,7 +29,7 @@ class DefaultLendingRestController(
 
     @GetMapping("/{userId}/positions")
     fun getPoolingMarkets(@PathVariable("userId") address: String): List<LendingElementVO> =
-        runBlocking(Dispatchers.IO) {
+        runBlocking {
             lendingUserServices.flatMap {
                 try {
                     it.getLendings(address)
@@ -45,15 +45,13 @@ class DefaultLendingRestController(
         @PathVariable("userId") address: String,
         @RequestParam("lendingElementId") lendingElementId: String,
         @RequestParam("network") network: Network
-    ): LendingElementVO? = runBlocking{
+    ): LendingElementVO? = runBlocking {
         lendingUserServices.filter {
             it.getNetwork() == network
         }.firstNotNullOfOrNull {
             try {
-                runBlocking(Dispatchers.IO) {
-                    retry(limitAttempts(3)) {
-                        it.getLending(address, lendingElementId)
-                    }
+                retry(limitAttempts(3)) {
+                    it.getLending(address, lendingElementId)
                 }
             } catch (ex: Exception) {
                 logger.error("Something went wrong trying to fetch the user lendings: ${ex.message}")

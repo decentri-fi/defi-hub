@@ -18,7 +18,7 @@ class GeneralStatisticsRestController(
 ) {
 
     @GetMapping("/statistics")
-    fun getStatistics() = runBlocking(Dispatchers.IO) {
+    fun getStatistics() = runBlocking {
         return@runBlocking StatisticsVO(
             marketCount = listOf(
                 async {
