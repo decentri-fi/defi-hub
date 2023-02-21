@@ -9,7 +9,9 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
 import io.github.reactivecircus.cache4k.Cache
-import kotlinx.coroutines.*
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import org.slf4j.LoggerFactory
@@ -41,26 +43,26 @@ class TokenService(
     }
 
     fun refreshCache() = runBlocking {
-            logger.info("refreshing token cache")
-            val semaphore = Semaphore(16)
-            Network.values().map { network ->
-                val millis = measureTimeMillis {
-                    val tokens = erC20Repository.allTokens(network).map {
-                        async {
-                            try {
-                                semaphore.withPermit {
-                                    getTokenInformation(it, network)
-                                }
-                            } catch (ex: Exception) {
-                                ex.printStackTrace()
-                                null
+        logger.info("refreshing token cache")
+        val semaphore = Semaphore(16)
+        Network.values().map { network ->
+            val millis = measureTimeMillis {
+                val tokens = erC20Repository.allTokens(network).map {
+                    async {
+                        try {
+                            semaphore.withPermit {
+                                getTokenInformation(it, network)
                             }
+                        } catch (ex: Exception) {
+                            ex.printStackTrace()
+                            null
                         }
-                    }.awaitAll().filterNotNull()
-                    tokenCache.put("tokens-${network}", tokens)
-                }
-                logger.info("refreshing token cache for ${network} took ${millis / 1000}s")
+                    }
+                }.awaitAll().filterNotNull()
+                tokenCache.put("tokens-${network}", tokens)
             }
+            logger.info("refreshing token cache for ${network} took ${millis / 1000}s")
+        }
     }
 
 
@@ -151,10 +153,22 @@ class TokenService(
         if (address == "0x0" || address.lowercase() == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") {
             return nativeTokenService.getNativeToken(network)
         }
-        logger.info("getting token information for ${address} on ${network}")
         return tokenInformationCache.get("${address}-${network}") {
             val token = erc20Service.getERC20(network, address)
             when {
+                (network == Network.ETHEREUM && token.address.lowercase() == "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2") -> {
+                    TokenInformation(
+                        logo = logoService.generateLogoUrl(network, address),
+                        name = "Maker",
+                        symbol = "MKR",
+                        address = token.address,
+                        decimals = token.decimals,
+                        totalSupply = token.totalSupply,
+                        type = TokenType.SINGLE,
+                        network = network
+                    )
+                }
+
                 (token.name.startsWith("PoolTogether")) -> {
                     TokenInformation(
                         logo = logoService.generateLogoUrl(network, address),

@@ -15,6 +15,7 @@ data class PoolingMarket(
     val protocol: Protocol,
     val address: String,
     val name: String,
+    val decimals: Int = 18,
     val symbol: String,
     val tokens: List<FungibleToken>,
     val apr: BigDecimal? = null,

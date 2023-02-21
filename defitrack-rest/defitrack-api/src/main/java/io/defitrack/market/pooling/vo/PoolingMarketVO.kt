@@ -8,13 +8,14 @@ import java.math.BigDecimal
 
 class PoolingMarketVO(
     id: String,
-    address: String,
     name: String,
     protocol: ProtocolVO,
     network: NetworkVO,
     val tokens: List<FungibleToken>,
     val breakdown: List<PoolingMarketTokenShareVO>?,
     val apr: BigDecimal?,
+    val address: String,
+    val decimals: Int = 18,
     marketSize: BigDecimal?,
     prepareInvestmentSupported: Boolean
 ) : MarketVO(

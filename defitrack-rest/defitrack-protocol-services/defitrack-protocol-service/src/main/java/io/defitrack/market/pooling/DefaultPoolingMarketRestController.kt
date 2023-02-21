@@ -146,6 +146,7 @@ class DefaultPoolingMarketRestController(
                     )
                 )
             },
+            decimals = decimals,
             address = address,
             apr = apr,
             marketSize = marketSize,
