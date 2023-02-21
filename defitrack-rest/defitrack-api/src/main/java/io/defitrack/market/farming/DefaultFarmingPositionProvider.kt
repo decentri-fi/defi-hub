@@ -8,10 +8,9 @@ import java.math.BigInteger
 
 @Service
 class DefaultFarmingPositionProvider(
-    erC20Resource: ERC20Resource,
     val farmingMarketProvider: List<FarmingMarketProvider>,
     val gateway: BlockchainGatewayProvider
-) : FarmingPositionProvider(erC20Resource) {
+) : FarmingPositionProvider() {
     override suspend fun getStakings(address: String): List<FarmingPosition> {
         return farmingMarketProvider.flatMap { provider ->
             val markets = provider.getMarkets().filter { it.balanceFetcher != null }

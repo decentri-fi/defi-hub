@@ -10,7 +10,7 @@ import java.math.BigInteger
 abstract class DefaultLendingPositionService(
     val lendingMarketProvider: LendingMarketProvider,
     val gateway: BlockchainGatewayProvider,
-) : LendingPositionService {
+) : LendingPositionService() {
 
     override suspend fun getLendings(address: String): List<LendingPosition> {
 
