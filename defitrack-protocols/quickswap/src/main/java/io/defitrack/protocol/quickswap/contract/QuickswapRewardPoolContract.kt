@@ -5,8 +5,6 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
-import org.web3j.abi.TypeReference
-import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
 
@@ -27,11 +25,11 @@ class QuickswapRewardPoolContract(
     }
 
     suspend fun rewardsTokenAddress(): String {
-        return read("rewardsToken")
+        return readWithAboi("rewardsToken")
     }
 
     suspend fun rewardRate(): BigInteger {
-        return read("rewardRate")
+        return readWithAboi("rewardRate")
     }
 
     fun getRewardFunction(): Function {

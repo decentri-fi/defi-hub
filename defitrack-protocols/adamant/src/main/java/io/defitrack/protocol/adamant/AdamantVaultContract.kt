@@ -4,10 +4,7 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
-import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Function
-import org.web3j.abi.datatypes.generated.Uint256
-import java.math.BigInteger
 
 class AdamantVaultContract(
     solidityBasedContractAccessor: BlockchainGateway,

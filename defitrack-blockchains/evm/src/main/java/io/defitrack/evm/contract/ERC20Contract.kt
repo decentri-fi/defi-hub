@@ -54,7 +54,7 @@ open class ERC20Contract(
 
     suspend fun name(): String {
         return try {
-            readWithoutAbi("name", outputs = listOf(string()))[0].value as String
+            readSingle("name", string())
         } catch (ex: Exception) {
             "unknown"
         }
@@ -62,7 +62,7 @@ open class ERC20Contract(
 
     suspend fun symbol(): String {
         return try {
-            readWithoutAbi("symbol", outputs = listOf(string()))[0].value as String
+            readSingle("symbol", string())
         } catch (ex: Exception) {
             "UNKWN"
         }
@@ -70,7 +70,7 @@ open class ERC20Contract(
 
     suspend fun decimals(): Int {
         return try {
-            val d: BigInteger = readWithoutAbi("decimals", outputs = listOf(uint256()))[0].value as BigInteger
+            val d: BigInteger = readSingle("decimals", uint256())
             return d.toInt()
         } catch (ex: Exception) {
             18
@@ -79,7 +79,7 @@ open class ERC20Contract(
 
     suspend fun totalSupply(): BigInteger {
         return try {
-            readWithoutAbi("totalSupply", outputs = listOf(uint256()))[0].value as BigInteger
+            readSingle("totalSupply", uint256())
         } catch (ex: Exception) {
             BigInteger.ZERO
         }

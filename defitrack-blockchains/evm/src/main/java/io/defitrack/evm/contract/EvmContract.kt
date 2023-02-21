@@ -86,7 +86,15 @@ abstract class EvmContract(
     }
 
 
-    suspend inline fun <reified T : Any> read(function: String): T {
+    suspend inline fun <reified T : Any> readSingle(function: String, output: TypeReference<out Type<*>>): T {
+        return readWithoutAbi(
+            function,
+            outputs = listOf(output)
+        )[0].value as T
+    }
+
+
+    suspend inline fun <reified T : Any> readWithAboi(function: String): T {
         return readWithAbi(function)[0].value as T
     }
 }

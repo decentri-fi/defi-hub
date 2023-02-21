@@ -16,15 +16,15 @@ class QuickswapDualRewardPoolContract(
 ) {
 
     suspend fun rewardsTokenAddressA(): String {
-        return read("rewardsTokenA")
+        return readWithAboi("rewardsTokenA")
     }
 
     suspend fun rewardsTokenAddressB(): String {
-        return read("rewardsTokenB")
+        return readWithAboi("rewardsTokenB")
     }
 
     suspend fun stakingTokenAddress(): String {
-        return read("stakingToken");
+        return readWithAboi("stakingToken");
     }
 
     suspend fun rewardRateA(): BigInteger {

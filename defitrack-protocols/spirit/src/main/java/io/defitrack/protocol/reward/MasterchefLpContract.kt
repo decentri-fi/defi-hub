@@ -17,20 +17,20 @@ class MasterchefLpContract(
 ) {
 
     suspend fun poolLength(): Int {
-        val retVal: BigInteger = read("poolLength")
+        val retVal: BigInteger = readWithAboi("poolLength")
         return retVal.toInt()
     }
 
     suspend fun totalAllocPoint(): BigInteger {
-        return read("totalAllocPoint")
+        return readWithAboi("totalAllocPoint")
     }
 
     suspend fun rewardToken(): String {
-        return read("spirit")
+        return readWithAboi("spirit")
     }
 
     suspend fun sushiPerSecond(): BigInteger {
-        return read("spiritPerBlock")
+        return readWithAboi("spiritPerBlock")
     }
 
     fun userInfoFunction(poolId: Int, user: String): Function {
