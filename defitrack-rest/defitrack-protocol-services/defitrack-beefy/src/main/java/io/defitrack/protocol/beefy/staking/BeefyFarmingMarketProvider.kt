@@ -13,7 +13,12 @@ import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
 import io.defitrack.protocol.beefy.domain.BeefyVault
 import io.defitrack.protocol.beefy.staking.invest.BeefyStakingInvestmentPreparer
-import kotlinx.coroutines.*
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
@@ -31,14 +36,16 @@ abstract class BeefyFarmingMarketProvider(
         }
     }
 
-    override suspend fun fetchMarkets(): List<FarmingMarket> =
-        withContext(Dispatchers.IO.limitedParallelism(5)) {
-            vaults.map {
-                async {
+    override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
+        val semaphore = Semaphore(10)
+        vaults.map {
+            async {
+                semaphore.withPermit {
                     toStakingMarketElement(it)
                 }
-            }.awaitAll().filterNotNull()
-        }
+            }
+        }.awaitAll().filterNotNull()
+    }
 
     private suspend fun toStakingMarketElement(beefyVault: BeefyVault): FarmingMarket? {
         return try {

@@ -2,10 +2,11 @@ package io.defitrack.market.farming.vo
 
 import io.defitrack.market.MarketVO
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.protocol.toVO
 import io.defitrack.network.NetworkVO
 import io.defitrack.network.toVO
+import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.ProtocolVO
+import io.defitrack.protocol.toVO
 import io.defitrack.token.FungibleToken
 import java.math.BigDecimal
 
@@ -19,7 +20,9 @@ class FarmingMarketVO(
     val vaultType: String,
     marketSize: BigDecimal?,
     val apr: BigDecimal?,
-    prepareInvestmentSupported: Boolean
+    prepareInvestmentSupported: Boolean,
+    val farmType: FarmType,
+    val rewardsFinished: Boolean
 ) : MarketVO(
     id, network, protocol, name, prepareInvestmentSupported, marketSize, "farming"
 ) {
@@ -34,7 +37,9 @@ class FarmingMarketVO(
             vaultType = this.contractType,
             marketSize = this.marketSize,
             apr = this.apr,
-            prepareInvestmentSupported = this.investmentPreparer != null
+            prepareInvestmentSupported = this.investmentPreparer != null,
+            farmType = farmType,
+            rewardsFinished = this.rewardsFinished
         )
     }
 }

@@ -23,5 +23,6 @@ data class FarmingMarket(
     val balanceFetcher: PositionFetcher? = null,
     val investmentPreparer: InvestmentPreparer? = null,
     val claimableRewardFetcher: ClaimableRewardFetcher? = null,
-    val metadata: Map<String, Any> = emptyMap()
+    val metadata: Map<String, Any> = emptyMap(),
+    val rewardsFinished: Boolean = false
 ) : DefiMarket
