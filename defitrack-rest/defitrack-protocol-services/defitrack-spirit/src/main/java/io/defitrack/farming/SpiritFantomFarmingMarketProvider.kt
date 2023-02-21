@@ -25,7 +25,7 @@ class SpiritFantomFarmingMarketProvider(
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         val masterchef = MasterchefLpContract(
-            blockchainGatewayProvider.getGateway(getNetwork()),
+            getBlockchainGateway(),
             abiResource.getABI("spirit/Masterchef.json"),
             spiritFantomService.getMasterchef()
         )

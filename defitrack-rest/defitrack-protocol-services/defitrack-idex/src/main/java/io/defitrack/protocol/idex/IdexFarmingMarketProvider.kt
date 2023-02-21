@@ -2,7 +2,6 @@ package io.defitrack.protocol.idex
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
@@ -29,7 +28,7 @@ class IdexFarmingMarketProvider(
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
         idexService.idexFarm().map {
             IdexFarmContract(
-                blockchainGatewayProvider.getGateway(getNetwork()),
+                getBlockchainGateway(),
                 minichefABI,
                 it
             )

@@ -3,7 +3,6 @@ package io.defitrack.protocol.adamant.staking
 import io.defitrack.abi.ABIResource
 import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
@@ -12,7 +11,6 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.adamant.AdamantService
 import io.defitrack.protocol.adamant.AdamantVaultContract
 import io.defitrack.protocol.adamant.claimable.AdamantVaultClaimPreparer
-import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.*
 import org.springframework.stereotype.Service
 
@@ -37,7 +35,7 @@ class AdamantVaultMarketProvider(
         coroutineScope {
             adamantService.adamantGenericVaults().map {
                 AdamantVaultContract(
-                    blockchainGatewayProvider.getGateway(getNetwork()),
+                    getBlockchainGateway(),
                     genericVault,
                     it.vaultAddress
                 )

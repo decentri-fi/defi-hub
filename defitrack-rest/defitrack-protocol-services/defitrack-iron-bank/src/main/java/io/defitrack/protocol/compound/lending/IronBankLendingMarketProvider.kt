@@ -27,7 +27,6 @@ import java.math.RoundingMode
 
 @Component
 abstract class IronBankLendingMarketProvider(
-    blockchainGatewayProvider: BlockchainGatewayProvider,
     private val abiResource: ABIResource,
     private val compoundEthereumService: IronBankService,
     private val priceResource: PriceResource

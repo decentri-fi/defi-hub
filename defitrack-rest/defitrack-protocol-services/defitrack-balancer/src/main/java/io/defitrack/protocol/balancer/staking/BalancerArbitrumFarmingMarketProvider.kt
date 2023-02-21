@@ -3,7 +3,6 @@ package io.defitrack.protocol.balancer.staking
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
-import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
@@ -11,7 +10,6 @@ import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerGaugeContract
 import io.defitrack.protocol.balancer.polygon.BalancerGaugeArbitrumGraphProvider
-import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -34,7 +32,7 @@ class BalancerArbitrumFarmingMarketProvider(
                 try {
                     val stakedToken = erC20Resource.getTokenInformation(getNetwork(), it.poolAddress)
                     val gauge = BalancerGaugeContract(
-                        blockchainGatewayProvider.getGateway(getNetwork()),
+                        getBlockchainGateway(),
                         balancerGaugeContractAbi,
                         it.id
                     )

@@ -4,7 +4,6 @@ import io.defitrack.abi.ABIResource
 import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
-import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.network.toVO
@@ -15,7 +14,6 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
-import io.defitrack.token.ERC20Resource
 import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -39,7 +37,7 @@ class QuickswapFarmingMarketProvider(
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
         quickswapService.getVaultAddresses().map {
             QuickswapRewardPoolContract(
-                blockchainGatewayProvider.getGateway(getNetwork()),
+                getBlockchainGateway(),
                 stakingRewardsABI,
                 it
             )

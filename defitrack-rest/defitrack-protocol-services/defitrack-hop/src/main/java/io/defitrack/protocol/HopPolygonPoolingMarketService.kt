@@ -3,7 +3,6 @@ package io.defitrack.protocol
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
@@ -11,7 +10,6 @@ import io.defitrack.price.PriceResource
 import io.defitrack.protocol.contract.HopLpTokenContract
 import io.defitrack.protocol.contract.HopSwapContract
 import io.defitrack.protocol.domain.HopLpToken
-import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -29,11 +27,9 @@ class HopPolygonPoolingMarketService(
 
 
     override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
-        val gateway = blockchainGatewayProvider.getGateway(getNetwork())
-
         hopService.getLps(getNetwork()).map { hopLpToken ->
             async {
-                toPoolingMarketElement(gateway, hopLpToken)
+                toPoolingMarketElement(getBlockchainGateway(), hopLpToken)
             }
         }.awaitAll().filterNotNull()
     }

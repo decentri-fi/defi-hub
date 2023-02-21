@@ -3,7 +3,6 @@ package io.defitrack.invest
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.market.DefiMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.ProtocolService
 import io.defitrack.token.ERC20Resource
@@ -11,7 +10,6 @@ import io.defitrack.token.MarketSizeService
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,10 +23,12 @@ abstract class MarketProvider<T> : ProtocolService {
 
     @Autowired
     lateinit var erC20Resource: ERC20Resource
+
     @Autowired
     lateinit var marketSizeService: MarketSizeService
+
     @Autowired
-    lateinit var blockchainGatewayProvider: BlockchainGatewayProvider
+    private lateinit var blockchainGatewayProvider: BlockchainGatewayProvider
 
     protected abstract suspend fun fetchMarkets(): List<T>
 
@@ -55,8 +55,12 @@ abstract class MarketProvider<T> : ProtocolService {
         cache.get("all") ?: emptyList()
     }
 
+    val chainGw: BlockchainGateway by lazy {
+        blockchainGatewayProvider.getGateway(getNetwork())
+    }
+
     fun getBlockchainGateway(): BlockchainGateway {
-        return blockchainGatewayProvider.getGateway(getNetwork())
+        return chainGw
     }
 
     fun defaultPositionFetcher(address: String): PositionFetcher {

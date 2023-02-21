@@ -34,7 +34,7 @@ class BalancerPolygonFarmingMarketProvider(
                 try {
                     val stakedToken = erC20Resource.getTokenInformation(getNetwork(), it.poolAddress)
                     val gauge = BalancerGaugeContract(
-                        blockchainGatewayProvider.getGateway(getNetwork()),
+                        getBlockchainGateway(),
                         balancerGaugeContractAbi,
                         it.id
                     )
