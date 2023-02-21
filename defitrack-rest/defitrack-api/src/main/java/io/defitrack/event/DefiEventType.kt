@@ -1,5 +1,5 @@
 package io.defitrack.event
 
 enum class DefiEventType {
-    CLAIM, TRANSFER, APPROVAL
+    CLAIM, TRANSFER, APPROVAL, SWAP, BORROW
 }
