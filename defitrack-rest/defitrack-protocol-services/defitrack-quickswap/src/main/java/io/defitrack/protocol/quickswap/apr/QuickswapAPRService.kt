@@ -4,7 +4,7 @@ import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.price.PriceResource
-import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
+import io.defitrack.protocol.quickswap.contract.QuickswapRewardPoolContract
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.contract.QuickswapDualRewardPoolContract
 import io.github.reactivecircus.cache4k.Cache

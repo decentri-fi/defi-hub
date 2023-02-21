@@ -14,7 +14,7 @@ import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 
 @Service
-class DQuickFarmingMarketProvider(
+class OldDQuickFarmingMarketProvider(
     private val quickswapService: QuickswapService,
     private val abiResource: ABIResource,
 ) : FarmingMarketProvider() {
@@ -30,7 +30,7 @@ class DQuickFarmingMarketProvider(
             DQuickContract(
                 getBlockchainGateway(),
                 dquickStakingABI,
-                quickswapService.getDQuickContract(),
+                quickswapService.getOldDQuickContract(),
             )
         }
     }
@@ -42,7 +42,7 @@ class DQuickFarmingMarketProvider(
         return listOf(
             create(
                 identifier = oldDQuick.address.lowercase(),
-                name = "Dragon's Lair",
+                name = "Dragon's Lair (Old)",
                 stakedToken = quickToken,
                 rewardTokens = listOf(
                     stakedToken

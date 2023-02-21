@@ -31,8 +31,8 @@ class DQuickContract(
     }
 
     suspend fun dquickForQuick(amount: BigInteger): BigInteger {
-        return readWithAbi(
-            "dQUICKForQuick",
+        return readWithoutAbi(
+            "dQUICKForQUICK",
             inputs = listOf(amount.toUint256()),
             outputs = listOf(
                 TypeReference.create(Uint256::class.java)

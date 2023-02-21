@@ -27,7 +27,7 @@ class DQuickExternalPriceService(
         }
     }
 
-    val dquickAddress = quickswapService.getDQuickContract()
+    val dquickAddress = quickswapService.getOldDQuickContract()
 
     val cache = Cache.Builder().expireAfterWrite(
         1.hours

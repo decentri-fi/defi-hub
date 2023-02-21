@@ -11,9 +11,10 @@ import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
+import io.defitrack.protocol.quickswap.contract.QuickswapRewardPoolContract
+import io.defitrack.protocol.quickswap.contract.RewardFactoryContract
 import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -37,8 +38,21 @@ class QuickswapFarmingMarketProvider(
         }
     }
 
+    val rewardFactoryContract by lazy {
+        runBlocking {
+            RewardFactoryContract(
+                getBlockchainGateway(),
+                quickswapService.getRewardFactory(),
+            )
+        }
+    }
+
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
-        quickswapService.getVaultAddresses().map {
+        val rewardPools = rewardFactoryContract.getStakingTokens().map {
+            rewardFactoryContract.stakingRewardsInfoByStakingToken(it)
+        }
+
+        rewardPools.map {
             QuickswapRewardPoolContract(
                 getBlockchainGateway(),
                 stakingRewardsABI,

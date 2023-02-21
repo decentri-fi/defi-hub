@@ -1,4 +1,4 @@
-package io.defitrack.protocol.quickswap
+package io.defitrack.protocol.quickswap.contract
 
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256

@@ -34,16 +34,25 @@ class QuickswapService(
         1.days
     ).build<String, List<QuickswapPair>>()
 
-    fun getDQuickContract(): String {
+    fun getOldDQuickContract(): String {
         return "0xf28164a485b0b2c90639e47b0f377b4a438a16b1"
     }
 
-    fun getDualPools() = listOf(
-        "0x3c1f53fed2238176419f8f897aec8791c499e3c8",
-        "0x14977e7e263ff79c4c3159f497d9551fbe769625",
-        "0xc0eb5d1316b835f4b584b59f922d9c87ca5053e5",
-        "0xd26e16f5a9dfb9fe32db7f6386402b8aae1a5dd7"
-    )
+    fun getDQuickContract(): String {
+        return "0x958d208cdf087843e9ad98d23823d32e17d723a1"
+    }
+
+    fun getDualRewardFactory(): String {
+        return "0x9dd12421c637689c3fc6e661c9e2f02c2f61b3eb"
+    }
+
+    fun getRewardFactory(): String {
+        return "0x8aaa5e259f74c8114e0a471d9f2adfc66bfe09ed"
+    }
+
+    fun getDeprecatedRewardFactory(): String {
+        return "0x8aaa5e259f74c8114e0a471d9f2adfc66bfe09ed"
+    }
 
     suspend fun getVaultAddresses(): List<String> {
         return vaultCache.get("quickswap-normal-vaults") {
