@@ -17,7 +17,7 @@ class TransactionRestController(
 ) {
 
     @OptIn(ExperimentalStdlibApi::class)
-    @GetMapping("/{txId}/logs")
+    @GetMapping("/{txId}")
     fun getTransaction(@PathVariable("txId") txId: String): Transaction? {
         return web3j.ethGetTransactionByHash(txId).send().transaction.getOrNull()
     }
