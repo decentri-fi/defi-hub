@@ -34,3 +34,5 @@ yearn
 wepiggy
 set
 olympusdao
+chainlink
+tokemak
