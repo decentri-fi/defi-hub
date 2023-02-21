@@ -12,6 +12,7 @@ import io.defitrack.protocol.balancer.staking.BalancerOptimismFarmingMarketProvi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import java.math.BigInteger
 import java.util.*
@@ -24,7 +25,9 @@ class BalancerOptimismUserClaimingRewardProvider(
 ) : ClaimableRewardProvider() {
 
     val gaugeContractAbi by lazy {
-        abiResource.getABI("balancer/gauge.json")
+        runBlocking {
+            abiResource.getABI("balancer/gauge.json")
+        }
     }
 
     override suspend fun claimables(address: String): List<Claimable> =

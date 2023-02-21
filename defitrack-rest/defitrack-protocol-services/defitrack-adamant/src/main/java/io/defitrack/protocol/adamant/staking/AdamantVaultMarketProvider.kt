@@ -11,7 +11,10 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.adamant.AdamantService
 import io.defitrack.protocol.adamant.AdamantVaultContract
 import io.defitrack.protocol.adamant.claimable.AdamantVaultClaimPreparer
-import kotlinx.coroutines.*
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 
 @Service
@@ -21,11 +24,13 @@ class AdamantVaultMarketProvider(
 ) : FarmingMarketProvider() {
 
     val genericVault by lazy {
-        abiResource.getABI("adamant/GenericVault.json")
+        runBlocking {
+            abiResource.getABI("adamant/GenericVault.json")
+        }
     }
 
     val addy by lazy {
-        runBlocking(Dispatchers.IO) {
+        runBlocking {
             getToken("0xc3fdbadc7c795ef1d6ba111e06ff8f16a20ea539")
         }
     }

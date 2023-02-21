@@ -8,6 +8,7 @@ import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.StargateService
 import io.defitrack.protocol.contract.LPStakingContract
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 
 @Component
@@ -18,7 +19,9 @@ abstract class StargateFarmingMarketProvider(
 ) : FarmingMarketProvider() {
 
     val lpStakingContractAbi by lazy {
-        abiResource.getABI("stargate/LPStaking.json")
+        runBlocking {
+            abiResource.getABI("stargate/LPStaking.json")
+        }
     }
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {

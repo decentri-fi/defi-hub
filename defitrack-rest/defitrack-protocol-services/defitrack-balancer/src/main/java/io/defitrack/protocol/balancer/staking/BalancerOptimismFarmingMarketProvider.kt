@@ -13,6 +13,7 @@ import io.defitrack.protocol.balancer.polygon.BalancerGaugeOptimismGraphProvider
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 
 @Component
@@ -23,7 +24,9 @@ class BalancerOptimismFarmingMarketProvider(
     FarmingMarketProvider() {
 
     val balancerGaugeContractAbi by lazy {
-        abiResource.getABI("balancer/gauge.json")
+        runBlocking {
+            abiResource.getABI("balancer/gauge.json")
+        }
     }
 
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {

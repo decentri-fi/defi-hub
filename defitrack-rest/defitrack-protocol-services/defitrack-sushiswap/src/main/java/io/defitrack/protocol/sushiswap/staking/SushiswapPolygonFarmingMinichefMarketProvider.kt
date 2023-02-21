@@ -14,6 +14,7 @@ import io.defitrack.protocol.SushiPolygonService
 import io.defitrack.protocol.reward.MiniChefV2Contract
 import io.defitrack.protocol.sushiswap.apr.MinichefStakingAprCalculator
 import io.defitrack.token.TokenType
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -25,7 +26,9 @@ class SushiswapPolygonFarmingMinichefMarketProvider(
 ) : FarmingMarketProvider() {
 
     val minichefABI by lazy {
-        abiResource.getABI("sushi/MiniChefV2.json")
+       runBlocking {
+           abiResource.getABI("sushi/MiniChefV2.json")
+       }
     }
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {

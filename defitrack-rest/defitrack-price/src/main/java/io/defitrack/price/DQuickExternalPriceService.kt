@@ -22,7 +22,9 @@ class DQuickExternalPriceService(
 ) : ExternalPriceService {
 
     val dquickStakingABI by lazy {
-        abiResource.getABI("quickswap/dquick.json")
+        runBlocking {
+            abiResource.getABI("quickswap/dquick.json")
+        }
     }
 
     val dquickAddress = quickswapService.getDQuickContract()

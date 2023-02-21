@@ -13,10 +13,7 @@ import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
 import io.defitrack.protocol.beefy.domain.BeefyVault
 import io.defitrack.protocol.beefy.staking.invest.BeefyStakingInvestmentPreparer
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
@@ -29,7 +26,9 @@ abstract class BeefyFarmingMarketProvider(
 ) : FarmingMarketProvider() {
 
     val vaultV6ABI by lazy {
-        abiResource.getABI("beefy/VaultV6.json")
+        runBlocking {
+            abiResource.getABI("beefy/VaultV6.json")
+        }
     }
 
     override suspend fun fetchMarkets(): List<FarmingMarket> =

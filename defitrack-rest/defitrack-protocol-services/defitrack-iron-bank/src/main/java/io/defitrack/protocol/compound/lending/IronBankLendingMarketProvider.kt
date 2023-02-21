@@ -14,10 +14,7 @@ import io.defitrack.protocol.compound.IronBankService
 import io.defitrack.protocol.compound.IronbankTokenContract
 import io.defitrack.protocol.compound.lending.invest.CompoundLendingInvestmentPreparer
 import io.defitrack.token.TokenType
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -31,11 +28,15 @@ abstract class IronBankLendingMarketProvider(
 ) : LendingMarketProvider() {
 
     val comptrollerABI by lazy {
-        abiResource.getABI("compound/comptroller.json")
+        runBlocking {
+            abiResource.getABI("compound/comptroller.json")
+        }
     }
 
     val cTokenABI by lazy {
-        abiResource.getABI("compound/ctoken.json")
+        runBlocking {
+            abiResource.getABI("compound/ctoken.json")
+        }
     }
 
 

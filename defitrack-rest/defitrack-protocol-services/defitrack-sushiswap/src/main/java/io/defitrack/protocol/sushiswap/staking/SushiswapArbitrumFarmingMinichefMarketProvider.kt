@@ -14,6 +14,7 @@ import io.defitrack.protocol.sushiswap.apr.MinichefStakingAprCalculator
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 
 @Component
@@ -23,7 +24,9 @@ class SushiswapArbitrumFarmingMinichefMarketProvider(
 ) : FarmingMarketProvider() {
 
     val minichefABI by lazy {
-        abiResource.getABI("sushi/MiniChefV2.json")
+        runBlocking {
+            abiResource.getABI("sushi/MiniChefV2.json")
+        }
     }
 
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {

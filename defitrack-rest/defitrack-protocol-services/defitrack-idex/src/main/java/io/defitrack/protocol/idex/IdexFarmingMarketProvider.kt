@@ -11,6 +11,7 @@ import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 
 @Component
@@ -22,7 +23,9 @@ class IdexFarmingMarketProvider(
 
 
     val minichefABI by lazy {
-        abiResource.getABI("idex/IdexFarm.json")
+        runBlocking {
+            abiResource.getABI("idex/IdexFarm.json")
+        }
     }
 
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {

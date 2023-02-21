@@ -8,6 +8,7 @@ import io.defitrack.protocol.quickswap.QuickswapRewardPoolContract
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.contract.QuickswapDualRewardPoolContract
 import io.github.reactivecircus.cache4k.Cache
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -23,11 +24,15 @@ class QuickswapAPRService(
 ) {
 
     val stakingRewardsABI by lazy {
-        abiResource.getABI("quickswap/StakingRewards.json")
+       runBlocking {
+           abiResource.getABI("quickswap/StakingRewards.json")
+       }
     }
 
     val stakingDualRewards by lazy {
-        abiResource.getABI("quickswap/DualStakingRewards.json")
+       runBlocking {
+           abiResource.getABI("quickswap/DualStakingRewards.json")
+       }
     }
 
     val cache = Cache.Builder().expireAfterWrite(

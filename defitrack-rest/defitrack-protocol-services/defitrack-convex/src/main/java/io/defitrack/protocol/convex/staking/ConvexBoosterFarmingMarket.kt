@@ -9,6 +9,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.convex.ConvexService
 import io.defitrack.protocol.convex.contract.ConvexBoosterContract
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 
 @Component
@@ -18,11 +19,13 @@ class ConvexBoosterFarmingMarket(
 ) : FarmingMarketProvider() {
 
     val booster by lazy {
-        ConvexBoosterContract(
-            getBlockchainGateway(),
-            abiResource.getABI("convex/Booster.json"),
-            convexService.provideBooster()
-        )
+        runBlocking {
+            ConvexBoosterContract(
+                getBlockchainGateway(),
+                abiResource.getABI("convex/Booster.json"),
+                convexService.provideBooster()
+            )
+        }
     }
 
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {

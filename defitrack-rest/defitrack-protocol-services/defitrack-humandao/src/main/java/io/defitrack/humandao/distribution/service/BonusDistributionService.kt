@@ -25,11 +25,15 @@ class BonusDistributionService(
 ) {
 
     final val bonusDistributorABI by lazy {
-        abiResource.getABI("humandao/HumanDaoDistributor.json")
+       runBlocking {
+           abiResource.getABI("humandao/HumanDaoDistributor.json")
+       }
     }
 
     final val erc20ABI by lazy {
-        abiResource.getABI("general/ERC20.json")
+        runBlocking {
+            abiResource.getABI("general/ERC20.json")
+        }
     }
 
     companion object {

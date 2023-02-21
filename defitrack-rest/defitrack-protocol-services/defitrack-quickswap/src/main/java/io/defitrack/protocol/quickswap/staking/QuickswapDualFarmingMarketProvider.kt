@@ -16,6 +16,7 @@ import io.defitrack.protocol.quickswap.contract.QuickswapDualRewardPoolContract
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -29,7 +30,9 @@ class QuickswapDualFarmingMarketProvider(
 ) : FarmingMarketProvider() {
 
     val stakingRewardsABI by lazy {
-        abiService.getABI("quickswap/DualStakingRewards.json")
+        runBlocking {
+            abiService.getABI("quickswap/DualStakingRewards.json")
+        }
     }
 
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {

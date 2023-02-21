@@ -15,6 +15,7 @@ import io.defitrack.protocol.dinoswap.contract.DinoswapFossilFarmsContract
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 
 @Service
@@ -25,7 +26,9 @@ class DinoswapFarmingMarketProvider(
 ) : FarmingMarketProvider() {
 
     val fossilFarms by lazy {
-        abiResource.getABI("dinoswap/FossilFarms.json")
+        runBlocking {
+            abiResource.getABI("dinoswap/FossilFarms.json")
+        }
     }
 
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {

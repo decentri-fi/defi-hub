@@ -13,6 +13,7 @@ import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.ribbon.contract.RibbonVaultContract
 import io.defitrack.token.ERC20Resource
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 
 @Component
@@ -22,7 +23,11 @@ class RibbonAvalancheFarmingMarketProvider(
     abiResource: ABIResource,
 ) : FarmingMarketProvider() {
 
-    val ribbonVaultAbi = abiResource.getABI("ribbon/vault.json")
+    val ribbonVaultAbi by lazy {
+        runBlocking {
+            abiResource.getABI("ribbon/vault.json")
+        }
+    }
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         return ribbonGraphProvider.getVaults().map {

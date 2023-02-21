@@ -11,6 +11,7 @@ import io.defitrack.protocol.compound.v2.contract.CompoundComptrollerContract
 import io.defitrack.protocol.compound.CompoundEthereumService
 import io.defitrack.protocol.compound.v2.contract.CompoundTokenContract
 import io.defitrack.token.ERC20Resource
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -25,11 +26,13 @@ class CompoundBorrowingService(
 ) : BorrowService {
 
     val comptrollerABI by lazy {
-        abiResource.getABI("compound/comptroller.json")
+       runBlocking { abiResource.getABI("compound/comptroller.json")}
     }
 
     val cTokenABI by lazy {
-        abiResource.getABI("compound/ctoken.json")
+        runBlocking {
+            abiResource.getABI("compound/ctoken.json")
+        }
     }
 
     val gateway = blockchainGatewayProvider.getGateway(getNetwork())

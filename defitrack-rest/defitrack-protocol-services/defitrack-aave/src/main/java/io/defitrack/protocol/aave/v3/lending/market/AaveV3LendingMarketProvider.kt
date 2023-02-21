@@ -16,6 +16,7 @@ import io.defitrack.protocol.aave.v3.lending.invest.AaveV3LendingInvestmentPrepa
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 
 abstract class AaveV3LendingMarketProvider(
     private val priceResource: PriceResource,
@@ -25,19 +26,23 @@ abstract class AaveV3LendingMarketProvider(
 ) : LendingMarketProvider() {
 
     val pool by lazy {
-        PoolContract(
-            getBlockchainGateway(),
-            abiResource.getABI("aave/v3/Pool.json"),
-            aaveV3DataProvider.poolAddress
-        )
+        runBlocking {
+            PoolContract(
+                getBlockchainGateway(),
+                abiResource.getABI("aave/v3/Pool.json"),
+                aaveV3DataProvider.poolAddress
+            )
+        }
     }
 
     val poolDataProvider by lazy {
-        PoolDataProvider(
-            getBlockchainGateway(),
-            abiResource.getABI("aave/v3/AaveProtocolDataProvider.json"),
-            aaveV3DataProvider.poolDataProvider
-        )
+        runBlocking {
+            PoolDataProvider(
+                getBlockchainGateway(),
+                abiResource.getABI("aave/v3/AaveProtocolDataProvider.json"),
+                aaveV3DataProvider.poolDataProvider
+            )
+        }
     }
 
     override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {

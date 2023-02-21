@@ -13,6 +13,7 @@ import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.polycat.PolycatService
 import io.defitrack.protocol.polycat.contract.PolycatMasterChefContract
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 
@@ -24,7 +25,7 @@ class PolycatFarmingMarketProvider(
 ) : FarmingMarketProvider() {
 
     val masterChefABI by lazy {
-        abiResource.getABI("polycat/MasterChef.json")
+        runBlocking {abiResource.getABI("polycat/MasterChef.json")}
     }
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {

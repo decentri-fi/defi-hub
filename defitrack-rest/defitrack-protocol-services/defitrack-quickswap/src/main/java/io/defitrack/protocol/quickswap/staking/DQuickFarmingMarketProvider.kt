@@ -10,6 +10,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.contract.DQuickContract
 import io.defitrack.protocol.quickswap.staking.invest.DQuickStakingInvestmentPreparer
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 
 @Service
@@ -19,15 +20,19 @@ class DQuickFarmingMarketProvider(
 ) : FarmingMarketProvider() {
 
     val dquickStakingABI by lazy {
-        abiResource.getABI("quickswap/dquick.json")
+        runBlocking {
+            abiResource.getABI("quickswap/dquick.json")
+        }
     }
 
     val dquick by lazy {
-        DQuickContract(
-            getBlockchainGateway(),
-            dquickStakingABI,
-            quickswapService.getDQuickContract(),
-        )
+        runBlocking {
+            DQuickContract(
+                getBlockchainGateway(),
+                dquickStakingABI,
+                quickswapService.getDQuickContract(),
+            )
+        }
     }
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {

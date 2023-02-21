@@ -19,6 +19,7 @@ import io.defitrack.protocol.aave.v2.lending.invest.AaveV2LendingInvestmentPrepa
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import java.math.BigInteger
 
@@ -30,17 +31,24 @@ class AaveV2MainnetLendingMarketProvider(
     private val priceResource: PriceResource,
 ) : LendingMarketProvider() {
 
-    val lendingPoolAddressesProviderContract = LendingPoolAddressProviderContract(
-        blockchainGatewayProvider.getGateway(getNetwork()),
-        abiResource.getABI("aave/LendingPoolAddressesProvider.json"),
-        aaveV2MainnetService.getLendingPoolAddressesProvider()
-    )
+    val lendingPoolAddressesProviderContract by lazy {
+        runBlocking {
+            LendingPoolAddressProviderContract(
+                blockchainGatewayProvider.getGateway(getNetwork()),
+                abiResource.getABI("aave/LendingPoolAddressesProvider.json"),
+                aaveV2MainnetService.getLendingPoolAddressesProvider())
+        }
+    }
 
-    val lendingPoolContract = LendingPoolContract(
-        blockchainGatewayProvider.getGateway(getNetwork()),
-        abiResource.getABI("aave/LendingPool.json"),
-        lendingPoolAddressesProviderContract.lendingPoolAddress()
-    )
+    val lendingPoolContract by lazy {
+       runBlocking {
+           LendingPoolContract(
+               blockchainGatewayProvider.getGateway(getNetwork()),
+               abiResource.getABI("aave/LendingPool.json"),
+               lendingPoolAddressesProviderContract.lendingPoolAddress()
+           )
+       }
+    }
 
     override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
         aaveV2MainnetService.getReserves()

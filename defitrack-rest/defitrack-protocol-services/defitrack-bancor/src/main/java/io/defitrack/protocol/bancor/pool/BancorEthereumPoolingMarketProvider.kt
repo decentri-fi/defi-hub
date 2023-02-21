@@ -14,6 +14,7 @@ import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 
 @Component
@@ -24,10 +25,13 @@ class BancorEthereumPoolingMarketProvider(
 
 
     val poolTokenContractAbi by lazy {
-        abiResource.getABI("bancor/PoolToken.json")
+       runBlocking {
+           abiResource.getABI("bancor/PoolToken.json")
+       }
     }
     val bancorNetworkAbi by lazy {
-        abiResource.getABI("bancor/BancorNetwork.json")
+        runBlocking { abiResource.getABI("bancor/BancorNetwork.json")
+        }
     }
 
     val bancorNetworkContract by lazy {

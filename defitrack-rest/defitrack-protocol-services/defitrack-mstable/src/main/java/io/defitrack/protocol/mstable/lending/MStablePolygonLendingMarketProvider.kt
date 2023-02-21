@@ -9,6 +9,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.mstable.MStablePolygonService
 import io.defitrack.protocol.mstable.contract.MStableEthereumSavingsContract
 import io.defitrack.token.ERC20Resource
+import kotlinx.coroutines.runBlocking
 
 @Deprecated("not a lending market")
 class MStablePolygonLendingMarketProvider(
@@ -18,7 +19,9 @@ class MStablePolygonLendingMarketProvider(
 ) : LendingMarketProvider() {
 
     val savingsContractABI by lazy {
-        abiResource.getABI("mStable/SavingsContract.json")
+        runBlocking {
+            abiResource.getABI("mStable/SavingsContract.json")
+        }
     }
 
     override suspend fun fetchMarkets(): List<LendingMarket> {

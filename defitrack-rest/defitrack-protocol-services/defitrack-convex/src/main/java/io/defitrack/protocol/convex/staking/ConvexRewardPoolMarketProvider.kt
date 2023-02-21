@@ -8,6 +8,7 @@ import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.convex.ConvexService
 import io.defitrack.protocol.convex.contract.CvxRewardPoolContract
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 
 @Service
@@ -17,7 +18,9 @@ class ConvexRewardPoolMarketProvider(
 ) : FarmingMarketProvider() {
 
     val cvxRewardPoolABI by lazy {
-        abiResource.getABI("convex/CvxRewardPool.json")
+        runBlocking {
+            abiResource.getABI("convex/CvxRewardPool.json")
+        }
     }
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {

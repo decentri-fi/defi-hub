@@ -19,6 +19,7 @@ import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -33,11 +34,15 @@ class CompoundLendingMarketProvider(
 ) : LendingMarketProvider() {
 
     val comptrollerABI by lazy {
-        abiResource.getABI("compound/comptroller.json")
+        runBlocking {
+            abiResource.getABI("compound/comptroller.json")
+        }
     }
 
     val cTokenABI by lazy {
-        abiResource.getABI("compound/ctoken.json")
+        runBlocking {
+            abiResource.getABI("compound/ctoken.json")
+        }
     }
 
     override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
