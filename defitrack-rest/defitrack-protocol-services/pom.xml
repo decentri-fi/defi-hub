@@ -49,6 +49,7 @@
         <module>defitrack-set</module>
         <module>defitrack-wepiggy</module>
         <module>defitrack-olympusdao</module>
+        <module>defitrack-chainlink</module>
         <module>defitrack-protocol-service</module>
     </modules>
 

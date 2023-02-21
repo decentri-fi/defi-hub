@@ -10,6 +10,13 @@ enum class Protocol(
     val enabled: Boolean = true,
     val networks: List<Network>
 ) {
+    CHAINLINK(
+        logo = "chainlink.png",
+        slug = "chainlink",
+        website = "https://chain.link",
+        primitives = listOf(DefiPrimitive.FARMING),
+        networks = listOf(Network.ETHEREUM)
+    ),
     OLYMPUSDAO(
         logo = "olympusdao.png",
         slug = "olympusdao",
