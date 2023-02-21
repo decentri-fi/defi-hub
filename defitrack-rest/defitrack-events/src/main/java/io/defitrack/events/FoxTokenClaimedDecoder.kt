@@ -7,7 +7,6 @@ import io.defitrack.event.DefiEventType
 import io.defitrack.event.EventDecoder
 import io.defitrack.event.EventUtils.Companion.appliesTo
 import org.springframework.stereotype.Component
-import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.protocol.core.methods.response.Log
 import java.math.BigInteger
 
@@ -30,14 +29,9 @@ class FoxTokenClaimedDecoder : EventDecoder() {
     }
 
     override suspend fun extract(log: Log, network: Network): DefiEvent {
-        val user = "user" to FunctionReturnDecoder.decodeIndexedValue(
-            log.topics[1], TypeUtils.address()
-        ).value as String;
+        val user = "user" to claimedEvent.getIndexedParameter<String>(log, 0);
 
-        val amount = "amount" to FunctionReturnDecoder.decode(
-            log.data,
-            claimedEvent.nonIndexedParameters
-        )[1].value as BigInteger
+        val amount = "amount" to claimedEvent.getNonIndexedParameter<BigInteger>(log, 1)
 
         val asset = "asset" to getToken("0xc770eefad204b5180df6a14ee197d99d808ee52d", network)
 

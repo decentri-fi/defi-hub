@@ -4,6 +4,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.token.ERC20Resource
 import org.springframework.beans.factory.annotation.Autowired
+import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.protocol.core.methods.response.Log
 
 abstract class EventDecoder {
@@ -16,5 +17,18 @@ abstract class EventDecoder {
 
     suspend fun getToken(address: String, network: Network): TokenInformationVO {
         return erC20Resource.getTokenInformation(network, address)
+    }
+
+    inline fun <reified T> org.web3j.abi.datatypes.Event.getNonIndexedParameter(log: Log, index: Int): T {
+        return FunctionReturnDecoder.decode(
+            log.data,
+            nonIndexedParameters
+        )[index].value as T
+    }
+
+    inline fun <reified T> org.web3j.abi.datatypes.Event.getIndexedParameter(log: Log, index: Int): T {
+        return FunctionReturnDecoder.decodeIndexedValue(
+            log.topics[index+1], indexedParameters[index]
+        ).value as T
     }
 }
