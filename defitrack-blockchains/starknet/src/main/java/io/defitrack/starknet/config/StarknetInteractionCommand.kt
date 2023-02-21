@@ -1,4 +1,4 @@
-package io.defitrack.contract
+package io.defitrack.starknet.config
 
 import io.defitrack.evm.contract.ContractInteractionCommand
 

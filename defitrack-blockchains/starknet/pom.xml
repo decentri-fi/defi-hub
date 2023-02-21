@@ -18,6 +18,11 @@
             <artifactId>evm</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.swmansion.starknet</groupId>
+            <artifactId>starknet</artifactId>
+            <version>0.5.0</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -118,7 +118,7 @@ open class BlockchainGateway(
         return executeCall(address, createFunctionWithAbi(function, inputs, outputs))
     }
 
-    suspend fun executeCall(
+    open suspend fun executeCall(
         address: String,
         function: org.web3j.abi.datatypes.Function,
     ): List<Type<*>> {

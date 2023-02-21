@@ -1,7 +1,6 @@
 package io.defitrack
 
-import io.defitrack.contract.ContractInteractionRestController
-import io.defitrack.contract.StarknetInteractionCommand
+import io.defitrack.starknet.config.StarknetInteractionCommand
 import io.defitrack.evm.web3j.SimpleRateLimiter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
