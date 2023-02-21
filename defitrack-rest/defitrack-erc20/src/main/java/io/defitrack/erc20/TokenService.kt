@@ -4,6 +4,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.erc20.protocolspecific.BalancerTokenService
 import io.defitrack.erc20.protocolspecific.CurveTokenService
 import io.defitrack.erc20.protocolspecific.HopTokenService
+import io.defitrack.erc20.protocolspecific.VelodromeTokenService
 import io.defitrack.logo.LogoService
 import io.defitrack.market.pooling.contract.LPTokenContract
 import io.defitrack.nativetoken.NativeTokenService
@@ -26,6 +27,7 @@ class TokenService(
     private val curveTokenService: CurveTokenService,
     private val balancerTokenService: BalancerTokenService,
     private val nativeTokenService: NativeTokenService,
+    private val velodromeTokenService: VelodromeTokenService,
     private val logoService: LogoService
 ) {
 
@@ -83,11 +85,12 @@ class TokenService(
             isBalancerLp(lp.address, lp.blockchainGateway.network) -> {
                 TokenType.BALANCER
             }
-
+            isVelodromeLp(lp.address, lp.blockchainGateway.network) -> {
+                TokenType.VELODROME
+            }
             isHopLp(symbol) -> {
                 TokenType.HOP
             }
-
             isCurveToken(lp.name()) -> {
                 TokenType.CURVE
             }
@@ -108,6 +111,10 @@ class TokenService(
 
     private suspend fun isBalancerLp(address: String, network: Network): Boolean {
         return balancerTokenService.isBalancerToken(address, network)
+    }
+
+    private suspend fun isVelodromeLp(address: String, network: Network): Boolean {
+        return velodromeTokenService.isVelodromeToken(address, network)
     }
 
     val tokenInformationCache = Cache.Builder().build<String, TokenInformation>()
@@ -163,6 +170,10 @@ class TokenService(
 
                 isBalancerLp(token.address, network) -> {
                     balancerTokenService.getTokenInformation(token.address, network)
+                }
+
+                isVelodromeLp(token.address, network) -> {
+                    fromLP(Protocol.VELODROME, network, token)
                 }
 
                 isHopLp(token.symbol) -> {
