@@ -2,18 +2,14 @@ package io.defitrack.protocol.curve.staking
 
 import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.network.toVO
 import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.crv.CurveEthereumGaugeGraphProvider
 import io.defitrack.protocol.crv.contract.CurveGaugeContract
 import io.defitrack.protocol.crv.contract.CurveGaugeControllerContract
-import io.defitrack.token.ERC20Resource
-import io.defitrack.token.MarketSizeService
 import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -21,11 +17,7 @@ import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Service
 
 @Service
-class CurveEthereumFarmingMarketProvider(
-    private val erC20Resource: ERC20Resource,
-    private val marketSizeService: MarketSizeService,
-    private val blockchainGatewayProvider: BlockchainGatewayProvider
-) : FarmingMarketProvider() {
+class CurveEthereumFarmingMarketProvider : FarmingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<FarmingMarket> =
         coroutineScope {

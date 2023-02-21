@@ -12,13 +12,11 @@ import org.springframework.stereotype.Component
 class IronBankEthereumLendingMarketProvider(
     blockchainGatewayProvider: BlockchainGatewayProvider,
     abiResource: ABIResource,
-    erC20Resource: ERC20Resource,
     compoundEthereumService: IronBankEthereumService,
     priceResource: PriceResource
 ) : IronBankLendingMarketProvider(
     blockchainGatewayProvider,
     abiResource,
-    erC20Resource,
     compoundEthereumService,
     priceResource
 

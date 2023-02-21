@@ -28,7 +28,6 @@ class AaveV2MainnetLendingMarketProvider(
     abiResource: ABIResource,
     blockchainGatewayProvider: BlockchainGatewayProvider,
     private val aaveV2MainnetService: AaveV2MainnetService,
-    private val erC20Resource: ERC20Resource,
     private val priceResource: PriceResource,
 ) : LendingMarketProvider() {
 

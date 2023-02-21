@@ -6,7 +6,6 @@ import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.PoolToken
 import io.defitrack.protocol.graph.BeethovenXFantomGraphProvider
-import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -16,9 +15,8 @@ import java.math.BigDecimal
 
 @Component
 class BeethovenXFantomPoolingMarketProvider(
-    private val beethovenXFantomGraphProvider: BeethovenXFantomGraphProvider,
-    erC20Resource: ERC20Resource
-) : PoolingMarketProvider(erC20Resource) {
+    private val beethovenXFantomGraphProvider: BeethovenXFantomGraphProvider
+) : PoolingMarketProvider() {
     override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
         beethovenXFantomGraphProvider.getPools().map {
             async {
@@ -33,13 +31,13 @@ class BeethovenXFantomPoolingMarketProvider(
                                 it.tokens.joinToString("/", transform = PoolToken::symbol)
                             } Pool",
                             tokens = it.tokens.map { poolToken ->
-                                erc20Resource.getTokenInformation(getNetwork(), poolToken.address).toFungibleToken()
+                                erC20Resource.getTokenInformation(getNetwork(), poolToken.address).toFungibleToken()
                             },
                             symbol = it.symbol,
                             apr = BigDecimal.ZERO,
                             marketSize = it.totalLiquidity,
                             tokenType = TokenType.BALANCER,
-                            positionFetcher = defaultBalanceFetcher(it.address)
+                            positionFetcher = defaultPositionFetcher(it.address)
                         )
                     } catch (ex: Exception) {
                         logger.error("problem trying to import beethoven pool", ex)

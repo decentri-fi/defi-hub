@@ -5,7 +5,6 @@ import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.uniswap.v2.apr.UniswapAPRService
-import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import io.defitrack.uniswap.v2.AbstractUniswapV2Service
 import org.springframework.stereotype.Component
@@ -13,9 +12,8 @@ import org.springframework.stereotype.Component
 @Component
 class UniswapV2EthereumPoolingMarketProvider(
     private val uniswapServices: List<AbstractUniswapV2Service>,
-    erC20Resource: ERC20Resource,
     private val uniswapAPRService: UniswapAPRService,
-) : PoolingMarketProvider(erC20Resource) {
+) : PoolingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<PoolingMarket> {
         return uniswapServices.filter {
@@ -23,9 +21,9 @@ class UniswapV2EthereumPoolingMarketProvider(
         }.flatMap { service ->
             service.getPairs().mapNotNull {
                 try {
-                    val token = erc20Resource.getTokenInformation(getNetwork(), it.id)
-                    val token0 = erc20Resource.getTokenInformation(getNetwork(), it.token0.id)
-                    val token1 = erc20Resource.getTokenInformation(getNetwork(), it.token1.id)
+                    val token = getToken(it.id)
+                    val token0 = getToken(it.token0.id)
+                    val token1 = getToken(it.token1.id)
                     PoolingMarket(
                         network = getNetwork(),
                         protocol = getProtocol(),
@@ -40,7 +38,7 @@ class UniswapV2EthereumPoolingMarketProvider(
                         apr = uniswapAPRService.getAPR(it.id, getNetwork()),
                         marketSize = it.reserveUSD,
                         tokenType = TokenType.UNISWAP,
-                        positionFetcher = defaultBalanceFetcher(token.address)
+                        positionFetcher = defaultPositionFetcher(token.address)
                     )
                 } catch (ex: Exception) {
                     ex.printStackTrace()

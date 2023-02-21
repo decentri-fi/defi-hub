@@ -29,7 +29,6 @@ import java.math.RoundingMode
 abstract class IronBankLendingMarketProvider(
     blockchainGatewayProvider: BlockchainGatewayProvider,
     private val abiResource: ABIResource,
-    private val erC20Resource: ERC20Resource,
     private val compoundEthereumService: IronBankService,
     private val priceResource: PriceResource
 ) : LendingMarketProvider() {
@@ -42,7 +41,6 @@ abstract class IronBankLendingMarketProvider(
         abiResource.getABI("compound/ctoken.json")
     }
 
-    val gateway = blockchainGatewayProvider.getGateway(getNetwork())
 
     override suspend fun fetchMarkets(): List<LendingMarket> =
         withContext(Dispatchers.IO.limitedParallelism(5)) {
@@ -113,7 +111,7 @@ abstract class IronBankLendingMarketProvider(
     private suspend fun getTokenContracts(): List<IronbankTokenContract> {
         return getComptroller().getMarkets().map { market ->
             IronbankTokenContract(
-                gateway,
+                getBlockchainGateway(),
                 cTokenABI,
                 market
             )
@@ -122,7 +120,7 @@ abstract class IronBankLendingMarketProvider(
 
     private fun getComptroller(): IronBankComptrollerContract {
         return IronBankComptrollerContract(
-            gateway,
+            getBlockchainGateway(),
             comptrollerABI,
             compoundEthereumService.getComptroller()
         )

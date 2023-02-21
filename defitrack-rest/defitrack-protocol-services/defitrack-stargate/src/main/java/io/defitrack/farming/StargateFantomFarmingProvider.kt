@@ -12,9 +12,8 @@ class StargateFantomFarmingProvider(
     stargateService: StargateFantomService,
     accessorGateway: BlockchainGatewayProvider,
     abiResource: ABIResource,
-    erC20Resource: ERC20Resource
 ) : StargateFarmingMarketProvider(
-    stargateService, accessorGateway, abiResource, erC20Resource
+    stargateService, accessorGateway, abiResource
 ) {
     override fun getNetwork(): Network {
         return Network.FANTOM

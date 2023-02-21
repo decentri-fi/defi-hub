@@ -16,7 +16,6 @@ abstract class StargateFarmingMarketProvider(
     private val stargateOptimismService: StargateService,
     private val accessorGateway: BlockchainGatewayProvider,
     private val abiResource: ABIResource,
-    private val erC20Resource: ERC20Resource
 ) : FarmingMarketProvider() {
 
     val lpStakingContractAbi by lazy {

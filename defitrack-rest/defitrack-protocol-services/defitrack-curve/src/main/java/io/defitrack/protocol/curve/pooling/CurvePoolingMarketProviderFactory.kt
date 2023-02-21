@@ -22,9 +22,7 @@ class CurvePoolingMarketProviderFactory {
                 it.network == network
             }
         }.map {
-            CurvePoolingMarketProvider(
-                it, marketSizeService, erC20Resource
-            )
+            CurvePoolingMarketProvider(it)
         }
     }
 

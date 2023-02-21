@@ -16,7 +16,6 @@ class MStablePolygonLendingMarketProvider(
     private val mStableService: MStablePolygonService,
     private val abiResource: ABIResource,
     private val tokenService: ERC20Resource,
-    private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) : LendingMarketProvider() {
 
     val savingsContractABI by lazy {

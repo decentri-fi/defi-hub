@@ -27,10 +27,8 @@ import java.math.RoundingMode
 @Service
 class QuickswapFarmingMarketProvider(
     private val quickswapService: QuickswapService,
-    private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val abiService: ABIResource,
     private val priceResource: PriceResource,
-    private val erC20Resource: ERC20Resource,
     private val quickswapAPRService: QuickswapAPRService,
 ) : FarmingMarketProvider() {
 
@@ -71,8 +69,7 @@ class QuickswapFarmingMarketProvider(
                                 )
                             }
                         ),
-                        balanceFetcher = defaultBalanceFetcher(
-                            erC20Resource,
+                        balanceFetcher = defaultPositionFetcher(
                             rewardPool.address
                         ),
                         farmType = FarmType.LIQUIDITY_MINING
