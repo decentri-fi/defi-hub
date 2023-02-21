@@ -27,6 +27,10 @@
         </dependency>
         <dependency>
             <groupId>io.defitrack</groupId>
+            <artifactId>velodrome</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
             <artifactId>ethereum</artifactId>
         </dependency>
         <dependency>
