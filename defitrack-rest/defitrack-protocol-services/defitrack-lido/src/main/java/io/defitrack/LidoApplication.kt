@@ -6,8 +6,8 @@ import org.springframework.scheduling.annotation.EnableScheduling
 
 @SpringBootApplication
 @EnableScheduling
-class AelinApplication
+class LidoApplication
 
 fun main(args: Array<String>) {
-    runApplication<AelinApplication>(*args)
+    runApplication<LidoApplication>(*args)
 }
