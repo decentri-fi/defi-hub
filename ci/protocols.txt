@@ -36,3 +36,4 @@ set
 olympusdao
 chainlink
 tokemak
+qidao
