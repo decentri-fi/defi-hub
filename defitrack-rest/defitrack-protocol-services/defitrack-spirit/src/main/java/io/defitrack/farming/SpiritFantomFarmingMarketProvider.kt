@@ -3,16 +3,17 @@ package io.defitrack.farming
 import io.defitrack.abi.ABIResource
 import io.defitrack.apr.MinichefStakingAprCalculator
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
+import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceResource
+import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SpiritFantomService
 import io.defitrack.protocol.reward.MasterchefLpContract
-import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.market.lending.domain.PositionFetcher
-import io.defitrack.protocol.FarmType
-import io.defitrack.token.ERC20Resource
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
@@ -23,7 +24,7 @@ class SpiritFantomFarmingMarketProvider(
     private val priceResource: PriceResource,
 ) : FarmingMarketProvider() {
 
-    override suspend fun fetchMarkets(): List<FarmingMarket> {
+    override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
         val masterchef = MasterchefLpContract(
             getBlockchainGateway(),
             abiResource.getABI("spirit/Masterchef.json"),
@@ -32,35 +33,39 @@ class SpiritFantomFarmingMarketProvider(
 
         val reward = getToken(masterchef.rewardToken())
 
-        return masterchef.poolInfos().mapIndexed { index, value ->
-
-            val stakedToken = getToken(value.lpToken)
-            val aprCalculator = MinichefStakingAprCalculator(
-                getERC20Resource(),
-                priceResource,
-                masterchef,
-                index,
-                stakedToken
-            )
-            FarmingMarket(
-                id = "fantom-spirit-${masterchef.address}-${index}",
-                network = getNetwork(),
-                protocol = getProtocol(),
-                name = "${stakedToken.name} spirit farm",
-                stakedToken = stakedToken.toFungibleToken(),
-                rewardTokens = listOf(
-                    reward.toFungibleToken()
-                ),
-                contractType = "spirit-masterchef",
-                marketSize = BigDecimal.ZERO,
-                apr = aprCalculator.calculateApr(),
-                balanceFetcher = PositionFetcher(
-                    masterchef.address,
-                    { user -> masterchef.userInfoFunction(index, user) }
-                ),
-                farmType = FarmType.LIQUIDITY_MINING
-            )
-        }
+        return@coroutineScope masterchef.poolInfos().mapIndexed { index, value ->
+            async {
+                try {
+                    val stakedToken = getToken(value.lpToken)
+                    val aprCalculator = MinichefStakingAprCalculator(
+                        getERC20Resource(),
+                        priceResource,
+                        masterchef,
+                        index,
+                        stakedToken
+                    )
+                    create(
+                        identifier = "${masterchef.address}-${index}",
+                        name = "${stakedToken.name} spirit farm",
+                        stakedToken = stakedToken.toFungibleToken(),
+                        rewardTokens = listOf(
+                            reward.toFungibleToken()
+                        ),
+                        vaultType = "spirit-masterchef",
+                        marketSize = BigDecimal.ZERO,
+                        apr = aprCalculator.calculateApr(),
+                        balanceFetcher = PositionFetcher(
+                            masterchef.address,
+                            { user -> masterchef.userInfoFunction(index, user) }
+                        ),
+                        farmType = FarmType.LIQUIDITY_MINING
+                    )
+                } catch (ex: Exception) {
+                    logger.error("Error while fetching spirit market", ex)
+                    null
+                }
+            }
+        }.awaitAll().filterNotNull()
     }
 
     override fun getProtocol(): Protocol {
