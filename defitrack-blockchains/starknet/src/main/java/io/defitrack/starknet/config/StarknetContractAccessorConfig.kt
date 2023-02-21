@@ -16,7 +16,7 @@ class StarknetContractAccessorConfig(
 ) {
 
     @Bean
-    fun arbitrumContractAccessor(): BlockchainGateway {
+    fun starknetContractAccessor(): BlockchainGateway {
         return BlockchainGateway(
             abiDecoder,
             Network.ARBITRUM,

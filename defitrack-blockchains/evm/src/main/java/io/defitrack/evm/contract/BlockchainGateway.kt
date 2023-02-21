@@ -136,7 +136,7 @@ open class BlockchainGateway(
             httpClient.post("$endpoint/contract/call") {
                 contentType(ContentType.Application.Json)
                 setBody(
-                    ContractInteractionCommand(
+                    EvmContractInteractionCommand(
                         from = from,
                         contract = contract,
                         function = encodedFunction

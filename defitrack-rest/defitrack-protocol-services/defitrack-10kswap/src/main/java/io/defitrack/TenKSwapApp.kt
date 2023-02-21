@@ -9,5 +9,5 @@ import org.springframework.cache.annotation.EnableCaching
 class TenKSwapApp
 
 fun main(args: Array<String>) {
-    runApplication<TenKSwap>(*args)
+    runApplication<TenKSwapApp>(*args)
 }

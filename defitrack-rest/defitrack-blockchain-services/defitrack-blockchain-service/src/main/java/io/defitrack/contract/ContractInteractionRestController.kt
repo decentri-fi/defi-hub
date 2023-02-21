@@ -1,9 +1,10 @@
 package io.defitrack.contract
 
-import io.defitrack.evm.contract.ContractInteractionCommand
+import io.defitrack.evm.contract.EvmContractInteractionCommand
 import io.defitrack.evm.web3j.SimpleRateLimiter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -11,26 +12,26 @@ import org.springframework.web.bind.annotation.RestController
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.core.methods.request.Transaction
-import org.web3j.protocol.core.methods.response.EthCall
 import org.web3j.protocol.exceptions.ClientConnectionException
+import java.util.*
 
 @RestController
 @RequestMapping("/contract")
-class ContractInteractionRestController(
-    private val web3j: Web3j
+open class ContractInteractionRestController(
+    private val web3j: Web3j,
 ) {
 
     val simpleRateLimiter = SimpleRateLimiter(20.0)
 
     @PostMapping("/call")
-    fun call(@RequestBody contractInteractionCommand: ContractInteractionCommand): EthCall =
+    fun call(@RequestBody evmContractInteractionCommand: EvmContractInteractionCommand) =
         runBlocking {
             simpleRateLimiter.acquire()
-            performCall(contractInteractionCommand)
+            performCall(evmContractInteractionCommand)
         }
 
-    suspend fun performCall(contractInteractionCommand: ContractInteractionCommand): EthCall {
-        return with(contractInteractionCommand) {
+    open suspend fun performCall(evmContractInteractionCommand: EvmContractInteractionCommand): Any {
+        return with(evmContractInteractionCommand) {
             try {
                 web3j.ethCall(
                     Transaction.createEthCallTransaction(
@@ -38,11 +39,11 @@ class ContractInteractionRestController(
                         contract,
                         function
                     ), DefaultBlockParameterName.LATEST
-                ).send()
+                )!!.send()!!
             } catch (ex: ClientConnectionException) {
                 if (ex.message?.contains("429") == true) {
                     delay(1000L)
-                    return performCall(contractInteractionCommand)
+                    return performCall(evmContractInteractionCommand)
                 } else {
                     throw ex
                 }
