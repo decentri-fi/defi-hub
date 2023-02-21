@@ -2,6 +2,7 @@ package io.defitrack.erc20.protocolspecific
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
+import io.defitrack.erc20.ERC20
 import io.defitrack.erc20.ERC20ContractReader
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.HopService
@@ -50,5 +51,9 @@ class HopTokenService(
                 network = network
             )
         }
+    }
+
+    fun isProtocolToken(token: ERC20): Boolean {
+        return token.symbol.startsWith("HOP-LP")
     }
 }

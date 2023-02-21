@@ -1,6 +1,7 @@
 package io.defitrack.erc20.protocolspecific
 
 import io.defitrack.common.network.Network
+import io.defitrack.erc20.ERC20
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.kyberswap.contract.KyberswapElasticContract
 import kotlinx.coroutines.runBlocking
@@ -20,9 +21,9 @@ class KyberElasticTokenService(
         }
     }
 
-    fun isKyberElasticToken(address: String, network: Network): Boolean {
-        return when (network) {
-            Network.OPTIMISM -> kyberElasticOptimismPools.contains(address)
+    fun isProtocolToken(token: ERC20): Boolean {
+        return when (token.network) {
+            Network.OPTIMISM -> kyberElasticOptimismPools.contains(token.address)
             else -> false
         }
     }

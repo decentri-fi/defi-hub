@@ -1,6 +1,7 @@
 package io.defitrack.erc20.protocolspecific
 
 import io.defitrack.common.network.Network
+import io.defitrack.erc20.ERC20
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.VelodromeOptimismService
 import io.defitrack.uniswap.v2.PairFactoryContract
@@ -23,9 +24,9 @@ class VelodromeTokenService(
         }
     }
 
-    fun isVelodromeToken(address: String, network: Network): Boolean {
-        return when (network) {
-            Network.OPTIMISM -> optimismPools.contains(address)
+    fun isVelodromeToken(token: ERC20): Boolean {
+        return when (token.network) {
+            Network.OPTIMISM -> optimismPools.contains(token.address)
             else -> false
         }
     }

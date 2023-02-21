@@ -1,6 +1,7 @@
 package io.defitrack.erc20.protocolspecific
 
 import io.defitrack.common.network.Network
+import io.defitrack.erc20.ERC20
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.set.EthereumSetProvider
@@ -24,12 +25,11 @@ class SetProtocolTokenService(
         Network.POLYGON to polygonSetProvider
     )
 
-    suspend fun isSetToken(
-        address: String,
-        network: Network
+    suspend fun isProtocolToken(
+        token: ERC20,
     ): Boolean {
-        return providers[network]?.let {
-            it.getSets().map { it.lowercase() }.contains(address.lowercase())
+        return providers[token.network]?.let {
+            it.getSets().map { it.lowercase() }.contains(token.address.lowercase())
         } ?: false
     }
 

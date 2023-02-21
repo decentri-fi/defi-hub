@@ -74,20 +74,20 @@ class TokenService(
         return name.lowercase().startsWith("curve.fi".lowercase())
     }
 
-    private suspend fun isBalancerLp(address: String, network: Network): Boolean {
-        return balancerTokenService.isBalancerToken(address, network)
+    private suspend fun isBalancerLp(token: ERC20): Boolean {
+        return balancerTokenService.isProtocolToken(token)
     }
 
-    private suspend fun isSetLp(address: String, network: Network): Boolean {
-        return setProtocolTokenService.isSetToken(address, network)
+    private suspend fun isSetLp(token: ERC20): Boolean {
+        return setProtocolTokenService.isProtocolToken(token)
     }
 
-    private suspend fun isVelodromeLp(address: String, network: Network): Boolean {
-        return velodromeTokenService.isVelodromeToken(address, network)
+    private suspend fun isVelodromeLp(token: ERC20): Boolean {
+        return velodromeTokenService.isVelodromeToken(token)
     }
 
-    private suspend fun isKyberElasticLp(address: String, network: Network): Boolean {
-        return kyberElasticTokenService.isKyberElasticToken(address, network)
+    private suspend fun isKyberElasticLp(token: ERC20): Boolean {
+        return kyberElasticTokenService.isProtocolToken(token)
     }
 
     val tokenInformationCache = Cache.Builder().build<String, TokenInformation>()
@@ -156,23 +156,23 @@ class TokenService(
                     fromLP(Protocol.KYBER_SWAP, network, token, TokenType.KYBER)
                 }
 
-                isBalancerLp(token.address, network) -> {
+                isBalancerLp(token) -> {
                     balancerTokenService.getTokenInformation(token.address, network)
                 }
 
-                isVelodromeLp(token.address, network) -> {
+                isVelodromeLp(token) -> {
                     fromLP(Protocol.VELODROME, network, token, TokenType.VELODROME)
                 }
 
-                isKyberElasticLp(token.address, network) -> {
+                isKyberElasticLp(token) -> {
                     fromLP(Protocol.KYBER_SWAP, network, token, TokenType.KYBER_ELASTIC)
                 }
 
-                isSetLp(token.address, network) -> {
+                isSetLp(token) -> {
                     setProtocolTokenService.getTokenInformation(token.address, network)
                 }
 
-                isHopLp(token.symbol) -> {
+                isHopLp(token) -> {
                     hopTokenService.getTokenInformation(token.address, network)
                 }
 
@@ -200,8 +200,8 @@ class TokenService(
         return symbol.startsWith("DMM-LP")
     }
 
-    private fun isHopLp(symbol: String): Boolean {
-        return symbol.startsWith("HOP-LP")
+    private fun isHopLp(token: ERC20): Boolean {
+        return hopTokenService.isProtocolToken(token)
     }
 
     suspend fun fromLP(protocol: Protocol, network: Network, erc20: ERC20, tokenType: TokenType): TokenInformation {

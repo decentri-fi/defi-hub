@@ -1,6 +1,7 @@
 package io.defitrack.erc20.protocolspecific
 
 import io.defitrack.common.network.Network
+import io.defitrack.erc20.ERC20
 import io.defitrack.erc20.ERC20ContractReader
 import io.defitrack.protocol.balancer.BalancerPoolGraphProvider
 import io.defitrack.token.TokenInformation
@@ -13,12 +14,11 @@ class BalancerTokenService(
     private val erC20ContractReader: ERC20ContractReader
 ) {
 
-    suspend fun isBalancerToken(
-        address: String,
-        network: Network
+    suspend fun isProtocolToken(
+        token: ERC20,
     ): Boolean {
-        return getBalancerService(network)?.let {
-            it.getPool(address) != null
+        return getBalancerService(token.network)?.let {
+            it.getPool(token.address) != null
         } ?: false
     }
 
