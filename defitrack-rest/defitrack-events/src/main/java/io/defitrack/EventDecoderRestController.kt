@@ -35,7 +35,6 @@ class EventDecoderRestController(
                     logger.error("Error decoding event for tx $txId", ex)
                     null
                 }
-
             }
         }.filterNotNull()
     }

@@ -1,0 +1,49 @@
+package io.defitrack.events
+
+import io.defitrack.abi.TypeUtils
+import io.defitrack.common.network.Network
+import io.defitrack.event.DefiEvent
+import io.defitrack.event.DefiEventType
+import io.defitrack.event.EventDecoder
+import io.defitrack.event.EventUtils.Companion.appliesTo
+import org.springframework.stereotype.Component
+import org.web3j.abi.FunctionReturnDecoder
+import org.web3j.protocol.core.methods.response.Log
+import java.math.BigInteger
+
+@Component
+class FoxTokenClaimedDecoder : EventDecoder() {
+
+    val claimedEvent = org.web3j.abi.datatypes.Event(
+        "Claimed",
+        listOf(
+            TypeUtils.uint256(),
+            TypeUtils.address(true),
+            TypeUtils.uint256(),
+            TypeUtils.uint256(),
+            TypeUtils.uint256()
+        )
+    )
+
+    override fun appliesTo(log: Log): Boolean {
+        return log.address == "0xb90381dae1a72528660278100c5aa44e1108cef7" && log.appliesTo(claimedEvent)
+    }
+
+    override suspend fun extract(log: Log, network: Network): DefiEvent {
+        val user = "user" to FunctionReturnDecoder.decodeIndexedValue(
+            log.topics[1], TypeUtils.address()
+        ).value as String;
+
+        val amount = "amount" to FunctionReturnDecoder.decode(
+            log.data,
+            claimedEvent.nonIndexedParameters
+        )[1].value as BigInteger
+
+        val asset = "asset" to getToken("0xc770eefad204b5180df6a14ee197d99d808ee52d", network)
+
+        return DefiEvent(
+            type = DefiEventType.CLAIM,
+            metadata = mapOf(user, asset, amount)
+        )
+    }
+}

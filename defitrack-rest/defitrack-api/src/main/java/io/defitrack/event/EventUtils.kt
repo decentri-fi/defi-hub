@@ -9,6 +9,7 @@ class EventUtils {
     companion object {
         fun Log.appliesTo(event: Event): Boolean {
             return topics.map { it.lowercase() }.contains(EventEncoder.encode(event))
+                    && topics.size == event.indexedParameters.size + 1
         }
     }
 }
