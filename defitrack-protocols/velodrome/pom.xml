@@ -18,6 +18,11 @@
         </dependency>
         <dependency>
             <groupId>io.defitrack</groupId>
+            <artifactId>uniswap</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
             <artifactId>optimism</artifactId>
         </dependency>
     </dependencies>
