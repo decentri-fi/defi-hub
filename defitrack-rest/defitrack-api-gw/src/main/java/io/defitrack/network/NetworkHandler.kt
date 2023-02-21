@@ -15,7 +15,7 @@ class NetworkHandler {
         .contentType(APPLICATION_JSON)
         .body(
             BodyInserters.fromValue(
-                Network.values().map(Network::toVO)
+                Network.values().filter(Network::hasMicroService).map(Network::toVO)
             )
         )
 }

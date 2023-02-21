@@ -1,10 +1,9 @@
-package io.defitrack.contract
+package io.defitrack
 
 import io.defitrack.evm.contract.EvmContractInteractionCommand
 import io.defitrack.evm.web3j.SimpleRateLimiter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -17,7 +16,7 @@ import java.util.*
 
 @RestController
 @RequestMapping("/contract")
-open class ContractInteractionRestController(
+class EVMContractInteractionRestController(
     private val web3j: Web3j,
 ) {
 
@@ -30,7 +29,7 @@ open class ContractInteractionRestController(
             performCall(evmContractInteractionCommand)
         }
 
-    open suspend fun performCall(evmContractInteractionCommand: EvmContractInteractionCommand): Any {
+    suspend fun performCall(evmContractInteractionCommand: EvmContractInteractionCommand): Any {
         return with(evmContractInteractionCommand) {
             try {
                 web3j.ethCall(
