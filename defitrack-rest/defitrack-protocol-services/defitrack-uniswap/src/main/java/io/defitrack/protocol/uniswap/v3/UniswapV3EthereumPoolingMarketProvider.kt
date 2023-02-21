@@ -30,9 +30,9 @@ class UniswapV3EthereumPoolingMarketProvider(
                         network = getNetwork(),
                         protocol = getProtocol(),
                         id = "uniswap-v3-ethereum-${it.id}",
-                        name = token.name,
+                        name = "Uniswap V3 ${token0.symbol}/${token1.symbol} LP",
                         address = it.id,
-                        symbol = token.symbol,
+                        symbol = "${token0.symbol}-${token1.symbol}",
                         tokens = listOf(
                             token0.toFungibleToken(),
                             token1.toFungibleToken()

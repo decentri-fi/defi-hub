@@ -1,18 +1,12 @@
 package io.defitrack.protocol.quickswap
 
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.protocol.quickswap.domain.PairDayData
-import io.defitrack.protocol.quickswap.domain.QuickLpPools
 import io.defitrack.protocol.quickswap.domain.QuickswapPair
 import io.defitrack.thegraph.GraphProvider
 import io.defitrack.thegraph.TheGraphGatewayProvider
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import kotlin.time.Duration.Companion.days
 
@@ -50,34 +44,15 @@ class QuickswapService(
         return "0x8aaa5e259f74c8114e0a471d9f2adfc66bfe09ed"
     }
 
-    fun getDeprecatedRewardFactory(): String {
+    fun getOldRewardFactory(): String {
         return "0x8aaa5e259f74c8114e0a471d9f2adfc66bfe09ed"
     }
 
-    suspend fun getVaultAddresses(): List<String> {
-        return vaultCache.get("quickswap-normal-vaults") {
-            val maticVaultsEndpoint =
-                "https://raw.githubusercontent.com/beefyfinance/beefy-api/master/src/data/matic/quickLpPools.json"
-            val result: String = client.get(maticVaultsEndpoint).bodyAsText()
-
-            objectMapper.readValue(
-                result,
-                object : TypeReference<List<QuickLpPools>>() {
-                }).map {
-                it.rewardPool
-            }
-        }
+    fun getDeprecatedRewardFactory() : String {
+        return "0x5eec262b05a57da9beb5fe96a34aa4ed0c5e029f"
     }
 
-    fun getDualVaultAddresses(): List<String> {
-        return runBlocking {
-            vaultCache.get("quickswap-dual-vaults") {
-                val maticVaultsEndpoint =
-                    "https://raw.githubusercontent.com/beefyfinance/beefy-api/master/src/data/matic/quickDualLpPools.json"
-                client.get(maticVaultsEndpoint).body()
-            }
-        }
-    }
+
 
     suspend fun getPairDayData(pairId: String): List<PairDayData> {
         val query = """

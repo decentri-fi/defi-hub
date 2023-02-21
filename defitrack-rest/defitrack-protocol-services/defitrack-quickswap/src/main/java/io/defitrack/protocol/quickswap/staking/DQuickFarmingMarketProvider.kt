@@ -55,7 +55,7 @@ class DQuickFarmingMarketProvider(
                 investmentPreparer = DQuickStakingInvestmentPreparer(
                     getERC20Resource(), oldDQuick
                 ),
-                farmType = FarmType.LIQUIDITY_MINING
+                farmType = FarmType.YIELD_OPTIMIZING_AUTOCOMPOUNDER,
             )
         )
     }

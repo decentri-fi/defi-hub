@@ -25,7 +25,7 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 @Service
-class OldQuickswapFarmingMarketProvider(
+class DeprecatedQuickswapFarmingMarketProvider(
     private val quickswapService: QuickswapService,
     private val abiService: ABIResource,
     private val priceResource: PriceResource,
@@ -42,7 +42,7 @@ class OldQuickswapFarmingMarketProvider(
         runBlocking {
             RewardFactoryContract(
                 getBlockchainGateway(),
-                quickswapService.getOldRewardFactory(),
+                quickswapService.getDeprecatedRewardFactory(),
             )
         }
     }
@@ -65,7 +65,7 @@ class OldQuickswapFarmingMarketProvider(
                     val rewardToken = getToken(rewardPool.rewardsTokenAddress())
                     create(
                         identifier = rewardPool.address,
-                        name = "${stakedToken.name} Reward Pool (Old)",
+                        name = "${stakedToken.name} Reward Pool (Deprecated)",
                         stakedToken = stakedToken.toFungibleToken(),
                         rewardTokens = listOf(rewardToken.toFungibleToken()),
                         vaultType = "quickswap-reward-rewardPool",

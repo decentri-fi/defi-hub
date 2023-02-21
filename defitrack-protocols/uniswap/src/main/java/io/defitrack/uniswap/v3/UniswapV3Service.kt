@@ -12,18 +12,6 @@ class UniswapV3Service(
     graphGatewayProvider
 ) {
 
-    suspend fun getPairDayData(pairId: String): List<PoolDayData> {
-        val query = """
-              {
-                poolDayDatas(first: 8, orderBy: date, orderDirection: desc where: {id: "$pairId"}) {
-                id,
-                volumeUSD
-              }
-            }
-        """.trimIndent()
-        return query(query, "poolDayDatas")
-
-    }
     suspend fun providePools(): List<UniswapV3Pool> {
         val query = """
             {
