@@ -20,7 +20,7 @@ enum class Protocol(
     VELODROME(
         logo = "velodrome.svg",
         slug = "velodrome",
-        primitives = listOf(DefiPrimitive.POOLING),
+        primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
         "https://app.velodrome.finance",
         networks = listOf(Network.OPTIMISM)
     ),
