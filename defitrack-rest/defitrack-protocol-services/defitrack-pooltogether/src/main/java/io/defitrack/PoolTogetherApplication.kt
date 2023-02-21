@@ -6,8 +6,8 @@ import org.springframework.scheduling.annotation.EnableScheduling
 
 @SpringBootApplication
 @EnableScheduling
-class ChainlinkApplication
+class PoolTogetherApplication
 
 fun main(args: Array<String>) {
-    runApplication<ChainlinkApplication>(*args)
+    runApplication<PoolTogetherApplication>(*args)
 }
