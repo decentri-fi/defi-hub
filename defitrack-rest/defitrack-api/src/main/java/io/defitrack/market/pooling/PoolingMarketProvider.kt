@@ -24,7 +24,8 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
         tokens: List<FungibleToken>,
         positionFetcher: PositionFetcher? = null,
         investmentPreparer: InvestmentPreparer? = null,
-        breakdown: List<PoolingMarketTokenShare>? = null
+        breakdown: List<PoolingMarketTokenShare>? = null,
+        erc20Compatible: Boolean = true
     ): PoolingMarket {
         return PoolingMarket(
             id = "lp_${getNetwork().slug}-${getProtocol().slug}-${identifier}",
@@ -41,6 +42,7 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
             positionFetcher = positionFetcher,
             investmentPreparer = investmentPreparer,
             breakdown = breakdown,
+            erc20Compatible = erc20Compatible
         )
     }
 

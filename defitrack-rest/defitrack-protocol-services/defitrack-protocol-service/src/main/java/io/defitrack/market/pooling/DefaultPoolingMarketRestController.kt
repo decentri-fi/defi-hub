@@ -150,7 +150,8 @@ class DefaultPoolingMarketRestController(
             address = address,
             apr = apr,
             marketSize = marketSize,
-            prepareInvestmentSupported = investmentPreparer != null
+            prepareInvestmentSupported = investmentPreparer != null,
+            erc20Compatible = erc20Compatible,
         )
     }
 }
