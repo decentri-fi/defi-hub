@@ -35,6 +35,11 @@ class BalancerTokenService(
         val balancerService = getBalancerService(token.network)
         return balancerService?.getPool(token.address)?.let {
             val erc20 = erC20ContractReader.getERC20(token.network, token.address)
+            val underlying = it.tokens.filter { underlying ->
+                underlying.address != token.address //bug in balancer graph
+            }
+
+
             TokenInformation(
                 name = it.name,
                 symbol = it.symbol,
@@ -42,9 +47,7 @@ class BalancerTokenService(
                 decimals = erc20.decimals,
                 type = TokenType.BALANCER,
                 protocol = Protocol.BALANCER,
-                underlyingTokens = it.tokens.filter { underlying ->
-                    underlying.address != token.address //bug in balancer graph
-                }.map { underlyingPoolToken ->
+                underlyingTokens = underlying.map { underlyingPoolToken ->
                     val underlying = erC20Resource.getTokenInformation(erc20.network, underlyingPoolToken.address)
                     TokenInformation(
                         name = underlyingPoolToken.name,

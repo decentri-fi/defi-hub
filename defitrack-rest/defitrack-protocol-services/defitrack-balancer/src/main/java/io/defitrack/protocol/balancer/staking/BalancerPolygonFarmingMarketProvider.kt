@@ -42,7 +42,9 @@ class BalancerPolygonFarmingMarketProvider(
 
                     create(
                         identifier = it.id,
-                        name = stakedToken.symbol + " Gauge",
+                        name = stakedToken.underlyingTokens.joinToString("/") {
+                          it.symbol
+                        } + " Gauge",
                         stakedToken = stakedToken.toFungibleToken(),
                         rewardTokens = getRewardTokens(
                             gauge

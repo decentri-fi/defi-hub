@@ -15,6 +15,9 @@ class BalancerPolygonPoolingMarketProvider(
 ) : PoolingMarketProvider() {
     override suspend fun fetchMarkets(): List<PoolingMarket> {
         return balancerPolygonPoolGraphProvider.getPools().mapNotNull {
+
+            val token = getToken(it.address)
+
             if (it.totalLiquidity > BigDecimal.valueOf(100000)) {
                 PoolingMarket(
                     id = "balancer-polygon-${it.id}",
@@ -26,7 +29,9 @@ class BalancerPolygonPoolingMarketProvider(
                             it.symbol
                         }
                     } Pool",
-                    tokens = emptyList(),
+                    tokens = token.underlyingTokens.map {
+                        it.toFungibleToken()
+                    },
                     symbol = it.symbol,
                     apr = BigDecimal.ZERO,
                     marketSize = it.totalLiquidity,
