@@ -3,10 +3,11 @@ package io.defitrack.protocol.quickswap.apr
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
+import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
-import io.defitrack.protocol.quickswap.contract.QuickswapRewardPoolContract
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.contract.QuickswapDualRewardPoolContract
+import io.defitrack.protocol.quickswap.contract.QuickswapRewardPoolContract
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
@@ -14,6 +15,10 @@ import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
 import kotlin.time.Duration.Companion.hours
+
+private const val DQUICK = "0xf28164a485b0b2c90639e47b0f377b4a438a16b1"
+
+private const val BLOCKS_PER_YEAR = 31536000L
 
 @Component
 class QuickswapAPRService(
@@ -24,15 +29,15 @@ class QuickswapAPRService(
 ) {
 
     val stakingRewardsABI by lazy {
-       runBlocking {
-           abiResource.getABI("quickswap/StakingRewards.json")
-       }
+        runBlocking {
+            abiResource.getABI("quickswap/StakingRewards.json")
+        }
     }
 
     val stakingDualRewards by lazy {
-       runBlocking {
-           abiResource.getABI("quickswap/DualStakingRewards.json")
-       }
+        runBlocking {
+            abiResource.getABI("quickswap/DualStakingRewards.json")
+        }
     }
 
     val cache = Cache.Builder().expireAfterWrite(
@@ -58,18 +63,26 @@ class QuickswapAPRService(
             address
         )
         val quickRewardsPerYear =
-            (contract.rewardRateA().times(BigInteger.valueOf(31536000))).toBigDecimal()
+            (contract.rewardRateA().times(BigInteger.valueOf(BLOCKS_PER_YEAR))).toBigDecimal()
                 .divide(BigDecimal.TEN.pow(18))
-        val usdQuickRewardsPerYear = priceResource.getPrice("QUICK").times(
-            quickRewardsPerYear
-        )
+        val usdQuickRewardsPerYear = priceResource.calculatePrice(
+            PriceRequest(
+                DQUICK,
+                Network.POLYGON,
+                quickRewardsPerYear
+            )
+        ).toBigDecimal()
 
         val maticRewardsPerYear =
-            (contract.rewardRateB().times(BigInteger.valueOf(31536000))).toBigDecimal()
+            (contract.rewardRateB().times(BigInteger.valueOf(BLOCKS_PER_YEAR))).toBigDecimal()
                 .divide(BigDecimal.TEN.pow(18))
-        val usdMaticRewardsPerYear = priceResource.getPrice("MATIC").times(
-            maticRewardsPerYear
-        )
+        val usdMaticRewardsPerYear = priceResource.calculatePrice(
+            PriceRequest(
+                "0x0",
+                Network.POLYGON,
+                maticRewardsPerYear
+            )
+        ).toBigDecimal()
 
         val stakingTokenAddress = contract.stakingTokenAddress()
         val reserveUsd = quickswapService.getPairs().find {
@@ -91,11 +104,15 @@ class QuickswapAPRService(
         )
 
         val quickRewardsPerYear =
-            (contract.rewardRate().times(BigInteger.valueOf(31536000))).toBigDecimal()
+            (contract.rewardRate().times(BigInteger.valueOf(BLOCKS_PER_YEAR))).toBigDecimal()
                 .divide(BigDecimal.TEN.pow(18))
-        val usdRewardsPerYear = priceResource.getPrice("DQUICK").times(
-            quickRewardsPerYear
-        )
+        val usdRewardsPerYear = priceResource.calculatePrice(
+            PriceRequest(
+                DQUICK,
+                Network.POLYGON,
+                quickRewardsPerYear
+            )
+        ).toBigDecimal()
 
         val stakingTokenAddress = contract.stakingTokenAddress()
         val reserveUsd = quickswapService.getPairs().find {

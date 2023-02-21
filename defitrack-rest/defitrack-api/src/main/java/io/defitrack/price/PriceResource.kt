@@ -26,17 +26,6 @@ class PriceResource(
         .expireAfterWrite(10.minutes)
         .build<String, BigDecimal>()
 
-    @Deprecated("use calculate price")
-    suspend fun getPrice(symbol: String): BigDecimal {
-        logger.error("Use of deprecated getPrice method")
-        return 0.0.toBigDecimal()
-    }
-
-    suspend fun calculatePrice(name: String, amount: Double): Double {
-        val price = getPrice(name)
-        return amount.times(price.toDouble())
-    }
-
     suspend fun calculatePrice(priceRequest: PriceRequest?): Double {
         return priceRequest?.let {
             try {

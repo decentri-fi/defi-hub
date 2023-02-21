@@ -38,6 +38,7 @@ class ERC20Resource(
         .expireAfterWrite(1.hours)
         .build()
 
+    val wrappedCache: Cache<Network, WrappedToken> = Cache.Builder().build()
 
     val erc20ABI by lazy {
         runBlocking {
@@ -60,6 +61,14 @@ class ERC20Resource(
         return withContext(Dispatchers.IO) {
             tokenCache.get("token-${network}-${address}") {
                 retry(limitAttempts(3)) { client.get("$erc20ResourceLocation/${network.name}/$address/token").body() }
+            }
+        }
+    }
+
+    suspend fun getWrappedToken(network: Network) : WrappedToken{
+        return withContext(Dispatchers.IO) {
+            wrappedCache.get(network) {
+                retry(limitAttempts(3)) { client.get("$erc20ResourceLocation/${network.name}/wrapped").body() }
             }
         }
     }
@@ -129,4 +138,8 @@ class ERC20Resource(
             }
         }
     }
+
+    data class WrappedToken(
+        val address: String
+    )
 }

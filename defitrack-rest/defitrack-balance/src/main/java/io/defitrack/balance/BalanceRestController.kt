@@ -3,6 +3,7 @@ package io.defitrack.balance
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.network.toVO
+import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.Dispatchers
@@ -33,8 +34,11 @@ class BalanceRestController(
 
             if (balance > BigDecimal.ZERO) {
                 val price = priceResource.calculatePrice(
-                    it.nativeTokenName(),
-                    1.0
+                    PriceRequest(
+                        "0x0",
+                        it.getNetwork(),
+                        1.0.toBigDecimal()
+                    )
                 )
                 BalanceElement(
                     amount = balance.toDouble(),
@@ -63,8 +67,11 @@ class BalanceRestController(
 
         val balance = balanceService.getNativeBalance(address)
         val price = priceResource.calculatePrice(
-            balanceService.nativeTokenName(),
-            1.0
+            PriceRequest(
+                "0x0",
+                balanceService.getNetwork(),
+                1.0.toBigDecimal(),
+            )
         )
 
         BalanceElement(
@@ -80,7 +87,7 @@ class BalanceRestController(
     }
 
     @GetMapping("/{address}/token-balances")
-    fun getTokenBalance(@PathVariable("address") address: String): List<BalanceElement> = runBlocking(Dispatchers.IO) {
+    fun getTokenBalance(@PathVariable("address") address: String): List<BalanceElement> = runBlocking {
         balanceServices.flatMap {
             try {
                 it.getTokenBalances(address)
@@ -90,7 +97,13 @@ class BalanceRestController(
             }
         }.map {
             val normalizedAmount = it.amount.asEth(it.token.decimals).toDouble()
-            val price = priceResource.calculatePrice(it.token.symbol, 1.0)
+            val price = priceResource.calculatePrice(
+                PriceRequest(
+                    it.token.address,
+                    it.network,
+                    1.0.toBigDecimal()
+                )
+            )
 
             BalanceElement(
                 amount = normalizedAmount,
@@ -113,7 +126,13 @@ class BalanceRestController(
 
         balanceService?.getTokenBalances(address)?.map {
             val normalizedAmount = it.amount.asEth(it.token.decimals).toDouble()
-            val price = priceResource.calculatePrice(it.token.symbol, 1.0)
+            val price = priceResource.calculatePrice(
+                PriceRequest(
+                    it.token.address,
+                    it.network,
+                    1.0.toBigDecimal()
+                )
+            )
             BalanceElement(
                 amount = normalizedAmount,
                 network = it.network.toVO(),

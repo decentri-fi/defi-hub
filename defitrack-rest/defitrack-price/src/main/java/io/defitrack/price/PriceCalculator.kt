@@ -9,7 +9,6 @@ import io.defitrack.price.hop.HopPriceService
 import io.defitrack.protocol.balancer.graph.BalancerPolygonPoolGraphProvider
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
-import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -26,53 +25,53 @@ class PriceCalculator(
 
     val logger = LoggerFactory.getLogger(this::class.java)
 
-    fun calculatePrice(
-        priceRequest: PriceRequest?
+    suspend fun calculatePrice(
+        priceRequest: PriceRequest
     ): Double {
-        if (priceRequest?.amount == BigDecimal.ZERO) {
+        if (priceRequest.amount == BigDecimal.ZERO) {
             return 0.0
         }
 
-        return runBlocking {
-            retry(limitAttempts(5)) {
-                if (priceRequest == null) {
-                    return@retry 0.0
+        val tokenAddress = if (priceRequest.address == "0x0") {
+            erc20Service.getWrappedToken(priceRequest.network).address
+        } else {
+            priceRequest.address
+        }
+
+        return retry(limitAttempts(5)) {
+            val token = erc20Service.getTokenInformation(priceRequest.network, tokenAddress)
+
+            val tokenType = (priceRequest.type ?: token.type)
+            val price = when {
+                tokenType.standardLpToken -> {
+                    calculateLpHoldings(priceRequest, token)
                 }
 
-                val token = erc20Service.getTokenInformation(priceRequest.network, priceRequest.address)
-
-                val tokenType = (priceRequest.type ?: token.type)
-                val price = when {
-                    tokenType.standardLpToken -> {
-                        calculateLpHoldings(priceRequest, token)
-                    }
-
-                    tokenType == TokenType.BALANCER -> {
-                        calculateBalancerPrice(priceRequest)
-                    }
-
-                    tokenType == TokenType.CURVE -> {
-                        calculateLpHoldings(priceRequest, token)
-                    }
-
-                    tokenType == TokenType.HOP -> {
-                        hopPriceService.calculateHopPrice(priceRequest)
-                    }
-
-                    else -> {
-                        calculateTokenWorth(
-                            priceRequest.network,
-                            token,
-                            priceRequest.amount
-                        )
-                    }
+                tokenType == TokenType.BALANCER -> {
+                    calculateBalancerPrice(priceRequest)
                 }
 
+                tokenType == TokenType.CURVE -> {
+                    calculateLpHoldings(priceRequest, token)
+                }
 
-                price.times(
-                    BigDecimal.TEN.pow(18)
-                ).dividePrecisely(BigDecimal.TEN.pow(18)).toDouble()
+                tokenType == TokenType.HOP -> {
+                    hopPriceService.calculateHopPrice(priceRequest)
+                }
+
+                else -> {
+                    calculateTokenWorth(
+                        priceRequest.network,
+                        token,
+                        priceRequest.amount
+                    )
+                }
             }
+
+
+            price.times(
+                BigDecimal.TEN.pow(18)
+            ).dividePrecisely(BigDecimal.TEN.pow(18)).toDouble()
         }
     }
 

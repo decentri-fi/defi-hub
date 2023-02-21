@@ -5,6 +5,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.network.toVO
+import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
@@ -24,6 +25,7 @@ class AelinRewardMarketProvider(
     val rewardPool by lazy {
         StakingRewardsContract(getBlockchainGateway())
     }
+
     override suspend fun fetchMarkets(): List<FarmingMarket> {
 
         val aelin = getToken(aelinAddress)
@@ -64,9 +66,14 @@ class AelinRewardMarketProvider(
         val quickRewardsPerYear =
             (rewardPool.rewardRate().times(BigInteger.valueOf(31536000))).toBigDecimal()
                 .divide(BigDecimal.TEN.pow(18))
-        val usdRewardsPerYear = priceResource.getPrice("DQUICK").times(
-            quickRewardsPerYear
-        )
+        val usdRewardsPerYear = priceResource.calculatePrice(
+            PriceRequest(
+                aelinAddress,
+                getNetwork(),
+                quickRewardsPerYear
+            )
+        ).toBigDecimal()
+
         val marketsize = marketSizeService.getMarketSize(
             getToken(aelinAddress).toFungibleToken(),
             address,

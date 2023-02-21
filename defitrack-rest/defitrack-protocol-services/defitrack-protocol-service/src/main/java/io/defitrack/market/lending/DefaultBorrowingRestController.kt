@@ -1,13 +1,13 @@
 package io.defitrack.market.lending
 
-import io.defitrack.market.borrowing.domain.BorrowPosition
-import io.defitrack.market.borrowing.vo.BorrowPositionVO
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.market.borrowing.BorrowService
+import io.defitrack.market.borrowing.domain.BorrowPosition
+import io.defitrack.market.borrowing.vo.BorrowPositionVO
 import io.defitrack.network.toVO
+import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.toVO
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -46,8 +46,12 @@ class DefaultBorrowingRestController(
                 network = network.toVO(),
                 protocol = protocol.toVO(),
                 dollarValue = priceResource.calculatePrice(
-                    token.symbol,
-                    amount.toDouble()
+                    PriceRequest(
+                        token.address,
+                        this.network,
+                        this.amount.asEth(token.decimals),
+                        token.type
+                    )
                 ),
                 rate = rate,
                 name = name,
