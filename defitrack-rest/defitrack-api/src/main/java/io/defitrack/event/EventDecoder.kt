@@ -12,7 +12,7 @@ abstract class EventDecoder {
     @Autowired
     lateinit var erC20Resource: ERC20Resource
 
-    abstract fun appliesTo(log: Log): Boolean
+    abstract fun appliesTo(log: Log, network: Network): Boolean
     abstract suspend fun extract(log: Log, network: Network): DefiEvent
 
     suspend fun getToken(address: String, network: Network): TokenInformationVO {

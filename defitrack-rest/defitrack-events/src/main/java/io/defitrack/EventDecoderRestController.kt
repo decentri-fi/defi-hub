@@ -26,7 +26,7 @@ class EventDecoderRestController(
         logs.flatMap {
             eventDecoders.map { decoder ->
                 try {
-                    if (decoder.appliesTo(it)) {
+                    if (decoder.appliesTo(it, network)) {
                         decoder.extract(it, network)
                     } else {
                         null

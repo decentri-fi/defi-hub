@@ -1,4 +1,4 @@
-package io.defitrack.events
+package io.defitrack.events.erc20
 
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.uint256
@@ -14,21 +14,21 @@ import org.web3j.protocol.core.methods.response.Log
 import java.math.BigInteger
 
 @Component
-class ApprovalEventDecoder : EventDecoder() {
+class TransferEventDecoder : EventDecoder() {
 
-    val transferEvent = Event("Approval", listOf(address(true), address(true), uint256()))
+    val transferEvent = Event("Transfer", listOf(address(true), address(true), uint256()))
 
-    override fun appliesTo(log: Log): Boolean {
+    override fun appliesTo(log: Log, network: Network): Boolean {
         return log.appliesTo(transferEvent)
     }
 
     override suspend fun extract(log: Log, network: Network): DefiEvent {
-        val owner =
-            "owner" to FunctionReturnDecoder.decodeIndexedValue(
+        val from =
+            "from" to FunctionReturnDecoder.decodeIndexedValue(
                 log.topics[1], address()
             ).value as String;
 
-        val spender = "spender" to FunctionReturnDecoder.decodeIndexedValue(
+        val to = "to" to FunctionReturnDecoder.decodeIndexedValue(
             log.topics[2], address()
         ).value as String;
 
@@ -40,8 +40,8 @@ class ApprovalEventDecoder : EventDecoder() {
         val asset = "asset" to getToken(log.address, network)
 
         return DefiEvent(
-            type = DefiEventType.APPROVAL,
-            metadata = mapOf(owner, spender, asset, amount)
+            type = DefiEventType.TRANSFER,
+            metadata = mapOf(from, to, asset, amount)
         )
     }
 }

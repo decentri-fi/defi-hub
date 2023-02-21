@@ -1,4 +1,4 @@
-package io.defitrack.events
+package io.defitrack.events.borrowing
 
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.uint256
@@ -25,7 +25,7 @@ class BorrowEventDecoder : EventDecoder() {
         )
     )
 
-    override fun appliesTo(log: Log): Boolean {
+    override fun appliesTo(log: Log, network: Network): Boolean {
         return log.appliesTo(event)
     }
 

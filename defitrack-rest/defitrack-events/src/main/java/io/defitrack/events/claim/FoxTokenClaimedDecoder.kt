@@ -1,4 +1,4 @@
-package io.defitrack.events
+package io.defitrack.events.claim
 
 import io.defitrack.abi.TypeUtils
 import io.defitrack.common.network.Network
@@ -24,7 +24,7 @@ class FoxTokenClaimedDecoder : EventDecoder() {
         )
     )
 
-    override fun appliesTo(log: Log): Boolean {
+    override fun appliesTo(log: Log, network: Network): Boolean {
         return log.address == "0xb90381dae1a72528660278100c5aa44e1108cef7" && log.appliesTo(claimedEvent)
     }
 
