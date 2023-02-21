@@ -4,7 +4,6 @@ import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
-import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
 import io.defitrack.protocol.PairFactoryContract
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.VelodromeOptimismService
@@ -30,16 +29,7 @@ class VelodromePoolingMarketProvider(
             async {
 
                 val poolingToken = getToken(it)
-
                 val tokens = poolingToken.underlyingTokens
-
-                val breakdown = tokens.map {
-                    PoolingMarketTokenShare(
-                        token = it.toFungibleToken(),
-                        reserve = getBalance(it.address, poolingToken.address),
-                        reserveUSD = getMarketSize(it.toFungibleToken(), poolingToken.address)
-                    )
-                }
 
                 try {
                     PoolingMarket(
@@ -52,7 +42,7 @@ class VelodromePoolingMarketProvider(
                         ),
                         address = it,
                         name = "Velodrome ${poolingToken.name}",
-                        breakdown = breakdown,
+                        breakdown = defaultBreakdown(tokens, poolingToken.address),
                         symbol = poolingToken.symbol,
                         tokens = poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
                         tokenType = TokenType.VELODROME
@@ -64,6 +54,7 @@ class VelodromePoolingMarketProvider(
             }
         }.awaitAll().filterNotNull()
     }
+
 
     override fun getProtocol(): Protocol {
         return Protocol.VELODROME
