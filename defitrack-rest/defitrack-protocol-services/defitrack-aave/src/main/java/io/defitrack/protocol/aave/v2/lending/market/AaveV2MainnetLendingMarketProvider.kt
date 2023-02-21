@@ -63,7 +63,7 @@ class AaveV2MainnetLendingMarketProvider(
                         create(
                             identifier = it.id,
                             token = token.toFungibleToken(),
-                            name = it.name + " Aave Pool",
+                            name = "aave v2 " + it.name,
                             poolType = "aave-v2",
                             marketSize = calculateMarketSize(it, aToken, token).toBigDecimal(),
                             investmentPreparer = AaveV2LendingInvestmentPreparer(

@@ -63,7 +63,7 @@ class AaveV2PolygonLendingMarketProvider(
                         create(
                             identifier = it.id,
                             token = token.toFungibleToken(),
-                            name = it.name + " Aave Pool",
+                            name = "aave v2" + it.name,
                             rate = it.lendingRate.toBigDecimal(),
                             marketSize = calculateMarketSize(it, aToken, token).toBigDecimal(),
                             poolType = "aave-v2",
