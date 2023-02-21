@@ -21,5 +21,6 @@ data class PoolingMarket(
     val marketSize: BigDecimal? = null,
     val tokenType: TokenType,
     val positionFetcher: PositionFetcher? = null,
-    val investmentPreparer: InvestmentPreparer? = null
+    val investmentPreparer: InvestmentPreparer? = null,
+    val breakdown: List<PoolingMarketTokenShare>? = null
 ) : DefiMarket

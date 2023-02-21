@@ -95,6 +95,10 @@ abstract class MarketProvider<T> : ProtocolService {
         return marketSizeService.getMarketSize(token, location, getNetwork())
     }
 
+    suspend fun getMarketSize(tokens: List<FungibleToken>, location: String): BigDecimal {
+        return marketSizeService.getMarketSize(tokens, location, getNetwork())
+    }
+
     fun getERC20Resource(): ERC20Resource {
         return erC20Resource
     }

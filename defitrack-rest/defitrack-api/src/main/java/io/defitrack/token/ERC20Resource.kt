@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
+import kotlin.time.Duration.Companion.hours
 
 @Component
 class ERC20Resource(
@@ -28,8 +29,13 @@ class ERC20Resource(
     @Value("\${erc20ResourceLocation:http://defitrack-erc20:8080}") private val erc20ResourceLocation: String
 ) {
 
+    val tokensCache: Cache<String, List<TokenInformationVO>> = Cache.Builder()
+        .expireAfterWrite(12.hours)
+        .build()
 
-    val tokenCache: Cache<String, List<TokenInformationVO>> = Cache.Builder().build()
+    val tokenCache: Cache<String, TokenInformationVO> = Cache.Builder()
+        .expireAfterWrite(1.hours)
+        .build()
 
 
     val erc20ABI by lazy {
@@ -37,7 +43,7 @@ class ERC20Resource(
     }
 
     suspend fun getAllTokens(network: Network): List<TokenInformationVO> = withContext(Dispatchers.IO) {
-        tokenCache.get("tokens-${network}") {
+        tokensCache.get("tokens-${network}") {
             retry(limitAttempts(3)) { client.get("$erc20ResourceLocation/${network.name}").body() }
         }
     }
@@ -47,10 +53,13 @@ class ERC20Resource(
             client.get("$erc20ResourceLocation/${network.name}/$tokenAddress/$user").body()
         }
 
-    suspend fun getTokenInformation(network: Network, address: String): TokenInformationVO =
-        withContext(Dispatchers.IO) {
-            retry(limitAttempts(3)) { client.get("$erc20ResourceLocation/${network.name}/$address/token").body() }
+    suspend fun getTokenInformation(network: Network, address: String): TokenInformationVO {
+        return withContext(Dispatchers.IO) {
+            tokenCache.get("token-${network}-${address}") {
+                retry(limitAttempts(3)) { client.get("$erc20ResourceLocation/${network.name}/$address/token").body() }
+            }
         }
+    }
 
     fun getApproveFunction(
         network: Network,
