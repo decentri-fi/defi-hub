@@ -73,6 +73,10 @@ class TypeUtils {
             return Address(this)
         }
 
+        fun String.toUtf8String(): Utf8String {
+            return Utf8String(this)
+        }
+
         fun Boolean.toBool(): Bool {
             return Bool(this)
         }

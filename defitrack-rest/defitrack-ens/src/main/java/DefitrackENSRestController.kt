@@ -23,4 +23,23 @@ class DefitrackENSRestController(private val ensNameService: EnsNameService) {
             result, address
         )
     }
+
+    @GetMapping("/by-name/{name}/avatar")
+    fun getAvatar(@PathVariable name: String): Map<String, String> {
+        val result = ensNameService.getAvatar(name)
+        return if (result.isNotBlank()) {
+            mapOf(
+                "avatar" to result
+            )
+        } else {
+            val result = ensNameService.getEnsByName(name)
+            if (result.isNotBlank()) {
+                mapOf(
+                    "avatar" to "https://metadata.ens.domains/preview/${result}"
+                )
+            } else {
+                emptyMap()
+            }
+        }
+    }
 }
