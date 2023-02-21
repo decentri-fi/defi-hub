@@ -8,5 +8,5 @@ class PriceRequest(
     val address: String,
     val network: Network,
     val amount: BigDecimal,
-    val type: TokenType?
+    val type: TokenType? = null
 )
