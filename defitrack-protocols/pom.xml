@@ -56,6 +56,7 @@
         <module>pooltogether</module>
         <module>velodrome</module>
         <module>lido</module>
+        <module>10kswap</module>
     </modules>
 
     <dependencyManagement>
