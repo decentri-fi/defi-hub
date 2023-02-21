@@ -5,6 +5,7 @@ import io.defitrack.event.DefiEvent
 import io.defitrack.event.EventDecoder
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import kotlinx.coroutines.runBlocking
+import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -14,6 +15,8 @@ class EventDecoderRestController(
     private val gatewayProvider: BlockchainGatewayProvider,
 ) {
 
+    val logger = LoggerFactory.getLogger(this::class.java)
+
     @GetMapping("/{txId}", params = ["network"])
     fun decodeTransaction(
         @PathVariable("txId") txId: String,
@@ -22,11 +25,17 @@ class EventDecoderRestController(
         val logs = gatewayProvider.getGateway(network).getLogs(txId)
         logs.flatMap {
             eventDecoders.map { decoder ->
-                if (decoder.appliesTo(it)) {
-                    decoder.extract(it, network)
-                } else {
+                try {
+                    if (decoder.appliesTo(it)) {
+                        decoder.extract(it, network)
+                    } else {
+                        null
+                    }
+                } catch (ex: Exception) {
+                    logger.error("Error decoding event for tx $txId", ex)
                     null
                 }
+
             }
         }.filterNotNull()
     }
