@@ -4,15 +4,17 @@ import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.crv.CurvePoolGraphProvider
+import io.defitrack.protocol.crv.CurveOptimismGraphProvider
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import org.springframework.stereotype.Service
 import java.math.BigDecimal
 
-class CurvePoolingMarketProvider(
-    private val curvePoolGraphProvider: CurvePoolGraphProvider,
+@Service
+class CurveOptimismPoolingMarketProvider(
+    private val curvePoolGraphProvider: CurveOptimismGraphProvider,
 ) : PoolingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<PoolingMarket> =

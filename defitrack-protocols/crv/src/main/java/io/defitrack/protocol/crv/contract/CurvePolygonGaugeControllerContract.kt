@@ -7,7 +7,7 @@ import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
 import java.math.BigInteger
 
-class CurveGaugeControllerContract(
+class CurvePolygonGaugeControllerContract(
     blockchainGateway: BlockchainGateway, address: String
 ) : EvmContract(
     blockchainGateway, "", address
@@ -15,7 +15,7 @@ class CurveGaugeControllerContract(
 
     suspend fun getGaugeCount(): BigInteger {
         return readWithoutAbi(
-            "n_gauges",
+            "get_gauge_count",
             outputs = listOf(uint256())
         )[0].value as BigInteger
     }
@@ -23,7 +23,7 @@ class CurveGaugeControllerContract(
     suspend fun getGaugeAddresses(): List<String> {
         return (0 until getGaugeCount().toInt()).map {
             readWithoutAbi(
-                "gauges",
+                "get_gauge",
                 listOf(it.toBigInteger().toUint256()),
                 listOf(address())
             )[0].value as String
