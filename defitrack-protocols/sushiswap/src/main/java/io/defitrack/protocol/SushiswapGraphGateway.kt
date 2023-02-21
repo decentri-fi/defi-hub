@@ -15,7 +15,7 @@ class SushiswapGraphGateway(
     suspend fun getPairs(): List<SushiswapPair> {
         val query = """
         {
-            pairs(first: 500, orderDirection: desc, orderBy: volumeUSD) {
+            pairs(first: 500, orderDirection: desc, orderBy: volumeUSD, where: {reserveUSD_gt: 25000}) {
             id
             reserveUSD
             token0 {
