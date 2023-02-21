@@ -42,3 +42,4 @@ pooltogether
 velodrome
 lido
 tokemak
+cowswap
