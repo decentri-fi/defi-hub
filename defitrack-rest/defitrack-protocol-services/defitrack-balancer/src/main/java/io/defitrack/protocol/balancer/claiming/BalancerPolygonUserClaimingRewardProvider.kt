@@ -25,9 +25,9 @@ class BalancerPolygonUserClaimingRewardProvider(
 ) : ClaimableRewardProvider() {
 
     val gaugeContractAbi by lazy {
-       runBlocking {
-           abiResource.getABI("balancer/gauge.json")
-       }
+        runBlocking {
+            abiResource.getABI("balancer/gauge.json")
+        }
     }
 
     override suspend fun claimables(address: String): List<Claimable> =
@@ -42,7 +42,8 @@ class BalancerPolygonUserClaimingRewardProvider(
                         )
 
                         val claimTransaction = BalancerClaimPreparer(
-                            gaugeContract
+                            gaugeContract,
+                            address
                         ).prepare(PrepareClaimCommand(user = address))
 
                         gaugeContract.getBalances(address, liquidityGauge.rewardTokens)

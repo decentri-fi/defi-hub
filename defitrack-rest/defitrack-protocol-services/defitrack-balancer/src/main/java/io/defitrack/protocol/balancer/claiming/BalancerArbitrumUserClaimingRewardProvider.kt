@@ -42,7 +42,7 @@ class BalancerArbitrumUserClaimingRewardProvider(
                         )
 
                         val claimTransaction = BalancerClaimPreparer(
-                            gaugeContract
+                            gaugeContract, from = address
                         ).prepare(PrepareClaimCommand(user = address))
 
                         gaugeContract.getBalances(address, liquidityGauge.rewardTokens)

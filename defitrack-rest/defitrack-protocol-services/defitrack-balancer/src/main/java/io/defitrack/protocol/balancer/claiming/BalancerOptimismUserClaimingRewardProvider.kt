@@ -42,7 +42,8 @@ class BalancerOptimismUserClaimingRewardProvider(
                         )
 
                         val claimTransaction = BalancerClaimPreparer(
-                            gaugeContract
+                            gaugeContract,
+                            address
                         ).prepare(PrepareClaimCommand(user = address))
 
                         gaugeContract.getBalances(address, liquidityGauge.rewardTokens)
