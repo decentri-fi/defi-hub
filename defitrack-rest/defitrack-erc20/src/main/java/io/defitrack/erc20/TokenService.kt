@@ -9,11 +9,13 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
 import io.github.reactivecircus.cache4k.Cache
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
+import org.slf4j.LoggerFactory
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
+import kotlin.system.measureTimeMillis
 
 @Service
 class TokenService(
@@ -29,24 +31,41 @@ class TokenService(
     private val logoService: LogoService
 ) {
 
+    val logger = LoggerFactory.getLogger(this.javaClass)
 
     val tokenCache: Cache<String, List<TokenInformation>> = Cache.Builder().build()
 
-    suspend fun getAllTokensForNetwork(network: Network): List<TokenInformation> {
-        return withContext(Dispatchers.IO.limitedParallelism(10)) {
-            tokenCache.get("tokens-${network}") {
-                erC20Repository.allTokens(network).map {
-                    async {
-                        try {
-                            getTokenInformation(it, network)
-                        } catch (ex: Exception) {
-                            ex.printStackTrace()
-                            null
+    @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
+    fun refreshCaches() {
+        refreshCache()
+    }
+
+    fun refreshCache() = runBlocking {
+            logger.info("refreshing token cache")
+            val semaphore = Semaphore(16)
+            Network.values().map { network ->
+                val millis = measureTimeMillis {
+                    val tokens = erC20Repository.allTokens(network).map {
+                        async {
+                            try {
+                                semaphore.withPermit {
+                                    getTokenInformation(it, network)
+                                }
+                            } catch (ex: Exception) {
+                                ex.printStackTrace()
+                                null
+                            }
                         }
-                    }
-                }.awaitAll().filterNotNull()
+                    }.awaitAll().filterNotNull()
+                    tokenCache.put("tokens-${network}", tokens)
+                }
+                logger.info("refreshing token cache for ${network} took ${millis / 1000}s")
             }
-        }
+    }
+
+
+    suspend fun getAllTokensForNetwork(network: Network): List<TokenInformation> {
+        return tokenCache.get("tokens-${network}") ?: emptyList()
     }
 
     suspend fun getType(lp: LPTokenContract): TokenType {
@@ -132,7 +151,7 @@ class TokenService(
         if (address == "0x0" || address.lowercase() == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") {
             return nativeTokenService.getNativeToken(network)
         }
-
+        logger.info("getting token information for ${address} on ${network}")
         return tokenInformationCache.get("${address}-${network}") {
             val token = erc20Service.getERC20(network, address)
             when {

@@ -14,6 +14,7 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
@@ -39,7 +40,9 @@ class ERC20Resource(
 
 
     val erc20ABI by lazy {
-        abiResource.getABI("general/ERC20.json")
+        runBlocking {
+            abiResource.getABI("general/ERC20.json")
+        }
     }
 
     suspend fun getAllTokens(network: Network): List<TokenInformationVO> = withContext(Dispatchers.IO) {

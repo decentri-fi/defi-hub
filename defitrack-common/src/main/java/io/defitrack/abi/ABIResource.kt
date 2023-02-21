@@ -4,23 +4,21 @@ import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
-import kotlinx.coroutines.runBlocking
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
 @Component
 class ABIResource(
     @Value("\${abiResourceLocation:http://defitrack-abi:8080}") val abiResourceLocation: String,
-    private val client: HttpClient) {
+    private val client: HttpClient
+) {
 
     val cache = Cache.Builder().build<String, String>()
 
-    fun getABI(abi: String): String {
-        return runBlocking {
-            cache.get(abi) {
-                val response: Abi = client.get("$abiResourceLocation?id=${abi}").body()
-                response.content
-            }
+    suspend fun getABI(abi: String): String {
+        return cache.get(abi) {
+            val response: Abi = client.get("$abiResourceLocation?id=${abi}").body()
+            response.content
         }
     }
 }

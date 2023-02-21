@@ -5,6 +5,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.ERC20Contract
 import io.github.reactivecircus.cache4k.Cache
+import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -16,7 +17,9 @@ class ERC20Service(
 
     val erc20Buffer = Cache.Builder().build<String, ERC20Contract>()
     val erc20ABI by lazy {
-        abiService.getABI("general/ERC20.json")
+        runBlocking {
+            abiService.getABI("general/ERC20.json")
+        }
     }
 
     val logger = LoggerFactory.getLogger(this::class.java)

@@ -36,7 +36,6 @@ abstract class MarketProvider<T> : ProtocolService {
     protected abstract suspend fun fetchMarkets(): List<T>
 
     fun refreshCaches() = runBlocking(Dispatchers.Default) {
-
         val millis = measureTimeMillis {
             try {
                 val markets = populate()
