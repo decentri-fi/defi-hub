@@ -1,4 +1,5 @@
 aave
+aura
 aelin
 adamant
 apeswap

@@ -10,6 +10,13 @@ enum class Protocol(
     val enabled: Boolean = true,
     val networks: List<Network>
 ) {
+    AURA(
+        logo = "aura.png",
+        slug = "aura",
+        primitives = listOf(DefiPrimitive.FARMING),
+        website = "https://aura.finance",
+        networks = listOf(Network.ETHEREUM)
+    ),
     LIDO(
         logo = "lido.png",
         slug = "lido",

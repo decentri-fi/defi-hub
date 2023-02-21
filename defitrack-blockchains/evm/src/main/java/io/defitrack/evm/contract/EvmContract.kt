@@ -85,32 +85,6 @@ abstract class EvmContract(
         )
     }
 
-    suspend fun readConstant(method: String, inputs: List<Type<*>>): List<Type<*>> {
-        return blockchainGateway.readFunctionWithAbi(
-            address = address,
-            inputs = inputs,
-            function = blockchainGateway.getConstantFunction(
-                abi,
-                method
-            )
-        )
-    }
-
-    suspend fun readConstant(
-        method: String,
-        inputs: List<Type<*>>,
-        outputs: List<TypeReference<out Type<*>>>? = null
-    ): List<Type<*>> {
-        return blockchainGateway.readFunctionWithAbi(
-            address = address,
-            inputs = inputs,
-            function = blockchainGateway.getConstantFunction(
-                abi,
-                method
-            ),
-            outputs = outputs
-        )
-    }
 
     suspend inline fun <reified T : Any> read(function: String): T {
         return readWithAbi(function)[0].value as T
