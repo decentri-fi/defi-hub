@@ -32,7 +32,7 @@ enum class Protocol(
         networks = listOf(Network.ARBITRUM)
     ),
     POOLTOGETHER(
-        logo = "pooltogether.png",
+        logo = "pooltogether.jpg",
         slug = "pooltogether",
         website = "https://pooltogether.com",
         primitives = listOf(DefiPrimitive.POOLING),
