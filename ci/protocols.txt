@@ -39,3 +39,4 @@ qidao
 swapfish
 pooltogether
 velodrome
+lido
