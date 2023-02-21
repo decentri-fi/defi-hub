@@ -1,4 +1,4 @@
-package io.defitrack.protocol.compound
+package io.defitrack.protocol.compound.v2.contract
 
 import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.BlockchainGateway
