@@ -1,6 +1,5 @@
 package io.defitrack.protocol
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.sushi.domain.SushiswapPair
 import io.defitrack.thegraph.TheGraphGatewayProvider
