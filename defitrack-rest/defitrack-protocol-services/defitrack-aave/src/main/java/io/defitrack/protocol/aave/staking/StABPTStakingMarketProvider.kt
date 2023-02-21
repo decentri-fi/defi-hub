@@ -18,10 +18,6 @@ import java.math.BigInteger
 
 @Component
 class StABPTStakingMarketProvider(
-    private val erC20Resource: ERC20Resource,
-    private val blockchainGatewayProvider: BlockchainGatewayProvider,
-    private val marketSizeService: MarketSizeService,
-    private val erc20Resource: ERC20Resource
 ) : FarmingMarketProvider() {
 
     private val stABPT = "0xa1116930326d21fb917d5a27f1e9943a9595fb47"
@@ -36,7 +32,7 @@ class StABPTStakingMarketProvider(
             stABPT
         )
 
-        val totalStakedAbpt = erc20Resource.getBalance(getNetwork(), abpt, stABPT)
+        val totalStakedAbpt = erC20Resource.getBalance(getNetwork(), abpt, stABPT)
         val ratio = totalStakedAbpt.toBigDecimal().dividePrecisely(stakingContract.totalSupply().toBigDecimal())
 
         return listOf(
