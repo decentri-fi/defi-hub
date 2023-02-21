@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component
 
 @Component
 class SushiPolygonService(
-    objectMapper: ObjectMapper,
     graphGatewayProvider: TheGraphGatewayProvider
 ) : SushiswapService {
 

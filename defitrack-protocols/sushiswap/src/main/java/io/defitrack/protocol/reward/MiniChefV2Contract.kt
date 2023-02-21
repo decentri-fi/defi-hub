@@ -2,6 +2,7 @@ package io.defitrack.protocol.reward
 
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
+import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.multicall.MultiCallElement
@@ -29,6 +30,17 @@ class MiniChefV2Contract(
                 TypeReference.create(Uint256::class.java),
                 TypeReference.create(Uint256::class.java)
             )
+        )
+    }
+
+    fun harvestFunction(pid: Int, to: String): Function {
+        return createFunctionWithAbi(
+            "harvest",
+            listOf(
+                pid.toBigInteger().toUint256(),
+                to.toAddress()
+            ),
+            listOf()
         )
     }
 
@@ -98,6 +110,17 @@ class MiniChefV2Contract(
             "SUSHI",
             outputs = listOf(TypeReference.create(Address::class.java))
         )[0].value as String
+    }
+
+    suspend fun pendingSushiFunction(pid: Int, address: String): Function {
+        return createFunction(
+            "pendingSushi",
+            inputs = listOf(
+                pid.toBigInteger().toUint256(),
+                address.toAddress()
+            ),
+            outputs = listOf(uint256())
+        )
     }
 
 

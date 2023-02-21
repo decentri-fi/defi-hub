@@ -1,11 +1,13 @@
 package io.defitrack.protocol.sushiswap.staking
 
 import io.defitrack.abi.ABIResource
+import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
+import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.FarmType
@@ -14,6 +16,7 @@ import io.defitrack.protocol.SushiPolygonService
 import io.defitrack.protocol.reward.MiniChefV2Contract
 import io.defitrack.protocol.sushiswap.apr.MinichefStakingAprCalculator
 import io.defitrack.token.TokenType
+import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
@@ -26,9 +29,9 @@ class SushiswapPolygonFarmingMinichefMarketProvider(
 ) : FarmingMarketProvider() {
 
     val minichefABI by lazy {
-       runBlocking {
-           abiResource.getABI("sushi/MiniChefV2.json")
-       }
+        runBlocking {
+            abiResource.getABI("sushi/MiniChefV2.json")
+        }
     }
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
@@ -73,6 +76,18 @@ class SushiswapPolygonFarmingMinichefMarketProvider(
                 chef.address,
                 { user -> chef.userInfoFunction(poolId, user) }
             ),
+            claimableRewardFetcher = ClaimableRewardFetcher(
+                address = chef.address,
+                function = { user -> chef.pendingSushiFunction(poolId, user) },
+                preparedTransaction = { user ->
+                    PreparedTransaction(
+                        getNetwork().toVO(),
+                        chef.harvestFunction(poolId, user),
+                        chef.address,
+                        user
+                    )
+                }
+            ),
             farmType = FarmType.LIQUIDITY_MINING
         )
     }
@@ -81,14 +96,19 @@ class SushiswapPolygonFarmingMinichefMarketProvider(
         chef: MiniChefV2Contract,
         stakedTokenInformation: TokenInformationVO
     ): BigDecimal {
-        val balance = getERC20Resource().getBalance(getNetwork(), stakedTokenInformation.address, chef.address)
+        val balance =
+            getERC20Resource().getBalance(getNetwork(), stakedTokenInformation.address, chef.address)
         return BigDecimal.valueOf(
             priceResource.calculatePrice(
                 PriceRequest(
                     stakedTokenInformation.address,
                     getNetwork(),
                     balance.toBigDecimal()
-                        .divide(BigDecimal.TEN.pow(stakedTokenInformation.decimals), 18, RoundingMode.HALF_UP),
+                        .divide(
+                            BigDecimal.TEN.pow(stakedTokenInformation.decimals),
+                            18,
+                            RoundingMode.HALF_UP
+                        ),
                     TokenType.SUSHISWAP
                 )
             )
