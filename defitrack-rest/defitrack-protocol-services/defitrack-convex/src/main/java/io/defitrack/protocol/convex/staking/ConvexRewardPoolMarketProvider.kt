@@ -11,7 +11,7 @@ import io.defitrack.protocol.convex.contract.CvxRewardPoolContract
 import org.springframework.stereotype.Service
 
 @Service
-class ConvexPoolsFarmingPositionProvider(
+class ConvexRewardPoolMarketProvider(
     private val convexService: ConvexService,
     private val abiResource: ABIResource,
 ) : FarmingMarketProvider() {
@@ -43,7 +43,8 @@ class ConvexPoolsFarmingPositionProvider(
                 balanceFetcher = defaultPositionFetcher(
                     it.address
                 ),
-                farmType = FarmType.STAKING
+                farmType = FarmType.STAKING,
+                metadata = mapOf("contract" to it)
             )
         }
     }

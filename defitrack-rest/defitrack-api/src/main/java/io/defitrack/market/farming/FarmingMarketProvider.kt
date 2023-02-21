@@ -25,7 +25,7 @@ abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>() {
         claimableRewardFetcher: ClaimableRewardFetcher? = null,
         investmentPreparer: InvestmentPreparer? = null,
         farmType: FarmType,
-        metadata: Map<String, String> = emptyMap()
+        metadata: Map<String, Any> = emptyMap()
     ): FarmingMarket {
         return FarmingMarket(
             id = "frm_${getNetwork().slug}-${getProtocol().slug}-${identifier}",
