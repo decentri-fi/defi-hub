@@ -45,9 +45,8 @@ class PolycatFarmingMarketProvider(
         chef: PolycatMasterChefContract,
         poolId: Int
     ): FarmingMarket {
-        val stakedtoken =
-            erC20Resource.getTokenInformation(getNetwork(), chef.poolInfo(poolId).lpToken)
-        val rewardToken = erC20Resource.getTokenInformation(getNetwork(), chef.rewardToken())
+        val stakedtoken = getToken(chef.poolInfo(poolId).lpToken)
+        val rewardToken =  getToken(chef.rewardToken())
         return create(
             identifier = "${chef.address}-${poolId}",
             name = stakedtoken.name + " Farm",
@@ -55,7 +54,7 @@ class PolycatFarmingMarketProvider(
             rewardTokens = listOf(
                 rewardToken.toFungibleToken()
             ),
-            apr = PolygcatStakingAprCalculator(erC20Resource, priceResource, chef, poolId).calculateApr(),
+            apr = PolygcatStakingAprCalculator(getERC20Resource(), priceResource, chef, poolId).calculateApr(),
             marketSize = calculateMarketSize(stakedtoken, chef),
             balanceFetcher = PositionFetcher(
                 address = chef.address,
@@ -75,7 +74,7 @@ class PolycatFarmingMarketProvider(
         chef: PolycatMasterChefContract
     ): BigDecimal {
 
-        val balance = erC20Resource.getBalance(
+        val balance = getERC20Resource().getBalance(
             getNetwork(),
             stakedtoken.address,
             chef.address

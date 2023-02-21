@@ -3,10 +3,9 @@ package io.defitrack.protocol.compound.lending
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.lending.LendingMarketProvider
-import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.market.lending.domain.LendingMarket
+import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
@@ -14,7 +13,6 @@ import io.defitrack.protocol.compound.IronBankComptrollerContract
 import io.defitrack.protocol.compound.IronBankService
 import io.defitrack.protocol.compound.IronbankTokenContract
 import io.defitrack.protocol.compound.lending.invest.CompoundLendingInvestmentPreparer
-import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -53,9 +51,7 @@ abstract class IronBankLendingMarketProvider(
     private suspend fun toLendingMarket(ctokenContract: IronbankTokenContract): LendingMarket? {
         return try {
             val exchangeRate = ctokenContract.exchangeRate()
-            ctokenContract.underlyingAddress().let { tokenAddress ->
-                erC20Resource.getTokenInformation(getNetwork(), tokenAddress)
-            }.let { underlyingToken ->
+            getToken(ctokenContract.underlyingAddress()).let { underlyingToken ->
                 create(
                     identifier = ctokenContract.address,
                     name = ctokenContract.name(),
@@ -82,7 +78,7 @@ abstract class IronBankLendingMarketProvider(
                     ),
                     investmentPreparer = CompoundLendingInvestmentPreparer(
                         ctokenContract,
-                        erC20Resource
+                        getERC20Resource()
                     )
                 )
             }

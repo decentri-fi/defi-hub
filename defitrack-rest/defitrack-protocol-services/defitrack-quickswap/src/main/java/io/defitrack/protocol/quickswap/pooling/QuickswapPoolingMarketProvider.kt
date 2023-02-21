@@ -35,11 +35,11 @@ class QuickswapPoolingMarketProvider(
     }
 
     private suspend fun toPoolingMarket(it: QuickswapPair): PoolingMarket? {
-        val token0 = erC20Resource.getTokenInformation(getNetwork(), it.token0.id)
-        val token1 = erC20Resource.getTokenInformation(getNetwork(), it.token1.id)
+        val token0 = getToken(it.token0.id)
+        val token1 = getToken(it.token1.id)
         if(token0.symbol == "UNKWN" || token1.symbol == "UNKWN") return null
 
-        val token = erC20Resource.getTokenInformation(getNetwork(), it.id)
+        val token = getToken(it.id)
 
         return PoolingMarket(
             network = getNetwork(),

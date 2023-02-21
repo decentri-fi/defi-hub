@@ -6,7 +6,6 @@ import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.kyberswap.KyberswapEthereumGraphProvider
 import io.defitrack.protocol.kyberswap.apr.KyberswapAPRService
-import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -25,9 +24,9 @@ class KyberswapEthereumPoolingMarketProvider(
             kyberswapPolygonService.getPoolingMarkets().map {
                 async {
                     try {
-                        val token = erC20Resource.getTokenInformation(getNetwork(), it.id)
-                        val token0 = erC20Resource.getTokenInformation(getNetwork(), it.token0.id)
-                        val token1 = erC20Resource.getTokenInformation(getNetwork(), it.token1.id)
+                        val token = getToken(it.id)
+                        val token0 = getToken(it.token0.id)
+                        val token1 = getToken(it.token1.id)
 
                         PoolingMarket(
                             id = "kyberswap-ethereum-${it.id}",

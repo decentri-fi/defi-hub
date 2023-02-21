@@ -10,7 +10,7 @@ import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 
 @Component
-class ABPTPoolingMarketProvider() : PoolingMarketProvider(
+class ABPTPoolingMarketProvider : PoolingMarketProvider(
 ) {
 
     val abptAddress = "0x41a08648c3766f9f9d85598ff102a08f4ef84f84"
@@ -20,8 +20,8 @@ class ABPTPoolingMarketProvider() : PoolingMarketProvider(
 
 
     override suspend fun fetchMarkets(): List<PoolingMarket> {
-        val aave = erC20Resource.getTokenInformation(getNetwork(), aaveAddress)
-        val weth = erC20Resource.getTokenInformation(getNetwork(), wethAddress)
+        val aave = getToken(aaveAddress)
+        val weth = getToken(wethAddress)
 
         return listOf(
             PoolingMarket(

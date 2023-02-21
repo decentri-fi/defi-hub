@@ -6,6 +6,7 @@ import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.ProtocolService
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.FungibleToken
 import io.defitrack.token.MarketSizeService
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.Dispatchers
@@ -13,6 +14,7 @@ import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import java.math.BigDecimal
 import java.math.BigInteger
 import kotlin.time.Duration.Companion.hours
 
@@ -22,7 +24,7 @@ abstract class MarketProvider<T> : ProtocolService {
     val logger: Logger = LoggerFactory.getLogger(this.javaClass)
 
     @Autowired
-    lateinit var erC20Resource: ERC20Resource
+    private lateinit var erC20Resource: ERC20Resource
 
     @Autowired
     lateinit var marketSizeService: MarketSizeService
@@ -77,5 +79,17 @@ abstract class MarketProvider<T> : ProtocolService {
 
     suspend fun getToken(address: String): TokenInformationVO {
         return erC20Resource.getTokenInformation(getNetwork(), address)
+    }
+
+    suspend fun getBalance(token: String, user: String): BigInteger {
+        return erC20Resource.getBalance(getNetwork(), token, user)
+    }
+
+    suspend fun getMarketSize(token: FungibleToken, location: String): BigDecimal {
+        return marketSizeService.getMarketSize(token, location, getNetwork())
+    }
+
+    fun getERC20Resource(): ERC20Resource {
+        return erC20Resource
     }
 }

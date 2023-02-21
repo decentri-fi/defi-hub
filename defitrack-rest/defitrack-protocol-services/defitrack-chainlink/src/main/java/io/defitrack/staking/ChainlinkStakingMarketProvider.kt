@@ -1,15 +1,12 @@
 package io.defitrack.staking
 
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.ChainlinkStakingContract
 import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
-import io.defitrack.token.ERC20Resource
-import io.defitrack.token.MarketSizeService
 import org.springframework.stereotype.Component
 
 @Component
@@ -25,9 +22,7 @@ class ChainlinkStakingMarketProvider : FarmingMarketProvider(
     )
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
-        val chainlinkToken = erC20Resource.getTokenInformation(
-            getNetwork(), link
-        ).toFungibleToken()
+        val chainlinkToken = getToken(link).toFungibleToken()
         return listOf(
             create(
                 name = "Chainlink Staking",

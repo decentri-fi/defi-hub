@@ -21,12 +21,12 @@ class QiDaoArbitrumVaultProvider(
             )
             vault.populateVaultOwners()
 
-            val collateral = erC20Resource.getTokenInformation(getNetwork(), vault.collateral())
+            val collateral = getToken(vault.collateral())
 
             create(
                 name = vault.name(),
                 identifier = vault.address,
-                token = erC20Resource.getTokenInformation(getNetwork(), collateral.address).toFungibleToken(),
+                token = getToken(collateral.address).toFungibleToken(),
                 marketSize = marketSizeService.getMarketSize(
                     collateral.toFungibleToken(),
                     vault.address,

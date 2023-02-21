@@ -30,13 +30,13 @@ class SpiritFantomFarmingMarketProvider(
             spiritFantomService.getMasterchef()
         )
 
-        val reward = erC20Resource.getTokenInformation(getNetwork(), masterchef.rewardToken())
+        val reward = getToken(masterchef.rewardToken())
 
         return masterchef.poolInfos().mapIndexed { index, value ->
 
-            val stakedToken = erC20Resource.getTokenInformation(getNetwork(), value.lpToken)
+            val stakedToken = getToken(value.lpToken)
             val aprCalculator = MinichefStakingAprCalculator(
-                erC20Resource,
+                getERC20Resource(),
                 priceResource,
                 masterchef,
                 index,

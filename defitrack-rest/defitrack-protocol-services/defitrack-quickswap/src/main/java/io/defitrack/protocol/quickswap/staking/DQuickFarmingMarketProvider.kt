@@ -31,11 +31,8 @@ class DQuickFarmingMarketProvider(
     }
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
-
-        val stakedToken = erC20Resource.getTokenInformation(getNetwork(), dquick.address).toFungibleToken()
-        val quickToken =
-            erC20Resource.getTokenInformation(getNetwork(), "0x831753dd7087cac61ab5644b308642cc1c33dc13")
-                .toFungibleToken()
+        val stakedToken = getToken(dquick.address).toFungibleToken()
+        val quickToken = getToken("0x831753dd7087cac61ab5644b308642cc1c33dc13").toFungibleToken()
 
         return listOf(
             create(
@@ -51,7 +48,7 @@ class DQuickFarmingMarketProvider(
                     { user -> dquick.balanceOfMethod(user) }
                 ),
                 investmentPreparer = DQuickStakingInvestmentPreparer(
-                    erC20Resource, dquick
+                    getERC20Resource(), dquick
                 ),
                 farmType = FarmType.LIQUIDITY_MINING
             )

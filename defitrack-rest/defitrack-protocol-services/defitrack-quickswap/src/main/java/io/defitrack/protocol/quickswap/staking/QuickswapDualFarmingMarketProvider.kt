@@ -42,9 +42,9 @@ class QuickswapDualFarmingMarketProvider(
         }.map { pool ->
             async {
                 try {
-                    val stakedToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingTokenAddress())
-                    val rewardTokenA = erC20Resource.getTokenInformation(getNetwork(), pool.rewardsTokenAddressA())
-                    val rewardTokenB = erC20Resource.getTokenInformation(getNetwork(), pool.rewardsTokenAddressB())
+                    val stakedToken = getToken(pool.stakingTokenAddress())
+                    val rewardTokenA = getToken(pool.rewardsTokenAddressA())
+                    val rewardTokenB = getToken(pool.rewardsTokenAddressB())
 
                     create(
                         identifier = pool.address,

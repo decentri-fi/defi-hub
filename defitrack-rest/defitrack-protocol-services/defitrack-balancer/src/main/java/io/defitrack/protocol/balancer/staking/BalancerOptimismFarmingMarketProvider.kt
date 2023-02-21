@@ -30,7 +30,7 @@ class BalancerOptimismFarmingMarketProvider(
         gaugeProvider.getGauges().map {
             async {
                 try {
-                    val stakedToken = erC20Resource.getTokenInformation(getNetwork(), it.poolAddress)
+                    val stakedToken = getToken(it.poolAddress)
                     val gauge = BalancerGaugeContract(
                         getBlockchainGateway(),
                         balancerGaugeContractAbi,
@@ -67,7 +67,7 @@ class BalancerOptimismFarmingMarketProvider(
             try {
                 val rewardToken = balancerGaugeContract.getRewardToken(it)
                 if (rewardToken != "0x0000000000000000000000000000000000000000") {
-                    erC20Resource.getTokenInformation(getNetwork(), rewardToken)
+                    getToken(rewardToken)
                 } else {
                     null
                 }

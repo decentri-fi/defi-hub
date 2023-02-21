@@ -26,7 +26,7 @@ class RibbonEthereumFarmingMarketProvider(
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         return ribbonEthereumGraphProvider.getVaults().map {
-            val stakedToken = erC20Resource.getTokenInformation(getNetwork(), it.underlyingAsset)
+            val stakedToken = getToken(it.underlyingAsset)
             val vault = RibbonVaultContract(
                 getBlockchainGateway(),
                 ribbonVaultAbi,

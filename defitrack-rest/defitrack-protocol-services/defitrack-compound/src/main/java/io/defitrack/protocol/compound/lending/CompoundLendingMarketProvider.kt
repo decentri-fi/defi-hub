@@ -6,8 +6,8 @@ import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.lending.LendingMarketProvider
-import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.market.lending.domain.LendingMarket
+import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
@@ -15,7 +15,6 @@ import io.defitrack.protocol.compound.CompoundComptrollerContract
 import io.defitrack.protocol.compound.CompoundEthereumService
 import io.defitrack.protocol.compound.CompoundTokenContract
 import io.defitrack.protocol.compound.lending.invest.CompoundLendingInvestmentPreparer
-import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -51,9 +50,7 @@ class CompoundLendingMarketProvider(
 
     private suspend fun toLendingMarket(ctokenContract: CompoundTokenContract): LendingMarket? {
         return try {
-            ctokenContract.underlyingAddress().let { tokenAddress ->
-                erC20Resource.getTokenInformation(getNetwork(), tokenAddress)
-            }.let { underlyingToken ->
+            getToken(ctokenContract.underlyingAddress()).let { underlyingToken ->
                 val exchangeRate = ctokenContract.exchangeRate()
                 create(
                     identifier = ctokenContract.address,
@@ -81,7 +78,7 @@ class CompoundLendingMarketProvider(
                     ),
                     investmentPreparer = CompoundLendingInvestmentPreparer(
                         ctokenContract,
-                        erC20Resource
+                        getERC20Resource()
                     )
                 )
             }

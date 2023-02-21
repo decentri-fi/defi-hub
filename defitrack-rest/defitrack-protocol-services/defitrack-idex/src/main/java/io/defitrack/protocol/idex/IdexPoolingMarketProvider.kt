@@ -4,7 +4,6 @@ import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
-import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -23,9 +22,9 @@ class IdexPoolingMarketProvider(
                 try {
                     if (it.reserveUsd > BigDecimal.valueOf(10000)) {
                         try {
-                            val token = erC20Resource.getTokenInformation(getNetwork(), it.liquidityToken)
-                            val token0 = erC20Resource.getTokenInformation(getNetwork(), it.tokenA)
-                            val token1 = erC20Resource.getTokenInformation(getNetwork(), it.tokenB)
+                            val token = getToken(it.liquidityToken)
+                            val token0 = getToken(it.tokenA)
+                            val token1 = getToken(it.tokenB)
 
                             PoolingMarket(
                                 network = getNetwork(),

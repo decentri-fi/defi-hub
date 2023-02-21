@@ -47,8 +47,8 @@ abstract class AaveV3LendingMarketProvider(
 
                     val reserveData = poolDataProvider.getReserveData(it)
                     val reserveTokenAddresses = poolDataProvider.getReserveTokensAddresses(it)
-                    val aToken = erC20Resource.getTokenInformation(getNetwork(), reserveTokenAddresses.aTokenAddress)
-                    val underlying = erC20Resource.getTokenInformation(getNetwork(), it)
+                    val aToken = getToken(reserveTokenAddresses.aTokenAddress)
+                    val underlying = getToken(it)
                     val totalSupply = poolDataProvider.getATokenTotalSupply(it)
 
                     create(
@@ -60,7 +60,7 @@ abstract class AaveV3LendingMarketProvider(
                         investmentPreparer = AaveV3LendingInvestmentPreparer(
                             underlying.address,
                             pool,
-                            erC20Resource
+                            getERC20Resource()
                         ),
                         marketSize = priceResource.calculatePrice(
                             PriceRequest(
@@ -72,7 +72,7 @@ abstract class AaveV3LendingMarketProvider(
                         ).toBigDecimal(),
                         positionFetcher = PositionFetcher(
                             aToken.address,
-                            { user -> erC20Resource.balanceOfFunction(aToken.address, user, getNetwork()) },
+                            { user -> getERC20Resource().balanceOfFunction(aToken.address, user, getNetwork()) },
                         )
                     )
                 } catch (ex: Exception) {

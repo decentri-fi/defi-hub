@@ -6,8 +6,8 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.lending.LendingMarketProvider
-import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.market.lending.domain.LendingMarket
+import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
@@ -16,7 +16,6 @@ import io.defitrack.protocol.aave.v2.contract.LendingPoolAddressProviderContract
 import io.defitrack.protocol.aave.v2.contract.LendingPoolContract
 import io.defitrack.protocol.aave.v2.domain.AaveReserve
 import io.defitrack.protocol.aave.v2.lending.invest.AaveV2LendingInvestmentPreparer
-import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -50,8 +49,8 @@ class AaveV2PolygonLendingMarketProvider(
             }.map {
                 async {
                     try {
-                        val aToken = erC20Resource.getTokenInformation(getNetwork(), it.aToken.id)
-                        val token = erC20Resource.getTokenInformation(getNetwork(), it.underlyingAsset)
+                        val aToken = getToken(it.aToken.id)
+                        val token = getToken(it.underlyingAsset)
                         create(
                             identifier = it.id,
                             token = token.toFungibleToken(),
@@ -62,12 +61,12 @@ class AaveV2PolygonLendingMarketProvider(
                             investmentPreparer = AaveV2LendingInvestmentPreparer(
                                 token.address,
                                 lendingPoolContract,
-                                erC20Resource
+                                getERC20Resource()
                             ),
                             positionFetcher = PositionFetcher(
                                 aToken.address,
                                 { user ->
-                                    erC20Resource.balanceOfFunction(aToken.address, user, getNetwork())
+                                    getERC20Resource().balanceOfFunction(aToken.address, user, getNetwork())
                                 }
                             )
                         )
@@ -83,7 +82,7 @@ class AaveV2PolygonLendingMarketProvider(
         aToken: TokenInformationVO,
         underlyingToken: TokenInformationVO
     ): Double {
-        val underlying = erC20Resource.getTokenInformation(getNetwork(), underlyingToken.address)
+        val underlying = getToken(underlyingToken.address)
         return priceResource.calculatePrice(
             PriceRequest(
                 underlying.address,

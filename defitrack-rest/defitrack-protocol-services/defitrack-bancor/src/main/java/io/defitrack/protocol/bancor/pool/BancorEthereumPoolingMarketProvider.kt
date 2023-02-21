@@ -62,7 +62,7 @@ class BancorEthereumPoolingMarketProvider(
                         tokenType = TokenType.BANCOR,
                         marketSize = it.totalValueLockedUSD,
                         investmentPreparer = BancorPoolInvestmentPreparer(
-                            erC20Resource, bancorNetworkContract, underlying.address
+                            getERC20Resource(), bancorNetworkContract, underlying.address
                         ),
                         positionFetcher = defaultPositionFetcher(token.address)
                     )

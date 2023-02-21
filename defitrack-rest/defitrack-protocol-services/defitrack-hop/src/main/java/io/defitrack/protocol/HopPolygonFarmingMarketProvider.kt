@@ -40,8 +40,8 @@ class HopPolygonFarmingMarketProvider(
                 stakingReward
             )
 
-            val stakedToken = erC20Resource.getTokenInformation(getNetwork(), pool.stakingTokenAddress())
-            val rewardToken = erC20Resource.getTokenInformation(getNetwork(), pool.rewardsTokenAddress())
+            val stakedToken = getToken(pool.stakingTokenAddress())
+            val rewardToken = getToken(pool.rewardsTokenAddress())
 
             return create(
                 identifier = pool.address,
