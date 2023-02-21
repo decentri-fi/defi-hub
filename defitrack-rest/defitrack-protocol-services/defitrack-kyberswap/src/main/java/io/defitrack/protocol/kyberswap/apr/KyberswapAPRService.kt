@@ -1,10 +1,10 @@
 package io.defitrack.protocol.kyberswap.apr
 
 import io.defitrack.common.network.Network
-import io.defitrack.protocol.kyberswap.KyberswapEthereumGraphProvider
-import io.defitrack.protocol.kyberswap.domain.PairDayData
-import io.defitrack.protocol.kyberswap.KyberswapPolygonGraphProvider
-import io.defitrack.protocol.kyberswap.domain.Pool
+import io.defitrack.protocol.kyberswap.graph.KyberswapEthereumGraphProvider
+import io.defitrack.protocol.kyberswap.graph.domain.PairDayData
+import io.defitrack.protocol.kyberswap.graph.KyberswapPolygonGraphProvider
+import io.defitrack.protocol.kyberswap.graph.domain.Pool
 import io.github.reactivecircus.cache4k.Cache
 import org.springframework.stereotype.Component
 import java.math.BigDecimal

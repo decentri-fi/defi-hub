@@ -1,46 +1,48 @@
-package io.defitrack.pooling
+package io.defitrack.protocol.kyberswap.pooling
 
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.VelodromeOptimismService
+import io.defitrack.protocol.kyberswap.contract.KyberswapElasticContract
 import io.defitrack.token.TokenType
-import io.defitrack.uniswap.v2.PairFactoryContract
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 
 @Component
-class VelodromeOptimismPoolingMarketProvider(
-    private val velodromeOptimismService: VelodromeOptimismService
+class KyberElasticPoolingMarketProvider(
+
 ) : PoolingMarketProvider() {
 
+    val kyberswapElastic by lazy {
+        runBlocking {
+            KyberswapElasticContract(
+                getBlockchainGateway(),
+                "0xb85ebe2e4ea27526f817ff33fb55fb240057c03f"
+            )
+        }
+    }
 
     override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
-        val pairFactoryContract = PairFactoryContract(
-            blockchainGateway = getBlockchainGateway(),
-            contractAddress = velodromeOptimismService.getPoolFactory()
-        )
-
-        return@coroutineScope pairFactoryContract.allPairs().map {
+        kyberswapElastic.allPairs().map { poolInfo ->
             async {
-
-                val poolingToken = getToken(it)
+                val poolingToken = getToken(poolInfo.address)
                 val tokens = poolingToken.underlyingTokens
 
                 try {
                     PoolingMarket(
-                        id = "pooling-velodrome-optimism-$it",
+                        id = "pooling-velodrome-optimism-${poolInfo.address}",
                         network = getNetwork(),
                         protocol = getProtocol(),
                         marketSize = getMarketSize(
                             poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
-                            it
+                            poolInfo.address
                         ),
-                        address = it,
+                        address = poolInfo.address,
                         name = poolingToken.name,
                         breakdown = defaultBreakdown(tokens, poolingToken.address),
                         symbol = poolingToken.symbol,
@@ -48,16 +50,15 @@ class VelodromeOptimismPoolingMarketProvider(
                         tokenType = TokenType.VELODROME
                     )
                 } catch (ex: Exception) {
-                    logger.error("Error while fetching pooling market $it", ex)
+                    logger.error("Error while fetching pooling market ${poolInfo.address}", ex)
                     null
                 }
             }
         }.awaitAll().filterNotNull()
     }
 
-
     override fun getProtocol(): Protocol {
-        return Protocol.VELODROME
+        return Protocol.KYBER_SWAP
     }
 
     override fun getNetwork(): Network {

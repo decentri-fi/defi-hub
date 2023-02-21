@@ -4,7 +4,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>kyberswap</artifactId>
-    <packaging>pom</packaging>
 
     <parent>
         <groupId>io.defitrack</groupId>
@@ -12,9 +11,23 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <modules>
-        <module>kyberswap-common</module>
-        <module>kyberswap-ethereum</module>
-        <module>kyberswap-polygon</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>protocol</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>ethereum</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>polygon</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>optimism</artifactId>
+        </dependency>
+    </dependencies>
 </project>

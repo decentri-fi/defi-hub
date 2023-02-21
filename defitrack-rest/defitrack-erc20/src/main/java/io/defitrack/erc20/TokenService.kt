@@ -3,7 +3,6 @@ package io.defitrack.erc20
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.protocolspecific.*
 import io.defitrack.logo.LogoService
-import io.defitrack.market.pooling.contract.LPTokenContract
 import io.defitrack.nativetoken.NativeTokenService
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.TokenInformation
@@ -21,15 +20,16 @@ import kotlin.system.measureTimeMillis
 
 @Service
 class TokenService(
-    private val erc20Service: ERC20Service,
+    private val erc20ContractReader: ERC20ContractReader,
     private val erC20Repository: ERC20Repository,
-    private val LPtokenService: LPtokenService,
+    private val LpContractReader: LpContractReader,
     private val hopTokenService: HopTokenService,
     private val curveTokenService: CurveTokenService,
     private val setProtocolTokenService: SetProtocolTokenService,
     private val balancerTokenService: BalancerTokenService,
     private val nativeTokenService: NativeTokenService,
     private val velodromeTokenService: VelodromeTokenService,
+    private val kyberElasticTokenService: KyberElasticTokenService,
     private val logoService: LogoService
 ) {
 
@@ -70,67 +70,6 @@ class TokenService(
         return tokenCache.get("tokens-${network}") ?: emptyList()
     }
 
-    suspend fun getType(lp: LPTokenContract): TokenType {
-        val symbol = lp.symbol()
-        return when {
-            symbol == "SLP" -> {
-                TokenType.SUSHISWAP
-            }
-
-            symbol == "UNI-V2" -> {
-                TokenType.UNISWAP
-            }
-
-            symbol == "WLP" -> {
-                TokenType.WAULT
-            }
-
-            symbol == "spLP" -> {
-                TokenType.SPOOKY
-            }
-
-            symbol == "SPIRIT-LP" -> {
-                TokenType.SPIRIT
-            }
-
-            symbol == "DFYNLP" -> {
-                TokenType.DFYN
-            }
-
-            symbol == "APE-LP" -> {
-                TokenType.APE
-            }
-
-            isBalancerLp(lp.address, lp.blockchainGateway.network) -> {
-                TokenType.BALANCER
-            }
-
-            isSetLp(lp.address, lp.blockchainGateway.network) -> {
-                TokenType.SET
-            }
-
-            isVelodromeLp(lp.address, lp.blockchainGateway.network) -> {
-                TokenType.VELODROME
-            }
-
-            isHopLp(symbol) -> {
-                TokenType.HOP
-            }
-
-            isCurveToken(lp.name()) -> {
-                TokenType.CURVE
-            }
-
-            isKyberDMMLP(symbol) -> {
-                TokenType.KYBER
-            }
-
-            else -> {
-                TokenType.SINGLE
-            }
-        }
-    }
-
     private fun isCurveToken(name: String): Boolean {
         return name.lowercase().startsWith("curve.fi".lowercase())
     }
@@ -147,6 +86,10 @@ class TokenService(
         return velodromeTokenService.isVelodromeToken(address, network)
     }
 
+    private suspend fun isKyberElasticLp(address: String, network: Network): Boolean {
+        return kyberElasticTokenService.isKyberElasticToken(address, network)
+    }
+
     val tokenInformationCache = Cache.Builder().build<String, TokenInformation>()
 
     suspend fun getTokenInformation(address: String, network: Network): TokenInformation {
@@ -154,7 +97,7 @@ class TokenService(
             return nativeTokenService.getNativeToken(network)
         }
         return tokenInformationCache.get("${address}-${network}") {
-            val token = erc20Service.getERC20(network, address)
+            val token = erc20ContractReader.getERC20(network, address)
             when {
                 (network == Network.ETHEREUM && token.address.lowercase() == "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2") -> {
                     TokenInformation(
@@ -183,31 +126,34 @@ class TokenService(
                 }
 
                 (token.symbol) == "SLP" -> {
-                    fromLP(Protocol.SUSHISWAP, network, token)
+                    fromLP(Protocol.SUSHISWAP, network, token, TokenType.SUSHISWAP)
                 }
 
                 (token.symbol) == "UNI-V2" -> {
-                    fromLP(if (network == Network.POLYGON) Protocol.QUICKSWAP else Protocol.UNISWAP, network, token)
+                    fromLP(
+                        if (network == Network.POLYGON) Protocol.QUICKSWAP else Protocol.UNISWAP, network, token,
+                        if (network == Network.POLYGON) TokenType.QUICKSWAP else TokenType.UNISWAP
+                    )
                 }
 
                 (token.symbol) == "spLP" -> {
-                    fromLP(Protocol.SPOOKY, network, token)
+                    fromLP(Protocol.SPOOKY, network, token, TokenType.SPOOKY)
                 }
 
                 (token.symbol == "DFYNLP") -> {
-                    fromLP(Protocol.DFYN, network, token)
+                    fromLP(Protocol.DFYN, network, token, TokenType.DFYN)
                 }
 
                 (token.symbol == "APE-LP") -> {
-                    fromLP(Protocol.APESWAP, network, token)
+                    fromLP(Protocol.APESWAP, network, token, TokenType.APE)
                 }
 
                 (token.symbol == "SPIRIT-LP") -> {
-                    fromLP(Protocol.SPIRITSWAP, network, token)
+                    fromLP(Protocol.SPIRITSWAP, network, token, TokenType.SPIRIT)
                 }
 
                 isKyberDMMLP(token.symbol) -> {
-                    fromLP(Protocol.KYBER_SWAP, network, token)
+                    fromLP(Protocol.KYBER_SWAP, network, token, TokenType.KYBER)
                 }
 
                 isBalancerLp(token.address, network) -> {
@@ -215,7 +161,11 @@ class TokenService(
                 }
 
                 isVelodromeLp(token.address, network) -> {
-                    fromLP(Protocol.VELODROME, network, token)
+                    fromLP(Protocol.VELODROME, network, token, TokenType.VELODROME)
+                }
+
+                isKyberElasticLp(token.address, network) -> {
+                    fromLP(Protocol.KYBER_SWAP, network, token, TokenType.KYBER_ELASTIC)
                 }
 
                 isSetLp(token.address, network) -> {
@@ -254,8 +204,8 @@ class TokenService(
         return symbol.startsWith("HOP-LP")
     }
 
-    suspend fun fromLP(protocol: Protocol, network: Network, erc20: ERC20): TokenInformation {
-        val lp = LPtokenService.getLP(network, erc20.address)
+    suspend fun fromLP(protocol: Protocol, network: Network, erc20: ERC20, tokenType: TokenType): TokenInformation {
+        val lp = LpContractReader.getLP(network, erc20.address)
 
         val token0 = getTokenInformation(
             lp.token0(), network
@@ -270,7 +220,7 @@ class TokenService(
             address = erc20.address,
             decimals = erc20.decimals,
             totalSupply = lp.totalSupply(),
-            type = getType(lp),
+            type = tokenType,
             protocol = protocol,
             underlyingTokens = listOf(token0, token1),
             network = network

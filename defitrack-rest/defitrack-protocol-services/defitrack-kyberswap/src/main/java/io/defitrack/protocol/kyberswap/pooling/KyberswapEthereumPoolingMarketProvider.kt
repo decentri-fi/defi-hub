@@ -4,7 +4,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.kyberswap.KyberswapEthereumGraphProvider
+import io.defitrack.protocol.kyberswap.graph.KyberswapEthereumGraphProvider
 import io.defitrack.protocol.kyberswap.apr.KyberswapAPRService
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.Dispatchers

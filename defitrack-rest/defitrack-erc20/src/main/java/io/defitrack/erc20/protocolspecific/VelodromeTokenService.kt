@@ -2,8 +2,8 @@ package io.defitrack.erc20.protocolspecific
 
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.protocol.contract.PairFactoryContract
 import io.defitrack.protocol.VelodromeOptimismService
+import io.defitrack.uniswap.v2.PairFactoryContract
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 

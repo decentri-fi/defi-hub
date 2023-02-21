@@ -3,7 +3,6 @@ package io.defitrack.abi
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Bool
-import org.web3j.abi.datatypes.Type
 import org.web3j.abi.datatypes.Utf8String
 import org.web3j.abi.datatypes.generated.*
 import java.math.BigInteger
@@ -48,6 +47,9 @@ class TypeUtils {
             return TypeReference.create(Uint40::class.java)
         }
 
+        fun uint32(): TypeReference<Uint32> {
+            return TypeReference.create(Uint32::class.java)
+        }
 
         fun bool(): TypeReference<Bool> {
             return TypeReference.create(Bool::class.java)

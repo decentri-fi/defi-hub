@@ -1,7 +1,7 @@
 package io.defitrack.erc20.protocolspecific
 
 import io.defitrack.common.network.Network
-import io.defitrack.erc20.ERC20Service
+import io.defitrack.erc20.ERC20ContractReader
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.crv.CurvePoolGraphProvider
 import io.defitrack.token.TokenInformation
@@ -11,14 +11,14 @@ import org.springframework.stereotype.Component
 @Component
 class CurveTokenService(
     private val curvePoolGraphProviders: List<CurvePoolGraphProvider>,
-    private val erC20Service: ERC20Service
+    private val erC20ContractReader: ERC20ContractReader
 ) {
     suspend fun getTokenInformation(address: String, network: Network): TokenInformation {
         return getCurveInfo(address, network) ?: getDefaultInfo(address, network)
     }
 
     private suspend fun getDefaultInfo(address: String, network: Network): TokenInformation {
-        return erC20Service.getERC20(network, address).toToken().copy(
+        return erC20ContractReader.getERC20(network, address).toToken().copy(
             type = TokenType.CURVE,
             protocol = Protocol.CURVE
         )
@@ -33,10 +33,10 @@ class CurveTokenService(
         return if (pool != null) {
             try {
                 val underlyingTokens = pool.coins.map { coin ->
-                    erC20Service.getERC20(network, coin).toToken()
+                    erC20ContractReader.getERC20(network, coin).toToken()
                 }
 
-                val token = erC20Service.getERC20(network, address)
+                val token = erC20ContractReader.getERC20(network, address)
 
                 TokenInformation(
                     name = token.name,

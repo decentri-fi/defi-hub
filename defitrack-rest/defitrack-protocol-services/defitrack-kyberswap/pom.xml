@@ -19,11 +19,12 @@
         </dependency>
         <dependency>
             <groupId>io.defitrack</groupId>
-            <artifactId>kyberswap-ethereum</artifactId>
+            <artifactId>kyberswap</artifactId>
         </dependency>
         <dependency>
             <groupId>io.defitrack</groupId>
-            <artifactId>kyberswap-polygon</artifactId>
+            <artifactId>optimism</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

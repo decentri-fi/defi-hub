@@ -77,7 +77,7 @@ abstract class BeefyFarmingMarketProvider(
                     }
                 ),
                 investmentPreparer = BeefyStakingInvestmentPreparer(contract, getERC20Resource()),
-                farmType = FarmType.VAULT
+                farmType = FarmType.YIELD_OPTIMIZING_AUTOCOMPOUNDER
             )
         } catch (ex: Exception) {
             logger.error("Unable to get beefy farm ${beefyVault.id}")

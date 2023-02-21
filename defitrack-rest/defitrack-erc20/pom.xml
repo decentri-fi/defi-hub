@@ -25,6 +25,7 @@
             <groupId>io.defitrack</groupId>
             <artifactId>crv</artifactId>
         </dependency>
+
         <dependency>
             <groupId>io.defitrack</groupId>
             <artifactId>set</artifactId>
@@ -32,6 +33,10 @@
         <dependency>
             <groupId>io.defitrack</groupId>
             <artifactId>velodrome</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>kyberswap</artifactId>
         </dependency>
         <dependency>
             <groupId>io.defitrack</groupId>

@@ -2,7 +2,7 @@ package io.defitrack.erc20.protocolspecific
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.erc20.ERC20Service
+import io.defitrack.erc20.ERC20ContractReader
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.HopService
 import io.defitrack.protocol.Protocol
@@ -16,7 +16,7 @@ class HopTokenService(
     private val abiResource: ABIResource,
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val hopService: HopService,
-    private val erC20Service: ERC20Service
+    private val erC20ContractReader: ERC20ContractReader
 ) {
 
     suspend fun getTokenInformation(
@@ -33,8 +33,8 @@ class HopTokenService(
                 address
             )
 
-            val token0 = erC20Service.getERC20(network, hopLpToken.canonicalToken)
-            val token1 = erC20Service.getERC20(network, hopLpToken.hToken)
+            val token0 = erC20ContractReader.getERC20(network, hopLpToken.canonicalToken)
+            val token1 = erC20ContractReader.getERC20(network, hopLpToken.hToken)
 
             TokenInformation(
                 name = saddleToken.name(),
