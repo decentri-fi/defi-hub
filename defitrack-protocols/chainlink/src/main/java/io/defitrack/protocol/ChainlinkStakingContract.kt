@@ -22,4 +22,12 @@ class ChainlinkStakingContract(
             listOf(uint256())
         )
     }
+
+    fun getBaseReward(user: String): Function {
+        return createFunction(
+            method = "getBaseReward",
+            inputs = listOf(user.toAddress()),
+            outputs = listOf(uint256())
+        )
+    }
 }

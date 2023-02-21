@@ -48,7 +48,7 @@ class ChainlinkStakingMarketProvider(
                     chainlinkStakingContract.address,
                     { user -> chainlinkStakingContract.getStake(user) }
                 ),
-                farmType = FarmType.STAKING
+                farmType = FarmType.STAKING,
             )
         )
     }
