@@ -40,3 +40,4 @@ swapfish
 pooltogether
 velodrome
 lido
+tokemak
