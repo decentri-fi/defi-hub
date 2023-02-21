@@ -1,6 +1,6 @@
 package io.defitrack.token
 
-class FungibleToken(
+open class FungibleToken(
     val address: String,
     val name: String,
     val decimals: Int,
