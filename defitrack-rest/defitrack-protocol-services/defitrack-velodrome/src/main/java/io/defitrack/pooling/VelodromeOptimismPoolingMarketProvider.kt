@@ -4,7 +4,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
-import io.defitrack.protocol.PairFactoryContract
+import io.defitrack.protocol.contract.PairFactoryContract
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.VelodromeOptimismService
 import io.defitrack.token.TokenType
@@ -14,7 +14,7 @@ import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 
 @Component
-class VelodromePoolingMarketProvider(
+class VelodromeOptimismPoolingMarketProvider(
     private val velodromeOptimismService: VelodromeOptimismService
 ) : PoolingMarketProvider() {
 
@@ -41,7 +41,7 @@ class VelodromePoolingMarketProvider(
                             it
                         ),
                         address = it,
-                        name = "Velodrome ${poolingToken.name}",
+                        name = poolingToken.name,
                         breakdown = defaultBreakdown(tokens, poolingToken.address),
                         symbol = poolingToken.symbol,
                         tokens = poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
