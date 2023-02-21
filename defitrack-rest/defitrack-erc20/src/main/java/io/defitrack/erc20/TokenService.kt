@@ -31,7 +31,7 @@ class TokenService(
     val tokenCache: Cache<String, List<TokenInformation>> = Cache.Builder().build()
 
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
-    fun refreshCaches() {
+    fun refreshCaches() = runBlocking {
         refreshCache()
     }
 
@@ -54,8 +54,9 @@ class TokenService(
                 }.awaitAll().filterNotNull()
                 tokenCache.put("tokens-${network}", tokens)
             }
-            logger.info("refreshing token cache for ${network} took ${millis / 1000}s")
+            logger.info("refreshing token cache for $network took ${millis / 1000}s (${tokenCache.get("tokens-${network}")?.size ?: 0} tokens)")
         }
+        logger.info("done refreshing tokens")
     }
 
 

@@ -34,7 +34,7 @@ class ERC20Repository(
     }
 
     @PostConstruct
-    fun populateTokens() {
+    fun populateTokens() = runBlocking {
         tokenList = listOf(
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/polygon/quickswap-default.tokenlist.json",
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/polygon/polygon.vetted.tokenlist.json",
@@ -55,20 +55,19 @@ class ERC20Repository(
         })
     }
 
-    private fun fetchFromTokenList(url: String): List<Pair<Network, String>> {
-        return runBlocking {
-            val result: String = client.get(with(HttpRequestBuilder()) {
-                url(url)
-                this
-            }).body()
-            val tokens = objectMapper.readValue(
-                result,
-                TokenListResponse::class.java
-            )
+    private suspend fun fetchFromTokenList(url: String): List<Pair<Network, String>> {
+        val result: String = client.get(with(HttpRequestBuilder()) {
+            url(url)
+            this
+        }).body()
+        val tokens = objectMapper.readValue(
+            result,
+            TokenListResponse::class.java
+        )
 
-            logger.info("imported $url")
-            tokens
-        }.tokens.mapNotNull { entry ->
+        logger.info("imported $url")
+
+        return tokens.tokens.mapNotNull { entry ->
             Network.fromChainId(entry.chainId)?.let { network ->
                 network to entry.address
             }
