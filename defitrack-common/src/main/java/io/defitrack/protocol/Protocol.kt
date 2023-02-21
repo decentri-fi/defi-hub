@@ -10,6 +10,13 @@ enum class Protocol(
     val enabled: Boolean = true,
     val networks: List<Network>
 ) {
+    SWAPFISH(
+        logo = "swapfish.png",
+        slug = "swapfish",
+        primitives = listOf(DefiPrimitive.FARMING),
+        website = "https://swapfish.fi",
+        networks = listOf(Network.ARBITRUM)
+    ),
     POOLTOGETHER(
         logo = "pooltogether.png",
         slug = "pooltogether",
@@ -98,7 +105,12 @@ enum class Protocol(
         logo = "aave.png",
         slug = "aave",
         website = "https://aave.com/",
-        primitives = listOf(DefiPrimitive.LENDING, DefiPrimitive.BORROWING, DefiPrimitive.FARMING, DefiPrimitive.POOLING),
+        primitives = listOf(
+            DefiPrimitive.LENDING,
+            DefiPrimitive.BORROWING,
+            DefiPrimitive.FARMING,
+            DefiPrimitive.POOLING
+        ),
         networks = listOf(Network.ETHEREUM, Network.POLYGON, Network.ARBITRUM, Network.OPTIMISM)
     ),
     HUMANDAO(
