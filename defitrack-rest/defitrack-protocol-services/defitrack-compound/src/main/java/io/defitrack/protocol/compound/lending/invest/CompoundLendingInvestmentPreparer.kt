@@ -4,7 +4,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.invest.PrepareInvestmentCommand
 import io.defitrack.market.farming.domain.InvestmentPreparer
 import io.defitrack.network.toVO
-import io.defitrack.protocol.compound.CompoundTokenContract
+import io.defitrack.protocol.compound.v2.contract.CompoundTokenContract
 import io.defitrack.token.ERC20Resource
 import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.Deferred
