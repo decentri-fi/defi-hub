@@ -35,7 +35,6 @@ class DefaultPoolingPositionRestController(
                 try {
                     it.userPoolings(address)
                 } catch (ex: Exception) {
-                    logger.error("Something went wrong trying to fetch the user poolings: ${ex.message}")
                     emptyList()
                 }
             }

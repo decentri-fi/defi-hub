@@ -35,15 +35,20 @@ class DefaultPoolingMarketRestController(
     }
 
     @GetMapping(value = ["/all-markets"])
-    fun allMarkets(): List<PoolingMarketVO> = runBlocking {
-        poolingMarketProviders.map {
-            async {
-                it.getMarkets().map {
-                    it.toVO()
+    fun allMarkets(@RequestParam(required = false, name = "network") network: Network?): List<PoolingMarketVO> =
+        runBlocking {
+            poolingMarketProviders
+                .filter {
+                    network?.let { network -> it.getNetwork() == network } ?: true
                 }
-            }
-        }.awaitAll().flatten()
-    }
+                .map {
+                    async {
+                        it.getMarkets().map {
+                            it.toVO()
+                        }
+                    }
+                }.awaitAll().flatten()
+        }
 
 
     @PostMapping(value = ["/markets/{id}/invest"])
