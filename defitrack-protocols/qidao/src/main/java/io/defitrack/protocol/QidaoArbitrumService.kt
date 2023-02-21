@@ -11,5 +11,4 @@ class QidaoArbitrumService {
             "0xb237f4264938f0903f5ec120bb1aa4bee3562fff"
         )
     }
-
 }
