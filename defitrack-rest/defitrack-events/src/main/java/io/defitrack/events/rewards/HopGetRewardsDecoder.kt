@@ -15,9 +15,8 @@ import java.math.BigInteger
 
 
 @Component
-class HopRewardPairEventDecoder(
-    private val transferEventDecoder: EventDecoder,
-    private val hopPolygonService: HopPolygonService
+class HopGetRewardsDecoder(
+    hopPolygonService: HopPolygonService
 ) : EventDecoder() {
 
     val pairMap = mapOf(

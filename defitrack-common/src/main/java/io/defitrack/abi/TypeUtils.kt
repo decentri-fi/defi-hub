@@ -1,9 +1,7 @@
 package io.defitrack.abi
 
 import org.web3j.abi.TypeReference
-import org.web3j.abi.datatypes.Address
-import org.web3j.abi.datatypes.Bool
-import org.web3j.abi.datatypes.Utf8String
+import org.web3j.abi.datatypes.*
 import org.web3j.abi.datatypes.generated.*
 import java.math.BigInteger
 
