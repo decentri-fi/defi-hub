@@ -51,7 +51,6 @@ class ApeswapPolygonPoolingMarketProvider(
                             if (marketSize < BigDecimal.valueOf(10000))
                                 return@async null
 
-                            logger.info("got $pool")
                             create(
                                 identifier = pool,
                                 address = pool,
