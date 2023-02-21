@@ -54,6 +54,7 @@
         <module>qidao</module>
         <module>pooltogether</module>
         <module>velodrome</module>
+        <module>lido</module>
     </modules>
 
     <dependencyManagement>
