@@ -3,7 +3,7 @@ package io.defitrack.staking
 import io.defitrack.common.network.Network
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.protocol.FarmType
+import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import org.springframework.stereotype.Component
 
@@ -22,7 +22,7 @@ class VeVeloStakingMarketProvider : FarmingMarketProvider() {
                 rewardTokens = listOf(getToken(veVelo).toFungibleToken()),
                 vaultType = "veVELO",
                 marketSize = getMarketSize(veloToken.toFungibleToken(), veVelo),
-                farmType = FarmType.VOTE_ESCROW
+                farmType = ContractType.VOTE_ESCROW
             )
         )
     }

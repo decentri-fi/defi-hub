@@ -3,9 +3,8 @@ package io.defitrack.protocol.yearn
 import io.defitrack.common.network.Network
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.protocol.FarmType
+import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
-import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Component
 
 @Component
@@ -21,7 +20,7 @@ class YearnFarmingMarketProvider(
                 stakedToken = stakedtoken,
                 rewardTokens = listOf(stakedtoken),
                 vaultType = "yearn-v2",
-                farmType = FarmType.VAULT
+                farmType = ContractType.VAULT
             )
         }
     }

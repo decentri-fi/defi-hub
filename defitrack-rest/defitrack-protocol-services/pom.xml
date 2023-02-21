@@ -23,6 +23,7 @@
         <module>defitrack-bancor</module>
         <module>defitrack-beefy</module>
         <module>defitrack-compound</module>
+        <module>defitrack-cowswap</module>
         <module>defitrack-convex</module>
         <module>defitrack-curve</module>
         <module>defitrack-dfyn</module>

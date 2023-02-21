@@ -8,7 +8,7 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
-import io.defitrack.protocol.FarmType
+import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
 import io.defitrack.protocol.beefy.domain.BeefyVault
@@ -77,7 +77,7 @@ abstract class BeefyFarmingMarketProvider(
                     }
                 ),
                 investmentPreparer = BeefyStakingInvestmentPreparer(contract, getERC20Resource()),
-                farmType = FarmType.YIELD_OPTIMIZING_AUTOCOMPOUNDER
+                farmType = ContractType.YIELD_OPTIMIZING_AUTOCOMPOUNDER
             )
         } catch (ex: Exception) {
             logger.error("Unable to get beefy farm ${beefyVault.id}")

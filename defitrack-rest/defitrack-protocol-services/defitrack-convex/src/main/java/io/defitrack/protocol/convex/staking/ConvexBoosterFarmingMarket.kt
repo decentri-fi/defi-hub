@@ -4,7 +4,7 @@ import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.protocol.FarmType
+import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.convex.ConvexEthereumService
 import io.defitrack.protocol.convex.contract.ConvexBoosterContract
@@ -40,7 +40,7 @@ class ConvexBoosterFarmingMarket(
                 vaultType = "convex-crv-rewards",
                 stakedToken = stakedToken.toFungibleToken(),
                 rewardTokens = emptyList(),
-                farmType = FarmType.STAKING
+                farmType = ContractType.STAKING
             )
         }
     }

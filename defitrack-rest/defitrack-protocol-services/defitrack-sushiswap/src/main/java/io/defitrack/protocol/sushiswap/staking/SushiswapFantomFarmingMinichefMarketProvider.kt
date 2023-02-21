@@ -8,7 +8,7 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
-import io.defitrack.protocol.FarmType
+import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SushiFantomService
 import io.defitrack.protocol.reward.MiniChefV2Contract
@@ -73,7 +73,7 @@ class SushiswapFantomFarmingMinichefMarketProvider(
                 chef.address,
                 { user -> chef.userInfoFunction(poolId, user) }
             ),
-            farmType = FarmType.LIQUIDITY_MINING
+            farmType = ContractType.LIQUIDITY_MINING
         )
     }
 

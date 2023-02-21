@@ -4,7 +4,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.price.PriceResource
-import io.defitrack.protocol.FarmType
+import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SpookyFantomService
 import io.defitrack.protocol.contract.MasterChefBasedContract
@@ -57,7 +57,7 @@ class SpookyFarmingMarketProvider(
                         ),
                         apr = aprCalculator.calculateApr(),
                         balanceFetcher = defaultPositionFetcher(masterchef.address),
-                        farmType = FarmType.LIQUIDITY_MINING
+                        farmType = ContractType.LIQUIDITY_MINING
                     )
                 } catch (ex: Exception) {
                     logger.error("Error while fetching spooky farm", ex)

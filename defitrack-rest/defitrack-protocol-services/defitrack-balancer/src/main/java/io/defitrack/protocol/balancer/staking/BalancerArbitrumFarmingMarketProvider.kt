@@ -6,7 +6,7 @@ import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
-import io.defitrack.protocol.FarmType
+import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerGaugeContract
 import io.defitrack.protocol.balancer.graph.BalancerGaugeArbitrumGraphProvider
@@ -54,7 +54,7 @@ class BalancerArbitrumFarmingMarketProvider(
                             gauge.address,
                             { user -> gauge.balanceOfMethod(user) }
                         ),
-                        farmType = FarmType.STAKING,
+                        farmType = ContractType.STAKING,
                         metadata = mapOf("address" to it.id)
                     )
                 } catch (ex: Exception) {

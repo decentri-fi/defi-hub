@@ -8,7 +8,7 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
-import io.defitrack.protocol.FarmType
+import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
@@ -79,7 +79,7 @@ class QuickswapDualFarmingMarketProvider(
                             pool.address,
                             { user -> pool.balanceOfMethod(user) }
                         ),
-                        farmType = FarmType.DUAL_REWARD_MINING
+                        farmType = ContractType.DUAL_REWARD_MINING
                     )
                 } catch (ex: Exception) {
                     ex.printStackTrace()

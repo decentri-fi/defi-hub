@@ -57,7 +57,7 @@ class HopOptimismFarmingMarketProvider(
                     address = pool.address,
                     function = { user -> pool.balanceOfMethod(user) }
                 ),
-                farmType = FarmType.LIQUIDITY_MINING
+                farmType = ContractType.LIQUIDITY_MINING
             )
         } catch (ex: Exception) {
             ex.printStackTrace()

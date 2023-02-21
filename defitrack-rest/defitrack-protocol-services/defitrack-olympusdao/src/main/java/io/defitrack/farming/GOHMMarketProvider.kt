@@ -4,10 +4,9 @@ import io.defitrack.common.network.Network
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
-import io.defitrack.protocol.FarmType
+import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.OlympusEthereumService
 import io.defitrack.protocol.Protocol
-import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import java.math.BigInteger
 
@@ -38,7 +37,7 @@ class GOHMMarketProvider(
                         gohm.balanceFrom(gohmAmount)
                     }
                 ),
-                farmType = FarmType.STAKING
+                farmType = ContractType.STAKING
             )
         )
     }

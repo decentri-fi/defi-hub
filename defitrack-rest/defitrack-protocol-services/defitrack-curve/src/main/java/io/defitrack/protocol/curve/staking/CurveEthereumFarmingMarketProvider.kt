@@ -6,7 +6,7 @@ import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.network.toVO
-import io.defitrack.protocol.FarmType
+import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.crv.contract.CurveGaugeContract
 import io.defitrack.protocol.crv.contract.CurveEthereumGaugeControllerContract
@@ -53,7 +53,7 @@ class CurveEthereumFarmingMarketProvider : FarmingMarketProvider() {
                             marketSize = marketSizeService.getMarketSize(
                                 stakedToken.toFungibleToken(), gauge, getNetwork()
                             ),
-                            farmType = FarmType.LIQUIDITY_MINING,
+                            farmType = ContractType.LIQUIDITY_MINING,
                             balanceFetcher = PositionFetcher(
                                 gauge,
                                 { user ->

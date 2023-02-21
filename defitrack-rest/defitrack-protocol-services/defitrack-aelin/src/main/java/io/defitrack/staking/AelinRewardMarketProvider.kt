@@ -7,7 +7,7 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
-import io.defitrack.protocol.FarmType
+import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aelin.farming.StakingRewardsContract
 import io.defitrack.transaction.PreparedTransaction
@@ -57,7 +57,7 @@ class AelinRewardMarketProvider(
                         )
                     }
                 ),
-                farmType = FarmType.STAKING
+                farmType = ContractType.STAKING
             )
         )
     }

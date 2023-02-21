@@ -4,9 +4,8 @@ import io.defitrack.common.network.Network
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.pooling.VelodromeOptimismPoolingMarketProvider
-import io.defitrack.protocol.FarmType
+import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.VelodromeOptimismService
 import io.defitrack.protocol.contract.VelodromeGaugeContract
 import io.defitrack.protocol.contract.VoterContract
 import kotlinx.coroutines.async
@@ -49,7 +48,7 @@ class VelodromeGaugeMarketProvider(
                     create(
                         name = stakedToken.name + " Gauge",
                         identifier = stakedToken.symbol + "-gauge",
-                        farmType = FarmType.LIQUIDITY_MINING,
+                        farmType = ContractType.LIQUIDITY_MINING,
                         rewardTokens = contract.getRewardList().map { reward ->
                             getToken(reward).toFungibleToken()
                         },

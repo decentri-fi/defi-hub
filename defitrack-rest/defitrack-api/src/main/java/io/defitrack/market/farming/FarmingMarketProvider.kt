@@ -5,11 +5,9 @@ import io.defitrack.invest.MarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.domain.InvestmentPreparer
 import io.defitrack.market.lending.domain.PositionFetcher
-import io.defitrack.protocol.FarmType
-import io.defitrack.token.ERC20Resource
+import io.defitrack.protocol.ContractType
 import io.defitrack.token.FungibleToken
 import java.math.BigDecimal
-import java.math.BigInteger
 
 abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>() {
 
@@ -24,7 +22,7 @@ abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>() {
         balanceFetcher: PositionFetcher? = null,
         claimableRewardFetcher: ClaimableRewardFetcher? = null,
         investmentPreparer: InvestmentPreparer? = null,
-        farmType: FarmType,
+        farmType: ContractType,
         metadata: Map<String, Any> = emptyMap(),
         rewardsFinished: Boolean = false
     ): FarmingMarket {

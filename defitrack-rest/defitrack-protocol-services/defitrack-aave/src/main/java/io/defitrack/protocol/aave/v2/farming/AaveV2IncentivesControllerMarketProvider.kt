@@ -4,7 +4,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
-import io.defitrack.protocol.FarmType
+import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.v2.contract.IncentivesControllerContract
 import org.springframework.stereotype.Service
@@ -33,7 +33,7 @@ class AaveV2IncentivesControllerMarketProvider : FarmingMarketProvider() {
                         ).getUserUnclaimedRewardsFn(user)
                     }
                 ),
-                farmType = FarmType.STAKING
+                farmType = ContractType.STAKING
             )
         )
     }

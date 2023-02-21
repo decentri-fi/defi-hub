@@ -7,7 +7,7 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
-import io.defitrack.protocol.FarmType
+import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.adamant.LidoService
 import io.defitrack.protocol.adamant.StethContract
@@ -31,7 +31,7 @@ class StethMarketProvider(
                 stakedToken = getToken("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2").toFungibleToken(),
                 rewardTokens = emptyList(),
                 vaultType = "steth",
-                farmType = FarmType.STAKING,
+                farmType = ContractType.STAKING,
                 balanceFetcher = PositionFetcher(
                     address = steth.address,
                     function = { user ->

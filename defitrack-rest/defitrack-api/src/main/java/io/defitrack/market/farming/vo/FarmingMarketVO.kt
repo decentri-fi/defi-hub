@@ -4,7 +4,7 @@ import io.defitrack.market.MarketVO
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.network.NetworkVO
 import io.defitrack.network.toVO
-import io.defitrack.protocol.FarmType
+import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.ProtocolVO
 import io.defitrack.protocol.toVO
 import io.defitrack.token.FungibleToken
@@ -21,7 +21,7 @@ class FarmingMarketVO(
     marketSize: BigDecimal?,
     val apr: BigDecimal?,
     prepareInvestmentSupported: Boolean,
-    val farmType: FarmType,
+    val farmType: ContractType,
     val rewardsFinished: Boolean
 ) : MarketVO(
     id, network, protocol, name, prepareInvestmentSupported, marketSize, "farming"

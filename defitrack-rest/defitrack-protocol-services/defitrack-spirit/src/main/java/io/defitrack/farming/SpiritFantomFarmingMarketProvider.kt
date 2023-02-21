@@ -7,7 +7,7 @@ import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceResource
-import io.defitrack.protocol.FarmType
+import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SpiritFantomService
 import io.defitrack.protocol.reward.MasterchefLpContract
@@ -58,7 +58,7 @@ class SpiritFantomFarmingMarketProvider(
                             masterchef.address,
                             { user -> masterchef.userInfoFunction(index, user) }
                         ),
-                        farmType = FarmType.LIQUIDITY_MINING
+                        farmType = ContractType.LIQUIDITY_MINING
                     )
                 } catch (ex: Exception) {
                     logger.error("Error while fetching spirit market", ex)

@@ -2,15 +2,13 @@ package io.defitrack.protocol.sushiswap.staking
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
-import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
-import io.defitrack.protocol.FarmType
+import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.xsushi.XSushiContract
 import io.defitrack.token.ERC20Resource
-import io.defitrack.token.MarketSizeService
 import org.springframework.stereotype.Component
 import java.math.BigInteger
 
@@ -56,7 +54,7 @@ class XSushiStakingMarketProvider(
                         userXSushi.times(ratio).toBigInteger()
                     }
                 ),
-                farmType = FarmType.STAKING
+                farmType = ContractType.STAKING
             )
         )
     }

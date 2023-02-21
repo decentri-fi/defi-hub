@@ -3,16 +3,14 @@ package io.defitrack.protocol.ribbon
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
-import io.defitrack.protocol.FarmType
+import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.ribbon.contract.RibbonVaultContract
-import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 
@@ -55,7 +53,7 @@ class RibbonAvalancheFarmingMarketProvider(
                     it.id,
                     { user -> vault.balanceOfMethod(user) }
                 ),
-                farmType = FarmType.VAULT
+                farmType = ContractType.VAULT
             )
         }
     }

@@ -4,7 +4,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
-import io.defitrack.protocol.FarmType
+import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.QidaoPolygonService
 import io.defitrack.protocol.contract.QidaoFarmV2Contract
@@ -56,7 +56,7 @@ class QidaoFarmingMarketProvider(
                 chef.address,
                 getNetwork()
             ),
-            farmType = FarmType.LIQUIDITY_MINING
+            farmType = ContractType.LIQUIDITY_MINING
         )
     }
 

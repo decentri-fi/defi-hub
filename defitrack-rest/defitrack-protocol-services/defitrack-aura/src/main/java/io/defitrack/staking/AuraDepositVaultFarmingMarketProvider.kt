@@ -3,7 +3,7 @@ package io.defitrack.staking
 import io.defitrack.common.network.Network
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.protocol.FarmType
+import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aura.AuraBoosterContract
 import io.defitrack.protocol.aura.CrvRewardsContract
@@ -35,7 +35,7 @@ class AuraDepositVaultFarmingMarketProvider(
                     create(
                         name = crvrewards.name(),
                         identifier = crvrewards.address,
-                        farmType = FarmType.VAULT,
+                        farmType = ContractType.VAULT,
                         stakedToken = asset.toFungibleToken(),
                         rewardTokens = listOf(getToken(crvrewards.rewardToken()).toFungibleToken()),
                         vaultType = "aura-deposit",

@@ -7,7 +7,7 @@ import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.network.toVO
-import io.defitrack.protocol.FarmType
+import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.transaction.PreparedTransaction
 import org.springframework.stereotype.Component
@@ -54,7 +54,7 @@ class AaveStakingMarketProvider : FarmingMarketProvider() {
                         userStAave.times(ratio).toBigInteger()
                     }
                 ),
-                farmType = FarmType.STAKING,
+                farmType = ContractType.STAKING,
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     address = stAave,
                     function = { user ->
