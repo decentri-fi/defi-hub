@@ -5,3 +5,4 @@ ethereum
 fantom
 optimism
 polygon
+starknet
