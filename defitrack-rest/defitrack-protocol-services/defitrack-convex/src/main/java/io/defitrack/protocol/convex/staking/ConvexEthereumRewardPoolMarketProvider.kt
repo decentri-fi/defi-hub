@@ -6,14 +6,14 @@ import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.convex.ConvexService
+import io.defitrack.protocol.convex.ConvexEthereumService
 import io.defitrack.protocol.convex.contract.CvxRewardPoolContract
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 
 @Service
-class ConvexRewardPoolMarketProvider(
-    private val convexService: ConvexService,
+class ConvexEthereumRewardPoolMarketProvider(
+    private val convexService: ConvexEthereumService,
     private val abiResource: ABIResource,
 ) : FarmingMarketProvider() {
 
@@ -29,15 +29,14 @@ class ConvexRewardPoolMarketProvider(
             CvxRewardPoolContract(
                 getBlockchainGateway(),
                 cvxRewardPoolABI,
-                it.address,
-                it.name
+                it,
             )
         }.map {
             val stakingToken = getToken(it.stakingToken())
             val rewardToken = getToken(it.rewardToken())
             create(
-                name = it.name,
-                identifier = it.name,
+                name = it.name(),
+                identifier = it.address,
                 stakedToken = stakingToken.toFungibleToken(),
                 rewardTokens = listOf(rewardToken.toFungibleToken()),
                 vaultType = "cvx-vault",

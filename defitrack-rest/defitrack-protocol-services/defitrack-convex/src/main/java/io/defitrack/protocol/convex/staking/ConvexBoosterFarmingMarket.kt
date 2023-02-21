@@ -6,7 +6,7 @@ import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.convex.ConvexService
+import io.defitrack.protocol.convex.ConvexEthereumService
 import io.defitrack.protocol.convex.contract.ConvexBoosterContract
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class ConvexBoosterFarmingMarket(
-    convexService: ConvexService,
+    convexService: ConvexEthereumService,
     abiResource: ABIResource,
 ) : FarmingMarketProvider() {
 

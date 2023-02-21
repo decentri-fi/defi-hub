@@ -1,17 +1,5 @@
 package io.defitrack.protocol.convex.staking
 
-import io.defitrack.abi.ABIResource
-import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.convex.ConvexService
-import io.defitrack.protocol.convex.contract.CvxLockerContract
-import io.defitrack.market.farming.FarmingPositionProvider
-import io.defitrack.market.farming.domain.FarmingPosition
-import io.defitrack.token.ERC20Resource
-import org.springframework.stereotype.Service
-import java.math.BigInteger
-
 //@Service
 //class ConvexVoteLockedFarmingPositionProvider(
 //    private val convexService: ConvexService,
