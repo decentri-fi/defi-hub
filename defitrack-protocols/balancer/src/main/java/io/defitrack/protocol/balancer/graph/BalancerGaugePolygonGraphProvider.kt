@@ -1,4 +1,4 @@
-package io.defitrack.protocol.balancer.polygon
+package io.defitrack.protocol.balancer.graph
 
 import io.defitrack.protocol.balancer.domain.LiquidityGauge
 import io.defitrack.thegraph.GraphProvider

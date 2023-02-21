@@ -1,4 +1,4 @@
-package io.defitrack.protocol.balancer.polygon
+package io.defitrack.protocol.balancer.graph
 
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.balancer.BalancerPoolGraphProvider
@@ -8,10 +8,10 @@ import io.defitrack.thegraph.TheGraphGatewayProvider
 import org.springframework.stereotype.Component
 
 @Component
-class BalancerEthereumPoolGraphProvider(
+class BalancerPolygonPoolGraphProvider(
     theGraphGatewayProvider: TheGraphGatewayProvider,
 ) : GraphProvider(
-    "https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2",
+    "https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-polygon-v2",
     theGraphGatewayProvider
 ), BalancerPoolGraphProvider {
 
@@ -66,6 +66,6 @@ class BalancerEthereumPoolGraphProvider(
     }
 
     override fun getNetwork(): Network {
-        return Network.ETHEREUM
+        return Network.POLYGON
     }
 }

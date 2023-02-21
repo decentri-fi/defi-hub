@@ -6,7 +6,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.price.hop.HopPriceService
-import io.defitrack.protocol.balancer.polygon.BalancerPolygonPoolGraphProvider
+import io.defitrack.protocol.balancer.graph.BalancerPolygonPoolGraphProvider
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.runBlocking

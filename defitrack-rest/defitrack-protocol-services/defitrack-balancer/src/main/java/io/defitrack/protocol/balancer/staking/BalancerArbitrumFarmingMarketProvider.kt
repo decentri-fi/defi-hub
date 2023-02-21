@@ -9,7 +9,7 @@ import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.FarmType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerGaugeContract
-import io.defitrack.protocol.balancer.polygon.BalancerGaugeArbitrumGraphProvider
+import io.defitrack.protocol.balancer.graph.BalancerGaugeArbitrumGraphProvider
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope

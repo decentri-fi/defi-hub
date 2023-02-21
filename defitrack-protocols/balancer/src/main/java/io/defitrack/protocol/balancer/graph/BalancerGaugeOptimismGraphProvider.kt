@@ -1,4 +1,4 @@
-package io.defitrack.protocol.balancer.polygon
+package io.defitrack.protocol.balancer.graph
 
 import io.defitrack.protocol.balancer.domain.LiquidityGauge
 import io.defitrack.thegraph.GraphProvider
@@ -6,10 +6,10 @@ import io.defitrack.thegraph.TheGraphGatewayProvider
 import org.springframework.stereotype.Service
 
 @Service
-class BalancerGaugeArbitrumGraphProvider(
+class BalancerGaugeOptimismGraphProvider(
     theGraphGatewayProvider: TheGraphGatewayProvider
 ) : GraphProvider(
-    "https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-gauges-arbitrum",
+    "https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-gauges-optimism",
     theGraphGatewayProvider
 ) {
 
