@@ -1,6 +1,6 @@
 package io.defitrack.erc20.protocolspecific
 
-import io.defitrack.common.network.Network
+import io.defitrack.erc20.ERC20
 import io.defitrack.erc20.ERC20ContractReader
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.crv.CurvePoolGraphProvider
@@ -12,41 +12,39 @@ import org.springframework.stereotype.Component
 class CurveTokenService(
     private val curvePoolGraphProviders: List<CurvePoolGraphProvider>,
     private val erC20ContractReader: ERC20ContractReader
-) {
-    suspend fun getTokenInformation(address: String, network: Network): TokenInformation {
-        return getCurveInfo(address, network) ?: getDefaultInfo(address, network)
+) : TokenIdentifier {
+    override suspend fun getTokenInfo(token: ERC20): TokenInformation {
+        return getCurveInfo(token) ?: getDefaultInfo(token)
     }
 
-    private suspend fun getDefaultInfo(address: String, network: Network): TokenInformation {
-        return erC20ContractReader.getERC20(network, address).toToken().copy(
+    private suspend fun getDefaultInfo(erC20: ERC20): TokenInformation {
+        return erC20.toToken().copy(
             type = TokenType.CURVE,
             protocol = Protocol.CURVE
         )
     }
 
-    private suspend fun getCurveInfo(address: String, network: Network): TokenInformation? {
+    private suspend fun getCurveInfo(token: ERC20): TokenInformation? {
         val provider = curvePoolGraphProviders.find {
-            it.network == network
+            it.network == token.network
         }
 
-        val pool = provider?.getPoolByLp(address)
+        val pool = provider?.getPoolByLp(token.address)
         return if (pool != null) {
             try {
                 val underlyingTokens = pool.coins.map { coin ->
-                    erC20ContractReader.getERC20(network, coin).toToken()
+                    erC20ContractReader.getERC20(token.network, coin).toToken()
                 }
-
-                val token = erC20ContractReader.getERC20(network, address)
 
                 TokenInformation(
                     name = token.name,
-                    address = address,
+                    address = token.address,
                     symbol = underlyingTokens.joinToString("/") { it.symbol },
                     decimals = token.decimals,
                     type = TokenType.CURVE,
                     underlyingTokens = underlyingTokens,
                     protocol = Protocol.CURVE,
-                    network = network,
+                    network = token.network,
                     totalSupply = token.totalSupply
                 )
             } catch (ex: Exception) {
@@ -55,5 +53,9 @@ class CurveTokenService(
         } else {
             null
         }
+    }
+
+    override suspend fun isProtocolToken(token: ERC20): Boolean {
+        return token.name.lowercase().startsWith("curve.fi".lowercase())
     }
 }

@@ -14,18 +14,18 @@ import org.springframework.stereotype.Component
 
 @Component
 class SetProtocolTokenService(
-    private val ethereumSetProvider: EthereumSetProvider,
-    private val polygonSetProvider: PolygonAbstractSetProvider,
+    ethereumSetProvider: EthereumSetProvider,
+    polygonSetProvider: PolygonAbstractSetProvider,
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val erC20Resource: ERC20Resource
-) {
+) : TokenIdentifier {
 
     val providers = mapOf(
         Network.ETHEREUM to ethereumSetProvider,
         Network.POLYGON to polygonSetProvider
     )
 
-    suspend fun isProtocolToken(
+    override suspend fun isProtocolToken(
         token: ERC20,
     ): Boolean {
         return providers[token.network]?.let {
@@ -33,28 +33,28 @@ class SetProtocolTokenService(
         } ?: false
     }
 
-    suspend fun getTokenInformation(address: String, network: Network): TokenInformation {
+    override suspend fun getTokenInfo(token: ERC20): TokenInformation {
         val contract = SetTokenContract(
-            blockchainGatewayProvider.getGateway(network),
-            address
+            blockchainGatewayProvider.getGateway(token.network),
+            token.address
         )
 
         return TokenInformation(
-            network = network,
+            network = token.network,
             name = contract.name(),
             symbol = contract.symbol(),
             type = TokenType.SET,
             decimals = contract.decimals(),
-            address = address,
+            address = token.address,
             protocol = Protocol.SET,
             totalSupply = contract.totalSupply(),
             underlyingTokens = contract.getPositions().map {
-                val info = erC20Resource.getTokenInformation(network, it.token)
+                val info = erC20Resource.getTokenInformation(token.network, it.token)
                 TokenInformation(
-                    network = network,
+                    network = token.network,
                     name = info.name,
                     symbol = info.symbol,
-                    type = TokenType.SINGLE,
+                    type = info.type,
                     decimals = info.decimals,
                     address = it.token,
                     totalSupply = info.totalSupply,
