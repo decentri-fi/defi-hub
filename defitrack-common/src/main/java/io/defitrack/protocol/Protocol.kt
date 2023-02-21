@@ -98,7 +98,7 @@ enum class Protocol(
         logo = "aave.png",
         slug = "aave",
         website = "https://aave.com/",
-        primitives = listOf(DefiPrimitive.LENDING, DefiPrimitive.BORROWING, DefiPrimitive.FARMING),
+        primitives = listOf(DefiPrimitive.LENDING, DefiPrimitive.BORROWING, DefiPrimitive.FARMING, DefiPrimitive.POOLING),
         networks = listOf(Network.ETHEREUM, Network.POLYGON, Network.ARBITRUM, Network.OPTIMISM)
     ),
     HUMANDAO(
