@@ -35,7 +35,7 @@ class DefitrackENSRestController(private val ensNameService: EnsNameService) {
             val result = ensNameService.getEnsByName(name)
             if (result.isNotBlank()) {
                 mapOf(
-                    "avatar" to "https://metadata.ens.domains/preview/${result}"
+                    "avatar" to "https://metadata.ens.domains/preview/${name}"
                 )
             } else {
                 emptyMap()
