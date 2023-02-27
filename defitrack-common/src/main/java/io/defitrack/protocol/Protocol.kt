@@ -10,6 +10,13 @@ enum class Protocol(
     val enabled: Boolean = true,
     val networks: List<Network>
 ) {
+    SOLIDLIZARD(
+        logo = "solidlizard.png",
+        slug = "solidlizard",
+        primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
+        website = "https://solidlizard.finance",
+        networks = listOf(Network.ARBITRUM)
+    ),
     COWSWAP(
         logo = "cowswap.png",
         slug = "cowswap",
