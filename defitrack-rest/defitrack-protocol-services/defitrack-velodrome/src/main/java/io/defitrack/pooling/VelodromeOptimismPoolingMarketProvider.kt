@@ -40,12 +40,13 @@ class VelodromeOptimismPoolingMarketProvider(
                             poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
                             it
                         ),
+                        positionFetcher = defaultPositionFetcher(poolingToken.address),
                         address = it,
                         name = poolingToken.name,
                         breakdown = defaultBreakdown(tokens, poolingToken.address),
                         symbol = poolingToken.symbol,
                         tokens = poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
-                        tokenType = TokenType.SOLIDLIZARD
+                        tokenType = TokenType.VELODROME
                     )
                 } catch (ex: Exception) {
                     logger.error("Error while fetching pooling market $it", ex)

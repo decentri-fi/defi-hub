@@ -33,7 +33,8 @@ class SolidLizardPoolingMarketProvider : PoolingMarketProvider() {
                         marketSize = getMarketSize(
                             poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken), it
                         ),
-                        tokenType = TokenType.VELODROME,
+                        positionFetcher = defaultPositionFetcher(poolingToken.address),
+                        tokenType = TokenType.SOLIDLIZARD,
                         tokens = poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
                         symbol = poolingToken.symbol,
                         breakdown = defaultBreakdown(tokens, poolingToken.address),
