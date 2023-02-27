@@ -36,7 +36,7 @@ class PriceResource(
                     }.body()
                 }
             } catch (ex: Exception) {
-                logger.error("unable to fetch price for ${it.address}")
+                logger.error("unable to fetch price for ${it.address} on network ${priceRequest.network}")
                 ex.printStackTrace()
                 0.0
             }

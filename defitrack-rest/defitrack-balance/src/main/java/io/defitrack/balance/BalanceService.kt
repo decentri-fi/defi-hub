@@ -20,7 +20,7 @@ abstract class BalanceService(
         return try {
             return blockchainGatewayProvider.getGateway(getNetwork()).getNativeBalance(address)
         } catch (ex: Exception) {
-            logger.error(ex.message)
+            logger.error(ex.message, ex)
             BigDecimal.ZERO
         }
     }

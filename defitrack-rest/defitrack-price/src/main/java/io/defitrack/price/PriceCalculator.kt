@@ -38,6 +38,11 @@ class PriceCalculator(
             priceRequest.address
         }
 
+        if (tokenAddress == null) {
+            logger.error("Token address is null for ${priceRequest.address} and network ${priceRequest.network}")
+            return 0.0
+        }
+
         return retry(limitAttempts(5)) {
             val token = erc20Service.getTokenInformation(priceRequest.network, tokenAddress)
 

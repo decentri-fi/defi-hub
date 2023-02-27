@@ -7,6 +7,8 @@ import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
@@ -25,35 +27,38 @@ class BalanceRestController(
     @Deprecated("use the network-specific call")
     @GetMapping("/{address}/native-balance")
     fun getBalance(@PathVariable("address") address: String): List<BalanceElement> = runBlocking {
-        balanceServices.mapNotNull {
-            val balance = try {
-                it.getNativeBalance(address)
-            } catch (ex: Exception) {
-                BigDecimal.ZERO
-            }
+        balanceServices.map {
+            async {
+                val balance = try {
+                    it.getNativeBalance(address)
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                    BigDecimal.ZERO
+                }
 
-            if (balance > BigDecimal.ZERO) {
-                val price = priceResource.calculatePrice(
-                    PriceRequest(
-                        "0x0",
-                        it.getNetwork(),
-                        1.0.toBigDecimal()
+                if (balance > BigDecimal.ZERO) {
+                    val price = priceResource.calculatePrice(
+                        PriceRequest(
+                            "0x0",
+                            it.getNetwork(),
+                            1.0.toBigDecimal()
+                        )
                     )
-                )
-                BalanceElement(
-                    amount = balance.toDouble(),
-                    network = it.getNetwork().toVO(),
-                    token = erC20Resource.getTokenInformation(
-                        it.getNetwork(),
-                        "0x0"
-                    ).toFungibleToken(),
-                    dollarValue = price.times(balance.toDouble()),
-                    price = price
-                )
-            } else {
-                null
+                    BalanceElement(
+                        amount = balance.toDouble(),
+                        network = it.getNetwork().toVO(),
+                        token = erC20Resource.getTokenInformation(
+                            it.getNetwork(),
+                            "0x0"
+                        ).toFungibleToken(),
+                        dollarValue = price.times(balance.toDouble()),
+                        price = price
+                    )
+                } else {
+                    null
+                }
             }
-        }
+        }.awaitAll().filterNotNull()
     }
 
     @GetMapping(value = ["/{address}/native-balance"], params = ["network"])
