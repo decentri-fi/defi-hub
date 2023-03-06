@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration
 class NftRouterConfig {
 
     @Bean
-    fun ensRoutes(builder: RouteLocatorBuilder): RouteLocator {
+    fun nftRoutes(builder: RouteLocatorBuilder): RouteLocator {
         val routeBuilder = builder.routes()
 
         routeBuilder.route("nft") {
