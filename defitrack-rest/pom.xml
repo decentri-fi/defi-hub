@@ -16,6 +16,7 @@
         <module>defitrack-api</module>
         <module>defitrack-api-gw</module>
         <module>defitrack-erc20</module>
+        <module>defitrack-nft</module>
         <module>defitrack-ens</module>
         <module>defitrack-abi</module>
         <module>defitrack-balance</module>

@@ -6,3 +6,4 @@ price
 api-gw
 statistics
 events
+nft
