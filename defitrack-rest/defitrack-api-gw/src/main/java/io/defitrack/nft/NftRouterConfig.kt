@@ -1,4 +1,4 @@
-package io.defitrack.ens
+package io.defitrack.nft
 
 import org.springframework.cloud.gateway.route.RouteLocator
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder
