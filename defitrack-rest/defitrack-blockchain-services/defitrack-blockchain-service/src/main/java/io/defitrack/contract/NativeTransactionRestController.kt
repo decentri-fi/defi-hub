@@ -18,11 +18,12 @@ class NativeTransactionRestController(
 
     @PostMapping("/logs")
     fun getEvents(@RequestBody getEventLogsCommand: GetEventLogsCommand): CompletableFuture<EthLog> {
+        require(getEventLogsCommand.addresses.isNotEmpty()) { "Address must not be empty" }
         val ethFilter =
             with(EthFilter(
                 DefaultBlockParameterName.EARLIEST,
                 DefaultBlockParameterName.LATEST,
-                getEventLogsCommand.address
+                getEventLogsCommand.addresses
             )) {
                 addSingleTopic(getEventLogsCommand.topic)
                 getEventLogsCommand.optionalTopics.forEach {
@@ -38,7 +39,7 @@ class NativeTransactionRestController(
     }
 
     class GetEventLogsCommand(
-        val address: String,
+        val addresses: List<String>,
         val topic: String,
         val optionalTopics: List<String?> = emptyList()
     )
