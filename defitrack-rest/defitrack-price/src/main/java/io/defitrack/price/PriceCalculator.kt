@@ -111,7 +111,7 @@ class PriceCalculator(
         token: TokenInformationVO,
         amount: BigDecimal,
     ): BigDecimal {
-        val tokenPrice = priceProvider.getPrice(network, token)
+        val tokenPrice = priceProvider.getPrice(token)
         return amount.times(tokenPrice)
     }
 
@@ -129,7 +129,7 @@ class PriceCalculator(
         )
 
         return underlyingTokens.map { underlyingToken ->
-            val price = priceProvider.getPrice(network, underlyingToken)
+            val price = priceProvider.getPrice(underlyingToken)
             val underlyingTokenBalance = erc20Service.getBalance(network, underlyingToken.address, lpAddress)
             val userTokenAmount = underlyingTokenBalance.toBigDecimal().times(userShare)
 

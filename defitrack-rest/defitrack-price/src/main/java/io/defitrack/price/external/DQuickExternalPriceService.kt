@@ -1,10 +1,11 @@
-package io.defitrack.price
+package io.defitrack.price.external
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
+import io.defitrack.price.BeefyPricesService
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.contract.DQuickContract
 import io.github.reactivecircus.cache4k.Cache
@@ -38,7 +39,7 @@ class DQuickExternalPriceService(
         return "dquick"
     }
 
-    override suspend fun getPrice(network: Network, tokenInformationVO: TokenInformationVO): BigDecimal {
+    override suspend fun getPrice(tokenInformationVO: TokenInformationVO): BigDecimal {
         return cache.get("dquick") {
             val quickAmount = DQuickContract(
                 blockchainGatewayProvider.getGateway(Network.POLYGON),

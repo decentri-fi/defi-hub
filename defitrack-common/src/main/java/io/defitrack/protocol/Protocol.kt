@@ -10,6 +10,13 @@ enum class Protocol(
     val enabled: Boolean = true,
     val networks: List<Network>
 ) {
+    STARGATE(
+        logo = "stargate.svg",
+        slug = "stargate",
+        primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
+        website = "https://stargate.finance",
+        networks = listOf(Network.ETHEREUM, Network.OPTIMISM, Network.POLYGON, Network.ARBITRUM, Network.AVALANCHE, Network.BINANCE)
+    ),
     SOLIDLIZARD(
         logo = "solidlizard.png",
         slug = "solidlizard",
@@ -259,13 +266,6 @@ enum class Protocol(
         website = "https://balancer.fi",
         primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
         networks = listOf(Network.POLYGON, Network.ARBITRUM)
-    ),
-    STARGATE(
-        logo = "stargate.png",
-        slug = "stargate",
-        website = "https://stargate.finance",
-        primitives = listOf(DefiPrimitive.FARMING),
-        networks = listOf(Network.OPTIMISM)
     ),
     SPOOKY(
         logo = "spooky.png",

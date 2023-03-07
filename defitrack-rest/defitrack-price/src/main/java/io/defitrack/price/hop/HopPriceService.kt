@@ -28,7 +28,7 @@ class HopPriceService(
             val canonicalTokenBalance =
                 erC20Resource.getBalance(priceRequest.network, it.canonicalToken, it.swapAddress)
 
-            val tokenPrice = priceProvider.getPrice(priceRequest.network, canonicalToken)
+            val tokenPrice = priceProvider.getPrice(canonicalToken)
 
             val totalLpWorth = (hTokenBalance.asEth(hToken.decimals).times(tokenPrice)).plus(
                 canonicalTokenBalance.asEth(canonicalToken.decimals).times(tokenPrice)
