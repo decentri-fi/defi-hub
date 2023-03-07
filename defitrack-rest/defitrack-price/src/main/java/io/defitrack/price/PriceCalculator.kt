@@ -56,6 +56,10 @@ class PriceCalculator(
                     calculateBalancerPrice(priceRequest)
                 }
 
+                tokenType == TokenType.STARGATE -> {
+                    calculateBalancerPrice(priceRequest)
+                }
+
                 tokenType == TokenType.CURVE -> {
                     calculateLpHoldings(priceRequest, token)
                 }

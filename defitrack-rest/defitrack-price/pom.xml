@@ -24,6 +24,7 @@
             <groupId>io.defitrack</groupId>
             <artifactId>arbitrum</artifactId>
         </dependency>
+
         <dependency>
             <groupId>io.defitrack</groupId>
             <artifactId>ethereum</artifactId>
@@ -43,6 +44,10 @@
         <dependency>
             <groupId>io.defitrack</groupId>
             <artifactId>balancer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>stargate</artifactId>
         </dependency>
         <dependency>
             <groupId>io.defitrack</groupId>

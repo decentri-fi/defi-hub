@@ -37,7 +37,7 @@ abstract class StargateFarmingMarketProvider(
             val rewardTokens = listOf(stargate)
 
             create(
-                identifier = "$lpStakingContract-$index",
+                identifier = "${lpStakingContract.address}-$index",
                 name = "Stargate ${stakedToken.name} Reward",
                 stakedToken = stakedToken.toFungibleToken(),
                 rewardTokens = rewardTokens.map { it.toFungibleToken() },
