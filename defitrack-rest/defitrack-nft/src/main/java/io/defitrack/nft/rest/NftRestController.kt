@@ -1,7 +1,7 @@
-package io.defitrack.io.defitrack.rest
+package io.defitrack.nft.rest
 
 import io.defitrack.common.network.Network
-import io.defitrack.rest.ERC1155Service
+import io.defitrack.nft.service.ERC1155Service
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.math.BigInteger
 
 @RestController
-class NftRestControllerApp(
+class NftRestController(
     private val erC1155Service: ERC1155Service
 ) {
 

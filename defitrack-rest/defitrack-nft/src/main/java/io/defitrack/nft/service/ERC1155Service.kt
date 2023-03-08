@@ -1,4 +1,4 @@
-package io.defitrack.rest
+package io.defitrack.nft.service
 
 import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
