@@ -17,6 +17,11 @@
             <artifactId>defitrack-blockchain-service</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>defitrack-evm</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

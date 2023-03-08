@@ -37,17 +37,20 @@ class TokenService(
 
     fun refreshCache() = runBlocking {
         logger.info("refreshing token cache")
-        val semaphore = Semaphore(16)
+        val semaphore = Semaphore(8)
         Network.values().map { network ->
             val millis = measureTimeMillis {
-                val tokens = erC20Repository.allTokens(network).map {
+                val allTokens = erC20Repository.allTokens(network)
+                logger.info("found ${allTokens.size} tokens for network ${network.name}")
+                logger.info("starting to import now")
+                val tokens = allTokens.map {
                     async {
                         try {
                             semaphore.withPermit {
                                 getTokenInformation(it, network)
                             }
                         } catch (ex: Exception) {
-                            ex.printStackTrace()
+                            logger.error("Unable to import token $it on network $network", ex)
                             null
                         }
                     }

@@ -135,7 +135,7 @@ open class BlockchainGateway(
         encodedFunction: String
     ): EthCall = withContext(Dispatchers.IO) {
         retry(limitAttempts(5) + binaryExponentialBackoff(1000, 10000)) {
-            httpClient.post("$endpoint/contract/call") {
+            val post = httpClient.post("$endpoint/contract/call") {
                 contentType(ContentType.Application.Json)
                 setBody(
                     EvmContractInteractionCommand(
@@ -144,7 +144,8 @@ open class BlockchainGateway(
                         function = encodedFunction
                     )
                 )
-            }.body()
+            }
+            post.body()
         }
     }
 

@@ -53,11 +53,11 @@ open class ERC20Contract(
     }
 
 
-
     suspend fun name(): String {
         return try {
             readSingle("name", string())
         } catch (ex: Exception) {
+            ex.printStackTrace()
             "unknown"
         }
     }
