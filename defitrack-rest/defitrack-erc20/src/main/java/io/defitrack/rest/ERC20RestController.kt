@@ -74,4 +74,31 @@ class ERC20RestController(
             ResponseEntity.ok(BigInteger.ZERO)
         }
     }
+
+    @GetMapping("/{network}/allowance/{token}/{userAddress}/{spenderAddress}")
+    fun getApproval(
+        @PathVariable("network") network: Network,
+        @PathVariable("token") token: String,
+        @PathVariable("userAddress") userAddress: String,
+        @PathVariable("spenderAddress") spenderAddress: String,
+    ): ResponseEntity<BigInteger> = runBlocking {
+
+        if (!WalletUtils.isValidAddress(token)) {
+            return@runBlocking ResponseEntity.badRequest().build()
+        }
+        if (!WalletUtils.isValidAddress(userAddress)) {
+            return@runBlocking ResponseEntity.badRequest().build()
+        }
+        if (!WalletUtils.isValidAddress(spenderAddress)) {
+            return@runBlocking ResponseEntity.badRequest().build()
+        }
+
+        return@runBlocking try {
+            ResponseEntity.ok(erC20ContractReader.getAllowance(network, token, userAddress, spenderAddress))
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            ResponseEntity.ok(BigInteger.ZERO)
+        }
+    }
+
 }

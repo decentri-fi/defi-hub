@@ -57,4 +57,10 @@ class ERC20ContractReader(
         erc20ABI,
         address
     ).balanceOf(userAddress)
+
+    suspend fun getAllowance(network: Network, address: String, userAddress: String, spenderAddress: String) = ERC20Contract(
+        blockchainGatewayProvider.getGateway(network),
+        erc20ABI,
+        address
+    ).allowance(userAddress, spenderAddress)
 }

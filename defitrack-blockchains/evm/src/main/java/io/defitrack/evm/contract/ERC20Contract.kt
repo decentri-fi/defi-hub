@@ -52,6 +52,8 @@ open class ERC20Contract(
         )[0].value as BigInteger
     }
 
+
+
     suspend fun name(): String {
         return try {
             readSingle("name", string())

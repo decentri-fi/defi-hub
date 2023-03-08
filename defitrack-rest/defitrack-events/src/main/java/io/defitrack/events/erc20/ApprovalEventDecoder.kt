@@ -16,10 +16,10 @@ import java.math.BigInteger
 @Component
 class ApprovalEventDecoder : EventDecoder() {
 
-    val transferEvent = Event("Approval", listOf(address(true), address(true), uint256()))
+    val approvalEvent = Event("Approval", listOf(address(true), address(true), uint256()))
 
     override fun appliesTo(log: Log, network: Network): Boolean {
-        return log.appliesTo(transferEvent)
+        return log.appliesTo(approvalEvent)
     }
 
     override suspend fun extract(log: Log, network: Network): DefiEvent {
@@ -34,7 +34,7 @@ class ApprovalEventDecoder : EventDecoder() {
 
         val amount = "amount" to FunctionReturnDecoder.decode(
             log.data,
-            transferEvent.nonIndexedParameters
+            approvalEvent.nonIndexedParameters
         )[0].value as BigInteger
 
         val asset = "asset" to getToken(log.address, network)
