@@ -3,19 +3,22 @@ package io.defitrack.erc20.protocolspecific
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.ERC20
 import io.defitrack.erc20.ERC20ContractReader
+import io.defitrack.erc20.TokenService
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.BalancerPoolGraphProvider
-import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
 class BalancerTokenService(
     private val poolGraphProviders: List<BalancerPoolGraphProvider>,
     private val erC20ContractReader: ERC20ContractReader,
-    private val erC20Resource: ERC20Resource
 ) : TokenIdentifier {
+
+    @Autowired
+    private lateinit var tokenService: TokenService
 
     override suspend fun isProtocolToken(
         token: ERC20,
@@ -48,7 +51,7 @@ class BalancerTokenService(
                 type = TokenType.BALANCER,
                 protocol = Protocol.BALANCER,
                 underlyingTokens = underlying.map { underlyingPoolToken ->
-                    val underlying = erC20Resource.getTokenInformation(erc20.network, underlyingPoolToken.address)
+                    val underlying = tokenService.getTokenInformation(underlyingPoolToken.address, token.network)
                     TokenInformation(
                         name = underlyingPoolToken.name,
                         symbol = underlyingPoolToken.symbol,

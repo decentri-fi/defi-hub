@@ -9,10 +9,9 @@ import org.springframework.stereotype.Component
 
 @Component
 class KyberDMMTokenIdentifier(
-    erC20Resource: ERC20Resource,
     lpContractReader: LpContractReader
 ) : DefaultLpIdentifier(
-    Protocol.KYBER_SWAP, TokenType.KYBER, erC20Resource, lpContractReader,
+    Protocol.KYBER_SWAP, TokenType.KYBER, lpContractReader,
 ) {
     override suspend fun isProtocolToken(token: ERC20): Boolean {
         return token.symbol.startsWith("DMM-LP")

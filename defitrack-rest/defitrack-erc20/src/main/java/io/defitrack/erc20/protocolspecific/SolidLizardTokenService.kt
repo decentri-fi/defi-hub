@@ -5,7 +5,6 @@ import io.defitrack.erc20.ERC20
 import io.defitrack.erc20.LpContractReader
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
-import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import io.defitrack.uniswap.v2.PairFactoryContract
 import kotlinx.coroutines.runBlocking
@@ -14,10 +13,9 @@ import org.springframework.stereotype.Service
 @Service
 class SolidLizardTokenService(
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
-    erC20Resource: ERC20Resource,
     lpContractReader: LpContractReader
 ) : DefaultLpIdentifier(
-    Protocol.SOLIDLIZARD, TokenType.SOLIDLIZARD, erC20Resource, lpContractReader
+    Protocol.SOLIDLIZARD, TokenType.SOLIDLIZARD, lpContractReader
 ) {
 
     val arbitrumPools by lazy {

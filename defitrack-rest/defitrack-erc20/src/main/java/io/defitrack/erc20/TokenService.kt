@@ -27,7 +27,6 @@ class TokenService(
 ) {
 
     val logger = LoggerFactory.getLogger(this.javaClass)
-
     val tokenCache: Cache<String, List<TokenInformation>> = Cache.Builder().build()
 
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)

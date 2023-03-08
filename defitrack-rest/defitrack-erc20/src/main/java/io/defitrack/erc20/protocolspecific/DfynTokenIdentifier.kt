@@ -9,10 +9,9 @@ import org.springframework.stereotype.Component
 
 @Component
 class DfynTokenIdentifier(
-    erC20Resource: ERC20Resource,
     lpContractReader: LpContractReader
 ) : DefaultLpIdentifier(
-    Protocol.DFYN, TokenType.DFYN, erC20Resource, lpContractReader,
+    Protocol.DFYN, TokenType.DFYN, lpContractReader,
 ) {
     override suspend fun isProtocolToken(token: ERC20): Boolean {
         return token.symbol.startsWith("DFYNLP")

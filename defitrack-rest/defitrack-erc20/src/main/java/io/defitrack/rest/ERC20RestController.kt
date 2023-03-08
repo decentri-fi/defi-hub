@@ -3,6 +3,8 @@ package io.defitrack.rest
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.*
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
+import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -15,6 +17,8 @@ class ERC20RestController(
     private val erC20ContractReader: ERC20ContractReader,
     private val tokenService: TokenService
 ) {
+
+    val logger = LoggerFactory.getLogger(this::class.java)
 
     @GetMapping("/{network}")
     fun getAllTokensForNetwork(
@@ -42,13 +46,15 @@ class ERC20RestController(
         @PathVariable("address") address: String
     ): ResponseEntity<TokenInformationVO> = runBlocking {
         try {
-            ResponseEntity.ok(
-                tokenService.getTokenInformation(
-                    address, network
-                ).toVO()
-            )
+            withTimeout(5000L) {
+                ResponseEntity.ok(
+                    tokenService.getTokenInformation(
+                        address, network
+                    ).toVO()
+                )
+            }
         } catch (ex: Exception) {
-            ex.printStackTrace()
+            logger.error("Error while getting token information", ex)
             ResponseEntity.notFound().build()
         }
     }

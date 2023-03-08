@@ -14,10 +14,9 @@ import org.springframework.stereotype.Service
 @Service
 class KyberElasticTokenService(
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
-    erC20Resource: ERC20Resource,
     lpContractReader: LpContractReader
 ) : DefaultLpIdentifier(
-    Protocol.KYBER_SWAP, TokenType.KYBER_ELASTIC, erC20Resource, lpContractReader
+    Protocol.KYBER_SWAP, TokenType.KYBER_ELASTIC, lpContractReader
 ) {
 
     val kyberElasticOptimismPools by lazy {
