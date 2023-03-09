@@ -47,7 +47,6 @@ class ERC20ContractReader(
             }
         } catch (ex: Exception) {
             logger.error("Unable to fetch erc20 info", ex)
-            ex.printStackTrace()
             throw ex
         }
     }
@@ -58,9 +57,10 @@ class ERC20ContractReader(
         address
     ).balanceOf(userAddress)
 
-    suspend fun getAllowance(network: Network, address: String, userAddress: String, spenderAddress: String) = ERC20Contract(
-        blockchainGatewayProvider.getGateway(network),
-        erc20ABI,
-        address
-    ).allowance(userAddress, spenderAddress)
+    suspend fun getAllowance(network: Network, address: String, userAddress: String, spenderAddress: String) =
+        ERC20Contract(
+            blockchainGatewayProvider.getGateway(network),
+            erc20ABI,
+            address
+        ).allowance(userAddress, spenderAddress)
 }

@@ -57,7 +57,7 @@ open class ERC20Contract(
         return try {
             readSingle("name", string())
         } catch (ex: Exception) {
-            ex.printStackTrace()
+            logger.error("ERC20: Error reading name for token $address on ${blockchainGateway.network}")
             "unknown"
         }
     }

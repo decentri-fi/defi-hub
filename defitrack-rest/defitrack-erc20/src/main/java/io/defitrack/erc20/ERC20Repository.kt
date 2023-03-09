@@ -40,13 +40,14 @@ class ERC20Repository(
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/polygon/quickswap-default.tokenlist.json",
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/polygon/polygon.vetted.tokenlist.json",
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/polygon/polygon.listed.tokenlist.json",
-            "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/ethereum/set.tokenlist.json",
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/ethereum/uniswap-default.tokenlist.json",
+            "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/ethereum/extendedtokens.uniswap.json",
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/arbitrum/tokenlist.json",
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/fantom/aeb.tokenlist.json",
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/fantom/fantomfinance.tokenlist.json",
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/avalanche/joe.tokenlist.json",
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/bsc/pancakeswap-extended.json",
+            "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/optimism/optimism.tokenlist.json",
         ).flatMap {
             fetchFromTokenList(it)
         }.groupBy({

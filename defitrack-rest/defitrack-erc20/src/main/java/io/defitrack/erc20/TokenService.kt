@@ -13,6 +13,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import kotlin.system.measureTimeMillis
@@ -22,9 +23,12 @@ class TokenService(
     private val erc20ContractReader: ERC20ContractReader,
     private val erC20Repository: ERC20Repository,
     private val nativeTokenService: NativeTokenService,
-    private val tokenIdentifiers: List<TokenIdentifier>,
+
     private val logoService: LogoService
 ) {
+
+    @Autowired
+    private lateinit var tokenIdentifiers: List<TokenIdentifier>
 
     val logger = LoggerFactory.getLogger(this.javaClass)
     val tokenCache: Cache<String, List<TokenInformation>> = Cache.Builder().build()
@@ -40,8 +44,7 @@ class TokenService(
         Network.values().map { network ->
             val millis = measureTimeMillis {
                 val allTokens = erC20Repository.allTokens(network)
-                logger.info("found ${allTokens.size} tokens for network ${network.name}")
-                logger.info("starting to import now")
+                logger.info("found ${allTokens.size} tokens for network ${network.name}. Importing.")
                 val tokens = allTokens.map {
                     async {
                         try {
