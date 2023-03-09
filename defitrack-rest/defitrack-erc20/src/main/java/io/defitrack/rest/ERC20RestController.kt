@@ -46,7 +46,7 @@ class ERC20RestController(
         @PathVariable("address") address: String
     ): ResponseEntity<TokenInformationVO> = runBlocking {
         try {
-            withTimeout(5000L) {
+            withTimeout(6000L) {
                 ResponseEntity.ok(
                     tokenService.getTokenInformation(
                         address, network
