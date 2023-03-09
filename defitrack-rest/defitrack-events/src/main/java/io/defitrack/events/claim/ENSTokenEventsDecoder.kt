@@ -28,12 +28,16 @@ class ENSTokenEventsDecoder : EventDecoder() {
         val amount = claimEvent.getNonIndexedParameter<BigInteger>(log, 0)
 
         return DefiEvent(
-            type = DefiEventType.CLAIM,
+            type = eventType(),
             metadata = mapOf(
                 "user" to user,
                 "amount" to amount,
                 "asset" to getToken("0xc18360217d8f7ab5e7c516566761ea12ce7f9d72", Network.ETHEREUM)
             )
         )
+    }
+
+    override fun eventType(): DefiEventType {
+        return DefiEventType.CLAIM
     }
 }

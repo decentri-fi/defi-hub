@@ -2,6 +2,7 @@ package io.defitrack
 
 import io.defitrack.common.network.Network
 import io.defitrack.event.DefiEvent
+import io.defitrack.event.DefiEventType
 import io.defitrack.event.EventDecoder
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import kotlinx.coroutines.runBlocking
@@ -20,22 +21,27 @@ class EventDecoderRestController(
     @GetMapping("/{txId}", params = ["network"])
     fun decodeTransaction(
         @PathVariable("txId") txId: String,
-        @RequestParam("network") network: Network
+        @RequestParam("network") network: Network,
+        @RequestParam("type", required = false) type: DefiEventType? = null
     ): List<DefiEvent> = runBlocking {
         val logs = gatewayProvider.getGateway(network).getLogs(txId)
         logs.flatMap {
-            eventDecoders.map { decoder ->
-                try {
-                    if (decoder.appliesTo(it, network)) {
-                        decoder.extract(it, network)
-                    } else {
+            eventDecoders
+                .filter {
+                    (type == null || it.eventType() == type)
+                }
+                .map { decoder ->
+                    try {
+                        if (decoder.appliesTo(it, network)) {
+                            decoder.extract(it, network)
+                        } else {
+                            null
+                        }
+                    } catch (ex: Exception) {
+                        logger.error("Error decoding event for tx $txId", ex)
                         null
                     }
-                } catch (ex: Exception) {
-                    logger.error("Error decoding event for tx $txId", ex)
-                    null
                 }
-            }
         }.filterNotNull()
     }
 }

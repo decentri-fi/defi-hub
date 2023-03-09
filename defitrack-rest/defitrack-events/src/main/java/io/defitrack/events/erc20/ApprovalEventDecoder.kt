@@ -40,8 +40,12 @@ class ApprovalEventDecoder : EventDecoder() {
         val asset = "asset" to getToken(log.address, network)
 
         return DefiEvent(
-            type = DefiEventType.APPROVAL,
+            type = eventType(),
             metadata = mapOf(owner, spender, asset, amount)
         )
+    }
+
+    override fun eventType(): DefiEventType {
+        return DefiEventType.APPROVAL
     }
 }

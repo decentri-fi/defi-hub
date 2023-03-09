@@ -45,10 +45,14 @@ class HopGetRewardsDecoder(
 
         return DefiEvent(
             protocol = Protocol.HOP,
-            type = DefiEventType.GET_REWARD,
+            type = eventType(),
             metadata = mapOf(
                 user, amount, token
             )
         )
+    }
+
+    override fun eventType(): DefiEventType {
+        return DefiEventType.GET_REWARD
     }
 }

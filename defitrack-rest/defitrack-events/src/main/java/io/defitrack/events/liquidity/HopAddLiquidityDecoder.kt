@@ -55,7 +55,7 @@ class HopAddLiquidityDecoder(
         val token2 = erC20Resource.getTokenInformation(network, contract.getToken(1))
 
         return DefiEvent(
-            DefiEventType.ADD_LIQUIDITY,
+            eventType(),
             protocol = Protocol.HOP,
             metadata = mapOf(
                 "user" to addLiquidityEvent.getIndexedParameter<String>(log, 0),
@@ -73,5 +73,9 @@ class HopAddLiquidityDecoder(
                 },
             )
         )
+    }
+
+    override fun eventType(): DefiEventType {
+        return DefiEventType.ADD_LIQUIDITY
     }
 }

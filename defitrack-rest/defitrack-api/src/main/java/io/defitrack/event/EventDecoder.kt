@@ -15,6 +15,8 @@ abstract class EventDecoder {
     abstract fun appliesTo(log: Log, network: Network): Boolean
     abstract suspend fun extract(log: Log, network: Network): DefiEvent
 
+    abstract fun eventType(): DefiEventType
+
     suspend fun getToken(address: String, network: Network): TokenInformationVO {
         return erC20Resource.getTokenInformation(network, address)
     }

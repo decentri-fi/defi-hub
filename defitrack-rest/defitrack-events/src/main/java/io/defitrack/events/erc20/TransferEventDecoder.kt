@@ -40,8 +40,12 @@ class TransferEventDecoder : EventDecoder() {
         val asset = "asset" to getToken(log.address, network)
 
         return DefiEvent(
-            type = DefiEventType.TRANSFER,
+            type = eventType(),
             metadata = mapOf(from, to, asset, amount)
         )
+    }
+
+    override fun eventType(): DefiEventType {
+        return DefiEventType.TRANSFER
     }
 }

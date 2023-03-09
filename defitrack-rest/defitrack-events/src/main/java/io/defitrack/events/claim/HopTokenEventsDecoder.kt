@@ -15,7 +15,7 @@ import java.math.BigInteger
 
 
 @Component
-class HopClaimEventDecoder : EventDecoder() {
+class HopTokenEventsDecoder : EventDecoder() {
 
     val claimEvent = org.web3j.abi.datatypes.Event("Claim", listOf(address(true), uint256()))
 
@@ -35,7 +35,7 @@ class HopClaimEventDecoder : EventDecoder() {
         )[0].value as BigInteger
 
         return DefiEvent(
-            type = DefiEventType.CLAIM,
+            type = eventType(),
             protocol = Protocol.HOP,
             metadata = mapOf(
                 "user" to user,
@@ -43,5 +43,11 @@ class HopClaimEventDecoder : EventDecoder() {
                 "asset" to getToken("0xc5102fe9359fd9a28f877a67e36b0f050d81a3cc", Network.ETHEREUM)
             )
         )
+
+
+    }
+
+    override fun eventType(): DefiEventType {
+        return DefiEventType.CLAIM
     }
 }
