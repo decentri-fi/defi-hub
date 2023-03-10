@@ -63,7 +63,8 @@ class DefaultPoolingPositionRestController(
             symbol = market.symbol,
             protocol = market.protocol.toVO(),
             id = market.id,
-            exitPositionSupported = market.exitPositionPreparer != null
+            exitPositionSupported = market.exitPositionPreparer != null,
+            nativeAmount = amount
         )
     }
 }

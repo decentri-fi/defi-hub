@@ -83,7 +83,8 @@ class DefaultFarmingPositionRestController(
             stakedToken = market.stakedToken,
             rewardTokens = market.rewardTokens,
             amount = amount.asEth(market.stakedToken.decimals).toDouble(),
-            exitPositionSupported = market.exitPositionPreparer != null
+            exitPositionSupported = market.exitPositionPreparer != null,
+            nativeAmount = amount
         )
     }
 

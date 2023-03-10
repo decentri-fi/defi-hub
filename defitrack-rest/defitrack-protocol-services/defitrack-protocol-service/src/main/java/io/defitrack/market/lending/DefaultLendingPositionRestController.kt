@@ -80,7 +80,8 @@ class DefaultLendingPositionRestController(
                 amount = amount.asEth(market.token.decimals).toDouble(),
                 id = market.id,
                 token = market.token,
-                exitPositionSupported = market.exitPositionPreparer != null
+                exitPositionSupported = market.exitPositionPreparer != null,
+                nativeAmount = amount,
             )
         }
     }
