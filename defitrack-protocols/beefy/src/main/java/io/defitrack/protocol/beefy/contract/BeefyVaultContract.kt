@@ -18,6 +18,13 @@ class BeefyVaultContract(
         solidityBasedContractAccessor, abi, address
     ) {
 
+    fun exitFunction(amount: BigInteger): Function {
+        return createFunction(
+            method = "withdraw",
+            inputs = listOf(amount.toUint256())
+        )
+    }
+
     suspend fun balance(): BigInteger {
         return readWithAbi(
             "balance",

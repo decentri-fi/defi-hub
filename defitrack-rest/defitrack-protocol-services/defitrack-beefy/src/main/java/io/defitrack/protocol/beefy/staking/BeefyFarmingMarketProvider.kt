@@ -6,6 +6,7 @@ import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
+import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.ContractType
@@ -13,6 +14,7 @@ import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
 import io.defitrack.protocol.beefy.domain.BeefyVault
 import io.defitrack.protocol.beefy.staking.invest.BeefyStakingInvestmentPreparer
+import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -77,7 +79,15 @@ abstract class BeefyFarmingMarketProvider(
                     }
                 ),
                 investmentPreparer = BeefyStakingInvestmentPreparer(contract, getERC20Resource()),
-                farmType = ContractType.YIELD_OPTIMIZING_AUTOCOMPOUNDER
+                farmType = ContractType.YIELD_OPTIMIZING_AUTOCOMPOUNDER,
+                exitPositionPreparer = prepareExit {
+                    PreparedTransaction(
+                        getNetwork().toVO(),
+                        contract.exitFunction(it.amount),
+                        contract.address,
+                        from = it.user
+                    )
+                }
             )
         } catch (ex: Exception) {
             logger.error("Unable to get beefy farm ${beefyVault.id}")
