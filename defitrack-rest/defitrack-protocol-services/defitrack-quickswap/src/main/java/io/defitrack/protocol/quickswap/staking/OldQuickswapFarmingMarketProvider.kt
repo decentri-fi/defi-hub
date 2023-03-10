@@ -88,7 +88,15 @@ class OldQuickswapFarmingMarketProvider(
                             rewardPool.address
                         ),
                         farmType = ContractType.LIQUIDITY_MINING,
-                        rewardsFinished = true
+                        rewardsFinished = true,
+                        exitPositionPreparer = prepareExit {
+                            PreparedTransaction(
+                                getNetwork().toVO(),
+                                rewardPool.exitFunction(it.amount),
+                                rewardPool.address,
+                                from = it.user
+                            )
+                        }
                     )
                 } catch (ex: Exception) {
                     ex.printStackTrace()

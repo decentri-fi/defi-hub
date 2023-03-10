@@ -1,17 +1,20 @@
 package io.defitrack.invest
 
+import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGatewayProvider
+import io.defitrack.exit.ExitPositionCommand
+import io.defitrack.exit.ExitPositionPreparer
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.ProtocolService
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.FungibleToken
 import io.defitrack.token.MarketSizeService
+import io.defitrack.transaction.PreparedTransaction
 import io.github.reactivecircus.cache4k.Cache
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -108,5 +111,21 @@ abstract class MarketProvider<T> : ProtocolService {
 
     fun getPriceResource(): PriceResource {
         return priceResource
+    }
+
+    fun prepareExit(createTransaction: (exitPositionCommand: ExitPositionCommand) -> PreparedTransaction): ExitPositionPreparer {
+        return object : ExitPositionPreparer() {
+            override suspend fun getExitPositionCommand(exitPositionCommand: ExitPositionCommand): Deferred<PreparedTransaction> {
+                return coroutineScope {
+                    async {
+                        createTransaction(exitPositionCommand)
+                    }
+                }
+            }
+
+            override fun getNetwork(): Network {
+                return getNetwork()
+            }
+        }
     }
 }

@@ -15,6 +15,16 @@ class DQuickContract(
 ) : ERC20Contract(
     contractAccessor, abi, address
 ) {
+
+
+    fun exitFunction(amount: BigInteger): Function {
+        return Function(
+            "leave",
+            listOf(amount.toUint256()),
+            listOf()
+        )
+    }
+
     suspend fun quickBalance(address: String): BigInteger {
         return readWithAbi(
             "QUICKBalance",

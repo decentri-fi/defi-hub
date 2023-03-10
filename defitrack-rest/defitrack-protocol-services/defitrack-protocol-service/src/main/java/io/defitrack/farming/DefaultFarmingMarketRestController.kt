@@ -1,6 +1,7 @@
 package io.defitrack.farming
 
 import io.defitrack.common.network.Network
+import io.defitrack.exit.ExitPositionCommand
 import io.defitrack.farming.vo.TransactionPreparationVO
 import io.defitrack.invest.PrepareInvestmentCommand
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -8,7 +9,6 @@ import io.defitrack.market.farming.vo.FarmingMarketVO
 import io.defitrack.market.farming.vo.FarmingMarketVO.Companion.toVO
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -86,6 +86,20 @@ class DefaultFarmingMarketRestController(
         @RequestBody prepareInvestmentCommand: PrepareInvestmentCommand
     ): ResponseEntity<TransactionPreparationVO> = runBlocking {
         getStakingMarketById(id)?.investmentPreparer?.prepare(prepareInvestmentCommand)?.let { transactions ->
+            ResponseEntity.ok(
+                TransactionPreparationVO(
+                    transactions
+                )
+            )
+        } ?: ResponseEntity.badRequest().build()
+    }
+
+    @PostMapping(value = ["/markets/{id}/exit"])
+    fun prepareExit(
+        @PathVariable("id") id: String,
+        @RequestBody exitPositionCommand: ExitPositionCommand
+    ) = runBlocking{
+        getStakingMarketById(id)?.exitPositionPreparer?.prepare(exitPositionCommand)?.let { transactions ->
             ResponseEntity.ok(
                 TransactionPreparationVO(
                     transactions

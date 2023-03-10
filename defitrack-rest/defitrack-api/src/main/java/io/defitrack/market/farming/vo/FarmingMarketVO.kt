@@ -21,10 +21,11 @@ class FarmingMarketVO(
     marketSize: BigDecimal?,
     val apr: BigDecimal?,
     prepareInvestmentSupported: Boolean,
+    exitPositionSupported: Boolean,
     val farmType: ContractType,
     val rewardsFinished: Boolean
 ) : MarketVO(
-    id, network, protocol, name, prepareInvestmentSupported, marketSize, "farming"
+    id, network, protocol, name, prepareInvestmentSupported, exitPositionSupported, marketSize, "farming"
 ) {
     companion object {
         fun FarmingMarket.toVO() = FarmingMarketVO(
@@ -38,6 +39,7 @@ class FarmingMarketVO(
             marketSize = this.marketSize,
             apr = this.apr,
             prepareInvestmentSupported = this.investmentPreparer != null,
+            exitPositionSupported = this.exitPositionPreparer != null,
             farmType = farmType,
             rewardsFinished = this.rewardsFinished
         )

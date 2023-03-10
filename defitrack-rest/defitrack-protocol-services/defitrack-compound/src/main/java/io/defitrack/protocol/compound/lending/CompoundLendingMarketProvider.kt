@@ -4,17 +4,16 @@ import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.compound.v2.contract.CompoundComptrollerContract
 import io.defitrack.protocol.compound.CompoundEthereumService
-import io.defitrack.protocol.compound.v2.contract.CompoundTokenContract
 import io.defitrack.protocol.compound.lending.invest.CompoundLendingInvestmentPreparer
+import io.defitrack.protocol.compound.v2.contract.CompoundComptrollerContract
+import io.defitrack.protocol.compound.v2.contract.CompoundTokenContract
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -27,7 +26,6 @@ import java.math.RoundingMode
 
 @Component
 class CompoundLendingMarketProvider(
-    blockchainGatewayProvider: BlockchainGatewayProvider,
     private val abiResource: ABIResource,
     private val compoundEthereumService: CompoundEthereumService,
     private val priceResource: PriceResource

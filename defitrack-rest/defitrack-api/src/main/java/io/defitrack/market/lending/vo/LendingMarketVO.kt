@@ -15,7 +15,8 @@ class LendingMarketVO(
     val rate: Double?,
     val poolType: String,
     marketSize: BigDecimal?,
-    prepareInvestmentSupported: Boolean
+    prepareInvestmentSupported: Boolean,
+    exitPositionSupported: Boolean,
 ) : MarketVO(
-    id, network, protocol, name, prepareInvestmentSupported, marketSize, "lending"
+    id, network, protocol, name, prepareInvestmentSupported, exitPositionSupported, marketSize, "lending"
 )

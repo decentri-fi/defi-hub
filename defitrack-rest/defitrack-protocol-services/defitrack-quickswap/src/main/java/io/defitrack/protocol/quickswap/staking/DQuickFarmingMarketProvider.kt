@@ -5,11 +5,13 @@ import io.defitrack.common.network.Network
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
+import io.defitrack.network.toVO
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.contract.DQuickContract
 import io.defitrack.protocol.quickswap.staking.invest.DQuickStakingInvestmentPreparer
+import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 
@@ -56,6 +58,14 @@ class DQuickFarmingMarketProvider(
                     getERC20Resource(), oldDQuick
                 ),
                 farmType = ContractType.YIELD_OPTIMIZING_AUTOCOMPOUNDER,
+                exitPositionPreparer = prepareExit {
+                    PreparedTransaction(
+                        getNetwork().toVO(),
+                        oldDQuick.exitFunction(it.amount),
+                        oldDQuick.address,
+                        it.user
+                    )
+                }
             )
         )
     }

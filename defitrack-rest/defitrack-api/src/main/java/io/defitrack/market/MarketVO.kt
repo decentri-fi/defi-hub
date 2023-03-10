@@ -10,6 +10,7 @@ abstract class MarketVO(
     val protocol: ProtocolVO,
     val name: String,
     val prepareInvestmentSupported: Boolean,
+    val exitPositionSupported: Boolean,
     val marketSize: BigDecimal?,
     val marketType: String
 )

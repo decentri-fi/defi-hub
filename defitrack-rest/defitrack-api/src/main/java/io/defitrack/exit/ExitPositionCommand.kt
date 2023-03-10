@@ -1,8 +1,8 @@
-package io.defitrack.invest
+package io.defitrack.exit
 
 import java.math.BigInteger
 
-class PrepareInvestmentCommand(
+class ExitPositionCommand(
     val user: String,
     val amount: BigInteger
 )

@@ -9,7 +9,6 @@ import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.vo.PoolingMarketTokenShareVO
 import io.defitrack.market.pooling.vo.PoolingMarketVO
 import io.defitrack.network.toVO
-import io.defitrack.price.PriceResource
 import io.defitrack.protocol.toVO
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
@@ -27,8 +26,7 @@ import java.math.BigDecimal
 @RequestMapping("/pooling")
 class DefaultPoolingMarketRestController(
     private val poolingMarketProviders: List<PoolingMarketProvider>,
-    private val erC20Resource: ERC20Resource,
-    private val priceResource: PriceResource
+    private val erC20Resource: ERC20Resource
 ) {
     companion object {
         val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -49,7 +47,6 @@ class DefaultPoolingMarketRestController(
                     }
                 }.awaitAll().flatten()
         }
-
 
     @PostMapping(value = ["/markets/{id}/invest"])
     fun prepareInvestment(
@@ -157,6 +154,7 @@ class DefaultPoolingMarketRestController(
             marketSize = marketSize,
             prepareInvestmentSupported = investmentPreparer != null,
             erc20Compatible = erc20Compatible,
+            exitPositionSupported = exitPositionPreparer != null
         )
     }
 }

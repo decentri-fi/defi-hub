@@ -1,6 +1,7 @@
 package io.defitrack.market.pooling.domain
 
 import io.defitrack.common.network.Network
+import io.defitrack.exit.ExitPositionCommand
 import io.defitrack.market.DefiMarket
 import io.defitrack.market.farming.domain.InvestmentPreparer
 import io.defitrack.market.lending.domain.PositionFetcher
@@ -23,6 +24,7 @@ data class PoolingMarket(
     val tokenType: TokenType,
     val positionFetcher: PositionFetcher? = null,
     val investmentPreparer: InvestmentPreparer? = null,
+    val exitPositionPreparer: ExitPositionCommand? = null,
     val breakdown: List<PoolingMarketTokenShare>? = null,
     val erc20Compatible: Boolean = true
 ) : DefiMarket

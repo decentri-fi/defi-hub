@@ -15,6 +15,8 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
@@ -29,6 +31,8 @@ class ERC20Resource(
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
     @Value("\${erc20ResourceLocation:http://defitrack-erc20:8080}") private val erc20ResourceLocation: String
 ) {
+
+    val semaphore = Semaphore(4)
 
     val tokensCache: Cache<String, List<TokenInformationVO>> = Cache.Builder()
         .expireAfterWrite(12.hours)
@@ -54,13 +58,17 @@ class ERC20Resource(
 
     suspend fun getBalance(network: Network, tokenAddress: String, user: String): BigInteger =
         withContext(Dispatchers.IO) {
-            client.get("$erc20ResourceLocation/${network.name}/$tokenAddress/$user").body()
+            semaphore.withPermit {
+                client.get("$erc20ResourceLocation/${network.name}/$tokenAddress/$user").body()
+            }
         }
 
     suspend fun getTokenInformation(network: Network, address: String): TokenInformationVO {
         return withContext(Dispatchers.IO) {
             tokenCache.get("token-${network}-${address}") {
-                retry(limitAttempts(3)) { client.get("$erc20ResourceLocation/${network.name}/$address/token").body() }
+                semaphore.withPermit {
+                    retry(limitAttempts(3)) { client.get("$erc20ResourceLocation/${network.name}/$address/token").body() }
+                }
             }
         }
     }

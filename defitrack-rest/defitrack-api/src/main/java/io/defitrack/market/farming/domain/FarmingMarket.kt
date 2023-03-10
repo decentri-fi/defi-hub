@@ -2,6 +2,7 @@ package io.defitrack.market.farming.domain
 
 import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.network.Network
+import io.defitrack.exit.ExitPositionPreparer
 import io.defitrack.market.DefiMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.ContractType
@@ -22,6 +23,7 @@ data class FarmingMarket(
     val farmType: ContractType,
     val balanceFetcher: PositionFetcher? = null,
     val investmentPreparer: InvestmentPreparer? = null,
+    val exitPositionPreparer: ExitPositionPreparer? = null,
     val claimableRewardFetcher: ClaimableRewardFetcher? = null,
     val metadata: Map<String, Any> = emptyMap(),
     val rewardsFinished: Boolean = false

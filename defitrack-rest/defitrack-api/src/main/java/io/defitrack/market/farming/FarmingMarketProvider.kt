@@ -1,6 +1,7 @@
 package io.defitrack.market.farming
 
 import io.defitrack.claimable.ClaimableRewardFetcher
+import io.defitrack.exit.ExitPositionPreparer
 import io.defitrack.invest.MarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.domain.InvestmentPreparer
@@ -22,6 +23,7 @@ abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>() {
         balanceFetcher: PositionFetcher? = null,
         claimableRewardFetcher: ClaimableRewardFetcher? = null,
         investmentPreparer: InvestmentPreparer? = null,
+        exitPositionPreparer: ExitPositionPreparer? = null,
         farmType: ContractType,
         metadata: Map<String, Any> = emptyMap(),
         rewardsFinished: Boolean = false
@@ -41,7 +43,8 @@ abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>() {
             investmentPreparer = investmentPreparer,
             claimableRewardFetcher = claimableRewardFetcher,
             metadata = metadata,
-            rewardsFinished = rewardsFinished
+            rewardsFinished = rewardsFinished,
+            exitPositionPreparer = exitPositionPreparer
         )
     }
 }
