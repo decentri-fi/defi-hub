@@ -14,4 +14,5 @@ class PoolingPositionVO(
     val dollarValue: Double,
     val id: String,
     val exitPositionSupported: Boolean,
+    val marketType: String = "pooling"
 )

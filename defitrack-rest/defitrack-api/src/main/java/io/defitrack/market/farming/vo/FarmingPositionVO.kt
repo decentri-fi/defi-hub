@@ -16,4 +16,5 @@ data class FarmingPositionVO(
     val amount: Double,
     val rewardTokens: List<FungibleToken>,
     val exitPositionSupported: Boolean,
+    val marketType: String = "farming"
 )

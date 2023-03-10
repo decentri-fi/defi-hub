@@ -13,5 +13,6 @@ data class LendingPositionVO(
     val name: String,
     val amount: Double,
     val token: FungibleToken,
-    val exitPositionSupported: Boolean
+    val exitPositionSupported: Boolean,
+    val marketType: String = "lending"
 )
