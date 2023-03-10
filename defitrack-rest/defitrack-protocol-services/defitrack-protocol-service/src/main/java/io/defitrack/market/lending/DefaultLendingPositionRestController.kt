@@ -5,12 +5,11 @@ import com.github.michaelbull.retry.retry
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.market.lending.domain.LendingPosition
-import io.defitrack.market.lending.vo.LendingElementVO
+import io.defitrack.market.lending.vo.LendingPositionVO
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.toVO
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -18,7 +17,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/lending")
-class DefaultLendingRestController(
+class DefaultLendingPositionRestController(
     private val lendingUserServices: List<LendingPositionService>,
     private val priceResource: PriceResource
 ) {
@@ -28,7 +27,7 @@ class DefaultLendingRestController(
     }
 
     @GetMapping("/{userId}/positions")
-    fun getPoolingMarkets(@PathVariable("userId") address: String): List<LendingElementVO> =
+    fun getPoolingMarkets(@PathVariable("userId") address: String): List<LendingPositionVO> =
         runBlocking {
             lendingUserServices.flatMap {
                 try {
@@ -45,7 +44,7 @@ class DefaultLendingRestController(
         @PathVariable("userId") address: String,
         @RequestParam("lendingElementId") lendingElementId: String,
         @RequestParam("network") network: Network
-    ): LendingElementVO? = runBlocking {
+    ): LendingPositionVO? = runBlocking {
         lendingUserServices.filter {
             it.getNetwork() == network
         }.firstNotNullOfOrNull {
@@ -60,7 +59,7 @@ class DefaultLendingRestController(
         }?.toVO()
     }
 
-    suspend fun LendingPosition.toVO(): LendingElementVO {
+    suspend fun LendingPosition.toVO(): LendingPositionVO {
         return with(this) {
 
             val lendingInDollars = priceResource.calculatePrice(
@@ -72,7 +71,7 @@ class DefaultLendingRestController(
                 )
             )
 
-            LendingElementVO(
+            LendingPositionVO(
                 network = market.network.toVO(),
                 protocol = market.protocol.toVO(),
                 dollarValue = lendingInDollars,
@@ -80,7 +79,8 @@ class DefaultLendingRestController(
                 name = market.name,
                 amount = amount.asEth(market.token.decimals).toDouble(),
                 id = market.id,
-                token = market.token
+                token = market.token,
+                exitPositionSupported = market.exitPositionPreparer != null
             )
         }
     }

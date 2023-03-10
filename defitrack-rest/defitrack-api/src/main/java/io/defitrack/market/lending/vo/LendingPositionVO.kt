@@ -3,9 +3,8 @@ package io.defitrack.market.lending.vo
 import io.defitrack.network.NetworkVO
 import io.defitrack.protocol.ProtocolVO
 import io.defitrack.token.FungibleToken
-import java.math.BigInteger
 
-data class LendingElementVO(
+data class LendingPositionVO(
     val id: String,
     val network: NetworkVO,
     val protocol: ProtocolVO,
@@ -13,5 +12,6 @@ data class LendingElementVO(
     val rate: Double?,
     val name: String,
     val amount: Double,
-    val token: FungibleToken
+    val token: FungibleToken,
+    val exitPositionSupported: Boolean
 )

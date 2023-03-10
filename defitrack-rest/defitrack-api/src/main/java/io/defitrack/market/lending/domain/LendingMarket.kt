@@ -2,6 +2,7 @@ package io.defitrack.market.lending.domain
 
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.multicall.MultiCallElement
+import io.defitrack.exit.ExitPositionPreparer
 import io.defitrack.market.DefiMarket
 import io.defitrack.market.farming.domain.InvestmentPreparer
 import io.defitrack.protocol.Protocol
@@ -22,6 +23,7 @@ data class LendingMarket(
     val poolType: String,
     val positionFetcher: PositionFetcher? = null,
     val investmentPreparer: InvestmentPreparer? = null,
+    val exitPositionPreparer: ExitPositionPreparer? = null,
     val metadata: Map<String, Any> = emptyMap()
 ) : DefiMarket
 
