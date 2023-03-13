@@ -7,10 +7,10 @@ import io.defitrack.protocol.Protocol
 import kotlinx.coroutines.runBlocking
 import java.math.BigInteger
 
-abstract class DefaultLendingPositionService(
+abstract class AbstractLendingPositionProvider(
     val lendingMarketProvider: LendingMarketProvider,
     val gateway: BlockchainGatewayProvider,
-) : LendingPositionService() {
+) : LendingPositionProvider() {
 
     override suspend fun getLendings(address: String): List<LendingPosition> {
 
@@ -18,7 +18,7 @@ abstract class DefaultLendingPositionService(
             it.positionFetcher != null
         }
 
-        return gateway.getGateway(getNetwork()).readMultiCall(
+        return gateway.getGateway(lendingMarketProvider.getNetwork()).readMultiCall(
             markets.map {
                 it.positionFetcher!!.toMulticall(address)
             }
@@ -42,13 +42,5 @@ abstract class DefaultLendingPositionService(
         getLendings(address).firstOrNull {
             it.market.id == marketId
         }
-    }
-
-    override fun getProtocol(): Protocol {
-        return lendingMarketProvider.getProtocol()
-    }
-
-    override fun getNetwork(): Network {
-        return lendingMarketProvider.getNetwork()
     }
 }

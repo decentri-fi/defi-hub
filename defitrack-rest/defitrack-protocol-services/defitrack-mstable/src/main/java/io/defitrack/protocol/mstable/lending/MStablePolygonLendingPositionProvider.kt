@@ -1,12 +1,12 @@
 package io.defitrack.protocol.mstable.lending
 
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.market.lending.DefaultLendingPositionService
+import io.defitrack.market.lending.AbstractLendingPositionProvider
 
 @Deprecated("not a lending market")
-class MStablePolygonLendingPositionService(
+class MStablePolygonLendingPositionProvider(
     blockchainGatewayProvider: BlockchainGatewayProvider,
     mStablePolygonLendingMarketService: MStablePolygonLendingMarketProvider,
-) : DefaultLendingPositionService(
+) : AbstractLendingPositionProvider(
     mStablePolygonLendingMarketService, blockchainGatewayProvider
 )

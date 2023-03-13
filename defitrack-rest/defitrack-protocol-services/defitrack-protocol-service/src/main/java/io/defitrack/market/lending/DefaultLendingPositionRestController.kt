@@ -1,7 +1,5 @@
 package io.defitrack.market.lending
 
-import com.github.michaelbull.retry.policy.limitAttempts
-import com.github.michaelbull.retry.retry
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.market.lending.domain.LendingPosition
@@ -14,12 +12,12 @@ import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
+import org.web3j.crypto.WalletUtils
 
 @RestController
 @RequestMapping("/lending")
 class DefaultLendingPositionRestController(
-    private val lendingUserServices: List<LendingPositionService>,
-    private val priceResource: PriceResource
+    private val lendingPositionProvider: LendingPositionProvider, private val priceResource: PriceResource
 ) {
 
     companion object {
@@ -27,36 +25,28 @@ class DefaultLendingPositionRestController(
     }
 
     @GetMapping("/{userId}/positions")
-    fun getPoolingMarkets(@PathVariable("userId") address: String): List<LendingPositionVO> =
-        runBlocking {
-            lendingUserServices.flatMap {
-                try {
-                    it.getLendings(address)
-                } catch (ex: Exception) {
-                    logger.error("Something went wrong trying to fetch the user lendings: ${ex.message}")
-                    emptyList()
-                }
-            }.map { it.toVO() }
+    fun getPoolingMarkets(@PathVariable("userId") address: String): List<LendingPositionVO> = runBlocking {
+        lendingPositionProvider.getLendings(address).map {
+            it.toVO()
         }
+    }
 
     @GetMapping(value = ["/{userId}/positions"], params = ["lendingElementId", "network"])
-    fun getStakingById(
+    fun getLendingById(
         @PathVariable("userId") address: String,
         @RequestParam("lendingElementId") lendingElementId: String,
         @RequestParam("network") network: Network
     ): LendingPositionVO? = runBlocking {
-        lendingUserServices.filter {
-            it.getNetwork() == network
-        }.firstNotNullOfOrNull {
+        if (WalletUtils.isValidAddress(address)) {
             try {
-                retry(limitAttempts(3)) {
-                    it.getLending(address, lendingElementId)
-                }
+                lendingPositionProvider.getLending(address, lendingElementId)?.toVO()
             } catch (ex: Exception) {
-                logger.error("Something went wrong trying to fetch the user lendings: ${ex.message}")
+                logger.error("Something went wrong trying to fetch the user farms: ${ex.message}")
                 null
             }
-        }?.toVO()
+        } else {
+            null
+        }
     }
 
     suspend fun LendingPosition.toVO(): LendingPositionVO {
@@ -80,7 +70,7 @@ class DefaultLendingPositionRestController(
                 amountDecimal = underlyingAmount.asEth(market.token.decimals).toDouble(),
                 id = market.id,
                 token = market.token,
-                exitPositionSupported = market.exitPositionPreparer != null,
+                exitPositionSupported = market.exitPositionPreparer !== null,
                 amount = tokenAmount,
             )
         }

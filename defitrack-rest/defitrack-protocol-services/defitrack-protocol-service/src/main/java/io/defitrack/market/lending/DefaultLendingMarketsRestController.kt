@@ -77,7 +77,7 @@ class DefaultLendingMarketsRestController(
             poolType = poolType,
             marketSize = marketSize,
             prepareInvestmentSupported = investmentPreparer != null,
-            exitPositionSupported = this.investmentPreparer != null
+            exitPositionSupported = this.exitPositionPreparer != null
         )
     }
 }
