@@ -5,8 +5,9 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.market.lending.LendingMarketProvider
-import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.market.lending.domain.LendingMarket
+import io.defitrack.market.lending.domain.Position
+import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
@@ -75,7 +76,11 @@ class WepiggyLendingMarketProvider(
                         { user -> ctokenContract.balanceOfMethod(user) },
                         { retVal ->
                             val tokenBalance = retVal[0].value as BigInteger
-                            tokenBalance.times(exchangeRate).asEth().toBigInteger()
+                            Position(
+                                tokenBalance.times(exchangeRate).asEth().toBigInteger(),
+                                tokenBalance
+                            )
+
                         }
                     ),
                     investmentPreparer = null

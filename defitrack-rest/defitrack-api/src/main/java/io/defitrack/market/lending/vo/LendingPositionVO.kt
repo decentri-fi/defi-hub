@@ -12,8 +12,8 @@ data class LendingPositionVO(
     val dollarValue: Double,
     val rate: Double?,
     val name: String,
-    val amount: Double,
-    val nativeAmount: BigInteger,
+    val amountDecimal: Double,
+    val amount: BigInteger,
     val token: FungibleToken,
     val exitPositionSupported: Boolean,
     val marketType: String = "lending"

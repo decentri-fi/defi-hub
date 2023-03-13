@@ -24,12 +24,13 @@ abstract class DefaultLendingPositionService(
             }
         ).mapIndexed { index, retVal ->
             val market = markets[index]
-            val balance = market.positionFetcher!!.extractBalance(retVal)
+            val position = market.positionFetcher!!.extractBalance(retVal)
 
-            if (balance > BigInteger.ZERO) {
+            if (position.underlyingAmount > BigInteger.ZERO) {
                 LendingPosition(
                     market = market,
-                    amount = balance,
+                    underlyingAmount = position.underlyingAmount,
+                    tokenAmount = position.tokenAmount
                 )
             } else {
                 null

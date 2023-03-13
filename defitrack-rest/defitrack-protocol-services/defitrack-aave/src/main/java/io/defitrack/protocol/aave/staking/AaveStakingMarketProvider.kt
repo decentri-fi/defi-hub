@@ -5,6 +5,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.market.lending.domain.Position
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.network.toVO
 import io.defitrack.protocol.ContractType
@@ -50,8 +51,11 @@ class AaveStakingMarketProvider : FarmingMarketProvider() {
                         )
                     },
                     { retVal ->
-                        val userStAave = (retVal[0].value as BigInteger).toBigDecimal()
-                        userStAave.times(ratio).toBigInteger()
+                        val userStAave = (retVal[0].value as BigInteger)
+                        Position(
+                            userStAave.toBigDecimal().times(ratio).toBigInteger(),
+                            userStAave
+                        )
                     }
                 ),
                 farmType = ContractType.STAKING,

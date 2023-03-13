@@ -5,6 +5,7 @@ import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.market.lending.domain.Position
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
@@ -73,9 +74,13 @@ abstract class BeefyFarmingMarketProvider(
                     contract.address,
                     { user -> contract.balanceOfMethod(user) },
                     extractBalance = { result ->
-                        ((result[0].value as BigInteger).times(pricePerFullShare)).dividePrecisely(
-                            BigDecimal.TEN.pow(18)
-                        ).toBigInteger()
+                        val balance = result[0].value as BigInteger
+                        Position(
+                            (balance.times(pricePerFullShare)).dividePrecisely(
+                                BigDecimal.TEN.pow(18)
+                            ).toBigInteger(),
+                            balance,
+                        )
                     }
                 ),
                 investmentPreparer = BeefyStakingInvestmentPreparer(contract, getERC20Resource()),

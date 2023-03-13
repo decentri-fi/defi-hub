@@ -49,13 +49,13 @@ class DefaultPoolingPositionRestController(
         val lpToken = erC20Resource.getTokenInformation(market.network, market.address)
         return PoolingPositionVO(
             lpAddress = market.address,
-            amount = amount.asEth(lpToken.decimals),
+            amountDecimal = tokenAmount.asEth(lpToken.decimals),
             name = market.name,
             dollarValue = priceResource.calculatePrice(
                 PriceRequest(
                     market.address,
                     market.network,
-                    amount.asEth(lpToken.decimals),
+                    tokenAmount.asEth(lpToken.decimals),
                     lpToken.type
                 )
             ),
@@ -64,7 +64,7 @@ class DefaultPoolingPositionRestController(
             protocol = market.protocol.toVO(),
             id = market.id,
             exitPositionSupported = market.exitPositionPreparer != null,
-            nativeAmount = amount
+            amount = tokenAmount
         )
     }
 }

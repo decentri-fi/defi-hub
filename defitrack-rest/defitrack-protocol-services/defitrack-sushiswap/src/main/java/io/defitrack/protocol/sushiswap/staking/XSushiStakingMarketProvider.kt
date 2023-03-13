@@ -4,6 +4,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.market.lending.domain.Position
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
@@ -15,7 +16,7 @@ import java.math.BigInteger
 @Component
 class XSushiStakingMarketProvider(
     private val erc20Resource: ERC20Resource,
-): FarmingMarketProvider() {
+) : FarmingMarketProvider() {
 
     private val xsushi = "0x8798249c2E607446EfB7Ad49eC89dD1865Ff4272"
     private val sushi = "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2"
@@ -50,8 +51,11 @@ class XSushiStakingMarketProvider(
                         erc20Resource.balanceOfFunction(xsushi, user, getNetwork())
                     },
                     { retVal ->
-                        val userXSushi = (retVal[0].value as BigInteger).toBigDecimal()
-                        userXSushi.times(ratio).toBigInteger()
+                        val userXSushi = (retVal[0].value as BigInteger)
+                        Position(
+                            userXSushi.toBigDecimal().times(ratio).toBigInteger(),
+                            userXSushi
+                        )
                     }
                 ),
                 farmType = ContractType.STAKING

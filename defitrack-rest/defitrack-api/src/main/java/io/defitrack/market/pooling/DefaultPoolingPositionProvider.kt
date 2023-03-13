@@ -16,6 +16,7 @@ class DefaultPoolingPositionProvider(
 ) : PoolingPositionProvider() {
 
     val logger = LoggerFactory.getLogger(this::class.java)
+
     override suspend fun fetchUserPoolings(address: String): List<PoolingPosition> = coroutineScope {
         poolingMarketProviders.map { provider ->
             return@map async {
@@ -32,11 +33,11 @@ class DefaultPoolingPositionProvider(
                         }
                     ).mapIndexed { index, retVal ->
                         val market = markets[index]
-                        val balance = market.positionFetcher!!.extractBalance(retVal)
+                        val position = market.positionFetcher!!.extractBalance(retVal)
 
-                        if (balance > BigInteger.ONE) {
+                        if (position.underlyingAmount > BigInteger.ONE) {
                             PoolingPosition(
-                                balance,
+                                position.tokenAmount,
                                 market,
                             )
                         } else {

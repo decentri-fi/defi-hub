@@ -6,6 +6,7 @@ import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.exit.ExitPositionCommand
 import io.defitrack.exit.ExitPositionPreparer
+import io.defitrack.market.lending.domain.Position
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.ProtocolService
@@ -84,7 +85,8 @@ abstract class MarketProvider<T> : ProtocolService {
                 erC20Resource.balanceOfFunction(address, user, getNetwork())
             },
             { retVal ->
-                retVal[0].value as BigInteger
+                val result = retVal[0].value as BigInteger
+                Position(result, result)
             }
         )
     }

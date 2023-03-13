@@ -28,7 +28,7 @@ class DefaultFarmingPositionRestController(
             stakingServices.flatMap {
                 try {
                     it.getStakings(address).filter {
-                        it.amount > BigInteger.ZERO
+                        it.underlyingAmount > BigInteger.ZERO
                     }
                 } catch (ex: Exception) {
                     logger.error("Something went wrong trying to fetch the user stakings: ${ex.message}")
@@ -67,7 +67,7 @@ class DefaultFarmingPositionRestController(
             PriceRequest(
                 address = market.stakedToken.address,
                 network = market.network,
-                amount = amount.asEth(market.stakedToken.decimals),
+                amount = underlyingAmount.asEth(market.stakedToken.decimals),
                 type = market.stakedToken.type
             )
         )
@@ -82,9 +82,11 @@ class DefaultFarmingPositionRestController(
             vaultType = market.contractType,
             stakedToken = market.stakedToken,
             rewardTokens = market.rewardTokens,
-            amount = amount.asEth(market.stakedToken.decimals).toDouble(),
+            stakedAmountDecimal = underlyingAmount.asEth(market.stakedToken.decimals),
+            stakedAmount = underlyingAmount,
             exitPositionSupported = market.exitPositionPreparer != null,
-            nativeAmount = amount
+            tokenAmount = tokenAmount,
+            tokenAmountDecimal = tokenAmount.asEth(market.stakedToken.decimals),
         )
     }
 

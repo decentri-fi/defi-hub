@@ -17,8 +17,10 @@ class QidaoArbitrumVaultPositionProvider(
             val userVaults = qidaoVaultContract.getVaults(user)
 
             userVaults.map {
+                val collateral = qidaoVaultContract.vaultCollateral(it.toBigInteger())
                 LendingPosition(
-                    qidaoVaultContract.vaultCollateral(it.toBigInteger()),
+                    collateral,
+                    collateral,
                     market,
                 )
             }

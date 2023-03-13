@@ -7,8 +7,8 @@ import java.math.BigInteger
 
 class PoolingPositionVO(
     val lpAddress: String,
-    val amount: BigDecimal,
-    val nativeAmount: BigInteger,
+    val amountDecimal: BigDecimal,
+    val amount: BigInteger,
     val name: String,
     val network: NetworkVO,
     val symbol: String,

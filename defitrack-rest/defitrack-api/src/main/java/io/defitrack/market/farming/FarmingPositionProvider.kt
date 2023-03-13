@@ -1,6 +1,5 @@
 package io.defitrack.market.farming
 
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.domain.FarmingPosition
@@ -12,6 +11,7 @@ abstract class FarmingPositionProvider {
 
     @Autowired
     lateinit var erC20Resource: ERC20Resource
+
     @Autowired
     lateinit var blockchainGatewayProvider: BlockchainGatewayProvider
 
@@ -24,11 +24,13 @@ abstract class FarmingPositionProvider {
 
     fun create(
         market: FarmingMarket,
-        amount: BigInteger
+        stakedAmount: BigInteger,
+        tokenAmount: BigInteger
     ): FarmingPosition {
         return FarmingPosition(
             market = market,
-            amount = amount
+            underlyingAmount = stakedAmount,
+            tokenAmount = tokenAmount
         )
     }
 }

@@ -2,7 +2,6 @@ package io.defitrack.market.farming
 
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.domain.FarmingPosition
-import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Service
 import java.math.BigInteger
 
@@ -26,10 +25,11 @@ class DefaultFarmingPositionProvider(
                 val market = markets[index]
                 val balance = market.balanceFetcher!!.extractBalance(retVal)
 
-                if (balance > BigInteger.ONE) {
+                if (balance.underlyingAmount > BigInteger.ONE) {
                     FarmingPosition(
                         market,
-                        balance,
+                        balance.underlyingAmount,
+                        balance.tokenAmount
                     )
                 } else {
                     null

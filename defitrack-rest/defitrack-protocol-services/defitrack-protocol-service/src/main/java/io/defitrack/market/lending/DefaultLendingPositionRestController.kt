@@ -66,7 +66,7 @@ class DefaultLendingPositionRestController(
                 PriceRequest(
                     address = market.token.address,
                     network = market.network,
-                    amount = amount.asEth(market.token.decimals),
+                    amount = underlyingAmount.asEth(market.token.decimals),
                     type = null
                 )
             )
@@ -77,11 +77,11 @@ class DefaultLendingPositionRestController(
                 dollarValue = lendingInDollars,
                 rate = market.rate?.toDouble(),
                 name = market.name,
-                amount = amount.asEth(market.token.decimals).toDouble(),
+                amountDecimal = underlyingAmount.asEth(market.token.decimals).toDouble(),
                 id = market.id,
                 token = market.token,
                 exitPositionSupported = market.exitPositionPreparer != null,
-                nativeAmount = amount,
+                amount = tokenAmount,
             )
         }
     }

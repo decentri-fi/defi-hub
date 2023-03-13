@@ -5,6 +5,7 @@ import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
+import io.defitrack.market.lending.domain.Position
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
@@ -82,7 +83,10 @@ abstract class IronBankLendingMarketProvider(
                         { user -> ctokenContract.balanceOfMethod(user) },
                         { retVal ->
                             val tokenBalance = retVal[0].value as BigInteger
-                            tokenBalance.times(exchangeRate).asEth(18).toBigInteger()
+                            Position(
+                                tokenBalance.times(exchangeRate).asEth(18).toBigInteger(),
+                                tokenBalance
+                            )
                         }
                     ),
                     investmentPreparer = CompoundLendingInvestmentPreparer(

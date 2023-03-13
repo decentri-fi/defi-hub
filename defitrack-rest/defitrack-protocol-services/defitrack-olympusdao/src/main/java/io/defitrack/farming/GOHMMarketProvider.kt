@@ -3,6 +3,7 @@ package io.defitrack.farming
 import io.defitrack.common.network.Network
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.market.lending.domain.Position
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.OlympusEthereumService
@@ -17,7 +18,7 @@ class GOHMMarketProvider(
 
     val ohmAddress = "0x64aa3364F17a4D01c6f1751Fd97C2BD3D7e7f1D5"
     override suspend fun fetchMarkets(): List<FarmingMarket> {
-        val ohm =  getToken(ohmAddress)
+        val ohm = getToken(ohmAddress)
         val gohm = olympusEthereumService.getGOHMContract()
 
         return listOf(
@@ -34,7 +35,10 @@ class GOHMMarketProvider(
                     },
                     { retVal ->
                         val gohmAmount = retVal[0].value as BigInteger
-                        gohm.balanceFrom(gohmAmount)
+                        Position(
+                            underlyingAmount = gohm.balanceFrom(gohmAmount),
+                            tokenAmount = gohmAmount,
+                        )
                     }
                 ),
                 farmType = ContractType.STAKING

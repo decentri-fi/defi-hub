@@ -5,6 +5,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.market.lending.domain.Position
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.network.toVO
 import io.defitrack.protocol.ContractType
@@ -21,7 +22,7 @@ class StABPTStakingMarketProvider(
     private val aave = "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9"
     private val abpt = "0x41a08648c3766f9f9d85598ff102a08f4ef84f84"
     override suspend fun fetchMarkets(): List<FarmingMarket> {
-        val aaveToken = getToken( aave)
+        val aaveToken = getToken(aave)
         val abptToken = getToken(abpt)
 
         val stakingContract = StakedAaveContract(
@@ -53,8 +54,11 @@ class StABPTStakingMarketProvider(
                         )
                     },
                     { retVal ->
-                        val userStAave = (retVal[0].value as BigInteger).toBigDecimal()
-                        userStAave.times(ratio).toBigInteger()
+                        val userStAave = (retVal[0].value as BigInteger)
+                        Position(
+                            userStAave.toBigDecimal().times(ratio).toBigInteger(),
+                            userStAave
+                        )
                     }
                 ),
                 farmType = ContractType.STAKING,
