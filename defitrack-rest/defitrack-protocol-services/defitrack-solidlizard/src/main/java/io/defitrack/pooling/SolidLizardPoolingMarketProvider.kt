@@ -23,22 +23,23 @@ class SolidLizardPoolingMarketProvider : PoolingMarketProvider() {
         return@coroutineScope factory.allPairs().map {
             async {
 
-                val poolingToken = getToken(it)
-                val tokens = poolingToken.underlyingTokens
+                val token = getToken(it)
+                val tokens = token.underlyingTokens
 
                 try {
                     create(
-                        name = poolingToken.name,
-                        identifier = poolingToken.address,
+                        name = token.name,
+                        identifier = token.address,
                         marketSize = getMarketSize(
-                            poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken), it
+                            token.underlyingTokens.map(TokenInformationVO::toFungibleToken), it
                         ),
-                        positionFetcher = defaultPositionFetcher(poolingToken.address),
+                        positionFetcher = defaultPositionFetcher(token.address),
                         tokenType = TokenType.SOLIDLIZARD,
-                        tokens = poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
-                        symbol = poolingToken.symbol,
-                        breakdown = defaultBreakdown(tokens, poolingToken.address),
-                        address = poolingToken.address
+                        tokens = token.underlyingTokens.map(TokenInformationVO::toFungibleToken),
+                        symbol = token.symbol,
+                        breakdown = defaultBreakdown(tokens, token.address),
+                        address = token.address,
+                        totalSupply = token.totalSupply
                     )
                 } catch (ex: Exception) {
                     logger.error("Error while fetching pooling market $it", ex)

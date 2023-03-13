@@ -44,7 +44,8 @@ class KyberswapEthereumPoolingMarketProvider(
                             apr = kyberswapAPRService.getAPR(it.pair.id, getNetwork()),
                             marketSize = it.reserveUSD,
                             tokenType = TokenType.KYBER,
-                            positionFetcher = defaultPositionFetcher(token.address)
+                            positionFetcher = defaultPositionFetcher(token.address),
+                            totalSupply = token.totalSupply
                         )
                     } catch (ex: Exception) {
                         ex.printStackTrace()

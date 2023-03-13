@@ -6,7 +6,6 @@ import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SpiritswapService
-import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
@@ -44,7 +43,8 @@ class SpiritFantomPoolingMarketProvider(
                     id = "spirit-fantom-${it.id}",
                     marketSize = it.reserveUSD,
                     tokenType = TokenType.SPIRIT,
-                    positionFetcher = defaultPositionFetcher(token.address)
+                    positionFetcher = defaultPositionFetcher(token.address),
+                    totalSupply = token.totalSupply
                 )
             }
     }

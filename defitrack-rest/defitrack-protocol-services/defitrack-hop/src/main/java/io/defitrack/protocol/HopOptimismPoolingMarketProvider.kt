@@ -51,8 +51,8 @@ class HopOptimismPoolingMarketProvider(
                 contract.swap()
             )
 
-            val htoken =  getToken(hopLpToken.hToken)
-            val canonical =  getToken(hopLpToken.canonicalToken)
+            val htoken = getToken(hopLpToken.hToken)
+            val canonical = getToken(hopLpToken.canonicalToken)
 
             val marketSize = getPrice(canonical.address, contract, swapContract).toBigDecimal()
             PoolingMarket(
@@ -75,7 +75,8 @@ class HopOptimismPoolingMarketProvider(
                     marketSize
                 ),
                 tokenType = TokenType.HOP,
-                positionFetcher = defaultPositionFetcher(hopLpToken.lpToken)
+                positionFetcher = defaultPositionFetcher(hopLpToken.lpToken),
+                totalSupply = contract.totalSupply()
             )
         } catch (ex: Exception) {
             ex.printStackTrace()

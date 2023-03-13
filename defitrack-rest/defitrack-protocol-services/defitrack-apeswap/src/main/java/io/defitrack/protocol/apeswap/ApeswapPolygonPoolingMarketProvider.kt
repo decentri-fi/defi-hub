@@ -60,7 +60,8 @@ class ApeswapPolygonPoolingMarketProvider(
                                 breakdown = defaultBreakdown(underlyingTokens, poolingToken.address),
                                 tokens = underlyingTokens.map { it.toFungibleToken() },
                                 tokenType = TokenType.APE,
-                                positionFetcher = defaultPositionFetcher(poolingToken.address)
+                                positionFetcher = defaultPositionFetcher(poolingToken.address),
+                                totalSupply = poolingToken.totalSupply
                             )
                         }
                     } catch (ex: Exception) {

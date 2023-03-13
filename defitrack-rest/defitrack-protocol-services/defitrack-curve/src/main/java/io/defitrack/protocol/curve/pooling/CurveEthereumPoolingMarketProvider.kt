@@ -5,7 +5,6 @@ import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.crv.CurveEthereumGraphProvider
-import io.defitrack.protocol.crv.CurvePoolGraphProvider
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -40,7 +39,8 @@ class CurveEthereumPoolingMarketProvider(
                             apr = BigDecimal.ZERO,
                             marketSize = marketSizeService.getMarketSize(tokens, lpToken.address, getNetwork()),
                             tokenType = TokenType.CURVE,
-                            positionFetcher = if (lpToken.name == "unknown") null else defaultPositionFetcher(lpToken.address)
+                            positionFetcher = if (lpToken.name == "unknown") null else defaultPositionFetcher(lpToken.address),
+                            totalSupply = lpToken.totalSupply
                         )
                     } catch (ex: Exception) {
                         ex.printStackTrace()

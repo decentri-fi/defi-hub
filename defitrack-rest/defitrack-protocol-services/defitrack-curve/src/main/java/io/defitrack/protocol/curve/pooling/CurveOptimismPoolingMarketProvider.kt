@@ -39,7 +39,8 @@ class CurveOptimismPoolingMarketProvider(
                             apr = BigDecimal.ZERO,
                             marketSize = marketSizeService.getMarketSize(tokens, lpToken.address, getNetwork()),
                             tokenType = TokenType.CURVE,
-                            positionFetcher = if (lpToken.name == "unknown") null else defaultPositionFetcher(lpToken.address)
+                            positionFetcher = if (lpToken.name == "unknown") null else defaultPositionFetcher(lpToken.address),
+                            totalSupply = lpToken.totalSupply
                         )
                     } catch (ex: Exception) {
                         ex.printStackTrace()

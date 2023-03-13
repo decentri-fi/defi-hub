@@ -4,8 +4,8 @@ import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.kyberswap.graph.KyberswapPolygonGraphProvider
 import io.defitrack.protocol.kyberswap.apr.KyberswapAPRService
+import io.defitrack.protocol.kyberswap.graph.KyberswapPolygonGraphProvider
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -40,7 +40,8 @@ class KyberswapPolygonPoolingMarketProvider(
                         apr = kyberswapAPRService.getAPR(it.pair.id, getNetwork()),
                         marketSize = it.reserveUSD,
                         tokenType = TokenType.KYBER,
-                        positionFetcher = defaultPositionFetcher(token.address)
+                        positionFetcher = defaultPositionFetcher(token.address),
+                        totalSupply = token.totalSupply
                     )
                 } catch (ex: Exception) {
                     ex.printStackTrace()

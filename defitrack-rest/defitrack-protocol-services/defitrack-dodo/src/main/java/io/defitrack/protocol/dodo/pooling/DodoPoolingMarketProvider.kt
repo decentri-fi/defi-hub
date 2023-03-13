@@ -5,9 +5,8 @@ import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.DodoGraphProvider
-import io.defitrack.token.ERC20Resource
-import io.defitrack.token.MarketSizeService
 import io.defitrack.token.TokenType
+import java.math.BigInteger
 
 abstract class DodoPoolingMarketProvider(
     private val dodoGraphProvider: DodoGraphProvider,
@@ -28,6 +27,7 @@ abstract class DodoPoolingMarketProvider(
                 symbol = baseToken.symbol + "/" + quoteToken.symbol,
                 tokens = listOf(baseToken, quoteToken).map { it.toFungibleToken() },
                 tokenType = TokenType.DODO,
+                totalSupply = BigInteger.ZERO,
                 marketSize = priceResource.calculatePrice(
                     PriceRequest(
                         baseToken.address,

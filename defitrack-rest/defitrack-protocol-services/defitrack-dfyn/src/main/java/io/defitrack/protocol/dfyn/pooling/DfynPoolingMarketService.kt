@@ -6,7 +6,6 @@ import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.dfyn.DfynService
 import io.defitrack.protocol.dfyn.apr.DfynAPRService
-import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
@@ -38,7 +37,8 @@ class DfynPoolingMarketService(
                     apr = dfynAPRService.getAPR(it.id),
                     marketSize = it.reserveUSD,
                     tokenType = TokenType.DFYN,
-                    positionFetcher = defaultPositionFetcher(token.address)
+                    positionFetcher = defaultPositionFetcher(token.address),
+                    totalSupply = token.totalSupply
                 )
             } else {
                 null

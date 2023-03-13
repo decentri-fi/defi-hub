@@ -75,7 +75,8 @@ class BancorEthereumPoolingMarketProvider(
                         investmentPreparer = BancorPoolInvestmentPreparer(
                             getERC20Resource(), bancorNetworkContract, underlying.address
                         ),
-                        positionFetcher = defaultPositionFetcher(token.address)
+                        positionFetcher = defaultPositionFetcher(token.address),
+                        totalSupply = token.totalSupply
                     )
                 } catch (ex: Exception) {
                     ex.printStackTrace()
