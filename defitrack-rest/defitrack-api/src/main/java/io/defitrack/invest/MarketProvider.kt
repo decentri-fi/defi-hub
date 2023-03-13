@@ -122,6 +122,7 @@ abstract class MarketProvider<T> : ProtocolService {
     }
 
     fun prepareExit(preparedExit: (exitPositionCommand: ExitPositionCommand) -> PreparedExit): ExitPositionPreparer {
+        val network = getNetwork()
         return object : ExitPositionPreparer() {
             override suspend fun getExitPositionCommand(exitPositionCommand: ExitPositionCommand): Deferred<PreparedTransaction> {
                 return coroutineScope {
@@ -138,7 +139,7 @@ abstract class MarketProvider<T> : ProtocolService {
             }
 
             override fun getNetwork(): Network {
-                return getNetwork()
+                return network
             }
         }
     }
