@@ -6,10 +6,12 @@ import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
+import io.defitrack.network.toVO
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerGaugeContract
 import io.defitrack.protocol.balancer.graph.BalancerGaugePolygonGraphProvider
+import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -57,7 +59,15 @@ class BalancerPolygonFarmingMarketProvider(
                             { user -> gauge.balanceOfMethod(user) }
                         ),
                         farmType = ContractType.STAKING,
-                        metadata = mapOf("address" to it.id)
+                        metadata = mapOf("address" to it.id),
+                        exitPositionPreparer = prepareExit {
+                            PreparedTransaction(
+                                network = getNetwork().toVO(),
+                                function = gauge.exitPosition(it.amount),
+                                to = gauge.address,
+                                from = it.user
+                            )
+                        }
                     )
                 } catch (ex: Exception) {
                     logger.error(

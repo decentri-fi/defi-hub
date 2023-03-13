@@ -17,6 +17,16 @@ class BalancerGaugeContract(
     address: String
 ) : ERC20Contract(blockchainGateway, abi, address) {
 
+    fun exitPosition(amount: BigInteger): Function {
+        return Function(
+            "withdraw",
+            listOf(
+                amount.toUint256()
+            ),
+            listOf()
+        )
+    }
+
     fun getClaimableRewardFunction(address: String, token: String): Function {
         return createFunctionWithAbi(
             "claimable_reward_write",
