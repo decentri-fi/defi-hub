@@ -60,11 +60,9 @@ class BalancerOptimismFarmingMarketProvider(
                             farmType = ContractType.STAKING,
                             metadata = mapOf("address" to it.id),
                             exitPositionPreparer = prepareExit {
-                                PreparedTransaction(
-                                    network = getNetwork().toVO(),
+                                PreparedExit(
                                     function = gauge.exitPosition(it.amount),
                                     to = gauge.address,
-                                    from = it.user
                                 )
                             }
                         )

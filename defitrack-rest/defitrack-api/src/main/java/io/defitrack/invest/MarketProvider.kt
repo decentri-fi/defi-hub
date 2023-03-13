@@ -8,6 +8,7 @@ import io.defitrack.exit.ExitPositionCommand
 import io.defitrack.exit.ExitPositionPreparer
 import io.defitrack.market.lending.domain.Position
 import io.defitrack.market.lending.domain.PositionFetcher
+import io.defitrack.network.toVO
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.ProtocolService
 import io.defitrack.token.ERC20Resource
@@ -21,6 +22,7 @@ import kotlinx.coroutines.sync.withPermit
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.web3j.abi.datatypes.Function
 import java.math.BigDecimal
 import java.math.BigInteger
 import kotlin.system.measureTimeMillis
@@ -119,12 +121,18 @@ abstract class MarketProvider<T> : ProtocolService {
         return priceResource
     }
 
-    fun prepareExit(createTransaction: (exitPositionCommand: ExitPositionCommand) -> PreparedTransaction): ExitPositionPreparer {
+    fun prepareExit(preparedExit: (exitPositionCommand: ExitPositionCommand) -> PreparedExit): ExitPositionPreparer {
         return object : ExitPositionPreparer() {
             override suspend fun getExitPositionCommand(exitPositionCommand: ExitPositionCommand): Deferred<PreparedTransaction> {
                 return coroutineScope {
                     async {
-                        createTransaction(exitPositionCommand)
+                        val prepared = preparedExit(exitPositionCommand)
+                        PreparedTransaction(
+                            network = getNetwork().toVO(),
+                            function = prepared.function,
+                            to = prepared.to,
+                            from = exitPositionCommand.user
+                        )
                     }
                 }
             }
@@ -134,6 +142,8 @@ abstract class MarketProvider<T> : ProtocolService {
             }
         }
     }
+
+    data class PreparedExit(val function: Function, val to: String)
 
     suspend inline fun <T> throttled(action: () -> T): T {
         return semaphore.withPermit(action)
