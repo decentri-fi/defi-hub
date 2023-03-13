@@ -31,35 +31,39 @@ class BalancerArbitrumFarmingMarketProvider(
 
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
         gaugeProvider.getGauges().map {
-            async {
-                try {
-                    val stakedToken = getToken(it.poolAddress)
-                    val gauge = BalancerGaugeContract(
-                        getBlockchainGateway(),
-                        balancerGaugeContractAbi,
-                        it.id
-                    )
+            throttled {
+                async {
+                    try {
+                        val stakedToken = getToken(it.poolAddress)
+                        val gauge = BalancerGaugeContract(
+                            getBlockchainGateway(),
+                            balancerGaugeContractAbi,
+                            it.id
+                        )
 
-                    create(
-                        identifier = it.id,
-                        name = stakedToken.symbol + " Gauge",
-                        stakedToken = stakedToken.toFungibleToken(),
-                        rewardTokens = getRewardTokens(
-                            gauge
-                        ).map { reward ->
-                            reward.toFungibleToken()
-                        },
-                        vaultType = "balancerGauge",
-                        balanceFetcher = PositionFetcher(
-                            gauge.address,
-                            { user -> gauge.balanceOfMethod(user) }
-                        ),
-                        farmType = ContractType.STAKING,
-                        metadata = mapOf("address" to it.id)
-                    )
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                    null
+                        create(
+                            identifier = it.id,
+                            name = stakedToken.symbol + " Gauge",
+                            stakedToken = stakedToken.toFungibleToken(),
+                            rewardTokens = getRewardTokens(
+                                gauge
+                            ).map { reward ->
+                                reward.toFungibleToken()
+                            },
+                            vaultType = "balancerGauge",
+                            balanceFetcher = PositionFetcher(
+                                gauge.address,
+                                { user -> gauge.balanceOfMethod(user) }
+                            ),
+                            farmType = ContractType.STAKING,
+                            metadata = mapOf("address" to it.id)
+                        )
+                    } catch (ex: Exception) {
+                        logger.error(
+                            "Error while fetching balancer gauge: ${ex.message}"
+                        )
+                        null
+                    }
                 }
             }
         }.awaitAll().filterNotNull()

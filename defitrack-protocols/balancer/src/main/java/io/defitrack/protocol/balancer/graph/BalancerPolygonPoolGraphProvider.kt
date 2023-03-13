@@ -38,7 +38,7 @@ class BalancerPolygonPoolGraphProvider(
     suspend fun getPools(): List<Pool> {
         val query = """
             {
-               pools(first: 1000, orderBy: totalLiquidity, orderDirection: desc) {
+               pools(first: 1000, orderBy: totalLiquidity, orderDirection: desc, where: {totalLiquidity_gt: 10000}) {
                 address
                 id
                 totalLiquidity,

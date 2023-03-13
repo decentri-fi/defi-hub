@@ -16,9 +16,9 @@ data class FarmingPositionVO(
     val apr: Double?,
     val stakedToken: FungibleToken,
     val stakedAmountDecimal: BigDecimal,
-    val stakedAmount: BigInteger,
+    val stakedAmount: String,
     val tokenAmountDecimal: BigDecimal,
-    val tokenAmount: BigInteger,
+    val tokenAmount: String,
     val rewardTokens: List<FungibleToken>,
     val exitPositionSupported: Boolean,
     val marketType: String = "farming"

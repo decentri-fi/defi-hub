@@ -8,7 +8,7 @@ import io.defitrack.protocol.beefy.BeefyService
 import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import org.springframework.stereotype.Service
 
-@Service
+//@Service
 class BeefyFantomFarmingMarketProvider(
     abiResource: ABIResource,
     beefyAPYService: BeefyAPYService,

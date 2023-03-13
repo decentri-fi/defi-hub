@@ -43,7 +43,7 @@ class BalancerPolygonFarmingMarketProvider(
                     create(
                         identifier = it.id,
                         name = stakedToken.underlyingTokens.joinToString("/") {
-                          it.symbol
+                            it.symbol
                         } + " Gauge",
                         stakedToken = stakedToken.toFungibleToken(),
                         rewardTokens = getRewardTokens(
@@ -60,7 +60,9 @@ class BalancerPolygonFarmingMarketProvider(
                         metadata = mapOf("address" to it.id)
                     )
                 } catch (ex: Exception) {
-                    ex.printStackTrace()
+                    logger.error(
+                        "Error while fetching balancer gauge: ${ex.message}"
+                    )
                     null
                 }
             }

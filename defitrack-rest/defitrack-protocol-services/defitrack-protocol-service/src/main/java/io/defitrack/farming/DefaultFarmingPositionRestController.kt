@@ -25,7 +25,7 @@ class DefaultFarmingPositionRestController(
     @GetMapping("/{userAddress}/positions")
     fun getPositions(@PathVariable("userAddress") address: String): List<FarmingPositionVO> = runBlocking {
         if (WalletUtils.isValidAddress(address)) {
-            stakingServices.flatMap {
+            val results = stakingServices.flatMap {
                 try {
                     it.getStakings(address).filter {
                         it.underlyingAmount > BigInteger.ZERO
@@ -37,6 +37,7 @@ class DefaultFarmingPositionRestController(
             }.map {
                 it.toVO()
             }
+            results
         } else {
             emptyList()
         }
@@ -83,9 +84,9 @@ class DefaultFarmingPositionRestController(
             stakedToken = market.stakedToken,
             rewardTokens = market.rewardTokens,
             stakedAmountDecimal = underlyingAmount.asEth(market.stakedToken.decimals),
-            stakedAmount = underlyingAmount,
+            stakedAmount = underlyingAmount.toString(10),
             exitPositionSupported = market.exitPositionPreparer != null,
-            tokenAmount = tokenAmount,
+            tokenAmount = tokenAmount.toString(10),
             tokenAmountDecimal = tokenAmount.asEth(market.stakedToken.decimals),
         )
     }

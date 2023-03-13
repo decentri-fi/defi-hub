@@ -16,6 +16,8 @@ import io.defitrack.token.MarketSizeService
 import io.defitrack.transaction.PreparedTransaction
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,6 +30,8 @@ abstract class MarketProvider<T> : ProtocolService {
 
     val cache = Cache.Builder().expireAfterWrite(4.hours).build<String, List<T>>()
     val logger: Logger = LoggerFactory.getLogger(this.javaClass)
+
+    val semaphore = Semaphore(8)
 
     @Autowired
     private lateinit var erC20Resource: ERC20Resource
@@ -129,5 +133,9 @@ abstract class MarketProvider<T> : ProtocolService {
                 return getNetwork()
             }
         }
+    }
+
+    suspend inline fun <T> throttled(action: () -> T): T {
+        return semaphore.withPermit(action)
     }
 }
