@@ -92,7 +92,10 @@ abstract class BeefyFarmingMarketProvider(
                         contract.address,
                         from = it.user
                     )
-                }
+                },
+                metadata = mapOf(
+                    "vaultAddress" to contract.address,
+                )
             )
         } catch (ex: Exception) {
             logger.error("Unable to get beefy farm ${beefyVault.id}")
