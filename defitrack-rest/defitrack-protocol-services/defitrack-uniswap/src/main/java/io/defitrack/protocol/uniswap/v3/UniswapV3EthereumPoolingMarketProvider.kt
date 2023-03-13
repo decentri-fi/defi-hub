@@ -4,14 +4,11 @@ import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
-import io.defitrack.token.ERC20Resource
-import io.defitrack.token.MarketSizeService
 import io.defitrack.token.TokenType
 import io.defitrack.uniswap.v3.UniswapV3Service
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.joinAll
 import org.springframework.stereotype.Component
 
 @Component
@@ -19,7 +16,7 @@ class UniswapV3EthereumPoolingMarketProvider(
     private val uniswapV3Service: UniswapV3Service,
 ) : PoolingMarketProvider() {
 
-    override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope{
+    override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
         uniswapV3Service.providePools().map {
             async {
                 try {
@@ -38,11 +35,13 @@ class UniswapV3EthereumPoolingMarketProvider(
                             token1.toFungibleToken()
                         ),
                         apr = null,
-                        marketSize = marketSizeService.getMarketSize(token0.toFungibleToken(), it.id, getNetwork()).plus(
-                            marketSizeService.getMarketSize(token1.toFungibleToken(), it.id, getNetwork())
-                        ),
+                        marketSize = marketSizeService.getMarketSize(token0.toFungibleToken(), it.id, getNetwork())
+                            .plus(
+                                marketSizeService.getMarketSize(token1.toFungibleToken(), it.id, getNetwork())
+                            ),
                         tokenType = TokenType.UNISWAP,
-                        positionFetcher = defaultPositionFetcher(token.address)
+                        positionFetcher = defaultPositionFetcher(token.address),
+                        totalSupply = token.totalSupply
                     )
                 } catch (ex: Exception) {
                     ex.printStackTrace()

@@ -38,7 +38,8 @@ class UniswapV2EthereumPoolingMarketProvider(
                         apr = uniswapAPRService.getAPR(it.id, getNetwork()),
                         marketSize = it.reserveUSD,
                         tokenType = TokenType.UNISWAP,
-                        positionFetcher = defaultPositionFetcher(token.address)
+                        positionFetcher = defaultPositionFetcher(token.address),
+                        totalSupply = token.totalSupply
                     )
                 } catch (ex: Exception) {
                     ex.printStackTrace()

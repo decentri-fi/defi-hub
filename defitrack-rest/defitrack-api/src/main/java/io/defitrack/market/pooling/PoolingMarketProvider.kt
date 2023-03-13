@@ -9,6 +9,7 @@ import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
 import io.defitrack.token.FungibleToken
 import io.defitrack.token.TokenType
 import java.math.BigDecimal
+import java.math.BigInteger
 
 abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
 
@@ -23,6 +24,7 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
         symbol: String,
         tokenType: TokenType,
         tokens: List<FungibleToken>,
+        totalSupply: BigInteger,
         positionFetcher: PositionFetcher? = null,
         investmentPreparer: InvestmentPreparer? = null,
         breakdown: List<PoolingMarketTokenShare>? = null,
@@ -43,7 +45,8 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
             positionFetcher = positionFetcher,
             investmentPreparer = investmentPreparer,
             breakdown = breakdown,
-            erc20Compatible = erc20Compatible
+            erc20Compatible = erc20Compatible,
+            totalSupply = totalSupply
         )
     }
 

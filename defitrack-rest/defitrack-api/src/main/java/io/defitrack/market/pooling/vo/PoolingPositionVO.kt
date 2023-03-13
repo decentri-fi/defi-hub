@@ -10,6 +10,7 @@ class PoolingPositionVO(
     val amountDecimal: BigDecimal,
     val amount: BigInteger,
     val name: String,
+    val breakdown: List<PoolingPositionTokenshareVO>?,
     val network: NetworkVO,
     val symbol: String,
     val protocol: ProtocolVO,

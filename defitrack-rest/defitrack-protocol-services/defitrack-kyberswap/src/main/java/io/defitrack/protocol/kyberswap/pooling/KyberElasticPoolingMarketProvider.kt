@@ -47,7 +47,8 @@ class KyberElasticPoolingMarketProvider(
                         breakdown = defaultBreakdown(tokens, poolingToken.address),
                         symbol = poolingToken.symbol,
                         tokens = poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
-                        tokenType = TokenType.VELODROME
+                        tokenType = TokenType.VELODROME,
+                        totalSupply = poolingToken.totalSupply
                     )
                 } catch (ex: Exception) {
                     logger.error("Error while fetching pooling market ${poolInfo.address}", ex)

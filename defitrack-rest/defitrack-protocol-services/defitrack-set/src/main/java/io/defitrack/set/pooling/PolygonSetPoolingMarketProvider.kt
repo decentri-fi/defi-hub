@@ -39,7 +39,8 @@ class PolygonSetPoolingMarketProvider(
                         marketSize = null,
                         tokenType = TokenType.SET,
                         positionFetcher = defaultPositionFetcher(it),
-                        investmentPreparer = null
+                        investmentPreparer = null,
+                        totalSupply = tokenContract.totalSupply()
                     )
                 } catch (ex: Exception) {
                     logger.error("Unable to import set with address $it", ex)

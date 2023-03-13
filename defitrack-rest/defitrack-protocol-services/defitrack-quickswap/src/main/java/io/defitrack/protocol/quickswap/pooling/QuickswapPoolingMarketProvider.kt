@@ -39,7 +39,6 @@ class QuickswapPoolingMarketProvider(
     }
 
     private suspend fun toPoolingMarket(it: QuickswapPair): PoolingMarket? {
-        println(it.id)
         val token0 = getToken(it.token0.id)
         val token1 = getToken(it.token1.id)
         if (token0.symbol == "UNKWN" || token1.symbol == "UNKWN") return null
@@ -60,7 +59,8 @@ class QuickswapPoolingMarketProvider(
             apr = quickswapAPRService.getLPAPR(it.id),
             marketSize = it.reserveUSD,
             tokenType = TokenType.QUICKSWAP,
-            positionFetcher = defaultPositionFetcher(token.address)
+            positionFetcher = defaultPositionFetcher(token.address),
+            totalSupply = token.totalSupply
         )
     }
 

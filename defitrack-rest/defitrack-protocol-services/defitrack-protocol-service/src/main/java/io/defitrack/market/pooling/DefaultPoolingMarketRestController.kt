@@ -1,12 +1,10 @@
 package io.defitrack.market.pooling
 
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
-import io.defitrack.common.utils.BigDecimalExtensions.isZero
 import io.defitrack.farming.vo.TransactionPreparationVO
 import io.defitrack.invest.PrepareInvestmentCommand
+import io.defitrack.market.pooling.breakdown.PoolingBreakdownService
 import io.defitrack.market.pooling.domain.PoolingMarket
-import io.defitrack.market.pooling.vo.PoolingMarketTokenShareVO
 import io.defitrack.market.pooling.vo.PoolingMarketVO
 import io.defitrack.network.toVO
 import io.defitrack.protocol.toVO
@@ -26,7 +24,8 @@ import java.math.BigDecimal
 @RequestMapping("/pooling")
 class DefaultPoolingMarketRestController(
     private val poolingMarketProviders: List<PoolingMarketProvider>,
-    private val erC20Resource: ERC20Resource
+    private val erC20Resource: ERC20Resource,
+    private val poolingBreakdownService: PoolingBreakdownService
 ) {
     companion object {
         val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -129,25 +128,13 @@ class DefaultPoolingMarketRestController(
     }
 
     fun PoolingMarket.toVO(): PoolingMarketVO {
-        val totalReserveUSD = breakdown?.sumOf {
-            it.reserveUSD
-        } ?: BigDecimal.ZERO
         return PoolingMarketVO(
             name = name,
             protocol = protocol.toVO(),
             network = network.toVO(),
             tokens = tokens,
             id = id,
-            breakdown = breakdown?.map {
-                PoolingMarketTokenShareVO(
-                    token = it.token,
-                    reserve = it.reserve,
-                    reserveUSD = it.reserveUSD,
-                    weight = if (it.reserveUSD.isZero() || totalReserveUSD.isZero()) BigDecimal.ZERO else it.reserveUSD.dividePrecisely(
-                        totalReserveUSD
-                    )
-                )
-            },
+            breakdown = poolingBreakdownService.toVO(breakdown),
             decimals = decimals,
             address = address,
             apr = apr,

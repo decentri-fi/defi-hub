@@ -1,6 +1,7 @@
 package io.defitrack.market.pooling
 
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.market.pooling.breakdown.PoolingBreakdownService
 import io.defitrack.market.pooling.domain.PoolingPosition
 import io.defitrack.market.pooling.vo.PoolingPositionVO
 import io.defitrack.network.toVO
@@ -23,7 +24,8 @@ import org.springframework.web.bind.annotation.RestController
 class DefaultPoolingPositionRestController(
     private val poolingPositionProviders: List<PoolingPositionProvider>,
     private val priceResource: PriceResource,
-    private val erC20Resource: ERC20Resource
+    private val erC20Resource: ERC20Resource,
+    private val breakdownService: PoolingBreakdownService
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -64,7 +66,8 @@ class DefaultPoolingPositionRestController(
             protocol = market.protocol.toVO(),
             id = market.id,
             exitPositionSupported = market.exitPositionPreparer != null,
-            amount = tokenAmount
+            amount = tokenAmount,
+            breakdown = breakdownService.toPositionVO(market, tokenAmount)
         )
     }
 }

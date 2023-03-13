@@ -29,7 +29,8 @@ class BalancerEthereumPoolingMarketProvider(
                     apr = BigDecimal.ZERO,
                     marketSize = it.totalLiquidity,
                     tokenType = TokenType.BALANCER,
-                    positionFetcher = defaultPositionFetcher(it.address)
+                    positionFetcher = defaultPositionFetcher(it.address),
+                    totalSupply = it.totalShares.toBigInteger()
                 )
             } else {
                 null

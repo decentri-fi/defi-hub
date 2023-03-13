@@ -38,7 +38,8 @@ class PoolTogetherOptimismAUSDCTicketMarketProvider(
                     )
                 ).toBigDecimal(),
                 tokenType = TokenType.POOLTOGETHER,
-                positionFetcher = defaultPositionFetcher(token.address)
+                positionFetcher = defaultPositionFetcher(token.address),
+                totalSupply = token.totalSupply
             )
         )
     }
