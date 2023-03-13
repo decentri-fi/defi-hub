@@ -88,7 +88,7 @@ abstract class BeefyFarmingMarketProvider(
                 exitPositionPreparer = prepareExit {
                     PreparedTransaction(
                         getNetwork().toVO(),
-                        contract.exitFunction(it.amount),
+                        contract.fullExitFunction(),
                         contract.address,
                         from = it.user
                     )

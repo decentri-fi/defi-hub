@@ -25,6 +25,12 @@ class BeefyVaultContract(
         )
     }
 
+    fun fullExitFunction(): Function {
+        return createFunction(
+            method = "withdrawAll",
+        )
+    }
+
     suspend fun balance(): BigInteger {
         return readWithAbi(
             "balance",
