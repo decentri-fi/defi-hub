@@ -14,7 +14,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import org.springframework.stereotype.Component
-import java.math.BigDecimal
 
 @Component
 class ApeswapPolygonPoolingMarketProvider(
@@ -38,18 +37,15 @@ class ApeswapPolygonPoolingMarketProvider(
 
         return coroutineScope {
             pools.map { pool ->
-                async {
-                    try {
-                        semaphore.withPermit {
+                semaphore.withPermit {
+                    async {
+                        try {
                             val poolingToken = getToken(pool)
                             val underlyingTokens = poolingToken.underlyingTokens
                             val marketSize = getMarketSize(
                                 poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
                                 pool
                             )
-
-                            if (marketSize < BigDecimal.valueOf(10000))
-                                return@async null
 
                             create(
                                 identifier = pool,
@@ -63,10 +59,10 @@ class ApeswapPolygonPoolingMarketProvider(
                                 positionFetcher = defaultPositionFetcher(poolingToken.address),
                                 totalSupply = poolingToken.totalSupply
                             )
+                        } catch (ex: Exception) {
+                            logger.error("Error while fetching pooling market $pool", ex)
+                            null
                         }
-                    } catch (ex: Exception) {
-                        logger.error("Error while fetching pooling market $pool", ex)
-                        null
                     }
                 }
             }.awaitAll().filterNotNull()

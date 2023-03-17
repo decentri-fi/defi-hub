@@ -71,7 +71,7 @@ class QuickswapService(
         return pairCache.get("all-pairs") {
             val query = """
    {
-            	pairs(first: 500, orderDirection: desc, orderBy: reserveUSD, where: {reserveUSD_gt: 10000}) {
+            	pairs(first: 1000, orderDirection: desc, orderBy: reserveUSD, where: {reserveUSD_gt: 10000}) {
                 id
                 reserveUSD
                 token0 {

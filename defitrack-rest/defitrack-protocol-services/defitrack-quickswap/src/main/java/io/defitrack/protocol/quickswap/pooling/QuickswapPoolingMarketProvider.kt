@@ -24,8 +24,8 @@ class QuickswapPoolingMarketProvider(
     override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
         val semaphore = Semaphore(8)
         quickswapService.getPairs().map {
-            async {
-                semaphore.withPermit {
+            semaphore.withPermit {
+                async {
                     try {
                         toPoolingMarket(it)
                     } catch (ex: Exception) {
