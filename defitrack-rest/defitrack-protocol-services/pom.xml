@@ -22,6 +22,7 @@
         <module>defitrack-balancer</module>
         <module>defitrack-bancor</module>
         <module>defitrack-beefy</module>
+        <module>defitrack-camelot</module>
         <module>defitrack-compound</module>
         <module>defitrack-cowswap</module>
         <module>defitrack-convex</module>

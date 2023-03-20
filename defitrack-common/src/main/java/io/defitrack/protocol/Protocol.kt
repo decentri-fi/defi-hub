@@ -10,6 +10,13 @@ enum class Protocol(
     val enabled: Boolean = true,
     val networks: List<Network>
 ) {
+    CAMELOT(
+        logo = "camelot.png",
+        slug = "camelot",
+        primitives =  listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
+        website = "https://camelot.exchange//",
+        networks = listOf(Network.ARBITRUM)
+    ),
     STARGATE(
         logo = "stargate.svg",
         slug = "stargate",
