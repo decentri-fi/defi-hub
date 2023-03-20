@@ -44,3 +44,4 @@ lido
 tokemak
 cowswap
 solidlizard
+camelot
