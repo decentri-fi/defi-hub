@@ -104,7 +104,7 @@ class WepiggyLendingMarketProvider(
     }
 
     override fun getProtocol(): Protocol {
-        return Protocol.COMPOUND
+        return Protocol.WEPIGGY
     }
 
     override fun getNetwork(): Network {
