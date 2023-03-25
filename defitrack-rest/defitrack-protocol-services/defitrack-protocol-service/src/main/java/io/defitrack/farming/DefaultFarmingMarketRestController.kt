@@ -5,11 +5,15 @@ import io.defitrack.exit.ExitPositionCommand
 import io.defitrack.farming.vo.TransactionPreparationVO
 import io.defitrack.invest.PrepareInvestmentCommand
 import io.defitrack.market.farming.FarmingMarketProvider
+import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.vo.FarmingMarketVO
-import io.defitrack.market.farming.vo.FarmingMarketVO.Companion.toVO
+import io.defitrack.network.toVO
+import io.defitrack.protocol.toVO
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.runBlocking
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -41,7 +45,7 @@ class DefaultFarmingMarketRestController(
     fun searchByToken(
         @RequestParam("token") tokenAddress: String,
         @RequestParam("network") network: Network
-    ): List<FarmingMarketVO>  = runBlocking {
+    ): List<FarmingMarketVO> = runBlocking {
         farmingMarketProviders
             .filter {
                 it.getNetwork() == network
@@ -98,7 +102,7 @@ class DefaultFarmingMarketRestController(
     fun prepareExit(
         @PathVariable("id") id: String,
         @RequestBody exitPositionCommand: ExitPositionCommand
-    ) = runBlocking{
+    ) = runBlocking {
         getStakingMarketById(id)?.exitPositionPreparer?.prepare(exitPositionCommand)?.let { transactions ->
             ResponseEntity.ok(
                 TransactionPreparationVO(
@@ -107,4 +111,34 @@ class DefaultFarmingMarketRestController(
             )
         } ?: ResponseEntity.badRequest().build()
     }
+
+    fun FarmingMarket.toVO(): FarmingMarketVO {
+        return with(
+            FarmingMarketVO(
+                id = this.id,
+                network = this.network.toVO(),
+                protocol = this.protocol.toVO(),
+                name = this.name,
+                stakedToken = this.stakedToken,
+                reward = this.rewardTokens,
+                vaultType = this.contractType,
+                marketSize = this.marketSize,
+                apr = this.apr,
+                prepareInvestmentSupported = this.investmentPreparer != null,
+                exitPositionSupported = this.exitPositionPreparer != null,
+                farmType = farmType,
+                rewardsFinished = this.rewardsFinished
+            )
+        ) {
+            val self = linkTo(
+                methodOn(DefaultFarmingMarketRestController::class.java).getById(
+                    this.id
+                )
+            ).withSelfRel()
+
+            this.add(self)
+            this
+        }
+    }
+
 }

@@ -28,20 +28,5 @@ class FarmingMarketVO(
     id, network, protocol, name, prepareInvestmentSupported, exitPositionSupported, marketSize, "farming"
 ) {
     companion object {
-        fun FarmingMarket.toVO() = FarmingMarketVO(
-            id = this.id,
-            network = this.network.toVO(),
-            protocol = this.protocol.toVO(),
-            name = this.name,
-            stakedToken = this.stakedToken,
-            reward = this.rewardTokens,
-            vaultType = this.contractType,
-            marketSize = this.marketSize,
-            apr = this.apr,
-            prepareInvestmentSupported = this.investmentPreparer != null,
-            exitPositionSupported = this.exitPositionPreparer != null,
-            farmType = farmType,
-            rewardsFinished = this.rewardsFinished
-        )
     }
 }
