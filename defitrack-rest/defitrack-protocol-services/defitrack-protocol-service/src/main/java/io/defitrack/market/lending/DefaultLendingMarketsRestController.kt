@@ -1,7 +1,7 @@
 package io.defitrack.market.lending
 
 import io.defitrack.common.network.Network
-import io.defitrack.farming.vo.TransactionPreparationVO
+import io.defitrack.market.farming.vo.TransactionPreparationVO
 import io.defitrack.invest.PrepareInvestmentCommand
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.lending.vo.LendingMarketVO

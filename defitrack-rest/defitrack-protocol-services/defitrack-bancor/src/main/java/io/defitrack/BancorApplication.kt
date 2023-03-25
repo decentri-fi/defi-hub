@@ -1,10 +1,13 @@
 package io.defitrack
 
-import org.springframework.boot.autoconfigure.SpringBootApplication
+import io.defitrack.protocol.Protocol
 import org.springframework.boot.runApplication
 
-@SpringBootApplication
-class BancorApplication
+class BancorApplication : ProtocolApplication() {
+    override fun getProtocol(): Protocol {
+        return Protocol.BANCOR
+    }
+}
 
 fun main(args: Array<String>) {
     runApplication<BancorApplication>(*args)

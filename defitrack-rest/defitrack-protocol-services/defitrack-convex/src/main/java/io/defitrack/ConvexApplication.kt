@@ -1,12 +1,13 @@
 package io.defitrack
 
-import org.springframework.boot.autoconfigure.SpringBootApplication
+import io.defitrack.protocol.Protocol
 import org.springframework.boot.runApplication
-import org.springframework.cache.annotation.EnableCaching
 
-@SpringBootApplication
-@EnableCaching
-class ConvexApplication
+class ConvexApplication : ProtocolApplication() {
+    override fun getProtocol(): Protocol {
+        return Protocol.CONVEX
+    }
+}
 
 fun main(args: Array<String>) {
     runApplication<ConvexApplication>(*args)

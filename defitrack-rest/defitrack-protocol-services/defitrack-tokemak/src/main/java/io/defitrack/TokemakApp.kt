@@ -1,12 +1,13 @@
 package io.defitrack
 
-import org.springframework.boot.autoconfigure.SpringBootApplication
+import io.defitrack.protocol.Protocol
 import org.springframework.boot.runApplication
-import org.springframework.scheduling.annotation.EnableScheduling
 
-@SpringBootApplication
-@EnableScheduling
-class TokemakApp
+class TokemakApp : ProtocolApplication() {
+    override fun getProtocol(): Protocol {
+        return Protocol.TOKEMAK
+    }
+}
 
 fun main(args: Array<String>) {
     runApplication<TokemakApp>(*args)

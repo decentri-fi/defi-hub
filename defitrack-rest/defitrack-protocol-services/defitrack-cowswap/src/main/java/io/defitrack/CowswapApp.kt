@@ -1,13 +1,15 @@
 package io.defitrack
 
-import org.springframework.boot.autoconfigure.SpringBootApplication
+import io.defitrack.protocol.Protocol
 import org.springframework.boot.runApplication
-import org.springframework.cache.annotation.EnableCaching
 
-@SpringBootApplication
-@EnableCaching
-class CowswapApp
+
+class CowswapApplication : ProtocolApplication() {
+    override fun getProtocol(): Protocol {
+        return Protocol.COWSWAP
+    }
+}
 
 fun main(args: Array<String>) {
-    runApplication<CowswapApp>(*args)
+    runApplication<CowswapApplication>(*args)
 }

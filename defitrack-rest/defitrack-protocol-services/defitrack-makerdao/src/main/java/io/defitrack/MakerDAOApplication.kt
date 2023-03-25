@@ -1,12 +1,13 @@
 package io.defitrack
 
-import org.springframework.boot.autoconfigure.SpringBootApplication
+import io.defitrack.protocol.Protocol
 import org.springframework.boot.runApplication
-import org.springframework.cache.annotation.EnableCaching
 
-@SpringBootApplication
-@EnableCaching
-class MakerDAOApplication
+class MakerDAOApplication : ProtocolApplication() {
+    override fun getProtocol(): Protocol {
+        return Protocol.MAKERDAO
+    }
+}
 
 fun main(args: Array<String>) {
     runApplication<MakerDAOApplication>(*args)

@@ -102,8 +102,5 @@ class AaveV2PolygonLendingMarketProvider(
         )
     }
 
-
-    override fun getProtocol(): Protocol = Protocol.AAVE
-
     override fun getNetwork(): Network = Network.POLYGON
 }

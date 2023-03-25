@@ -1,5 +1,7 @@
 package io.defitrack.protocol
 
+import org.springframework.hateoas.RepresentationModel
+
 
 class ProtocolVO(
     val name: String,
@@ -7,7 +9,7 @@ class ProtocolVO(
     val slug: String,
     val primitives: List<DefiPrimitive>,
     val website: String
-)
+) : RepresentationModel<ProtocolVO>()
 
 fun Protocol.toVO(): ProtocolVO {
     return ProtocolVO(

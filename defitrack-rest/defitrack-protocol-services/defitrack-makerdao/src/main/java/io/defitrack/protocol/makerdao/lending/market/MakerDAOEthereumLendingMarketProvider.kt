@@ -40,7 +40,5 @@ class MakerDAOEthereumLendingMarketProvider(
         }.awaitAll().filterNotNull()
     }
 
-    override fun getProtocol() = Protocol.MAKERDAO
-
     override fun getNetwork() = Network.ETHEREUM
 }

@@ -1,6 +1,6 @@
 package io.defitrack.market.lending
 
-import io.defitrack.invest.MarketProvider
+import io.defitrack.market.MarketProvider
 import io.defitrack.market.farming.domain.InvestmentPreparer
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.lending.domain.PositionFetcher

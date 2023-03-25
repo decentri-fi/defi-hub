@@ -2,7 +2,7 @@ package io.defitrack.market.farming
 
 import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.exit.ExitPositionPreparer
-import io.defitrack.invest.MarketProvider
+import io.defitrack.market.MarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.domain.InvestmentPreparer
 import io.defitrack.market.lending.domain.PositionFetcher

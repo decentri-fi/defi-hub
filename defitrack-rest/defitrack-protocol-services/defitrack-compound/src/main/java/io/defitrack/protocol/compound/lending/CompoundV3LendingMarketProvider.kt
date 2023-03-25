@@ -30,10 +30,6 @@ class CompoundV3LendingMarketProvider(
         }
     }
 
-    override fun getProtocol(): Protocol {
-        return Protocol.COMPOUND
-    }
-
     override fun getNetwork(): Network {
         return Network.ETHEREUM
     }

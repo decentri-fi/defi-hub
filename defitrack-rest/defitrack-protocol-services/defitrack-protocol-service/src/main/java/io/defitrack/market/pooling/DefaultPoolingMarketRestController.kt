@@ -1,7 +1,7 @@
 package io.defitrack.market.pooling
 
 import io.defitrack.common.network.Network
-import io.defitrack.farming.vo.TransactionPreparationVO
+import io.defitrack.market.farming.vo.TransactionPreparationVO
 import io.defitrack.invest.PrepareInvestmentCommand
 import io.defitrack.market.pooling.breakdown.PoolingBreakdownService
 import io.defitrack.market.pooling.domain.PoolingMarket

@@ -1,10 +1,13 @@
 package io.defitrack
 
-import org.springframework.boot.autoconfigure.SpringBootApplication
+import io.defitrack.protocol.Protocol
 import org.springframework.boot.runApplication
 
-@SpringBootApplication
-class BalancerApplication
+class BalancerApplication : ProtocolApplication() {
+    override fun getProtocol(): Protocol {
+        return Protocol.BALANCER
+    }
+}
 
 fun main(args: Array<String>) {
     runApplication<BalancerApplication>(*args)

@@ -1,10 +1,13 @@
 package io.defitrack
 
-import org.springframework.boot.autoconfigure.SpringBootApplication
+import io.defitrack.protocol.Protocol
 import org.springframework.boot.runApplication
 
-@SpringBootApplication
-class PolygonProtocolApp
+class PolygonProtocolApp : ProtocolApplication() {
+    override fun getProtocol(): Protocol {
+        return Protocol.POLYGON
+    }
+}
 
 fun main(args: Array<String>) {
     runApplication<PolygonProtocolApp>(*args)

@@ -1,10 +1,13 @@
 package io.defitrack
 
-import org.springframework.boot.autoconfigure.SpringBootApplication
+import io.defitrack.protocol.Protocol
 import org.springframework.boot.runApplication
 
-@SpringBootApplication
-class KyberswapApplication
+class KyberswapApplication : ProtocolApplication() {
+    override fun getProtocol(): Protocol {
+        return Protocol.KYBER_SWAP
+    }
+}
 
 fun main(args: Array<String>) {
     runApplication<KyberswapApplication>(*args)

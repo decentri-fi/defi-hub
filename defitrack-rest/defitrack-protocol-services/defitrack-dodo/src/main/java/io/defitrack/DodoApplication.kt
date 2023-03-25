@@ -1,12 +1,13 @@
 package io.defitrack
 
-import org.springframework.boot.autoconfigure.SpringBootApplication
+import io.defitrack.protocol.Protocol
 import org.springframework.boot.runApplication
-import org.springframework.cache.annotation.EnableCaching
 
-@SpringBootApplication
-@EnableCaching
-class DodoApplication
+class DodoApplication : ProtocolApplication() {
+    override fun getProtocol(): Protocol {
+        return Protocol.DODO
+    }
+}
 
 fun main(args: Array<String>) {
     runApplication<DodoApplication>(*args)
