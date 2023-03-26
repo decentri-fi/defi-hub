@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
 @Component
-class DfynPoolingMarketService(
+class DfynPoolingMarketProvider(
     private val dfynService: DfynService,
     private val dfynAPRService: DfynAPRService,
 ) : PoolingMarketProvider() {
@@ -44,10 +44,6 @@ class DfynPoolingMarketService(
                 null
             }
         }
-    }
-
-    override fun getProtocol(): Protocol {
-        return Protocol.DFYN
     }
 
     override fun getNetwork(): Network {

@@ -1,5 +1,6 @@
 package io.defitrack.market
 
+import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGateway
@@ -49,8 +50,14 @@ abstract class MarketProvider<T> : ProtocolService {
     @Autowired
     lateinit var marketSizeService: MarketSizeService
 
+
+    @Autowired
+    lateinit var abiResource: ABIResource
+
+
     @Autowired
     private lateinit var blockchainGatewayProvider: BlockchainGatewayProvider
+
 
     protected abstract suspend fun fetchMarkets(): List<T>
 
@@ -153,6 +160,10 @@ abstract class MarketProvider<T> : ProtocolService {
 
     suspend inline fun <T> throttled(action: () -> T): T {
         return semaphore.withPermit(action)
+    }
+
+    suspend fun getAbi(name: String): String {
+        return abiResource.getABI(name)
     }
 
     override fun getProtocol(): Protocol {

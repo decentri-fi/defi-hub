@@ -1,15 +1,12 @@
 package io.defitrack.protocol.dinoswap.staking
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
-import io.defitrack.price.PriceResource
 import io.defitrack.protocol.ContractType
-import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.dinoswap.DinoswapService
 import io.defitrack.protocol.dinoswap.contract.DinoswapFossilFarmsContract
 import kotlinx.coroutines.async
@@ -21,13 +18,11 @@ import org.springframework.stereotype.Service
 @Service
 class DinoswapFarmingMarketProvider(
     private val dinoswapService: DinoswapService,
-    private val abiResource: ABIResource,
-    private val priceResource: PriceResource,
 ) : FarmingMarketProvider() {
 
     val fossilFarms by lazy {
         runBlocking {
-            abiResource.getABI("dinoswap/FossilFarms.json")
+            getAbi("dinoswap/FossilFarms.json")
         }
     }
 
@@ -60,7 +55,7 @@ class DinoswapFarmingMarketProvider(
         val rewardToken = getToken(chef.rewardToken())
 
         val marketBalance = getERC20Resource().getBalance(getNetwork(), stakedtoken.address, chef.address)
-        val marketSize = priceResource.calculatePrice(
+        val marketSize = getPriceResource().calculatePrice(
             PriceRequest(
                 stakedtoken.address,
                 getNetwork(),
@@ -84,11 +79,6 @@ class DinoswapFarmingMarketProvider(
             marketSize = marketSize.toBigDecimal(),
             farmType = ContractType.LIQUIDITY_MINING
         )
-    }
-
-
-    override fun getProtocol(): Protocol {
-        return Protocol.DINOSWAP
     }
 
     override fun getNetwork(): Network {

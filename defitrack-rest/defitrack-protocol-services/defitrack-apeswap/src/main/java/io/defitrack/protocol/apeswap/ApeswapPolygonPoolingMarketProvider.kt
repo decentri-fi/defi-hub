@@ -69,10 +69,6 @@ class ApeswapPolygonPoolingMarketProvider(
         }
     }
 
-    override fun getProtocol(): Protocol {
-        return Protocol.APESWAP
-    }
-
     override fun getNetwork(): Network {
         return Network.POLYGON
     }

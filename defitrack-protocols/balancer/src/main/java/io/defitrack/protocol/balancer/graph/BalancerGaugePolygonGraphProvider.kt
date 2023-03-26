@@ -11,9 +11,9 @@ class BalancerGaugePolygonGraphProvider(
 ) : GraphProvider(
     "https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-gauges-polygon",
     theGraphGatewayProvider
-) {
+), BalancerGaugeProvider {
 
-    suspend fun getGauges(): List<LiquidityGauge> {
+    override suspend fun getGauges(): List<LiquidityGauge> {
         val query = """
             {
             	liquidityGauges {
