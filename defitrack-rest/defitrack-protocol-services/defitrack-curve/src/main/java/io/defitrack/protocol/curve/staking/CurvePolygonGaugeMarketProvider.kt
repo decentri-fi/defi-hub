@@ -17,78 +17,9 @@ import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Service
 
 @Service
-class CurvePolygonGaugeMarketProvider : FarmingMarketProvider() {
-    override suspend fun fetchMarkets(): List<FarmingMarket> {
-        return coroutineScope {
-
-            val gaugeController = CurvePolygonGaugeControllerContract(
-                blockchainGateway = getBlockchainGateway(),
-                address = "0xabc000d88f23bb45525e447528dbf656a9d55bf5"
-            )
-
-            return@coroutineScope gaugeController.getGaugeAddresses().map { gauge ->
-                async {
-                    try {
-                        val contract = CurveGaugeContract(
-                            getBlockchainGateway(),
-                            gauge
-                        )
-                        val rewardTokens = contract.rewardTokens()
-                            .filter {
-                                it != "0x0000000000000000000000000000000000000000"
-                            }
-                            .map {
-                                getToken(it).toFungibleToken()
-                            }
-
-                        val stakedToken = getToken(contract.lpToken())
-
-                        create(
-                            identifier = gauge,
-                            name = stakedToken.name + " Gauge",
-                            stakedToken = stakedToken.toFungibleToken(),
-                            rewardTokens = rewardTokens,
-                            vaultType = "curve-gauge",
-                            marketSize = marketSizeService.getMarketSize(
-                                stakedToken.toFungibleToken(), gauge, getNetwork()
-                            ),
-                            farmType = ContractType.LIQUIDITY_MINING,
-                            balanceFetcher = PositionFetcher(
-                                gauge,
-                                { user ->
-                                    getERC20Resource().balanceOfFunction(gauge, user, getNetwork())
-                                }
-                            ),
-                            claimableRewardFetcher = rewardTokens.takeIf { it.isNotEmpty() }?.let {
-                                ClaimableRewardFetcher(
-                                    address = contract.address,
-                                    function = { user ->
-                                        contract.getClaimableRewardFunction(
-                                            user, rewardTokens.first().address
-                                        )
-                                    },
-                                    preparedTransaction = {
-                                        PreparedTransaction(
-                                            getNetwork().toVO(),
-                                            contract.getClaimRewardsFunction(),
-                                            contract.address
-                                        )
-                                    }
-                                )
-                            }
-                        )
-                    } catch (ex: Exception) {
-                        logger.error("Unable to fetch curve gauge ${gauge}")
-                        null
-                    }
-                }
-            }.awaitAll().filterNotNull()
-        }
-    }
-
-    override fun getProtocol(): Protocol {
-        return Protocol.CURVE
-    }
+class CurvePolygonGaugeMarketProvider : CurveGaugeFarmingMarketProvider(
+    "0xabc000d88f23bb45525e447528dbf656a9d55bf5"
+) {
 
     override fun getNetwork(): Network {
         return Network.POLYGON
