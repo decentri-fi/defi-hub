@@ -50,10 +50,6 @@ class PolygonSetPoolingMarketProvider(
         }.awaitAll().filterNotNull()
     }
 
-    override fun getProtocol(): Protocol {
-        return Protocol.SET
-    }
-
     override fun getNetwork(): Network {
         return Network.POLYGON
     }

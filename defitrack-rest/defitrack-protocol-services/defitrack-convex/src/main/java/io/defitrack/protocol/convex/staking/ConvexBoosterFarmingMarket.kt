@@ -45,10 +45,6 @@ class ConvexBoosterFarmingMarket(
         }
     }
 
-    override fun getProtocol(): Protocol {
-        return Protocol.CONVEX
-    }
-
     override fun getNetwork(): Network {
         return Network.ETHEREUM
     }

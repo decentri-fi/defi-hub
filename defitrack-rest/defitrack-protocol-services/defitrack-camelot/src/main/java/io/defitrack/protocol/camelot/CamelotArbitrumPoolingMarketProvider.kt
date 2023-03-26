@@ -1,4 +1,4 @@
-package io.defitrack.protocol.apeswap
+package io.defitrack.protocol.camelot
 
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
@@ -32,11 +32,9 @@ class CamelotArbitrumPoolingMarketProvider(
 
 
     override suspend fun fetchMarkets(): List<PoolingMarket> {
-        val semaphore = Semaphore(16)
-
         return coroutineScope {
             pools.map { pool ->
-                semaphore.withPermit {
+                throttled {
                     async {
                         try {
                             val poolingToken = getToken(pool)

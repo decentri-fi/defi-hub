@@ -1,6 +1,5 @@
 package io.defitrack.farming
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -19,13 +18,12 @@ import org.springframework.stereotype.Component
 @Component
 class BeethovenXOptimismFarmingMarketProvider(
     private val gaugeProvider: BeethovenXOptimismGaugeGraphProvider,
-    private val abiResource: ABIResource
 ) :
     FarmingMarketProvider() {
 
     val balancerGaugeContractAbi by lazy {
         runBlocking {
-            abiResource.getABI("balancer/gauge.json")
+            getAbi("balancer/gauge.json")
         }
     }
 
@@ -78,10 +76,6 @@ class BeethovenXOptimismFarmingMarketProvider(
                 null
             }
         }
-    }
-
-    override fun getProtocol(): Protocol {
-        return Protocol.BEETHOVENX
     }
 
     override fun getNetwork(): Network {

@@ -51,10 +51,6 @@ class KyberswapPolygonPoolingMarketProvider(
         }.awaitAll().filterNotNull()
     }
 
-    override fun getProtocol(): Protocol {
-        return Protocol.KYBER_SWAP
-    }
-
     override fun getNetwork(): Network {
         return Network.POLYGON
     }

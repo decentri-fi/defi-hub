@@ -50,10 +50,6 @@ class UniswapV2EthereumPoolingMarketProvider(
         }
     }
 
-    override fun getProtocol(): Protocol {
-        return Protocol.UNISWAP
-    }
-
     override fun getNetwork(): Network {
         return Network.ETHEREUM
     }

@@ -1,15 +1,12 @@
 package io.defitrack.protocol.quickswap.staking
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
-import io.defitrack.price.PriceResource
 import io.defitrack.protocol.ContractType
-import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
 import io.defitrack.protocol.quickswap.contract.DualRewardFactoryContract
@@ -25,14 +22,12 @@ import java.math.RoundingMode
 @Service
 class QuickswapDualFarmingMarketProvider(
     private val quickswapService: QuickswapService,
-    private val abiService: ABIResource,
-    private val priceResource: PriceResource,
     private val quickswapAPRService: QuickswapAPRService,
 ) : FarmingMarketProvider() {
 
     val stakingRewardsABI by lazy {
         runBlocking {
-            abiService.getABI("quickswap/DualStakingRewards.json")
+            getAbi("quickswap/DualStakingRewards.json")
         }
     }
 
@@ -102,7 +97,7 @@ class QuickswapDualFarmingMarketProvider(
         stakedTokenInformation: TokenInformationVO,
         pool: QuickswapDualRewardPoolContract
     ) = BigDecimal.valueOf(
-        priceResource.calculatePrice(
+        getPriceResource().calculatePrice(
             PriceRequest(
                 address = stakedTokenInformation.address,
                 network = getNetwork(),
@@ -113,10 +108,6 @@ class QuickswapDualFarmingMarketProvider(
             )
         )
     )
-
-    override fun getProtocol(): Protocol {
-        return Protocol.QUICKSWAP
-    }
 
     override fun getNetwork(): Network {
         return Network.POLYGON

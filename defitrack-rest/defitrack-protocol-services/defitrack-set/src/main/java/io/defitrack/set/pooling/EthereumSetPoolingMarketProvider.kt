@@ -66,10 +66,6 @@ class EthereumSetPoolingMarketProvider(
         }
     }
 
-    override fun getProtocol(): Protocol {
-        return Protocol.SET
-    }
-
     override fun getNetwork(): Network {
         return Network.ETHEREUM
     }

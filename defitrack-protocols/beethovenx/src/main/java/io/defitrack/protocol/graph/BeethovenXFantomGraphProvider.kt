@@ -16,7 +16,7 @@ class BeethovenXFantomGraphProvider(
     graphGatewayProvider
 ), BalancerPoolGraphProvider {
 
-    suspend fun getPools(): List<Pool> {
+    override suspend fun getPools(): List<Pool> {
         val query = """
             {
                pools(first: 100, orderBy: totalLiquidity, orderDirection: desc) {

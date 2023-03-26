@@ -1,6 +1,5 @@
 package io.defitrack.protocol.quickswap.staking
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
@@ -8,7 +7,6 @@ import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
-import io.defitrack.price.PriceResource
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapService
@@ -27,14 +25,12 @@ import java.math.RoundingMode
 @Service
 class QuickswapFarmingMarketProvider(
     private val quickswapService: QuickswapService,
-    private val abiService: ABIResource,
-    private val priceResource: PriceResource,
     private val quickswapAPRService: QuickswapAPRService,
 ) : FarmingMarketProvider() {
 
     val stakingRewardsABI by lazy {
         runBlocking {
-            abiService.getABI("quickswap/StakingRewards.json")
+            getAbi("quickswap/StakingRewards.json")
         }
     }
 
@@ -101,7 +97,7 @@ class QuickswapFarmingMarketProvider(
         stakedTokenInformation: TokenInformationVO,
         pool: QuickswapRewardPoolContract
     ) = BigDecimal.valueOf(
-        priceResource.calculatePrice(
+        getPriceResource().calculatePrice(
             PriceRequest(
                 address = stakedTokenInformation.address,
                 network = getNetwork(),

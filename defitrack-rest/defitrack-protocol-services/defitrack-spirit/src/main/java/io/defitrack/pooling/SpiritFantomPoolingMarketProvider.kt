@@ -49,10 +49,6 @@ class SpiritFantomPoolingMarketProvider(
             }
     }
 
-    override fun getProtocol(): Protocol {
-        return Protocol.SPIRITSWAP
-    }
-
     override fun getNetwork(): Network {
         return Network.FANTOM
     }

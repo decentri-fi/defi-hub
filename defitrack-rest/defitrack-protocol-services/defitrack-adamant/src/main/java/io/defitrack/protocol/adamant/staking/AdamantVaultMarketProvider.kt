@@ -1,6 +1,5 @@
 package io.defitrack.protocol.adamant.staking
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.network.Network
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -20,12 +19,11 @@ import org.springframework.stereotype.Service
 @Service
 class AdamantVaultMarketProvider(
     private val adamantService: AdamantService,
-    private val abiResource: ABIResource,
 ) : FarmingMarketProvider() {
 
     val genericVault by lazy {
         runBlocking {
-            abiResource.getABI("adamant/GenericVault.json")
+            getAbi("adamant/GenericVault.json")
         }
     }
 
@@ -79,10 +77,6 @@ class AdamantVaultMarketProvider(
                 }
             }.awaitAll().filterNotNull()
         }
-
-    override fun getProtocol(): Protocol {
-        return Protocol.ADAMANT
-    }
 
     override fun getNetwork(): Network {
         return Network.POLYGON

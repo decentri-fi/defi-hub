@@ -14,12 +14,11 @@ import org.springframework.stereotype.Service
 @Service
 class ConvexEthereumRewardPoolMarketProvider(
     private val convexService: ConvexEthereumService,
-    private val abiResource: ABIResource,
 ) : FarmingMarketProvider() {
 
     val cvxRewardPoolABI by lazy {
         runBlocking {
-            abiResource.getABI("convex/CvxRewardPool.json")
+            getAbi("convex/CvxRewardPool.json")
         }
     }
 
@@ -49,10 +48,6 @@ class ConvexEthereumRewardPoolMarketProvider(
                 metadata = mapOf("contract" to it)
             )
         }
-    }
-
-    override fun getProtocol(): Protocol {
-        return Protocol.CONVEX
     }
 
     override fun getNetwork(): Network {

@@ -1,6 +1,5 @@
 package io.defitrack.protocol.beefy.staking
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -8,7 +7,6 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.Position
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
-import io.defitrack.price.PriceResource
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
@@ -25,15 +23,13 @@ import java.math.BigInteger
 import java.math.RoundingMode
 
 abstract class BeefyFarmingMarketProvider(
-    private val abiResource: ABIResource,
     private val beefyAPYService: BeefyAPYService,
     private val vaults: List<BeefyVault>,
-    private val priceService: PriceResource
 ) : FarmingMarketProvider() {
 
     val vaultV6ABI by lazy {
         runBlocking {
-            abiResource.getABI("beefy/VaultV6.json")
+            getAbi("beefy/VaultV6.json")
         }
     }
 
@@ -103,7 +99,7 @@ abstract class BeefyFarmingMarketProvider(
         want: TokenInformationVO,
         beefyVault: BeefyVaultContract
     ) = BigDecimal.valueOf(
-        priceService.calculatePrice(
+        getPriceResource().calculatePrice(
             PriceRequest(
                 want.address,
                 getNetwork(),

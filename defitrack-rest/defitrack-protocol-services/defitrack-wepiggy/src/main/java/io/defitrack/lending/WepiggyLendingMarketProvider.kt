@@ -1,6 +1,5 @@
 package io.defitrack.lending
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
@@ -9,7 +8,6 @@ import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.lending.domain.Position
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
-import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.compound.v2.contract.CompoundComptrollerContract
 import io.defitrack.protocol.compound.v2.contract.CompoundTokenContract
@@ -26,20 +24,18 @@ import java.math.RoundingMode
 
 @Component
 class WepiggyLendingMarketProvider(
-    private val abiResource: ABIResource,
     private val wepiggyPolygonService: WepiggyPolygonService,
-    private val priceResource: PriceResource
 ) : LendingMarketProvider() {
 
     val comptrollerABI by lazy {
         runBlocking {
-            abiResource.getABI("compound/comptroller.json")
+            getAbi("compound/comptroller.json")
         }
     }
 
     val cTokenABI by lazy {
         runBlocking {
-            abiResource.getABI("compound/ctoken.json")
+            getAbi("compound/ctoken.json")
         }
     }
 
@@ -60,7 +56,7 @@ class WepiggyLendingMarketProvider(
                     name = ctokenContract.name(),
                     rate = getSupplyRate(compoundTokenContract = ctokenContract),
                     token = underlyingToken.toFungibleToken(),
-                    marketSize = priceResource.calculatePrice(
+                    marketSize = getPriceResource().calculatePrice(
                         PriceRequest(
                             underlyingToken.address,
                             getNetwork(),

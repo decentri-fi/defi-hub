@@ -1,6 +1,5 @@
 package io.defitrack.protocol.quickswap.staking
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -16,12 +15,11 @@ import org.springframework.stereotype.Service
 @Service
 class DQuickFarmingMarketProvider(
     private val quickswapService: QuickswapService,
-    private val abiResource: ABIResource,
 ) : FarmingMarketProvider() {
 
     val dquickStakingABI by lazy {
         runBlocking {
-            abiResource.getABI("quickswap/dquick.json")
+            getAbi("quickswap/dquick.json")
         }
     }
 
@@ -64,10 +62,6 @@ class DQuickFarmingMarketProvider(
                 }
             )
         )
-    }
-
-    override fun getProtocol(): Protocol {
-        return Protocol.QUICKSWAP
     }
 
     override fun getNetwork(): Network {

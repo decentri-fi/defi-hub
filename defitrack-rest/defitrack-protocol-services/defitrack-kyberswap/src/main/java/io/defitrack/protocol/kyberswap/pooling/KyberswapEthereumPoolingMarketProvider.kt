@@ -10,8 +10,6 @@ import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.sync.Semaphore
-import kotlinx.coroutines.sync.withPermit
 import org.springframework.stereotype.Service
 
 @Service
@@ -21,10 +19,9 @@ class KyberswapEthereumPoolingMarketProvider(
 ) : PoolingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
-        val semaphore = Semaphore(10)
         kyberswapPolygonService.getPoolingMarkets().map {
             async {
-                semaphore.withPermit {
+                throttled {
                     try {
                         val token = getToken(it.id)
                         val token0 = getToken(it.token0.id)
@@ -54,10 +51,6 @@ class KyberswapEthereumPoolingMarketProvider(
                 }
             }
         }.awaitAll().filterNotNull()
-    }
-
-    override fun getProtocol(): Protocol {
-        return Protocol.KYBER_SWAP
     }
 
     override fun getNetwork(): Network {

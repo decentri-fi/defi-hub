@@ -41,10 +41,6 @@ class QiDaoArbitrumVaultProvider(
         }
     }
 
-    override fun getProtocol(): Protocol {
-        return Protocol.QIDAO
-    }
-
     override fun getNetwork(): Network {
         return Network.ARBITRUM
     }

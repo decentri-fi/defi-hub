@@ -12,8 +12,6 @@ import io.defitrack.protocol.sushiswap.apr.MasterchefBasedfStakingAprCalculator
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.sync.Semaphore
-import kotlinx.coroutines.sync.withPermit
 import org.springframework.stereotype.Component
 
 @Component
@@ -28,19 +26,13 @@ class SushiswapEthereumMasterchefMarketProvider : FarmingMarketProvider() {
             "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd"
         )
 
-        val semaphore = Semaphore(16)
-
         contract.poolInfos().mapIndexed { poolIndex, poolInfo ->
             async {
-                semaphore.withPermit {
+                throttled {
                     toStakingMarketElement(poolInfo, contract, poolIndex)
                 }
             }
         }.awaitAll().filterNotNull()
-    }
-
-    override fun getProtocol(): Protocol {
-        return Protocol.SUSHISWAP
     }
 
     override fun getNetwork(): Network {

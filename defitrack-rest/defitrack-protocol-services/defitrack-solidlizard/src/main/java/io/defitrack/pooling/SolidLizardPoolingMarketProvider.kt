@@ -4,7 +4,6 @@ import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
-import io.defitrack.protocol.Protocol
 import io.defitrack.token.TokenType
 import io.defitrack.uniswap.v2.PairFactoryContract
 import kotlinx.coroutines.async
@@ -18,7 +17,6 @@ class SolidLizardPoolingMarketProvider : PoolingMarketProvider() {
         val factory = PairFactoryContract(
             getBlockchainGateway(), "0x734d84631f00dc0d3fcd18b04b6cf42bfd407074"
         )
-
 
         return@coroutineScope factory.allPairs().map {
             async {
@@ -47,10 +45,6 @@ class SolidLizardPoolingMarketProvider : PoolingMarketProvider() {
                 }
             }
         }.awaitAll().filterNotNull()
-    }
-
-    override fun getProtocol(): Protocol {
-        return Protocol.SOLIDLIZARD
     }
 
     override fun getNetwork(): Network {

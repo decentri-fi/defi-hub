@@ -52,10 +52,6 @@ class BeethovenXFantomPoolingMarketProvider(
         }.awaitAll().filterNotNull()
     }
 
-    override fun getProtocol(): Protocol {
-        return Protocol.BEETHOVENX
-    }
-
     override fun getNetwork(): Network {
         return Network.FANTOM
     }

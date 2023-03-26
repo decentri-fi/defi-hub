@@ -3,7 +3,6 @@ package io.defitrack.protocol.idex
 import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
-import io.defitrack.protocol.Protocol
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -56,10 +55,6 @@ class IdexPoolingMarketProvider(
                 }
             }
         }.awaitAll().filterNotNull()
-    }
-
-    override fun getProtocol(): Protocol {
-        return Protocol.IDEX
     }
 
     override fun getNetwork(): Network {

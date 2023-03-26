@@ -11,10 +11,6 @@ class SushiswapFantomPoolingMarketProvider(
     sushiServices: List<SushiswapService>,
 ) : DefaultSushiPoolingMarketProvider(sushiServices) {
 
-    override fun getProtocol(): Protocol {
-        return Protocol.SUSHISWAP
-    }
-
     override fun getNetwork(): Network {
         return Network.FANTOM
     }

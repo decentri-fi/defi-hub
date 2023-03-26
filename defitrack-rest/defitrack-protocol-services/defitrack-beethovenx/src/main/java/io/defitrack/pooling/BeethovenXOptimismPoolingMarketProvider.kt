@@ -4,7 +4,6 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
-import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.PoolToken
 import io.defitrack.protocol.graph.BeethovenXOptimismGraphProvider
 import io.defitrack.token.TokenType
@@ -50,10 +49,6 @@ class BeethovenXOptimismPoolingMarketProvider(
                 }
             }
         }.awaitAll().filterNotNull()
-    }
-
-    override fun getProtocol(): Protocol {
-        return Protocol.BEETHOVENX
     }
 
     override fun getNetwork(): Network {

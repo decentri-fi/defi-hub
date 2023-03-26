@@ -62,10 +62,6 @@ class SwapfishArbitrumMasterchefFarmingMarketProvider(
         }
     }
 
-    override fun getProtocol(): Protocol {
-        return Protocol.SWAPFISH
-    }
-
     override fun getNetwork(): Network {
         return Network.ARBITRUM
     }

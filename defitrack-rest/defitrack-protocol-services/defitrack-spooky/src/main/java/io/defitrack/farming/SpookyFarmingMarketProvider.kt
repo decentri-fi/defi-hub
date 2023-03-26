@@ -3,7 +3,6 @@ package io.defitrack.farming
 import io.defitrack.common.network.Network
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.price.PriceResource
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SpookyFantomService
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Component
 @Component
 class SpookyFarmingMarketProvider(
     private val spookyFantomService: SpookyFantomService,
-    private val priceResource: PriceResource,
 ) : FarmingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
@@ -35,7 +33,7 @@ class SpookyFarmingMarketProvider(
             val stakedToken = getToken(value.lpToken)
             val aprCalculator = MinichefStakingAprCalculator(
                 getERC20Resource(),
-                priceResource,
+                getPriceResource(),
                 masterchef,
                 index,
                 stakedToken
@@ -65,10 +63,6 @@ class SpookyFarmingMarketProvider(
                 }
             }
         }.awaitAll().filterNotNull()
-    }
-
-    override fun getProtocol(): Protocol {
-        return Protocol.SPOOKY
     }
 
     override fun getNetwork(): Network {

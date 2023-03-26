@@ -1,6 +1,5 @@
 package io.defitrack.protocol.mstable.staking
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -18,12 +17,11 @@ import org.springframework.stereotype.Service
 @Service
 class MStableEthereumFarmingMarketProvider(
     private val mStableEthereumService: MStableEthereumService,
-    private val abiResource: ABIResource,
 ) : FarmingMarketProvider() {
 
     val boostedSavingsVaultABI by lazy {
         runBlocking {
-            abiResource.getABI("mStable/BoostedSavingsVault.json")
+            getAbi("mStable/BoostedSavingsVault.json")
         }
     }
 
@@ -63,10 +61,6 @@ class MStableEthereumFarmingMarketProvider(
             ),
             farmType = ContractType.VAULT
         )
-    }
-
-    override fun getProtocol(): Protocol {
-        return Protocol.MSTABLE
     }
 
     override fun getNetwork(): Network {

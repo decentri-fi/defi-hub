@@ -46,10 +46,6 @@ class GOHMMarketProvider(
         )
     }
 
-    override fun getProtocol(): Protocol {
-        return Protocol.OLYMPUSDAO
-    }
-
     override fun getNetwork(): Network {
         return Network.ETHEREUM
     }

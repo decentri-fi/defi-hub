@@ -1,12 +1,10 @@
 package io.defitrack.farming
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.apr.MinichefStakingAprCalculator
 import io.defitrack.common.network.Network
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
-import io.defitrack.price.PriceResource
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SpiritFantomService
@@ -20,14 +18,12 @@ import java.math.BigDecimal
 @Component
 class SpiritFantomFarmingMarketProvider(
     private val spiritFantomService: SpiritFantomService,
-    private val abiResource: ABIResource,
-    private val priceResource: PriceResource,
 ) : FarmingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
         val masterchef = MasterchefLpContract(
             getBlockchainGateway(),
-            abiResource.getABI("spirit/Masterchef.json"),
+            getAbi("spirit/Masterchef.json"),
             spiritFantomService.getMasterchef()
         )
 
@@ -39,7 +35,7 @@ class SpiritFantomFarmingMarketProvider(
                     val stakedToken = getToken(value.lpToken)
                     val aprCalculator = MinichefStakingAprCalculator(
                         getERC20Resource(),
-                        priceResource,
+                        getPriceResource(),
                         masterchef,
                         index,
                         stakedToken

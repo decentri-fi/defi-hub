@@ -1,6 +1,5 @@
 package io.defitrack.protocol.sushiswap.staking
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -21,13 +20,12 @@ import java.math.RoundingMode
 
 @Component
 class SushiswapFantomFarmingMinichefMarketProvider(
-    private val abiResource: ABIResource,
     private val priceResource: PriceResource,
 ) : FarmingMarketProvider() {
 
     val minichefABI by lazy {
         runBlocking {
-            abiResource.getABI("sushi/MiniChefV2.json")
+            getAbi("sushi/MiniChefV2.json")
         }
     }
 
@@ -43,10 +41,6 @@ class SushiswapFantomFarmingMinichefMarketProvider(
                 toStakingMarketElement(chef, poolId)
             }
         }
-    }
-
-    override fun getProtocol(): Protocol {
-        return Protocol.SUSHISWAP
     }
 
     override fun getNetwork(): Network {

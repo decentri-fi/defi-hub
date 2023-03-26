@@ -44,10 +44,6 @@ class PoolTogetherOptimismAUSDCTicketMarketProvider(
         )
     }
 
-    override fun getProtocol(): Protocol {
-        return Protocol.POOLTOGETHER
-    }
-
     override fun getNetwork(): Network {
         return Network.OPTIMISM
     }

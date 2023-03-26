@@ -35,7 +35,7 @@ class BalancerPolygonPoolGraphProvider(
         logger.info("Initialized BalancerPolygonPoolGraphProvider in ${millis / 1000} s")
     }
 
-    suspend fun getPools(): List<Pool> {
+    override suspend fun getPools(): List<Pool> {
         val query = """
             {
                pools(first: 1000, orderBy: totalLiquidity, orderDirection: desc, where: {totalLiquidity_gt: 10000}) {

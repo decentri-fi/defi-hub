@@ -1,11 +1,8 @@
 package io.defitrack.farming
 
-import io.defitrack.abi.ABIResource
-import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.protocol.ContractType
-import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.StargateService
 import io.defitrack.protocol.contract.LPStakingContract
 import kotlinx.coroutines.runBlocking
@@ -14,19 +11,17 @@ import org.springframework.stereotype.Component
 @Component
 abstract class StargateFarmingMarketProvider(
     private val stargateOptimismService: StargateService,
-    private val accessorGateway: BlockchainGatewayProvider,
-    private val abiResource: ABIResource,
 ) : FarmingMarketProvider() {
 
     val lpStakingContractAbi by lazy {
         runBlocking {
-            abiResource.getABI("stargate/LPStaking.json")
+            getAbi("stargate/LPStaking.json")
         }
     }
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         val lpStakingContract = LPStakingContract(
-            accessorGateway.getGateway(getNetwork()),
+            getBlockchainGateway(),
             lpStakingContractAbi,
             stargateOptimismService.getLpFarm()
         )
@@ -45,9 +40,5 @@ abstract class StargateFarmingMarketProvider(
                 farmType = ContractType.LIQUIDITY_MINING
             )
         }
-    }
-
-    override fun getProtocol(): Protocol {
-        return Protocol.STARGATE
     }
 }

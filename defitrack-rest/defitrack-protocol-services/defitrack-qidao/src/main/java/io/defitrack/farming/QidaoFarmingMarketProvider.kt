@@ -60,11 +60,6 @@ class QidaoFarmingMarketProvider(
         )
     }
 
-
-    override fun getProtocol(): Protocol {
-        return Protocol.QIDAO
-    }
-
     override fun getNetwork(): Network {
         return Network.POLYGON
     }

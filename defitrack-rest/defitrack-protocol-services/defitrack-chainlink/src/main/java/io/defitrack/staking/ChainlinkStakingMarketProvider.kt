@@ -46,10 +46,6 @@ class ChainlinkStakingMarketProvider : FarmingMarketProvider(
         )
     }
 
-    override fun getProtocol(): Protocol {
-        return Protocol.CHAINLINK
-    }
-
     override fun getNetwork(): Network {
         return Network.ETHEREUM
     }

@@ -1,29 +1,25 @@
 package io.defitrack.protocol.quickswap.staking
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
-import io.defitrack.network.toVO
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.contract.DQuickContract
 import io.defitrack.protocol.quickswap.staking.invest.DQuickStakingInvestmentPreparer
-import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 
 @Service
 class OldDQuickFarmingMarketProvider(
     private val quickswapService: QuickswapService,
-    private val abiResource: ABIResource,
 ) : FarmingMarketProvider() {
 
     val dquickStakingABI by lazy {
         runBlocking {
-            abiResource.getABI("quickswap/dquick.json")
+            getAbi("quickswap/dquick.json")
         }
     }
 
@@ -67,10 +63,6 @@ class OldDQuickFarmingMarketProvider(
                 }
             )
         )
-    }
-
-    override fun getProtocol(): Protocol {
-        return Protocol.QUICKSWAP
     }
 
     override fun getNetwork(): Network {

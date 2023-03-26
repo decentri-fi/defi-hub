@@ -1,6 +1,5 @@
 package io.defitrack.protocol.bancor.pool
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Component
 
 @Component
 class BancorEthereumPoolingMarketProvider(
-    private val abiResource: ABIResource,
     private val bancorEthreumProvider: BancorEthereumProvider,
 ) : PoolingMarketProvider() {
 
@@ -33,12 +31,12 @@ class BancorEthereumPoolingMarketProvider(
 
     val poolTokenContractAbi by lazy {
         runBlocking {
-            abiResource.getABI("bancor/PoolToken.json")
+            getAbi("bancor/PoolToken.json")
         }
     }
     val bancorNetworkAbi by lazy {
         runBlocking {
-            abiResource.getABI("bancor/BancorNetwork.json")
+            getAbi("bancor/BancorNetwork.json")
         }
     }
 
@@ -84,10 +82,6 @@ class BancorEthereumPoolingMarketProvider(
                 }
             }
         }.awaitAll().filterNotNull()
-    }
-
-    override fun getProtocol(): Protocol {
-        return Protocol.BANCOR
     }
 
     override fun getNetwork(): Network {

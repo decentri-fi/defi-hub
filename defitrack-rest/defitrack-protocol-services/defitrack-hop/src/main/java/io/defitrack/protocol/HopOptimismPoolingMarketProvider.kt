@@ -1,12 +1,10 @@
 package io.defitrack.protocol
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
-import io.defitrack.price.PriceResource
 import io.defitrack.protocol.contract.HopLpTokenContract
 import io.defitrack.protocol.contract.HopSwapContract
 import io.defitrack.protocol.domain.HopLpToken
@@ -21,8 +19,6 @@ import java.math.BigDecimal
 class HopOptimismPoolingMarketProvider(
     private val hopService: HopService,
     private val hopAPRService: HopAPRService,
-    private val abiResource: ABIResource,
-    private val priceResource: PriceResource,
 ) : PoolingMarketProvider() {
 
 
@@ -41,13 +37,13 @@ class HopOptimismPoolingMarketProvider(
         return try {
             val contract = HopLpTokenContract(
                 blockchainGateway = gateway,
-                abiResource.getABI("hop/SaddleToken.json"),
+                getAbi("hop/SaddleToken.json"),
                 hopLpToken.lpToken
             )
 
             val swapContract = HopSwapContract(
                 blockchainGateway = gateway,
-                abiResource.getABI("hop/Swap.json"),
+                getAbi("hop/Swap.json"),
                 contract.swap()
             )
 
@@ -94,7 +90,7 @@ class HopOptimismPoolingMarketProvider(
             swapContract.virtualPrice().toBigDecimal()
         ).divide(BigDecimal.TEN.pow(36))
 
-        return priceResource.calculatePrice(
+        return getPriceResource().calculatePrice(
             PriceRequest(
                 address = canonicalTokenAddress,
                 network = getNetwork(),
@@ -102,10 +98,6 @@ class HopOptimismPoolingMarketProvider(
                 TokenType.SINGLE
             )
         )
-    }
-
-    override fun getProtocol(): Protocol {
-        return Protocol.HOP
     }
 
     override fun getNetwork(): Network {

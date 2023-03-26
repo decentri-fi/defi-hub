@@ -1,6 +1,5 @@
 package io.defitrack.protocol.polycat.staking
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.erc20.TokenInformationVO
@@ -8,7 +7,6 @@ import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
-import io.defitrack.price.PriceResource
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.polycat.PolycatService
@@ -20,12 +18,10 @@ import java.math.BigDecimal
 @Service
 class PolycatFarmingMarketProvider(
     private val polycatService: PolycatService,
-    private val abiResource: ABIResource,
-    private val priceResource: PriceResource,
 ) : FarmingMarketProvider() {
 
     val masterChefABI by lazy {
-        runBlocking {abiResource.getABI("polycat/MasterChef.json")}
+        runBlocking { getAbi("polycat/MasterChef.json") }
     }
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
@@ -47,7 +43,7 @@ class PolycatFarmingMarketProvider(
         poolId: Int
     ): FarmingMarket {
         val stakedtoken = getToken(chef.poolInfo(poolId).lpToken)
-        val rewardToken =  getToken(chef.rewardToken())
+        val rewardToken = getToken(chef.rewardToken())
         return create(
             identifier = "${chef.address}-${poolId}",
             name = stakedtoken.name + " Farm",
@@ -55,7 +51,7 @@ class PolycatFarmingMarketProvider(
             rewardTokens = listOf(
                 rewardToken.toFungibleToken()
             ),
-            apr = PolygcatStakingAprCalculator(getERC20Resource(), priceResource, chef, poolId).calculateApr(),
+            apr = PolygcatStakingAprCalculator(getERC20Resource(), getPriceResource(), chef, poolId).calculateApr(),
             marketSize = calculateMarketSize(stakedtoken, chef),
             balanceFetcher = PositionFetcher(
                 address = chef.address,
@@ -82,7 +78,7 @@ class PolycatFarmingMarketProvider(
         )
 
         return BigDecimal(
-            priceResource.calculatePrice(
+            getPriceResource().calculatePrice(
                 PriceRequest(
                     stakedtoken.address,
                     getNetwork(),
@@ -91,11 +87,6 @@ class PolycatFarmingMarketProvider(
                 )
             )
         )
-    }
-
-
-    override fun getProtocol(): Protocol {
-        return Protocol.POLYCAT
     }
 
     override fun getNetwork(): Network {

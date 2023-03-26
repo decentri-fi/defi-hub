@@ -1,11 +1,9 @@
 package io.defitrack.protocol.sushiswap.staking
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
-import io.defitrack.price.PriceResource
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SushiArbitrumService
@@ -19,13 +17,11 @@ import org.springframework.stereotype.Component
 
 @Component
 class SushiswapArbitrumFarmingMinichefMarketProvider(
-    private val abiResource: ABIResource,
-    private val priceResource: PriceResource,
 ) : FarmingMarketProvider() {
 
     val minichefABI by lazy {
         runBlocking {
-            abiResource.getABI("sushi/MiniChefV2.json")
+            getAbi("sushi/MiniChefV2.json")
         }
     }
 
@@ -69,7 +65,7 @@ class SushiswapArbitrumFarmingMinichefMarketProvider(
                 ),
                 vaultType = "sushi-minichefV2",
                 marketSize = getMarketSize(stakedtoken.toFungibleToken(), chef.address),
-                apr = MinichefStakingAprCalculator(getERC20Resource(), priceResource, chef, poolId).calculateApr(),
+                apr = MinichefStakingAprCalculator(getERC20Resource(), getPriceResource(), chef, poolId).calculateApr(),
                 balanceFetcher = PositionFetcher(
                     chef.address,
                     { user -> chef.userInfoFunction(poolId, user) }

@@ -1,6 +1,5 @@
 package io.defitrack.protocol.iron.lending
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.market.lending.LendingMarketProvider
@@ -8,7 +7,6 @@ import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.lending.domain.Position
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
-import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.compound.IronBankComptrollerContract
 import io.defitrack.protocol.compound.IronBankService
@@ -19,39 +17,32 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.sync.Semaphore
-import kotlinx.coroutines.sync.withPermit
-import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
 
-@Component
 abstract class IronBankLendingMarketProvider(
-    private val abiResource: ABIResource,
-    private val compoundEthereumService: IronBankService,
-    private val priceResource: PriceResource
+    private val ironBankService: IronBankService,
 ) : LendingMarketProvider() {
 
     val comptrollerABI by lazy {
         runBlocking {
-            abiResource.getABI("compound/comptroller.json")
+            getAbi("compound/comptroller.json")
         }
     }
 
     val cTokenABI by lazy {
         runBlocking {
-            abiResource.getABI("compound/ctoken.json")
+            getAbi("compound/ctoken.json")
         }
     }
 
 
     override suspend fun fetchMarkets(): List<LendingMarket> =
         coroutineScope {
-            val semaphore = Semaphore(10)
             getTokenContracts().map {
                 async {
-                    semaphore.withPermit {
+                    throttled {
                         toLendingMarket(it)
                     }
                 }
@@ -67,7 +58,7 @@ abstract class IronBankLendingMarketProvider(
                     name = ctokenContract.name(),
                     rate = getSupplyRate(compoundTokenContract = ctokenContract),
                     token = underlyingToken.toFungibleToken(),
-                    marketSize = priceResource.calculatePrice(
+                    marketSize = getPriceResource().calculatePrice(
                         PriceRequest(
                             underlyingToken.address,
                             getNetwork(),
@@ -130,7 +121,7 @@ abstract class IronBankLendingMarketProvider(
         return IronBankComptrollerContract(
             getBlockchainGateway(),
             comptrollerABI,
-            compoundEthereumService.getComptroller()
+            ironBankService.getComptroller()
         )
     }
 }

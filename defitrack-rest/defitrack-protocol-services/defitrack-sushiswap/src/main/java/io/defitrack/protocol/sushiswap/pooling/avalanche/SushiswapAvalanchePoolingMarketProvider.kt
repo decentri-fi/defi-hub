@@ -10,11 +10,6 @@ import org.springframework.stereotype.Component
 class SushiswapAvalanchePoolingMarketProvider(
     sushiServices: List<SushiswapService>,
 ) : DefaultSushiPoolingMarketProvider(sushiServices) {
-
-    override fun getProtocol(): Protocol {
-        return Protocol.SUSHISWAP
-    }
-
     override fun getNetwork(): Network {
         return Network.AVALANCHE
     }

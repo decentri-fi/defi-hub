@@ -1,6 +1,5 @@
 package io.defitrack.protocol
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
@@ -9,7 +8,6 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
-import io.defitrack.price.PriceResource
 import io.defitrack.protocol.contract.HopStakingReward
 import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.async
@@ -22,8 +20,6 @@ import java.math.RoundingMode
 @Component
 class HopPolygonFarmingMarketProvider(
     private val hopService: HopService,
-    private val abiResource: ABIResource,
-    private val priceResource: PriceResource
 ) : FarmingMarketProvider() {
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
         hopService.getStakingRewards(getNetwork()).map { stakingReward ->
@@ -81,7 +77,7 @@ class HopPolygonFarmingMarketProvider(
         stakedTokenInformation: TokenInformationVO,
         pool: HopStakingReward
     ) = BigDecimal.valueOf(
-        priceResource.calculatePrice(
+        getPriceResource().calculatePrice(
             PriceRequest(
                 address = stakedTokenInformation.address,
                 network = getNetwork(),
@@ -92,10 +88,6 @@ class HopPolygonFarmingMarketProvider(
             )
         )
     )
-
-    override fun getProtocol(): Protocol {
-        return Protocol.HOP
-    }
 
     override fun getNetwork(): Network {
         return Network.POLYGON

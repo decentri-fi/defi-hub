@@ -1,6 +1,5 @@
 package io.defitrack.protocol
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -12,8 +11,6 @@ import io.defitrack.protocol.contract.HopStakingReward
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.sync.Semaphore
-import kotlinx.coroutines.sync.withPermit
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -21,14 +18,12 @@ import java.math.RoundingMode
 @Component
 class HopOptimismFarmingMarketProvider(
     private val hopService: HopService,
-    private val abiResource: ABIResource,
     private val priceResource: PriceResource
 ) : FarmingMarketProvider() {
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
-        val semaphore = Semaphore(10)
         hopService.getStakingRewards(getNetwork()).map { stakingReward ->
             async {
-                semaphore.withPermit {
+                throttled {
                     toStakingMarket(stakingReward)
                 }
             }
@@ -80,10 +75,6 @@ class HopOptimismFarmingMarketProvider(
             )
         )
     )
-
-    override fun getProtocol(): Protocol {
-        return Protocol.HOP
-    }
 
     override fun getNetwork(): Network {
         return Network.OPTIMISM

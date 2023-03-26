@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component
 
 @Component
 class IdexFarmingMarketProvider(
-    private val abiResource: ABIResource,
     private val tokenService: ERC20Resource,
     private val idexService: IdexService
 ) : FarmingMarketProvider() {
@@ -24,7 +23,7 @@ class IdexFarmingMarketProvider(
 
     val minichefABI by lazy {
         runBlocking {
-            abiResource.getABI("idex/IdexFarm.json")
+            getAbi("idex/IdexFarm.json")
         }
     }
 
@@ -47,10 +46,6 @@ class IdexFarmingMarketProvider(
                 }
             }
         }.awaitAll().filterNotNull()
-    }
-
-    override fun getProtocol(): Protocol {
-        return Protocol.IDEX
     }
 
     override fun getNetwork(): Network {
