@@ -16,7 +16,7 @@ abstract class ProtocolApplication {
     fun provideProtocol(): ProtocolProvider {
         return object : ProtocolProvider {
             override fun getProtocol(): Protocol {
-                return getProtocol()
+                return this@ProtocolApplication.getProtocol()
             }
         }
     }
