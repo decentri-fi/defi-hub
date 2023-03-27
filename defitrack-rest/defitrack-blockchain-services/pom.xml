@@ -16,6 +16,7 @@
         <module>defitrack-blockchain-service</module>
         <module>defitrack-evm</module>
         <module>defitrack-polygon</module>
+        <module>defitrack-polygon-zkevm</module>
         <module>defitrack-ethereum</module>
         <module>defitrack-optimism</module>
         <module>defitrack-arbitrum</module>
