@@ -13,9 +13,8 @@ import java.math.BigInteger
 
 class BalancerGaugeContract(
     blockchainGateway: BlockchainGateway,
-    abi: String,
     address: String
-) : ERC20Contract(blockchainGateway, abi, address) {
+) : ERC20Contract(blockchainGateway, "", address) {
 
     fun exitPosition(amount: BigInteger): Function {
         return Function(
@@ -28,7 +27,7 @@ class BalancerGaugeContract(
     }
 
     fun getClaimableRewardFunction(address: String, token: String): Function {
-        return createFunctionWithAbi(
+        return createFunction(
             "claimable_reward_write",
             listOf(
                 address.toAddress(),
@@ -39,7 +38,7 @@ class BalancerGaugeContract(
     }
 
     fun getClaimRewardsFunction(): Function {
-        return createFunctionWithAbi(
+        return createFunction(
             "claim_rewards",
             emptyList(),
             emptyList()
@@ -85,7 +84,7 @@ class BalancerGaugeContract(
 
 
     suspend fun getRewardToken(index: Int): String {
-        return readWithAbi(
+        return readWithoutAbi(
             "reward_tokens",
             listOf(index.toBigInteger().toUint256()),
             listOf(address())

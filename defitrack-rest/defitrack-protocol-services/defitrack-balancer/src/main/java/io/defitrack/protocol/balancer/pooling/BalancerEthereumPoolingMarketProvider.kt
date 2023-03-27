@@ -15,6 +15,5 @@ class BalancerEthereumPoolingMarketProvider(
     balancerEthereumPoolGraphProvider: BalancerEthereumPoolGraphProvider,
 ) : BalancerPoolingMarketProvider(balancerEthereumPoolGraphProvider) {
 
-
     override fun getNetwork(): Network = Network.ETHEREUM
 }

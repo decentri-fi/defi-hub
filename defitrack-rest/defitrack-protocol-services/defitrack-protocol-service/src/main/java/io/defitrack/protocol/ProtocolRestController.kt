@@ -38,7 +38,7 @@ fun Protocol.toVO(): ProtocolVO {
         }
         if (this.primitives.contains(DefiPrimitive.POOLING)) {
             add(
-                WebMvcLinkBuilder.linkTo(DefaultPoolingMarketRestController).slash("all-markets").withRel("pooling")
+                WebMvcLinkBuilder.linkTo(DefaultPoolingMarketRestController::class.java).slash("all-markets").withRel("pooling")
             )
         }
         if (this.primitives.contains(DefiPrimitive.LENDING)) {

@@ -34,7 +34,6 @@ class BeethovenXOptimismFarmingMarketProvider(
                     val stakedToken = getToken(it.poolAddress)
                     val gauge = BalancerGaugeContract(
                         getBlockchainGateway(),
-                        balancerGaugeContractAbi,
                         it.id
                     )
 

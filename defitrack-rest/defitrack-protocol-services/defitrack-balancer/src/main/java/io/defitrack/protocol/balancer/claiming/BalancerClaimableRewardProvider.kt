@@ -29,7 +29,6 @@ abstract class BalancerClaimableRewardProvider(
                     return@async try {
                         val gaugeContract = BalancerGaugeContract(
                             getBlockchainGateway(),
-                            gaugeContractAbi,
                             liquidityGauge.metadata["address"] as String
                         )
 
