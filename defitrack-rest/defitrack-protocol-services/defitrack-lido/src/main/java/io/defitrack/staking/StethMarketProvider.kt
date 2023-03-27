@@ -24,6 +24,8 @@ class StethMarketProvider(
             lidoService.steth()
         )
 
+        val pooledEth = steth.getPooledEthByShares(steth.getTotalShares())
+
         return listOf(
             create(
                 name = "Liquid Staked Ether 2.0",
@@ -42,7 +44,7 @@ class StethMarketProvider(
                     PriceRequest(
                         "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
                         getNetwork(),
-                        steth.getTotalSupply().asEth(),
+                        pooledEth.asEth(),
                     )
                 ).toBigDecimal()
             )

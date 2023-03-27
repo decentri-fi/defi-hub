@@ -8,23 +8,27 @@ import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
 
-class StethContract(
+class WSTEthContract(
     blockchainGateway: BlockchainGateway, address: String
 ) : EvmContract(
     blockchainGateway, "", address
 ) {
 
-    suspend fun getTotalShares(): BigInteger {
+    suspend fun getStethByWstethFunction(wsteth: BigInteger): BigInteger {
         return readWithoutAbi(
-            "getTotalShares",
+            "getStETHByWstETH",
+            inputs = listOf(wsteth.toUint256()),
             outputs = listOf(uint256())
         )[0].value as BigInteger
     }
 
-    suspend fun getPooledEthByShares(shares: BigInteger): BigInteger {
+    suspend fun stEthPerToken() {
+        return readSingle("stEthPerToken", uint256())
+    }
+
+    suspend fun getTotalShares(): BigInteger {
         return readWithoutAbi(
-            "getPooledEthByShares",
-            inputs = listOf(shares.toUint256()),
+            "getTotalShares",
             outputs = listOf(uint256())
         )[0].value as BigInteger
     }
