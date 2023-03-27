@@ -45,3 +45,4 @@ tokemak
 cowswap
 solidlizard
 camelot
+tornadocash

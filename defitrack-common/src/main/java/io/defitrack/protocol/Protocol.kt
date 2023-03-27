@@ -10,6 +10,13 @@ enum class Protocol(
     val enabled: Boolean = true,
     val networks: List<Network>
 ) {
+    BLUR(
+        logo = "blur.png",
+        slug = "blur",
+        primitives = listOf(DefiPrimitive.POOLING),
+        website = "https://blur.io",
+        networks = listOf(Network.ETHEREUM)
+    ),
     TORNADO_CASH(
         logo = "tornado.png",
         slug = "tornadocash",

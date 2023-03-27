@@ -3,23 +3,18 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>tornadocash</artifactId>
+    <artifactId>defitrack-blur</artifactId>
 
     <parent>
         <groupId>io.defitrack</groupId>
-        <artifactId>defitrack-protocols</artifactId>
+        <artifactId>defitrack-protocol-services</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
     <dependencies>
         <dependency>
             <groupId>io.defitrack</groupId>
-            <artifactId>protocol</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
-            <artifactId>evm</artifactId>
+            <artifactId>defitrack-protocol-service</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -28,4 +23,12 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>
