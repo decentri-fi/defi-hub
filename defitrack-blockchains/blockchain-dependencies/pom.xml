@@ -31,6 +31,11 @@
             </dependency>
             <dependency>
                 <groupId>io.defitrack</groupId>
+                <artifactId>polygon-zkevm</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.defitrack</groupId>
                 <artifactId>ethereum</artifactId>
                 <version>${project.version}</version>
             </dependency>
