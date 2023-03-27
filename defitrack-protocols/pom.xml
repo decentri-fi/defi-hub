@@ -59,6 +59,7 @@
         <module>lido</module>
         <module>10kswap</module>
         <module>tornadocash</module>
+        <module>polygon-protocol</module>
     </modules>
 
     <dependencyManagement>
