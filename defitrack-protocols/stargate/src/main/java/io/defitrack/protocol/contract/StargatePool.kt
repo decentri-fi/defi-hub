@@ -11,7 +11,6 @@ class StargatePool(
     blockchainGateway, "", address
 ) {
 
-
     suspend fun token(): String {
         return readSingle(
             "token",
