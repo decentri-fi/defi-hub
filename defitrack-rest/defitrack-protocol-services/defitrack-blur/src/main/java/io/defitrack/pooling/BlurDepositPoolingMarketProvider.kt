@@ -35,7 +35,8 @@ class BlurDepositPoolingMarketProvider : PoolingMarketProvider() {
                 symbol = "blurEth",
                 tokenType = TokenType.BLUR,
                 tokens = listOf(ether.toFungibleToken()),
-                totalSupply = blurEthDepositContract.totalSupply()
+                totalSupply = blurEthDepositContract.totalSupply(),
+                positionFetcher = defaultPositionFetcher(blurEthDeposit),
             )
         )
     }
