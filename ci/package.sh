@@ -1,16 +1,16 @@
 #!/usr/bin/bash
 
 function startNetwork {
-  docker build -t defitrack/defitrack:$1-${BRANCH_NAME} defitrack-rest/defitrack-blockchain-services/defitrack-$1 -f ci/Dockerfile
+  docker build -t ${DOCKER_REPO}:$1-${BRANCH_NAME} defitrack-rest/defitrack-blockchain-services/defitrack-$1 -f ci/Dockerfile
 }
 
 function startProtocol {
-  docker build -t defitrack/defitrack:$1-${BRANCH_NAME} defitrack-rest/defitrack-protocol-services/defitrack-$1 -f ci/Dockerfile
+  docker build -t ${DOCKER_REPO}:$1-${BRANCH_NAME} defitrack-rest/defitrack-protocol-services/defitrack-$1 -f ci/Dockerfile
 }
 
 
 function startInfra {
-  docker build -t defitrack/defitrack:$1-${BRANCH_NAME} defitrack-rest/defitrack-$1 -f ci/Dockerfile
+  docker build -t ${DOCKER_REPO}:$1-${BRANCH_NAME} defitrack-rest/defitrack-$1 -f ci/Dockerfile
 }
 
 
