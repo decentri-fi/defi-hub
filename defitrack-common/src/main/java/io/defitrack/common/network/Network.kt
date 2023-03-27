@@ -8,7 +8,7 @@ enum class Network(val logo: String, val chainId: Int, val slug: String, val has
     AVALANCHE("avalanche.png", 43114, "avalanche"),
     BINANCE("bsc.svg", 56, "binance"),
     POLYGON("polygon.png", 137, "polygon"),
-    POLYGON_ZKEVM("polygon-zkevm.png", 1422, "polygon-zkevm", false),
+    POLYGON_ZKEVM("polygon-zkevm.png", 1101, "polygon-zkevm", false),
     STARKET("starknet.png", 0, "starknet", false);
 
     val imageBasePath = "https://github.com/defitrack/data/raw/master/logo/network/"
