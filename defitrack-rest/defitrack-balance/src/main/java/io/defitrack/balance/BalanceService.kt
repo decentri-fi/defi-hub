@@ -50,8 +50,4 @@ abstract class BalanceService(
             emptyList()
         }
     }
-
-    fun getBalances() {
-
-    }
 }
