@@ -27,7 +27,7 @@ class StargatePoolFactory(
         val multicalls = (0 until poolLength()).map { poolIndex ->
             MultiCallElement(
                 createFunction(
-                    "getPool",
+                    "allPools",
                     inputs = listOf(poolIndex.toBigInteger().toUint256()),
                     outputs = listOf(TypeUtils.address())
                 ),
