@@ -10,10 +10,17 @@ enum class Protocol(
     val enabled: Boolean = true,
     val networks: List<Network>
 ) {
+    TORNADO_CASH(
+        logo = "tornado.png",
+        slug = "tornadocash",
+        primitives = listOf(DefiPrimitive.FARMING),
+        website = "https://tornadocash.eth.link",
+        networks = listOf(Network.ETHEREUM)
+    ),
     CAMELOT(
         logo = "camelot.png",
         slug = "camelot",
-        primitives =  listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
+        primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
         website = "https://camelot.exchange//",
         networks = listOf(Network.ARBITRUM)
     ),
@@ -22,7 +29,14 @@ enum class Protocol(
         slug = "stargate",
         primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
         website = "https://stargate.finance",
-        networks = listOf(Network.ETHEREUM, Network.OPTIMISM, Network.POLYGON, Network.ARBITRUM, Network.AVALANCHE, Network.BINANCE)
+        networks = listOf(
+            Network.ETHEREUM,
+            Network.OPTIMISM,
+            Network.POLYGON,
+            Network.ARBITRUM,
+            Network.AVALANCHE,
+            Network.BINANCE
+        )
     ),
     SOLIDLIZARD(
         logo = "solidlizard.png",

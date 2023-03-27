@@ -58,6 +58,7 @@
         <module>velodrome</module>
         <module>lido</module>
         <module>10kswap</module>
+        <module>tornadocash</module>
     </modules>
 
     <dependencyManagement>
