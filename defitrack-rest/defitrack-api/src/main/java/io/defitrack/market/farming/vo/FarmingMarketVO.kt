@@ -1,12 +1,9 @@
 package io.defitrack.market.farming.vo
 
 import io.defitrack.market.MarketVO
-import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.network.NetworkVO
-import io.defitrack.network.toVO
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.ProtocolVO
-import io.defitrack.protocol.toVO
 import io.defitrack.token.FungibleToken
 import java.math.BigDecimal
 

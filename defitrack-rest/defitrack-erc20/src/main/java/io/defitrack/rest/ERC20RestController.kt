@@ -2,6 +2,7 @@ package io.defitrack.rest
 
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.*
+import io.defitrack.toVO
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import org.slf4j.LoggerFactory

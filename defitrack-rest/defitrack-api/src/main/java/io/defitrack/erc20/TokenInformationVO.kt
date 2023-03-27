@@ -1,11 +1,8 @@
 package io.defitrack.erc20
 
 import io.defitrack.network.NetworkVO
-import io.defitrack.network.toVO
 import io.defitrack.protocol.ProtocolVO
-import io.defitrack.protocol.toVO
 import io.defitrack.token.FungibleToken
-import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
 import java.math.BigInteger
 
@@ -31,19 +28,4 @@ class TokenInformationVO(
             type,
         )
     }
-}
-
-fun TokenInformation.toVO(): TokenInformationVO {
-    return TokenInformationVO(
-        network = network.toVO(),
-        logo = logo,
-        name = name,
-        symbol = symbol,
-        address = address,
-        decimals = decimals,
-        type = type,
-        totalSupply = totalSupply,
-        underlyingTokens = underlyingTokens.map { it.toVO() },
-        protocol = protocol?.toVO()
-    )
 }

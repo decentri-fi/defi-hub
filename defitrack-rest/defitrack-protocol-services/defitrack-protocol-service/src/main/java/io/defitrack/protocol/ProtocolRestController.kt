@@ -3,7 +3,7 @@ package io.defitrack.protocol
 import io.defitrack.market.farming.DefaultFarmingMarketRestController
 import io.defitrack.market.lending.DefaultLendingMarketsRestController
 import io.defitrack.market.pooling.DefaultPoolingMarketRestController
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -16,18 +16,38 @@ class ProtocolRestController(
 
     @GetMapping
     fun getProtocol(): ProtocolVO {
-        val protocol = protocolProvider.getProtocol().toVO()
-        return with(protocol) {
-            if(protocol.primitives.contains(DefiPrimitive.FARMING)) {
-                add(linkTo(DefaultFarmingMarketRestController::class.java).withRel("farming"))
-            }
-            if(protocol.primitives.contains(DefiPrimitive.POOLING)) {
-                add(linkTo(DefaultPoolingMarketRestController::class.java).withRel("pooling"))
-            }
-            if(protocol.primitives.contains(DefiPrimitive.LENDING)) {
-                add(linkTo(DefaultLendingMarketsRestController::class.java).withRel("lending"))
-            }
-            this
+        return protocolProvider.getProtocol().toVO()
+    }
+}
+
+fun Protocol.toVO(): ProtocolVO {
+    return with(
+        ProtocolVO(
+            name = this.name,
+            logo = this.getImage(),
+            slug = this.slug,
+            primitives = this.primitives,
+            website = this.website
+        )
+    ) {
+        if (this.primitives.contains(DefiPrimitive.FARMING)) {
+            add(
+                WebMvcLinkBuilder.linkTo(DefaultFarmingMarketRestController::class.java).slash("all-markets")
+                    .withRel("farming")
+            )
         }
+        if (this.primitives.contains(DefiPrimitive.POOLING)) {
+            add(
+                WebMvcLinkBuilder.linkTo(DefaultPoolingMarketRestController).slash("all-markets").withRel("pooling")
+            )
+        }
+        if (this.primitives.contains(DefiPrimitive.LENDING)) {
+            add(
+                WebMvcLinkBuilder.linkTo(DefaultLendingMarketsRestController::class.java)
+                    .slash("all-markets")
+                    .withRel("lending")
+            )
+        }
+        this
     }
 }
