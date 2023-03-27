@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    environment {
+        DOCKER_REPO=qkyrie/defitrack
+    }
     stages {
         stage('compile') {
             steps {
