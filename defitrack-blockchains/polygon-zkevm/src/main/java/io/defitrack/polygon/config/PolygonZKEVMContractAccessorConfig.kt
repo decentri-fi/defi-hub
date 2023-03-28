@@ -18,7 +18,7 @@ class PolygonZKEVMContractAccessorConfig(
     @Bean
     fun polygonGateway(): BlockchainGateway {
         return BlockchainGateway(
-            abiDecoder, Network.POLYGON, "0x11ce4B23bD875D7F5C6a31084f55fDe1e9A87507", httpClient, endpoint
+            abiDecoder, Network.POLYGON, "0xfB4C2947223ED76452Ce43D5afda2bcc90D42545", httpClient, endpoint
         )
     }
 }
