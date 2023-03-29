@@ -1,6 +1,6 @@
 package io.defitrack.evm.contract
 
-class EvmContractInteractionCommand (
+data class EvmContractInteractionCommand (
     val from: String?,
     val contract: String,
     val function: String

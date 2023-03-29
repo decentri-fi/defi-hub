@@ -4,8 +4,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class DefitrackPolygonApp
+class PolygonZkEvmApplication
 
 fun main(args: Array<String>) {
-    runApplication<DefitrackPolygonApp>(*args)
+    runApplication<PolygonZkEvmApplication>(*args)
 }

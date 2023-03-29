@@ -15,6 +15,6 @@ class NativeBalanceRestController(
 ) {
     @GetMapping("/{address}")
     fun getNativeBalance(@PathVariable("address") address: String): BigInteger {
-        return web3j.ethGetBalance(address, DefaultBlockParameterName.LATEST).send().balance
+        return web3j.ethGetBalance(address, DefaultBlockParameterName.PENDING).send().balance
     }
 }

@@ -37,7 +37,7 @@ class EVMContractInteractionRestController(
                         from,
                         contract,
                         function
-                    ), DefaultBlockParameterName.LATEST
+                    ), DefaultBlockParameterName.PENDING
                 )!!.send()!!
             } catch (ex: ClientConnectionException) {
                 if (ex.message?.contains("429") == true) {
