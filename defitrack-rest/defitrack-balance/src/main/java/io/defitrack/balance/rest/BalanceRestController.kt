@@ -1,5 +1,7 @@
-package io.defitrack.balance
+package io.defitrack.balance.rest
 
+import io.defitrack.balance.service.BalanceService
+import io.defitrack.balance.service.dto.BalanceElement
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.network.toVO
@@ -29,12 +31,7 @@ class BalanceRestController(
     fun getBalance(@PathVariable("address") address: String): List<BalanceElement> = runBlocking {
         balanceServices.map {
             async {
-                val balance = try {
-                    it.getNativeBalance(address)
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                    BigDecimal.ZERO
-                }
+                val balance = it.getNativeBalance(address)
 
                 if (balance > BigDecimal.ZERO) {
                     val price = priceResource.calculatePrice(

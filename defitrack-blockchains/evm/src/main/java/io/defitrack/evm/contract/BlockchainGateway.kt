@@ -44,8 +44,6 @@ open class BlockchainGateway(
 ) {
 
     suspend fun getNativeBalance(address: String): BigDecimal = withContext(Dispatchers.IO) {
-        val result= httpClient.get("$endpoint/balance/$address").body() as String
-        println(result)
         val balance: BigInteger = httpClient.get("$endpoint/balance/$address").body()
         balance.toBigDecimal().dividePrecisely(
             BigDecimal.TEN.pow(18)

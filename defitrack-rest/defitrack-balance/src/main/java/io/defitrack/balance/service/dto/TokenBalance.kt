@@ -1,4 +1,4 @@
-package io.defitrack.balance
+package io.defitrack.balance.service.dto
 
 import io.defitrack.common.network.Network
 import io.defitrack.token.FungibleToken

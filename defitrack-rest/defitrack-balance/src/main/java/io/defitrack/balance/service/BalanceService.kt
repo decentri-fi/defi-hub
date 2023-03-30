@@ -1,5 +1,6 @@
-package io.defitrack.balance
+package io.defitrack.balance.service
 
+import io.defitrack.balance.service.dto.TokenBalance
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.token.ERC20Resource
@@ -20,7 +21,7 @@ abstract class BalanceService(
         return try {
             return blockchainGatewayProvider.getGateway(getNetwork()).getNativeBalance(address)
         } catch (ex: Exception) {
-            logger.error(ex.message, ex)
+            logger.error(ex.message)
             BigDecimal.ZERO
         }
     }
@@ -46,7 +47,6 @@ abstract class BalanceService(
                 }.filterNotNull()
         } catch (ex: Exception) {
             logger.error("Unable to get token balances for {}", this.getNetwork())
-            ex.printStackTrace()
             emptyList()
         }
     }
