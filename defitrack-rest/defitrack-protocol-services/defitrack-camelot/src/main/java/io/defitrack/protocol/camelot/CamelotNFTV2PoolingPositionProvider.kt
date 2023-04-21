@@ -2,6 +2,7 @@ package io.defitrack.protocol.camelot
 
 import io.defitrack.market.pooling.PoolingPositionProvider
 import io.defitrack.market.pooling.domain.PoolingPosition
+import io.defitrack.protocol.algebra.AlgebraPositionsV2Contract
 import org.springframework.stereotype.Component
 
 @Component

@@ -1,4 +1,4 @@
-package io.defitrack.protocol.camelot
+package io.defitrack.protocol.algebra
 
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toAddress

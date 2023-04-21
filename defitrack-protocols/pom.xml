@@ -23,6 +23,7 @@
         <module>bancor</module>
         <module>dinoswap</module>
         <module>hop</module>
+        <module>algebra</module>
         <module>apeswap</module>
         <module>dodo</module>
         <module>stargate</module>
@@ -32,6 +33,7 @@
         <module>polycat</module>
         <module>spirit</module>
         <module>spooky</module>
+        <module>camelot</module>
         <module>kyberswap</module>
         <module>iron-bank</module>
         <module>idex</module>
