@@ -39,6 +39,13 @@ class TransferEventDecoder : EventDecoder() {
 
         val asset = "asset" to getToken(log.address, network)
 
+        if (to.second == "0x0000000000000000000000000000000000000000") {
+            return DefiEvent(
+                type = DefiEventType.BURN,
+                metadata = mapOf(from, asset, amount)
+            )
+        }
+
         return DefiEvent(
             type = eventType(),
             metadata = mapOf(from, to, asset, amount)
