@@ -58,7 +58,9 @@ class HopAddLiquidityDecoder(
             eventType(),
             protocol = Protocol.HOP,
             metadata = mapOf(
-                "user" to addLiquidityEvent.getIndexedParameter<String>(log, 0),
+                "user" to getLabeledAddress(
+                    addLiquidityEvent.getIndexedParameter<String>(log, 0)
+                ),
                 "deposits" to listOf(
                     mapOf(
                         "token" to token1,

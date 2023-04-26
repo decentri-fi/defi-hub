@@ -25,9 +25,11 @@ class HopTokenEventsDecoder : EventDecoder() {
     }
 
     override suspend fun extract(log: Log, network: Network): DefiEvent {
-        val user = FunctionReturnDecoder.decodeIndexedValue(
-            log.topics[1], address()
-        ).value as String
+        val user = getLabeledAddress(
+            FunctionReturnDecoder.decodeIndexedValue(
+                log.topics[1], address()
+            ).value as String
+        )
 
         val amount = FunctionReturnDecoder.decode(
             log.data,

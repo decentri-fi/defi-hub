@@ -31,7 +31,7 @@ class BorrowEventDecoder : EventDecoder() {
 
     override suspend fun extract(log: Log, network: Network): DefiEvent {
         val borrower =
-            "borrower" to event.getNonIndexedParameter<String>(log, 0)
+            "borrower" to getLabeledAddress(event.getNonIndexedParameter<String>(log, 0))
 
         val borrowAmount = "borrowAmount" to event.getNonIndexedParameter<BigInteger>(log, 1)
         val asset = "asset" to getToken(log.address, network)

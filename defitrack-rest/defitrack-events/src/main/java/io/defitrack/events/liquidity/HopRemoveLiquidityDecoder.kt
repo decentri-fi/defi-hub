@@ -56,7 +56,9 @@ class HopRemoveLiquidityDecoder(
             eventType(),
             protocol = Protocol.HOP,
             metadata = mapOf(
-                "user" to removeLiquidityEvent.getIndexedParameter<String>(log, 0),
+                "user" to getLabeledAddress(
+                    removeLiquidityEvent.getIndexedParameter<String>(log, 0)
+                ),
                 "withdrawals" to listOf(
                     mapOf(
                         "token" to token1,

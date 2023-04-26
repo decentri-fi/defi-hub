@@ -24,13 +24,17 @@ class ApprovalEventDecoder : EventDecoder() {
 
     override suspend fun extract(log: Log, network: Network): DefiEvent {
         val owner =
-            "owner" to FunctionReturnDecoder.decodeIndexedValue(
-                log.topics[1], address()
-            ).value as String;
+            "owner" to getLabeledAddress(
+                FunctionReturnDecoder.decodeIndexedValue(
+                    log.topics[1], address()
+                ).value as String
+            );
 
-        val spender = "spender" to FunctionReturnDecoder.decodeIndexedValue(
-            log.topics[2], address()
-        ).value as String;
+        val spender = "spender" to getLabeledAddress(
+            FunctionReturnDecoder.decodeIndexedValue(
+                log.topics[2], address()
+            ).value as String
+        )
 
         val amount = "amount" to FunctionReturnDecoder.decode(
             log.data,

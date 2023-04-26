@@ -23,7 +23,9 @@ class ENSTokenEventsDecoder : EventDecoder() {
     }
 
     override suspend fun extract(log: Log, network: Network): DefiEvent {
-        val user = claimEvent.getIndexedParameter<String>(log, 0)
+        val user = getLabeledAddress(
+            claimEvent.getIndexedParameter<String>(log, 0)
+        )
 
         val amount = claimEvent.getNonIndexedParameter<BigInteger>(log, 0)
 

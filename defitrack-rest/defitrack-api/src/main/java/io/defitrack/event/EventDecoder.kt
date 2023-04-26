@@ -2,6 +2,8 @@ package io.defitrack.event
 
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.labeledaddresses.LabelAddressesResource
+import io.defitrack.labeledaddresses.LabeledAddress
 import io.defitrack.token.ERC20Resource
 import org.springframework.beans.factory.annotation.Autowired
 import org.web3j.abi.FunctionReturnDecoder
@@ -11,6 +13,9 @@ abstract class EventDecoder {
 
     @Autowired
     lateinit var erC20Resource: ERC20Resource
+
+    @Autowired
+    lateinit var labelAddressesResource: LabelAddressesResource
 
     abstract fun appliesTo(log: Log, network: Network): Boolean
     abstract suspend fun extract(log: Log, network: Network): DefiEvent
@@ -30,7 +35,11 @@ abstract class EventDecoder {
 
     inline fun <reified T> org.web3j.abi.datatypes.Event.getIndexedParameter(log: Log, index: Int): T {
         return FunctionReturnDecoder.decodeIndexedValue(
-            log.topics[index+1], indexedParameters[index]
+            log.topics[index + 1], indexedParameters[index]
         ).value as T
+    }
+
+    suspend fun getLabeledAddress(address: String): LabeledAddress {
+        return labelAddressesResource.getLabel(address)
     }
 }

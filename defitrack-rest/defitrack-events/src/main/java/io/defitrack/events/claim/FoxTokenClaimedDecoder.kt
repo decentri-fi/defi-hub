@@ -29,7 +29,9 @@ class FoxTokenClaimedDecoder : EventDecoder() {
     }
 
     override suspend fun extract(log: Log, network: Network): DefiEvent {
-        val user = "user" to claimedEvent.getIndexedParameter<String>(log, 0);
+        val user = "user" to getLabeledAddress(
+            claimedEvent.getIndexedParameter<String>(log, 0)
+        )
 
         val amount = "amount" to claimedEvent.getNonIndexedParameter<BigInteger>(log, 1)
 

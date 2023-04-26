@@ -24,13 +24,17 @@ class TransferEventDecoder : EventDecoder() {
 
     override suspend fun extract(log: Log, network: Network): DefiEvent {
         val from =
-            "from" to FunctionReturnDecoder.decodeIndexedValue(
-                log.topics[1], address()
-            ).value as String;
+            "from" to getLabeledAddress(
+                FunctionReturnDecoder.decodeIndexedValue(
+                    log.topics[1], address()
+                ).value as String
+            )
 
-        val to = "to" to FunctionReturnDecoder.decodeIndexedValue(
-            log.topics[2], address()
-        ).value as String;
+        val to = "to" to getLabeledAddress(
+            FunctionReturnDecoder.decodeIndexedValue(
+                log.topics[2], address()
+            ).value as String
+        )
 
         val amount = "amount" to FunctionReturnDecoder.decode(
             log.data,
@@ -39,7 +43,7 @@ class TransferEventDecoder : EventDecoder() {
 
         val asset = "asset" to getToken(log.address, network)
 
-        if (to.second == "0x0000000000000000000000000000000000000000") {
+        if (to.second.address == "0x0000000000000000000000000000000000000000") {
             return DefiEvent(
                 type = DefiEventType.BURN,
                 metadata = mapOf(from, asset, amount)
