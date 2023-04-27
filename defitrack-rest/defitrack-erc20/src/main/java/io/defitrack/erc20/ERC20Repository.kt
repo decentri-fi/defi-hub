@@ -45,7 +45,7 @@ class ERC20Repository(
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/arbitrum/tokenlist.json",
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/fantom/aeb.tokenlist.json",
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/fantom/fantomfinance.tokenlist.json",
-            "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/avalanche/joe.tokenlist.json",
+       //     "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/avalanche/joe.tokenlist.json",
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/bsc/pancakeswap-extended.json",
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/optimism/optimism.tokenlist.json",
         ).flatMap {
