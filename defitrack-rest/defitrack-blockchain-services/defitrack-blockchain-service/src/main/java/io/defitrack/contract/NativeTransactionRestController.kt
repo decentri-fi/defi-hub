@@ -25,10 +25,10 @@ class NativeTransactionRestController(
             with(
                 EthFilter(
                     getEventLogsCommand.fromBlock?.let {
-                        DefaultBlockParameterNumber(BigInteger(it, 10))
+                        DefaultBlockParameterNumber(it)
                     } ?: DefaultBlockParameterName.EARLIEST,
                     getEventLogsCommand.toBlock?.let {
-                        DefaultBlockParameterNumber(BigInteger(it, 10))
+                        DefaultBlockParameterNumber(it)
                     } ?: DefaultBlockParameterName.LATEST,
                     getEventLogsCommand.addresses
                 )
@@ -50,7 +50,7 @@ class NativeTransactionRestController(
         val addresses: List<String>,
         val topic: String,
         val optionalTopics: List<String?> = emptyList(),
-        val fromBlock: String? = null,
-        val toBlock: String? = null
+        val fromBlock: BigInteger? = null,
+        val toBlock: BigInteger? = null
     )
 }
