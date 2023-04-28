@@ -129,7 +129,6 @@ class DefaultPoolingMarketRestController(
     }
 
     fun PoolingMarket.toVO(): PoolingMarketVO {
-        val market = this
         with(
             PoolingMarketVO(
                 name = name,

@@ -2,7 +2,9 @@ package io.defitrack.market.pooling
 
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.market.pooling.breakdown.PoolingBreakdownService
+import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.domain.PoolingPosition
+import io.defitrack.market.pooling.vo.PoolingMarketVO
 import io.defitrack.market.pooling.vo.PoolingPositionVO
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
@@ -14,6 +16,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -25,7 +28,8 @@ class DefaultPoolingPositionRestController(
     private val poolingPositionProviders: List<PoolingPositionProvider>,
     private val priceResource: PriceResource,
     private val erC20Resource: ERC20Resource,
-    private val breakdownService: PoolingBreakdownService
+    private val breakdownService: PoolingBreakdownService,
+    private val poolingBreakdownService: PoolingBreakdownService
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -67,7 +71,45 @@ class DefaultPoolingPositionRestController(
             id = market.id,
             exitPositionSupported = market.exitPositionPreparer != null,
             amount = tokenAmount,
-            breakdown = breakdownService.toPositionVO(market, tokenAmount)
+            breakdown = breakdownService.toPositionVO(market, tokenAmount),
+            market = market.toVO()
         )
     }
+
+    fun PoolingMarket.toVO(): PoolingMarketVO {
+        with(
+            PoolingMarketVO(
+                name = name,
+                protocol = protocol.toVO(),
+                network = network.toVO(),
+                tokens = tokens,
+                id = id,
+                breakdown = poolingBreakdownService.toVO(breakdown),
+                decimals = decimals,
+                address = address,
+                apr = apr,
+                marketSize = marketSize,
+                prepareInvestmentSupported = investmentPreparer != null,
+                erc20Compatible = erc20Compatible,
+                exitPositionSupported = exitPositionPreparer != null
+            )
+        ) {
+            val self = WebMvcLinkBuilder.linkTo(
+                WebMvcLinkBuilder.methodOn(DefaultPoolingMarketRestController::class.java).getById(
+                    this.id
+                )
+            ).withSelfRel()
+
+            val alternatives = WebMvcLinkBuilder.linkTo(
+                WebMvcLinkBuilder.methodOn(DefaultPoolingMarketRestController::class.java).findAlternatives(
+                    this.address,
+                    this.network.toNetwork()
+                )
+            ).withRel("alternatives")
+
+            this.add(self, alternatives)
+            return this
+        }
+    }
+
 }
