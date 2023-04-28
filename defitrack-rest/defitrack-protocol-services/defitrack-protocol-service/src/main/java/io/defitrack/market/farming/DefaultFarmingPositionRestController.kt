@@ -1,7 +1,9 @@
 package io.defitrack.market.farming
 
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.domain.FarmingPosition
+import io.defitrack.market.farming.vo.FarmingMarketVO
 import io.defitrack.market.farming.vo.FarmingPositionVO
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
@@ -10,6 +12,7 @@ import io.defitrack.protocol.toVO
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 import org.springframework.web.bind.annotation.*
 import org.web3j.crypto.WalletUtils
 import java.math.BigInteger
@@ -87,8 +90,39 @@ class DefaultFarmingPositionRestController(
             exitPositionSupported = market.exitPositionPreparer != null,
             tokenAmount = tokenAmount.toString(10),
             tokenAmountDecimal = tokenAmount.asEth(market.stakedToken.decimals),
-            expired = market.expired
+            expired = market.expired,
+            market = market.toVO()
         )
+    }
+
+    fun FarmingMarket.toVO(): FarmingMarketVO {
+        return with(
+            FarmingMarketVO(
+                id = this.id,
+                network = this.network.toVO(),
+                protocol = this.protocol.toVO(),
+                name = this.name,
+                stakedToken = this.stakedToken,
+                reward = this.rewardTokens,
+                vaultType = this.contractType,
+                marketSize = this.marketSize,
+                apr = this.apr,
+                prepareInvestmentSupported = this.investmentPreparer != null,
+                exitPositionSupported = this.exitPositionPreparer != null,
+                farmType = farmType,
+                rewardsFinished = this.expired
+            )
+        ) {
+            val self = WebMvcLinkBuilder.linkTo(
+                WebMvcLinkBuilder.methodOn(DefaultFarmingMarketRestController::class.java).getById(
+                    this.id
+                )
+            ).withSelfRel()
+
+            this.add(self)
+            this
+        }
+
     }
 
     companion object {
