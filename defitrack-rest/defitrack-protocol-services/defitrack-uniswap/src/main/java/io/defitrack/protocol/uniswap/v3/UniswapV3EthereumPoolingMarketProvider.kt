@@ -5,10 +5,10 @@ import io.defitrack.abi.TypeUtils
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.pooling.PoolingMarketProvider
+import io.defitrack.market.pooling.breakdown.PoolingBreakdownMapper
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.token.TokenType
 import io.defitrack.uniswap.v3.UniswapV3PoolContract
-import io.defitrack.uniswap.v3.UniswapV3Service
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -20,7 +20,7 @@ import java.math.BigInteger
 
 @Component
 class UniswapV3EthereumPoolingMarketProvider(
-    private val uniswapV3Service: UniswapV3Service,
+    private val poolingBreakdownMapper: PoolingBreakdownMapper
 ) : PoolingMarketProvider() {
 
     val poolCreatedEvent = Event(
@@ -66,6 +66,10 @@ class UniswapV3EthereumPoolingMarketProvider(
                         val token = getToken(it)
                         val token0 = getToken(uniswapV3Pool.token0())
                         val token1 = getToken(uniswapV3Pool.token1())
+                        val underlyingTokens = listOf(
+                            token0,
+                            token1
+                        )
                         PoolingMarket(
                             network = getNetwork(),
                             protocol = getProtocol(),
@@ -73,15 +77,12 @@ class UniswapV3EthereumPoolingMarketProvider(
                             name = "Uniswap V3 ${token0.symbol}/${token1.symbol} LP",
                             address = it,
                             symbol = "${token0.symbol}-${token1.symbol}",
-                            tokens = listOf(
-                                token0.toFungibleToken(),
-                                token1.toFungibleToken()
-                            ),
+                            breakdown = defaultBreakdown(underlyingTokens, uniswapV3Pool.address),
+                            tokens = underlyingTokens.map { it.toFungibleToken() },
                             apr = null,
-                            marketSize = marketSizeService.getMarketSize(token0.toFungibleToken(), it, getNetwork())
-                                .plus(
-                                    marketSizeService.getMarketSize(token1.toFungibleToken(), it, getNetwork())
-                                ),
+                            marketSize = marketSizeService.getMarketSize(
+                                underlyingTokens.map { it.toFungibleToken() }, it, getNetwork()
+                            ),
                             tokenType = TokenType.UNISWAP,
                             positionFetcher = defaultPositionFetcher(token.address),
                             totalSupply = token.totalSupply

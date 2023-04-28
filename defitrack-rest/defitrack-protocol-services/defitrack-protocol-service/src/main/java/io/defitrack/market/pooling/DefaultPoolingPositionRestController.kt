@@ -1,7 +1,7 @@
 package io.defitrack.market.pooling
 
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.market.pooling.breakdown.PoolingBreakdownService
+import io.defitrack.market.pooling.breakdown.PoolingBreakdownMapper
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.domain.PoolingPosition
 import io.defitrack.market.pooling.vo.PoolingMarketVO
@@ -28,8 +28,8 @@ class DefaultPoolingPositionRestController(
     private val poolingPositionProviders: List<PoolingPositionProvider>,
     private val priceResource: PriceResource,
     private val erC20Resource: ERC20Resource,
-    private val breakdownService: PoolingBreakdownService,
-    private val poolingBreakdownService: PoolingBreakdownService
+    private val breakdownService: PoolingBreakdownMapper,
+    private val poolingBreakdownMapper: PoolingBreakdownMapper
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -84,7 +84,7 @@ class DefaultPoolingPositionRestController(
                 network = network.toVO(),
                 tokens = tokens,
                 id = id,
-                breakdown = poolingBreakdownService.toVO(breakdown),
+                breakdown = poolingBreakdownMapper.toVO(breakdown),
                 decimals = decimals,
                 address = address,
                 apr = apr,

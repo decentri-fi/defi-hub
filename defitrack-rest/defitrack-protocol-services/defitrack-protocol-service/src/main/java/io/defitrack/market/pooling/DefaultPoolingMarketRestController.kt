@@ -3,7 +3,7 @@ package io.defitrack.market.pooling
 import io.defitrack.common.network.Network
 import io.defitrack.market.farming.vo.TransactionPreparationVO
 import io.defitrack.invest.PrepareInvestmentCommand
-import io.defitrack.market.pooling.breakdown.PoolingBreakdownService
+import io.defitrack.market.pooling.breakdown.PoolingBreakdownMapper
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.vo.PoolingMarketVO
 import io.defitrack.network.toVO
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.*
 class DefaultPoolingMarketRestController(
     private val poolingMarketProviders: List<PoolingMarketProvider>,
     private val erC20Resource: ERC20Resource,
-    private val poolingBreakdownService: PoolingBreakdownService
+    private val poolingBreakdownMapper: PoolingBreakdownMapper
 ) {
     companion object {
         val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -136,7 +136,7 @@ class DefaultPoolingMarketRestController(
                 network = network.toVO(),
                 tokens = tokens,
                 id = id,
-                breakdown = poolingBreakdownService.toVO(breakdown),
+                breakdown = poolingBreakdownMapper.toVO(breakdown),
                 decimals = decimals,
                 address = address,
                 apr = apr,

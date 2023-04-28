@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 import java.math.BigInteger
 
 @Service
-class PoolingBreakdownService {
+class PoolingBreakdownMapper {
 
     val logger = LoggerFactory.getLogger(this::class.java)
 
