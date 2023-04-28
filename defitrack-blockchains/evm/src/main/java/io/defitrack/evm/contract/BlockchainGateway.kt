@@ -50,6 +50,18 @@ open class BlockchainGateway(
         )
     }
 
+    suspend fun getEvents(getEventsLog: GetEventLogsCommand): String? {
+        val result = httpClient.post("$endpoint/events/logs") {
+            contentType(ContentType.Application.Json)
+            setBody(getEventsLog)
+        }
+        return if (result.status.isSuccess()) {
+            result.body()
+        } else {
+            null
+        }
+    }
+
     suspend fun getLogs(txId: String): List<Log> = withContext(Dispatchers.IO) {
         httpClient.get("$endpoint/tx/${txId}/logs").body()
     }
@@ -197,13 +209,16 @@ open class BlockchainGateway(
                         val typeclass = Class.forName("org.web3j.abi.datatypes.DynamicBytes") as Class<Type<*>>
                         indexedTypeReference(typeclass, indexed)
                     }
+
                     "tuple[]" -> {
                         null
                     }
+
                     "tuple" -> {
                         val typeclass = Class.forName("org.web3j.abi.datatypes.DynamicStruct") as Class<Type<*>>
                         indexedTypeReference(typeclass, indexed)
                     }
+
                     else -> {
                         val typeClass =
                             Class.forName("org.web3j.abi.datatypes." + StringUtils.capitalize(type)) as Class<Type<*>>
@@ -242,4 +257,12 @@ open class BlockchainGateway(
 
         val MAX_UINT256 = BigInteger.TWO.pow(256).minus(BigInteger.ONE).toUint256()
     }
+
+    class GetEventLogsCommand(
+        val addresses: List<String>,
+        val topic: String,
+        val optionalTopics: List<String?> = kotlin.collections.emptyList(),
+        val fromBlock: BigInteger? = null,
+        val toBlock: BigInteger? = null
+    )
 }

@@ -57,6 +57,10 @@ class TypeUtils {
             return TypeReference.create(Uint40::class.java)
         }
 
+        fun uint24(indexed: Boolean): TypeReference<Uint24> {
+            return TypeReference.create(Uint24::class.java, indexed)
+        }
+
         fun uint64(): TypeReference<Uint64> {
             return TypeReference.create(Uint64::class.java)
         }
