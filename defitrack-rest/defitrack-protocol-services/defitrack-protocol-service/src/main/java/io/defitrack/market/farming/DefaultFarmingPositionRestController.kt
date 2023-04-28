@@ -1,7 +1,6 @@
 package io.defitrack.market.farming
 
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.market.farming.FarmingPositionProvider
 import io.defitrack.market.farming.domain.FarmingPosition
 import io.defitrack.market.farming.vo.FarmingPositionVO
 import io.defitrack.network.toVO
@@ -88,6 +87,7 @@ class DefaultFarmingPositionRestController(
             exitPositionSupported = market.exitPositionPreparer != null,
             tokenAmount = tokenAmount.toString(10),
             tokenAmountDecimal = tokenAmount.asEth(market.stakedToken.decimals),
+            expired = market.expired
         )
     }
 

@@ -21,5 +21,6 @@ data class FarmingPositionVO(
     val tokenAmount: String,
     val rewardTokens: List<FungibleToken>,
     val exitPositionSupported: Boolean,
-    val marketType: String = "farming"
+    val marketType: String = "farming",
+    val expired: Boolean,
 )

@@ -4,7 +4,6 @@ import io.defitrack.common.network.Network
 import io.defitrack.exit.ExitPositionCommand
 import io.defitrack.market.farming.vo.TransactionPreparationVO
 import io.defitrack.invest.PrepareInvestmentCommand
-import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.vo.FarmingMarketVO
 import io.defitrack.network.toVO
@@ -127,7 +126,7 @@ class DefaultFarmingMarketRestController(
                 prepareInvestmentSupported = this.investmentPreparer != null,
                 exitPositionSupported = this.exitPositionPreparer != null,
                 farmType = farmType,
-                rewardsFinished = this.rewardsFinished
+                rewardsFinished = this.expired
             )
         ) {
             val self = linkTo(

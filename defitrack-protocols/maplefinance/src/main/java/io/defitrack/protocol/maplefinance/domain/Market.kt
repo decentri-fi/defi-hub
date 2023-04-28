@@ -1,7 +1,5 @@
 package io.defitrack.protocol.maplefinance.domain
 
-import java.math.BigDecimal
-
 class Market(
     val id: String,
     val name: String,

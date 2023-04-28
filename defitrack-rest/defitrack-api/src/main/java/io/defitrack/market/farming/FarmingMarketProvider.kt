@@ -43,7 +43,7 @@ abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>() {
             investmentPreparer = investmentPreparer,
             claimableRewardFetcher = claimableRewardFetcher,
             metadata = metadata,
-            rewardsFinished = rewardsFinished,
+            expired = rewardsFinished,
             exitPositionPreparer = exitPositionPreparer
         )
     }
