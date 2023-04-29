@@ -37,7 +37,7 @@ class HopTokenEventsDecoder : EventDecoder() {
         )[0].value as BigInteger
 
         return DefiEvent(
-            type = eventType(),
+            type = DefiEventType.CLAIM,
             protocol = Protocol.HOP,
             metadata = mapOf(
                 "user" to user,
@@ -49,7 +49,9 @@ class HopTokenEventsDecoder : EventDecoder() {
 
     }
 
-    override fun eventType(): DefiEventType {
-        return DefiEventType.CLAIM
+    override fun eventTypes(): List<DefiEventType> {
+        return listOf(
+            DefiEventType.CLAIM
+        )
     }
 }

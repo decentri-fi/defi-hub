@@ -53,7 +53,7 @@ class HopRemoveLiquidityDecoder(
         val token2 = erC20Resource.getTokenInformation(network, contract.getToken(1))
 
         return DefiEvent(
-            eventType(),
+            DefiEventType.REMOVE_LIQUIDITY,
             protocol = Protocol.HOP,
             metadata = mapOf(
                 "user" to getLabeledAddress(
@@ -75,7 +75,9 @@ class HopRemoveLiquidityDecoder(
         )
     }
 
-    override fun eventType(): DefiEventType {
-        return DefiEventType.REMOVE_LIQUIDITY
+    override fun eventTypes(): List<DefiEventType> {
+        return listOf(
+            DefiEventType.REMOVE_LIQUIDITY
+        )
     }
 }

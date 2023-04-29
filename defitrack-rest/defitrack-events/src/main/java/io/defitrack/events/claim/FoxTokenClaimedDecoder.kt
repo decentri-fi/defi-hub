@@ -38,12 +38,14 @@ class FoxTokenClaimedDecoder : EventDecoder() {
         val asset = "asset" to getToken("0xc770eefad204b5180df6a14ee197d99d808ee52d", network)
 
         return DefiEvent(
-            type = eventType(),
+            type = DefiEventType.CLAIM,
             metadata = mapOf(user, asset, amount)
         )
     }
 
-    override fun eventType(): DefiEventType {
-        return DefiEventType.CLAIM
+    override fun eventTypes(): List<DefiEventType> {
+        return listOf(
+            DefiEventType.CLAIM
+        )
     }
 }

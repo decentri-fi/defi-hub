@@ -30,7 +30,7 @@ class ENSTokenEventsDecoder : EventDecoder() {
         val amount = claimEvent.getNonIndexedParameter<BigInteger>(log, 0)
 
         return DefiEvent(
-            type = eventType(),
+            type = DefiEventType.CLAIM,
             metadata = mapOf(
                 "user" to user,
                 "amount" to amount,
@@ -39,7 +39,9 @@ class ENSTokenEventsDecoder : EventDecoder() {
         )
     }
 
-    override fun eventType(): DefiEventType {
-        return DefiEventType.CLAIM
+    override fun eventTypes(): List<DefiEventType> {
+        return listOf(
+            DefiEventType.CLAIM
+        )
     }
 }

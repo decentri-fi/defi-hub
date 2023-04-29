@@ -51,12 +51,14 @@ class TransferEventDecoder : EventDecoder() {
         }
 
         return DefiEvent(
-            type = eventType(),
+            type = DefiEventType.TRANSFER,
             metadata = mapOf(from, to, asset, amount)
         )
     }
 
-    override fun eventType(): DefiEventType {
-        return DefiEventType.TRANSFER
+    override fun eventTypes(): List<DefiEventType> {
+        return listOf(
+            DefiEventType.TRANSFER, DefiEventType.BURN
+        )
     }
 }

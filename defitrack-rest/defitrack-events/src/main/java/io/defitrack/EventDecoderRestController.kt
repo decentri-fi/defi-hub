@@ -28,7 +28,7 @@ class EventDecoderRestController(
         logs.flatMap {
             eventDecoders
                 .filter {
-                    (type == null || it.eventType() == type)
+                    (type == null || it.eventTypes().contains(type))
                 }
                 .map { decoder ->
                     try {
@@ -42,6 +42,8 @@ class EventDecoderRestController(
                         null
                     }
                 }
-        }.filterNotNull()
+        }.filterNotNull().filter {
+            type == null || it.type == type
+        }
     }
 }
