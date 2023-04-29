@@ -126,7 +126,7 @@ class DefaultFarmingMarketRestController(
                 prepareInvestmentSupported = this.investmentPreparer != null,
                 exitPositionSupported = this.exitPositionPreparer != null,
                 farmType = farmType,
-                rewardsFinished = this.expired
+                expired = this.expired
             )
         ) {
             val self = linkTo(

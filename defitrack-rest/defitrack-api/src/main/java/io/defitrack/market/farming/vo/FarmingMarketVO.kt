@@ -20,10 +20,7 @@ class FarmingMarketVO(
     prepareInvestmentSupported: Boolean,
     exitPositionSupported: Boolean,
     val farmType: ContractType,
-    val rewardsFinished: Boolean
+    val expired: Boolean
 ) : MarketVO(
     id, network, protocol, name, prepareInvestmentSupported, exitPositionSupported, marketSize, "farming"
-) {
-    companion object {
-    }
-}
+)
