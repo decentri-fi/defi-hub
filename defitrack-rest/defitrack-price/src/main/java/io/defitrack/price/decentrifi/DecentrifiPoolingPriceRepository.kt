@@ -25,9 +25,13 @@ class DecentrifiPoolingPriceRepository(
             val pools = getPools(protocol.slug)
             pools.map { pool ->
                 val price = pool.price
-                cache.put(pool.address, price)
+                cache.put(pool.address.lowercase(), price)
             }
         }
+    }
+
+    fun appliesTo(address: String): Boolean {
+        return cache.get(address.lowercase()) != null
     }
 
     suspend fun getProtocols(): List<ProtocolVO> {
@@ -36,5 +40,9 @@ class DecentrifiPoolingPriceRepository(
 
     suspend fun getPools(protocol: String): List<PoolingMarketVO> {
         return httpClient.get("https://api.decentri.fi/$protocol/pooling/all-markets").body()
+    }
+
+    suspend fun getPrice(address: String): BigDecimal {
+        return cache.get(address.lowercase()) ?: BigDecimal.ZERO
     }
 }
