@@ -32,10 +32,8 @@ class VelodromeOptimismPoolingMarketProvider(
                 val tokens = poolingToken.underlyingTokens
 
                 try {
-                    PoolingMarket(
-                        id = "pooling-velodrome-optimism-$it",
-                        network = getNetwork(),
-                        protocol = getProtocol(),
+                    create(
+                        identifier = it,
                         marketSize = getMarketSize(
                             poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
                             it

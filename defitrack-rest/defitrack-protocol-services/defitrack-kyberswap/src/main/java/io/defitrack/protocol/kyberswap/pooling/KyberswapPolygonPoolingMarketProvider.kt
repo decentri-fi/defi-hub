@@ -3,7 +3,6 @@ package io.defitrack.protocol.kyberswap.pooling
 import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
-import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.kyberswap.apr.KyberswapAPRService
 import io.defitrack.protocol.kyberswap.graph.KyberswapPolygonGraphProvider
 import io.defitrack.token.TokenType
@@ -26,10 +25,8 @@ class KyberswapPolygonPoolingMarketProvider(
                     val token0 = getToken(it.token0.id)
                     val token1 = getToken(it.token1.id)
 
-                    PoolingMarket(
-                        id = "kyberswap-polygon-${it.id}",
-                        network = getNetwork(),
-                        protocol = getProtocol(),
+                    create(
+                        identifier = it.id,
                         address = it.id,
                         name = token.name,
                         symbol = token.symbol,

@@ -6,7 +6,6 @@ import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
 import io.defitrack.price.PriceRequest
-import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.set.EthereumSetProvider
 import io.defitrack.protocol.set.SetTokenContract
 import io.defitrack.token.TokenType
@@ -28,10 +27,8 @@ class EthereumSetPoolingMarketProvider(
 
 
                 val positions = tokenContract.getPositions()
-                PoolingMarket(
-                    id = "set-ethereum-$it",
-                    network = getNetwork(),
-                    protocol = getProtocol(),
+                create(
+                    identifier = it,
                     address = it,
                     name = tokenContract.name(),
                     symbol = tokenContract.symbol(),

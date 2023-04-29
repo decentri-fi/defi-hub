@@ -5,7 +5,6 @@ import io.defitrack.abi.TypeUtils
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.pooling.PoolingMarketProvider
-import io.defitrack.market.pooling.breakdown.PoolingBreakdownMapper
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.token.TokenType
 import io.defitrack.uniswap.v3.UniswapV3PoolContract
@@ -19,9 +18,7 @@ import org.web3j.abi.datatypes.Event
 import java.math.BigInteger
 
 @Component
-class UniswapV3EthereumPoolingMarketProvider(
-    private val poolingBreakdownMapper: PoolingBreakdownMapper
-) : PoolingMarketProvider() {
+class UniswapV3EthereumPoolingMarketProvider() : PoolingMarketProvider() {
 
     val poolCreatedEvent = Event(
         "PoolCreated",
@@ -70,10 +67,8 @@ class UniswapV3EthereumPoolingMarketProvider(
                             token0,
                             token1
                         )
-                        PoolingMarket(
-                            network = getNetwork(),
-                            protocol = getProtocol(),
-                            id = "uniswap-v3-ethereum-${it}",
+                        create(
+                            identifier = "v3-${it}",
                             name = "Uniswap V3 ${token0.symbol}/${token1.symbol} LP",
                             address = it,
                             symbol = "${token0.symbol}-${token1.symbol}",

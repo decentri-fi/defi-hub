@@ -3,8 +3,6 @@ package io.defitrack.pooling
 import io.defitrack.apr.SpiritswapAPRService
 import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
-import io.defitrack.market.pooling.domain.PoolingMarket
-import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SpiritswapService
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
@@ -29,9 +27,7 @@ class SpiritFantomPoolingMarketProvider(
                 val token0 = getToken(it.token0.id)
                 val token1 = getToken(it.token1.id)
 
-                PoolingMarket(
-                    network = service.getNetwork(),
-                    protocol = getProtocol(),
+                create(
                     address = it.id,
                     name = token.name,
                     tokens = listOf(
@@ -40,7 +36,7 @@ class SpiritFantomPoolingMarketProvider(
                     ),
                     symbol = token.symbol,
                     apr = spiritswapAPRService.getAPR(it.id, service.getNetwork()),
-                    id = "spirit-fantom-${it.id}",
+                    identifier = it.id,
                     marketSize = it.reserveUSD,
                     tokenType = TokenType.SPIRIT,
                     positionFetcher = defaultPositionFetcher(token.address),

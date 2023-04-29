@@ -8,8 +8,6 @@ import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.sync.Semaphore
-import kotlinx.coroutines.sync.withPermit
 
 abstract class DefaultSushiPoolingMarketProvider(
     private val sushiServices: List<SushiswapService>,
@@ -29,9 +27,7 @@ abstract class DefaultSushiPoolingMarketProvider(
                                 val token0 = getToken(it.token0.id)
                                 val token1 = getToken(it.token1.id)
 
-                                PoolingMarket(
-                                    network = service.getNetwork(),
-                                    protocol = getProtocol(),
+                                create(
                                     address = it.id,
                                     name = token.name,
                                     symbol = token.symbol,
@@ -40,7 +36,7 @@ abstract class DefaultSushiPoolingMarketProvider(
                                         token1.toFungibleToken(),
                                     ),
                                     apr = SushiPoolingAPRCalculator(service, it.id).calculateApr(),
-                                    id = "sushi-${getNetwork().slug}-${it.id}",
+                                    identifier = it.id,
                                     marketSize = it.reserveUSD,
                                     tokenType = TokenType.SUSHISWAP,
                                     positionFetcher = defaultPositionFetcher(token.address),

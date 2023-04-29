@@ -27,10 +27,8 @@ class KyberswapEthereumPoolingMarketProvider(
                         val token0 = getToken(it.token0.id)
                         val token1 = getToken(it.token1.id)
 
-                        PoolingMarket(
-                            id = "kyberswap-ethereum-${it.id}",
-                            network = getNetwork(),
-                            protocol = getProtocol(),
+                        create(
+                            identifier = it.id,
                             address = it.id,
                             name = token.name,
                             symbol = token.symbol,

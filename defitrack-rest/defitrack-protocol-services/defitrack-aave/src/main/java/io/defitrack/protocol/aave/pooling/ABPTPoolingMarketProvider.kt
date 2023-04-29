@@ -4,7 +4,6 @@ import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
-import io.defitrack.protocol.Protocol
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 
@@ -23,10 +22,8 @@ class ABPTPoolingMarketProvider() : PoolingMarketProvider(
         val weth = getToken(wethAddress)
 
         return listOf(
-            PoolingMarket(
-                id = "pool_aave-ethereum-abpt",
-                network = getNetwork(),
-                protocol = getProtocol(),
+            create(
+                identifier = "abpt",
                 address = abptAddress,
                 name = "Aave Balance Pool Token",
                 symbol = "ABPT",

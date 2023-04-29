@@ -23,11 +23,9 @@ class DfynPoolingMarketProvider(
                 val token0 = getToken(it.token0.id)
                 val token1 = getToken(it.token1.id)
 
-                PoolingMarket(
-                    network = getNetwork(),
-                    protocol = getProtocol(),
+                create(
                     address = it.id,
-                    id = "dfyn-polygon-${it.id}",
+                    identifier = it.id,
                     name = token.name,
                     symbol = token.symbol,
                     tokens = listOf(

@@ -6,7 +6,6 @@ import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
-import io.defitrack.protocol.Protocol
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 
@@ -21,10 +20,8 @@ class PoolTogetherOptimismAUSDCTicketMarketProvider(
         val token = getToken(usdcTicketAddress)
 
         return listOf(
-            PoolingMarket(
-                id = "ethereum-aUSDC-ticket",
-                network = getNetwork(),
-                protocol = getProtocol(),
+            create(
+                identifier = "aUSDC-ticket",
                 address = usdcTicketAddress,
                 name = "PoolTogether aOptUSDC Ticket",
                 symbol = "PTaOptUSDC",

@@ -51,10 +51,8 @@ class HopArbitrumPoolingMarketProvider(
             val canonical = getToken(hopLpToken.canonicalToken)
 
             val marketSize = getPrice(canonical.address, contract, swapContract).toBigDecimal()
-            PoolingMarket(
-                id = "hop-arbitrum-${hopLpToken.canonicalToken}",
-                network = getNetwork(),
-                protocol = getProtocol(),
+            create(
+                identifier = hopLpToken.canonicalToken,
                 address = hopLpToken.lpToken,
                 symbol = htoken.symbol + "-" + canonical.symbol,
                 name = contract.name(),

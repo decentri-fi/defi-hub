@@ -21,12 +21,10 @@ class BeethovenXFantomPoolingMarketProvider(
     override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
         beethovenXFantomGraphProvider.getPools().map {
             async {
-                if (it.totalLiquidity > BigDecimal.valueOf(100000)) {
+                if (it.totalLiquidity > BigDecimal.valueOf(1000)) {
                     try {
-                        PoolingMarket(
-                            id = "beets-fantom-${it.id}",
-                            network = getNetwork(),
-                            protocol = getProtocol(),
+                        create(
+                            identifier = it.id,
                             address = it.address,
                             name = "${
                                 it.tokens.joinToString("/", transform = PoolToken::symbol)

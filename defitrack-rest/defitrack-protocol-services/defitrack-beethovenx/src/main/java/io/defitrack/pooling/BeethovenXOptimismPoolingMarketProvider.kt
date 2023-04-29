@@ -22,10 +22,8 @@ class BeethovenXOptimismPoolingMarketProvider(
             async {
                 if (it.totalLiquidity > BigDecimal.valueOf(100000)) {
                     try {
-                        PoolingMarket(
-                            id = "beets-optimism-${it.id}",
-                            network = getNetwork(),
-                            protocol = getProtocol(),
+                        create(
+                            identifier = it.id,
                             address = it.address,
                             name = "${
                                 it.tokens.joinToString("/", transform = PoolToken::symbol)

@@ -34,10 +34,8 @@ class KyberElasticPoolingMarketProvider(
                 val tokens = poolingToken.underlyingTokens
 
                 try {
-                    PoolingMarket(
-                        id = "pooling-velodrome-optimism-${poolInfo.address}",
-                        network = getNetwork(),
-                        protocol = getProtocol(),
+                    create(
+                        identifier = poolInfo.address,
                         marketSize = getMarketSize(
                             poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
                             poolInfo.address

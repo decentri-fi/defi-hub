@@ -26,10 +26,8 @@ abstract class CurvePoolingMarketProvider(
 
                         val lpToken = getToken(pool.address)
 
-                        PoolingMarket(
-                            id = "curve-${getNetwork().slug}-${pool.lpToken}",
-                            network = getNetwork(),
-                            protocol = getProtocol(),
+                        create(
+                            identifier = pool.lpToken,
                             address = pool.address,
                             name = lpToken.name,
                             symbol = lpToken.symbol,
@@ -41,8 +39,7 @@ abstract class CurvePoolingMarketProvider(
                             totalSupply = lpToken.totalSupply,
                         )
                     } catch (ex: Exception) {
-                        ex.printStackTrace()
-                        logger.error("Unable to import curve pool ${pool.address}", ex.message)
+                        logger.error("Unable to import curve pool ${pool.address}", ex)
                         null
                     }
                 }

@@ -45,11 +45,9 @@ class QuickswapPoolingMarketProvider(
 
         val token = getToken(it.id)
 
-        return PoolingMarket(
-            network = getNetwork(),
-            protocol = getProtocol(),
+        return create(
             address = it.id,
-            id = "quickswap-polygon-${it.id}",
+            identifier = it.id,
             name = token.name,
             symbol = token.symbol,
             tokens = listOf(

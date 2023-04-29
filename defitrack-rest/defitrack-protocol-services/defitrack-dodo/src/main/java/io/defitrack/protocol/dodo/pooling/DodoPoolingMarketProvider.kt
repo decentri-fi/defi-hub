@@ -18,10 +18,8 @@ abstract class DodoPoolingMarketProvider(
             val baseToken = getToken(pool.baseToken.id)
             val quoteToken = getToken(pool.quoteToken.id)
 
-            PoolingMarket(
-                id = "dodo-${getNetwork().slug}-${pool.id}",
-                network = getNetwork(),
-                protocol = getProtocol(),
+            create(
+                identifier = pool.id,
                 address = pool.id,
                 name = baseToken.symbol + "/" + quoteToken.symbol + " LP",
                 symbol = baseToken.symbol + "/" + quoteToken.symbol,

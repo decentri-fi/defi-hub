@@ -3,7 +3,6 @@ package io.defitrack.protocol.bancor.pool
 import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
-import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.bancor.BancorEthereumProvider
 import io.defitrack.protocol.bancor.contract.BancorNetworkContract
 import io.defitrack.protocol.bancor.contract.BancorPoolCollection
@@ -59,10 +58,8 @@ class BancorEthereumPoolingMarketProvider(
 
                     val underlying = getToken(poolTokenContract.reserveToken())
                         .toFungibleToken()
-                    PoolingMarket(
-                        id = "bancor-ethereum-${pool}",
-                        network = getNetwork(),
-                        protocol = getProtocol(),
+                    create(
+                        identifier = pool,
                         address = pool,
                         name = token.name,
                         symbol = token.symbol,

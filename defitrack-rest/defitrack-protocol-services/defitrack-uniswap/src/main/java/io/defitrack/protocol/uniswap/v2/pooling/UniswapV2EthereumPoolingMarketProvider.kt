@@ -3,7 +3,6 @@ package io.defitrack.protocol.uniswap.v2.pooling
 import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
-import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.uniswap.v2.apr.UniswapAPRService
 import io.defitrack.token.TokenType
 import io.defitrack.uniswap.v2.AbstractUniswapV2Service
@@ -24,10 +23,8 @@ class UniswapV2EthereumPoolingMarketProvider(
                     val token = getToken(it.id)
                     val token0 = getToken(it.token0.id)
                     val token1 = getToken(it.token1.id)
-                    PoolingMarket(
-                        network = getNetwork(),
-                        protocol = getProtocol(),
-                        id = "uniswap-v2-ethereum-${it.id}",
+                    create(
+                        identifier = "v2-${it.id}",
                         name = token.name,
                         address = it.id,
                         symbol = token.symbol,

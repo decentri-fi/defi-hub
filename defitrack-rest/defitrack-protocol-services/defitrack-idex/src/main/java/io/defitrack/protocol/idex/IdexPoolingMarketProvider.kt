@@ -25,12 +25,10 @@ class IdexPoolingMarketProvider(
                             val token0 = getToken(it.tokenA)
                             val token1 = getToken(it.tokenB)
 
-                            PoolingMarket(
-                                network = getNetwork(),
-                                protocol = getProtocol(),
+                            create(
                                 address = it.liquidityToken,
                                 symbol = token.symbol,
-                                id = "idex-polygon-${it.liquidityToken}",
+                                identifier = it.liquidityToken,
                                 name = "IDEX ${token0.symbol}-${token1.symbol}",
                                 tokens = listOf(
                                     token0.toFungibleToken(),
