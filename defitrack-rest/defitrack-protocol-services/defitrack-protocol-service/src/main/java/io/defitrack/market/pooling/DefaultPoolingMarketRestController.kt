@@ -1,8 +1,8 @@
 package io.defitrack.market.pooling
 
 import io.defitrack.common.network.Network
-import io.defitrack.market.farming.vo.TransactionPreparationVO
 import io.defitrack.invest.PrepareInvestmentCommand
+import io.defitrack.market.farming.vo.TransactionPreparationVO
 import io.defitrack.market.pooling.breakdown.PoolingBreakdownMapper
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.vo.PoolingMarketVO
@@ -143,7 +143,8 @@ class DefaultPoolingMarketRestController(
                 marketSize = marketSize,
                 prepareInvestmentSupported = investmentPreparer != null,
                 erc20Compatible = erc20Compatible,
-                exitPositionSupported = exitPositionPreparer != null
+                exitPositionSupported = exitPositionPreparer != null,
+                price = price
             )
         ) {
             val self = linkTo(

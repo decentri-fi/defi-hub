@@ -91,7 +91,8 @@ class DefaultPoolingPositionRestController(
                 marketSize = marketSize,
                 prepareInvestmentSupported = investmentPreparer != null,
                 erc20Compatible = erc20Compatible,
-                exitPositionSupported = exitPositionPreparer != null
+                exitPositionSupported = exitPositionPreparer != null,
+                price = price
             )
         ) {
             val self = WebMvcLinkBuilder.linkTo(

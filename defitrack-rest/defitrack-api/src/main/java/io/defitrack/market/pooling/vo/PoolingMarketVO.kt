@@ -19,7 +19,8 @@ class PoolingMarketVO(
     marketSize: BigDecimal?,
     prepareInvestmentSupported: Boolean,
     exitPositionSupported: Boolean,
-    val erc20Compatible: Boolean
+    val erc20Compatible: Boolean,
+    val price: BigDecimal = BigDecimal.ZERO
 ) : MarketVO(
     id, network, protocol, name, prepareInvestmentSupported, exitPositionSupported, marketSize, "pooling"
 )
