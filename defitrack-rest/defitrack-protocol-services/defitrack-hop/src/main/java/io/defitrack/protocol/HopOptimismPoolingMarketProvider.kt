@@ -1,6 +1,7 @@
 package io.defitrack.protocol
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
@@ -50,7 +51,10 @@ class HopOptimismPoolingMarketProvider(
             val htoken = getToken(hopLpToken.hToken)
             val canonical = getToken(hopLpToken.canonicalToken)
 
-            val marketSize = getPrice(canonical.address, contract, swapContract).toBigDecimal()
+
+            val marketSize = calculateMarketSize(
+                hopLpToken
+            )
             create(
                 identifier = hopLpToken.canonicalToken,
                 address = hopLpToken.lpToken,
@@ -78,23 +82,23 @@ class HopOptimismPoolingMarketProvider(
         }
     }
 
-    private suspend fun getPrice(
-        canonicalTokenAddress: String,
-        contract: HopLpTokenContract,
-        swapContract: HopSwapContract
-    ): Double {
+    suspend fun calculateMarketSize(hopLpToken: HopLpToken): BigDecimal {
+        val canonicalToken = getToken(hopLpToken.canonicalToken)
+        val hToken = getToken(hopLpToken.hToken)
+        val hTokenBalance = getBalance(hToken.address, hopLpToken.swapAddress)
+        val canonicalTokenBalance =
+            getBalance(hopLpToken.canonicalToken, hopLpToken.swapAddress)
 
-        val tokenAmount = contract.totalSupply().toBigDecimal().times(
-            swapContract.virtualPrice().toBigDecimal()
-        ).divide(BigDecimal.TEN.pow(36))
-
-        return getPriceResource().calculatePrice(
+        val tokenPrice = getPriceResource().calculatePrice(
             PriceRequest(
-                address = canonicalTokenAddress,
-                network = getNetwork(),
-                amount = tokenAmount,
-                TokenType.SINGLE
+                canonicalToken.address,
+                getNetwork(),
+                1.0.toBigDecimal(),
             )
+        ).toBigDecimal()
+
+        return (hTokenBalance.toBigDecimal().asEth(hToken.decimals).times(tokenPrice)).plus(
+            canonicalTokenBalance.asEth(canonicalToken.decimals).times(tokenPrice)
         )
     }
 

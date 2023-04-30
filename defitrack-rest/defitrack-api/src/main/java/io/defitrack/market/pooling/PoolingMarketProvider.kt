@@ -1,6 +1,7 @@
 package io.defitrack.market.pooling
 
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
+import io.defitrack.common.utils.BigDecimalExtensions.isZero
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.MarketProvider
@@ -50,9 +51,22 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
             breakdown = breakdown,
             erc20Compatible = erc20Compatible,
             totalSupply = totalSupply,
-            price = price ?: marketSize?.dividePrecisely(
-                totalSupply.asEth(decimals),
-            ) ?: BigDecimal.ZERO
+            price = price ?: calculatePrice(marketSize, totalSupply, decimals)
+        )
+    }
+
+    private fun calculatePrice(
+        marketSize: BigDecimal?,
+        totalSupply: BigInteger,
+        decimals: Int
+    ): BigDecimal {
+        if (marketSize == null || marketSize <= BigDecimal.ZERO) return BigDecimal.ZERO
+        val supply = totalSupply.asEth(decimals)
+
+        if (supply.isZero()) return BigDecimal.ZERO
+
+        return marketSize.dividePrecisely(
+            totalSupply.asEth(decimals),
         )
     }
 
