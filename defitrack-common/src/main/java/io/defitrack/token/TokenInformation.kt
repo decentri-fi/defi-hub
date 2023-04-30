@@ -24,6 +24,7 @@ data class TokenInformation(
             symbol,
             logo,
             type,
+            totalSupply,
         )
     }
 }

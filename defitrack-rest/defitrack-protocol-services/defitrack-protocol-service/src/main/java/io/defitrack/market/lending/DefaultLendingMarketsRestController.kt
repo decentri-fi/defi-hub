@@ -1,12 +1,13 @@
 package io.defitrack.market.lending
 
 import io.defitrack.common.network.Network
-import io.defitrack.market.farming.vo.TransactionPreparationVO
 import io.defitrack.invest.PrepareInvestmentCommand
+import io.defitrack.market.farming.vo.TransactionPreparationVO
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.lending.vo.LendingMarketVO
 import io.defitrack.network.toVO
 import io.defitrack.protocol.toVO
+import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -77,7 +78,8 @@ class DefaultLendingMarketsRestController(
             poolType = poolType,
             marketSize = marketSize,
             prepareInvestmentSupported = investmentPreparer != null,
-            exitPositionSupported = this.exitPositionPreparer != null
+            exitPositionSupported = this.exitPositionPreparer != null,
+            erc20Compatible = this.erc20Compatible
         )
     }
 }

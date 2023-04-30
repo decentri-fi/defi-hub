@@ -24,7 +24,9 @@ data class LendingMarket(
     val positionFetcher: PositionFetcher? = null,
     val investmentPreparer: InvestmentPreparer? = null,
     val exitPositionPreparer: ExitPositionPreparer? = null,
-    val metadata: Map<String, Any> = emptyMap()
+    val metadata: Map<String, Any> = emptyMap(),
+    val erc20Compatible: Boolean = false,
+    val price: BigDecimal
 ) : DefiMarket
 
 class PositionFetcher(

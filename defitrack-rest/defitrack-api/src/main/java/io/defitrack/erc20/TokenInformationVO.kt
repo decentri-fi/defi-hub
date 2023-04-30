@@ -26,6 +26,7 @@ class TokenInformationVO(
             symbol,
             logo,
             type,
+            totalSupply
         )
     }
 }

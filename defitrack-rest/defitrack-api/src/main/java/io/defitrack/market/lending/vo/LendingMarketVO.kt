@@ -17,6 +17,7 @@ class LendingMarketVO(
     marketSize: BigDecimal?,
     prepareInvestmentSupported: Boolean,
     exitPositionSupported: Boolean,
+    val erc20Compatible: Boolean
 ) : MarketVO(
     id, network, protocol, name, prepareInvestmentSupported, exitPositionSupported, marketSize, "lending"
 )

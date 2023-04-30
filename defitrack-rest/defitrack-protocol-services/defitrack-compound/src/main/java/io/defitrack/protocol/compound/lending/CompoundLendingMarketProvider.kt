@@ -83,7 +83,8 @@ class CompoundLendingMarketProvider(
                     investmentPreparer = CompoundLendingInvestmentPreparer(
                         ctokenContract,
                         getERC20Resource()
-                    )
+                    ),
+                    metadata = mapOf("totalSupply" to ctokenContract.totalSupply()),
                 )
             }
         } catch (ex: Exception) {
