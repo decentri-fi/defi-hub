@@ -5,19 +5,16 @@ import com.github.michaelbull.retry.retry
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.erc20.TokenInformationVO
-import io.defitrack.protocol.balancer.graph.BalancerPolygonPoolGraphProvider
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigInteger
-import java.math.RoundingMode
 
 @Service
 class PriceCalculator(
     private val erc20Service: ERC20Resource,
-    private val balancerTokenService: BalancerPolygonPoolGraphProvider,
     private val priceProvider: PriceProvider
 ) {
 
@@ -50,14 +47,6 @@ class PriceCalculator(
                     calculateLpHoldings(priceRequest, token)
                 }
 
-                tokenType == TokenType.BALANCER -> {
-                    calculateBalancerPrice(priceRequest)
-                }
-
-                tokenType == TokenType.STARGATE -> {
-                    calculateBalancerPrice(priceRequest)
-                }
-
                 tokenType == TokenType.CURVE -> {
                     calculateLpHoldings(priceRequest, token)
                 }
@@ -77,13 +66,6 @@ class PriceCalculator(
             ).dividePrecisely(BigDecimal.TEN.pow(18)).toDouble()
         }
     }
-
-    private suspend fun calculateBalancerPrice(priceRequest: PriceRequest) =
-        balancerTokenService.getPool(priceRequest.address)?.let { pool ->
-            pool.totalLiquidity.divide(pool.totalShares, 18, RoundingMode.HALF_UP)
-                .times(priceRequest.amount)
-        } ?: BigDecimal.ZERO
-
 
     private suspend fun calculateLpHoldings(
         priceRequest: PriceRequest,
@@ -120,7 +102,6 @@ class PriceCalculator(
         totalLPAmount: BigInteger,
         underlyingTokens: List<TokenInformationVO>
     ): BigDecimal {
-
         val userShare = userLPAmount.dividePrecisely(
             totalLPAmount.dividePrecisely(BigDecimal.TEN.pow(18))
         )
