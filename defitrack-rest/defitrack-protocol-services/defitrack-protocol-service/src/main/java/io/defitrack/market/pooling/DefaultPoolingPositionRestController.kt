@@ -16,7 +16,6 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -77,40 +76,21 @@ class DefaultPoolingPositionRestController(
     }
 
     fun PoolingMarket.toVO(): PoolingMarketVO {
-        with(
-            PoolingMarketVO(
-                name = name,
-                protocol = protocol.toVO(),
-                network = network.toVO(),
-                tokens = tokens,
-                id = id,
-                breakdown = poolingBreakdownMapper.toVO(breakdown),
-                decimals = decimals,
-                address = address,
-                apr = apr,
-                marketSize = marketSize,
-                prepareInvestmentSupported = investmentPreparer != null,
-                erc20Compatible = erc20Compatible,
-                exitPositionSupported = exitPositionPreparer != null,
-                price = price
-            )
-        ) {
-            val self = WebMvcLinkBuilder.linkTo(
-                WebMvcLinkBuilder.methodOn(DefaultPoolingMarketRestController::class.java).getById(
-                    this.id
-                )
-            ).withSelfRel()
-
-            val alternatives = WebMvcLinkBuilder.linkTo(
-                WebMvcLinkBuilder.methodOn(DefaultPoolingMarketRestController::class.java).findAlternatives(
-                    this.address,
-                    this.network.toNetwork()
-                )
-            ).withRel("alternatives")
-
-            this.add(self, alternatives)
-            return this
-        }
+        return PoolingMarketVO(
+            name = name,
+            protocol = protocol.toVO(),
+            network = network.toVO(),
+            tokens = tokens,
+            id = id,
+            breakdown = poolingBreakdownMapper.toVO(breakdown),
+            decimals = decimals,
+            address = address,
+            apr = apr,
+            marketSize = marketSize,
+            prepareInvestmentSupported = investmentPreparer != null,
+            erc20Compatible = erc20Compatible,
+            exitPositionSupported = exitPositionPreparer != null,
+            price = price
+        )
     }
-
 }

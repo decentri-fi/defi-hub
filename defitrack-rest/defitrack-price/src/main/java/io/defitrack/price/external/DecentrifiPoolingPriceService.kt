@@ -11,7 +11,7 @@ class DecentrifiPoolingPriceService(
 ) : ExternalPriceService {
 
     override fun appliesTo(tokenInformationVO: TokenInformationVO): Boolean {
-        return decentrifiPoolingPriceRepository.appliesTo(tokenInformationVO.address.lowercase())
+        return decentrifiPoolingPriceRepository.contains(tokenInformationVO.address.lowercase())
     }
 
     override suspend fun getPrice(tokenInformationVO: TokenInformationVO): BigDecimal {

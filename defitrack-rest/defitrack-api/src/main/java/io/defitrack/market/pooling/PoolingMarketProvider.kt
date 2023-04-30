@@ -59,7 +59,7 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
     suspend fun defaultBreakdown(
         tokens: List<TokenInformationVO>,
         poolAddress: String
-    ): List<PoolingMarketTokenShare>? {
+    ): List<PoolingMarketTokenShare> {
         return tokens.map {
             PoolingMarketTokenShare(
                 token = it.toFungibleToken(),

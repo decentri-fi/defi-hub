@@ -129,13 +129,6 @@ class DefaultFarmingMarketRestController(
                 expired = this.expired
             )
         ) {
-            val self = linkTo(
-                methodOn(DefaultFarmingMarketRestController::class.java).getById(
-                    this.id
-                )
-            ).withSelfRel()
-
-            this.add(self)
             this
         }
     }

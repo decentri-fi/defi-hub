@@ -16,8 +16,6 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -129,39 +127,21 @@ class DefaultPoolingMarketRestController(
     }
 
     fun PoolingMarket.toVO(): PoolingMarketVO {
-        with(
-            PoolingMarketVO(
-                name = name,
-                protocol = protocol.toVO(),
-                network = network.toVO(),
-                tokens = tokens,
-                id = id,
-                breakdown = poolingBreakdownMapper.toVO(breakdown),
-                decimals = decimals,
-                address = address,
-                apr = apr,
-                marketSize = marketSize,
-                prepareInvestmentSupported = investmentPreparer != null,
-                erc20Compatible = erc20Compatible,
-                exitPositionSupported = exitPositionPreparer != null,
-                price = price
-            )
-        ) {
-            val self = linkTo(
-                methodOn(DefaultPoolingMarketRestController::class.java).getById(
-                    this.id
-                )
-            ).withSelfRel()
-
-            val alternatives = linkTo(
-                methodOn(DefaultPoolingMarketRestController::class.java).findAlternatives(
-                    this.address,
-                    this.network.toNetwork()
-                )
-            ).withRel("alternatives")
-
-            this.add(self, alternatives)
-            return this
-        }
+        return PoolingMarketVO(
+            name = name,
+            protocol = protocol.toVO(),
+            network = network.toVO(),
+            tokens = tokens,
+            id = id,
+            breakdown = poolingBreakdownMapper.toVO(breakdown),
+            decimals = decimals,
+            address = address,
+            apr = apr,
+            marketSize = marketSize,
+            prepareInvestmentSupported = investmentPreparer != null,
+            erc20Compatible = erc20Compatible,
+            exitPositionSupported = exitPositionPreparer != null,
+            price = price
+        )
     }
 }

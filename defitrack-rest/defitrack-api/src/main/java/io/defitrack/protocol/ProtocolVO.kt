@@ -1,8 +1,5 @@
 package io.defitrack.protocol
 
-import org.springframework.hateoas.RepresentationModel
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
-
 
 class ProtocolVO(
     val name: String,
@@ -10,4 +7,4 @@ class ProtocolVO(
     val slug: String,
     val primitives: List<DefiPrimitive>,
     val website: String
-) : RepresentationModel<ProtocolVO>()
+)
