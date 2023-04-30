@@ -5,8 +5,6 @@ import com.github.michaelbull.retry.retry
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.erc20.TokenInformationVO
-import io.defitrack.price.hop.CamelotPriceService
-import io.defitrack.price.hop.HopPriceService
 import io.defitrack.protocol.balancer.graph.BalancerPolygonPoolGraphProvider
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
@@ -20,8 +18,6 @@ import java.math.RoundingMode
 class PriceCalculator(
     private val erc20Service: ERC20Resource,
     private val balancerTokenService: BalancerPolygonPoolGraphProvider,
-    private val hopPriceService: HopPriceService,
-    private val camelotPriceService: CamelotPriceService,
     private val priceProvider: PriceProvider
 ) {
 
@@ -64,14 +60,6 @@ class PriceCalculator(
 
                 tokenType == TokenType.CURVE -> {
                     calculateLpHoldings(priceRequest, token)
-                }
-
-                tokenType == TokenType.HOP -> {
-                    hopPriceService.calculateHopPrice(priceRequest)
-                }
-
-                tokenType == TokenType.ALGEBRA_NFT -> {
-                    camelotPriceService.calculateAlgebraPrice(priceRequest)
                 }
 
                 else -> {
@@ -124,7 +112,6 @@ class PriceCalculator(
         val tokenPrice = priceProvider.getPrice(token)
         return amount.times(tokenPrice)
     }
-
 
     suspend fun calculateLpHoldings(
         network: Network,

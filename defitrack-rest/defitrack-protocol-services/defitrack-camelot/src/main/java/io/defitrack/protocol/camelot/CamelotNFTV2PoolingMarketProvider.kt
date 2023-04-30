@@ -10,7 +10,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
-import java.math.BigInteger
 
 
 @Component
@@ -45,7 +44,7 @@ class CamelotNFTV2PoolingMarketProvider(
             breakdown = emptyList(),
             erc20Compatible = false,
             tokenType = TokenType.ALGEBRA_NFT,
-            totalSupply = BigInteger.ZERO,
+            totalSupply = it.liquidity,
             marketSize = getMarketSize(
                 listOf(token0.toFungibleToken(), token1.toFungibleToken()),
                 pool
