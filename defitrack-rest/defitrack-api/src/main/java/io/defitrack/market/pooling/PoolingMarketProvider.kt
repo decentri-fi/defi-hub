@@ -50,7 +50,7 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
             investmentPreparer = investmentPreparer,
             breakdown = breakdown,
             erc20Compatible = erc20Compatible,
-            totalSupply = totalSupply,
+            totalSupply = totalSupply.asEth(decimals),
             price = price ?: calculatePrice(marketSize, totalSupply, decimals)
         )
     }

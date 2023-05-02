@@ -9,7 +9,6 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.token.FungibleToken
 import io.defitrack.token.TokenType
 import java.math.BigDecimal
-import java.math.BigInteger
 
 data class PoolingMarket(
     val id: String,
@@ -19,7 +18,7 @@ data class PoolingMarket(
     val name: String,
     val decimals: Int = 18,
     val symbol: String,
-    val totalSupply: BigInteger,
+    val totalSupply: BigDecimal,
     val tokens: List<FungibleToken>,
     val apr: BigDecimal? = null,
     val marketSize: BigDecimal? = null,

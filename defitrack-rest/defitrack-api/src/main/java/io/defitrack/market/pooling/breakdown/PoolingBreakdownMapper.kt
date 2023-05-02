@@ -7,6 +7,7 @@ import io.defitrack.market.pooling.vo.PoolingMarketTokenShareVO
 import io.defitrack.market.pooling.vo.PoolingPositionTokenshareVO
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.math.BigDecimal
 import java.math.BigInteger
 
 @Service
@@ -28,14 +29,14 @@ class PoolingBreakdownMapper {
         }
     }
 
-    fun toPositionVO(poolingMarket: PoolingMarket, userSupply: BigInteger): List<PoolingPositionTokenshareVO> {
+    fun toPositionVO(poolingMarket: PoolingMarket, userSupply: BigDecimal): List<PoolingPositionTokenshareVO> {
         val toVO = toVO(poolingMarket.breakdown)
         if (poolingMarket.totalSupply == BigInteger.ZERO) {
             logger.warn("totalSupply is zero for ${poolingMarket.name}")
             return emptyList()
         }
 
-        val ratio = userSupply.toBigDecimal().dividePrecisely(poolingMarket.totalSupply.toBigDecimal())
+        val ratio = userSupply.dividePrecisely(poolingMarket.totalSupply)
 
         return toVO.map {
             PoolingPositionTokenshareVO(

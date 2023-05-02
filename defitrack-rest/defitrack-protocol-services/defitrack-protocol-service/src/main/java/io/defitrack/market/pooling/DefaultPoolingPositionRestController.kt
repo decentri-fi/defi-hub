@@ -70,7 +70,7 @@ class DefaultPoolingPositionRestController(
             id = market.id,
             exitPositionSupported = market.exitPositionPreparer != null,
             amount = tokenAmount,
-            breakdown = breakdownService.toPositionVO(market, tokenAmount),
+            breakdown = breakdownService.toPositionVO(market, tokenAmount.asEth(lpToken.decimals)),
             market = market.toVO()
         )
     }
