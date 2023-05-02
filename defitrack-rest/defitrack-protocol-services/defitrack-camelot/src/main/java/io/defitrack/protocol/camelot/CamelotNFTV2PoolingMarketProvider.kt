@@ -35,6 +35,10 @@ class CamelotNFTV2PoolingMarketProvider(
 
         val pool = camelotService.getPoolByPair(token0.address, token1.address)
 
+        val marketSize = getMarketSize(
+            listOf(token0.toFungibleToken(), token1.toFungibleToken()),
+            pool
+        )
         return create(
             tokens = listOf(token0.toFungibleToken(), token1.toFungibleToken()),
             identifier = pool,
@@ -45,10 +49,7 @@ class CamelotNFTV2PoolingMarketProvider(
             erc20Compatible = false,
             tokenType = TokenType.ALGEBRA_NFT,
             totalSupply = it.liquidity,
-            marketSize = getMarketSize(
-                listOf(token0.toFungibleToken(), token1.toFungibleToken()),
-                pool
-            )
+            marketSize = marketSize
         )
     }
 
