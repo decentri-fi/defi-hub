@@ -15,7 +15,7 @@ import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import org.springframework.stereotype.Component
 
-//@Component
+@Component
 class CamelotArbitrumPoolingMarketProvider(
 ) : PoolingMarketProvider() {
 

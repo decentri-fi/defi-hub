@@ -4,6 +4,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.CamelotService
+import io.defitrack.protocol.algebra.AlgebraPoolContract
 import io.defitrack.protocol.algebra.AlgebraPosition
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
@@ -33,22 +34,25 @@ class CamelotNFTV2PoolingMarketProvider(
         val token0 = getToken(it.token0)
         val token1 = getToken(it.token1)
 
-        val pool = camelotService.getPoolByPair(token0.address, token1.address)
+        val pool = AlgebraPoolContract(
+            getBlockchainGateway(),
+            camelotService.getPoolByPair(token0.address, token1.address)
+        )
 
         val marketSize = getMarketSize(
             listOf(token0.toFungibleToken(), token1.toFungibleToken()),
-            pool
+            pool.address
         )
         return create(
             tokens = listOf(token0.toFungibleToken(), token1.toFungibleToken()),
-            identifier = pool,
-            address = pool,
+            identifier = pool.address,
+            address = pool.address,
             name = "Camelot V3 ${token0.symbol}/${token1.symbol}",
             symbol = token0.symbol + "/" + token1.symbol,
             breakdown = emptyList(),
             erc20Compatible = false,
             tokenType = TokenType.ALGEBRA_NFT,
-            totalSupply = it.liquidity,
+            totalSupply = pool.liquidity(),
             marketSize = marketSize
         )
     }
