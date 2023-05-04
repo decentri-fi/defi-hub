@@ -1,9 +1,0 @@
-arbitrum
-avalanche
-binance
-ethereum
-fantom
-optimism
-polygon
-polygon-zkevm
-starknet

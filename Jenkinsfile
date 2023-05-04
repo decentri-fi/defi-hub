@@ -6,7 +6,7 @@ pipeline {
     stages {
         stage('compile') {
             steps {
-                sh './mvnw clean compile'
+                sh './mvnw -T 1C clean compile '
             }
         }
         stage('Test') {
