@@ -12,6 +12,8 @@ import io.defitrack.protocol.balancer.contract.BalancerLiquidityGaugeFactoryCont
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 
 abstract class BalancerGaugeFarmingMarketProvider(
     private val poolingMarketProvider: PoolingMarketProvider,
@@ -28,50 +30,53 @@ abstract class BalancerGaugeFarmingMarketProvider(
 
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
 
+        val semaphore = Semaphore(8)
         val pools = poolingMarketProvider.getMarkets()
 
         pools.map { pool ->
             async {
+                semaphore.withPermit {
+                    try {
+                        val gauge = factory.getPoolGauge(pool.address)
 
-                try {
-                    val gauge = factory.getPoolGauge(pool.address)
+                        val stakedToken = getToken(pool.address)
+                        val gaugecontract = BalancerGaugeContract(
+                            getBlockchainGateway(),
+                            gauge
+                        )
 
-                    val stakedToken = getToken(pool.address)
-                    val gaugecontract = BalancerGaugeContract(
-                        getBlockchainGateway(),
-                        gauge
-                    )
-
-                    create(
-                        identifier = pool.id,
-                        name = stakedToken.underlyingTokens.joinToString("/") {
-                            it.symbol
-                        } + " Gauge",
-                        stakedToken = stakedToken.toFungibleToken(),
-                        rewardTokens = getRewardTokens(
-                            gaugecontract
-                        ).map { reward ->
-                            reward.toFungibleToken()
-                        },
-                        vaultType = "balancerGauge",
-                        balanceFetcher = PositionFetcher(
-                            gaugecontract.address,
-                            { user -> gaugecontract.balanceOfMethod(user) }
-                        ),
-                        farmType = ContractType.STAKING,
-                        metadata = mapOf("address" to pool.id),
-                        exitPositionPreparer = prepareExit {
-                            PreparedExit(
-                                function = gaugecontract.exitPosition(it.amount),
-                                to = gaugecontract.address,
-                            )
-                        }
-                    )
-                } catch (ex: Exception) {
-                    logger.error(
-                        "Error while fetching balancer gauge: ${ex.message}"
-                    )
-                    null
+                        create(
+                            identifier = pool.id,
+                            name = stakedToken.underlyingTokens.joinToString("/") {
+                                it.symbol
+                            } + " Gauge",
+                            stakedToken = stakedToken.toFungibleToken(),
+                            rewardTokens = getRewardTokens(
+                                gaugecontract
+                            ).map { reward ->
+                                reward.toFungibleToken()
+                            },
+                            vaultType = "balancerGauge",
+                            balanceFetcher = PositionFetcher(
+                                gaugecontract.address,
+                                { user -> gaugecontract.balanceOfMethod(user) }
+                            ),
+                            farmType = ContractType.STAKING,
+                            metadata = mapOf("address" to pool.id),
+                            exitPositionPreparer = prepareExit {
+                                PreparedExit(
+                                    function = gaugecontract.exitPosition(it.amount),
+                                    to = gaugecontract.address,
+                                )
+                            }
+                        )
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                        logger.error(
+                            "Error while fetching balancer gauge: ${ex.message}"
+                        )
+                        null
+                    }
                 }
             }
         }

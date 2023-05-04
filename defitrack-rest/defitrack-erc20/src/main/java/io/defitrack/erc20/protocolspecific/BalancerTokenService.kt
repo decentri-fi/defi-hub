@@ -50,6 +50,7 @@ class BalancerTokenService(
                 decimals = erc20.decimals,
                 type = TokenType.BALANCER,
                 protocol = Protocol.BALANCER,
+                totalSupply = erc20.totalSupply,
                 underlyingTokens = underlying.map { underlyingPoolToken ->
                     val underlying = tokenService.getTokenInformation(underlyingPoolToken.address, token.network)
                     TokenInformation(

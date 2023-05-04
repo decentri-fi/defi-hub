@@ -25,6 +25,10 @@ class TypeUtils {
             return Int128(this)
         }
 
+        fun ByteArray.toBytes32(): Bytes32 {
+            return Bytes32(this)
+        }
+
         fun BigInteger.toInt128(): Int128 {
             return Int128(this)
         }
