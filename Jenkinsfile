@@ -6,7 +6,7 @@ pipeline {
     stages {
         stage('compile') {
             steps {
-                sh './mvnw -T 1C clean compile '
+                sh './mvnw -T 1.5C clean compile '
             }
         }
         stage('Test') {
@@ -17,7 +17,7 @@ pipeline {
         stage('Package') {
              steps {
                  echo "-=- packaging project -=-"
-                 sh "./mvnw package -DskipTests"
+                 sh "./mvnw -T 1.5C package -DskipTests"
              }
         }
         stage('Docker Package') {
