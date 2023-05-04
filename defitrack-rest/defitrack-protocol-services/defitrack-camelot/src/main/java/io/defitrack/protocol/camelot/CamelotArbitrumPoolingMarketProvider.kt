@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component
 class CamelotArbitrumPoolingMarketProvider(
 ) : PoolingMarketProvider() {
 
-
     val pools by lazy {
         runBlocking {
             val pairFactoryContract = PairFactoryContract(
@@ -29,7 +28,6 @@ class CamelotArbitrumPoolingMarketProvider(
             pairFactoryContract.allPairs()
         }
     }
-
 
     override suspend fun fetchMarkets(): List<PoolingMarket> {
         return coroutineScope {

@@ -15,21 +15,27 @@ class ABPTPoolingMarketProvider() : PoolingMarketProvider(
     val aaveAddress = "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9"
     val wethAddress = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
 
+    val bPool = "0xC697051d1C6296C24aE3bceF39acA743861D9A81"
+
 
     override suspend fun fetchMarkets(): List<PoolingMarket> {
         val token = getToken(abptAddress)
         val aave = getToken(aaveAddress)
         val weth = getToken(wethAddress)
 
+        val tokens = listOf(
+            aave, weth
+        ).map(TokenInformationVO::toFungibleToken)
         return listOf(
             create(
                 identifier = "abpt",
                 address = abptAddress,
                 name = "Aave Balance Pool Token",
                 symbol = "ABPT",
-                tokens = listOf(
-                    aave, weth
-                ).map(TokenInformationVO::toFungibleToken),
+                tokens = tokens,
+                marketSize = getMarketSize(
+                    tokens, bPool
+                ),
                 tokenType = TokenType.BALANCER,
                 totalSupply = token.totalSupply
             )
