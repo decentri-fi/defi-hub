@@ -33,7 +33,6 @@ class BeethovenXFantomPoolingMarketProvider(
                                 getToken(poolToken.address).toFungibleToken()
                             },
                             symbol = it.symbol,
-                            apr = BigDecimal.ZERO,
                             marketSize = it.totalLiquidity,
                             tokenType = TokenType.BALANCER,
                             positionFetcher = defaultPositionFetcher(it.address),

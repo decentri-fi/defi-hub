@@ -3,10 +3,13 @@ package io.defitrack.protocol.dfyn.pooling
 import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
-import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.dfyn.DfynService
 import io.defitrack.protocol.dfyn.apr.DfynAPRService
+import io.defitrack.protocol.dfyn.domain.Pair
 import io.defitrack.token.TokenType
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
@@ -16,8 +19,18 @@ class DfynPoolingMarketProvider(
     private val dfynAPRService: DfynAPRService,
 ) : PoolingMarketProvider() {
 
-    override suspend fun fetchMarkets(): List<PoolingMarket> {
-        return dfynService.getPairs().mapNotNull {
+    override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
+        dfynService.getPairs().map {
+            async {
+                throttled {
+                    createMarket(it)
+                }
+            }
+        }.awaitAll().filterNotNull()
+    }
+
+    private suspend fun DfynPoolingMarketProvider.createMarket(it: Pair): PoolingMarket? {
+        return try {
             if (it.reserveUSD > BigDecimal.valueOf(100000)) {
                 val token = getToken(it.id)
                 val token0 = getToken(it.token0.id)
@@ -41,6 +54,9 @@ class DfynPoolingMarketProvider(
             } else {
                 null
             }
+        } catch (e: Exception) {
+            logger.error("Error fetching market", e)
+            null
         }
     }
 
