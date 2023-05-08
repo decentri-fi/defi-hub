@@ -46,6 +46,7 @@ abstract class StargatePoolingMarketProvider(
                             symbol = pool.symbol(),
                             tokenType = TokenType.STARGATE,
                             tokens = listOf(underlying.toFungibleToken()),
+                            decimals = pool.decimals(),
                             totalSupply = pool.totalSupply(),
                             marketSize = getPriceResource().calculatePrice(
                                 PriceRequest(
