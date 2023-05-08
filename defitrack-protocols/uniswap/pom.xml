@@ -21,5 +21,9 @@
             <groupId>io.defitrack</groupId>
             <artifactId>ethereum</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>arbitrum</artifactId>
+        </dependency>
     </dependencies>
 </project>

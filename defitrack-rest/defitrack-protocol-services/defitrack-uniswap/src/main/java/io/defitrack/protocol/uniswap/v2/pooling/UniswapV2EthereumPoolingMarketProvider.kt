@@ -23,7 +23,6 @@ class UniswapV2EthereumPoolingMarketProvider(
                 launch {
                     throttled {
                         try {
-                            logger.info(it.id)
                             val token = getToken(it.id)
                             val token0 = getToken(it.token0.id)
                             val token1 = getToken(it.token1.id)
