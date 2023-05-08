@@ -1,34 +1,35 @@
-package io.defitrack.protocol
+package io.defitrack.protocol.pooling
 
-import io.defitrack.common.network.Network
-import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
+import io.defitrack.protocol.HopService
+import io.defitrack.protocol.apr.HopAPRService
 import io.defitrack.protocol.contract.HopLpTokenContract
 import io.defitrack.protocol.contract.HopSwapContract
 import io.defitrack.protocol.domain.HopLpToken
 import io.defitrack.token.TokenType
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
-import org.springframework.stereotype.Component
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
-@Component
-class HopOptimismPoolingMarketProvider(
+abstract class HopPoolingMarketProvider(
     private val hopService: HopService,
-    private val hopAPRService: HopAPRService,
-) : PoolingMarketProvider() {
+    private val hopAPRService: HopAPRService
+) : PoolingMarketProvider(){
 
-
-    override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
-        hopService.getLps(getNetwork()).map { hopLpToken ->
-            async {
-                toPoolingMarketElement(getBlockchainGateway(), hopLpToken)
+    override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
+        hopService.getLps(getNetwork()).forEach { hopLpToken ->
+            launch {
+                throttled {
+                    toPoolingMarketElement(getBlockchainGateway(), hopLpToken)?.let {
+                        send(it)
+                    }
+                }
             }
-        }.awaitAll().filterNotNull()
+        }
     }
 
     private suspend fun toPoolingMarketElement(
@@ -38,23 +39,20 @@ class HopOptimismPoolingMarketProvider(
         return try {
             val contract = HopLpTokenContract(
                 blockchainGateway = gateway,
-                getAbi("hop/SaddleToken.json"),
+                abiResource.getABI("hop/SaddleToken.json"),
                 hopLpToken.lpToken
             )
 
             val swapContract = HopSwapContract(
                 blockchainGateway = gateway,
-                getAbi("hop/Swap.json"),
+                abiResource.getABI("hop/Swap.json"),
                 contract.swap()
             )
 
             val htoken = getToken(hopLpToken.hToken)
             val canonical = getToken(hopLpToken.canonicalToken)
 
-
-            val marketSize = calculateMarketSize(
-                hopLpToken
-            )
+            val marketSize = getPrice(canonical.address, contract, swapContract).toBigDecimal()
             create(
                 identifier = hopLpToken.canonicalToken,
                 address = hopLpToken.lpToken,
@@ -82,27 +80,24 @@ class HopOptimismPoolingMarketProvider(
         }
     }
 
-    suspend fun calculateMarketSize(hopLpToken: HopLpToken): BigDecimal {
-        val canonicalToken = getToken(hopLpToken.canonicalToken)
-        val hToken = getToken(hopLpToken.hToken)
-        val hTokenBalance = getBalance(hToken.address, hopLpToken.swapAddress)
-        val canonicalTokenBalance =
-            getBalance(hopLpToken.canonicalToken, hopLpToken.swapAddress)
+    private suspend fun getPrice(
+        canonicalTokenAddress: String,
+        contract: HopLpTokenContract,
+        swapContract: HopSwapContract
+    ): Double {
 
-        val tokenPrice = getPriceResource().calculatePrice(
+        val tokenAmount = contract.totalSupply().toBigDecimal().times(
+            swapContract.virtualPrice().toBigDecimal()
+        ).divide(BigDecimal.TEN.pow(36))
+
+        return getPriceResource().calculatePrice(
             PriceRequest(
-                canonicalToken.address,
-                getNetwork(),
-                1.0.toBigDecimal(),
+                address = canonicalTokenAddress,
+                network = getNetwork(),
+                amount = tokenAmount,
+                TokenType.SINGLE
             )
-        ).toBigDecimal()
-
-        return (hTokenBalance.toBigDecimal().asEth(hToken.decimals).times(tokenPrice)).plus(
-            canonicalTokenBalance.asEth(canonicalToken.decimals).times(tokenPrice)
         )
     }
 
-    override fun getNetwork(): Network {
-        return Network.OPTIMISM
-    }
 }

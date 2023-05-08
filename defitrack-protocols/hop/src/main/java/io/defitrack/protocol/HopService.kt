@@ -34,26 +34,6 @@ class HopService(
         }?.getStakingRewards() ?: emptyList()
     }
 
-    suspend fun getTvls(network: Network): List<Tvl> {
-        val query = """
-           {
-              tvls {
-                token, 
-                amount
-                id
-              }
-            }
-        """.trimIndent()
-        val endpoint = getGraph(network)
-        val graph = graphGatewayProvider.createTheGraphGateway(endpoint)
-
-        val poolSharesAsString = graph.performQuery(query).asJsonObject["tvls"].toString()
-        return objectMapper.readValue(poolSharesAsString,
-            object : TypeReference<List<Tvl>>() {
-
-            })
-    }
-
     suspend fun getDailyVolumes(tokenName: String, network: Network): List<DailyVolume> {
         val token = convertTokenName(tokenName)
         val query = """

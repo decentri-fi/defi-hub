@@ -1,0 +1,15 @@
+package io.defitrack.protocol.farming
+
+import io.defitrack.common.network.Network
+import io.defitrack.protocol.HopService
+import org.springframework.stereotype.Component
+
+@Component
+class HopArbitrumFarmingMarketProvider(
+    hopService: HopService,
+) : HopFarmingMarketProvider(hopService) {
+
+    override fun getNetwork(): Network {
+        return Network.ARBITRUM
+    }
+}

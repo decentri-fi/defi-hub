@@ -1,69 +1,55 @@
-package io.defitrack.protocol
+package io.defitrack.protocol.farming
 
-import io.defitrack.claimable.ClaimableRewardFetcher
-import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
-import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
+import io.defitrack.protocol.ContractType
+import io.defitrack.protocol.HopService
 import io.defitrack.protocol.contract.HopStakingReward
-import io.defitrack.transaction.PreparedTransaction
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
-import org.springframework.stereotype.Component
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-@Component
-class HopPolygonFarmingMarketProvider(
+abstract class HopFarmingMarketProvider(
     private val hopService: HopService,
 ) : FarmingMarketProvider() {
-    override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
-        hopService.getStakingRewards(getNetwork()).map { stakingReward ->
-            async {
-                toStakingMarket(stakingReward)
+
+    override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
+        hopService.getStakingRewards(getNetwork()).forEach { stakingReward ->
+            launch {
+                throttled {
+                    toStakingMarket(stakingReward)?.let { send(it) }
+                }
             }
-        }.awaitAll().filterNotNull()
+        }
     }
+
 
     private suspend fun toStakingMarket(stakingReward: String): FarmingMarket? {
         return try {
-            val rewardPool = HopStakingReward(
+            val pool = HopStakingReward(
                 getBlockchainGateway(),
                 abiResource.getABI("quickswap/StakingRewards.json"),
                 stakingReward
             )
 
-            val stakedToken = getToken(rewardPool.stakingTokenAddress())
-            val rewardToken = getToken(rewardPool.rewardsTokenAddress())
+            val stakedToken = getToken(pool.stakingTokenAddress())
+            val rewardToken = getToken(pool.rewardsTokenAddress())
 
             return create(
-                identifier = rewardPool.address,
+                identifier = pool.address,
                 name = "${stakedToken.name} Staking Rewards",
                 stakedToken = stakedToken.toFungibleToken(),
                 rewardTokens = listOf(rewardToken.toFungibleToken()),
                 vaultType = "hop-staking-rewards",
-                marketSize = getMarketSize(stakedToken, rewardPool),
-                claimableRewardFetcher = ClaimableRewardFetcher(
-                    address = rewardPool.address,
-                    { user ->
-                        rewardPool.earnedFunction(user)
-                    },
-                    preparedTransaction = { user ->
-                        PreparedTransaction(
-                            getNetwork().toVO(),
-                            rewardPool.getRewardFn(),
-                            rewardPool.address,
-                            user
-                        )
-                    }
-                ),
+                marketSize = getMarketSize(stakedToken, pool),
                 balanceFetcher = PositionFetcher(
-                    address = rewardPool.address,
-                    function = { user -> rewardPool.balanceOfMethod(user) }
+                    address = pool.address,
+                    function = { user -> pool.balanceOfMethod(user) }
                 ),
                 farmType = ContractType.LIQUIDITY_MINING
             )
@@ -88,8 +74,4 @@ class HopPolygonFarmingMarketProvider(
             )
         )
     )
-
-    override fun getNetwork(): Network {
-        return Network.POLYGON
-    }
 }

@@ -1,8 +1,9 @@
-package io.defitrack.protocol
+package io.defitrack.protocol.apr
 
 import io.defitrack.common.network.Network
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
+import io.defitrack.protocol.HopService
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
