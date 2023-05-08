@@ -13,7 +13,7 @@ import java.math.BigInteger
 
 
 data class LendingMarket(
-    val id: String,
+    override val id: String,
     val network: Network,
     val protocol: Protocol,
     val name: String,

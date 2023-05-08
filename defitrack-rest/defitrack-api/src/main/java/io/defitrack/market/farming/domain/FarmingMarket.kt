@@ -11,7 +11,7 @@ import io.defitrack.token.FungibleToken
 import java.math.BigDecimal
 
 data class FarmingMarket(
-    val id: String,
+    override val id: String,
     val network: Network,
     val protocol: Protocol,
     val name: String,

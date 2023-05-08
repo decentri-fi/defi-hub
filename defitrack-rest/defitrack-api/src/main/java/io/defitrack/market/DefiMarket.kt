@@ -1,3 +1,5 @@
 package io.defitrack.market
 
-interface DefiMarket
+interface DefiMarket {
+    val id: String
+}

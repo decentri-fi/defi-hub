@@ -11,7 +11,7 @@ import io.defitrack.token.TokenType
 import java.math.BigDecimal
 
 data class PoolingMarket(
-    val id: String,
+    override val id: String,
     val network: Network,
     val protocol: Protocol,
     val address: String,

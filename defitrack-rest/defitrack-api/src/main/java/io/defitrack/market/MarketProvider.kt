@@ -20,6 +20,8 @@ import io.defitrack.token.MarketSizeService
 import io.defitrack.transaction.PreparedTransaction
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import org.slf4j.Logger
@@ -31,9 +33,9 @@ import java.math.BigInteger
 import kotlin.system.measureTimeMillis
 import kotlin.time.Duration.Companion.hours
 
-abstract class MarketProvider<T> : ProtocolService {
+abstract class MarketProvider<T : DefiMarket> : ProtocolService {
 
-    val cache = Cache.Builder().expireAfterWrite(4.hours).build<String, List<T>>()
+    val cache = Cache.Builder().expireAfterWrite(4.hours).build<String, T>()
     val logger: Logger = LoggerFactory.getLogger(this.javaClass)
 
     val semaphore = Semaphore(8)
@@ -59,14 +61,28 @@ abstract class MarketProvider<T> : ProtocolService {
     private lateinit var blockchainGatewayProvider: BlockchainGatewayProvider
 
 
-    protected abstract suspend fun fetchMarkets(): List<T>
+    protected open suspend fun produceMarkets(): Flow<T> {
+        return emptyFlow()
+    }
+
+    protected open suspend fun fetchMarkets(): List<T> {
+        return emptyList()
+    }
 
     fun refreshCaches() = runBlocking(Dispatchers.Default) {
         val millis = measureTimeMillis {
             try {
                 val markets = populate()
-                cache.put("all", markets)
-                logger.info("${markets.size} markets added")
+                markets.forEach {
+                    cache.put(it.id, it)
+                }
+
+                produceMarkets().collect {
+                    logger.info("adding ${it.id}")
+                    cache.put(it.id, it)
+                }
+
+                logger.info("done adding ${cache.asMap().size} markets")
             } catch (ex: Exception) {
                 logger.error("something went wrong trying to populate the cache", ex)
             }
@@ -85,7 +101,7 @@ abstract class MarketProvider<T> : ProtocolService {
     }
 
     fun getMarkets(): List<T> = runBlocking(Dispatchers.Default) {
-        cache.get("all") ?: emptyList()
+        cache.asMap().values.toList()
     }
 
     val chainGw: BlockchainGateway by lazy {
@@ -97,16 +113,12 @@ abstract class MarketProvider<T> : ProtocolService {
     }
 
     fun defaultPositionFetcher(address: String): PositionFetcher {
-        return PositionFetcher(
-            address,
-            { user ->
-                erC20Resource.balanceOfFunction(address, user, getNetwork())
-            },
-            { retVal ->
-                val result = retVal[0].value as BigInteger
-                Position(result, result)
-            }
-        )
+        return PositionFetcher(address, { user ->
+            erC20Resource.balanceOfFunction(address, user, getNetwork())
+        }, { retVal ->
+            val result = retVal[0].value as BigInteger
+            Position(result, result)
+        })
     }
 
     suspend fun getToken(address: String): TokenInformationVO {

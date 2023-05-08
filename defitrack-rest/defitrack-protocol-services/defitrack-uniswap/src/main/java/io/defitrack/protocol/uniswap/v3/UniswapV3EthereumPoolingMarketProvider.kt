@@ -8,9 +8,10 @@ import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.token.TokenType
 import io.defitrack.uniswap.v3.UniswapV3PoolContract
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import org.web3j.abi.FunctionReturnDecoder
@@ -51,45 +52,50 @@ class UniswapV3EthereumPoolingMarketProvider() : PoolingMarketProvider() {
         }
     }
 
-    override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
-        poolAddresses.map {
-            async {
-                try {
-                    throttled {
-                        val uniswapV3Pool = UniswapV3PoolContract(
-                            getBlockchainGateway(),
-                            it
-                        )
-                        val token = getToken(it)
-                        val token0 = getToken(uniswapV3Pool.token0())
-                        val token1 = getToken(uniswapV3Pool.token1())
-                        val underlyingTokens = listOf(
-                            token0,
-                            token1
-                        )
-                        create(
-                            identifier = "v3-${it}",
-                            name = "Uniswap V3 ${token0.symbol}/${token1.symbol} LP",
-                            address = it,
-                            symbol = "${token0.symbol}-${token1.symbol}",
-                            breakdown = defaultBreakdown(underlyingTokens, uniswapV3Pool.address),
-                            tokens = underlyingTokens.map { it.toFungibleToken() },
-                            apr = null,
-                            marketSize = marketSizeService.getMarketSize(
-                                underlyingTokens.map { it.toFungibleToken() }, it, getNetwork()
-                            ),
-                            tokenType = TokenType.UNISWAP,
-                            positionFetcher = defaultPositionFetcher(token.address),
-                            totalSupply = token.totalSupply
-                        )
+    override suspend fun produceMarkets(): Flow<PoolingMarket> {
+        return channelFlow {
+            val jobs = poolAddresses.map {
+                launch {
+                    try {
+                        logger.info(it)
+                        throttled {
+                            val uniswapV3Pool = UniswapV3PoolContract(
+                                getBlockchainGateway(),
+                                it
+                            )
+                            val token = getToken(it)
+                            val token0 = getToken(uniswapV3Pool.token0())
+                            val token1 = getToken(uniswapV3Pool.token1())
+                            val underlyingTokens = listOf(
+                                token0,
+                                token1
+                            )
+                            send(
+                                create(
+                                    identifier = "v3-${it}",
+                                    name = "Uniswap V3 ${token0.symbol}/${token1.symbol} LP",
+                                    address = it,
+                                    symbol = "${token0.symbol}-${token1.symbol}",
+                                    breakdown = defaultBreakdown(underlyingTokens, uniswapV3Pool.address),
+                                    tokens = underlyingTokens.map { it.toFungibleToken() },
+                                    apr = null,
+                                    marketSize = marketSizeService.getMarketSize(
+                                        underlyingTokens.map { it.toFungibleToken() }, it, getNetwork()
+                                    ),
+                                    tokenType = TokenType.UNISWAP,
+                                    positionFetcher = defaultPositionFetcher(token.address),
+                                    totalSupply = token.totalSupply
+                                )
+                            )
+                        }
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                        logger.error("something went wrong trying to import uniswap market ${it}")
                     }
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                    logger.error("something went wrong trying to import uniswap market ${it}")
-                    null
                 }
             }
-        }.awaitAll().filterNotNull()
+            jobs.joinAll()
+        }
     }
 
     override fun getNetwork(): Network {
