@@ -22,7 +22,7 @@ class DecentrifiPoolingPriceRepository(
 
     val cache = Cache.Builder().build<String, BigDecimal>()
 
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
+    @Scheduled(fixedDelay = 1000 * 60 * 10)
     fun populatePoolPrices() = runBlocking {
         val protocols = getProtocols()
         protocols.map { protocol ->

@@ -9,32 +9,34 @@ import io.defitrack.protocol.balancer.Pool
 import io.defitrack.protocol.balancer.contract.BalancerPoolContract
 import io.defitrack.protocol.balancer.contract.BalancerVaultContract
 import io.defitrack.token.TokenType
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
 abstract class BalancerPoolingMarketProvider(
     private val balancerPoolGraphProvider: BalancerPoolGraphProvider
 ) : PoolingMarketProvider() {
 
-    override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
-         balancerPoolGraphProvider.getPools().map {
-             async {
+
+    override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
+        balancerPoolGraphProvider.getPools().forEach {
+            launch {
                 throttled {
                     try {
-                        createMarket(it)
+                        createMarket(it)?.let {
+                            send(it)
+                        }
                     } catch (ex: Exception) {
                         logger.error("Unable to get pool information for ${it.id}", ex)
-                        null
                     }
                 }
-             }
-        }.awaitAll().filterNotNull()
+            }
+        }
     }
 
-    private suspend fun BalancerPoolingMarketProvider.createMarket(it: Pool) =
-        if (it.totalLiquidity > BigDecimal.valueOf(100000)) {
+    private suspend fun createMarket(it: Pool): PoolingMarket? {
+        return if (it.totalLiquidity > BigDecimal.valueOf(100000)) {
             val poolContract = BalancerPoolContract(
                 getBlockchainGateway(), it.address
             )
@@ -83,4 +85,5 @@ abstract class BalancerPoolingMarketProvider(
         } else {
             null
         }
+    }
 }
