@@ -7,12 +7,10 @@ import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.TokenType
 import io.defitrack.uniswap.v2.PairFactoryContract
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.sync.Semaphore
-import kotlinx.coroutines.sync.withPermit
 import org.springframework.stereotype.Component
 
 @Component
@@ -29,11 +27,11 @@ class CamelotArbitrumPoolingMarketProvider(
         }
     }
 
-    override suspend fun fetchMarkets(): List<PoolingMarket> {
-        return coroutineScope {
-            pools.map { pool ->
+    override suspend fun produceMarkets(): Flow<PoolingMarket> {
+        return channelFlow {
+            pools.forEach { pool ->
                 throttled {
-                    async {
+                    launch {
                         try {
                             val poolingToken = getToken(pool)
                             val underlyingTokens = poolingToken.underlyingTokens
@@ -42,25 +40,26 @@ class CamelotArbitrumPoolingMarketProvider(
                                 pool
                             )
 
-                            create(
-                                identifier = pool,
-                                address = pool,
-                                name = poolingToken.name,
-                                symbol = poolingToken.symbol,
-                                marketSize = marketSize,
-                                breakdown = defaultBreakdown(underlyingTokens, poolingToken.address),
-                                tokens = underlyingTokens.map { it.toFungibleToken() },
-                                tokenType = TokenType.CAMELOT,
-                                positionFetcher = defaultPositionFetcher(poolingToken.address),
-                                totalSupply = poolingToken.totalSupply
+                            send(
+                                create(
+                                    identifier = pool,
+                                    address = pool,
+                                    name = poolingToken.name,
+                                    symbol = poolingToken.symbol,
+                                    marketSize = marketSize,
+                                    breakdown = defaultBreakdown(underlyingTokens, poolingToken.address),
+                                    tokens = underlyingTokens.map { it.toFungibleToken() },
+                                    tokenType = TokenType.CAMELOT,
+                                    positionFetcher = defaultPositionFetcher(poolingToken.address),
+                                    totalSupply = poolingToken.totalSupply
+                                )
                             )
                         } catch (ex: Exception) {
                             logger.error("Error while fetching pooling market $pool", ex)
-                            null
                         }
                     }
                 }
-            }.awaitAll().filterNotNull()
+            }
         }
     }
 
