@@ -36,9 +36,9 @@ class DualRewardFactoryContract(
                 address(),
                 address(),
                 address(),
-                uint256(),
-                uint256(),
-                uint256(),
+                uint256(), //rewardsA
+                uint256(), //rewardsB
+                uint256(), //duration
             )
         )[0].value as String
     }

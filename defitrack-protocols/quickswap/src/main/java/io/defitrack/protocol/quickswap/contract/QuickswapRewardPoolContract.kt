@@ -26,6 +26,11 @@ class QuickswapRewardPoolContract(
         )
     }
 
+    suspend fun periodFinish(): BigInteger {
+        return readSingle("periodFinish", uint256())
+    }
+
+
     suspend fun stakingTokenAddress(): String {
         return readWithAbi(
             method = "stakingToken",

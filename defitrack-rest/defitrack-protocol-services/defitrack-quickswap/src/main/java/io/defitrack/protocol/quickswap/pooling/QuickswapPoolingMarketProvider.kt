@@ -8,11 +8,9 @@ import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
 import io.defitrack.protocol.quickswap.domain.QuickswapPair
 import io.defitrack.token.TokenType
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.sync.Semaphore
-import kotlinx.coroutines.sync.withPermit
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 
 @Component
@@ -21,21 +19,21 @@ class QuickswapPoolingMarketProvider(
     private val quickswapAPRService: QuickswapAPRService,
 ) : PoolingMarketProvider() {
 
-    override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
-        val semaphore = Semaphore(8)
-        quickswapService.getPairs().map {
-            semaphore.withPermit {
-                async {
+    override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
+        quickswapService.getPairs().forEach {
+            throttled {
+                launch {
                     try {
-                        toPoolingMarket(it)
+                        toPoolingMarket(it)?.let {
+                            send(it)
+                        }
                     } catch (ex: Exception) {
                         logger.error("Unable to import quickswap pair ${it.id}", ex)
                         ex.printStackTrace()
-                        null
                     }
                 }
             }
-        }.awaitAll().filterNotNull()
+        }
     }
 
     private suspend fun toPoolingMarket(it: QuickswapPair): PoolingMarket? {

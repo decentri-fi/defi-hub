@@ -35,6 +35,10 @@ class QuickswapDualRewardPoolContract(
     }
 
 
+    suspend fun periodFinish(): BigInteger {
+        return readSingle("periodFinish", uint256())
+    }
+
     suspend fun rewardRateB(): BigInteger {
         return readWithAbi(
             method = "rewardRateB",

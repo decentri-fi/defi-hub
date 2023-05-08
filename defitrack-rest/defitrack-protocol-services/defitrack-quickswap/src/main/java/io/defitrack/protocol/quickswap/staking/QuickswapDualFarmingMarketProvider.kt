@@ -5,19 +5,18 @@ import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
-import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
 import io.defitrack.protocol.quickswap.contract.DualRewardFactoryContract
 import io.defitrack.protocol.quickswap.contract.QuickswapDualRewardPoolContract
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
-import java.math.RoundingMode
+import java.util.*
 
 @Service
 class QuickswapDualFarmingMarketProvider(
@@ -40,7 +39,7 @@ class QuickswapDualFarmingMarketProvider(
         }
     }
 
-    override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
+    override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
 
         val dualPools = dualStakingFactory.getStakingTokens().map {
             dualStakingFactory.stakingRewardsInfoByStakingToken(it)
@@ -52,14 +51,16 @@ class QuickswapDualFarmingMarketProvider(
                 stakingRewardsABI,
                 it
             )
-        }.map { pool ->
-            async {
+        }.forEach { pool ->
+            launch {
                 try {
                     val stakedToken = getToken(pool.stakingTokenAddress())
                     val rewardTokenA = getToken(pool.rewardsTokenAddressA())
                     val rewardTokenB = getToken(pool.rewardsTokenAddressB())
 
-                    create(
+                    val ended = Date(pool.periodFinish().toLong() * 1000).before(Date())
+
+                    val market = create(
                         identifier = pool.address,
                         name = "${stakedToken.name} Dual Reward Pool",
                         stakedToken = stakedToken.toFungibleToken(),
@@ -68,20 +69,22 @@ class QuickswapDualFarmingMarketProvider(
                             rewardTokenB.toFungibleToken()
                         ),
                         vaultType = "quickswap-dual-reward-pool",
-                        marketSize = getMarketSize(stakedToken, pool),
+                        marketSize = getMarketSize(stakedToken.toFungibleToken(), pool.address),
                         apr = getApr(pool, stakedToken),
                         balanceFetcher = PositionFetcher(
                             pool.address,
                             { user -> pool.balanceOfMethod(user) }
                         ),
-                        farmType = ContractType.DUAL_REWARD_MINING
+                        farmType = ContractType.DUAL_REWARD_MINING,
+                        rewardsFinished = ended
                     )
+
+                    send(market)
                 } catch (ex: Exception) {
                     ex.printStackTrace()
-                    null
                 }
             }
-        }.awaitAll().filterNotNull()
+        }
     }
 
     private suspend fun getApr(
@@ -92,22 +95,6 @@ class QuickswapDualFarmingMarketProvider(
             stakedTokenInformation.address
         ))
     }
-
-    private suspend fun getMarketSize(
-        stakedTokenInformation: TokenInformationVO,
-        pool: QuickswapDualRewardPoolContract
-    ) = BigDecimal.valueOf(
-        getPriceResource().calculatePrice(
-            PriceRequest(
-                address = stakedTokenInformation.address,
-                network = getNetwork(),
-                amount = pool.totalSupply().toBigDecimal().divide(
-                    BigDecimal.TEN.pow(stakedTokenInformation.decimals), RoundingMode.HALF_UP
-                ),
-                type = stakedTokenInformation.type
-            )
-        )
-    )
 
     override fun getNetwork(): Network {
         return Network.POLYGON
