@@ -40,6 +40,7 @@ class DefaultPoolingPositionRestController(
                 try {
                     it.userPoolings(address)
                 } catch (ex: Exception) {
+                    ex.printStackTrace()
                     emptyList()
                 }
             }

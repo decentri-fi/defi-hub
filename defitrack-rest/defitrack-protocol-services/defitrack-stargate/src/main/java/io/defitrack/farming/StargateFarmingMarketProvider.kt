@@ -2,6 +2,7 @@ package io.defitrack.farming
 
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.StargateService
 import io.defitrack.protocol.contract.LPStakingContract
@@ -37,7 +38,11 @@ abstract class StargateFarmingMarketProvider(
                 stakedToken = stakedToken.toFungibleToken(),
                 rewardTokens = rewardTokens.map { it.toFungibleToken() },
                 vaultType = "stargate-lp-staking",
-                farmType = ContractType.LIQUIDITY_MINING
+                farmType = ContractType.LIQUIDITY_MINING,
+                balanceFetcher = PositionFetcher(
+                    lpStakingContract.address,
+                    { user: String -> lpStakingContract.userInfo(index, user) },
+                )
             )
         }
     }

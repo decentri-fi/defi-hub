@@ -1,12 +1,14 @@
 package io.defitrack.protocol.contract
 
 import io.defitrack.abi.TypeUtils.Companion.address
+import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import org.web3j.abi.TypeReference
+import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
@@ -73,5 +75,19 @@ class LPStakingContract(
             "poolLength",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger).toInt()
+    }
+
+    fun userInfo(poolId: Int, user: String): Function {
+        return createFunction(
+            "userInfo",
+            inputs = listOf(
+                poolId.toBigInteger().toUint256(),
+                user.toAddress()
+            ),
+            outputs = listOf(
+                uint256(),
+                uint256()
+            )
+        )
     }
 }

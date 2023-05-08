@@ -81,7 +81,6 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
                     logger.debug("adding ${it.id}")
                     cache.put(it.id, it)
                 }
-
                 logger.info("done adding ${cache.asMap().size} markets")
             } catch (ex: Exception) {
                 logger.error("something went wrong trying to populate the cache", ex)
