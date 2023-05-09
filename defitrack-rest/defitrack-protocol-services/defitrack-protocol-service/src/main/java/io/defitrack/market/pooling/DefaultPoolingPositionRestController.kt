@@ -86,6 +86,7 @@ class DefaultPoolingPositionRestController(
             prepareInvestmentSupported = investmentPreparer != null,
             erc20Compatible = erc20Compatible,
             exitPositionSupported = exitPositionPreparer != null,
+            totalSupply = totalSupply,
             price = price
         )
     }

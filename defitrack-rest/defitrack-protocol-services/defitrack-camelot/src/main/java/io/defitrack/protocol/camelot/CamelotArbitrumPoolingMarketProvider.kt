@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 
-@Component
+//@Component
 class CamelotArbitrumPoolingMarketProvider(
 ) : PoolingMarketProvider() {
 
@@ -30,33 +30,31 @@ class CamelotArbitrumPoolingMarketProvider(
     override suspend fun produceMarkets(): Flow<PoolingMarket> {
         return channelFlow {
             pools.forEach { pool ->
-                throttled {
-                    launch {
-                        try {
-                            val poolingToken = getToken(pool)
-                            val underlyingTokens = poolingToken.underlyingTokens
-                            val marketSize = getMarketSize(
-                                poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
-                                pool
-                            )
+                launch {
+                    try {
+                        val poolingToken = getToken(pool)
+                        val underlyingTokens = poolingToken.underlyingTokens
+                        val marketSize = getMarketSize(
+                            poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
+                            pool
+                        )
 
-                            send(
-                                create(
-                                    identifier = pool,
-                                    address = pool,
-                                    name = poolingToken.name,
-                                    symbol = poolingToken.symbol,
-                                    marketSize = marketSize,
-                                    breakdown = defaultBreakdown(underlyingTokens, poolingToken.address),
-                                    tokens = underlyingTokens.map { it.toFungibleToken() },
-                                    tokenType = TokenType.CAMELOT,
-                                    positionFetcher = defaultPositionFetcher(poolingToken.address),
-                                    totalSupply = poolingToken.totalSupply
-                                )
+                        send(
+                            create(
+                                identifier = pool,
+                                address = pool,
+                                name = poolingToken.name,
+                                symbol = poolingToken.symbol,
+                                marketSize = marketSize,
+                                breakdown = defaultBreakdown(underlyingTokens, poolingToken.address),
+                                tokens = underlyingTokens.map { it.toFungibleToken() },
+                                tokenType = TokenType.CAMELOT,
+                                positionFetcher = defaultPositionFetcher(poolingToken.address),
+                                totalSupply = poolingToken.totalSupply
                             )
-                        } catch (ex: Exception) {
-                            logger.error("Error while fetching pooling market $pool", ex)
-                        }
+                        )
+                    } catch (ex: Exception) {
+                        logger.error("Error while fetching pooling market $pool", ex)
                     }
                 }
             }
