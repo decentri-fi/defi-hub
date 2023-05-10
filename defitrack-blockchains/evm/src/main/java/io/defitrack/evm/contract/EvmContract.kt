@@ -11,12 +11,14 @@ abstract class EvmContract(
     val address: String
 ) {
 
-    fun createFunction(
-        method: String,
-        inputs: List<Type<*>> = emptyList(),
-        outputs: List<TypeReference<out Type<*>>>? = emptyList()
-    ): Function {
-        return BlockchainGateway.createFunction(method, inputs, outputs)
+    companion object {
+        fun createFunction(
+            method: String,
+            inputs: List<Type<*>> = emptyList(),
+            outputs: List<TypeReference<out Type<*>>>? = emptyList()
+        ): Function {
+            return BlockchainGateway.createFunction(method, inputs, outputs)
+        }
     }
 
     fun createFunctionWithAbi(

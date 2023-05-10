@@ -5,7 +5,7 @@ import io.defitrack.invest.PrepareInvestmentCommand
 import io.defitrack.market.farming.vo.TransactionPreparationVO
 import io.defitrack.market.pooling.mapper.PoolingMarketVOMapper
 import io.defitrack.market.pooling.vo.PoolingMarketVO
-import io.defitrack.token.ERC20Resource
+import io.defitrack.token.DecentrifiERC20Resource
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/pooling")
 class DefaultPoolingMarketRestController(
     private val poolingMarketProviders: List<PoolingMarketProvider>,
-    private val erC20Resource: ERC20Resource,
+    private val erC20Resource: DecentrifiERC20Resource,
     private val poolingMarketVOMapper: PoolingMarketVOMapper
 ) {
     companion object {

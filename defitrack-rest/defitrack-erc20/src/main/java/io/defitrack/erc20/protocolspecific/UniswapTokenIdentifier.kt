@@ -4,7 +4,6 @@ import io.defitrack.common.network.Network
 import io.defitrack.erc20.ERC20
 import io.defitrack.erc20.LpContractReader
 import io.defitrack.protocol.Protocol
-import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 

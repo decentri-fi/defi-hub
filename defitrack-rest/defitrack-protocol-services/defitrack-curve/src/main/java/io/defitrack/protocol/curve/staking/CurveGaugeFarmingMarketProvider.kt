@@ -1,6 +1,7 @@
 package io.defitrack.protocol.curve.staking
 
 import io.defitrack.claimable.ClaimableRewardFetcher
+import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
@@ -15,7 +16,7 @@ import kotlinx.coroutines.coroutineScope
 
 abstract class CurveGaugeFarmingMarketProvider(
     private val gaugeControllerAddress: String
-): FarmingMarketProvider() {
+) : FarmingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         return coroutineScope {
@@ -55,7 +56,7 @@ abstract class CurveGaugeFarmingMarketProvider(
                             balanceFetcher = PositionFetcher(
                                 gauge,
                                 { user ->
-                                    getERC20Resource().balanceOfFunction(gauge, user, getNetwork())
+                                    balanceOfFunction(user)
                                 }
                             ),
                             claimableRewardFetcher = rewardTokens.takeIf { it.isNotEmpty() }?.let {

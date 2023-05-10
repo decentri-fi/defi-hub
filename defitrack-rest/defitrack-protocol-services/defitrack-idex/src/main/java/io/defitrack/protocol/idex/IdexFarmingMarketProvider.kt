@@ -1,13 +1,11 @@
 package io.defitrack.protocol.idex
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.ContractType
-import io.defitrack.protocol.Protocol
-import io.defitrack.token.ERC20Resource
+import io.defitrack.token.DecentrifiERC20Resource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -16,7 +14,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class IdexFarmingMarketProvider(
-    private val tokenService: ERC20Resource,
+    private val tokenService: DecentrifiERC20Resource,
     private val idexService: IdexService
 ) : FarmingMarketProvider() {
 

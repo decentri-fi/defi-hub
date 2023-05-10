@@ -3,6 +3,7 @@ package io.defitrack.protocol.aave.v3.lending.market
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
@@ -77,7 +78,7 @@ abstract class AaveV3LendingMarketProvider(
                         ).toBigDecimal(),
                         positionFetcher = PositionFetcher(
                             aToken.address,
-                            { user -> getERC20Resource().balanceOfFunction(aToken.address, user, getNetwork()) },
+                            { user -> balanceOfFunction(user) },
                         )
                     )
                 } catch (ex: Exception) {

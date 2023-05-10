@@ -1,6 +1,7 @@
 package io.defitrack.protocol.farming
 
 import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
@@ -49,7 +50,7 @@ abstract class HopFarmingMarketProvider(
                 marketSize = getMarketSize(stakedToken, pool),
                 balanceFetcher = PositionFetcher(
                     address = pool.address,
-                    function = { user -> pool.balanceOfMethod(user) }
+                    function = { user -> balanceOfFunction(user) }
                 ),
                 farmType = ContractType.LIQUIDITY_MINING
             )

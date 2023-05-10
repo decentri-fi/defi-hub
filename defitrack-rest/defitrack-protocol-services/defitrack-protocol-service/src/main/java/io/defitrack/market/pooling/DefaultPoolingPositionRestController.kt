@@ -8,7 +8,7 @@ import io.defitrack.market.pooling.vo.PoolingMarketVO
 import io.defitrack.market.pooling.vo.PoolingPositionVO
 import io.defitrack.network.toVO
 import io.defitrack.protocol.mapper.ProtocolVOMapper
-import io.defitrack.token.ERC20Resource
+import io.defitrack.token.DecentrifiERC20Resource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/pooling")
 class DefaultPoolingPositionRestController(
     private val poolingPositionProviders: List<PoolingPositionProvider>,
-    private val erC20Resource: ERC20Resource,
+    private val erC20Resource: DecentrifiERC20Resource,
     private val breakdownService: PoolingBreakdownMapper,
     private val poolingBreakdownMapper: PoolingBreakdownMapper,
     private val protocolVOMapper: ProtocolVOMapper

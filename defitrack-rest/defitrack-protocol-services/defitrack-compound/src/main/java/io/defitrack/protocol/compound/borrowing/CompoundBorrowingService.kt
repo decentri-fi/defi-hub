@@ -7,8 +7,8 @@ import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.market.borrowing.BorrowService
 import io.defitrack.market.borrowing.domain.BorrowPosition
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.compound.v2.contract.CompoundComptrollerContract
 import io.defitrack.protocol.compound.CompoundEthereumService
+import io.defitrack.protocol.compound.v2.contract.CompoundComptrollerContract
 import io.defitrack.protocol.compound.v2.contract.CompoundTokenContract
 import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.runBlocking
@@ -21,12 +21,12 @@ import java.math.RoundingMode
 class CompoundBorrowingService(
     private val compoundEthereumService: CompoundEthereumService,
     private val abiResource: ABIResource,
-    private val blockchainGatewayProvider: BlockchainGatewayProvider,
-    private val erC20Service: ERC20Resource
+    private val erC20Resource: ERC20Resource,
+    blockchainGatewayProvider: BlockchainGatewayProvider,
 ) : BorrowService {
 
     val comptrollerABI by lazy {
-       runBlocking { abiResource.getABI("compound/comptroller.json")}
+        runBlocking { abiResource.getABI("compound/comptroller.json") }
     }
 
     val cTokenABI by lazy {
@@ -74,7 +74,7 @@ class CompoundBorrowingService(
             if (balance > BigInteger.ZERO) {
                 val compoundTokenContract = tokenContracts[index]
                 val underlying = compoundTokenContract.underlyingAddress().let { tokenAddress ->
-                    erC20Service.getTokenInformation(getNetwork(), tokenAddress)
+                    erC20Resource.getTokenInformation(getNetwork(), tokenAddress)
                 }
                 val token = underlying.toFungibleToken()
                 BorrowPosition(

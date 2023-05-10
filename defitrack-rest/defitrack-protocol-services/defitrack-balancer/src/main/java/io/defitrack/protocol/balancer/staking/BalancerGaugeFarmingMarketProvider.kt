@@ -2,6 +2,7 @@ package io.defitrack.protocol.balancer.staking
 
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
@@ -59,7 +60,7 @@ abstract class BalancerGaugeFarmingMarketProvider(
                             vaultType = "balancerGauge",
                             balanceFetcher = PositionFetcher(
                                 gaugecontract.address,
-                                { user -> gaugecontract.balanceOfMethod(user) }
+                                { user -> balanceOfFunction(user) }
                             ),
                             farmType = ContractType.STAKING,
                             metadata = mapOf("address" to pool.id),

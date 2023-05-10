@@ -1,11 +1,11 @@
 package io.defitrack.protocol.quickswap.staking
 
 import io.defitrack.common.network.Network
+import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.ContractType
-import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.contract.DQuickContract
 import io.defitrack.protocol.quickswap.staking.invest.DQuickStakingInvestmentPreparer
@@ -48,7 +48,7 @@ class DQuickFarmingMarketProvider(
                 vaultType = "quickswap-dquick",
                 balanceFetcher = PositionFetcher(
                     stakedToken.address,
-                    { user -> oldDQuick.balanceOfMethod(user) }
+                    { user -> ERC20Contract.balanceOfFunction(user) }
                 ),
                 investmentPreparer = DQuickStakingInvestmentPreparer(
                     getERC20Resource(), oldDQuick

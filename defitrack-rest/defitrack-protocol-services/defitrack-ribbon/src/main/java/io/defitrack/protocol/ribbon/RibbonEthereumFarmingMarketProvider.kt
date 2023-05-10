@@ -2,12 +2,12 @@ package io.defitrack.protocol.ribbon
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.ContractType
-import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.ribbon.contract.RibbonVaultContract
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
@@ -47,7 +47,7 @@ class RibbonEthereumFarmingMarketProvider(
                 ).toBigDecimal(),
                 balanceFetcher = PositionFetcher(
                     it.id,
-                    { user -> vault.balanceOfMethod(user) }
+                    { user -> ERC20Contract.balanceOfFunction(user) }
                 ),
                 farmType = ContractType.VAULT
             )

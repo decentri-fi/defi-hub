@@ -2,6 +2,7 @@ package io.defitrack.protocol.quickswap.staking
 
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
@@ -73,7 +74,7 @@ class QuickswapDualFarmingMarketProvider(
                         apr = getApr(pool, stakedToken),
                         balanceFetcher = PositionFetcher(
                             pool.address,
-                            { user -> pool.balanceOfMethod(user) }
+                            { user -> ERC20Contract.balanceOfFunction(user) }
                         ),
                         farmType = ContractType.DUAL_REWARD_MINING,
                         rewardsFinished = ended

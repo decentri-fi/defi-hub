@@ -1,13 +1,11 @@
 package io.defitrack.apr
 
-import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.reward.MasterchefLpContract
-import io.defitrack.token.TokenInformation
-import io.defitrack.token.TokenType
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.TokenType
 import java.math.BigDecimal
 import java.math.RoundingMode
 

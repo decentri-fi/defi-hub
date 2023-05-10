@@ -3,6 +3,7 @@ package io.defitrack.protocol.aave.staking
 import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
+import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.Position
@@ -46,9 +47,7 @@ class AaveStakingMarketProvider : FarmingMarketProvider() {
                 balanceFetcher = PositionFetcher(
                     stAave,
                     { user ->
-                        getERC20Resource().balanceOfFunction(
-                            stAave, user, getNetwork()
-                        )
+                        balanceOfFunction(user)
                     },
                     { retVal ->
                         val userStAave = (retVal[0].value as BigInteger)

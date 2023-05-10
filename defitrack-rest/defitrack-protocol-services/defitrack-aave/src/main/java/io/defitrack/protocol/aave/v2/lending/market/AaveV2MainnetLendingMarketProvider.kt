@@ -5,12 +5,12 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
+import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
-import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.v2.AaveV2MainnetService
 import io.defitrack.protocol.aave.v2.contract.LendingPoolAddressProviderContract
 import io.defitrack.protocol.aave.v2.contract.LendingPoolContract
@@ -36,18 +36,19 @@ class AaveV2MainnetLendingMarketProvider(
             LendingPoolAddressProviderContract(
                 blockchainGatewayProvider.getGateway(getNetwork()),
                 abiResource.getABI("aave/LendingPoolAddressesProvider.json"),
-                aaveV2MainnetService.getLendingPoolAddressesProvider())
+                aaveV2MainnetService.getLendingPoolAddressesProvider()
+            )
         }
     }
 
     val lendingPoolContract by lazy {
-       runBlocking {
-           LendingPoolContract(
-               blockchainGatewayProvider.getGateway(getNetwork()),
-               abiResource.getABI("aave/LendingPool.json"),
-               lendingPoolAddressesProviderContract.lendingPoolAddress()
-           )
-       }
+        runBlocking {
+            LendingPoolContract(
+                blockchainGatewayProvider.getGateway(getNetwork()),
+                abiResource.getABI("aave/LendingPool.json"),
+                lendingPoolAddressesProviderContract.lendingPoolAddress()
+            )
+        }
     }
 
     override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
@@ -75,7 +76,7 @@ class AaveV2MainnetLendingMarketProvider(
                             positionFetcher = PositionFetcher(
                                 aToken.address,
                                 { user ->
-                                    getERC20Resource().balanceOfFunction(aToken.address, user, getNetwork())
+                                    balanceOfFunction(user)
                                 }
                             )
                         )
@@ -102,5 +103,6 @@ class AaveV2MainnetLendingMarketProvider(
             )
         )
     }
+
     override fun getNetwork(): Network = Network.ETHEREUM
 }

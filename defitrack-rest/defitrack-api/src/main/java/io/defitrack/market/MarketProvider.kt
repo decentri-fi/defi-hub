@@ -5,6 +5,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGatewayProvider
+import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.exit.ExitPositionCommand
 import io.defitrack.exit.ExitPositionPreparer
 import io.defitrack.market.lending.domain.Position
@@ -113,7 +114,7 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
 
     fun defaultPositionFetcher(address: String): PositionFetcher {
         return PositionFetcher(address, { user ->
-            erC20Resource.balanceOfFunction(address, user, getNetwork())
+            ERC20Contract.balanceOfFunction(user)
         }, { retVal ->
             val result = retVal[0].value as BigInteger
             Position(result, result)

@@ -1,13 +1,13 @@
 package io.defitrack.farming
 
 import io.defitrack.common.network.Network
+import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.Position
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.OlympusEthereumService
-import io.defitrack.protocol.Protocol
 import org.springframework.stereotype.Service
 import java.math.BigInteger
 
@@ -31,7 +31,7 @@ class GOHMMarketProvider(
                 balanceFetcher = PositionFetcher(
                     gohm.address,
                     { user ->
-                        getERC20Resource().balanceOfFunction(gohm.address, user, getNetwork())
+                        balanceOfFunction(user)
                     },
                     { retVal ->
                         val gohmAmount = retVal[0].value as BigInteger

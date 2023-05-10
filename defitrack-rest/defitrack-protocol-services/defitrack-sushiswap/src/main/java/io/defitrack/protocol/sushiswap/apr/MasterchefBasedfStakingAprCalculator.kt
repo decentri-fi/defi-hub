@@ -6,6 +6,7 @@ import io.defitrack.apr.StakingAprCalculator
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.contract.MasterChefBasedContract
+import io.defitrack.token.DecentrifiERC20Resource
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import java.math.BigDecimal

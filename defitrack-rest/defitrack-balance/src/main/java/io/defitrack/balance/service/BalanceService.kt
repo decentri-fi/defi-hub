@@ -26,7 +26,7 @@ abstract class BalanceService(
         }
     }
 
-    open suspend fun  getTokenBalances(user: String): List<TokenBalance> {
+    open suspend fun getTokenBalances(user: String): List<TokenBalance> {
         return try {
             val tokenAddresses = erc20Resource.getAllTokens(getNetwork()).map {
                 it.address

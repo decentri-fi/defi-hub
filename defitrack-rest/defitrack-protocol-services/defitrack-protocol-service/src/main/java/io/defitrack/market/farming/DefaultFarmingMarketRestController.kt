@@ -8,7 +8,7 @@ import io.defitrack.market.farming.vo.FarmingMarketVO
 import io.defitrack.market.farming.vo.TransactionPreparationVO
 import io.defitrack.network.toVO
 import io.defitrack.protocol.mapper.ProtocolVOMapper
-import io.defitrack.token.ERC20Resource
+import io.defitrack.token.DecentrifiERC20Resource
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.runBlocking
 import org.springframework.http.ResponseEntity
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping(*["/staking", "/farming"])
 class DefaultFarmingMarketRestController(
     private val farmingMarketProviders: List<FarmingMarketProvider>,
-    private val erC20Resource: ERC20Resource,
+    private val erC20Resource: DecentrifiERC20Resource,
     private val protocolVOMapper: ProtocolVOMapper
 ) {
 

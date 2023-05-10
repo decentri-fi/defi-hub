@@ -1,6 +1,7 @@
 package io.defitrack.market.farming.domain
 
 import io.defitrack.common.network.Network
+import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.exception.TransactionPreparationException
 import io.defitrack.invest.PrepareInvestmentCommand
 import io.defitrack.network.toVO
@@ -69,9 +70,7 @@ abstract class InvestmentPreparer(
 
                 if (allowance < investmentAmount) {
                     PreparedTransaction(
-                        function = erC20Resource.getFullApproveFunction(
-                            getNetwork(),
-                            getToken(),
+                        function = ERC20Contract.fullApproveFunction(
                             getEntryContract()
                         ),
                         to = getToken(),

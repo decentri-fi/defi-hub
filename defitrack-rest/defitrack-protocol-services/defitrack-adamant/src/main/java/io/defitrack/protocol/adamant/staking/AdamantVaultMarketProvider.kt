@@ -2,11 +2,11 @@ package io.defitrack.protocol.adamant.staking
 
 import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.network.Network
+import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.ContractType
-import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.adamant.AdamantService
 import io.defitrack.protocol.adamant.AdamantVaultContract
 import io.defitrack.protocol.adamant.claimable.AdamantVaultClaimPreparer
@@ -56,7 +56,7 @@ class AdamantVaultMarketProvider(
                             vaultType = "adamant-generic-vault",
                             balanceFetcher = PositionFetcher(
                                 vault.address,
-                                { user -> vault.balanceOfMethod(user) }
+                                { user -> balanceOfFunction(user) }
                             ),
                             farmType = ContractType.VAULT,
                             claimableRewardFetcher = ClaimableRewardFetcher(

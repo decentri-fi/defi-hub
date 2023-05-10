@@ -2,6 +2,7 @@ package io.defitrack.protocol.beefy.staking
 
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.Position
@@ -66,7 +67,7 @@ abstract class BeefyFarmingMarketProvider(
                 vaultType = "beefyVaultV6",
                 balanceFetcher = PositionFetcher(
                     contract.address,
-                    { user -> contract.balanceOfMethod(user) },
+                    { user -> balanceOfFunction(user) },
                     extractBalance = { result ->
                         val balance = result[0].value as BigInteger
                         Position(

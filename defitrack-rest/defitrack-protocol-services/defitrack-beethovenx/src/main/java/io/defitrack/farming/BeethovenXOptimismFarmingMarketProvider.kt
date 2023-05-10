@@ -2,11 +2,11 @@ package io.defitrack.farming
 
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.ContractType
-import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerGaugeContract
 import io.defitrack.protocol.graph.BeethovenXOptimismGaugeGraphProvider
 import kotlinx.coroutines.async
@@ -49,7 +49,7 @@ class BeethovenXOptimismFarmingMarketProvider(
                         vaultType = "beethovenxGauge",
                         balanceFetcher = PositionFetcher(
                             gauge.address,
-                            { user -> gauge.balanceOfMethod(user) }
+                            { user -> balanceOfFunction(user) }
                         ),
                         farmType = ContractType.STAKING,
                         metadata = mapOf("address" to it.id)

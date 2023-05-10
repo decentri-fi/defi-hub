@@ -26,11 +26,11 @@ class MarketSizeService(
         location: String,
         network: Network
     ): BigDecimal {
-       val balance =  if (token.address == "0x0") {
-           val gateway = blockchainGatewayProvider.getGateway(network)
-           gateway.getNativeBalance(location)
+        val balance = if (token.address == "0x0") {
+            val gateway = blockchainGatewayProvider.getGateway(network)
+            gateway.getNativeBalance(location)
         } else {
-           erC20Resource.getBalance(network, token.address, location).asEth(token.decimals)
+            erC20Resource.getBalance(network, token.address, location).asEth(token.decimals)
         }
 
         return priceResource.calculatePrice(

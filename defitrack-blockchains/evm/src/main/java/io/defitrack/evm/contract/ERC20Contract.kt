@@ -18,6 +18,33 @@ open class ERC20Contract(
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
+    companion object {
+        fun approveFunction(spender: String, amount: BigInteger): Function {
+            return createFunction(
+                "approve",
+                listOf(spender.toAddress(), amount.toUint256()),
+                listOf()
+            )
+        }
+
+        fun fullApproveFunction(
+            spender: String
+        ): Function {
+            return approveFunction(spender, BlockchainGateway.MAX_UINT256.value)
+        }
+
+        fun balanceOfFunction(address: String): Function {
+            return createFunction(
+                "balanceOf",
+                inputs = listOf(address.toAddress()),
+                outputs = listOf(
+                    uint256()
+                )
+            )
+        }
+    }
+
+
     suspend fun allowance(owner: String, spender: String): BigInteger {
         return readWithAbi(
             "allowance",
@@ -26,23 +53,6 @@ open class ERC20Contract(
         )[0].value as BigInteger
     }
 
-    fun balanceOfMethod(address: String): Function {
-        return createFunction(
-            "balanceOf",
-            inputs = listOf(address.toAddress()),
-            outputs = listOf(
-                uint256()
-            )
-        )
-    }
-
-    fun approveFunction(spender: String, amount: BigInteger): Function {
-        return createFunction(
-            "approve",
-            listOf(spender.toAddress(), amount.toUint256()),
-            listOf()
-        )
-    }
 
     suspend fun balanceOf(address: String): BigInteger {
         return readWithoutAbi(
