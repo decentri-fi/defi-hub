@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.nio.charset.Charset
-import javax.annotation.PostConstruct
+import jakarta.annotation.PostConstruct
 import kotlin.time.Duration.Companion.days
 
 @Service

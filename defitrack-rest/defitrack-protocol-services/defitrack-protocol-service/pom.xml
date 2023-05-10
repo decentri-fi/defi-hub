@@ -5,7 +5,7 @@
 
     <artifactId>defitrack-protocol-service</artifactId>
 
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
 
     <parent>
         <groupId>io.defitrack</groupId>
