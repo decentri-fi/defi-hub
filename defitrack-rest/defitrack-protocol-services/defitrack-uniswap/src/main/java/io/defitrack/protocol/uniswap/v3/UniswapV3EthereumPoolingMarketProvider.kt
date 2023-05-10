@@ -18,7 +18,7 @@ import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.datatypes.Event
 import java.math.BigInteger
 
-@Component
+//@Component
 class UniswapV3EthereumPoolingMarketProvider() : PoolingMarketProvider() {
 
     val poolCreatedEvent = Event(

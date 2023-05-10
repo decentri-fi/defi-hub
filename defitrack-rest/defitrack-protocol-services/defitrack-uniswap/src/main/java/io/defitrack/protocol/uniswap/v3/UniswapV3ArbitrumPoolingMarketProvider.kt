@@ -10,7 +10,6 @@ import io.defitrack.token.TokenType
 import io.defitrack.uniswap.v3.UniswapV3PoolContract
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
@@ -18,7 +17,7 @@ import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.datatypes.Event
 import java.math.BigInteger
 
-@Component
+//@Component
 class UniswapV3ArbitrumPoolingMarketProvider() : PoolingMarketProvider() {
 
     val poolCreatedEvent = Event(
@@ -54,7 +53,7 @@ class UniswapV3ArbitrumPoolingMarketProvider() : PoolingMarketProvider() {
 
     override suspend fun produceMarkets(): Flow<PoolingMarket> {
         return channelFlow {
-            val jobs = poolAddresses.map {
+            poolAddresses.forEach {
                 launch {
                     try {
                         throttled {
@@ -93,7 +92,6 @@ class UniswapV3ArbitrumPoolingMarketProvider() : PoolingMarketProvider() {
                     }
                 }
             }
-            jobs.joinAll()
         }
     }
 
