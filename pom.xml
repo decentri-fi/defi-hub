@@ -24,7 +24,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <web3j.version>4.9.8</web3j.version>
         <commons-codec.version>1.15</commons-codec.version>
-        <spring-cloud-dependencies.version>2021.0.4</spring-cloud-dependencies.version>
+        <spring-cloud-dependencies.version>2022.0.2</spring-cloud-dependencies.version>
         <commons-collections.version>4.4</commons-collections.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <jacoco-maven-plugin.version>0.8.6</jacoco-maven-plugin.version>
