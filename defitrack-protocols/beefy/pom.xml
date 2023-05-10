@@ -38,9 +38,5 @@
             <groupId>io.defitrack</groupId>
             <artifactId>fantom</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
-            <artifactId>avalanche</artifactId>
-        </dependency>
     </dependencies>
 </project>

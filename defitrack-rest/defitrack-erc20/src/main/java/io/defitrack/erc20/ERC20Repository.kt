@@ -26,7 +26,6 @@ class ERC20Repository(
         val NATIVE_WRAP_MAPPING = mapOf(
             Network.ETHEREUM to "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
             Network.OPTIMISM to "0x4200000000000000000000000000000000000006",
-            Network.AVALANCHE to "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
             Network.POLYGON to "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
             Network.ARBITRUM to "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
             Network.BINANCE to "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
@@ -45,7 +44,6 @@ class ERC20Repository(
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/arbitrum/tokenlist.json",
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/fantom/aeb.tokenlist.json",
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/fantom/fantomfinance.tokenlist.json",
-       //     "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/avalanche/joe.tokenlist.json",
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/bsc/pancakeswap-extended.json",
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/optimism/optimism.tokenlist.json",
         ).flatMap {

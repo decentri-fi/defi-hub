@@ -20,7 +20,6 @@
         <module>polygon-zkevm</module>
         <module>binance</module>
         <module>arbitrum</module>
-        <module>avalanche</module>
         <module>fantom</module>
         <module>optimism</module>
         <module>starknet</module>

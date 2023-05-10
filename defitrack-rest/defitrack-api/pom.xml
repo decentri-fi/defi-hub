@@ -5,6 +5,8 @@
 
     <artifactId>defitrack-api</artifactId>
 
+    <packaging>pom</packaging>
+
     <parent>
         <groupId>io.defitrack</groupId>
         <artifactId>defitrack-rest</artifactId>

@@ -41,7 +41,6 @@ enum class Protocol(
             Network.OPTIMISM,
             Network.POLYGON,
             Network.ARBITRUM,
-            Network.AVALANCHE,
             Network.BINANCE
         )
     ),
@@ -169,7 +168,7 @@ enum class Protocol(
         slug = "iron-bank",
         website = "https://ib.xyz/",
         primitives = listOf(DefiPrimitive.LENDING, DefiPrimitive.BORROWING),
-        networks = listOf(Network.ETHEREUM, Network.AVALANCHE, Network.FANTOM)
+        networks = listOf(Network.ETHEREUM, Network.FANTOM)
     ),
     AAVE(
         logo = "aave.png",
@@ -216,7 +215,7 @@ enum class Protocol(
         slug = "beefy",
         website = "https://beefy.com",
         primitives = listOf(DefiPrimitive.FARMING),
-        networks = listOf(Network.POLYGON, Network.AVALANCHE, Network.ARBITRUM, Network.FANTOM, Network.BINANCE)
+        networks = listOf(Network.POLYGON, Network.ARBITRUM, Network.FANTOM, Network.BINANCE)
     ),
     QUICKSWAP(
         logo = "quickswap.png",
@@ -279,7 +278,7 @@ enum class Protocol(
         slug = "sushiswap",
         website = "https://sushi.com",
         primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
-        networks = listOf(Network.POLYGON, Network.AVALANCHE, Network.ARBITRUM, Network.FANTOM, Network.ETHEREUM)
+        networks = listOf(Network.POLYGON, Network.ARBITRUM, Network.FANTOM, Network.ETHEREUM)
     ),
     KYBER_SWAP(
         logo = "dmm.png",
@@ -314,7 +313,7 @@ enum class Protocol(
         slug = "ribbon",
         website = "https://ribbon.finance",
         primitives = listOf(DefiPrimitive.FARMING),
-        networks = listOf(Network.AVALANCHE, Network.ETHEREUM)
+        networks = listOf(Network.ETHEREUM)
     ),
     LOOKSRARE(
         logo = "looksrare.png",

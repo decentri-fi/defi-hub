@@ -19,10 +19,6 @@
         </dependency>
         <dependency>
             <groupId>io.defitrack</groupId>
-            <artifactId>avalanche</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
             <artifactId>ethereum</artifactId>
         </dependency>
     </dependencies>

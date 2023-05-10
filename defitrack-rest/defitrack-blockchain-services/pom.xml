@@ -21,7 +21,6 @@
         <module>defitrack-optimism</module>
         <module>defitrack-arbitrum</module>
         <module>defitrack-fantom</module>
-        <module>defitrack-avalanche</module>
         <module>defitrack-starknet</module>
         <module>defitrack-binance</module>
     </modules>

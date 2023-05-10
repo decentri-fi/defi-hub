@@ -61,14 +61,6 @@ class NativeTokenService(private val logoService: LogoService) {
                 logo = nativeLogo,
                 network = network
             )
-            Network.AVALANCHE -> TokenInformation(
-                address = nullAddress,
-                name = "Avalanche",
-                decimals = 18,
-                symbol = "AVAX",
-                type = TokenType.NATIVE,
-                network = network
-            )
             Network.BINANCE -> TokenInformation(
                 address = nullAddress,
                 name = "BNB",
