@@ -17,10 +17,9 @@ function startInfra {
   ./mvnw -pl defitrack-rest/defitrack-$1 spring-boot:build-image
 }
 
+rm -rf infrastructure
 git clone https://github.com/decentri-fi/infrastructure
 
 for package in $(cat infrastructure/networks.txt); do startNetwork $package; done
 for package in $(cat infrastructure/protocols.txt); do startProtocol $package; done
 for package in $(cat infrastructure/infra.txt); do startInfra $package; done
-
-mvn -pl defitrack-rest/defitrack-balance spring-boot:build-image

@@ -70,7 +70,7 @@
                             <BP_JVM_VERSION>${java.version}</BP_JVM_VERSION>
                         </env>
                     </image>
-                    <imageName>decentrifi/${artifactId}</imageName>
+                    <imageName>decentrifi/${project.artifactId}</imageName>
                 </configuration>
             </plugin>
         </plugins>
