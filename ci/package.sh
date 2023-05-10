@@ -5,7 +5,8 @@ function startNetwork {
 }
 
 function startProtocol {
-  docker build -t ${DOCKER_REPO}:$1-${BRANCH_NAME} defitrack-rest/defitrack-protocol-services/defitrack-$1 -f ci/Dockerfile
+  mvn -pl defitrack-protocol-services/defitrack-$1 spring-boot:build-image
+  #docker build -t ${DOCKER_REPO}:$1-${BRANCH_NAME} defitrack-rest/defitrack-protocol-services/defitrack-$1 -f ci/Dockerfile
 }
 
 
