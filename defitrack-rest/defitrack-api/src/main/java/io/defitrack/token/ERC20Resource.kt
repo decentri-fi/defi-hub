@@ -35,7 +35,7 @@ class ERC20Resource(
     val semaphore = Semaphore(4)
 
     val tokensCache: Cache<String, List<TokenInformationVO>> = Cache.Builder()
-        .expireAfterWrite(12.hours)
+        .expireAfterWrite(1.hours)
         .build()
 
     val tokenCache: Cache<String, TokenInformationVO> = Cache.Builder()
