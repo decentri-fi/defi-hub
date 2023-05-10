@@ -5,6 +5,8 @@
 
     <artifactId>defitrack-evm</artifactId>
 
+    <packaging>pom</packaging>
+
     <parent>
         <groupId>io.defitrack</groupId>
         <artifactId>defitrack-blockchain-services</artifactId>
