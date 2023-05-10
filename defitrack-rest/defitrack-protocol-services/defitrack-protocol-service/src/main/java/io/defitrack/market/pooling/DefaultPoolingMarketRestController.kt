@@ -3,11 +3,8 @@ package io.defitrack.market.pooling
 import io.defitrack.common.network.Network
 import io.defitrack.invest.PrepareInvestmentCommand
 import io.defitrack.market.farming.vo.TransactionPreparationVO
-import io.defitrack.market.pooling.breakdown.PoolingBreakdownMapper
-import io.defitrack.market.pooling.domain.PoolingMarket
+import io.defitrack.market.pooling.mapper.PoolingMarketVOMapper
 import io.defitrack.market.pooling.vo.PoolingMarketVO
-import io.defitrack.network.toVO
-import io.defitrack.protocol.toVO
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +21,7 @@ import org.springframework.web.bind.annotation.*
 class DefaultPoolingMarketRestController(
     private val poolingMarketProviders: List<PoolingMarketProvider>,
     private val erC20Resource: ERC20Resource,
-    private val poolingBreakdownMapper: PoolingBreakdownMapper
+    private val poolingMarketVOMapper: PoolingMarketVOMapper
 ) {
     companion object {
         val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -39,9 +36,7 @@ class DefaultPoolingMarketRestController(
                 }
                 .map {
                     async {
-                        it.getMarkets().map {
-                            it.toVO()
-                        }
+                        it.getMarkets().map(poolingMarketVOMapper::map)
                     }
                 }.awaitAll().flatten()
         }
@@ -75,7 +70,7 @@ class DefaultPoolingMarketRestController(
                 it.tokens.any { t ->
                     t.address.lowercase() == tokenAddress.lowercase()
                 } || it.address.lowercase() == tokenAddress.lowercase()
-            }.map { it.toVO() }
+            }.map(poolingMarketVOMapper::map)
     }
 
     @GetMapping(value = ["/markets/{id}"])
@@ -83,7 +78,7 @@ class DefaultPoolingMarketRestController(
         @PathVariable("id") id: String,
     ): ResponseEntity<PoolingMarketVO> {
         return poolingMarketById(id)?.let {
-            ResponseEntity.ok(it.toVO())
+            ResponseEntity.ok(poolingMarketVOMapper.map(it))
         } ?: ResponseEntity.notFound().build()
     }
 
@@ -123,26 +118,6 @@ class DefaultPoolingMarketRestController(
 
                     else -> false
                 }
-            }.map { it.toVO() }
-    }
-
-    fun PoolingMarket.toVO(): PoolingMarketVO {
-        return PoolingMarketVO(
-            name = name,
-            protocol = protocol.toVO(),
-            network = network.toVO(),
-            tokens = tokens,
-            id = id,
-            breakdown = poolingBreakdownMapper.toVO(breakdown),
-            decimals = decimals,
-            address = address,
-            apr = apr,
-            marketSize = marketSize,
-            prepareInvestmentSupported = investmentPreparer != null,
-            erc20Compatible = erc20Compatible,
-            exitPositionSupported = exitPositionPreparer != null,
-            price = price,
-            totalSupply = totalSupply
-        )
+            }.map(poolingMarketVOMapper::map)
     }
 }

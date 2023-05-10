@@ -4,7 +4,7 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
-import io.defitrack.protocol.toVO
+import io.defitrack.protocol.mapper.ProtocolVOMapper
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
@@ -19,7 +19,8 @@ import org.springframework.web.bind.annotation.RestController
 class DefaultClaimableRestController(
     private val claimableRewardProviders: List<ClaimableRewardProvider>,
     private val priceResource: PriceResource,
-    private val defaultClaimableRewardProvider: DefaultClaimableRewardProvider
+    private val defaultClaimableRewardProvider: DefaultClaimableRewardProvider,
+    private val protocolVOMapper: ProtocolVOMapper
 ) {
 
     companion object {
@@ -56,7 +57,7 @@ class DefaultClaimableRestController(
             id = it.id,
             name = it.name,
             type = it.type,
-            protocol = it.protocol.toVO(),
+            protocol = protocolVOMapper.map(it.protocol),
             network = it.network.toVO(),
             token = it.claimableTokens.first(),
             amount = it.amount.asEth(it.claimableTokens.first().decimals).toDouble(),

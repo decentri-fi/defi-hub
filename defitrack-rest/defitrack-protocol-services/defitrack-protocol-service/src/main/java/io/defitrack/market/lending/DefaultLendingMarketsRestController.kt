@@ -3,10 +3,8 @@ package io.defitrack.market.lending
 import io.defitrack.common.network.Network
 import io.defitrack.invest.PrepareInvestmentCommand
 import io.defitrack.market.farming.vo.TransactionPreparationVO
-import io.defitrack.market.lending.domain.LendingMarket
+import io.defitrack.market.lending.mapper.LendingMarketVOMapper
 import io.defitrack.market.lending.vo.LendingMarketVO
-import io.defitrack.network.toVO
-import io.defitrack.protocol.toVO
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import org.springframework.http.ResponseEntity
@@ -16,15 +14,14 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/lending")
 class DefaultLendingMarketsRestController(
     private val lendingMarketProviders: List<LendingMarketProvider>,
+    private val lendingMarketVOMapper: LendingMarketVOMapper
 ) {
 
     @GetMapping(value = ["/all-markets"])
     fun getAllMarkets(): List<LendingMarketVO> {
         return lendingMarketProviders.flatMap {
             it.getMarkets()
-        }.map {
-            it.toVO()
-        }
+        }.map(lendingMarketVOMapper::map)
     }
 
     @GetMapping(value = ["/markets"], params = ["token"])
@@ -39,7 +36,7 @@ class DefaultLendingMarketsRestController(
                 it.getMarkets()
             }.filter {
                 it.token.address.lowercase() == token
-            }.map { it.toVO() }
+            }.map(lendingMarketVOMapper::map)
     }
 
 
@@ -65,21 +62,5 @@ class DefaultLendingMarketsRestController(
                 )
             )
         } ?: ResponseEntity.badRequest().build()
-    }
-
-    fun LendingMarket.toVO(): LendingMarketVO {
-        return LendingMarketVO(
-            id = id,
-            name = name,
-            protocol = protocol.toVO(),
-            network = network.toVO(),
-            token = token,
-            rate = rate?.toDouble(),
-            poolType = poolType,
-            marketSize = marketSize,
-            prepareInvestmentSupported = investmentPreparer != null,
-            exitPositionSupported = this.exitPositionPreparer != null,
-            erc20Compatible = this.erc20Compatible
-        )
     }
 }

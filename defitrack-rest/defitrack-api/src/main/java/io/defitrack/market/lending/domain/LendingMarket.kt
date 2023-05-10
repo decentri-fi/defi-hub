@@ -26,6 +26,7 @@ data class LendingMarket(
     val exitPositionPreparer: ExitPositionPreparer? = null,
     val metadata: Map<String, Any> = emptyMap(),
     val erc20Compatible: Boolean = false,
+    val totalSupply: BigDecimal,
     val price: BigDecimal
 ) : DefiMarket
 

@@ -1,5 +1,6 @@
 package io.defitrack.protocol
 
+import io.defitrack.protocol.mapper.ProtocolVOMapper
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -7,21 +8,12 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/")
 class ProtocolRestController(
-    private val protocolProvider: ProtocolProvider
+    private val protocolProvider: ProtocolProvider,
+    private val protocolVOMapper: ProtocolVOMapper
 ) {
 
     @GetMapping
     fun getProtocol(): ProtocolVO {
-        return protocolProvider.getProtocol().toVO()
+        return protocolVOMapper.map(protocolProvider.getProtocol())
     }
-}
-
-fun Protocol.toVO(): ProtocolVO {
-    return ProtocolVO(
-        name = this.name,
-        logo = this.getImage(),
-        slug = this.slug,
-        primitives = this.primitives,
-        website = this.website
-    )
 }

@@ -2,17 +2,15 @@ package io.defitrack.market.farming
 
 import io.defitrack.common.network.Network
 import io.defitrack.exit.ExitPositionCommand
-import io.defitrack.market.farming.vo.TransactionPreparationVO
 import io.defitrack.invest.PrepareInvestmentCommand
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.vo.FarmingMarketVO
+import io.defitrack.market.farming.vo.TransactionPreparationVO
 import io.defitrack.network.toVO
-import io.defitrack.protocol.toVO
+import io.defitrack.protocol.mapper.ProtocolVOMapper
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.runBlocking
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -20,7 +18,8 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping(*["/staking", "/farming"])
 class DefaultFarmingMarketRestController(
     private val farmingMarketProviders: List<FarmingMarketProvider>,
-    private val erC20Resource: ERC20Resource
+    private val erC20Resource: ERC20Resource,
+    private val protocolVOMapper: ProtocolVOMapper
 ) {
 
 
@@ -116,7 +115,7 @@ class DefaultFarmingMarketRestController(
             FarmingMarketVO(
                 id = this.id,
                 network = this.network.toVO(),
-                protocol = this.protocol.toVO(),
+                protocol = protocolVOMapper.map(this.protocol),
                 name = this.name,
                 stakedToken = this.stakedToken,
                 reward = this.rewardTokens,

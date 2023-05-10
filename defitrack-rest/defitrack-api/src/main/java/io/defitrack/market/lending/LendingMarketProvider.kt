@@ -40,7 +40,8 @@ abstract class LendingMarketProvider : MarketProvider<LendingMarket>() {
             positionFetcher = positionFetcher,
             investmentPreparer = investmentPreparer,
             metadata = metadata,
-            price = price ?: calculatePrice(marketSize, totalSupply, token.decimals)
+            price = price ?: calculatePrice(marketSize, totalSupply, token.decimals),
+            totalSupply = totalSupply.asEth(token.decimals)
         )
     }
 

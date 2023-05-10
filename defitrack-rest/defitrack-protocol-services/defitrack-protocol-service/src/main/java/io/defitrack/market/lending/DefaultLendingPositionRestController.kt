@@ -7,7 +7,7 @@ import io.defitrack.market.lending.vo.LendingPositionVO
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
-import io.defitrack.protocol.toVO
+import io.defitrack.protocol.mapper.ProtocolVOMapper
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -17,7 +17,9 @@ import org.web3j.crypto.WalletUtils
 @RestController
 @RequestMapping("/lending")
 class DefaultLendingPositionRestController(
-    private val lendingPositionProvider: LendingPositionProvider, private val priceResource: PriceResource
+    private val lendingPositionProvider: LendingPositionProvider,
+    private val priceResource: PriceResource,
+    private val protocolVOMapper: ProtocolVOMapper
 ) {
 
     companion object {
@@ -63,7 +65,7 @@ class DefaultLendingPositionRestController(
 
             LendingPositionVO(
                 network = market.network.toVO(),
-                protocol = market.protocol.toVO(),
+                protocol = protocolVOMapper.map(market.protocol),
                 dollarValue = lendingInDollars,
                 rate = market.rate?.toDouble(),
                 name = market.name,

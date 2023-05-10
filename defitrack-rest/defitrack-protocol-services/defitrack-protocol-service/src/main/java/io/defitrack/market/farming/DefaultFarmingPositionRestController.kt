@@ -8,7 +8,7 @@ import io.defitrack.market.farming.vo.FarmingPositionVO
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
-import io.defitrack.protocol.toVO
+import io.defitrack.protocol.mapper.ProtocolVOMapper
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -20,7 +20,8 @@ import java.math.BigInteger
 @RequestMapping(*["/staking", "/farming"])
 class DefaultFarmingPositionRestController(
     private val stakingServices: List<FarmingPositionProvider>,
-    private val priceResource: PriceResource
+    private val priceResource: PriceResource,
+    private val protocolVOMapper: ProtocolVOMapper
 ) {
 
     @GetMapping("/{userAddress}/positions")
@@ -77,7 +78,7 @@ class DefaultFarmingPositionRestController(
         return FarmingPositionVO(
             id = market.id,
             network = market.network.toVO(),
-            protocol = market.protocol.toVO(),
+            protocol = protocolVOMapper.map(market.protocol),
             dollarValue = stakedInDollars,
             name = market.name,
             apr = market.apr?.toDouble(),
@@ -98,8 +99,8 @@ class DefaultFarmingPositionRestController(
         return FarmingMarketVO(
             id = this.id,
             network = this.network.toVO(),
-            protocol = this.protocol.toVO(),
             name = this.name,
+            protocol = protocolVOMapper.map(this.protocol),
             stakedToken = this.stakedToken,
             reward = this.rewardTokens,
             vaultType = this.contractType,

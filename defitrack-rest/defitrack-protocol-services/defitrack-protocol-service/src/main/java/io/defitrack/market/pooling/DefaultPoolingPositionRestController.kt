@@ -7,9 +7,7 @@ import io.defitrack.market.pooling.domain.PoolingPosition
 import io.defitrack.market.pooling.vo.PoolingMarketVO
 import io.defitrack.market.pooling.vo.PoolingPositionVO
 import io.defitrack.network.toVO
-import io.defitrack.price.PriceRequest
-import io.defitrack.price.PriceResource
-import io.defitrack.protocol.toVO
+import io.defitrack.protocol.mapper.ProtocolVOMapper
 import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -25,10 +23,10 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/pooling")
 class DefaultPoolingPositionRestController(
     private val poolingPositionProviders: List<PoolingPositionProvider>,
-    private val priceResource: PriceResource,
     private val erC20Resource: ERC20Resource,
     private val breakdownService: PoolingBreakdownMapper,
-    private val poolingBreakdownMapper: PoolingBreakdownMapper
+    private val poolingBreakdownMapper: PoolingBreakdownMapper,
+    private val protocolVOMapper: ProtocolVOMapper
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -59,10 +57,10 @@ class DefaultPoolingPositionRestController(
             lpAddress = market.address,
             amountDecimal = amount,
             name = market.name,
-            dollarValue =  amount.times(market.price).toDouble(),
+            dollarValue = amount.times(market.price).toDouble(),
             network = market.network.toVO(),
             symbol = market.symbol,
-            protocol = market.protocol.toVO(),
+            protocol = protocolVOMapper.map(market.protocol),
             id = market.id,
             exitPositionSupported = market.exitPositionPreparer != null,
             amount = tokenAmount,
@@ -74,7 +72,7 @@ class DefaultPoolingPositionRestController(
     fun PoolingMarket.toVO(): PoolingMarketVO {
         return PoolingMarketVO(
             name = name,
-            protocol = protocol.toVO(),
+            protocol = protocolVOMapper.map(protocol),
             network = network.toVO(),
             tokens = tokens,
             id = id,

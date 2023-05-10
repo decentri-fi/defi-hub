@@ -7,7 +7,7 @@ import io.defitrack.market.borrowing.vo.BorrowPositionVO
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
-import io.defitrack.protocol.toVO
+import io.defitrack.protocol.mapper.ProtocolVOMapper
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -20,7 +20,8 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/borrowing")
 class DefaultBorrowingRestController(
     private val borrowingServices: List<BorrowService>,
-    private val priceResource: PriceResource
+    private val priceResource: PriceResource,
+    private val protocolVOMapper: ProtocolVOMapper
 ) {
 
     companion object {
@@ -44,7 +45,6 @@ class DefaultBorrowingRestController(
         return with(this) {
             BorrowPositionVO(
                 network = network.toVO(),
-                protocol = protocol.toVO(),
                 dollarValue = priceResource.calculatePrice(
                     PriceRequest(
                         token.address,
@@ -53,6 +53,7 @@ class DefaultBorrowingRestController(
                         token.type
                     )
                 ),
+                protocol = protocolVOMapper.map(protocol),
                 rate = rate,
                 name = name,
                 amount = amount.asEth(token.decimals).toDouble(),
