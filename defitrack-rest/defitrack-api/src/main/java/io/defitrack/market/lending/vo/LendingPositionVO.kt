@@ -16,5 +16,6 @@ data class LendingPositionVO(
     val amount: BigInteger,
     val token: FungibleToken,
     val exitPositionSupported: Boolean,
-    val marketType: String = "lending"
+    val marketType: String = "lending",
+    val market: LendingMarketVO,
 )
