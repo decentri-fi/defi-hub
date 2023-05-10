@@ -19,6 +19,7 @@ class LendingMarketVOMapper(
                 protocol = protocolVOMapper.map(protocol),
                 network = network.toVO(),
                 token = token,
+                marketToken = marketToken,
                 rate = rate?.toDouble(),
                 poolType = poolType,
                 marketSize = marketSize,

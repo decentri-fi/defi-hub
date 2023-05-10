@@ -25,7 +25,8 @@ class MakerDAOEthereumLendingMarketProvider(
                         name = it.name,
                         rate = it.rates.firstOrNull()?.rate?.toBigDecimal(),
                         poolType = "makerdao-lending",
-                        token = token.toFungibleToken()
+                        token = token.toFungibleToken(),
+                        marketToken = null
                     )
                 } catch (ex: Exception) {
                     ex.printStackTrace()

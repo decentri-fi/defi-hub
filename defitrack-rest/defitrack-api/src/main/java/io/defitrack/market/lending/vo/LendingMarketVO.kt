@@ -12,6 +12,7 @@ class LendingMarketVO(
     protocol: ProtocolVO,
     network: NetworkVO,
     val token: FungibleToken,
+    val marketToken: FungibleToken?,
     val rate: Double?,
     val poolType: String,
     marketSize: BigDecimal?,

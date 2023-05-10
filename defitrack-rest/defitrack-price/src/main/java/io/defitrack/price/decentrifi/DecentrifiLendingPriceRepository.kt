@@ -1,6 +1,6 @@
 package io.defitrack.price.decentrifi
 
-import io.defitrack.market.pooling.vo.PoolingMarketVO
+import io.defitrack.market.lending.vo.LendingMarketVO
 import io.defitrack.protocol.ProtocolVO
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
 @Component
-class DecentrifiPoolingPriceRepository(
+class DecentrifiLendingPriceRepository(
     private val httpClient: HttpClient
 ) {
 
@@ -27,21 +27,25 @@ class DecentrifiPoolingPriceRepository(
         val protocols = getProtocols()
         protocols.map { protocol ->
             try {
-                val pools = getPools(protocol.slug)
-                pools.forEach { pool ->
-                    val price = pool.price
-                    if (price == null) {
-                        logger.error("Price for pool ${pool.address} in ${pool.protocol.name} is null")
-                    } else {
-                        cache.put(pool.address.lowercase(), price)
+                val pools = getLendingMarkets(protocol.slug)
+                pools
+                    .filter {
+                        it.erc20Compatible && it.marketToken != null
                     }
-                }
+                    .forEach { market ->
+                        val price = market.price
+                        if (price == null) {
+                            logger.error("Price for market ${market.name} in ${market.protocol.name} is null")
+                        } else {
+                            cache.put(market.marketToken!!.address.lowercase(), price)
+                        }
+                    }
             } catch (ex: Exception) {
                 logger.error("Unable to import price for protocol ${protocol.slug}", ex)
             }
         }
 
-        logger.info("Decentrifi Pooling Price Repository populated with ${cache.asMap().entries.size} prices")
+        logger.info("Decentrifi Lending Price Repository populated with ${cache.asMap().entries.size} prices")
     }
 
     fun contains(address: String): Boolean {
@@ -52,13 +56,13 @@ class DecentrifiPoolingPriceRepository(
         return httpClient.get("https://api.decentri.fi/protocols").body()
     }
 
-    suspend fun getPools(protocol: String): List<PoolingMarketVO> {
-        val result = httpClient.get("https://api.decentri.fi/$protocol/pooling/all-markets")
-        if (result.status.isSuccess())
-            return result.body()
+    suspend fun getLendingMarkets(protocol: String): List<LendingMarketVO> {
+        val result = httpClient.get("https://api.decentri.fi/$protocol/lending/all-markets")
+        return if (result.status.isSuccess())
+            result.body()
         else {
-            logger.error("Unable to fetch pools for $protocol")
-            return emptyList()
+            logger.error("Unable to fetch lending markets for $protocol")
+            emptyList()
         }
     }
 

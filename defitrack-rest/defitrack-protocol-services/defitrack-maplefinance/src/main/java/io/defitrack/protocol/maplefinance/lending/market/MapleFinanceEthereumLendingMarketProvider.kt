@@ -25,7 +25,8 @@ class MapleFinanceEthereumLendingMarketProvider(
                         name = it.name,
                         rate = it.rates.firstOrNull()?.rate?.toBigDecimal(),
                         poolType = "maplefinance-lending",
-                        token = token.toFungibleToken()
+                        token = token.toFungibleToken(),
+                        marketToken = null
                     )
                 } catch (ex: Exception) {
                     ex.printStackTrace()

@@ -77,7 +77,8 @@ class AaveV2PolygonLendingMarketProvider(
                                 { user ->
                                     balanceOfFunction(user)
                                 }
-                            )
+                            ),
+                            marketToken = aToken.toFungibleToken()
                         )
                     } catch (ex: Exception) {
                         null

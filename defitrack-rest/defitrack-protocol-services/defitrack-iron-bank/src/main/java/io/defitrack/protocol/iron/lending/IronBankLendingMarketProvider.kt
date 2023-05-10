@@ -54,6 +54,7 @@ abstract class IronBankLendingMarketProvider(
         return try {
             val exchangeRate = ctokenContract.exchangeRate()
             getToken(ctokenContract.underlyingAddress()).let { underlyingToken ->
+                val ctoken = getToken(ctokenContract.address)
                 create(
                     identifier = ctokenContract.address,
                     name = ctokenContract.name(),
@@ -84,7 +85,9 @@ abstract class IronBankLendingMarketProvider(
                     investmentPreparer = CompoundLendingInvestmentPreparer(
                         ctokenContract,
                         getERC20Resource()
-                    )
+                    ),
+                    marketToken = ctoken.toFungibleToken(),
+                    erc20Compatible = true
                 )
             }
         } catch (ex: Exception) {

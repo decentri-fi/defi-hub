@@ -78,7 +78,8 @@ class AaveV2MainnetLendingMarketProvider(
                                 { user ->
                                     balanceOfFunction(user)
                                 }
-                            )
+                            ),
+                            marketToken = aToken.toFungibleToken()
                         )
                     } catch (ex: Exception) {
                         logger.error("Unable to fetch lending market with address $it", ex)

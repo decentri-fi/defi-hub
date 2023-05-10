@@ -17,6 +17,7 @@ data class LendingMarket(
     val network: Network,
     val protocol: Protocol,
     val name: String,
+    val marketToken: FungibleToken?,
     val token: FungibleToken,
     val marketSize: BigDecimal? = null,
     val rate: BigDecimal? = null,

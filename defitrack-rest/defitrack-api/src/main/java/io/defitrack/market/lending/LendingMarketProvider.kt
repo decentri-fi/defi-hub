@@ -23,7 +23,9 @@ abstract class LendingMarketProvider : MarketProvider<LendingMarket>() {
         positionFetcher: PositionFetcher? = null,
         investmentPreparer: InvestmentPreparer? = null,
         metadata: Map<String, Any> = emptyMap(),
-        price: BigDecimal? = null
+        price: BigDecimal? = null,
+        marketToken: FungibleToken?,
+        erc20Compatible: Boolean = false
     ): LendingMarket {
 
         val totalSupply = metadata["totalSupply"] as? BigInteger ?: BigInteger.ZERO
@@ -40,8 +42,10 @@ abstract class LendingMarketProvider : MarketProvider<LendingMarket>() {
             positionFetcher = positionFetcher,
             investmentPreparer = investmentPreparer,
             metadata = metadata,
-            price = price ?: calculatePrice(marketSize, totalSupply, token.decimals),
-            totalSupply = totalSupply.asEth(token.decimals)
+            price = price ?: calculatePrice(marketSize, totalSupply, marketToken?.decimals ?: token.decimals),
+            totalSupply = totalSupply.asEth(marketToken?.decimals ?: token.decimals),
+            marketToken = marketToken,
+            erc20Compatible = erc20Compatible
         )
     }
 

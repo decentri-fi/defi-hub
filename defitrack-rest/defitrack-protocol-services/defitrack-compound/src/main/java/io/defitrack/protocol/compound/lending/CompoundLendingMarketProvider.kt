@@ -45,7 +45,9 @@ class CompoundLendingMarketProvider(
     override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
         getTokenContracts().map {
             async {
-                toLendingMarket(it)
+                throttled {
+                    toLendingMarket(it)
+                }
             }
         }.awaitAll().filterNotNull()
     }
@@ -86,6 +88,8 @@ class CompoundLendingMarketProvider(
                         getERC20Resource()
                     ),
                     metadata = mapOf("totalSupply" to ctokenContract.totalSupply()),
+                    marketToken = getToken(ctokenContract.address).toFungibleToken(),
+                    erc20Compatible = true
                 )
             }
         } catch (ex: Exception) {

@@ -51,6 +51,7 @@ class WepiggyLendingMarketProvider(
     private suspend fun toLendingMarket(ctokenContract: CompoundTokenContract): LendingMarket? {
         return try {
             getToken(ctokenContract.underlyingAddress()).let { underlyingToken ->
+                val cToken = getToken(ctokenContract.address)
                 val exchangeRate = ctokenContract.exchangeRate()
                 create(
                     identifier = ctokenContract.address,
@@ -80,7 +81,9 @@ class WepiggyLendingMarketProvider(
 
                         }
                     ),
-                    investmentPreparer = null
+                    investmentPreparer = null,
+                    marketToken = cToken.toFungibleToken(),
+                    erc20Compatible = true
                 )
             }
         } catch (ex: Exception) {

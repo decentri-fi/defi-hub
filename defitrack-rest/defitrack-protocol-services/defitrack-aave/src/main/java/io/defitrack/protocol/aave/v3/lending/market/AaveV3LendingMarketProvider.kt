@@ -79,7 +79,8 @@ abstract class AaveV3LendingMarketProvider(
                         positionFetcher = PositionFetcher(
                             aToken.address,
                             { user -> balanceOfFunction(user) },
-                        )
+                        ),
+                        marketToken = aToken.toFungibleToken()
                     )
                 } catch (ex: Exception) {
                     logger.error("Unable to fetch V3 Lending market with address $it")
