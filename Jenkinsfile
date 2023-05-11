@@ -20,15 +20,5 @@ pipeline {
                  sh "./mvnw -T 1.5C install -DskipTests"
              }
         }
-        stage('Docker Package') {
-            when {
-                allOf {
-                    branch 'main'
-                }
-            }
-            steps {
-                sh "bash ci/package.sh"
-            }
-        }
     }
 }

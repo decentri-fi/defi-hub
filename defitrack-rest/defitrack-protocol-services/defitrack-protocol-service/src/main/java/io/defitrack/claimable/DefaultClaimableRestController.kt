@@ -1,8 +1,6 @@
 package io.defitrack.claimable
 
-import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.network.toVO
-import io.defitrack.price.PriceRequest
+import io.defitrack.claimable.mapper.ClaimableVOMapper
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.mapper.ProtocolVOMapper
 import kotlinx.coroutines.async
@@ -20,7 +18,8 @@ class DefaultClaimableRestController(
     private val claimableRewardProviders: List<ClaimableRewardProvider>,
     private val priceResource: PriceResource,
     private val defaultClaimableRewardProvider: DefaultClaimableRewardProvider,
-    private val protocolVOMapper: ProtocolVOMapper
+    private val protocolVOMapper: ProtocolVOMapper,
+    private val claimableVOMapper: ClaimableVOMapper
 ) {
 
     companion object {
@@ -43,36 +42,14 @@ class DefaultClaimableRestController(
     }
 
     private suspend fun toVO(it: Claimable) = try {
-        val amount = it.amount.asEth(it.claimableTokens.firstOrNull()?.decimals ?: 18)
-        val claimableInDollar = priceResource.calculatePrice(
-            PriceRequest(
-                address = it.claimableTokens.first().address,
-                network = it.network,
-                amount = amount,
-                type = it.claimableTokens.first().type
-            )
-        )
-
-        ClaimableVO(
-            id = it.id,
-            name = it.name,
-            type = it.type,
-            protocol = protocolVOMapper.map(it.protocol),
-            network = it.network.toVO(),
-            token = it.claimableTokens.first(),
-            amount = it.amount.asEth(it.claimableTokens.first().decimals).toDouble(),
-            dollarValue = claimableInDollar,
-            claimTransaction = it.claimTransaction
-        )
+        claimableVOMapper.map(it)
     } catch (ex: Exception) {
         logger.error("Error while fetching claimable", ex)
         null
     }
 
     private suspend fun getFromDefaultProvider(user: String): List<Claimable> {
-        return defaultClaimableRewardProvider.claimables(
-            user
-        )
+        return defaultClaimableRewardProvider.claimables(user)
     }
 
     private suspend fun getFromProviders(address: String) = claimableRewardProviders.flatMap {
