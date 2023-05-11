@@ -3,18 +3,20 @@ package io.defitrack.market.pooling
 import io.defitrack.common.network.Network
 import io.defitrack.invest.PrepareInvestmentCommand
 import io.defitrack.market.farming.vo.TransactionPreparationVO
+import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.mapper.PoolingMarketVOMapper
 import io.defitrack.market.pooling.vo.PoolingMarketVO
 import io.defitrack.token.DecentrifiERC20Resource
 import io.defitrack.token.TokenType
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.runBlocking
+import io.defitrack.utils.PageUtils.createPageFromList
+import kotlinx.coroutines.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+
 
 @RestController
 @RequestMapping("/pooling")
@@ -27,19 +29,33 @@ class DefaultPoolingMarketRestController(
         val logger: Logger = LoggerFactory.getLogger(this::class.java)
     }
 
+    @GetMapping("/markets")
+    fun getMarkets(pageable: Pageable): Page<PoolingMarketVO> = runBlocking {
+        val allMarkets = getAllMarkets()
+        createPageFromList(
+            allMarkets, pageable
+        ).map {
+            poolingMarketVOMapper.map(it)
+        }
+    }
+
     @GetMapping(value = ["/all-markets"])
     fun allMarkets(@RequestParam(required = false, name = "network") network: Network?): List<PoolingMarketVO> =
         runBlocking {
-            poolingMarketProviders
-                .filter {
-                    network?.let { network -> it.getNetwork() == network } ?: true
-                }
-                .map {
-                    async {
-                        it.getMarkets().map(poolingMarketVOMapper::map)
-                    }
-                }.awaitAll().flatten()
+            getAllMarkets(network).map(poolingMarketVOMapper::map)
         }
+
+    private suspend fun getAllMarkets(network: Network? = null): List<PoolingMarket> = coroutineScope {
+        poolingMarketProviders
+            .filter {
+                network?.let { network -> it.getNetwork() == network } ?: true
+            }
+            .map {
+                async {
+                    it.getMarkets()
+                }
+            }.awaitAll().flatten()
+    }
 
     @PostMapping(value = ["/markets/{id}/invest"])
     fun prepareInvestment(
