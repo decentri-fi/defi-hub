@@ -1,13 +1,7 @@
 package io.defitrack.market.pooling
 
-import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.market.pooling.breakdown.PoolingBreakdownMapper
-import io.defitrack.market.pooling.domain.PoolingPosition
-import io.defitrack.market.pooling.mapper.PoolingMarketVOMapper
+import io.defitrack.market.pooling.mapper.PoolingPositionVOMapper
 import io.defitrack.market.pooling.vo.PoolingPositionVO
-import io.defitrack.network.toVO
-import io.defitrack.protocol.mapper.ProtocolVOMapper
-import io.defitrack.token.DecentrifiERC20Resource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
@@ -22,10 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/pooling")
 class DefaultPoolingPositionRestController(
     private val poolingPositionProviders: List<PoolingPositionProvider>,
-    private val erC20Resource: DecentrifiERC20Resource,
-    private val breakdownService: PoolingBreakdownMapper,
-    private val protocolVOMapper: ProtocolVOMapper,
-    private val poolingMarketVOMapper: PoolingMarketVOMapper
+    private val poolingPositionVOMapper: PoolingPositionVOMapper,
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -42,32 +33,9 @@ class DefaultPoolingPositionRestController(
                 }
             }
         }.awaitAll().flatMap {
-            it.map { poolingElement ->
-                poolingElement.toVO()
+            it.map {
+                poolingPositionVOMapper.map(it)
             }
         }
     }
-
-    suspend fun PoolingPosition.toVO(): PoolingPositionVO {
-        val lpToken = erC20Resource.getTokenInformation(market.network, market.address)
-        val amount = tokenAmount.asEth(lpToken.decimals)
-        val dollarValue = customPriceCalculator?.calculate() ?: amount.times(market.price).toDouble()
-
-        return PoolingPositionVO(
-            lpAddress = market.address,
-            amountDecimal = amount,
-            name = market.name,
-            dollarValue = dollarValue,
-            network = market.network.toVO(),
-            symbol = market.symbol,
-            protocol = protocolVOMapper.map(market.protocol),
-            id = market.id,
-            exitPositionSupported = market.exitPositionPreparer != null,
-            amount = tokenAmount,
-            breakdown = breakdownService.toPositionVO(market, amount),
-            market = poolingMarketVOMapper.map(market)
-        )
-    }
-
-
 }

@@ -1,14 +1,7 @@
 package io.defitrack.market.farming
 
-import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.market.farming.domain.FarmingPosition
-import io.defitrack.market.farming.vo.FarmingMarketVO
+import io.defitrack.market.farming.mapper.FarmingPositionVOMapper
 import io.defitrack.market.farming.vo.FarmingPositionVO
-import io.defitrack.network.toVO
-import io.defitrack.price.PriceRequest
-import io.defitrack.price.PriceResource
-import io.defitrack.protocol.mapper.ProtocolVOMapper
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -20,8 +13,7 @@ import java.math.BigInteger
 @RequestMapping(*["/staking", "/farming"])
 class DefaultFarmingPositionRestController(
     private val stakingServices: List<FarmingPositionProvider>,
-    private val priceResource: PriceResource,
-    private val protocolVOMapper: ProtocolVOMapper
+    private val farmingPositionVOMapper: FarmingPositionVOMapper
 ) {
 
     @GetMapping("/{userAddress}/positions")
@@ -37,7 +29,7 @@ class DefaultFarmingPositionRestController(
                     emptyList()
                 }
             }.map {
-                it.toVO()
+                farmingPositionVOMapper.map(it)
             }
             results
         } else {
@@ -58,59 +50,12 @@ class DefaultFarmingPositionRestController(
                     logger.error("Something went wrong trying to fetch the user farms: ${ex.message}")
                     null
                 }
-            }?.toVO()
+            }?.let {
+                farmingPositionVOMapper.map(it)
+            }
         } else {
             null
         }
-    }
-
-
-    suspend fun FarmingPosition.toVO(): FarmingPositionVO {
-        val stakedInDollars = priceResource.calculatePrice(
-            PriceRequest(
-                address = market.stakedToken.address,
-                network = market.network,
-                amount = underlyingAmount.asEth(market.stakedToken.decimals),
-                type = market.stakedToken.type
-            )
-        )
-
-        return FarmingPositionVO(
-            id = market.id,
-            network = market.network.toVO(),
-            protocol = protocolVOMapper.map(market.protocol),
-            dollarValue = stakedInDollars,
-            name = market.name,
-            apr = market.apr?.toDouble(),
-            vaultType = market.contractType,
-            stakedToken = market.stakedToken,
-            rewardTokens = market.rewardTokens,
-            stakedAmountDecimal = underlyingAmount.asEth(market.stakedToken.decimals),
-            stakedAmount = underlyingAmount.toString(10),
-            exitPositionSupported = market.exitPositionPreparer != null,
-            tokenAmount = tokenAmount.toString(10),
-            tokenAmountDecimal = tokenAmount.asEth(market.stakedToken.decimals),
-            expired = market.expired,
-            market = market.toVO()
-        )
-    }
-
-    fun FarmingMarket.toVO(): FarmingMarketVO {
-        return FarmingMarketVO(
-            id = this.id,
-            network = this.network.toVO(),
-            name = this.name,
-            protocol = protocolVOMapper.map(this.protocol),
-            stakedToken = this.stakedToken,
-            reward = this.rewardTokens,
-            vaultType = this.contractType,
-            marketSize = this.marketSize,
-            apr = this.apr,
-            prepareInvestmentSupported = this.investmentPreparer != null,
-            exitPositionSupported = this.exitPositionPreparer != null,
-            farmType = farmType,
-            expired = this.expired
-        )
     }
 
     companion object {

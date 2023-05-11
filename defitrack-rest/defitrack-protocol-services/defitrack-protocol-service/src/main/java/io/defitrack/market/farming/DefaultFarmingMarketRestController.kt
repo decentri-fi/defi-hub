@@ -3,11 +3,9 @@ package io.defitrack.market.farming
 import io.defitrack.common.network.Network
 import io.defitrack.exit.ExitPositionCommand
 import io.defitrack.invest.PrepareInvestmentCommand
-import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.market.farming.mapper.FarmingMarketVOMapper
 import io.defitrack.market.farming.vo.FarmingMarketVO
 import io.defitrack.market.farming.vo.TransactionPreparationVO
-import io.defitrack.network.toVO
-import io.defitrack.protocol.mapper.ProtocolVOMapper
 import io.defitrack.token.DecentrifiERC20Resource
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.runBlocking
@@ -19,7 +17,7 @@ import org.springframework.web.bind.annotation.*
 class DefaultFarmingMarketRestController(
     private val farmingMarketProviders: List<FarmingMarketProvider>,
     private val erC20Resource: DecentrifiERC20Resource,
-    private val protocolVOMapper: ProtocolVOMapper
+    private val farmingMarketVOMapper: FarmingMarketVOMapper
 ) {
 
 
@@ -34,9 +32,7 @@ class DefaultFarmingMarketRestController(
                 } ?: true
             }.flatMap {
                 it.getMarkets()
-            }.map {
-                it.toVO()
-            }
+            }.map(farmingMarketVOMapper::map)
     }
 
     @GetMapping(value = ["/markets"], params = ["token", "network"])
@@ -59,9 +55,7 @@ class DefaultFarmingMarketRestController(
                 } else {
                     it.stakedToken.address.lowercase() == tokenAddress.lowercase()
                 }
-            }.map {
-                it.toVO()
-            }
+            }.map(farmingMarketVOMapper::map)
     }
 
     @GetMapping(value = ["/markets/{marketId}"])
@@ -69,7 +63,9 @@ class DefaultFarmingMarketRestController(
         @PathVariable("marketId") id: String,
     ): ResponseEntity<FarmingMarketVO> {
         return getStakingMarketById(id)?.let {
-            ResponseEntity.ok(it.toVO())
+            ResponseEntity.ok(
+                farmingMarketVOMapper.map(it)
+            )
         } ?: ResponseEntity.notFound().build()
     }
 
@@ -109,27 +105,4 @@ class DefaultFarmingMarketRestController(
             )
         } ?: ResponseEntity.badRequest().build()
     }
-
-    fun FarmingMarket.toVO(): FarmingMarketVO {
-        return with(
-            FarmingMarketVO(
-                id = this.id,
-                network = this.network.toVO(),
-                protocol = protocolVOMapper.map(this.protocol),
-                name = this.name,
-                stakedToken = this.stakedToken,
-                reward = this.rewardTokens,
-                vaultType = this.contractType,
-                marketSize = this.marketSize,
-                apr = this.apr,
-                prepareInvestmentSupported = this.investmentPreparer != null,
-                exitPositionSupported = this.exitPositionPreparer != null,
-                farmType = farmType,
-                expired = this.expired
-            )
-        ) {
-            this
-        }
-    }
-
 }
