@@ -18,88 +18,10 @@ import org.web3j.abi.datatypes.Event
 import java.math.BigInteger
 
 @Component
-class UniswapV3ArbitrumPoolingMarketProvider() : PoolingMarketProvider() {
-
-    val poolCreatedEvent = Event(
-        "PoolCreated",
-        listOf(
-            TypeUtils.address(true),
-            TypeUtils.address(true),
-            TypeUtils.uint24(true),
-            TypeUtils.int24(),
-            TypeUtils.address(false)
-        )
-    )
-
-    val poolAddresses by lazy {
-        runBlocking {
-            val gateway = getBlockchainGateway()
-            val logs = gateway.getEvents(
-                BlockchainGateway.GetEventLogsCommand(
-                    addresses = listOf("0x1f98431c8ad98523631ae4a59f267346ea31f984"),
-                    topic = "0x783cca1c0412dd0d695e784568c96da2e9c22ff989357a2e8b1d9b2b4e6b7118",
-                    fromBlock = BigInteger("165", 10)
-                )
-            )
-
-            JsonParser().parse(logs).asJsonObject["result"].asJsonArray.map {
-                val data = it.asJsonObject["data"].asString
-                FunctionReturnDecoder.decode(
-                    data, poolCreatedEvent.nonIndexedParameters
-                )[1].value as String
-            }
-        }
-    }
-
-    override suspend fun produceMarkets(): Flow<PoolingMarket> {
-        return channelFlow {
-            poolAddresses.forEach {
-                launch {
-                    try {
-                        throttled {
-                            val uniswapV3Pool = UniswapV3PoolContract(
-                                getBlockchainGateway(),
-                                it
-                            )
-                            val market = toMarket(uniswapV3Pool)
-                            send(market)
-                        }
-                    } catch (ex: Exception) {
-                        ex.printStackTrace()
-                        logger.error("something went wrong trying to import uniswap market ${it}")
-                    }
-                }
-            }
-        }
-    }
-
-    suspend fun toMarket(pool: UniswapV3PoolContract): PoolingMarket {
-        val token = getToken(pool.address)
-        val token0 = getToken(pool.token0())
-        val token1 = getToken(pool.token1())
-        val underlyingTokens = listOf(
-            token0,
-            token1
-        )
-        return create(
-            identifier = "v3-${pool.address}",
-            name = "Uniswap V3 ${token0.symbol}/${token1.symbol} LP",
-            address = pool.address,
-            symbol = "${token0.symbol}-${token1.symbol}",
-            breakdown = defaultBreakdown(underlyingTokens, pool.address),
-            tokens = underlyingTokens.map { it.toFungibleToken() },
-            apr = null,
-            marketSize = marketSizeService.getMarketSize(
-                underlyingTokens.map { it.toFungibleToken() }, pool.address, getNetwork()
-            ),
-            tokenType = TokenType.UNISWAP,
-            positionFetcher = null,
-            totalSupply = token.totalSupply,
-            metadata = mapOf(
-                "tick" to pool.slot0().tick
-            )
-        )
-    }
+class UniswapV3ArbitrumPoolingMarketProvider() : UniswapV3PoolingMarketProvider(
+    "165",
+    "0x1f98431c8ad98523631ae4a59f267346ea31f984"
+) {
 
     override fun getNetwork(): Network {
         return Network.ARBITRUM
