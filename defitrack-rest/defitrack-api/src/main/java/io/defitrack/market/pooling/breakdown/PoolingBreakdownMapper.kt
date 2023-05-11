@@ -1,6 +1,7 @@
 package io.defitrack.market.pooling.breakdown
 
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
+import io.defitrack.common.utils.BigDecimalExtensions.isZero
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
 import io.defitrack.market.pooling.vo.PoolingMarketTokenShareVO
@@ -33,6 +34,10 @@ class PoolingBreakdownMapper {
         val toVO = toVO(poolingMarket.breakdown)
         if (poolingMarket.totalSupply == BigInteger.ZERO) {
             logger.warn("totalSupply is zero for ${poolingMarket.name}")
+            return emptyList()
+        }
+
+        if (userSupply.isZero()) {
             return emptyList()
         }
 

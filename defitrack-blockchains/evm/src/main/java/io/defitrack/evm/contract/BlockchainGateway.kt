@@ -69,7 +69,7 @@ open class BlockchainGateway(
     open suspend fun readMultiCall(elements: List<MultiCallElement>): List<List<Type<*>>> {
         if (elements.isEmpty()) {
             return kotlin.collections.emptyList()
-        } else if (elements.size > 100) {
+        } else if (elements.size > 500) {
             return elements.chunked(100).map {
                 readMultiCall(it)
             }.flatten()
@@ -98,7 +98,6 @@ open class BlockchainGateway(
             println("empty multicall")
         }
         val data = executeCall[1].value as List<DynamicBytes>
-
         return data.map {
             val element = elements[data.indexOf(it)]
             FunctionReturnDecoder.decode(Hex.encodeHexString(it.value), element.function.outputParameters)

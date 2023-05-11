@@ -38,7 +38,7 @@ class DefaultPoolingPositionProvider(
                         if (position.underlyingAmount > BigInteger.ONE) {
                             PoolingPosition(
                                 position.tokenAmount,
-                                market,
+                                market
                             )
                         } else {
                             null

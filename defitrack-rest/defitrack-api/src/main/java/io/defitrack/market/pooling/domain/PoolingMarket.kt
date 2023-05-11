@@ -29,4 +29,5 @@ data class PoolingMarket(
     val breakdown: List<PoolingMarketTokenShare>? = null,
     val erc20Compatible: Boolean = true,
     val price: BigDecimal,
+    val metadata: Map<String, Any>
 ) : DefiMarket

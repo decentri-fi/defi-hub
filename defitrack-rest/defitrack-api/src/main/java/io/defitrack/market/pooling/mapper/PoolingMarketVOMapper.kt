@@ -30,7 +30,8 @@ class PoolingMarketVOMapper(
                 erc20Compatible = erc20Compatible,
                 exitPositionSupported = exitPositionPreparer != null,
                 price = price,
-                totalSupply = totalSupply
+                totalSupply = totalSupply,
+                metadata = metadata
             )
         }
 

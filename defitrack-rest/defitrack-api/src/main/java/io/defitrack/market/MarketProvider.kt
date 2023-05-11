@@ -79,7 +79,7 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
                 }
 
                 produceMarkets().collect {
-                    logger.info("adding ${it.id}")
+                    logger.debug("adding ${it.id}")
                     cache.put(it.id, it)
                 }
                 logger.info("done adding ${cache.asMap().size} markets")

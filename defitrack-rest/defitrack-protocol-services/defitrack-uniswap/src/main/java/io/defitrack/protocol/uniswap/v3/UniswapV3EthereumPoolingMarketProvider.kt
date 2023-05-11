@@ -10,7 +10,6 @@ import io.defitrack.token.TokenType
 import io.defitrack.uniswap.v3.UniswapV3PoolContract
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
@@ -18,7 +17,7 @@ import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.datatypes.Event
 import java.math.BigInteger
 
-//@Component
+@Component
 class UniswapV3EthereumPoolingMarketProvider() : PoolingMarketProvider() {
 
     val poolCreatedEvent = Event(
@@ -54,7 +53,7 @@ class UniswapV3EthereumPoolingMarketProvider() : PoolingMarketProvider() {
 
     override suspend fun produceMarkets(): Flow<PoolingMarket> {
         return channelFlow {
-            val jobs = poolAddresses.map {
+            poolAddresses.forEach {
                 launch {
                     try {
                         logger.info(it)
@@ -63,30 +62,9 @@ class UniswapV3EthereumPoolingMarketProvider() : PoolingMarketProvider() {
                                 getBlockchainGateway(),
                                 it
                             )
-                            val token = getToken(it)
-                            val token0 = getToken(uniswapV3Pool.token0())
-                            val token1 = getToken(uniswapV3Pool.token1())
-                            val underlyingTokens = listOf(
-                                token0,
-                                token1
-                            )
-                            send(
-                                create(
-                                    identifier = "v3-${it}",
-                                    name = "Uniswap V3 ${token0.symbol}/${token1.symbol} LP",
-                                    address = it,
-                                    symbol = "${token0.symbol}-${token1.symbol}",
-                                    breakdown = defaultBreakdown(underlyingTokens, uniswapV3Pool.address),
-                                    tokens = underlyingTokens.map { it.toFungibleToken() },
-                                    apr = null,
-                                    marketSize = marketSizeService.getMarketSize(
-                                        underlyingTokens.map { it.toFungibleToken() }, it, getNetwork()
-                                    ),
-                                    tokenType = TokenType.UNISWAP,
-                                    positionFetcher = defaultPositionFetcher(token.address),
-                                    totalSupply = token.totalSupply
-                                )
-                            )
+
+                            val market = toMarket(uniswapV3Pool)
+                            send(market)
                         }
                     } catch (ex: Exception) {
                         ex.printStackTrace()
@@ -94,8 +72,35 @@ class UniswapV3EthereumPoolingMarketProvider() : PoolingMarketProvider() {
                     }
                 }
             }
-            jobs.joinAll()
         }
+    }
+
+    suspend fun toMarket(pool: UniswapV3PoolContract): PoolingMarket {
+        val token = getToken(pool.address)
+        val token0 = getToken(pool.token0())
+        val token1 = getToken(pool.token1())
+        val underlyingTokens = listOf(
+            token0,
+            token1
+        )
+        return create(
+            identifier = "v3-${pool.address}",
+            name = "Uniswap V3 ${token0.symbol}/${token1.symbol} LP",
+            address = pool.address,
+            symbol = "${token0.symbol}-${token1.symbol}",
+            breakdown = defaultBreakdown(underlyingTokens, pool.address),
+            tokens = underlyingTokens.map { it.toFungibleToken() },
+            apr = null,
+            marketSize = marketSizeService.getMarketSize(
+                underlyingTokens.map { it.toFungibleToken() }, pool.address, getNetwork()
+            ),
+            tokenType = TokenType.UNISWAP,
+            positionFetcher = null,
+            totalSupply = token.totalSupply,
+            metadata = mapOf(
+                "tick" to pool.slot0().tick
+            )
+        )
     }
 
     override fun getNetwork(): Network {

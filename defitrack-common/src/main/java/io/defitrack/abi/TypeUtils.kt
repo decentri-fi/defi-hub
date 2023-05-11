@@ -1,7 +1,10 @@
 package io.defitrack.abi
 
 import org.web3j.abi.TypeReference
-import org.web3j.abi.datatypes.*
+import org.web3j.abi.datatypes.Address
+import org.web3j.abi.datatypes.Bool
+import org.web3j.abi.datatypes.Bytes
+import org.web3j.abi.datatypes.Utf8String
 import org.web3j.abi.datatypes.generated.*
 import java.math.BigInteger
 
@@ -19,6 +22,10 @@ class TypeUtils {
 
         fun BigInteger.toUint16(): Uint16 {
             return Uint16(this)
+        }
+
+        fun BigInteger.toUint24(): Uint24 {
+            return Uint24(this)
         }
 
         fun BigInteger.Int128(): Int128 {
@@ -83,6 +90,14 @@ class TypeUtils {
 
         fun uint16(indexed: Boolean = false): TypeReference<Uint16> {
             return TypeReference.create(Uint16::class.java, indexed)
+        }
+
+        fun uint8(indexed: Boolean = false): TypeReference<Uint8> {
+            return TypeReference.create(Uint8::class.java, indexed)
+        }
+
+        fun uint160(indexed: Boolean = false): TypeReference<Uint160> {
+            return TypeReference.create(Uint160::class.java, indexed)
         }
 
         fun bool(): TypeReference<Bool> {
