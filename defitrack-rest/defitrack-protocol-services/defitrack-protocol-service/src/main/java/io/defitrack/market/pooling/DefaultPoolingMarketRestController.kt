@@ -46,9 +46,15 @@ class DefaultPoolingMarketRestController(
     }
 
     @GetMapping(value = ["/all-markets"])
-    fun allMarkets(@RequestParam(required = false, name = "network") network: Network?): List<PoolingMarketVO> =
+    fun allMarkets(
+        @RequestParam(required = false, name = "network") network: Network?,
+        @RequestParam(required = false, name = "protocol") protocol: String?
+    ): List<PoolingMarketVO> =
         runBlocking {
-            getAllMarkets(network).map(poolingMarketVOMapper::map)
+            getAllMarkets(
+                network = network,
+                protocol = protocol
+            ).map(poolingMarketVOMapper::map)
         }
 
     private suspend fun getAllMarkets(
