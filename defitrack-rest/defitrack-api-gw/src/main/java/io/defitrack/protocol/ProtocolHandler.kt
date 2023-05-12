@@ -1,15 +1,16 @@
 package io.defitrack.protocol
 
-import io.defitrack.protocol.domain.toVO
+import io.defitrack.protocol.mapper.ProtocolVOMapper
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
-import reactor.core.publisher.Mono
 
 @Component
-class ProtocolHandler {
+class ProtocolHandler(
+    private val protocolVOMapper: ProtocolVOMapper
+) {
 
     fun getProtocols(serverRequest: ServerRequest) = ServerResponse.ok()
         .contentType(APPLICATION_JSON)
@@ -17,7 +18,7 @@ class ProtocolHandler {
             BodyInserters.fromValue(
                 Protocol.values().filter {
                     it.enabled
-                }.map(Protocol::toVO)
+                }.map(protocolVOMapper::map)
             )
         )
 }

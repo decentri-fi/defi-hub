@@ -6,5 +6,6 @@ class ProtocolVO(
     val logo: String,
     val slug: String,
     val primitives: List<DefiPrimitive>,
-    val website: String
+    val website: String,
+    val company: CompanyVO
 )

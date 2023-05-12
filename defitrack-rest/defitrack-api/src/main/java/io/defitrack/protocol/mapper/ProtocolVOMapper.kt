@@ -1,5 +1,6 @@
 package io.defitrack.protocol.mapper
 
+import io.defitrack.protocol.CompanyVO
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.ProtocolVO
 import org.springframework.stereotype.Component
@@ -14,7 +15,11 @@ class ProtocolVOMapper {
                 logo = this.getImage(),
                 slug = this.slug,
                 primitives = this.primitives,
-                website = this.website
+                website = this.website,
+                company = CompanyVO(
+                    name = company.prettyName,
+                    slug = company.slug
+                )
             )
         }
     }
