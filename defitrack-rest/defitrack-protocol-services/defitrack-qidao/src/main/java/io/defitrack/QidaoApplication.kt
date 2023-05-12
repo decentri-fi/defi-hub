@@ -1,11 +1,11 @@
 package io.defitrack
 
-import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.Company
 import org.springframework.boot.runApplication
 
 class QidaoApplication : ProtocolApplication() {
-    override fun getProtocol(): Protocol {
-        return Protocol.QIDAO
+    override fun getCompany(): Company {
+        return Company.QIDAO
     }
 }
 

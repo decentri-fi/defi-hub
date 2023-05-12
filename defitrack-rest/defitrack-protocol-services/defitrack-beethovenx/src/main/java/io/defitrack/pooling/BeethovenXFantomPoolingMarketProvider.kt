@@ -18,6 +18,11 @@ import java.math.BigDecimal
 class BeethovenXFantomPoolingMarketProvider(
     private val beethovenXFantomGraphProvider: BeethovenXFantomGraphProvider
 ) : PoolingMarketProvider() {
+
+    override fun getProtocol(): Protocol {
+        return Protocol.BEETHOVENX
+    }
+
     override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
         beethovenXFantomGraphProvider.getPools().map {
             async {

@@ -20,6 +20,9 @@ class ApeswapPolygonPoolingMarketProvider(
     private val apeswapPolygonService: ApeswapPolygonService
 ) : PoolingMarketProvider() {
 
+    override fun getProtocol(): Protocol {
+        return Protocol.APESWAP
+    }
 
     val pools by lazy {
         runBlocking {

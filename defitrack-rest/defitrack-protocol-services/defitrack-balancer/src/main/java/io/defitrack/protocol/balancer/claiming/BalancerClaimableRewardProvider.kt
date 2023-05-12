@@ -4,6 +4,7 @@ import io.defitrack.claimable.Claimable
 import io.defitrack.claimable.ClaimableRewardProvider
 import io.defitrack.claimable.PrepareClaimCommand
 import io.defitrack.market.farming.FarmingMarketProvider
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerGaugeContract
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -16,10 +17,8 @@ abstract class BalancerClaimableRewardProvider(
     private val farmingMarketProvider: FarmingMarketProvider
 ) : ClaimableRewardProvider() {
 
-    val gaugeContractAbi by lazy {
-        runBlocking {
-            abiResource.getABI("balancer/gauge.json")
-        }
+    override fun getProtocol(): Protocol {
+        return Protocol.BALANCER
     }
 
     override suspend fun claimables(address: String): List<Claimable> =

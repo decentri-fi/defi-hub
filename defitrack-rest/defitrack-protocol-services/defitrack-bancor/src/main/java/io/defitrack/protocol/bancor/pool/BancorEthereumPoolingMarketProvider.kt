@@ -3,6 +3,7 @@ package io.defitrack.protocol.bancor.pool
 import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.bancor.BancorEthereumProvider
 import io.defitrack.protocol.bancor.contract.BancorNetworkContract
 import io.defitrack.protocol.bancor.contract.BancorPoolCollection
@@ -18,6 +19,10 @@ import org.springframework.stereotype.Component
 class BancorEthereumPoolingMarketProvider(
     private val bancorEthreumProvider: BancorEthereumProvider,
 ) : PoolingMarketProvider() {
+
+    override fun getProtocol(): Protocol {
+        return Protocol.BANCOR
+    }
 
     val bancorPoolCollection by lazy {
         runBlocking {

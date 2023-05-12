@@ -43,6 +43,10 @@ class SushiswapFantomFarmingMinichefMarketProvider(
         }
     }
 
+    override fun getProtocol(): Protocol {
+        return Protocol.SUSHISWAP
+    }
+
     override fun getNetwork(): Network {
         return Network.FANTOM
     }

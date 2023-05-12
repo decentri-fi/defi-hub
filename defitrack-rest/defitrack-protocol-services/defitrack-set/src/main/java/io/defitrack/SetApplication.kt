@@ -1,11 +1,11 @@
 package io.defitrack
 
-import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.Company
 import org.springframework.boot.runApplication
 
 class SetApplication : ProtocolApplication() {
-    override fun getProtocol(): Protocol {
-        return Protocol.SET
+    override fun getCompany(): Company {
+        return Company.SET
     }
 }
 

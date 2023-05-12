@@ -11,6 +11,7 @@ import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.v2.AaveV2PolygonService
 import io.defitrack.protocol.aave.v2.contract.LendingPoolAddressProviderContract
 import io.defitrack.protocol.aave.v2.contract.LendingPoolContract
@@ -85,6 +86,10 @@ class AaveV2PolygonLendingMarketProvider(
                     }
                 }
             }.awaitAll().filterNotNull()
+    }
+
+    override fun getProtocol(): Protocol {
+        return Protocol.AAVE_V2
     }
 
     private suspend fun calculateMarketSize(

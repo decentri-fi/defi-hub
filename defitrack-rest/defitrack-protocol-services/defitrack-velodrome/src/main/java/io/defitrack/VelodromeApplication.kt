@@ -1,13 +1,11 @@
 package io.defitrack
 
-import io.defitrack.protocol.Protocol
-import org.springframework.boot.autoconfigure.SpringBootApplication
+import io.defitrack.protocol.Company
 import org.springframework.boot.runApplication
-import org.springframework.scheduling.annotation.EnableScheduling
 
-class VelodromeApplication: ProtocolApplication() {
-    override fun getProtocol(): Protocol {
-        return Protocol.VELODROME
+class VelodromeApplication : ProtocolApplication() {
+    override fun getCompany(): Company {
+        return Company.VELODROME
     }
 }
 

@@ -34,6 +34,10 @@ class SwapfishArbitrumMasterchefFarmingMarketProvider(
         }.awaitAll().filterNotNull()
     }
 
+    override fun getProtocol(): Protocol {
+        return Protocol.SWAPFISH
+    }
+
     private suspend fun toStakingMarketElement(
         chef: MasterChefBasedContract,
         poolId: Int

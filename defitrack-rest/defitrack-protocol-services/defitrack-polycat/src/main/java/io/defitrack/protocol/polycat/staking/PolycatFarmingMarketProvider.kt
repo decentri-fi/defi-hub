@@ -38,6 +38,10 @@ class PolycatFarmingMarketProvider(
         }
     }
 
+    override fun getProtocol(): Protocol {
+        return Protocol.POLYCAT
+    }
+
     private suspend fun toStakingMarketElement(
         chef: PolycatMasterChefContract,
         poolId: Int

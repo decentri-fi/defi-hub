@@ -7,6 +7,7 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.ContractType
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.dinoswap.DinoswapService
 import io.defitrack.protocol.dinoswap.contract.DinoswapFossilFarmsContract
 import kotlinx.coroutines.async
@@ -45,6 +46,10 @@ class DinoswapFarmingMarketProvider(
                 }
             }
         }.awaitAll().filterNotNull()
+    }
+
+    override fun getProtocol(): Protocol {
+        return Protocol.DINOSWAP
     }
 
     private suspend fun toStakingMarketElement(

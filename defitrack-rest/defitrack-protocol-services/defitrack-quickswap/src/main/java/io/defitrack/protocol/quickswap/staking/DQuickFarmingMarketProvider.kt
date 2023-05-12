@@ -6,6 +6,7 @@ import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.ContractType
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.contract.DQuickContract
 import io.defitrack.protocol.quickswap.staking.invest.DQuickStakingInvestmentPreparer
@@ -62,6 +63,10 @@ class DQuickFarmingMarketProvider(
                 }
             )
         )
+    }
+
+    override fun getProtocol(): Protocol {
+        return Protocol.QUICKSWAP
     }
 
     override fun getNetwork(): Network {

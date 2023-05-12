@@ -3,6 +3,7 @@ package io.defitrack.pooling
 import io.defitrack.apr.SpiritswapAPRService
 import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SpiritswapService
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
@@ -43,6 +44,10 @@ class SpiritFantomPoolingMarketProvider(
                     totalSupply = token.totalSupply
                 )
             }
+    }
+
+    override fun getProtocol(): Protocol {
+        return Protocol.SPIRITSWAP
     }
 
     override fun getNetwork(): Network {

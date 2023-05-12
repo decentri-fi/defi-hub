@@ -3,6 +3,7 @@ package io.defitrack.protocol.dfyn.pooling
 import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.dfyn.DfynService
 import io.defitrack.protocol.dfyn.apr.DfynAPRService
 import io.defitrack.protocol.dfyn.domain.Pair
@@ -27,6 +28,10 @@ class DfynPoolingMarketProvider(
                 }
             }
         }.awaitAll().filterNotNull()
+    }
+
+    override fun getProtocol(): Protocol {
+        return Protocol.DFYN
     }
 
     private suspend fun DfynPoolingMarketProvider.createMarket(it: Pair): PoolingMarket? {

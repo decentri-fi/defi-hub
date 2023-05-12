@@ -4,6 +4,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.CamelotService
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.algebra.AlgebraPoolContract
 import io.defitrack.protocol.algebra.AlgebraPosition
 import io.defitrack.token.TokenType
@@ -28,6 +29,10 @@ class CamelotNFTV2PoolingMarketProvider(
                 toMarket(it)
             }
         }.awaitAll()
+    }
+
+    override fun getProtocol(): Protocol {
+        return Protocol.CAMELOT
     }
 
     suspend fun toMarket(it: AlgebraPosition): PoolingMarket {

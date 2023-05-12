@@ -6,6 +6,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
+import io.defitrack.protocol.Protocol
 import io.defitrack.token.TokenType
 import io.defitrack.uniswap.v3.UniswapFactoryContract
 import io.defitrack.uniswap.v3.UniswapV3PoolContract
@@ -113,5 +114,9 @@ abstract class UniswapV3PoolingMarketProvider(
 
     override fun getNetwork(): Network {
         return Network.ARBITRUM
+    }
+
+    override fun getProtocol(): Protocol {
+        return Protocol.UNISWAP_V3
     }
 }

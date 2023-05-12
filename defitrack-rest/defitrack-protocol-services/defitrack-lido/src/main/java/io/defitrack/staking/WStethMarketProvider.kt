@@ -6,6 +6,7 @@ import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.ContractType
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.adamant.StethContract
 import io.defitrack.protocol.adamant.WSTEthContract
 import org.springframework.stereotype.Component
@@ -48,6 +49,10 @@ class WStethMarketProvider(
                 marketSize = calculateMarketSize().toBigDecimal()
             )
         )
+    }
+
+    override fun getProtocol(): Protocol {
+        return Protocol.LIDO
     }
 
     suspend fun calculateMarketSize(): Double {

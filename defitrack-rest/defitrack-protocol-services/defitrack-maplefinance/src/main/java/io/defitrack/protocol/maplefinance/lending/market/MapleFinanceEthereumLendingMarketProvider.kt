@@ -3,6 +3,7 @@ package io.defitrack.protocol.maplefinance.lending.market
 import io.defitrack.common.network.Network
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.maplefinance.MapleFinanceEthereumGraphProvider
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -34,6 +35,10 @@ class MapleFinanceEthereumLendingMarketProvider(
                 }
             }
         }.awaitAll().filterNotNull()
+    }
+
+    override fun getProtocol(): Protocol {
+        return Protocol.MAPLEFINANCE
     }
 
     override fun getNetwork() = Network.ETHEREUM

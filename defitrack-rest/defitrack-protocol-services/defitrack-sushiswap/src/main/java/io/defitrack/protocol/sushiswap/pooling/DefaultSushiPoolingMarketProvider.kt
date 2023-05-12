@@ -2,6 +2,7 @@ package io.defitrack.protocol.sushiswap.pooling
 
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SushiswapService
 import io.defitrack.protocol.sushiswap.apr.SushiPoolingAPRCalculator
 import io.defitrack.token.TokenType
@@ -12,7 +13,9 @@ import kotlinx.coroutines.coroutineScope
 abstract class DefaultSushiPoolingMarketProvider(
     private val sushiServices: List<SushiswapService>,
 ) : PoolingMarketProvider() {
-
+    override fun getProtocol(): Protocol {
+        return Protocol.SUSHISWAP
+    }
     override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
 
         sushiServices.filter { sushiswapService ->

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 class UniswapTokenIdentifier(
     lpContractReader: LpContractReader
 ) : DefaultLpIdentifier(
-    Protocol.UNISWAP, TokenType.UNISWAP, lpContractReader,
+    Protocol.UNISWAP_V2, TokenType.UNISWAP, lpContractReader,
 ) {
     override suspend fun isProtocolToken(token: ERC20): Boolean {
         return token.symbol == "UNI-V2" && token.network != Network.POLYGON

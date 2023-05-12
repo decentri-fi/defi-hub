@@ -7,12 +7,12 @@ import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.ContractType
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerGaugeContract
 import io.defitrack.protocol.graph.BeethovenXOptimismGaugeGraphProvider
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 
 @Component
@@ -20,12 +20,6 @@ class BeethovenXOptimismFarmingMarketProvider(
     private val gaugeProvider: BeethovenXOptimismGaugeGraphProvider,
 ) :
     FarmingMarketProvider() {
-
-    val balancerGaugeContractAbi by lazy {
-        runBlocking {
-            getAbi("balancer/gauge.json")
-        }
-    }
 
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
         gaugeProvider.getGauges().map {
@@ -60,6 +54,10 @@ class BeethovenXOptimismFarmingMarketProvider(
                 }
             }
         }.awaitAll().filterNotNull()
+    }
+
+    override fun getProtocol(): Protocol {
+        return Protocol.BEETHOVENX
     }
 
     suspend fun getRewardTokens(balancerGaugeContract: BalancerGaugeContract): List<TokenInformationVO> {

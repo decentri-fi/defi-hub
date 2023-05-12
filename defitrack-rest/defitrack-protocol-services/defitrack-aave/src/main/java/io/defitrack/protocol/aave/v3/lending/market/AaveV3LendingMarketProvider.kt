@@ -90,7 +90,7 @@ abstract class AaveV3LendingMarketProvider(
         }.awaitAll().filterNotNull()
     }
 
-    override fun getProtocol() = Protocol.AAVE
+    override fun getProtocol() = Protocol.AAVE_V3
 
     override fun getNetwork() = network
 }

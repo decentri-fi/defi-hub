@@ -7,6 +7,7 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.network.toVO
 import io.defitrack.protocol.ContractType
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.crv.contract.CurveGaugeContract
 import io.defitrack.protocol.crv.contract.CurvePolygonGaugeControllerContract
 import io.defitrack.transaction.PreparedTransaction
@@ -18,6 +19,10 @@ abstract class CurveGaugeFarmingMarketProvider(
     private val gaugeControllerAddress: String
 ) : FarmingMarketProvider() {
 
+
+    override fun getProtocol(): Protocol {
+        return Protocol.CURVE
+    }
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         return coroutineScope {
 

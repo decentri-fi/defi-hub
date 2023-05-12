@@ -8,6 +8,7 @@ import io.defitrack.market.lending.domain.Position
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.OlympusEthereumService
+import io.defitrack.protocol.Protocol
 import org.springframework.stereotype.Service
 import java.math.BigInteger
 
@@ -44,6 +45,10 @@ class GOHMMarketProvider(
                 farmType = ContractType.STAKING
             )
         )
+    }
+
+    override fun getProtocol(): Protocol {
+        return Protocol.OLYMPUSDAO
     }
 
     override fun getNetwork(): Network {

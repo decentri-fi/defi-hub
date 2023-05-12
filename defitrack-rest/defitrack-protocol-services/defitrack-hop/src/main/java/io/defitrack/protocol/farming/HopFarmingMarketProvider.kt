@@ -8,6 +8,7 @@ import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.HopService
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.contract.HopStakingReward
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
@@ -75,4 +76,8 @@ abstract class HopFarmingMarketProvider(
             )
         )
     )
+
+    override fun getProtocol(): Protocol {
+        return Protocol.HOP
+    }
 }

@@ -7,6 +7,7 @@ import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
 import io.defitrack.price.PriceRequest
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.set.EthereumSetProvider
 import io.defitrack.protocol.set.SetTokenContract
 import io.defitrack.token.TokenType
@@ -65,6 +66,10 @@ class EthereumSetPoolingMarketProvider(
                 null
             }
         }
+    }
+
+    override fun getProtocol(): Protocol {
+        return Protocol.SET
     }
 
     suspend fun getPrice(positions: List<SetTokenContract.Position>): BigDecimal {

@@ -30,6 +30,10 @@ class CowswapVirtualTokenVaultProvider : FarmingMarketProvider() {
         )
     }
 
+    override fun getProtocol(): Protocol {
+        return Protocol.COWSWAP
+    }
+
     override fun getNetwork(): Network {
         return Network.ETHEREUM
     }

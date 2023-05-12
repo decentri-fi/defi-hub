@@ -5,6 +5,7 @@ import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.ContractType
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.QidaoPolygonService
 import io.defitrack.protocol.contract.QidaoFarmV2Contract
 import io.defitrack.token.DecentrifiERC20Resource
@@ -27,6 +28,10 @@ class QidaoFarmingMarketProvider(
                 toStakingMarketElement(contract, poolId)
             }
         }
+    }
+
+    override fun getProtocol(): Protocol {
+        return Protocol.QIDAO
     }
 
     private suspend fun toStakingMarketElement(

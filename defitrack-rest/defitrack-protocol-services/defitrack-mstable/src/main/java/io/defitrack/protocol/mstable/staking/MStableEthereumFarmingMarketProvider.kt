@@ -44,6 +44,10 @@ class MStableEthereumFarmingMarketProvider(
         }.awaitAll().filterNotNull()
     }
 
+    override fun getProtocol(): Protocol {
+        return Protocol.MSTABLE
+    }
+
     private suspend fun toStakingMarket(contract: MStableEthereumBoostedSavingsVaultContract): FarmingMarket {
         val stakingToken = getToken(contract.stakingToken())
         val rewardsToken = getToken(contract.rewardsToken())

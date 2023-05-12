@@ -1,11 +1,12 @@
 package io.defitrack
 
-import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.Company
 import org.springframework.boot.runApplication
 
 class RibbonAplication : ProtocolApplication() {
-    override fun getProtocol(): Protocol {
-        return Protocol.RIBBON
+
+    override fun getCompany(): Company {
+        return Company.RIBBON
     }
 }
 

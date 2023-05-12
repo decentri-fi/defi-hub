@@ -32,7 +32,7 @@ class AavePolygonBorrowingService(
         }
     }
 
-    override fun getProtocol(): Protocol = Protocol.AAVE
+    override fun getProtocol(): Protocol = Protocol.AAVE_V2
 
     override fun getNetwork(): Network = Network.POLYGON
 }

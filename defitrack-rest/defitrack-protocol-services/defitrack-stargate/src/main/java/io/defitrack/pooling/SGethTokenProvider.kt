@@ -3,6 +3,7 @@ package io.defitrack.pooling
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
+import io.defitrack.protocol.Protocol
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
@@ -12,6 +13,9 @@ abstract class SGethTokenProvider(
 ) : PoolingMarketProvider() {
 
 
+    override fun getProtocol(): Protocol {
+        return Protocol.STARGATE
+    }
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
         val token = getToken(address)
         val underlying = getToken("0x0")

@@ -7,6 +7,7 @@ import java.math.BigInteger
 
 interface ProtocolService {
     fun getProtocol(): Protocol
+
     fun getNetwork(): Network
 
     fun toDecimalValue(balance: BigInteger, decimals: Int): Double {

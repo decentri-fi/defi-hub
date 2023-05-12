@@ -3,6 +3,7 @@ package io.defitrack.farming
 import io.defitrack.common.network.Network
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.QidaoPolygonService
 import io.defitrack.protocol.contract.QidaoVaultContract
 import org.springframework.stereotype.Service
@@ -39,6 +40,10 @@ class QiDaoPolygonVaultProvider(
                 marketToken = null
             )
         }
+    }
+
+    override fun getProtocol(): Protocol {
+        return Protocol.QIDAO
     }
 
     override fun getNetwork(): Network {

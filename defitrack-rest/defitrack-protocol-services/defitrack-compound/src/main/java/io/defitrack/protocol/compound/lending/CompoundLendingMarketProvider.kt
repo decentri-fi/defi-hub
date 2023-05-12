@@ -10,6 +10,7 @@ import io.defitrack.market.lending.domain.Position
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.compound.CompoundEthereumService
 import io.defitrack.protocol.compound.lending.invest.CompoundLendingInvestmentPreparer
 import io.defitrack.protocol.compound.v2.contract.CompoundComptrollerContract
@@ -50,6 +51,10 @@ class CompoundLendingMarketProvider(
                 }
             }
         }.awaitAll().filterNotNull()
+    }
+
+    override fun getProtocol(): Protocol {
+        return Protocol.COMPOUND
     }
 
     private suspend fun toLendingMarket(ctokenContract: CompoundTokenContract): LendingMarket? {

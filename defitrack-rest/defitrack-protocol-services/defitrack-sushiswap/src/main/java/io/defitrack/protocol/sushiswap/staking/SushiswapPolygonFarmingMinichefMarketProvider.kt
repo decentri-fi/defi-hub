@@ -9,6 +9,7 @@ import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.ContractType
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SushiPolygonService
 import io.defitrack.protocol.reward.MiniChefV2Contract
 import io.defitrack.protocol.sushiswap.apr.MinichefStakingAprCalculator
@@ -45,6 +46,10 @@ class SushiswapPolygonFarmingMinichefMarketProvider(
 
             }
         }.awaitAll().filterNotNull()
+    }
+
+    override fun getProtocol(): Protocol {
+        return Protocol.SUSHISWAP
     }
 
     override fun getNetwork(): Network {

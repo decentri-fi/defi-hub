@@ -3,6 +3,7 @@ package io.defitrack.protocol.kyberswap.pooling
 import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.kyberswap.apr.KyberswapAPRService
 import io.defitrack.protocol.kyberswap.graph.KyberswapPolygonGraphProvider
 import io.defitrack.token.TokenType
@@ -46,6 +47,10 @@ class KyberswapPolygonPoolingMarketProvider(
                 }
             }
         }.awaitAll().filterNotNull()
+    }
+
+    override fun getProtocol(): Protocol {
+        return Protocol.KYBER_SWAP
     }
 
     override fun getNetwork(): Network {

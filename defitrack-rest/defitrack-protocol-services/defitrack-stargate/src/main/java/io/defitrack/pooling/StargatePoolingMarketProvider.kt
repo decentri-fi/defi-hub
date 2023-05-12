@@ -4,6 +4,7 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.StargateService
 import io.defitrack.protocol.contract.StargatePool
 import io.defitrack.protocol.contract.StargatePoolFactory
@@ -15,6 +16,11 @@ import kotlinx.coroutines.launch
 abstract class StargatePoolingMarketProvider(
     stargateService: StargateService
 ) : PoolingMarketProvider() {
+
+
+    override fun getProtocol(): Protocol {
+        return Protocol.STARGATE
+    }
 
     val factory by lazy {
         StargatePoolFactory(

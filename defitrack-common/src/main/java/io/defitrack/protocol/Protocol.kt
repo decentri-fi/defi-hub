@@ -193,7 +193,20 @@ enum class Protocol(
         networks = listOf(Network.ETHEREUM, Network.FANTOM),
         company = Company.IRON_BANK
     ),
-    AAVE(
+    AAVE_V2(
+        logo = "aave.png",
+        slug = "aave",
+        website = "https://aave.com/",
+        primitives = listOf(
+            DefiPrimitive.LENDING,
+            DefiPrimitive.BORROWING,
+            DefiPrimitive.FARMING,
+            DefiPrimitive.POOLING
+        ),
+        company = Company.AAVE,
+        networks = listOf(Network.ETHEREUM, Network.POLYGON, Network.ARBITRUM, Network.OPTIMISM)
+    ),
+    AAVE_V3(
         logo = "aave.png",
         slug = "aave",
         website = "https://aave.com/",
@@ -278,7 +291,15 @@ enum class Protocol(
         networks = listOf(Network.POLYGON),
         company = Company.ADAMANT
     ),
-    UNISWAP(
+    UNISWAP_V2(
+        logo = "uniswap.png",
+        slug = "uniswap",
+        website = "https://uniswap.org",
+        primitives = listOf(element = DefiPrimitive.POOLING),
+        networks = listOf(Network.ETHEREUM, Network.POLYGON),
+        company = Company.UNISWAP
+    ),
+    UNISWAP_V3(
         logo = "uniswap.png",
         slug = "uniswap",
         website = "https://uniswap.org",

@@ -37,6 +37,11 @@ class AaveV2IncentivesControllerMarketProvider : FarmingMarketProvider() {
             )
         )
     }
+
+    override fun getProtocol(): Protocol {
+        return Protocol.AAVE_V2
+    }
+
     override fun getNetwork(): Network {
         return Network.ETHEREUM
     }

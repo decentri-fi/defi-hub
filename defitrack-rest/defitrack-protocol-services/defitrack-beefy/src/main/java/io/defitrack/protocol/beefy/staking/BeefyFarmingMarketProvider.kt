@@ -9,6 +9,7 @@ import io.defitrack.market.lending.domain.Position
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.ContractType
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
 import io.defitrack.protocol.beefy.domain.BeefyVault
@@ -27,6 +28,11 @@ abstract class BeefyFarmingMarketProvider(
     private val beefyAPYService: BeefyAPYService,
     private val vaults: List<BeefyVault>,
 ) : FarmingMarketProvider() {
+
+
+    override fun getProtocol(): Protocol {
+        return Protocol.BEEFY
+    }
 
     val vaultV6ABI by lazy {
         runBlocking {

@@ -4,6 +4,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
+import io.defitrack.protocol.Protocol
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 
@@ -40,7 +41,12 @@ class ABPTPoolingMarketProvider() : PoolingMarketProvider(
         )
     }
 
+    override fun getProtocol(): Protocol {
+        return Protocol.AAVE_V3
+    }
+
     override fun getNetwork(): Network {
         return Network.ETHEREUM
     }
+
 }

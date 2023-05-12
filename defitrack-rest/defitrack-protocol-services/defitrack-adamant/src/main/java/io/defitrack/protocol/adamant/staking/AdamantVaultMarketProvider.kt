@@ -7,6 +7,7 @@ import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.ContractType
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.adamant.AdamantService
 import io.defitrack.protocol.adamant.AdamantVaultContract
 import io.defitrack.protocol.adamant.claimable.AdamantVaultClaimPreparer
@@ -20,6 +21,11 @@ import org.springframework.stereotype.Service
 class AdamantVaultMarketProvider(
     private val adamantService: AdamantService,
 ) : FarmingMarketProvider() {
+
+    override fun getProtocol(): Protocol {
+        return Protocol.ADAMANT
+    }
+
 
     val genericVault by lazy {
         runBlocking {

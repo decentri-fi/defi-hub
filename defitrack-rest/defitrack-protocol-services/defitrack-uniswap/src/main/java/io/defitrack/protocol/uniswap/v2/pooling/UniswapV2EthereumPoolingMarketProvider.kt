@@ -2,6 +2,7 @@ package io.defitrack.protocol.uniswap.v2.pooling
 
 import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.uniswap.v2.apr.UniswapAPRService
 import io.defitrack.token.TokenType
 import io.defitrack.uniswap.v2.AbstractUniswapV2Service
@@ -53,6 +54,10 @@ class UniswapV2EthereumPoolingMarketProvider(
                 }
             }
         }
+    }
+
+    override fun getProtocol(): Protocol {
+        TODO("Not yet implemented")
     }
 
     override fun getNetwork(): Network {

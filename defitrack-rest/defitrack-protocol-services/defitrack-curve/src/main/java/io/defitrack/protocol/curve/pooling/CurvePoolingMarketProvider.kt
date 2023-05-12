@@ -3,6 +3,7 @@ package io.defitrack.protocol.curve.pooling
 import io.defitrack.common.network.Network
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.crv.CurvePoolGraphProvider
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
@@ -14,6 +15,9 @@ abstract class CurvePoolingMarketProvider(
     private val curvePoolGraphProvider: CurvePoolGraphProvider
 ) : PoolingMarketProvider() {
 
+    override fun getProtocol(): Protocol {
+        return Protocol.CURVE
+    }
 
     override suspend fun fetchMarkets(): List<PoolingMarket> =
         coroutineScope {

@@ -5,6 +5,7 @@ import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.ContractType
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.tornadocash.farming.StakingRewardsContract
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
@@ -12,7 +13,7 @@ import java.math.BigInteger
 import java.math.RoundingMode
 
 @Component
-class StakingRewardsFarmProvider : FarmingMarketProvider() {
+class TornadoCashStakingRewardsFarmProvider : FarmingMarketProvider() {
 
     val stakingRewards = "0x720ffb58b4965d2c0bd2b827fa8316c2002a98aa"
 
@@ -34,6 +35,10 @@ class StakingRewardsFarmProvider : FarmingMarketProvider() {
                 apr = calculateSingleRewardPool(stakingRewardsContract),
             )
         )
+    }
+
+    override fun getProtocol(): Protocol {
+        return Protocol.TORNADO_CASH
     }
 
     private suspend fun calculateSingleRewardPool(stakingRewardsContract: StakingRewardsContract): BigDecimal {

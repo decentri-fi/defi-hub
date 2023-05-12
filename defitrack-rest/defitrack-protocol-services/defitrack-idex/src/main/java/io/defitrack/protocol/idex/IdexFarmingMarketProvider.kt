@@ -5,6 +5,7 @@ import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.ContractType
+import io.defitrack.protocol.Protocol
 import io.defitrack.token.DecentrifiERC20Resource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -44,6 +45,11 @@ class IdexFarmingMarketProvider(
                 }
             }
         }.awaitAll().filterNotNull()
+    }
+
+    override fun getProtocol(): Protocol {
+        return Protocol.IDEX
+
     }
 
     override fun getNetwork(): Network {

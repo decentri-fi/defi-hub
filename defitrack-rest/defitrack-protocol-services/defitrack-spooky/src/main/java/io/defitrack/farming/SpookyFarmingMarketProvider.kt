@@ -65,6 +65,10 @@ class SpookyFarmingMarketProvider(
         }.awaitAll().filterNotNull()
     }
 
+    override fun getProtocol(): Protocol {
+        return Protocol.SPOOKY
+    }
+
     override fun getNetwork(): Network {
         return Network.FANTOM
     }

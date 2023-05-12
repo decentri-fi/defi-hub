@@ -1,11 +1,12 @@
 package io.defitrack
 
+import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import org.springframework.boot.runApplication
 
 class AaveApplication : ProtocolApplication() {
-    override fun getProtocol(): Protocol {
-        return Protocol.AAVE
+    override fun getCompany(): Company {
+        return Company.AAVE
     }
 }
 

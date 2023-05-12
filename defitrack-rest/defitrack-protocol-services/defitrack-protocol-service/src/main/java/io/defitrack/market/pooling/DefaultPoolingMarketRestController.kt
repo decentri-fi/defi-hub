@@ -6,6 +6,7 @@ import io.defitrack.market.farming.vo.TransactionPreparationVO
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.mapper.PoolingMarketVOMapper
 import io.defitrack.market.pooling.vo.PoolingMarketVO
+import io.defitrack.protocol.Protocol
 import io.defitrack.token.DecentrifiERC20Resource
 import io.defitrack.token.TokenType
 import io.defitrack.utils.PageUtils.createPageFromList
@@ -30,8 +31,13 @@ class DefaultPoolingMarketRestController(
     }
 
     @GetMapping("/markets")
-    fun getMarkets(pageable: Pageable): Page<PoolingMarketVO> = runBlocking {
-        val allMarkets = getAllMarkets()
+    fun getMarkets(
+        pageable: Pageable,
+        @RequestParam(required = false, name = "protocol") protocol: String?
+    ): Page<PoolingMarketVO> = runBlocking {
+        val allMarkets = getAllMarkets(
+            protocol = protocol
+        )
         createPageFromList(
             allMarkets, pageable
         ).map {
@@ -45,8 +51,19 @@ class DefaultPoolingMarketRestController(
             getAllMarkets(network).map(poolingMarketVOMapper::map)
         }
 
-    private suspend fun getAllMarkets(network: Network? = null): List<PoolingMarket> = coroutineScope {
+    private suspend fun getAllMarkets(
+        network: Network? = null,
+        protocol: String? = null
+    ): List<PoolingMarket> = coroutineScope {
+
+        val pro = Protocol.values().find {
+            it.slug == protocol
+        }
+
         poolingMarketProviders
+            .filter {
+                pro?.let { pro -> it.getProtocol() == pro } ?: true
+            }
             .filter {
                 network?.let { network -> it.getNetwork() == network } ?: true
             }

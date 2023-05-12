@@ -104,6 +104,10 @@ class OldQuickswapFarmingMarketProvider(
         }.awaitAll().filterNotNull()
     }
 
+    override fun getProtocol(): Protocol {
+        return Protocol.QUICKSWAP
+    }
+
     private suspend fun getMarketSize(
         stakedTokenInformation: TokenInformationVO,
         pool: QuickswapRewardPoolContract

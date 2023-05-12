@@ -1,7 +1,7 @@
 package io.defitrack
 
-import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.ProtocolProvider
+import io.defitrack.protocol.Company
+import io.defitrack.protocol.CompanyProvider
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.Bean
@@ -13,14 +13,14 @@ import org.springframework.scheduling.annotation.EnableScheduling
 abstract class ProtocolApplication {
 
     @Bean
-    fun provideProtocol(): ProtocolProvider {
-        return object : ProtocolProvider {
-            override fun getProtocol(): Protocol {
-                return this@ProtocolApplication.getProtocol()
+    fun provideCompany(): CompanyProvider {
+        return object : CompanyProvider {
+            override fun getCompany(): Company {
+                return this@ProtocolApplication.getCompany()
             }
         }
     }
 
-    abstract fun getProtocol(): Protocol
+    abstract fun getCompany(): Company
 
 }

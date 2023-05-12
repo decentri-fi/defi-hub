@@ -5,6 +5,7 @@ import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.HopService
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.apr.HopAPRService
 import io.defitrack.protocol.contract.HopLpTokenContract
 import io.defitrack.protocol.contract.HopSwapContract
@@ -100,4 +101,8 @@ abstract class HopPoolingMarketProvider(
         )
     }
 
+
+    override fun getProtocol(): Protocol {
+        return Protocol.HOP
+    }
 }

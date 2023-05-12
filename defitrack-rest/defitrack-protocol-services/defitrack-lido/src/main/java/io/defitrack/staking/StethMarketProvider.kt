@@ -51,6 +51,10 @@ class StethMarketProvider(
         )
     }
 
+    override fun getProtocol(): Protocol {
+        return Protocol.LIDO
+    }
+
     override fun getNetwork(): Network {
         return Network.ETHEREUM
 

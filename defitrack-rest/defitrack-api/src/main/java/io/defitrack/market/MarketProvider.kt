@@ -13,7 +13,7 @@ import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.ProtocolProvider
+import io.defitrack.protocol.CompanyProvider
 import io.defitrack.protocol.ProtocolService
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.FungibleToken
@@ -45,7 +45,7 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
     private lateinit var erC20Resource: ERC20Resource
 
     @Autowired
-    private lateinit var protocolProvider: ProtocolProvider
+    private lateinit var companyProvider: CompanyProvider
 
     @Autowired
     private lateinit var priceResource: PriceResource
@@ -176,9 +176,5 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
 
     suspend fun getAbi(name: String): String {
         return abiResource.getABI(name)
-    }
-
-    override fun getProtocol(): Protocol {
-        return protocolProvider.getProtocol()
     }
 }

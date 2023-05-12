@@ -35,6 +35,10 @@ class SushiswapEthereumMasterchefMarketProvider : FarmingMarketProvider() {
         }.awaitAll().filterNotNull()
     }
 
+    override fun getProtocol(): Protocol {
+        return Protocol.SUSHISWAP
+    }
+
     override fun getNetwork(): Network {
         return Network.ETHEREUM
     }

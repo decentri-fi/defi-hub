@@ -8,6 +8,7 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.protocol.ContractType
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerGaugeContract
 import io.defitrack.protocol.balancer.contract.BalancerLiquidityGaugeFactoryContract
 import kotlinx.coroutines.async
@@ -21,6 +22,9 @@ abstract class BalancerGaugeFarmingMarketProvider(
     private val gaugeFactory: String,
 ) : FarmingMarketProvider() {
 
+    override fun getProtocol(): Protocol {
+        return Protocol.BALANCER
+    }
 
     val factory by lazy {
         BalancerLiquidityGaugeFactoryContract(

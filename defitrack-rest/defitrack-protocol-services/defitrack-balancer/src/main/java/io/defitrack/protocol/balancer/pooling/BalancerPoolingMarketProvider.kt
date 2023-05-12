@@ -4,6 +4,7 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.BalancerPoolGraphProvider
 import io.defitrack.protocol.balancer.Pool
 import io.defitrack.protocol.balancer.contract.BalancerPoolContract
@@ -18,7 +19,9 @@ abstract class BalancerPoolingMarketProvider(
     private val balancerPoolGraphProvider: BalancerPoolGraphProvider
 ) : PoolingMarketProvider() {
 
-
+    override fun getProtocol(): Protocol {
+        return Protocol.BALANCER
+    }
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
         balancerPoolGraphProvider.getPools().forEach {
             launch {

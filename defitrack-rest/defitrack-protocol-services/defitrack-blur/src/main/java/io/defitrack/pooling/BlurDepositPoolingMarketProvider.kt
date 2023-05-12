@@ -6,6 +6,7 @@ import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
+import io.defitrack.protocol.Protocol
 import io.defitrack.token.FungibleToken
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.coroutineScope
@@ -39,6 +40,10 @@ class BlurDepositPoolingMarketProvider : PoolingMarketProvider() {
                 positionFetcher = defaultPositionFetcher(blurEthDeposit),
             )
         )
+    }
+
+    override fun getProtocol(): Protocol {
+        return Protocol.BLUR
     }
 
     private suspend fun calculateMarketSize(): BigDecimal {

@@ -79,7 +79,7 @@ class StABPTStakingMarketProvider(
     }
 
     override fun getProtocol(): Protocol {
-        return Protocol.AAVE
+        return Protocol.AAVE_V3
     }
 
     override fun getNetwork(): Network {

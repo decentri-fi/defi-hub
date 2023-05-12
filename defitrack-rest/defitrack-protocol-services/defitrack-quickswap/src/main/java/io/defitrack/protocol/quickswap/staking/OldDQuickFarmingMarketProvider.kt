@@ -66,6 +66,10 @@ class OldDQuickFarmingMarketProvider(
         )
     }
 
+    override fun getProtocol(): Protocol {
+        return Protocol.QUICKSWAP
+    }
+
     override fun getNetwork(): Network {
         return Network.POLYGON
     }

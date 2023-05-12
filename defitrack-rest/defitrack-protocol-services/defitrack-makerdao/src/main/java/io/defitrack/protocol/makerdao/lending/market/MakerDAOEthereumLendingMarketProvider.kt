@@ -3,6 +3,7 @@ package io.defitrack.protocol.makerdao.lending.market
 import io.defitrack.common.network.Network
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.makerdao.MakerDAOEthereumGraphProvider
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -34,6 +35,10 @@ class MakerDAOEthereumLendingMarketProvider(
                 }
             }
         }.awaitAll().filterNotNull()
+    }
+
+    override fun getProtocol(): Protocol {
+        return Protocol.MAKERDAO
     }
 
     override fun getNetwork() = Network.ETHEREUM

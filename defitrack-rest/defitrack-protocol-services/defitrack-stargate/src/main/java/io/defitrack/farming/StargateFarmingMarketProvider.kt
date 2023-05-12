@@ -4,6 +4,7 @@ import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.ContractType
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.StargateService
 import io.defitrack.protocol.contract.LPStakingContract
 import kotlinx.coroutines.runBlocking
@@ -13,6 +14,11 @@ import org.springframework.stereotype.Component
 abstract class StargateFarmingMarketProvider(
     private val stargateOptimismService: StargateService,
 ) : FarmingMarketProvider() {
+
+
+    override fun getProtocol(): Protocol {
+        return Protocol.STARGATE
+    }
 
     val lpStakingContractAbi by lazy {
         runBlocking {

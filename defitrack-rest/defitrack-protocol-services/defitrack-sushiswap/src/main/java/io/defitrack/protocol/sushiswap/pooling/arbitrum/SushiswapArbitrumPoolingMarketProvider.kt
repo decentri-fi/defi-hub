@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component
 class SushiswapArbitrumPoolingMarketProvider(
     sushiServices: List<SushiswapService>,
 ) : DefaultSushiPoolingMarketProvider(sushiServices) {
+
+
     override fun getNetwork(): Network {
         return Network.ARBITRUM
     }

@@ -50,6 +50,10 @@ class AuraDepositVaultFarmingMarketProvider(
         }.awaitAll().filterNotNull()
     }
 
+    override fun getProtocol(): Protocol {
+        return Protocol.AURA
+    }
+
     override fun getNetwork(): Network {
         return Network.ETHEREUM
     }

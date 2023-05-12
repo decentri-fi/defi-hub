@@ -3,6 +3,7 @@ package io.defitrack.protocol.compound.lending
 import io.defitrack.common.network.Network
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.compound.CompoundEthereumService
 import io.defitrack.protocol.compound.v3.contract.CompoundV3AssetContract
 import org.springframework.stereotype.Component
@@ -30,6 +31,10 @@ class CompoundV3LendingMarketProvider(
                 )
             }
         }
+    }
+
+    override fun getProtocol(): Protocol {
+        return Protocol.COMPOUND
     }
 
     override fun getNetwork(): Network {

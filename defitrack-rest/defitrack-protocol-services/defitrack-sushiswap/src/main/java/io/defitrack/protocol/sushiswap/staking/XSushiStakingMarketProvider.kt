@@ -8,6 +8,7 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.Position
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.ContractType
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.xsushi.XSushiContract
 import org.springframework.stereotype.Component
 import java.math.BigInteger
@@ -58,6 +59,10 @@ class XSushiStakingMarketProvider(
                 farmType = ContractType.STAKING
             )
         )
+    }
+
+    override fun getProtocol(): Protocol {
+        return Protocol.SUSHISWAP
     }
 
     override fun getNetwork(): Network {
