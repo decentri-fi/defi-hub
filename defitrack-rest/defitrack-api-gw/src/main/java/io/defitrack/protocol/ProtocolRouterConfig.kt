@@ -14,25 +14,6 @@ import org.springframework.web.reactive.function.server.ServerResponse
 class ProtocolRouterConfig {
 
     @Bean
-    fun protocolRoutes(builder: RouteLocatorBuilder): RouteLocator {
-        val routeBuilder = builder.routes()
-
-        Protocol.values().forEach { proto ->
-            routeBuilder.route(proto.name) {
-                it.path(true, "/${proto.slug}/**")
-                    .filters { filter ->
-                        filter.rewritePath(
-                            "/${proto.slug}/(?<segment>.*)",
-                            "/\${segment}"
-                        )
-                    }
-                    .uri("http://defitrack-${proto.slug}:8080/api")
-            }
-        }
-        return routeBuilder.build()
-    }
-
-    @Bean
     fun protocolsRoute(protocolHandler: ProtocolHandler): RouterFunction<ServerResponse> {
         return RouterFunctions
             .route(GET("/protocols"), protocolHandler::getProtocols)
