@@ -1,9 +1,14 @@
+
+
+<div align="center">
+
 # **Decentrifi**
 
-Decentrifi is an open source API which allows you to easily integrate DeFi in any application. It provides a gateway to web3 without having to know any of the underlying cryptographic technology.
+ **Explore. Track. Integrate.**
 
-## Defi Hub
+[Website](https://decentri.fi) | [Discord]() 
 
+</div>
 
 Welcome to the Decentrifi Defi Hub, an enticing oasis in the vast desert of decentralized finance! Step into a world where possibilities are infinite, and innovation knows no bounds. This **fully open-source** ecosystem beckons developers and integrators with its irresistible charm, promising a seamless journey through the realms of decentralized finance.
 
