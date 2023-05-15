@@ -57,7 +57,7 @@ class UniswapV2EthereumPoolingMarketProvider(
     }
 
     override fun getProtocol(): Protocol {
-        TODO("Not yet implemented")
+        return Protocol.UNISWAP_V2
     }
 
     override fun getNetwork(): Network {

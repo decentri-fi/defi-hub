@@ -95,8 +95,6 @@ abstract class UniswapV3PoolingPositionProvider(
                         0.0
                     }
 
-                    println("got a total of ${userTokens0} ${token0.symbol} (${totalToken0Usd}) and ${userTokens1} ${token1.symbol} ${totalToken1Usd}")
-
                     PoolingPosition(
                         tokenAmount = BigInteger.ZERO,
                         market,
