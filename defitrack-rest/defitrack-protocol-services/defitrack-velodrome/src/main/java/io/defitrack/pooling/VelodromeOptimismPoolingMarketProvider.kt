@@ -11,6 +11,9 @@ import io.defitrack.uniswap.v2.PairFactoryContract
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 
 @Component
@@ -19,40 +22,42 @@ class VelodromeOptimismPoolingMarketProvider(
 ) : PoolingMarketProvider() {
 
 
-    override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
+    override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
         val pairFactoryContract = PairFactoryContract(
             blockchainGateway = getBlockchainGateway(),
             contractAddress = velodromeOptimismService.getPoolFactory()
         )
 
-        return@coroutineScope pairFactoryContract.allPairs().map {
-            async {
+        pairFactoryContract.allPairs().forEach {
+            launch {
+                throttled {
+                    val poolingToken = getToken(it)
+                    val tokens = poolingToken.underlyingTokens
 
-                val poolingToken = getToken(it)
-                val tokens = poolingToken.underlyingTokens
-
-                try {
-                    create(
-                        identifier = it,
-                        marketSize = getMarketSize(
-                            poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
-                            it
-                        ),
-                        positionFetcher = defaultPositionFetcher(poolingToken.address),
-                        address = it,
-                        name = poolingToken.name,
-                        breakdown = defaultBreakdown(tokens, poolingToken.address),
-                        symbol = poolingToken.symbol,
-                        tokens = poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
-                        tokenType = TokenType.VELODROME,
-                        totalSupply = poolingToken.totalSupply,
-                    )
-                } catch (ex: Exception) {
-                    logger.error("Error while fetching pooling market $it", ex)
-                    null
+                    try {
+                        send(
+                            create(
+                                identifier = it,
+                                marketSize = getMarketSize(
+                                    poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
+                                    it
+                                ),
+                                positionFetcher = defaultPositionFetcher(poolingToken.address),
+                                address = it,
+                                name = poolingToken.name,
+                                breakdown = defaultBreakdown(tokens, poolingToken.address),
+                                symbol = poolingToken.symbol,
+                                tokens = poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
+                                tokenType = TokenType.VELODROME,
+                                totalSupply = poolingToken.totalSupply,
+                            )
+                        )
+                    } catch (ex: Exception) {
+                        logger.error("Error while fetching pooling market $it", ex)
+                    }
                 }
             }
-        }.awaitAll().filterNotNull()
+        }
     }
 
 

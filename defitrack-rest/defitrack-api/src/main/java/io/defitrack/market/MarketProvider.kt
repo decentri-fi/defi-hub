@@ -39,7 +39,7 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
     val cache = Cache.Builder().expireAfterWrite(4.hours).build<String, T>()
     val logger: Logger = LoggerFactory.getLogger(this.javaClass)
 
-    val semaphore = Semaphore(8)
+    val semaphore = Semaphore(10)
 
     @Autowired
     private lateinit var erC20Resource: ERC20Resource
