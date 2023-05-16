@@ -22,15 +22,18 @@ class TornadoCashStakingRewardsFarmProvider : FarmingMarketProvider() {
         val stakingRewardsContract = StakingRewardsContract(getBlockchainGateway(), stakingRewards)
 
 
+        val rewardToken = getToken(stakingRewardsContract.rewardsToken())
+        val stakingToken = getToken(stakingRewardsContract.stakingToken())
+
         return listOf(
             create(
-                name = "staking-rewards-${stakingRewards}",
+                name = "${stakingToken.symbol} Staking Rewards",
                 identifier = stakingRewards,
                 farmType = ContractType.STAKING,
                 rewardTokens = listOf(
-                    getToken(stakingRewardsContract.rewardsToken()).toFungibleToken()
+                    rewardToken.toFungibleToken()
                 ),
-                stakedToken = getToken(stakingRewardsContract.stakingToken()).toFungibleToken(),
+                stakedToken = stakingToken.toFungibleToken(),
                 vaultType = "staking-rewards",
                 apr = calculateSingleRewardPool(stakingRewardsContract),
             )
