@@ -3,7 +3,7 @@ package io.defitrack.protocol.kyberswap.pooling
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.erc20.TokenInformationVO
-import io.defitrack.common.utils.RefetchableValue.Companion.refetchable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -38,7 +38,7 @@ class KyberElasticPoolingMarketProvider(
                 try {
                     create(
                         identifier = poolInfo.address,
-                        marketSize = refetchable {
+                        marketSize = refreshable {
                             getMarketSize(
                                 poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
                                 poolInfo.address
@@ -50,7 +50,7 @@ class KyberElasticPoolingMarketProvider(
                         symbol = poolingToken.symbol,
                         tokens = poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
                         tokenType = TokenType.VELODROME,
-                        totalSupply = refetchable(poolingToken.totalSupply.asEth(poolingToken.decimals)) {
+                        totalSupply = refreshable(poolingToken.totalSupply.asEth(poolingToken.decimals)) {
                             val token = getToken(poolInfo.address)
                             token.totalSupply.asEth(token.decimals)
                         },

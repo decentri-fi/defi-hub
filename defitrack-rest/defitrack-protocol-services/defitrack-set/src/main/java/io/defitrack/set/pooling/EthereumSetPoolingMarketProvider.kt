@@ -3,7 +3,7 @@ package io.defitrack.set.pooling
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.RefetchableValue.Companion.refetchable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
@@ -57,7 +57,7 @@ class EthereumSetPoolingMarketProvider(
                         )
                     },
                     apr = null,
-                    marketSize = refetchable {
+                    marketSize = refreshable {
                         val price = getPrice(positions)
                         val supply = tokenContract.totalSupply().asEth(tokenContract.decimals())
                         price.times(supply)
@@ -65,7 +65,7 @@ class EthereumSetPoolingMarketProvider(
                     tokenType = TokenType.SET,
                     positionFetcher = defaultPositionFetcher(it),
                     investmentPreparer = null,
-                    totalSupply = refetchable(token.totalDecimalSupply()) {
+                    totalSupply = refreshable(token.totalDecimalSupply()) {
                         val token = getToken(it)
                         token.totalDecimalSupply()
                     })

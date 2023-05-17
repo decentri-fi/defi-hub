@@ -45,7 +45,7 @@ class MarketCacheRefresher(
             it.refreshMarkets()
         }
         farmingMarketProviders.forEach {
-            it.populateCaches()
+            it.refreshMarkets()
         }
     }
 }

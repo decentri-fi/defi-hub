@@ -1,6 +1,7 @@
 package io.defitrack.farming
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
@@ -55,11 +56,13 @@ class QidaoFarmingMarketProvider(
                 address = chef.address,
                 function = { user -> chef.userInfoFunction(user, poolId) }
             ),
-            marketSize = marketSizeService.getMarketSize(
-                stakedtoken.toFungibleToken(),
-                chef.address,
-                getNetwork()
-            ),
+            marketSize = refreshable {
+                marketSizeService.getMarketSize(
+                    stakedtoken.toFungibleToken(),
+                    chef.address,
+                    getNetwork()
+                )
+            },
             farmType = ContractType.LIQUIDITY_MINING
         )
     }

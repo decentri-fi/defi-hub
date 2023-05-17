@@ -1,5 +1,6 @@
 package io.defitrack.protocol.farming
 
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -48,7 +49,9 @@ abstract class HopFarmingMarketProvider(
                 stakedToken = stakedToken.toFungibleToken(),
                 rewardTokens = listOf(rewardToken.toFungibleToken()),
                 vaultType = "hop-staking-rewards",
-                marketSize = getMarketSize(stakedToken, pool),
+                marketSize = Refreshable.refreshable {
+                    getMarketSize(stakedToken, pool)
+                },
                 balanceFetcher = PositionFetcher(
                     address = pool.address,
                     function = { user -> balanceOfFunction(user) }

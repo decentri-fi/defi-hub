@@ -2,6 +2,7 @@ package io.defitrack.market.farming.domain
 
 import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.exit.ExitPositionPreparer
 import io.defitrack.market.DefiMarket
 import io.defitrack.market.lending.domain.PositionFetcher
@@ -18,7 +19,7 @@ data class FarmingMarket(
     val stakedToken: FungibleToken,
     val rewardTokens: List<FungibleToken>,
     val contractType: String,
-    val marketSize: BigDecimal? = null,
+    val marketSize: Refreshable<BigDecimal>? = null,
     val apr: BigDecimal? = null,
     val farmType: ContractType,
     val balanceFetcher: PositionFetcher? = null,
@@ -27,4 +28,10 @@ data class FarmingMarket(
     val claimableRewardFetcher: ClaimableRewardFetcher? = null,
     val metadata: Map<String, Any> = emptyMap(),
     val expired: Boolean = false
-) : DefiMarket(id)
+) : DefiMarket(id) {
+
+    init {
+        addRefetchableValue(marketSize)
+    }
+
+}

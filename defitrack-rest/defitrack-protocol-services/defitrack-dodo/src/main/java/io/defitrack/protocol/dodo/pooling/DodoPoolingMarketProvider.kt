@@ -1,6 +1,6 @@
 package io.defitrack.protocol.dodo.pooling
 
-import io.defitrack.common.utils.RefetchableValue
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
@@ -24,8 +24,8 @@ abstract class DodoPoolingMarketProvider(
                 symbol = baseToken.symbol + "/" + quoteToken.symbol,
                 tokens = listOf(baseToken, quoteToken).map { it.toFungibleToken() },
                 tokenType = TokenType.DODO,
-                totalSupply = RefetchableValue.refetchable(BigDecimal.ZERO),
-                marketSize = RefetchableValue.refetchable {
+                totalSupply = Refreshable.refreshable(BigDecimal.ZERO),
+                marketSize = Refreshable.refreshable {
                     getPriceResource().calculatePrice(
                         PriceRequest(
                             baseToken.address,

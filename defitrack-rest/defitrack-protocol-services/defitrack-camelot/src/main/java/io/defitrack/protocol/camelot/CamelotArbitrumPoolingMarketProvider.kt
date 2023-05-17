@@ -2,7 +2,7 @@ package io.defitrack.protocol.camelot
 
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
-import io.defitrack.common.utils.RefetchableValue
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -42,7 +42,7 @@ class CamelotArbitrumPoolingMarketProvider(
                                 address = pool,
                                 name = poolingToken.name,
                                 symbol = poolingToken.symbol,
-                                marketSize = RefetchableValue.refetchable {
+                                marketSize = Refreshable.refreshable {
                                     getMarketSize(
                                         poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
                                         pool
@@ -52,7 +52,7 @@ class CamelotArbitrumPoolingMarketProvider(
                                 tokens = underlyingTokens.map { it.toFungibleToken() },
                                 tokenType = TokenType.CAMELOT,
                                 positionFetcher = defaultPositionFetcher(poolingToken.address),
-                                totalSupply = RefetchableValue.refetchable(poolingToken.totalDecimalSupply()) {
+                                totalSupply = Refreshable.refreshable(poolingToken.totalDecimalSupply()) {
                                     getToken(pool).totalDecimalSupply()
                                 }
                             )

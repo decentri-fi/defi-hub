@@ -1,15 +1,15 @@
 package io.defitrack.common.utils
 
-class RefetchableValue<T> {
+class Refreshable<T> {
 
     companion object {
-        fun <T> refetchable(initialValue: T, fetcher: (suspend () -> T)? = null): RefetchableValue<T> {
-            return RefetchableValue(initialValue, fetcher)
+        fun <T> refreshable(initialValue: T, fetcher: (suspend () -> T)? = null): Refreshable<T> {
+            return Refreshable(initialValue, fetcher)
         }
 
-        suspend fun <T> refetchable(fetcher: (suspend () -> T)): RefetchableValue<T> {
+        suspend fun <T> refreshable(fetcher: (suspend () -> T)): Refreshable<T> {
             val initial = fetcher()
-            return RefetchableValue(initial, fetcher)
+            return Refreshable(initial, fetcher)
         }
     }
 

@@ -2,6 +2,7 @@ package io.defitrack.protocol.ribbon
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -38,14 +39,16 @@ class RibbonEthereumFarmingMarketProvider(
                 stakedToken = stakedToken.toFungibleToken(),
                 rewardTokens = listOf(stakedToken.toFungibleToken()),
                 vaultType = "ribbon-theta-vault",
-                marketSize = getPriceResource().calculatePrice(
-                    PriceRequest(
-                        it.underlyingAsset,
-                        getNetwork(),
-                        it.totalBalance.asEth(stakedToken.decimals),
-                        stakedToken.type
-                    )
-                ).toBigDecimal(),
+                marketSize = Refreshable.refreshable { //todo: totalBalance is not fetched from the blockchain
+                    getPriceResource().calculatePrice(
+                        PriceRequest(
+                            it.underlyingAsset,
+                            getNetwork(),
+                            it.totalBalance.asEth(stakedToken.decimals),
+                            stakedToken.type
+                        )
+                    ).toBigDecimal()
+                },
                 balanceFetcher = PositionFetcher(
                     it.id,
                     { user -> ERC20Contract.balanceOfFunction(user) }

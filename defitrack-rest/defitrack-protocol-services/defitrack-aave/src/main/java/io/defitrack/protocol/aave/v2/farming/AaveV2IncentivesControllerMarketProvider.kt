@@ -1,6 +1,7 @@
 package io.defitrack.protocol.aave.v2.farming
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
@@ -24,7 +25,12 @@ class AaveV2IncentivesControllerMarketProvider : FarmingMarketProvider() {
                 stakedToken = stkAaveToken.toFungibleToken(),
                 rewardTokens = listOf(stkAaveToken.toFungibleToken()),
                 vaultType = "aave-v2-incentives",
-                marketSize = getMarketSize(stkAaveToken.toFungibleToken(), incentivesController),
+                marketSize = Refreshable.refreshable {
+                    getMarketSize(
+                        stkAaveToken.toFungibleToken(),
+                        incentivesController
+                    )
+                },
                 balanceFetcher = PositionFetcher(
                     incentivesController, { user ->
                         IncentivesControllerContract(

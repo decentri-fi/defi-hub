@@ -1,7 +1,7 @@
 package io.defitrack.protocol.sushiswap.pooling
 
-import io.defitrack.common.utils.RefetchableValue
-import io.defitrack.common.utils.RefetchableValue.Companion.refetchable
+import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -43,10 +43,10 @@ abstract class DefaultSushiPoolingMarketProvider(
                                     ),
                                     apr = SushiPoolingAPRCalculator(service, it.id).calculateApr(),
                                     identifier = it.id,
-                                    marketSize = refetchable(it.reserveUSD),
+                                    marketSize = refreshable(it.reserveUSD),
                                     tokenType = TokenType.SUSHISWAP,
                                     positionFetcher = defaultPositionFetcher(token.address),
-                                    totalSupply = RefetchableValue.refetchable(token.totalDecimalSupply()) {
+                                    totalSupply = Refreshable.refreshable(token.totalDecimalSupply()) {
                                         getToken(it.id).totalDecimalSupply()
                                     }
                                 )

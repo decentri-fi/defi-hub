@@ -1,7 +1,7 @@
 package io.defitrack.farming
 
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.RefetchableValue.Companion.refetchable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.protocol.Protocol
@@ -29,7 +29,7 @@ class QiDaoArbitrumVaultProvider(
                 name = vault.name(),
                 identifier = vault.address,
                 token = getToken(collateral.address).toFungibleToken(),
-                marketSize = refetchable {
+                marketSize = refreshable {
                     getMarketSize(
                         collateral.toFungibleToken(),
                         vault.address,
@@ -41,7 +41,7 @@ class QiDaoArbitrumVaultProvider(
                     "vaultContract" to vault
                 ),
                 marketToken = null,
-                totalSupply = refetchable(BigDecimal.ZERO)
+                totalSupply = refreshable(BigDecimal.ZERO)
             )
         }
     }

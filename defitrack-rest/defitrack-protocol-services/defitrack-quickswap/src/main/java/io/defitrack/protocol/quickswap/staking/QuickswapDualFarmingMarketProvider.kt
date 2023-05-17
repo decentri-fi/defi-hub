@@ -1,6 +1,7 @@
 package io.defitrack.protocol.quickswap.staking
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -71,7 +72,9 @@ class QuickswapDualFarmingMarketProvider(
                             rewardTokenB.toFungibleToken()
                         ),
                         vaultType = "quickswap-dual-reward-pool",
-                        marketSize = getMarketSize(stakedToken.toFungibleToken(), pool.address),
+                        marketSize = refreshable {
+                            getMarketSize(stakedToken.toFungibleToken(), pool.address)
+                        },
                         apr = getApr(pool, stakedToken),
                         balanceFetcher = PositionFetcher(
                             pool.address,

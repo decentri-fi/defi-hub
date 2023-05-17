@@ -2,7 +2,7 @@ package io.defitrack.protocol.apeswap
 
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
-import io.defitrack.common.utils.RefetchableValue
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -52,7 +52,7 @@ class ApeswapPolygonPoolingMarketProvider(
                                 address = pool,
                                 name = poolingToken.name,
                                 symbol = poolingToken.symbol,
-                                marketSize = RefetchableValue.refetchable {
+                                marketSize = Refreshable.refreshable {
                                     getMarketSize(
                                         poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
                                         pool
@@ -62,7 +62,7 @@ class ApeswapPolygonPoolingMarketProvider(
                                 tokens = underlyingTokens.map { it.toFungibleToken() },
                                 tokenType = TokenType.APE,
                                 positionFetcher = defaultPositionFetcher(poolingToken.address),
-                                totalSupply = RefetchableValue.refetchable {
+                                totalSupply = Refreshable.refreshable {
                                     getToken(pool).totalDecimalSupply()
                                 }
                             )

@@ -1,6 +1,8 @@
 package io.defitrack.protocol.sushiswap.staking
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
@@ -59,7 +61,9 @@ class SushiswapEthereumMasterchefMarketProvider : FarmingMarketProvider() {
                     rewardToken.toFungibleToken()
                 ),
                 vaultType = "sushi-masterchef",
-                marketSize = getMarketSize(stakedtoken.toFungibleToken(), chef.address),
+                marketSize = refreshable {
+                    getMarketSize(stakedtoken.toFungibleToken(), chef.address)
+                },
                 apr = MasterchefBasedfStakingAprCalculator(
                     getERC20Resource(),
                     getPriceResource(),

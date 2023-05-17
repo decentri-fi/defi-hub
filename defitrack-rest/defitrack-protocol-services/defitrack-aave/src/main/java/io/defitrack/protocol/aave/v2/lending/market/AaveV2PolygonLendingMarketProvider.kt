@@ -6,8 +6,8 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
-import io.defitrack.common.utils.RefetchableValue
-import io.defitrack.common.utils.RefetchableValue.Companion.refetchable
+import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
@@ -83,7 +83,7 @@ class AaveV2PolygonLendingMarketProvider(
                                 }
                             ),
                             marketToken = aToken.toFungibleToken(),
-                            totalSupply = refetchable(aToken.totalSupply.asEth(aToken.decimals)) {
+                            totalSupply = refreshable(aToken.totalSupply.asEth(aToken.decimals)) {
                                 val aToken = getToken(it.aToken.id)
                                 aToken.totalSupply.asEth(aToken.decimals)
                             }
@@ -103,9 +103,9 @@ class AaveV2PolygonLendingMarketProvider(
         reserve: AaveReserve,
         aToken: TokenInformationVO,
         underlyingToken: TokenInformationVO
-    ): RefetchableValue<BigDecimal> {
+    ): Refreshable<BigDecimal> {
         val underlying = getToken(underlyingToken.address)
-        return refetchable {
+        return refreshable {
             priceResource.calculatePrice(
                 PriceRequest(
                     underlying.address,

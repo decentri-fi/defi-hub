@@ -1,6 +1,7 @@
 package io.defitrack.farming
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.protocol.ContractType
@@ -48,11 +49,12 @@ class SpookyFarmingMarketProvider(
                             reward.toFungibleToken()
                         ),
                         vaultType = "spooky-masterchef",
-                        marketSize = marketSizeService.getMarketSize(
-                            stakedToken.toFungibleToken(),
-                            masterchef.address,
-                            getNetwork()
-                        ),
+                        marketSize = Refreshable.refreshable {
+                            getMarketSize(
+                                stakedToken.toFungibleToken(),
+                                masterchef.address,
+                            )
+                        },
                         apr = aprCalculator.calculateApr(),
                         balanceFetcher = defaultPositionFetcher(masterchef.address),
                         farmType = ContractType.LIQUIDITY_MINING

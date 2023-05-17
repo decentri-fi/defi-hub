@@ -3,7 +3,7 @@ package io.defitrack.lending
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
-import io.defitrack.common.utils.RefetchableValue.Companion.refetchable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.lending.domain.Position
@@ -58,7 +58,7 @@ class WepiggyLendingMarketProvider(
                     name = ctokenContract.name(),
                     rate = getSupplyRate(compoundTokenContract = ctokenContract),
                     token = underlyingToken.toFungibleToken(),
-                    marketSize = refetchable {
+                    marketSize = refreshable {
                         getPriceResource().calculatePrice(
                             PriceRequest(
                                 underlyingToken.address,
@@ -86,7 +86,7 @@ class WepiggyLendingMarketProvider(
                     investmentPreparer = null,
                     marketToken = cToken.toFungibleToken(),
                     erc20Compatible = true,
-                    totalSupply = refetchable(ctokenContract.totalSupply().asEth(ctokenContract.decimals())) {
+                    totalSupply = refreshable(ctokenContract.totalSupply().asEth(ctokenContract.decimals())) {
                         val cToken = getToken(ctokenContract.address)
                         ctokenContract.totalSupply().asEth(cToken.decimals)
                     }

@@ -3,7 +3,7 @@ package io.defitrack.pooling
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.erc20.TokenInformationVO
-import io.defitrack.common.utils.RefetchableValue.Companion.refetchable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -31,7 +31,7 @@ class SolidLizardPoolingMarketProvider : PoolingMarketProvider() {
                     create(
                         name = token.name,
                         identifier = token.address,
-                        marketSize = refetchable {
+                        marketSize = refreshable {
                             getMarketSize(
                                 tokens.map(TokenInformationVO::toFungibleToken),
                                 it
@@ -43,7 +43,7 @@ class SolidLizardPoolingMarketProvider : PoolingMarketProvider() {
                         symbol = token.symbol,
                         breakdown = defaultBreakdown(tokens, token.address),
                         address = token.address,
-                        totalSupply = refetchable(token.totalSupply.asEth(token.decimals)) {
+                        totalSupply = refreshable(token.totalSupply.asEth(token.decimals)) {
                             val token = getToken(it)
                             token.totalSupply.asEth(token.decimals)
                         }

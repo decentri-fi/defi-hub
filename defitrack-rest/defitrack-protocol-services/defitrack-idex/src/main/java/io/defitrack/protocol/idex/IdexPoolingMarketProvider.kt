@@ -2,7 +2,7 @@ package io.defitrack.protocol.idex
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.RefetchableValue
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.TokenType
@@ -37,10 +37,10 @@ class IdexPoolingMarketProvider(
                                     token1.toFungibleToken(),
                                 ),
                                 apr = BigDecimal.ZERO,
-                                marketSize = RefetchableValue.refetchable(it.reserveUsd),
+                                marketSize = Refreshable.refreshable(it.reserveUsd),
                                 tokenType = TokenType.IDEX,
                                 positionFetcher = defaultPositionFetcher(token.address),
-                                totalSupply = RefetchableValue.refetchable(token.totalSupply.asEth(token.decimals)) {
+                                totalSupply = Refreshable.refreshable(token.totalSupply.asEth(token.decimals)) {
                                     val token = getToken(it.liquidityToken)
                                     token.totalSupply.asEth(token.decimals)
                                 }

@@ -2,6 +2,7 @@ package io.defitrack.farming
 
 import io.defitrack.apr.MinichefStakingAprCalculator
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
@@ -48,7 +49,7 @@ class SpiritFantomFarmingMarketProvider(
                             reward.toFungibleToken()
                         ),
                         vaultType = "spirit-masterchef",
-                        marketSize = BigDecimal.ZERO,
+                        marketSize = Refreshable.refreshable(BigDecimal.ZERO),
                         apr = aprCalculator.calculateApr(),
                         balanceFetcher = PositionFetcher(
                             masterchef.address,

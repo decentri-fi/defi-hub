@@ -2,7 +2,7 @@ package io.defitrack.protocol.camelot
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.RefetchableValue
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.CamelotService
@@ -55,10 +55,10 @@ class CamelotNFTV2PoolingMarketProvider(
             breakdown = emptyList(),
             erc20Compatible = false,
             tokenType = TokenType.ALGEBRA_NFT,
-            totalSupply = RefetchableValue.refetchable {
+            totalSupply = Refreshable.refreshable {
                 pool.liquidity().asEth()
             },
-            marketSize = RefetchableValue.refetchable {
+            marketSize = Refreshable.refreshable {
                 getMarketSize(
                     listOf(token0.toFungibleToken(), token1.toFungibleToken()),
                     pool.address

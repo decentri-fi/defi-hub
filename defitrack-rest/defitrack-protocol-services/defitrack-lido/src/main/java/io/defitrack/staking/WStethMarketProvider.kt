@@ -2,6 +2,7 @@ package io.defitrack.staking
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.price.PriceRequest
@@ -10,6 +11,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.adamant.StethContract
 import io.defitrack.protocol.adamant.WSTEthContract
 import org.springframework.stereotype.Component
+import java.math.BigDecimal
 
 private const val STETH = "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84"
 private const val WSTETH = "0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0"
@@ -46,7 +48,9 @@ class WStethMarketProvider(
                 rewardTokens = emptyList(),
                 vaultType = "wsteth",
                 farmType = ContractType.STAKING,
-                marketSize = calculateMarketSize().toBigDecimal()
+                marketSize = Refreshable.refreshable {
+                    calculateMarketSize()
+                }
             )
         )
     }
@@ -55,7 +59,7 @@ class WStethMarketProvider(
         return Protocol.LIDO
     }
 
-    suspend fun calculateMarketSize(): Double {
+    suspend fun calculateMarketSize(): BigDecimal {
         val totalTokens = wstEthContract.getTotalSupply()
         val wrappedStethTokens = wstEthContract.getStethByWstethFunction(totalTokens)
         val pooledEth = stEthContract.getPooledEthByShares(wrappedStethTokens)
@@ -65,7 +69,7 @@ class WStethMarketProvider(
                 getNetwork(),
                 pooledEth.asEth()
             )
-        )
+        ).toBigDecimal()
     }
 
     override fun getNetwork(): Network {

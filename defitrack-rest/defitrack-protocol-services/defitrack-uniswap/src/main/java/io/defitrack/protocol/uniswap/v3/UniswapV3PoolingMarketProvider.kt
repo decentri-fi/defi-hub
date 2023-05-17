@@ -5,7 +5,7 @@ import io.defitrack.abi.TypeUtils
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.common.utils.RefetchableValue.Companion.refetchable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -99,7 +99,7 @@ abstract class UniswapV3PoolingMarketProvider(
             symbol = "${token0.symbol}-${token1.symbol}",
             breakdown = breakdown,
             tokens = underlyingTokens.map { it.toFungibleToken() },
-            marketSize = refetchable(breakdown.sumOf {
+            marketSize = refreshable(breakdown.sumOf {
                 it.reserveUSD
             }) {
                 defaultBreakdown(underlyingTokens, pool.address).sumOf {
@@ -108,7 +108,7 @@ abstract class UniswapV3PoolingMarketProvider(
             },
             tokenType = TokenType.UNISWAP,
             positionFetcher = null,
-            totalSupply = refetchable(token.totalSupply.asEth(token.decimals)) {
+            totalSupply = refreshable(token.totalSupply.asEth(token.decimals)) {
                 val token = getToken(pool.address)
                 token.totalSupply.asEth(token.decimals)
             },

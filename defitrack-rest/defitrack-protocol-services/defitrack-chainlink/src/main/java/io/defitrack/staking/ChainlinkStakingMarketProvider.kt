@@ -1,6 +1,7 @@
 package io.defitrack.staking
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
@@ -32,11 +33,12 @@ class ChainlinkStakingMarketProvider : FarmingMarketProvider(
                 stakedToken = chainlinkToken,
                 rewardTokens = listOf(chainlinkToken),
                 vaultType = "chainlink",
-                marketSize = marketSizeService.getMarketSize(
-                    chainlinkToken,
-                    chainlinkStakingContract.address,
-                    getNetwork()
-                ),
+                marketSize = refreshable {
+                    getMarketSize(
+                        chainlinkToken,
+                        chainlinkStakingContract.address,
+                    )
+                },
                 balanceFetcher = PositionFetcher(
                     chainlinkStakingContract.address,
                     { user -> chainlinkStakingContract.getStake(user) }

@@ -1,6 +1,7 @@
 package io.defitrack.protocol.sushiswap.staking
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
@@ -64,7 +65,9 @@ class SushiswapArbitrumFarmingMinichefMarketProvider(
                     rewardToken.toFungibleToken()
                 ),
                 vaultType = "sushi-minichefV2",
-                marketSize = getMarketSize(stakedtoken.toFungibleToken(), chef.address),
+                marketSize = Refreshable.refreshable {
+                    getMarketSize(stakedtoken.toFungibleToken(), chef.address)
+                },
                 apr = MinichefStakingAprCalculator(getERC20Resource(), getPriceResource(), chef, poolId).calculateApr(),
                 balanceFetcher = PositionFetcher(
                     chef.address,

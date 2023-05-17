@@ -1,7 +1,7 @@
 package io.defitrack.protocol.balancer.pooling
 
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.RefetchableValue
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
@@ -61,7 +61,7 @@ abstract class BalancerPoolingMarketProvider(
                 tokens = emptyList(),
                 symbol = it.symbol,
                 apr = BigDecimal.ZERO,
-                marketSize = RefetchableValue.refetchable {
+                marketSize = Refreshable.refreshable {
                     val poolInfo = vault.getPoolTokens(it.id)
 
                     val tokens = poolInfo.tokens.mapIndexed { index, address ->
@@ -83,7 +83,7 @@ abstract class BalancerPoolingMarketProvider(
                 },
                 tokenType = TokenType.BALANCER,
                 positionFetcher = defaultPositionFetcher(it.address),
-                totalSupply = RefetchableValue.refetchable {
+                totalSupply = Refreshable.refreshable {
                     getToken(it.address).totalDecimalSupply()
                 }
             )

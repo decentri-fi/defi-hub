@@ -3,7 +3,7 @@ package io.defitrack.set.pooling
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.RefetchableValue.Companion.refetchable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
@@ -45,7 +45,7 @@ class PolygonSetPoolingMarketProvider(
                             getToken(it.token).toFungibleToken()
                         },
                         apr = null,
-                        marketSize = refetchable {
+                        marketSize = refreshable {
                             val price = getPrice(positions)
                             val supply = token.totalSupply.asEth(token.decimals)
                             price.times(supply)
@@ -53,7 +53,7 @@ class PolygonSetPoolingMarketProvider(
                         tokenType = TokenType.SET,
                         positionFetcher = defaultPositionFetcher(it),
                         investmentPreparer = null,
-                        totalSupply = refetchable(token.totalSupply.asEth(token.decimals)) {
+                        totalSupply = refreshable(token.totalSupply.asEth(token.decimals)) {
                             val token = getToken(it)
                             token.totalSupply.asEth(token.decimals)
                         }

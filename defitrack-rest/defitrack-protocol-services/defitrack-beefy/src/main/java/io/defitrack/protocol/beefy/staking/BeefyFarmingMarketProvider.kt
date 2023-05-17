@@ -1,6 +1,7 @@
 package io.defitrack.protocol.beefy.staking
 
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -69,7 +70,9 @@ abstract class BeefyFarmingMarketProvider(
                 rewardTokens = listOf(
                     want.toFungibleToken()
                 ),
-                marketSize = getMarketSize(want, contract),
+                marketSize = Refreshable.refreshable {
+                    getMarketSize(want, contract)
+                },
                 vaultType = "beefyVaultV6",
                 balanceFetcher = PositionFetcher(
                     contract.address,
