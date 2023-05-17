@@ -1,5 +1,7 @@
 package io.defitrack.protocol.sushiswap.pooling
 
+import io.defitrack.common.utils.RefetchableValue
+import io.defitrack.common.utils.RefetchableValue.Companion.refetchable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -16,6 +18,7 @@ abstract class DefaultSushiPoolingMarketProvider(
     override fun getProtocol(): Protocol {
         return Protocol.SUSHISWAP
     }
+
     override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
 
         sushiServices.filter { sushiswapService ->
@@ -40,10 +43,12 @@ abstract class DefaultSushiPoolingMarketProvider(
                                     ),
                                     apr = SushiPoolingAPRCalculator(service, it.id).calculateApr(),
                                     identifier = it.id,
-                                    marketSize = it.reserveUSD,
+                                    marketSize = refetchable(it.reserveUSD),
                                     tokenType = TokenType.SUSHISWAP,
                                     positionFetcher = defaultPositionFetcher(token.address),
-                                    totalSupply = token.totalSupply
+                                    totalSupply = RefetchableValue.refetchable(token.totalDecimalSupply()) {
+                                        getToken(it.id).totalDecimalSupply()
+                                    }
                                 )
                             }
                         } catch (ex: Exception) {

@@ -2,6 +2,7 @@ package io.defitrack.pooling
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.common.utils.RefetchableValue.Companion.refetchable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -22,6 +23,7 @@ class BeethovenXOptimismPoolingMarketProvider(
     override fun getProtocol(): Protocol {
         return Protocol.BEETHOVENX
     }
+
     override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
         beethovenXOptimismGraphProvider.getPools().map {
             async {
@@ -38,11 +40,11 @@ class BeethovenXOptimismPoolingMarketProvider(
                             },
                             symbol = it.symbol,
                             apr = BigDecimal.ZERO,
-                            marketSize = it.totalLiquidity,
+                            marketSize = refetchable(it.totalLiquidity),
                             tokenType = TokenType.BALANCER,
                             positionFetcher = defaultPositionFetcher(it.address),
-                            totalSupply = it.totalShares.asEth().toBigInteger()
-                        )
+                            totalSupply = refetchable(it.totalShares.asEth())
+                        )  //todo, use contracts to get total supply
                     } catch (ex: Exception) {
                         logger.error("problem trying to import beethoven pool", ex)
                         null

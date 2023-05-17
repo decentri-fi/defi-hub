@@ -4,7 +4,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.exit.ExitPositionPreparer
 import io.defitrack.market.DefiMarket
-import io.defitrack.market.RefetchableValue
+import io.defitrack.common.utils.RefetchableValue
 import io.defitrack.market.farming.domain.InvestmentPreparer
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.FungibleToken

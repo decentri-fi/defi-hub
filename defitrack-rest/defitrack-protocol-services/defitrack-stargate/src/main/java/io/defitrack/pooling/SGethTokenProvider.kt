@@ -1,5 +1,6 @@
 package io.defitrack.pooling
 
+import io.defitrack.common.utils.RefetchableValue
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
@@ -16,6 +17,7 @@ abstract class SGethTokenProvider(
     override fun getProtocol(): Protocol {
         return Protocol.STARGATE
     }
+
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
         val token = getToken(address)
         val underlying = getToken("0x0")
@@ -23,18 +25,22 @@ abstract class SGethTokenProvider(
             create(
                 name = "SGETH Token",
                 identifier = "sgeth",
-                marketSize = getPriceResource().calculatePrice(
-                    PriceRequest(
-                        "0x0",
-                        getNetwork(),
-                        getBlockchainGateway().getNativeBalance(address)
-                    )
-                ).toBigDecimal(),
+                marketSize = RefetchableValue.refetchable {
+                    getPriceResource().calculatePrice(
+                        PriceRequest(
+                            "0x0",
+                            getNetwork(),
+                            getBlockchainGateway().getNativeBalance(address)
+                        )
+                    ).toBigDecimal()
+                },
                 address = address,
                 symbol = "sgeth",
                 tokenType = TokenType.STARGATE_VAULT,
                 tokens = listOf(underlying.toFungibleToken()),
-                totalSupply = token.totalSupply
+                totalSupply = RefetchableValue.refetchable(token.totalDecimalSupply()) {
+                    getToken(address).totalDecimalSupply()
+                }
             )
         )
     }

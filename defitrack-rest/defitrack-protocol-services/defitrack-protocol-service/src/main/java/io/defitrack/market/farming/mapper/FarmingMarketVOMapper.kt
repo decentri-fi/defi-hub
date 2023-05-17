@@ -5,6 +5,8 @@ import io.defitrack.market.farming.vo.FarmingMarketVO
 import io.defitrack.network.toVO
 import io.defitrack.protocol.mapper.ProtocolVOMapper
 import org.springframework.stereotype.Component
+import java.time.ZoneOffset
+import java.util.*
 
 @Component
 class FarmingMarketVOMapper(
@@ -27,7 +29,7 @@ class FarmingMarketVOMapper(
                 exitPositionSupported = this.exitPositionPreparer != null,
                 farmType = farmType,
                 expired = this.expired,
-                updatedAt = updatedAt.get()
+                updatedAt = Date.from(updatedAt.get().toInstant(ZoneOffset.UTC))
             )
         }
     }

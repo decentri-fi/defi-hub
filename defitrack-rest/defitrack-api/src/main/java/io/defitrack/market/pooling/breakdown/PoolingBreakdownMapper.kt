@@ -41,7 +41,7 @@ class PoolingBreakdownMapper {
             return emptyList()
         }
 
-        val ratio = userSupply.dividePrecisely(poolingMarket.totalSupply)
+        val ratio = userSupply.dividePrecisely(poolingMarket.totalSupply.get())
 
         return toVO.map {
             PoolingPositionTokenshareVO(

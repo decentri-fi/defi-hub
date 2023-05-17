@@ -2,6 +2,8 @@ package io.defitrack.pooling
 
 import io.defitrack.apr.SpiritswapAPRService
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.RefetchableValue
+import io.defitrack.common.utils.RefetchableValue.Companion.refetchable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.SpiritswapService
@@ -38,10 +40,12 @@ class SpiritFantomPoolingMarketProvider(
                     symbol = token.symbol,
                     apr = spiritswapAPRService.getAPR(it.id, service.getNetwork()),
                     identifier = it.id,
-                    marketSize = it.reserveUSD,
+                    marketSize = refetchable(it.reserveUSD),
                     tokenType = TokenType.SPIRIT,
                     positionFetcher = defaultPositionFetcher(token.address),
-                    totalSupply = token.totalSupply
+                    totalSupply = RefetchableValue.refetchable(token.totalDecimalSupply()) {
+                        getToken(it.id).totalDecimalSupply()
+                    }
                 )
             }
     }

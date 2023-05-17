@@ -2,7 +2,7 @@ package io.defitrack.market.pooling
 
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.BigDecimalExtensions.isZero
-import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.common.utils.RefetchableValue
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.MarketProvider
 import io.defitrack.market.farming.domain.InvestmentPreparer
@@ -12,27 +12,26 @@ import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
 import io.defitrack.token.FungibleToken
 import io.defitrack.token.TokenType
 import java.math.BigDecimal
-import java.math.BigInteger
 
 abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
 
 
-    fun create(
+    suspend fun create(
         name: String,
         identifier: String,
-        marketSize: BigDecimal? = null,
+        marketSize: RefetchableValue<BigDecimal>? = null,
         apr: BigDecimal? = null,
         address: String,
         decimals: Int = 18,
         symbol: String,
         tokenType: TokenType,
         tokens: List<FungibleToken>,
-        totalSupply: BigInteger,
+        totalSupply: RefetchableValue<BigDecimal>,
         positionFetcher: PositionFetcher? = null,
         investmentPreparer: InvestmentPreparer? = null,
         breakdown: List<PoolingMarketTokenShare>? = null,
         erc20Compatible: Boolean = true,
-        price: BigDecimal? = null,
+        price: RefetchableValue<BigDecimal>? = null,
         metadata: Map<String, Any> = emptyMap()
     ): PoolingMarket {
         return PoolingMarket(
@@ -51,25 +50,26 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
             investmentPreparer = investmentPreparer,
             breakdown = breakdown,
             erc20Compatible = erc20Compatible,
-            totalSupply = totalSupply.asEth(decimals),
-            price = price ?: calculatePrice(marketSize, totalSupply, decimals),
+            totalSupply = totalSupply,
+            price = price ?: calculatePrice(marketSize, totalSupply),
             metadata = metadata
         )
     }
 
-    private fun calculatePrice(
-        marketSize: BigDecimal?,
-        totalSupply: BigInteger,
-        decimals: Int
-    ): BigDecimal {
-        if (marketSize == null || marketSize <= BigDecimal.ZERO) return BigDecimal.ZERO
-        val supply = totalSupply.asEth(decimals)
+    private suspend fun calculatePrice(
+        marketSize: RefetchableValue<BigDecimal>?,
+        totalSupply: RefetchableValue<BigDecimal>,
+    ): RefetchableValue<BigDecimal> {
 
-        if (supply.isZero()) return BigDecimal.ZERO
+        return RefetchableValue.refetchable {
+            if (marketSize == null || marketSize.get() <= BigDecimal.ZERO) return@refetchable BigDecimal.ZERO
 
-        return marketSize.dividePrecisely(
-            totalSupply.asEth(decimals),
-        )
+            val supply = totalSupply.get()
+
+            if (supply.isZero()) return@refetchable BigDecimal.ZERO
+
+            return@refetchable marketSize.get().dividePrecisely(supply)
+        }
     }
 
     suspend fun defaultBreakdown(

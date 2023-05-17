@@ -2,6 +2,7 @@ package io.defitrack.protocol.apeswap
 
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.common.utils.RefetchableValue
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -45,22 +46,25 @@ class ApeswapPolygonPoolingMarketProvider(
                         try {
                             val poolingToken = getToken(pool)
                             val underlyingTokens = poolingToken.underlyingTokens
-                            val marketSize = getMarketSize(
-                                poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
-                                pool
-                            )
 
                             create(
                                 identifier = pool,
                                 address = pool,
                                 name = poolingToken.name,
                                 symbol = poolingToken.symbol,
-                                marketSize = marketSize,
+                                marketSize = RefetchableValue.refetchable {
+                                    getMarketSize(
+                                        poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
+                                        pool
+                                    )
+                                },
                                 breakdown = defaultBreakdown(underlyingTokens, poolingToken.address),
                                 tokens = underlyingTokens.map { it.toFungibleToken() },
                                 tokenType = TokenType.APE,
                                 positionFetcher = defaultPositionFetcher(poolingToken.address),
-                                totalSupply = poolingToken.totalSupply
+                                totalSupply = RefetchableValue.refetchable {
+                                    getToken(pool).totalDecimalSupply()
+                                }
                             )
                         } catch (ex: Exception) {
                             logger.error("Error while fetching pooling market $pool", ex)

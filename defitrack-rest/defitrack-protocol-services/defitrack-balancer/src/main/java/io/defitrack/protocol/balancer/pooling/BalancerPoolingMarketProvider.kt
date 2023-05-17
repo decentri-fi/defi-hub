@@ -1,6 +1,7 @@
 package io.defitrack.protocol.balancer.pooling
 
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.common.utils.RefetchableValue
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
@@ -22,6 +23,7 @@ abstract class BalancerPoolingMarketProvider(
     override fun getProtocol(): Protocol {
         return Protocol.BALANCER
     }
+
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
         balancerPoolGraphProvider.getPools().forEach {
             launch {
@@ -48,27 +50,6 @@ abstract class BalancerPoolingMarketProvider(
                 poolContract.getVault()
             )
 
-            val poolInfo = vault.getPoolTokens(it.id)
-
-            val tokens = poolInfo.tokens.mapIndexed { index, address ->
-                val token = getToken(address)
-                val balance = poolInfo.balances[index]
-                token to balance
-            }
-
-
-            val marketcap = tokens.sumOf {
-                getPriceResource().calculatePrice(
-                    PriceRequest(
-                        it.first.address,
-                        getNetwork(),
-                        it.second.asEth(it.first.decimals)
-                    )
-                )
-            }
-
-            val token = getToken(it.address)
-
             create(
                 identifier = it.id,
                 address = it.address,
@@ -80,10 +61,31 @@ abstract class BalancerPoolingMarketProvider(
                 tokens = emptyList(),
                 symbol = it.symbol,
                 apr = BigDecimal.ZERO,
-                marketSize = marketcap.toBigDecimal(),
+                marketSize = RefetchableValue.refetchable {
+                    val poolInfo = vault.getPoolTokens(it.id)
+
+                    val tokens = poolInfo.tokens.mapIndexed { index, address ->
+                        val token = getToken(address)
+                        val balance = poolInfo.balances[index]
+                        token to balance
+                    }
+
+
+                    tokens.sumOf {
+                        getPriceResource().calculatePrice(
+                            PriceRequest(
+                                it.first.address,
+                                getNetwork(),
+                                it.second.asEth(it.first.decimals)
+                            )
+                        )
+                    }.toBigDecimal()
+                },
                 tokenType = TokenType.BALANCER,
                 positionFetcher = defaultPositionFetcher(it.address),
-                totalSupply = token.totalSupply
+                totalSupply = RefetchableValue.refetchable {
+                    getToken(it.address).totalDecimalSupply()
+                }
             )
         } else {
             null

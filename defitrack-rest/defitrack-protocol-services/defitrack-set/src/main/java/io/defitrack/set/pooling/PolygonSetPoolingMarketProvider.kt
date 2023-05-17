@@ -3,6 +3,7 @@ package io.defitrack.set.pooling
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.common.utils.RefetchableValue.Companion.refetchable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
@@ -29,25 +30,33 @@ class PolygonSetPoolingMarketProvider(
                     val tokenContract = SetTokenContract(
                         getBlockchainGateway(), it
                     )
+
+                    val token = getToken(it)
+
                     val positions = tokenContract.getPositions()
 
-                    val price = getPrice(positions)
-                    val supply = tokenContract.totalSupply().asEth(tokenContract.decimals())
 
                     create(
                         identifier = it,
                         address = it,
-                        name = tokenContract.name(),
-                        symbol = tokenContract.symbol(),
+                        name = token.name,
+                        symbol = token.symbol,
                         tokens = positions.map {
                             getToken(it.token).toFungibleToken()
                         },
                         apr = null,
-                        marketSize = price.times(supply),
+                        marketSize = refetchable {
+                            val price = getPrice(positions)
+                            val supply = token.totalSupply.asEth(token.decimals)
+                            price.times(supply)
+                        },
                         tokenType = TokenType.SET,
                         positionFetcher = defaultPositionFetcher(it),
                         investmentPreparer = null,
-                        totalSupply = tokenContract.totalSupply()
+                        totalSupply = refetchable(token.totalSupply.asEth(token.decimals)) {
+                            val token = getToken(it)
+                            token.totalSupply.asEth(token.decimals)
+                        }
                     )
                 } catch (ex: Exception) {
                     logger.error("Unable to import set with address $it", ex)

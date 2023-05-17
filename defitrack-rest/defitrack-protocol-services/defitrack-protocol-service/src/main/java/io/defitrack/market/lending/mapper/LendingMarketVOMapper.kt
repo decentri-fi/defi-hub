@@ -5,6 +5,8 @@ import io.defitrack.market.lending.vo.LendingMarketVO
 import io.defitrack.network.toVO
 import io.defitrack.protocol.mapper.ProtocolVOMapper
 import org.springframework.stereotype.Component
+import java.time.ZoneOffset
+import java.util.*
 
 @Component
 class LendingMarketVOMapper(
@@ -28,7 +30,7 @@ class LendingMarketVOMapper(
                 erc20Compatible = this.erc20Compatible,
                 price = price.get(),
                 totalSupply = totalSupply.get(),
-                updatedAt = updatedAt.get()
+                updatedAt = Date.from(updatedAt.get().toInstant(ZoneOffset.UTC))
             )
         }
     }

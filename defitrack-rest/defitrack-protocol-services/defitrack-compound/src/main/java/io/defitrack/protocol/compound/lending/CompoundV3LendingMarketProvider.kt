@@ -2,7 +2,7 @@ package io.defitrack.protocol.compound.lending
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.market.RefetchableValue.Companion.refetchable
+import io.defitrack.common.utils.RefetchableValue.Companion.refetchable
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.protocol.Protocol

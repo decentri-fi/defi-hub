@@ -19,7 +19,6 @@ import io.defitrack.token.FungibleToken
 import io.defitrack.token.MarketSizeService
 import io.defitrack.transaction.PreparedTransaction
 import io.github.reactivecircus.cache4k.Cache
-import jakarta.annotation.PostConstruct
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -70,11 +69,17 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
         return emptyList()
     }
 
-    @PostConstruct
     fun refreshMarkets() = runBlocking {
-        getMarkets().forEach { market ->
-            market.refresh()
+        val millis = measureTimeMillis {
+            try {
+                getMarkets().forEach { market ->
+                    market.refresh()
+                }
+            } catch (ex: Exception) {
+                logger.error("something went wrong trying to refresh the cache", ex)
+            }
         }
+        logger.info("cache refresh took ${millis / 1000}s")
     }
 
     fun populateCaches() = runBlocking(Dispatchers.Default) {
@@ -95,7 +100,7 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
             }
         }
 
-        logger.info("cache refresh took ${millis / 1000}s")
+        logger.info("cache population took ${millis / 1000}s")
     }
 
     private suspend fun populate() = try {

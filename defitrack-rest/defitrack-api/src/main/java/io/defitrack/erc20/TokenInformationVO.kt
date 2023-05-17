@@ -1,9 +1,11 @@
 package io.defitrack.erc20
 
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.network.NetworkVO
 import io.defitrack.protocol.ProtocolVO
 import io.defitrack.token.FungibleToken
 import io.defitrack.token.TokenType
+import java.math.BigDecimal
 import java.math.BigInteger
 
 class TokenInformationVO(
@@ -18,6 +20,11 @@ class TokenInformationVO(
     val underlyingTokens: List<TokenInformationVO> = emptyList(),
     val protocol: ProtocolVO? = null
 ) {
+
+    fun totalDecimalSupply(): BigDecimal {
+        return totalSupply.asEth(decimals)
+    }
+
     fun toFungibleToken(): FungibleToken {
         return FungibleToken(
             address,

@@ -6,6 +6,7 @@ import io.defitrack.protocol.ProtocolVO
 import io.defitrack.token.FungibleToken
 import java.math.BigDecimal
 import java.time.LocalDateTime
+import java.util.Date
 
 class PoolingMarketVO(
     id: String,
@@ -24,7 +25,7 @@ class PoolingMarketVO(
     val price: BigDecimal = BigDecimal.ZERO,
     val totalSupply: BigDecimal = BigDecimal.ZERO,
     val metadata: Map<String, Any>,
-    updatedAt: LocalDateTime
+    updatedAt: Date
 ) : MarketVO(
     id, network, protocol, name, prepareInvestmentSupported, exitPositionSupported, marketSize, "pooling", updatedAt
 )

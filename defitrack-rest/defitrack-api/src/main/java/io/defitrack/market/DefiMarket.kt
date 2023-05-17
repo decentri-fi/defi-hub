@@ -1,5 +1,7 @@
 package io.defitrack.market
 
+import io.defitrack.common.utils.RefetchableValue
+import io.defitrack.common.utils.RefetchableValue.Companion.refetchable
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 
@@ -9,7 +11,7 @@ abstract class DefiMarket(
 
     val logger = LoggerFactory.getLogger(this::class.java)
 
-    val updatedAt = RefetchableValue.refetchable {
+    val updatedAt = refetchable(LocalDateTime.now()) {
         LocalDateTime.now()
     }
 

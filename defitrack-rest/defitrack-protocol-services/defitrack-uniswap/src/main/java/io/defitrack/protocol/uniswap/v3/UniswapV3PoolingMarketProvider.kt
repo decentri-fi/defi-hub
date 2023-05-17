@@ -3,7 +3,9 @@ package io.defitrack.protocol.uniswap.v3
 import com.google.gson.JsonParser
 import io.defitrack.abi.TypeUtils
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.common.utils.RefetchableValue.Companion.refetchable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -19,13 +21,11 @@ import org.web3j.abi.datatypes.Event
 import java.math.BigInteger
 
 abstract class UniswapV3PoolingMarketProvider(
-    private val fromBlock: String,
-    private val poolFactoryAddress: String
+    private val fromBlock: String, private val poolFactoryAddress: String
 ) : PoolingMarketProvider() {
 
     val poolCreatedEvent = Event(
-        "PoolCreated",
-        listOf(
+        "PoolCreated", listOf(
             TypeUtils.address(true),
             TypeUtils.address(true),
             TypeUtils.uint24(true),
@@ -36,8 +36,7 @@ abstract class UniswapV3PoolingMarketProvider(
 
     val poolFactory by lazy {
         UniswapFactoryContract(
-            getBlockchainGateway(),
-            poolFactoryAddress
+            getBlockchainGateway(), poolFactoryAddress
         )
     }
 
@@ -68,8 +67,7 @@ abstract class UniswapV3PoolingMarketProvider(
                     try {
                         throttled {
                             val uniswapV3Pool = UniswapV3PoolContract(
-                                getBlockchainGateway(),
-                                it
+                                getBlockchainGateway(), it
                             )
                             send(
                                 toMarket(uniswapV3Pool)
@@ -90,8 +88,7 @@ abstract class UniswapV3PoolingMarketProvider(
         val token1 = getToken(pool.token1())
 
         val underlyingTokens = listOf(
-            token0,
-            token1
+            token0, token1
         )
         val breakdown = defaultBreakdown(underlyingTokens, pool.address)
 
@@ -102,12 +99,19 @@ abstract class UniswapV3PoolingMarketProvider(
             symbol = "${token0.symbol}-${token1.symbol}",
             breakdown = breakdown,
             tokens = underlyingTokens.map { it.toFungibleToken() },
-            marketSize = breakdown.sumOf {
+            marketSize = refetchable(breakdown.sumOf {
                 it.reserveUSD
+            }) {
+                defaultBreakdown(underlyingTokens, pool.address).sumOf {
+                    it.reserveUSD
+                }
             },
             tokenType = TokenType.UNISWAP,
             positionFetcher = null,
-            totalSupply = token.totalSupply,
+            totalSupply = refetchable(token.totalSupply.asEth(token.decimals)) {
+                val token = getToken(pool.address)
+                token.totalSupply.asEth(token.decimals)
+            },
             erc20Compatible = false
         )
     }

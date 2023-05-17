@@ -1,6 +1,7 @@
 package io.defitrack.protocol.bancor.pool
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.RefetchableValue
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -76,7 +77,9 @@ class BancorEthereumPoolingMarketProvider(
                             getERC20Resource(), bancorNetworkContract, underlying.address
                         ),
                         positionFetcher = defaultPositionFetcher(token.address),
-                        totalSupply = token.totalSupply
+                        totalSupply = RefetchableValue.refetchable {
+                            getToken(pool).totalDecimalSupply()
+                        }
                     )
                 } catch (ex: Exception) {
                     ex.printStackTrace()

@@ -1,6 +1,8 @@
 package io.defitrack.protocol.uniswap.v2.pooling
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.common.utils.RefetchableValue.Companion.refetchable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.uniswap.v2.apr.UniswapAPRService
@@ -39,10 +41,13 @@ class UniswapV2EthereumPoolingMarketProvider(
                                         token1.toFungibleToken()
                                     ),
                                     apr = uniswapAPRService.getAPR(it.id, getNetwork()),
-                                    marketSize = it.reserveUSD,
+                                    marketSize = refetchable(it.reserveUSD), //todo: fetch this from the blockchain
                                     tokenType = TokenType.UNISWAP,
                                     positionFetcher = defaultPositionFetcher(token.address),
-                                    totalSupply = token.totalSupply
+                                    totalSupply = refetchable(token.totalSupply.asEth(token.decimals)) {
+                                        val token = getToken(it.id)
+                                        token.totalSupply.asEth(token.decimals)
+                                    }
                                 )
                             )
                         } catch (ex: Exception) {

@@ -4,7 +4,6 @@ import io.defitrack.market.MarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.pooling.domain.PoolingMarket
-import jakarta.annotation.PostConstruct
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Configuration
 import org.springframework.scheduling.annotation.Scheduled
@@ -17,7 +16,9 @@ class MarketCacheRefresher(
 ) {
     val logger = LoggerFactory.getLogger(this::class.java)
 
-    @PostConstruct
+    @Scheduled(
+        fixedDelay = 1000 * 60 * 60 * 24 * 3, //every 3 days
+    )
     fun populateCaches() {
         logger.info("Initial population of all cashes.")
         poolingMarketProviders.forEach {
@@ -38,7 +39,7 @@ class MarketCacheRefresher(
     fun refreshCaches() {
         logger.info("Refreshing all caches. No full population.")
         poolingMarketProviders.forEach {
-            it.populateCaches()
+            it.refreshMarkets()
         }
         lendingMarketProviders.forEach {
             it.refreshMarkets()

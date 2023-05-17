@@ -1,7 +1,9 @@
 package io.defitrack.protocol.kyberswap.pooling
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.common.utils.RefetchableValue.Companion.refetchable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -36,17 +38,22 @@ class KyberElasticPoolingMarketProvider(
                 try {
                     create(
                         identifier = poolInfo.address,
-                        marketSize = getMarketSize(
-                            poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
-                            poolInfo.address
-                        ),
+                        marketSize = refetchable {
+                            getMarketSize(
+                                poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
+                                poolInfo.address
+                            )
+                        },
                         address = poolInfo.address,
                         name = poolingToken.name,
                         breakdown = defaultBreakdown(tokens, poolingToken.address),
                         symbol = poolingToken.symbol,
                         tokens = poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
                         tokenType = TokenType.VELODROME,
-                        totalSupply = poolingToken.totalSupply
+                        totalSupply = refetchable(poolingToken.totalSupply.asEth(poolingToken.decimals)) {
+                            val token = getToken(poolInfo.address)
+                            token.totalSupply.asEth(token.decimals)
+                        },
                     )
                 } catch (ex: Exception) {
                     logger.error("Error while fetching pooling market ${poolInfo.address}", ex)

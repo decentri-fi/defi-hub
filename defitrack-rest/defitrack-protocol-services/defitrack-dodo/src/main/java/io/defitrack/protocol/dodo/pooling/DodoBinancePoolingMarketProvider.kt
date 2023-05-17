@@ -9,8 +9,7 @@ import org.springframework.stereotype.Service
 @Service
 class DodoBinancePoolingMarketProvider(
     dodoProvider: DodoBinanceGraphProvider,
-    priceResource: PriceResource
-) : DodoPoolingMarketProvider(dodoProvider, priceResource) {
+) : DodoPoolingMarketProvider(dodoProvider) {
 
     override fun getProtocol(): Protocol {
         return Protocol.DODO

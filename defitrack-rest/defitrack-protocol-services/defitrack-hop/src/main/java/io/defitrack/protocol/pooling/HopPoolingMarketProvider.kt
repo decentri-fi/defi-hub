@@ -1,6 +1,8 @@
 package io.defitrack.protocol.pooling
 
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.common.utils.RefetchableValue.Companion.refetchable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
@@ -19,7 +21,7 @@ import java.math.BigDecimal
 abstract class HopPoolingMarketProvider(
     private val hopService: HopService,
     private val hopAPRService: HopAPRService
-) : PoolingMarketProvider(){
+) : PoolingMarketProvider() {
 
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
         hopService.getLps(getNetwork()).forEach { hopLpToken ->
@@ -63,7 +65,9 @@ abstract class HopPoolingMarketProvider(
                     htoken.toFungibleToken(),
                     canonical.toFungibleToken()
                 ),
-                marketSize = marketSize,
+                marketSize = refetchable(marketSize) {
+                    getPrice(canonical.address, contract, swapContract).toBigDecimal()
+                },
                 apr = hopAPRService.getAPR(
                     canonical.symbol,
                     canonical.address,
@@ -73,7 +77,9 @@ abstract class HopPoolingMarketProvider(
                 ),
                 tokenType = TokenType.HOP,
                 positionFetcher = defaultPositionFetcher(hopLpToken.lpToken),
-                totalSupply = contract.totalSupply()
+                totalSupply = refetchable {
+                    contract.totalSupply().asEth(contract.decimals())
+                }
             )
         } catch (ex: Exception) {
             ex.printStackTrace()

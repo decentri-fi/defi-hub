@@ -1,6 +1,8 @@
 package io.defitrack.protocol.quickswap.pooling
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.common.utils.RefetchableValue.Companion.refetchable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -53,10 +55,13 @@ class QuickswapPoolingMarketProvider(
                 token1.toFungibleToken(),
             ),
             apr = quickswapAPRService.getLPAPR(it.id),
-            marketSize = it.reserveUSD,
+            marketSize = refetchable(it.reserveUSD),
             tokenType = TokenType.QUICKSWAP,
             positionFetcher = defaultPositionFetcher(token.address),
-            totalSupply = token.totalSupply
+            totalSupply = refetchable(token.totalSupply.asEth(token.decimals)) {
+                val token = getToken(it.id)
+                token.totalSupply.asEth(token.decimals)
+            }
         )
     }
 

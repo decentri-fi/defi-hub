@@ -1,7 +1,7 @@
 package io.defitrack.pooling
 
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.common.utils.RefetchableValue.Companion.refetchable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
@@ -20,6 +20,8 @@ class PoolTogetherOptimismAUSDCTicketMarketProvider(
     override suspend fun fetchMarkets(): List<PoolingMarket> {
         val token = getToken(usdcTicketAddress)
 
+        val supply = token.totalDecimalSupply()
+
         return listOf(
             create(
                 identifier = "aUSDC-ticket",
@@ -30,14 +32,19 @@ class PoolTogetherOptimismAUSDCTicketMarketProvider(
                     token.toFungibleToken()
                 ),
                 apr = null,
-                marketSize = priceResource.calculatePrice(
-                    PriceRequest(
-                        usdcAddress, getNetwork(), token.totalSupply.asEth(token.decimals), TokenType.SINGLE
-                    )
-                ).toBigDecimal(),
+                marketSize = refetchable {
+                    priceResource.calculatePrice(
+                        PriceRequest(
+                            usdcAddress, getNetwork(), supply
+                        )
+                    ).toBigDecimal()
+                },
                 tokenType = TokenType.POOLTOGETHER,
                 positionFetcher = defaultPositionFetcher(token.address),
-                totalSupply = token.totalSupply
+                totalSupply = refetchable(supply) {
+                    val token = getToken(usdcTicketAddress)
+                    token.totalDecimalSupply()
+                }
             )
         )
     }

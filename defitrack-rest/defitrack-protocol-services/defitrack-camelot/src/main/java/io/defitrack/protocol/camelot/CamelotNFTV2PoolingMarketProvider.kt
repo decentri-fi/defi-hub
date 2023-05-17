@@ -1,6 +1,8 @@
 package io.defitrack.protocol.camelot
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.common.utils.RefetchableValue
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.CamelotService
@@ -44,10 +46,6 @@ class CamelotNFTV2PoolingMarketProvider(
             camelotService.getPoolByPair(token0.address, token1.address)
         )
 
-        val marketSize = getMarketSize(
-            listOf(token0.toFungibleToken(), token1.toFungibleToken()),
-            pool.address
-        )
         return create(
             tokens = listOf(token0.toFungibleToken(), token1.toFungibleToken()),
             identifier = pool.address,
@@ -57,8 +55,15 @@ class CamelotNFTV2PoolingMarketProvider(
             breakdown = emptyList(),
             erc20Compatible = false,
             tokenType = TokenType.ALGEBRA_NFT,
-            totalSupply = pool.liquidity(),
-            marketSize = marketSize
+            totalSupply = RefetchableValue.refetchable {
+                pool.liquidity().asEth()
+            },
+            marketSize = RefetchableValue.refetchable {
+                getMarketSize(
+                    listOf(token0.toFungibleToken(), token1.toFungibleToken()),
+                    pool.address
+                )
+            }
         )
     }
 

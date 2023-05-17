@@ -3,11 +3,11 @@ package io.defitrack.pooling
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.ERC20Contract
+import io.defitrack.common.utils.RefetchableValue
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Protocol
-import io.defitrack.token.FungibleToken
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
@@ -31,12 +31,16 @@ class BlurDepositPoolingMarketProvider : PoolingMarketProvider() {
             create(
                 name = "BlurEth",
                 identifier = blurEthDeposit,
-                marketSize = calculateMarketSize(),
+                marketSize = RefetchableValue.refetchable {
+                    calculateMarketSize()
+                },
                 address = blurEthDeposit,
                 symbol = "blurEth",
                 tokenType = TokenType.BLUR,
                 tokens = listOf(ether.toFungibleToken()),
-                totalSupply = blurEthDepositContract.totalSupply(),
+                totalSupply = RefetchableValue.refetchable {
+                    blurEthDepositContract.totalSupply().asEth(blurEthDepositContract.decimals())
+                },
                 positionFetcher = defaultPositionFetcher(blurEthDeposit),
             )
         )

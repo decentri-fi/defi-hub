@@ -3,8 +3,8 @@ package io.defitrack.market.lending
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.BigDecimalExtensions.isZero
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.common.utils.RefetchableValue
 import io.defitrack.market.MarketProvider
-import io.defitrack.market.RefetchableValue
 import io.defitrack.market.farming.domain.InvestmentPreparer
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
@@ -13,7 +13,7 @@ import java.math.BigDecimal
 
 abstract class LendingMarketProvider : MarketProvider<LendingMarket>() {
 
-    fun create(
+    suspend fun create(
         identifier: String,
         name: String,
         token: FungibleToken,
@@ -48,7 +48,7 @@ abstract class LendingMarketProvider : MarketProvider<LendingMarket>() {
         )
     }
 
-    private fun calculatePrice(
+    private suspend fun calculatePrice(
         marketSize: RefetchableValue<BigDecimal>?,
         totalSupply: RefetchableValue<BigDecimal>,
         decimals: Int

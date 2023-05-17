@@ -2,6 +2,7 @@ package io.defitrack.protocol.camelot
 
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.common.utils.RefetchableValue
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -11,7 +12,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.springframework.stereotype.Component
 
 //@Component
 class CamelotArbitrumPoolingMarketProvider(
@@ -34,10 +34,7 @@ class CamelotArbitrumPoolingMarketProvider(
                     try {
                         val poolingToken = getToken(pool)
                         val underlyingTokens = poolingToken.underlyingTokens
-                        val marketSize = getMarketSize(
-                            poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
-                            pool
-                        )
+
 
                         send(
                             create(
@@ -45,12 +42,19 @@ class CamelotArbitrumPoolingMarketProvider(
                                 address = pool,
                                 name = poolingToken.name,
                                 symbol = poolingToken.symbol,
-                                marketSize = marketSize,
+                                marketSize = RefetchableValue.refetchable {
+                                    getMarketSize(
+                                        poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
+                                        pool
+                                    )
+                                },
                                 breakdown = defaultBreakdown(underlyingTokens, poolingToken.address),
                                 tokens = underlyingTokens.map { it.toFungibleToken() },
                                 tokenType = TokenType.CAMELOT,
                                 positionFetcher = defaultPositionFetcher(poolingToken.address),
-                                totalSupply = poolingToken.totalSupply
+                                totalSupply = RefetchableValue.refetchable(poolingToken.totalDecimalSupply()) {
+                                    getToken(pool).totalDecimalSupply()
+                                }
                             )
                         )
                     } catch (ex: Exception) {

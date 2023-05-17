@@ -1,7 +1,7 @@
 package io.defitrack.pooling
 
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.FormatUtils.asWei
+import io.defitrack.common.utils.RefetchableValue
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -38,10 +38,10 @@ class BeethovenXFantomPoolingMarketProvider(
                                 getToken(poolToken.address).toFungibleToken()
                             },
                             symbol = it.symbol,
-                            marketSize = it.totalLiquidity,
+                            marketSize = RefetchableValue.refetchable(it.totalLiquidity),
                             tokenType = TokenType.BALANCER,
                             positionFetcher = defaultPositionFetcher(it.address),
-                            totalSupply = asWei(it.totalShares)
+                            totalSupply = RefetchableValue.refetchable(it.totalShares) //todo, use contracts to get total supply
                         )
                     } catch (ex: Exception) {
                         logger.error("problem trying to import beethoven pool", ex)

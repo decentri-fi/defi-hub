@@ -1,16 +1,15 @@
 package io.defitrack.protocol.dodo.pooling
 
+import io.defitrack.common.utils.RefetchableValue
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
-import io.defitrack.price.PriceResource
 import io.defitrack.protocol.DodoGraphProvider
 import io.defitrack.token.TokenType
-import java.math.BigInteger
+import java.math.BigDecimal
 
 abstract class DodoPoolingMarketProvider(
     private val dodoGraphProvider: DodoGraphProvider,
-    private val priceResource: PriceResource,
 ) : PoolingMarketProvider() {
     override suspend fun fetchMarkets(): List<PoolingMarket> {
         return dodoGraphProvider.getPools().map { pool ->
@@ -25,25 +24,26 @@ abstract class DodoPoolingMarketProvider(
                 symbol = baseToken.symbol + "/" + quoteToken.symbol,
                 tokens = listOf(baseToken, quoteToken).map { it.toFungibleToken() },
                 tokenType = TokenType.DODO,
-                totalSupply = BigInteger.ZERO,
-                marketSize = priceResource.calculatePrice(
-                    PriceRequest(
-                        baseToken.address,
-                        getNetwork(),
-                        pool.baseReserve,
-                        baseToken.type
-                    )
-                ).toBigDecimal().plus(
-                    priceResource.calculatePrice(
+                totalSupply = RefetchableValue.refetchable(BigDecimal.ZERO),
+                marketSize = RefetchableValue.refetchable {
+                    getPriceResource().calculatePrice(
                         PriceRequest(
-                            quoteToken.address,
+                            baseToken.address,
                             getNetwork(),
-                            pool.quoteReserve,
+                            pool.baseReserve,
                             baseToken.type
                         )
-                    ).toBigDecimal()
-                )
-            )
+                    ).toBigDecimal().plus(
+                        getPriceResource().calculatePrice(
+                            PriceRequest(
+                                quoteToken.address,
+                                getNetwork(),
+                                pool.quoteReserve,
+                                baseToken.type
+                            )
+                        ).toBigDecimal()
+                    )
+                })
         }
     }
 }

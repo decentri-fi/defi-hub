@@ -1,7 +1,9 @@
 package io.defitrack.pooling
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.common.utils.RefetchableValue.Companion.refetchable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -29,16 +31,22 @@ class SolidLizardPoolingMarketProvider : PoolingMarketProvider() {
                     create(
                         name = token.name,
                         identifier = token.address,
-                        marketSize = getMarketSize(
-                            token.underlyingTokens.map(TokenInformationVO::toFungibleToken), it
-                        ),
+                        marketSize = refetchable {
+                            getMarketSize(
+                                tokens.map(TokenInformationVO::toFungibleToken),
+                                it
+                            )
+                        },
                         positionFetcher = defaultPositionFetcher(token.address),
                         tokenType = TokenType.SOLIDLIZARD,
                         tokens = token.underlyingTokens.map(TokenInformationVO::toFungibleToken),
                         symbol = token.symbol,
                         breakdown = defaultBreakdown(tokens, token.address),
                         address = token.address,
-                        totalSupply = token.totalSupply
+                        totalSupply = refetchable(token.totalSupply.asEth(token.decimals)) {
+                            val token = getToken(it)
+                            token.totalSupply.asEth(token.decimals)
+                        }
                     )
                 } catch (ex: Exception) {
                     logger.error("Error while fetching pooling market $it", ex)

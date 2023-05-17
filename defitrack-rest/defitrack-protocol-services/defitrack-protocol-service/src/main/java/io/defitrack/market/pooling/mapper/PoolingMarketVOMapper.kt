@@ -6,6 +6,8 @@ import io.defitrack.market.pooling.vo.PoolingMarketVO
 import io.defitrack.network.toVO
 import io.defitrack.protocol.mapper.ProtocolVOMapper
 import org.springframework.stereotype.Component
+import java.time.ZoneOffset
+import java.util.*
 
 @Component
 class PoolingMarketVOMapper(
@@ -25,17 +27,15 @@ class PoolingMarketVOMapper(
                 decimals = decimals,
                 address = address,
                 apr = apr,
-                marketSize = marketSize,
+                marketSize = marketSize?.get(),
                 prepareInvestmentSupported = investmentPreparer != null,
                 erc20Compatible = erc20Compatible,
                 exitPositionSupported = exitPositionPreparer != null,
-                price = price,
-                totalSupply = totalSupply,
+                price = price.get(),
+                totalSupply = totalSupply.get(),
                 metadata = metadata,
-                updatedAt = updatedAt.get()
+                updatedAt = Date.from(updatedAt.get().toInstant(ZoneOffset.UTC))
             )
         }
-
     }
-
 }

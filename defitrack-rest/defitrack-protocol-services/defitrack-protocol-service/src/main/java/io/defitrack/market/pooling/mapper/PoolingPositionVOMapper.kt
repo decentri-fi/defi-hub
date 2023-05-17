@@ -21,7 +21,7 @@ class PoolingPositionVOMapper(
         return with(poolingPosition) {
             val lpToken = erC20Resource.getTokenInformation(market.network, market.address)
             val amount = tokenAmount.asEth(lpToken.decimals)
-            val dollarValue = customPriceCalculator?.calculate() ?: amount.times(market.price).toDouble()
+            val dollarValue = customPriceCalculator?.calculate() ?: amount.times(market.price.get()).toDouble()
 
             PoolingPositionVO(
                 lpAddress = market.address,

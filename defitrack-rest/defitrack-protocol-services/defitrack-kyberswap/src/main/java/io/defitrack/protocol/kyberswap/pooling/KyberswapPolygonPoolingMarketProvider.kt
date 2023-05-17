@@ -1,6 +1,9 @@
 package io.defitrack.protocol.kyberswap.pooling
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.common.utils.RefetchableValue
+import io.defitrack.common.utils.RefetchableValue.Companion.refetchable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -26,6 +29,8 @@ class KyberswapPolygonPoolingMarketProvider(
                     val token0 = getToken(it.token0.id)
                     val token1 = getToken(it.token1.id)
 
+                    val supply = token.totalSupply.asEth(token.decimals)
+
                     create(
                         identifier = it.id,
                         address = it.id,
@@ -36,10 +41,13 @@ class KyberswapPolygonPoolingMarketProvider(
                             token1.toFungibleToken()
                         ),
                         apr = kyberswapAPRService.getAPR(it.pair.id, getNetwork()),
-                        marketSize = it.reserveUSD,
+                        marketSize = refetchable(it.reserveUSD),
                         tokenType = TokenType.KYBER,
                         positionFetcher = defaultPositionFetcher(token.address),
-                        totalSupply = token.totalSupply
+                        totalSupply = RefetchableValue.refetchable(supply) {
+                            val token = getToken(it.id)
+                            token.totalSupply.asEth(token.decimals)
+                        }
                     )
                 } catch (ex: Exception) {
                     ex.printStackTrace()

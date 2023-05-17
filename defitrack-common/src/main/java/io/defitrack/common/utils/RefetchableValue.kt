@@ -1,6 +1,4 @@
-package io.defitrack.market
-
-import kotlinx.coroutines.runBlocking
+package io.defitrack.common.utils
 
 class RefetchableValue<T> {
 
@@ -9,8 +7,9 @@ class RefetchableValue<T> {
             return RefetchableValue(initialValue, fetcher)
         }
 
-        fun <T> refetchable(fetcher: (suspend () -> T)): RefetchableValue<T> {
-            return RefetchableValue(null, fetcher)
+        suspend fun <T> refetchable(fetcher: (suspend () -> T)): RefetchableValue<T> {
+            val initial = fetcher()
+            return RefetchableValue(initial, fetcher)
         }
     }
 
@@ -18,17 +17,12 @@ class RefetchableValue<T> {
 
     val fetcher: (suspend () -> T)?
 
-    private constructor(initialValue: T?, fetcher: (suspend () -> T)? = null) {
+    private constructor(initialValue: T, fetcher: (suspend () -> T)? = null) {
         if (initialValue == null && fetcher == null) {
             throw IllegalArgumentException("initialValue and fetcher cannot both be null")
         }
 
-        if (initialValue == null) {
-            this.value = runBlocking { fetcher!!() }
-        } else {
-            this.value = initialValue
-        }
-
+        this.value = initialValue
         this.fetcher = fetcher
     }
 

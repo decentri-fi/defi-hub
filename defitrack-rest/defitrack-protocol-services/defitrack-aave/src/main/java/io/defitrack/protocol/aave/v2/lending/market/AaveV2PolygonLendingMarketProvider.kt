@@ -6,8 +6,8 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
-import io.defitrack.market.RefetchableValue
-import io.defitrack.market.RefetchableValue.Companion.refetchable
+import io.defitrack.common.utils.RefetchableValue
+import io.defitrack.common.utils.RefetchableValue.Companion.refetchable
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
