@@ -20,8 +20,8 @@ class LendingPositionVOMapper(
     suspend fun map(lendingPosition: LendingPosition): LendingPositionVO {
         return with(lendingPosition) {
 
-            val lendingInDollars = if (market.marketToken !== null && market.price > BigDecimal.ZERO) {
-                tokenAmount.asEth(market.marketToken!!.decimals).times(market.price)
+            val lendingInDollars = if (market.marketToken !== null && market.price.get() > BigDecimal.ZERO) {
+                tokenAmount.asEth(market.marketToken!!.decimals).times(market.price.get())
             } else {
                 priceResource.calculatePrice(
                     PriceRequest(

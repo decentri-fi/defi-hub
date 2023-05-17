@@ -31,7 +31,8 @@ class PoolingMarketVOMapper(
                 exitPositionSupported = exitPositionPreparer != null,
                 price = price,
                 totalSupply = totalSupply,
-                metadata = metadata
+                metadata = metadata,
+                updatedAt = updatedAt.get()
             )
         }
 

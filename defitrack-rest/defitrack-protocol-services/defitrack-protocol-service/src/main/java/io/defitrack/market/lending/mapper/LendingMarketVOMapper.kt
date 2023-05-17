@@ -22,12 +22,13 @@ class LendingMarketVOMapper(
                 marketToken = marketToken,
                 rate = rate?.toDouble(),
                 poolType = poolType,
-                marketSize = marketSize,
+                marketSize = marketSize?.get(),
                 prepareInvestmentSupported = investmentPreparer != null,
                 exitPositionSupported = this.exitPositionPreparer != null,
                 erc20Compatible = this.erc20Compatible,
-                price = price,
-                totalSupply = totalSupply
+                price = price.get(),
+                totalSupply = totalSupply.get(),
+                updatedAt = updatedAt.get()
             )
         }
     }

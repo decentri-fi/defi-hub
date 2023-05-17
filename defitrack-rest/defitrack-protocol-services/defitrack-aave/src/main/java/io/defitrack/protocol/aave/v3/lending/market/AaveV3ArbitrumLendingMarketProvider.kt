@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component
 class AaveV3ArbitrumLendingMarketProvider(
     abiResource: ABIResource,
     aaveV3DataProvider: AaveV3DataProvider,
-    priceResource: PriceResource
 ) : AaveV3LendingMarketProvider(
-    priceResource, Network.ARBITRUM, abiResource, aaveV3DataProvider
+    Network.ARBITRUM, abiResource, aaveV3DataProvider
 )

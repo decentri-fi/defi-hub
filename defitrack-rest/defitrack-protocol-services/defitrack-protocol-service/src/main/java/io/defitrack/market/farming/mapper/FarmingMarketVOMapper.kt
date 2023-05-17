@@ -26,7 +26,8 @@ class FarmingMarketVOMapper(
                 prepareInvestmentSupported = this.investmentPreparer != null,
                 exitPositionSupported = this.exitPositionPreparer != null,
                 farmType = farmType,
-                expired = this.expired
+                expired = this.expired,
+                updatedAt = updatedAt.get()
             )
         }
     }

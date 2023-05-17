@@ -71,8 +71,9 @@ abstract class UniswapV3PoolingMarketProvider(
                                 getBlockchainGateway(),
                                 it
                             )
-                            val market = toMarket(uniswapV3Pool)
-                            send(market)
+                            send(
+                                toMarket(uniswapV3Pool)
+                            )
                         }
                     } catch (ex: Exception) {
                         ex.printStackTrace()
@@ -87,28 +88,27 @@ abstract class UniswapV3PoolingMarketProvider(
         val token = getToken(pool.address)
         val token0 = getToken(pool.token0())
         val token1 = getToken(pool.token1())
+
         val underlyingTokens = listOf(
             token0,
             token1
         )
+        val breakdown = defaultBreakdown(underlyingTokens, pool.address)
+
         return create(
             identifier = "v3-${pool.address}",
             name = "Uniswap V3 ${token0.symbol}/${token1.symbol} LP",
             address = pool.address,
             symbol = "${token0.symbol}-${token1.symbol}",
-            breakdown = defaultBreakdown(underlyingTokens, pool.address),
+            breakdown = breakdown,
             tokens = underlyingTokens.map { it.toFungibleToken() },
-            apr = null,
-            marketSize = marketSizeService.getMarketSize(
-                underlyingTokens.map { it.toFungibleToken() }, pool.address, getNetwork()
-            ),
+            marketSize = breakdown.sumOf {
+                it.reserveUSD
+            },
             tokenType = TokenType.UNISWAP,
             positionFetcher = null,
             totalSupply = token.totalSupply,
-            erc20Compatible = false,
-            metadata = mapOf(
-                "tick" to pool.slot0().tick
-            )
+            erc20Compatible = false
         )
     }
 

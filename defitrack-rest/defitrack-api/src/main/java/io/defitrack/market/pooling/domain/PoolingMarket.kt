@@ -30,4 +30,4 @@ data class PoolingMarket(
     val erc20Compatible: Boolean = true,
     val price: BigDecimal,
     val metadata: Map<String, Any>
-) : DefiMarket
+) : DefiMarket(id)

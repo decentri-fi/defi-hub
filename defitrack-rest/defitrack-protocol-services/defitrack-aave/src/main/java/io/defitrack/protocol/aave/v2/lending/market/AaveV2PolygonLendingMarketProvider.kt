@@ -6,6 +6,8 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
+import io.defitrack.market.RefetchableValue
+import io.defitrack.market.RefetchableValue.Companion.refetchable
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
@@ -22,6 +24,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
+import java.math.BigDecimal
 import java.math.BigInteger
 
 @Service
@@ -66,7 +69,7 @@ class AaveV2PolygonLendingMarketProvider(
                             token = token.toFungibleToken(),
                             name = "aave v2" + it.name,
                             rate = it.lendingRate.toBigDecimal(),
-                            marketSize = calculateMarketSize(it, aToken, token).toBigDecimal(),
+                            marketSize = calculateMarketSize(it, aToken, token),
                             poolType = "aave-v2",
                             investmentPreparer = AaveV2LendingInvestmentPreparer(
                                 token.address,
@@ -79,7 +82,11 @@ class AaveV2PolygonLendingMarketProvider(
                                     balanceOfFunction(user)
                                 }
                             ),
-                            marketToken = aToken.toFungibleToken()
+                            marketToken = aToken.toFungibleToken(),
+                            totalSupply = refetchable(aToken.totalSupply.asEth(aToken.decimals)) {
+                                val aToken = getToken(it.aToken.id)
+                                aToken.totalSupply.asEth(aToken.decimals)
+                            }
                         )
                     } catch (ex: Exception) {
                         null
@@ -96,16 +103,18 @@ class AaveV2PolygonLendingMarketProvider(
         reserve: AaveReserve,
         aToken: TokenInformationVO,
         underlyingToken: TokenInformationVO
-    ): Double {
+    ): RefetchableValue<BigDecimal> {
         val underlying = getToken(underlyingToken.address)
-        return priceResource.calculatePrice(
-            PriceRequest(
-                underlying.address,
-                getNetwork(),
-                reserve.totalLiquidity.asEth(aToken.decimals),
-                underlying.type
-            )
-        )
+        return refetchable {
+            priceResource.calculatePrice(
+                PriceRequest(
+                    underlying.address,
+                    getNetwork(),
+                    reserve.totalLiquidity.asEth(aToken.decimals),
+                    underlying.type
+                )
+            ).toBigDecimal()
+        }
     }
 
     override fun getNetwork(): Network = Network.POLYGON

@@ -1,6 +1,8 @@
 package io.defitrack.protocol.compound.lending
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.market.RefetchableValue.Companion.refetchable
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.protocol.Protocol
@@ -27,7 +29,11 @@ class CompoundV3LendingMarketProvider(
                     token = lendingToken.toFungibleToken(),
                     poolType = "compoundv3",
                     marketToken = cToken.toFungibleToken(),
-                    erc20Compatible = true
+                    erc20Compatible = true,
+                    totalSupply = refetchable(cToken.totalSupply.asEth()) {
+                        val cToken = getToken(cTokenAddress)
+                        cToken.totalSupply.asEth()
+                    }
                 )
             }
         }

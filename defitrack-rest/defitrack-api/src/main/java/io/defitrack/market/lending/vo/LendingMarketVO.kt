@@ -5,6 +5,7 @@ import io.defitrack.network.NetworkVO
 import io.defitrack.protocol.ProtocolVO
 import io.defitrack.token.FungibleToken
 import java.math.BigDecimal
+import java.time.LocalDateTime
 
 class LendingMarketVO(
     id: String,
@@ -20,7 +21,8 @@ class LendingMarketVO(
     exitPositionSupported: Boolean,
     val erc20Compatible: Boolean,
     val price: BigDecimal,
-    val totalSupply: BigDecimal
+    val totalSupply: BigDecimal,
+    updatedAt: LocalDateTime
 ) : MarketVO(
-    id, network, protocol, name, prepareInvestmentSupported, exitPositionSupported, marketSize, "lending"
+    id, network, protocol, name, prepareInvestmentSupported, exitPositionSupported, marketSize, "lending", updatedAt
 )

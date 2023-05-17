@@ -1,6 +1,7 @@
 package io.defitrack.protocol.maplefinance.lending.market
 
 import io.defitrack.common.network.Network
+import io.defitrack.market.RefetchableValue.Companion.refetchable
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.protocol.Protocol
@@ -9,6 +10,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
+import java.math.BigDecimal
 
 @Component
 class MapleFinanceEthereumLendingMarketProvider(
@@ -27,7 +29,8 @@ class MapleFinanceEthereumLendingMarketProvider(
                         rate = it.rates.firstOrNull()?.rate?.toBigDecimal(),
                         poolType = "maplefinance-lending",
                         token = token.toFungibleToken(),
-                        marketToken = null
+                        marketToken = null,
+                        totalSupply = refetchable(BigDecimal.ZERO),
                     )
                 } catch (ex: Exception) {
                     ex.printStackTrace()

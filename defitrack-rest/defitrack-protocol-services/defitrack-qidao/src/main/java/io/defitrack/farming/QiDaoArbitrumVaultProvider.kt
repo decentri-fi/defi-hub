@@ -1,12 +1,14 @@
 package io.defitrack.farming
 
 import io.defitrack.common.network.Network
+import io.defitrack.market.RefetchableValue.Companion.refetchable
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.QidaoArbitrumService
 import io.defitrack.protocol.contract.QidaoVaultContract
 import org.springframework.stereotype.Service
+import java.math.BigDecimal
 
 @Service
 class QiDaoArbitrumVaultProvider(
@@ -27,17 +29,19 @@ class QiDaoArbitrumVaultProvider(
                 name = vault.name(),
                 identifier = vault.address,
                 token = getToken(collateral.address).toFungibleToken(),
-                marketSize = marketSizeService.getMarketSize(
-                    collateral.toFungibleToken(),
-                    vault.address,
-                    getNetwork()
-                ),
+                marketSize = refetchable {
+                    getMarketSize(
+                        collateral.toFungibleToken(),
+                        vault.address,
+                    )
+                },
                 poolType = "mai_vault",
                 metadata = mapOf(
                     "address" to vault.address,
                     "vaultContract" to vault
                 ),
                 marketToken = null,
+                totalSupply = refetchable(BigDecimal.ZERO)
             )
         }
     }

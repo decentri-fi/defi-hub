@@ -6,6 +6,7 @@ import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.ProtocolVO
 import io.defitrack.token.FungibleToken
 import java.math.BigDecimal
+import java.time.LocalDateTime
 
 class FarmingMarketVO(
     id: String,
@@ -20,7 +21,8 @@ class FarmingMarketVO(
     prepareInvestmentSupported: Boolean,
     exitPositionSupported: Boolean,
     val farmType: ContractType,
-    val expired: Boolean
+    val expired: Boolean,
+    updatedAt: LocalDateTime
 ) : MarketVO(
-    id, network, protocol, name, prepareInvestmentSupported, exitPositionSupported, marketSize, "farming"
+    id, network, protocol, name, prepareInvestmentSupported, exitPositionSupported, marketSize, "farming", updatedAt
 )

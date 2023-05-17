@@ -1,15 +1,14 @@
 package io.defitrack.protocol.compound.lending
 
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
+import io.defitrack.market.RefetchableValue.Companion.refetchable
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.lending.domain.Position
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
-import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.compound.CompoundEthereumService
 import io.defitrack.protocol.compound.lending.invest.CompoundLendingInvestmentPreparer
@@ -28,7 +27,6 @@ import java.math.RoundingMode
 @Component
 class CompoundLendingMarketProvider(
     private val compoundEthereumService: CompoundEthereumService,
-    private val priceResource: PriceResource
 ) : LendingMarketProvider() {
 
     val comptrollerABI by lazy {
@@ -66,16 +64,17 @@ class CompoundLendingMarketProvider(
                     name = ctokenContract.name(),
                     rate = getSupplyRate(compoundTokenContract = ctokenContract),
                     token = underlyingToken.toFungibleToken(),
-                    marketSize = priceResource.calculatePrice(
-                        PriceRequest(
-                            underlyingToken.address,
-                            getNetwork(),
-                            ctokenContract.cash().add(ctokenContract.totalBorrows()).toBigDecimal().dividePrecisely(
-                                BigDecimal.TEN.pow(underlyingToken.decimals)
-                            ),
-                            TokenType.SINGLE
-                        )
-                    ).toBigDecimal(),
+                    marketSize = refetchable {
+                        getPriceResource().calculatePrice(
+                            PriceRequest(
+                                underlyingToken.address,
+                                getNetwork(),
+                                ctokenContract.cash().add(ctokenContract.totalBorrows()).toBigDecimal()
+                                    .asEth(underlyingToken.decimals),
+                                TokenType.SINGLE
+                            )
+                        ).toBigDecimal()
+                    },
                     poolType = "compound-lendingpool",
                     positionFetcher = PositionFetcher(
                         ctokenContract.address,
@@ -92,9 +91,12 @@ class CompoundLendingMarketProvider(
                         ctokenContract,
                         getERC20Resource()
                     ),
-                    metadata = mapOf("totalSupply" to ctokenContract.totalSupply()),
                     marketToken = getToken(ctokenContract.address).toFungibleToken(),
-                    erc20Compatible = true
+                    erc20Compatible = true,
+                    totalSupply = refetchable({
+                        val cToken = getToken(ctokenContract.address)
+                        cToken.totalSupply.asEth(cToken.decimals)
+                    })
                 )
             }
         } catch (ex: Exception) {

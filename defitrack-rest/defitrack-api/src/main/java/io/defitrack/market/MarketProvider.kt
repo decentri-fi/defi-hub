@@ -12,7 +12,6 @@ import io.defitrack.market.lending.domain.Position
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceResource
-import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.CompanyProvider
 import io.defitrack.protocol.ProtocolService
 import io.defitrack.token.ERC20Resource
@@ -20,6 +19,7 @@ import io.defitrack.token.FungibleToken
 import io.defitrack.token.MarketSizeService
 import io.defitrack.transaction.PreparedTransaction
 import io.github.reactivecircus.cache4k.Cache
+import jakarta.annotation.PostConstruct
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -70,7 +70,14 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
         return emptyList()
     }
 
-    fun refreshCaches() = runBlocking(Dispatchers.Default) {
+    @PostConstruct
+    fun refreshMarkets() = runBlocking {
+        getMarkets().forEach { market ->
+            market.refresh()
+        }
+    }
+
+    fun populateCaches() = runBlocking(Dispatchers.Default) {
         val millis = measureTimeMillis {
             try {
                 val markets = populate()

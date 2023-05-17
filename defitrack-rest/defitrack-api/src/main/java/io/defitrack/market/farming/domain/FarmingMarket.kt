@@ -27,4 +27,4 @@ data class FarmingMarket(
     val claimableRewardFetcher: ClaimableRewardFetcher? = null,
     val metadata: Map<String, Any> = emptyMap(),
     val expired: Boolean = false
-) : DefiMarket
+) : DefiMarket(id)

@@ -4,12 +4,12 @@ import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.BigDecimalExtensions.isZero
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.market.MarketProvider
+import io.defitrack.market.RefetchableValue
 import io.defitrack.market.farming.domain.InvestmentPreparer
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.token.FungibleToken
 import java.math.BigDecimal
-import java.math.BigInteger
 
 abstract class LendingMarketProvider : MarketProvider<LendingMarket>() {
 
@@ -18,17 +18,16 @@ abstract class LendingMarketProvider : MarketProvider<LendingMarket>() {
         name: String,
         token: FungibleToken,
         poolType: String,
-        marketSize: BigDecimal? = null,
+        marketSize: RefetchableValue<BigDecimal>? = null,
         rate: BigDecimal? = null,
         positionFetcher: PositionFetcher? = null,
         investmentPreparer: InvestmentPreparer? = null,
         metadata: Map<String, Any> = emptyMap(),
-        price: BigDecimal? = null,
+        price: RefetchableValue<BigDecimal>? = null,
         marketToken: FungibleToken?,
-        erc20Compatible: Boolean = false
+        erc20Compatible: Boolean = false,
+        totalSupply: RefetchableValue<BigDecimal>
     ): LendingMarket {
-
-        val totalSupply = metadata["totalSupply"] as? BigInteger ?: BigInteger.ZERO
 
         return LendingMarket(
             id = "lnd_${getNetwork().slug}-${getProtocol().slug}-${identifier}",
@@ -43,24 +42,27 @@ abstract class LendingMarketProvider : MarketProvider<LendingMarket>() {
             investmentPreparer = investmentPreparer,
             metadata = metadata,
             price = price ?: calculatePrice(marketSize, totalSupply, marketToken?.decimals ?: token.decimals),
-            totalSupply = totalSupply.asEth(marketToken?.decimals ?: token.decimals),
+            totalSupply = totalSupply,
             marketToken = marketToken,
             erc20Compatible = erc20Compatible
         )
     }
 
     private fun calculatePrice(
-        marketSize: BigDecimal?,
-        totalSupply: BigInteger,
+        marketSize: RefetchableValue<BigDecimal>?,
+        totalSupply: RefetchableValue<BigDecimal>,
         decimals: Int
-    ): BigDecimal {
-        if (marketSize == null || marketSize <= BigDecimal.ZERO) return BigDecimal.ZERO
-        val supply = totalSupply.asEth(decimals)
+    ): RefetchableValue<BigDecimal> {
+        return RefetchableValue.refetchable {
+            if (marketSize == null || marketSize.get() <= BigDecimal.ZERO) return@refetchable BigDecimal.ZERO
 
-        if (supply.isZero()) return BigDecimal.ZERO
+            if (totalSupply.get().isZero()) {
+                return@refetchable BigDecimal.ZERO
+            }
 
-        return marketSize.dividePrecisely(
-            totalSupply.asEth(decimals),
-        )
+            return@refetchable marketSize.get().dividePrecisely(
+                totalSupply.get().asEth(decimals),
+            )
+        }
     }
 }

@@ -6,6 +6,8 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
+import io.defitrack.market.RefetchableValue
+import io.defitrack.market.RefetchableValue.Companion.refetchable
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
@@ -17,11 +19,12 @@ import io.defitrack.protocol.aave.v2.contract.LendingPoolAddressProviderContract
 import io.defitrack.protocol.aave.v2.contract.LendingPoolContract
 import io.defitrack.protocol.aave.v2.domain.AaveReserve
 import io.defitrack.protocol.aave.v2.lending.invest.AaveV2LendingInvestmentPreparer
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
+import java.math.BigDecimal
 import java.math.BigInteger
 
 @Service
@@ -52,42 +55,49 @@ class AaveV2MainnetLendingMarketProvider(
         }
     }
 
-    override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
+    override suspend fun produceMarkets(): Flow<LendingMarket> = channelFlow {
         aaveV2MainnetService.getReserves()
             .filter {
                 it.totalLiquidity > BigInteger.ZERO
             }
-            .map {
-                async {
-                    try {
-                        val aToken = getToken(it.aToken.id)
-                        val token = getToken(it.underlyingAsset)
-                        create(
-                            identifier = it.id,
-                            token = token.toFungibleToken(),
-                            name = "aave v2 " + it.name,
-                            poolType = "aave-v2",
-                            marketSize = calculateMarketSize(it, aToken, token).toBigDecimal(),
-                            investmentPreparer = AaveV2LendingInvestmentPreparer(
-                                token.address,
-                                lendingPoolContract,
-                                getERC20Resource()
-                            ),
-                            rate = it.lendingRate.toBigDecimal(),
-                            positionFetcher = PositionFetcher(
-                                aToken.address,
-                                { user ->
-                                    balanceOfFunction(user)
+            .forEach {
+                launch {
+                    throttled {
+                        try {
+                            val aToken = getToken(it.aToken.id)
+                            val token = getToken(it.underlyingAsset)
+                            val market = create(
+                                identifier = it.id,
+                                token = token.toFungibleToken(),
+                                name = "aave v2 " + it.name,
+                                poolType = "aave-v2",
+                                marketSize = calculateMarketSize(it, aToken, token),
+                                investmentPreparer = AaveV2LendingInvestmentPreparer(
+                                    token.address,
+                                    lendingPoolContract,
+                                    getERC20Resource()
+                                ),
+                                rate = it.lendingRate.toBigDecimal(),
+                                positionFetcher = PositionFetcher(
+                                    aToken.address,
+                                    { user ->
+                                        balanceOfFunction(user)
+                                    }
+                                ),
+                                marketToken = aToken.toFungibleToken(),
+                                totalSupply = refetchable(aToken.totalSupply.asEth(aToken.decimals)) {
+                                    val aToken = getToken(it.aToken.id)
+                                    aToken.totalSupply.asEth(aToken.decimals)
                                 }
-                            ),
-                            marketToken = aToken.toFungibleToken()
-                        )
-                    } catch (ex: Exception) {
-                        logger.error("Unable to fetch lending market with address $it", ex)
-                        null
+                            )
+
+                            send(market)
+                        } catch (ex: Exception) {
+                            logger.error("Unable to fetch lending market with address $it", ex)
+                        }
                     }
                 }
-            }.awaitAll().filterNotNull()
+            }
     }
 
     override fun getProtocol(): Protocol {
@@ -98,16 +108,18 @@ class AaveV2MainnetLendingMarketProvider(
         reserve: AaveReserve,
         aToken: TokenInformationVO,
         underlyingToken: TokenInformationVO
-    ): Double {
-        val underlying = getToken(underlyingToken.address)
-        return priceResource.calculatePrice(
-            PriceRequest(
-                underlying.address,
-                getNetwork(),
-                reserve.totalLiquidity.asEth(aToken.decimals),
-                underlying.type
-            )
-        )
+    ): RefetchableValue<BigDecimal> {
+        return refetchable {
+            val underlying = getToken(underlyingToken.address)
+            priceResource.calculatePrice(
+                PriceRequest(
+                    underlying.address,
+                    getNetwork(),
+                    reserve.totalLiquidity.asEth(aToken.decimals),
+                    underlying.type
+                )
+            ).toBigDecimal()
+        }
     }
 
     override fun getNetwork(): Network = Network.ETHEREUM

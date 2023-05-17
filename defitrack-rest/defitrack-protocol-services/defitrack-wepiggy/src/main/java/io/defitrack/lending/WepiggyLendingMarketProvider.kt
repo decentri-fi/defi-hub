@@ -1,9 +1,9 @@
 package io.defitrack.lending
 
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
+import io.defitrack.market.RefetchableValue.Companion.refetchable
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.lending.domain.Position
@@ -58,16 +58,18 @@ class WepiggyLendingMarketProvider(
                     name = ctokenContract.name(),
                     rate = getSupplyRate(compoundTokenContract = ctokenContract),
                     token = underlyingToken.toFungibleToken(),
-                    marketSize = getPriceResource().calculatePrice(
-                        PriceRequest(
-                            underlyingToken.address,
-                            getNetwork(),
-                            ctokenContract.cash().add(ctokenContract.totalBorrows()).toBigDecimal().dividePrecisely(
-                                BigDecimal.TEN.pow(underlyingToken.decimals)
-                            ),
-                            TokenType.SINGLE
-                        )
-                    ).toBigDecimal(),
+                    marketSize = refetchable {
+                        getPriceResource().calculatePrice(
+                            PriceRequest(
+                                underlyingToken.address,
+                                getNetwork(),
+                                ctokenContract.cash().add(ctokenContract.totalBorrows()).toBigDecimal().asEth(
+                                    underlyingToken.decimals
+                                ),
+                                TokenType.SINGLE
+                            )
+                        ).toBigDecimal()
+                    },
                     poolType = "compound-lendingpool",
                     positionFetcher = PositionFetcher(
                         ctokenContract.address,
@@ -83,7 +85,11 @@ class WepiggyLendingMarketProvider(
                     ),
                     investmentPreparer = null,
                     marketToken = cToken.toFungibleToken(),
-                    erc20Compatible = true
+                    erc20Compatible = true,
+                    totalSupply = refetchable(ctokenContract.totalSupply().asEth(ctokenContract.decimals())) {
+                        val cToken = getToken(ctokenContract.address)
+                        ctokenContract.totalSupply().asEth(cToken.decimals)
+                    }
                 )
             }
         } catch (ex: Exception) {

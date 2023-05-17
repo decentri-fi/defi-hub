@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component
 class AaveV3OptimismLendingMarketProvider(
     abiResource: ABIResource,
     aaveV3DataProvider: AaveV3DataProvider,
-    priceResource: PriceResource
 ) : AaveV3LendingMarketProvider(
-    priceResource, Network.OPTIMISM, abiResource, aaveV3DataProvider
+    Network.OPTIMISM, abiResource, aaveV3DataProvider
 )

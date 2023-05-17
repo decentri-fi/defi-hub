@@ -1,8 +1,8 @@
 package io.defitrack.protocol.iron.lending
 
-import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
+import io.defitrack.market.RefetchableValue.Companion.refetchable
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.lending.domain.Position
@@ -13,7 +13,6 @@ import io.defitrack.protocol.compound.IronBankComptrollerContract
 import io.defitrack.protocol.compound.IronBankService
 import io.defitrack.protocol.compound.IronbankTokenContract
 import io.defitrack.protocol.iron.lending.invest.CompoundLendingInvestmentPreparer
-import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -60,16 +59,17 @@ abstract class IronBankLendingMarketProvider(
                     name = ctokenContract.name(),
                     rate = getSupplyRate(compoundTokenContract = ctokenContract),
                     token = underlyingToken.toFungibleToken(),
-                    marketSize = getPriceResource().calculatePrice(
-                        PriceRequest(
-                            underlyingToken.address,
-                            getNetwork(),
-                            ctokenContract.cash().add(ctokenContract.totalBorrows()).toBigDecimal().dividePrecisely(
-                                BigDecimal.TEN.pow(underlyingToken.decimals),
-                            ),
-                            TokenType.SINGLE
-                        )
-                    ).toBigDecimal(),
+                    marketSize = refetchable {
+                        getPriceResource().calculatePrice(
+                            PriceRequest(
+                                underlyingToken.address,
+                                getNetwork(),
+                                ctokenContract.cash()
+                                    .add(ctokenContract.totalBorrows()).toBigDecimal()
+                                    .asEth(underlyingToken.decimals)
+                            )
+                        ).toBigDecimal()
+                    },
                     poolType = "iron-bank-lendingpool",
                     positionFetcher = PositionFetcher(
                         ctokenContract.address,
@@ -87,7 +87,11 @@ abstract class IronBankLendingMarketProvider(
                         getERC20Resource()
                     ),
                     marketToken = ctoken.toFungibleToken(),
-                    erc20Compatible = true
+                    erc20Compatible = true,
+                    totalSupply = refetchable(ctokenContract.totalSupply().asEth(ctoken.decimals)) {
+                        val ctoken = getToken(ctokenContract.address)
+                        ctokenContract.totalSupply().asEth(ctoken.decimals)
+                    }
                 )
             }
         } catch (ex: Exception) {
