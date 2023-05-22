@@ -2,7 +2,6 @@ package io.defitrack.market.lending
 
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.BigDecimalExtensions.isZero
-import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.RefetchableValue
 import io.defitrack.market.MarketProvider
 import io.defitrack.market.farming.domain.InvestmentPreparer
@@ -56,13 +55,13 @@ abstract class LendingMarketProvider : MarketProvider<LendingMarket>() {
         return RefetchableValue.refetchable {
             if (marketSize == null || marketSize.get() <= BigDecimal.ZERO) return@refetchable BigDecimal.ZERO
 
-            if (totalSupply.get().isZero()) {
+            val supply = totalSupply.get()
+
+            if (supply.isZero()) {
                 return@refetchable BigDecimal.ZERO
             }
 
-            return@refetchable marketSize.get().dividePrecisely(
-                totalSupply.get().asEth(decimals),
-            )
+            return@refetchable marketSize.get().dividePrecisely(supply)
         }
     }
 }
