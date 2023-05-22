@@ -1,10 +1,8 @@
 package io.defitrack.protocol.balancer.staking
 
-import io.defitrack.protocol.balancer.pooling.BalancerEthereumPoolingMarketProvider
 import io.defitrack.protocol.balancer.pooling.BalancerPolygonPoolingMarketProvider
-import org.springframework.stereotype.Component
 
-@Component
+//@Component
 class BalancerPolygonGaugeMarketProvider(
     balancerPoolingMarketProvider: BalancerPolygonPoolingMarketProvider
 ) : BalancerGaugeFarmingMarketProvider(

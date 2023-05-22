@@ -35,12 +35,11 @@ abstract class BalancerGaugeFarmingMarketProvider(
 
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
 
-        val semaphore = Semaphore(8)
         val pools = poolingMarketProvider.getMarkets()
 
         pools.map { pool ->
             async {
-                semaphore.withPermit {
+                throttled {
                     try {
                         val gauge = factory.getPoolGauge(pool.address)
 

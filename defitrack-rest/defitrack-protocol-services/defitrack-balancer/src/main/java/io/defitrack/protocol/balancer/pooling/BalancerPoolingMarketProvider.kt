@@ -1,68 +1,99 @@
 package io.defitrack.protocol.balancer.pooling
 
+import com.google.gson.JsonParser
+import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.balancer.BalancerPoolGraphProvider
-import io.defitrack.protocol.balancer.Pool
 import io.defitrack.protocol.balancer.contract.BalancerPoolContract
+import io.defitrack.protocol.balancer.contract.BalancerPoolFactoryContract
 import io.defitrack.protocol.balancer.contract.BalancerVaultContract
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
+import org.web3j.abi.EventEncoder
+import org.web3j.abi.FunctionReturnDecoder
 import java.math.BigDecimal
+import java.math.BigInteger
 
 abstract class BalancerPoolingMarketProvider(
-    private val balancerPoolGraphProvider: BalancerPoolGraphProvider
+    val factories: List<String>,
+    val earliestBlock: String
 ) : PoolingMarketProvider() {
 
-    override fun getProtocol(): Protocol {
-        return Protocol.BALANCER
-    }
-
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
-        balancerPoolGraphProvider.getPools().forEach {
+
+        if (factories.isEmpty())
+            return@channelFlow
+
+        val logs = getBlockchainGateway().getEvents(
+            BlockchainGateway.GetEventLogsCommand(
+                addresses = factories,
+                topic = EventEncoder.encode(BalancerPoolFactoryContract.POOL_CREATED_EVENT),
+                fromBlock = BigInteger(earliestBlock, 10),
+            )
+        )
+
+        val pools = JsonParser.parseString(logs).asJsonObject["result"].asJsonArray.map {
+            val createdPoolAddress = it.asJsonObject["topics"].asJsonArray[1].asString
+            FunctionReturnDecoder.decodeIndexedValue(
+                createdPoolAddress, address(true)
+            ).value as String
+        }
+
+        pools.forEach { pool ->
             launch {
                 throttled {
-                    try {
-                        createMarket(it)?.let {
-                            send(it)
-                        }
-                    } catch (ex: Exception) {
-                        logger.error("Unable to get pool information for ${it.id}", ex)
+                    createMarket(pool)?.let {
+                        send(it)
                     }
                 }
             }
         }
     }
 
-    private suspend fun createMarket(it: Pool): PoolingMarket? {
-        return if (it.totalLiquidity > BigDecimal.valueOf(100000)) {
+    private suspend fun createMarket(
+        pool: String,
+    ): PoolingMarket? {
+
+        try {
+
+
             val poolContract = BalancerPoolContract(
-                getBlockchainGateway(), it.address
+                getBlockchainGateway(), pool
             )
             val vault = BalancerVaultContract(
                 getBlockchainGateway(),
                 poolContract.getVault()
             )
 
-            create(
-                identifier = it.id,
-                address = it.address,
+            val poolId = poolContract.getPoolId()
+
+            val poolTokens = vault.getPoolTokens(poolId)
+            val underlying = poolTokens.tokens.mapIndexed { index, it ->
+                getToken(it) to poolTokens.balances[index]
+            }
+
+            return create(
+                identifier = poolId,
+                address = pool,
                 name = "${
-                    it.tokens.joinToString("/") {
-                        it.symbol
+                    underlying.joinToString("/") {
+                        it.first.symbol
                     }
                 } Pool",
                 tokens = emptyList(),
-                symbol = it.symbol,
+                symbol = underlying.joinToString("/") {
+                    it.first.symbol
+                },
                 apr = BigDecimal.ZERO,
                 marketSize = Refreshable.refreshable {
-                    val poolInfo = vault.getPoolTokens(it.id)
+                    val poolInfo = vault.getPoolTokens(poolId)
 
                     val tokens = poolInfo.tokens.mapIndexed { index, address ->
                         val token = getToken(address)
@@ -82,13 +113,19 @@ abstract class BalancerPoolingMarketProvider(
                     }.toBigDecimal()
                 },
                 tokenType = TokenType.BALANCER,
-                positionFetcher = defaultPositionFetcher(it.address),
+                positionFetcher = defaultPositionFetcher(pool),
                 totalSupply = Refreshable.refreshable {
-                    getToken(it.address).totalDecimalSupply()
+                    getToken(pool).totalDecimalSupply()
                 }
+
             )
-        } else {
-            null
+        } catch (e: Exception) {
+            logger.error("Error creating market for pool $pool", e)
+            return null
         }
+    }
+
+    override fun getProtocol(): Protocol {
+        return Protocol.BALANCER
     }
 }

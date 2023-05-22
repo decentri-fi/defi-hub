@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class BalancerEthereumGaugeMarketProvider(
-    balancerPoolingMarketProvider: BalancerEthereumPoolingMarketProvider
+    balancerEthereumPoolingMarketProvider: BalancerEthereumPoolingMarketProvider
 ) : BalancerGaugeFarmingMarketProvider(
-    balancerPoolingMarketProvider, "0x4e7bbd911cf1efa442bc1b2e9ea01ffe785412ec"
+    balancerEthereumPoolingMarketProvider, "0x4e7bbd911cf1efa442bc1b2e9ea01ffe785412ec"
 )

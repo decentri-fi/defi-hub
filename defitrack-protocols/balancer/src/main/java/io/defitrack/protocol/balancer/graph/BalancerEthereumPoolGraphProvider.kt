@@ -23,7 +23,7 @@ class BalancerEthereumPoolGraphProvider(
     val cache = Cache.Builder().build<String, Pool>()
     val logger = LoggerFactory.getLogger(this::class.java)
 
-    @PostConstruct
+    //@PostConstruct
     fun init() = runBlocking {
         logger.info("Initializing BalancerEthereumPoolGraphProvider")
         val millis = measureTimeMillis {

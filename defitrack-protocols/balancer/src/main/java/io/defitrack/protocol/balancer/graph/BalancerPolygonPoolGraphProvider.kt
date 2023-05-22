@@ -24,7 +24,7 @@ class BalancerPolygonPoolGraphProvider(
     val logger = LoggerFactory.getLogger(this::class.java)
 
 
-    @PostConstruct
+//    @PostConstruct
     fun init() = runBlocking {
         logger.info("Initializing BalancerPolygonPoolGraphProvider")
         val millis = measureTimeMillis {
