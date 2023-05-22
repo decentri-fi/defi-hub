@@ -1,6 +1,7 @@
 package io.defitrack.erc20.protocolspecific
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.erc20.ERC20
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
@@ -47,7 +48,9 @@ class SetProtocolTokenService(
             decimals = contract.decimals(),
             address = token.address,
             protocol = Protocol.SET,
-            totalSupply = contract.totalSupply(),
+            totalSupply = Refreshable.refreshable {
+                contract.totalSupply()
+            },
             underlyingTokens = contract.getPositions().map {
                 val info = erC20Resource.getTokenInformation(token.network, it.token)
                 TokenInformation(
@@ -57,7 +60,9 @@ class SetProtocolTokenService(
                     type = info.type,
                     decimals = info.decimals,
                     address = it.token,
-                    totalSupply = info.totalSupply,
+                    totalSupply = Refreshable.refreshable {
+                        erC20Resource.getTokenInformation(token.network, it.token).totalSupply
+                    },
                 )
             }
         )

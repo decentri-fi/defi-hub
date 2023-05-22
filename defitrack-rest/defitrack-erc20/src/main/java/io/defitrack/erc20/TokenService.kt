@@ -1,12 +1,14 @@
 package io.defitrack.erc20
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.erc20.protocolspecific.TokenIdentifier
 import io.defitrack.logo.LogoService
 import io.defitrack.nativetoken.NativeTokenService
 import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
 import io.github.reactivecircus.cache4k.Cache
+import jakarta.annotation.PostConstruct
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
@@ -33,12 +35,25 @@ class TokenService(
     val logger = LoggerFactory.getLogger(this.javaClass)
     val tokenCache: Cache<String, List<TokenInformation>> = Cache.Builder().build()
 
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 3)
+    @Scheduled(fixedDelay = 1000 * 60 * 60 * 3, initialDelay = 1000 * 60 * 60 * 3)
     fun refreshCaches() = runBlocking {
         refreshCache()
     }
 
-    fun refreshCache() = runBlocking {
+    suspend fun refreshCache() {
+        tokenCache.asMap().entries.flatMap {
+            it.value
+        }.forEach {
+            it.refresh()
+        }
+    }
+
+    @PostConstruct
+    fun populateCaches() = runBlocking {
+        initialPopulation()
+    }
+
+    fun initialPopulation() = runBlocking {
         logger.info("refreshing token cache")
         val semaphore = Semaphore(8)
         Network.values().map { network ->
@@ -84,7 +99,9 @@ class TokenService(
                 symbol = token.symbol,
                 address = token.address,
                 decimals = token.decimals,
-                totalSupply = token.totalSupply,
+                totalSupply = refreshable(token.totalSupply) {
+                    erc20ContractReader.getERC20(network, address).totalSupply
+                },
                 type = TokenType.SINGLE,
                 network = network
             )

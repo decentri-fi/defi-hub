@@ -12,14 +12,4 @@ class ERC20(
     val network: Network,
     val address: String,
     val totalSupply: BigInteger,
-) {
-    fun toToken(): TokenInformation = TokenInformation(
-        name = name,
-        symbol = symbol,
-        decimals = decimals,
-        address = address,
-        type = TokenType.SINGLE,
-        totalSupply = totalSupply,
-        network = network
-    )
-}
+)

@@ -94,7 +94,7 @@ abstract class UniswapV3PoolingMarketProvider(
 
         return create(
             identifier = "v3-${pool.address}",
-            name = "Uniswap V3 ${token0.symbol}/${token1.symbol} LP",
+            name = "${token0.symbol}/${token1.symbol}",
             address = pool.address,
             symbol = "${token0.symbol}-${token1.symbol}",
             breakdown = breakdown,

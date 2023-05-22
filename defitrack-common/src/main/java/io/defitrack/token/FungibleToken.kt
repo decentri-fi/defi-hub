@@ -2,7 +2,7 @@ package io.defitrack.token
 
 import java.math.BigInteger
 
-open class FungibleToken(
+data class FungibleToken(
     val address: String,
     val name: String,
     val decimals: Int,

@@ -88,7 +88,11 @@ class BalanceRestController(
                     emptyList()
                 }
             }
-        }.awaitAll().flatten().map { it.toBalanceElement() }
+        }.awaitAll().flatten()
+            .distinctBy {
+                it.token
+            }
+            .map { it.toBalanceElement() }
     }
 
     @GetMapping(value = ["/{address}/token-balances"], params = ["network"])

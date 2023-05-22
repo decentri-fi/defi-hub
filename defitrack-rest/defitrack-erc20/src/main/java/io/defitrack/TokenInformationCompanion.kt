@@ -13,7 +13,7 @@ fun TokenInformation.toVO(): TokenInformationVO {
         address = address,
         decimals = decimals,
         type = type,
-        totalSupply = totalSupply,
+        totalSupply = totalSupply.get(),
         underlyingTokens = underlyingTokens.map { it.toVO() },
     )
 }

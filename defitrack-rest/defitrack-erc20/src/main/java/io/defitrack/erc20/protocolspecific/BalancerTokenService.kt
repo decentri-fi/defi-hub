@@ -1,6 +1,7 @@
 package io.defitrack.erc20.protocolspecific
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.erc20.ERC20
 import io.defitrack.erc20.ERC20ContractReader
 import io.defitrack.erc20.TokenService
@@ -50,7 +51,9 @@ class BalancerTokenService(
                 decimals = erc20.decimals,
                 type = TokenType.BALANCER,
                 protocol = Protocol.BALANCER,
-                totalSupply = erc20.totalSupply,
+                totalSupply = Refreshable.refreshable(erc20.totalSupply) {
+                    erC20ContractReader.getERC20(token.network, token.address).totalSupply
+                },
                 underlyingTokens = underlying.map { underlyingPoolToken ->
                     val underlying = tokenService.getTokenInformation(underlyingPoolToken.address, token.network)
                     TokenInformation(

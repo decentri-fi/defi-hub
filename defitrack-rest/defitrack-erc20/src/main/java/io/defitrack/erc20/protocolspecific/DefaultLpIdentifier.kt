@@ -1,5 +1,6 @@
 package io.defitrack.erc20.protocolspecific
 
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.erc20.ERC20
 import io.defitrack.erc20.LpContractReader
 import io.defitrack.erc20.TokenService
@@ -32,20 +33,12 @@ abstract class DefaultLpIdentifier(
             symbol = "${token0.symbol}-${token1.symbol}",
             address = erc20.address,
             decimals = erc20.decimals,
-            totalSupply = lp.totalSupply(),
+            totalSupply = Refreshable.refreshable {
+                lp.totalSupply()
+            },
             type = tokenType,
             protocol = protocol,
-            underlyingTokens = listOf(token0, token1).map {
-                TokenInformation(
-                    network = erc20.network,
-                    name = it.name,
-                    symbol = it.symbol,
-                    type = it.type,
-                    decimals = it.decimals,
-                    address = it.address,
-                    totalSupply = it.totalSupply,
-                )
-            },
+            underlyingTokens = listOf(token0, token1),
             network = erc20.network
         )
     }
