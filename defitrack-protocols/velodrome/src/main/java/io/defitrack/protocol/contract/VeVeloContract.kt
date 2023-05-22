@@ -34,11 +34,14 @@ class VeVeloContract(
         }
     }
 
-    fun createBalanceOfNFTFn(tokenIndex: BigInteger): Function {
+    fun lockedFn(tokenIndex: BigInteger): Function {
         return createFunction(
-            "balanceOfNFT",
+            "locked",
             listOf(tokenIndex.toUint256()),
-            listOf(TypeUtils.uint256())
+            listOf(
+                TypeUtils.uint128(),
+                TypeUtils.uint256(),
+            )
         )
     }
 }

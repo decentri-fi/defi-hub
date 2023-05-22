@@ -69,7 +69,7 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
         return emptyList()
     }
 
-    fun refreshMarkets() = runBlocking {
+    suspend fun refreshMarkets() = coroutineScope {
         val millis = measureTimeMillis {
             try {
                 getMarkets().map { market ->

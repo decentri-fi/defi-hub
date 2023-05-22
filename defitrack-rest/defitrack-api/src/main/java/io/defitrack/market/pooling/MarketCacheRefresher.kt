@@ -4,6 +4,9 @@ import io.defitrack.market.MarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.pooling.domain.PoolingMarket
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Configuration
 import org.springframework.scheduling.annotation.Scheduled
@@ -36,16 +39,23 @@ class MarketCacheRefresher(
         fixedDelay = 1000 * 60 * 60 * 3,
         initialDelay = 1000 * 60 * 60 * 3
     ) //todo: make sure every one is just a refresh
-    fun refreshCaches() {
+    fun refreshCaches() = runBlocking {
         logger.info("Refreshing all caches. No full population.")
-        poolingMarketProviders.forEach {
-            it.refreshMarkets()
-        }
-        lendingMarketProviders.forEach {
-            it.refreshMarkets()
-        }
-        farmingMarketProviders.forEach {
-            it.refreshMarkets()
-        }
+        poolingMarketProviders.map {
+            launch {
+                it.refreshMarkets()
+            }
+        }.joinAll()
+
+        lendingMarketProviders.map {
+            launch {
+                it.refreshMarkets()
+            }
+        }.joinAll()
+        farmingMarketProviders.map {
+            launch {
+                it.refreshMarkets()
+            }
+        }.joinAll()
     }
 }

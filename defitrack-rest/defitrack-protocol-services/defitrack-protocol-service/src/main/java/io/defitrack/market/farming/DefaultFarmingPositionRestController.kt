@@ -12,14 +12,14 @@ import java.math.BigInteger
 @RestController
 @RequestMapping(*["/staking", "/farming"])
 class DefaultFarmingPositionRestController(
-    private val stakingServices: List<FarmingPositionProvider>,
+    private val farmingPositionProviders: List<FarmingPositionProvider>,
     private val farmingPositionVOMapper: FarmingPositionVOMapper
 ) {
 
     @GetMapping("/{userAddress}/positions")
     fun getPositions(@PathVariable("userAddress") address: String): List<FarmingPositionVO> = runBlocking {
         if (WalletUtils.isValidAddress(address)) {
-            val results = stakingServices.flatMap {
+            val results = farmingPositionProviders.flatMap {
                 try {
                     it.getStakings(address).filter {
                         it.underlyingAmount > BigInteger.ZERO
@@ -43,7 +43,7 @@ class DefaultFarmingPositionRestController(
         @RequestParam("stakingElementId") stakingElementId: String,
     ): FarmingPositionVO? = runBlocking {
         if (WalletUtils.isValidAddress(address)) {
-            stakingServices.firstNotNullOfOrNull {
+            farmingPositionProviders.firstNotNullOfOrNull {
                 try {
                     it.getStaking(address, stakingElementId)
                 } catch (ex: Exception) {
