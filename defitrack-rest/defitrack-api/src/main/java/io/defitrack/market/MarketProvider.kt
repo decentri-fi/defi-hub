@@ -72,9 +72,13 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
     fun refreshMarkets() = runBlocking {
         val millis = measureTimeMillis {
             try {
-                getMarkets().forEach { market ->
-                    market.refresh()
-                }
+                getMarkets().map { market ->
+                    launch {
+                        throttled {
+                            market.refresh()
+                        }
+                    }
+                }.joinAll()
             } catch (ex: Exception) {
                 logger.error("something went wrong trying to refresh the cache", ex)
             }
