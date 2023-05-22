@@ -1,6 +1,7 @@
 package io.defitrack.staking
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.pooling.VelodromeOptimismPoolingMarketProvider
@@ -8,7 +9,6 @@ import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.contract.VelodromeGaugeContract
 import io.defitrack.protocol.contract.VoterContract
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
@@ -53,10 +53,12 @@ class VelodromeGaugeMarketProvider(
                                 rewardTokens = contract.getRewardList().map { reward ->
                                     getToken(reward).toFungibleToken()
                                 },
-                                marketSize = getMarketSize(
-                                    stakedToken.toFungibleToken(),
-                                    contract.address
-                                ),
+                                marketSize = Refreshable.refreshable {
+                                    getMarketSize(
+                                        stakedToken.toFungibleToken(),
+                                        contract.address
+                                    )
+                                },
                                 stakedToken = stakedToken.toFungibleToken(),
                                 vaultType = "velodrome-gauge",
                                 balanceFetcher = defaultPositionFetcher(gauge)

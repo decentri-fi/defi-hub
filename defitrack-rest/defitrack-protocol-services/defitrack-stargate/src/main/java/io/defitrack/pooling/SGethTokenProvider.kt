@@ -1,6 +1,6 @@
 package io.defitrack.pooling
 
-import io.defitrack.common.utils.RefetchableValue
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
@@ -25,7 +25,7 @@ abstract class SGethTokenProvider(
             create(
                 name = "SGETH Token",
                 identifier = "sgeth",
-                marketSize = RefetchableValue.refetchable {
+                marketSize = Refreshable.refreshable {
                     getPriceResource().calculatePrice(
                         PriceRequest(
                             "0x0",
@@ -38,7 +38,7 @@ abstract class SGethTokenProvider(
                 symbol = "sgeth",
                 tokenType = TokenType.STARGATE_VAULT,
                 tokens = listOf(underlying.toFungibleToken()),
-                totalSupply = RefetchableValue.refetchable(token.totalDecimalSupply()) {
+                totalSupply = Refreshable.refreshable(token.totalDecimalSupply()) {
                     getToken(address).totalDecimalSupply()
                 }
             )

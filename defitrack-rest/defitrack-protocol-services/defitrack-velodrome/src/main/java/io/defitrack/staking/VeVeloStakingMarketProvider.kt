@@ -1,6 +1,7 @@
 package io.defitrack.staking
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.protocol.ContractType
@@ -21,7 +22,9 @@ class VeVeloStakingMarketProvider : FarmingMarketProvider() {
                 stakedToken = veloToken.toFungibleToken(),
                 rewardTokens = listOf(getToken(veVelo).toFungibleToken()),
                 vaultType = "veVELO",
-                marketSize = getMarketSize(veloToken.toFungibleToken(), veVelo),
+                marketSize = refreshable {
+                    getMarketSize(veloToken.toFungibleToken(), veVelo)
+                },
                 farmType = ContractType.VOTE_ESCROW
             )
         )

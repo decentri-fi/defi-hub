@@ -2,6 +2,7 @@ package io.defitrack.staking
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
@@ -40,13 +41,15 @@ class StethMarketProvider(
                         steth.sharesOfFunction(user)
                     },
                 ),
-                marketSize = priceResource.calculatePrice(
-                    PriceRequest(
-                        "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
-                        getNetwork(),
-                        pooledEth.asEth(),
-                    )
-                ).toBigDecimal()
+                marketSize = Refreshable.refreshable {
+                    priceResource.calculatePrice(
+                        PriceRequest(
+                            "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+                            getNetwork(),
+                            pooledEth.asEth(),
+                        )
+                    ).toBigDecimal()
+                }
             )
         )
     }

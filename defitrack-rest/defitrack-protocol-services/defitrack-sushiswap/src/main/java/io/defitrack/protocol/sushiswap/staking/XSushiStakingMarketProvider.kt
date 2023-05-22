@@ -2,6 +2,7 @@ package io.defitrack.protocol.sushiswap.staking
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -28,11 +29,6 @@ class XSushiStakingMarketProvider(
 
         val ratio = totalStakedSushi.toBigDecimal().dividePrecisely(xSushiContract.totalSupply().toBigDecimal())
 
-        val marketsize = marketSizeService.getMarketSize(
-            sushiToken.toFungibleToken(),
-            xsushi,
-            getNetwork()
-        )
 
         return listOf(
             create(
@@ -41,7 +37,12 @@ class XSushiStakingMarketProvider(
                 stakedToken = sushiToken.toFungibleToken(),
                 rewardTokens = listOf(sushiToken.toFungibleToken()),
                 vaultType = "xsushi",
-                marketSize = marketsize,
+                marketSize = Refreshable.refreshable {
+                    getMarketSize(
+                        sushiToken.toFungibleToken(),
+                        xsushi,
+                    )
+                },
                 apr = null,
                 balanceFetcher = PositionFetcher(
                     xsushi,

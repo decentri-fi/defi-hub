@@ -2,7 +2,7 @@ package io.defitrack.protocol.iron.lending
 
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
-import io.defitrack.common.utils.RefetchableValue.Companion.refetchable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.lending.domain.Position
@@ -59,7 +59,7 @@ abstract class IronBankLendingMarketProvider(
                     name = ctokenContract.name(),
                     rate = getSupplyRate(compoundTokenContract = ctokenContract),
                     token = underlyingToken.toFungibleToken(),
-                    marketSize = refetchable {
+                    marketSize = refreshable {
                         getPriceResource().calculatePrice(
                             PriceRequest(
                                 underlyingToken.address,
@@ -88,7 +88,7 @@ abstract class IronBankLendingMarketProvider(
                     ),
                     marketToken = ctoken.toFungibleToken(),
                     erc20Compatible = true,
-                    totalSupply = refetchable(ctokenContract.totalSupply().asEth(ctoken.decimals)) {
+                    totalSupply = refreshable(ctokenContract.totalSupply().asEth(ctoken.decimals)) {
                         val ctoken = getToken(ctokenContract.address)
                         ctokenContract.totalSupply().asEth(ctoken.decimals)
                     }

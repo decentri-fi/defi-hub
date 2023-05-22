@@ -1,6 +1,7 @@
 package io.defitrack.farming
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.protocol.ContractType
@@ -21,9 +22,11 @@ class CowswapVirtualTokenVaultProvider : FarmingMarketProvider() {
                 stakedToken = cowToken,
                 vaultType = "vcow",
                 rewardTokens = emptyList(),
-                marketSize = getMarketSize(
-                    cowToken, vtokenAddress
-                ),
+                marketSize = Refreshable.refreshable {
+                    getMarketSize(
+                        cowToken, vtokenAddress
+                    )
+                },
                 farmType = ContractType.VOTE_ESCROW,
                 balanceFetcher = defaultPositionFetcher(vtokenAddress),
             )

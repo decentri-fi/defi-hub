@@ -4,7 +4,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.exit.ExitPositionPreparer
 import io.defitrack.market.DefiMarket
-import io.defitrack.common.utils.RefetchableValue
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.farming.domain.InvestmentPreparer
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.FungibleToken
@@ -20,7 +20,7 @@ data class LendingMarket(
     val name: String,
     val marketToken: FungibleToken?,
     val token: FungibleToken,
-    val marketSize: RefetchableValue<BigDecimal>? = null,
+    val marketSize: Refreshable<BigDecimal>? = null,
     val rate: BigDecimal? = null,
     val poolType: String,
     val positionFetcher: PositionFetcher? = null,
@@ -28,8 +28,8 @@ data class LendingMarket(
     val exitPositionPreparer: ExitPositionPreparer? = null,
     val metadata: Map<String, Any> = emptyMap(),
     val erc20Compatible: Boolean = false,
-    val totalSupply: RefetchableValue<BigDecimal>,
-    val price: RefetchableValue<BigDecimal>
+    val totalSupply: Refreshable<BigDecimal>,
+    val price: Refreshable<BigDecimal>
 ) : DefiMarket(
     id
 ) {

@@ -1,7 +1,7 @@
 package io.defitrack.protocol.curve.pooling
 
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.RefetchableValue
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -38,12 +38,12 @@ abstract class CurvePoolingMarketProvider(
                             symbol = lpToken.symbol,
                             tokens = tokens,
                             apr = BigDecimal.ZERO,
-                            marketSize = RefetchableValue.refetchable {
+                            marketSize = Refreshable.refreshable {
                                 marketSizeService.getMarketSize(tokens, lpToken.address, getNetwork())
                             },
                             tokenType = TokenType.CURVE,
                             positionFetcher = if (lpToken.name == "unknown") null else defaultPositionFetcher(lpToken.address),
-                            totalSupply = RefetchableValue.refetchable(lpToken.totalDecimalSupply()) {
+                            totalSupply = Refreshable.refreshable(lpToken.totalDecimalSupply()) {
                                 getToken(pool.address).totalDecimalSupply()
                             }
                         )

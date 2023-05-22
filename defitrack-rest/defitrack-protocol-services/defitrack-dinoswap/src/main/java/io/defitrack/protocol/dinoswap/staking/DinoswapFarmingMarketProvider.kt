@@ -1,11 +1,10 @@
 package io.defitrack.protocol.dinoswap.staking
 
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
-import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.dinoswap.DinoswapService
@@ -60,14 +59,6 @@ class DinoswapFarmingMarketProvider(
         val rewardToken = getToken(chef.rewardToken())
 
         val marketBalance = getERC20Resource().getBalance(getNetwork(), stakedtoken.address, chef.address)
-        val marketSize = getPriceResource().calculatePrice(
-            PriceRequest(
-                stakedtoken.address,
-                getNetwork(),
-                marketBalance.asEth(stakedtoken.decimals),
-                stakedtoken.type
-            )
-        )
 
         return create(
             identifier = "${chef.address}-${poolId}",
@@ -81,7 +72,13 @@ class DinoswapFarmingMarketProvider(
                 address = chef.address,
                 function = { user -> chef.userInfoFunction(user, poolId) }
             ),
-            marketSize = marketSize.toBigDecimal(),
+            marketSize = Refreshable.refreshable {
+                marketSizeService.getMarketSize(
+                    stakedtoken.toFungibleToken(),
+                    chef.address,
+                    getNetwork()
+                )
+            },
             farmType = ContractType.LIQUIDITY_MINING
         )
     }

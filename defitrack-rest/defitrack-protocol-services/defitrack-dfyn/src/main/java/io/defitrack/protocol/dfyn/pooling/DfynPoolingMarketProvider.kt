@@ -1,7 +1,7 @@
 package io.defitrack.protocol.dfyn.pooling
 
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.RefetchableValue
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -52,10 +52,10 @@ class DfynPoolingMarketProvider(
                         token1.toFungibleToken()
                     ),
                     apr = dfynAPRService.getAPR(it.id),
-                    marketSize = RefetchableValue.refetchable(it.reserveUSD),
+                    marketSize = Refreshable.refreshable(it.reserveUSD),
                     tokenType = TokenType.DFYN,
                     positionFetcher = defaultPositionFetcher(token.address),
-                    totalSupply = RefetchableValue.refetchable(token.totalDecimalSupply()) {
+                    totalSupply = Refreshable.refreshable(token.totalDecimalSupply()) {
                         val token = getToken(it.id)
                         token.totalDecimalSupply()
                     }

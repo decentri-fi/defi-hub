@@ -2,6 +2,7 @@ package io.defitrack.staking
 
 import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.network.toVO
@@ -37,11 +38,12 @@ class AelinRewardMarketProvider(
                 stakedToken = aelin.toFungibleToken(),
                 rewardTokens = listOf(aelin.toFungibleToken()),
                 vaultType = "staking-rewards",
-                marketSize = marketSizeService.getMarketSize(
-                    aelin.toFungibleToken(),
-                    rewardPool.address,
-                    getNetwork()
-                ),
+                marketSize = Refreshable.refreshable {
+                    getMarketSize(
+                        aelin.toFungibleToken(),
+                        rewardPool.address,
+                    )
+                },
                 apr = calculateSingleRewardPool(rewardPool.address),
                 balanceFetcher = defaultPositionFetcher(
                     rewardPool.address

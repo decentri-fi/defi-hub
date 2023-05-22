@@ -1,7 +1,7 @@
 package io.defitrack.pooling
 
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.RefetchableValue.Companion.refetchable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
@@ -32,7 +32,7 @@ class PoolTogetherOptimismAUSDCTicketMarketProvider(
                     token.toFungibleToken()
                 ),
                 apr = null,
-                marketSize = refetchable {
+                marketSize = refreshable {
                     priceResource.calculatePrice(
                         PriceRequest(
                             usdcAddress, getNetwork(), supply
@@ -41,7 +41,7 @@ class PoolTogetherOptimismAUSDCTicketMarketProvider(
                 },
                 tokenType = TokenType.POOLTOGETHER,
                 positionFetcher = defaultPositionFetcher(token.address),
-                totalSupply = refetchable(supply) {
+                totalSupply = refreshable(supply) {
                     val token = getToken(usdcTicketAddress)
                     token.totalDecimalSupply()
                 }

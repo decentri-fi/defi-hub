@@ -1,6 +1,8 @@
 package io.defitrack.farming
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
@@ -53,7 +55,9 @@ class SwapfishArbitrumMasterchefFarmingMarketProvider(
                     rewardToken.toFungibleToken()
                 ),
                 vaultType = "sushi-minichefV2",
-                marketSize = getMarketSize(stakedtoken.toFungibleToken(), chef.address),
+                marketSize = refreshable {
+                    getMarketSize(stakedtoken.toFungibleToken(), chef.address)
+                },
                 balanceFetcher = PositionFetcher(
                     chef.address,
                     { user -> chef.userInfoFunction(poolId, user) }

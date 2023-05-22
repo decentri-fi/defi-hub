@@ -1,6 +1,7 @@
 package io.defitrack.protocol.curve.staking
 
 import io.defitrack.claimable.ClaimableRewardFetcher
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -23,6 +24,7 @@ abstract class CurveGaugeFarmingMarketProvider(
     override fun getProtocol(): Protocol {
         return Protocol.CURVE
     }
+
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         return coroutineScope {
 
@@ -54,9 +56,11 @@ abstract class CurveGaugeFarmingMarketProvider(
                             stakedToken = stakedToken.toFungibleToken(),
                             rewardTokens = rewardTokens,
                             vaultType = "curve-gauge",
-                            marketSize = marketSizeService.getMarketSize(
-                                stakedToken.toFungibleToken(), gauge, getNetwork()
-                            ),
+                            marketSize = Refreshable.refreshable {
+                                marketSizeService.getMarketSize(
+                                    stakedToken.toFungibleToken(), gauge, getNetwork()
+                                )
+                            },
                             farmType = ContractType.LIQUIDITY_MINING,
                             balanceFetcher = PositionFetcher(
                                 gauge,

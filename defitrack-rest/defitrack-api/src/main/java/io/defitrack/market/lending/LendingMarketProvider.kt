@@ -2,7 +2,8 @@ package io.defitrack.market.lending
 
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.BigDecimalExtensions.isZero
-import io.defitrack.common.utils.RefetchableValue
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.MarketProvider
 import io.defitrack.market.farming.domain.InvestmentPreparer
 import io.defitrack.market.lending.domain.LendingMarket
@@ -17,15 +18,15 @@ abstract class LendingMarketProvider : MarketProvider<LendingMarket>() {
         name: String,
         token: FungibleToken,
         poolType: String,
-        marketSize: RefetchableValue<BigDecimal>? = null,
+        marketSize: Refreshable<BigDecimal>? = null,
         rate: BigDecimal? = null,
         positionFetcher: PositionFetcher? = null,
         investmentPreparer: InvestmentPreparer? = null,
         metadata: Map<String, Any> = emptyMap(),
-        price: RefetchableValue<BigDecimal>? = null,
+        price: Refreshable<BigDecimal>? = null,
         marketToken: FungibleToken?,
         erc20Compatible: Boolean = false,
-        totalSupply: RefetchableValue<BigDecimal>
+        totalSupply: Refreshable<BigDecimal>
     ): LendingMarket {
 
         return LendingMarket(
@@ -48,20 +49,20 @@ abstract class LendingMarketProvider : MarketProvider<LendingMarket>() {
     }
 
     private suspend fun calculatePrice(
-        marketSize: RefetchableValue<BigDecimal>?,
-        totalSupply: RefetchableValue<BigDecimal>,
+        marketSize: Refreshable<BigDecimal>?,
+        totalSupply: Refreshable<BigDecimal>,
         decimals: Int
-    ): RefetchableValue<BigDecimal> {
-        return RefetchableValue.refetchable {
-            if (marketSize == null || marketSize.get() <= BigDecimal.ZERO) return@refetchable BigDecimal.ZERO
+    ): Refreshable<BigDecimal> {
+        return Refreshable.refreshable {
+            if (marketSize == null || marketSize.get() <= BigDecimal.ZERO) return@refreshable BigDecimal.ZERO
 
-            val supply = totalSupply.get()
-
-            if (supply.isZero()) {
-                return@refetchable BigDecimal.ZERO
+            if (totalSupply.get().isZero()) {
+                return@refreshable BigDecimal.ZERO
             }
 
-            return@refetchable marketSize.get().dividePrecisely(supply)
+            return@refreshable marketSize.get().dividePrecisely(
+                totalSupply.get(),
+            )
         }
     }
 }

@@ -2,7 +2,7 @@ package io.defitrack.protocol.pooling
 
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.common.utils.RefetchableValue.Companion.refetchable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
@@ -65,7 +65,7 @@ abstract class HopPoolingMarketProvider(
                     htoken.toFungibleToken(),
                     canonical.toFungibleToken()
                 ),
-                marketSize = refetchable(marketSize) {
+                marketSize = refreshable(marketSize) {
                     getPrice(canonical.address, contract, swapContract).toBigDecimal()
                 },
                 apr = hopAPRService.getAPR(
@@ -77,7 +77,7 @@ abstract class HopPoolingMarketProvider(
                 ),
                 tokenType = TokenType.HOP,
                 positionFetcher = defaultPositionFetcher(hopLpToken.lpToken),
-                totalSupply = refetchable {
+                totalSupply = refreshable {
                     contract.totalSupply().asEth(contract.decimals())
                 }
             )

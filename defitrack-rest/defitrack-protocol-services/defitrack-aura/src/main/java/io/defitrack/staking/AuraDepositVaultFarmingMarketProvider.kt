@@ -1,6 +1,7 @@
 package io.defitrack.staking
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.protocol.ContractType
@@ -39,7 +40,9 @@ class AuraDepositVaultFarmingMarketProvider(
                         stakedToken = asset.toFungibleToken(),
                         rewardTokens = listOf(getToken(crvrewards.rewardToken()).toFungibleToken()),
                         vaultType = "aura-deposit",
-                        marketSize = getMarketSize(asset.toFungibleToken(), crvrewards.rewardToken()),
+                        marketSize = Refreshable.refreshable {
+                            getMarketSize(asset.toFungibleToken(), crvrewards.rewardToken())
+                        },
                         balanceFetcher = defaultPositionFetcher(crvrewards.address)
                     )
                 } catch (ex: Exception) {

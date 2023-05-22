@@ -3,7 +3,7 @@ package io.defitrack.pooling
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.erc20.TokenInformationVO
-import io.defitrack.common.utils.RefetchableValue.Companion.refetchable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -37,7 +37,7 @@ class VelodromeOptimismPoolingMarketProvider(
                         send(
                             create(
                                 identifier = it,
-                                marketSize = refetchable {
+                                marketSize = refreshable {
                                     getMarketSize(
                                         poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
                                         it
@@ -50,7 +50,7 @@ class VelodromeOptimismPoolingMarketProvider(
                                 symbol = poolingToken.symbol,
                                 tokens = poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
                                 tokenType = TokenType.VELODROME,
-                                totalSupply = refetchable(poolingToken.totalSupply.asEth(poolingToken.decimals)) {
+                                totalSupply = refreshable(poolingToken.totalSupply.asEth(poolingToken.decimals)) {
                                     val poolingToken = getToken(it)
                                     poolingToken.totalSupply.asEth(poolingToken.decimals)
                                 },

@@ -3,7 +3,7 @@ package io.defitrack.pooling
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.ERC20Contract
-import io.defitrack.common.utils.RefetchableValue
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
@@ -31,14 +31,14 @@ class BlurDepositPoolingMarketProvider : PoolingMarketProvider() {
             create(
                 name = "BlurEth",
                 identifier = blurEthDeposit,
-                marketSize = RefetchableValue.refetchable {
+                marketSize = Refreshable.refreshable {
                     calculateMarketSize()
                 },
                 address = blurEthDeposit,
                 symbol = "blurEth",
                 tokenType = TokenType.BLUR,
                 tokens = listOf(ether.toFungibleToken()),
-                totalSupply = RefetchableValue.refetchable {
+                totalSupply = Refreshable.refreshable {
                     blurEthDepositContract.totalSupply().asEth(blurEthDepositContract.decimals())
                 },
                 positionFetcher = defaultPositionFetcher(blurEthDeposit),

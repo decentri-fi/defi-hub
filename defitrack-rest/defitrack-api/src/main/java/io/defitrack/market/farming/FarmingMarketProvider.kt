@@ -1,6 +1,7 @@
 package io.defitrack.market.farming
 
 import io.defitrack.claimable.ClaimableRewardFetcher
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.exit.ExitPositionPreparer
 import io.defitrack.market.MarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -18,7 +19,7 @@ abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>() {
         stakedToken: FungibleToken,
         rewardTokens: List<FungibleToken>,
         vaultType: String,
-        marketSize: BigDecimal? = null,
+        marketSize: Refreshable<BigDecimal>? = null,
         apr: BigDecimal? = null,
         balanceFetcher: PositionFetcher? = null,
         claimableRewardFetcher: ClaimableRewardFetcher? = null,

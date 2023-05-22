@@ -23,7 +23,7 @@ class FarmingMarketVOMapper(
                 stakedToken = this.stakedToken,
                 reward = this.rewardTokens,
                 vaultType = this.contractType,
-                marketSize = this.marketSize,
+                marketSize = this.marketSize?.get(),
                 apr = this.apr,
                 prepareInvestmentSupported = this.investmentPreparer != null,
                 exitPositionSupported = this.exitPositionPreparer != null,

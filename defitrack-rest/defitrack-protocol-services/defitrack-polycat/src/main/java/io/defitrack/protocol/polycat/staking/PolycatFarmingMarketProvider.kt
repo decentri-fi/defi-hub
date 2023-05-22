@@ -2,6 +2,7 @@ package io.defitrack.protocol.polycat.staking
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -56,7 +57,9 @@ class PolycatFarmingMarketProvider(
                 rewardToken.toFungibleToken()
             ),
             apr = PolygcatStakingAprCalculator(getERC20Resource(), getPriceResource(), chef, poolId).calculateApr(),
-            marketSize = calculateMarketSize(stakedtoken, chef),
+            marketSize = Refreshable.refreshable {
+                calculateMarketSize(stakedtoken, chef)
+            },
             balanceFetcher = PositionFetcher(
                 address = chef.address,
                 { user ->

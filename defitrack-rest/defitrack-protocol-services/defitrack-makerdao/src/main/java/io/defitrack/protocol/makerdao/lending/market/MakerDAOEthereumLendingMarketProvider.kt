@@ -1,7 +1,7 @@
 package io.defitrack.protocol.makerdao.lending.market
 
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.RefetchableValue.Companion.refetchable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.protocol.Protocol
@@ -30,7 +30,7 @@ class MakerDAOEthereumLendingMarketProvider(
                         poolType = "makerdao-lending",
                         token = token.toFungibleToken(),
                         marketToken = null,
-                        totalSupply = refetchable(BigDecimal.ZERO)
+                        totalSupply = refreshable(BigDecimal.ZERO)
                     )
                 } catch (ex: Exception) {
                     ex.printStackTrace()

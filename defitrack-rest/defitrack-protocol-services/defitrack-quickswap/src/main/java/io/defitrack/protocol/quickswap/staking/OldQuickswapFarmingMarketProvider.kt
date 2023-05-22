@@ -3,6 +3,8 @@ package io.defitrack.protocol.quickswap.staking
 import io.defitrack.abi.ABIResource
 import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -69,7 +71,9 @@ class OldQuickswapFarmingMarketProvider(
                         stakedToken = stakedToken.toFungibleToken(),
                         rewardTokens = listOf(rewardToken.toFungibleToken()),
                         vaultType = "quickswap-reward-rewardPool",
-                        marketSize = getMarketSize(stakedToken, rewardPool),
+                        marketSize = refreshable {
+                            getMarketSize(stakedToken, rewardPool)
+                        },
                         apr = (quickswapAPRService.getRewardPoolAPR(rewardPool.address) + quickswapAPRService.getLPAPR(
                             stakedToken.address
                         )),

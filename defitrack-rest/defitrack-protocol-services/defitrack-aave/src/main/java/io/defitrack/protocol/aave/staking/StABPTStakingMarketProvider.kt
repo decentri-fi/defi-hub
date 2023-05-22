@@ -3,6 +3,7 @@ package io.defitrack.protocol.aave.staking
 import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -43,9 +44,11 @@ class StABPTStakingMarketProvider(
                     aaveToken.toFungibleToken()
                 ),
                 vaultType = "stABPT",
-                marketSize = marketSizeService.getMarketSize(
-                    abptToken.toFungibleToken(), stABPT, getNetwork()
-                ),
+                marketSize = refreshable {
+                    getMarketSize(
+                        abptToken.toFungibleToken(), stABPT,
+                    )
+                },
                 apr = null,
                 balanceFetcher = PositionFetcher(
                     stABPT,
