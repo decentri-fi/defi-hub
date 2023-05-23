@@ -35,7 +35,8 @@ import kotlin.time.Duration.Companion.hours
 
 abstract class MarketProvider<T : DefiMarket> : ProtocolService {
 
-    val cache = Cache.Builder<String, T>().expireAfterWrite(4.hours).build()
+    val cache = Cache.Builder<String, T>()
+        .expireAfterWrite(4.hours).build()
     val logger: Logger = LoggerFactory.getLogger(this.javaClass)
 
     val semaphore = Semaphore(10)
@@ -116,8 +117,8 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
         emptyList()
     }
 
-    fun getMarkets(): List<T> = runBlocking(Dispatchers.Default) {
-        cache.asMap().values.toList().toMutableList()
+    fun getMarkets(): List<T> {
+        return cache.asMap().values.toMutableList()
     }
 
     val chainGw: BlockchainGateway by lazy {
