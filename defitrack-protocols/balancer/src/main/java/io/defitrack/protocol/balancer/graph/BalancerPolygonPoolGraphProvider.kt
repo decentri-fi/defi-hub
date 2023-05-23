@@ -20,7 +20,7 @@ class BalancerPolygonPoolGraphProvider(
     theGraphGatewayProvider
 ), BalancerPoolGraphProvider {
 
-    val cache = Cache.Builder().build<String, Pool>()
+    val cache = Cache.Builder<String, Pool>().build()
     val logger = LoggerFactory.getLogger(this::class.java)
 
 

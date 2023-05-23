@@ -22,9 +22,9 @@ class PriceResource(
         private val logger = LoggerFactory.getLogger(this::class.java)
     }
 
-    val cache = Cache.Builder()
+    val cache = Cache.Builder<String, BigDecimal>()
         .expireAfterWrite(10.minutes)
-        .build<String, BigDecimal>()
+        .build()
 
     suspend fun calculatePrice(priceRequest: PriceRequest?): Double {
         return priceRequest?.let {

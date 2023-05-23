@@ -27,7 +27,7 @@ abstract class AbstractUniswapV2Service(
     }
 
     private val pairCache =
-        Cache.Builder().expireAfterWrite(1.days).build<String, List<UniswapPair>>()
+        Cache.Builder<String, List<UniswapPair>>().expireAfterWrite(1.days).build()
 
     suspend fun getPairs(): List<UniswapPair> {
         return pairCache.get("all") {

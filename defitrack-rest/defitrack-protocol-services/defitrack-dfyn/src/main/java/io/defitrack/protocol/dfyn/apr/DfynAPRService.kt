@@ -13,7 +13,7 @@ import kotlin.time.ExperimentalTime
 class DfynAPRService(private val dfynService: DfynService) {
 
     @OptIn(ExperimentalTime::class)
-    val cache = Cache.Builder().expireAfterWrite(10.hours).build<String, BigDecimal>()
+    val cache = Cache.Builder<String, BigDecimal>().expireAfterWrite(10.hours).build()
 
     fun getAPR(address: String): BigDecimal = runBlocking {
         cache.get(address) {

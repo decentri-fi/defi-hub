@@ -20,7 +20,7 @@ class DecentrifiPoolingPriceRepository(
 
     val logger = LoggerFactory.getLogger(this::class.java)
 
-    val cache = Cache.Builder().build<String, BigDecimal>()
+    val cache = Cache.Builder<String, BigDecimal>().build()
 
     @Scheduled(fixedDelay = 1000 * 60 * 10)
     fun populatePoolPrices() = runBlocking {

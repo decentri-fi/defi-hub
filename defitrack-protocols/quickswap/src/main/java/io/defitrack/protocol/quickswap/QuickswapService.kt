@@ -20,13 +20,13 @@ class QuickswapService(
     "https://api.thegraph.com/subgraphs/name/sameepsi/quickswap06", graphGatewayProvider
 ) {
 
-    val vaultCache = Cache.Builder().expireAfterWrite(
+    val vaultCache = Cache.Builder<String, List<String>>().expireAfterWrite(
         1.days
-    ).build<String, List<String>>()
+    ).build()
 
-    val pairCache = Cache.Builder().expireAfterWrite(
+    val pairCache = Cache.Builder<String, List<QuickswapPair>>().expireAfterWrite(
         1.days
-    ).build<String, List<QuickswapPair>>()
+    ).build()
 
     fun getOldDQuickContract(): String {
         return "0xf28164a485b0b2c90639e47b0f377b4a438a16b1"
@@ -48,10 +48,9 @@ class QuickswapService(
         return "0x8aaa5e259f74c8114e0a471d9f2adfc66bfe09ed"
     }
 
-    fun getDeprecatedRewardFactory() : String {
+    fun getDeprecatedRewardFactory(): String {
         return "0x5eec262b05a57da9beb5fe96a34aa4ed0c5e029f"
     }
-
 
 
     suspend fun getPairDayData(pairId: String): List<PairDayData> {

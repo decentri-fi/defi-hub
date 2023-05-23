@@ -15,7 +15,7 @@ class ERC20ContractReader(
     private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) {
 
-    val erc20Buffer = Cache.Builder().build<String, ERC20Contract>()
+    val erc20Buffer = Cache.Builder<String, ERC20Contract>().build()
     val erc20ABI by lazy {
         runBlocking {
             abiService.getABI("general/ERC20.json")

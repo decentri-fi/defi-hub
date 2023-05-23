@@ -20,7 +20,7 @@ class EnsNameService(
 
     val ethereumProvider = accessorGateway.getGateway(Network.ETHEREUM)
 
-    val cache = Cache.Builder().expireAfterWrite(24.hours).build<String, String>()
+    val cache = Cache.Builder<String, String>().expireAfterWrite(24.hours).build()
 
     fun getAvatar(name: String) = runBlocking {
         cache.get("${name}:avatar") {

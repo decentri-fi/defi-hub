@@ -22,7 +22,7 @@ class SpiritFantomService(
     fun getMasterchef() = "0x9083ea3756bde6ee6f27a6e996806fbd37f6f093"
 
     private val pairCache =
-        Cache.Builder().expireAfterWrite(1.days).build<String, List<SushiswapPair>>()
+        Cache.Builder<String, List<SushiswapPair>>().expireAfterWrite(1.days).build()
 
     override suspend fun getPairs(): List<SushiswapPair> {
         return runBlocking {

@@ -30,7 +30,7 @@ class CoinGeckoPriceService(
         val logger: Logger = LoggerFactory.getLogger(this::class.java)
     }
 
-    val tokenCache = Cache.Builder().expireAfterWrite(7.days).build<String, Set<CoingeckoToken>>()
+    val tokenCache = Cache.Builder<String, Set<CoingeckoToken>>().expireAfterWrite(7.days).build()
 
     @PostConstruct
     fun init() = runBlocking {

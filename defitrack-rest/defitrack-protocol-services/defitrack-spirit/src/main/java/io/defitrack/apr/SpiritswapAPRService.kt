@@ -16,9 +16,9 @@ class SpiritswapAPRService(
 ) {
 
     @OptIn(ExperimentalTime::class)
-    val aprCache = Cache.Builder().expireAfterWrite(
+    val aprCache = Cache.Builder<String, BigDecimal>().expireAfterWrite(
         4.hours
-    ).build<String, BigDecimal>()
+    ).build()
 
     fun getAPR(address: String, network: Network): BigDecimal {
         return runBlocking {

@@ -42,7 +42,7 @@ class CamelotService(
         )
     }
 
-    val cache = Cache.Builder().expireAfterAccess(1.hours).build<String, List<AlgebraPoolContract>>()
+    val cache = Cache.Builder<String, List<AlgebraPoolContract>>().expireAfterAccess(1.hours).build()
 
     @PostConstruct
     fun init() = runBlocking {

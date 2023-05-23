@@ -15,7 +15,7 @@ class LpContractReader(
     private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) {
 
-    private val cache = Cache.Builder().build<String, LPTokenContract>()
+    private val cache = Cache.Builder<String, LPTokenContract>().build()
 
     val lpABI by lazy {
         runBlocking {

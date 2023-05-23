@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component
 @Component
 class AbiService(private val client: HttpClient) {
 
-    val cache = Cache.Builder().build<String, String>()
+    val cache = Cache.Builder<String, String>().build()
 
     suspend fun getABI(id: String): String {
         return cache.get(id) {

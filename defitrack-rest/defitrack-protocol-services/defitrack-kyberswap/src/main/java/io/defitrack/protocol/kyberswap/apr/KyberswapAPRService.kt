@@ -17,7 +17,7 @@ class KyberswapAPRService(
     private val kyberswapEthereumGraphProvider: KyberswapEthereumGraphProvider
 ) {
 
-    val cache = Cache.Builder().expireAfterWrite(10.hours).build<String, BigDecimal>()
+    val cache = Cache.Builder<String, BigDecimal>().expireAfterWrite(10.hours).build()
 
     suspend fun getAPR(address: String, network: Network): BigDecimal {
         return cache.get("$address-${network.slug}") {

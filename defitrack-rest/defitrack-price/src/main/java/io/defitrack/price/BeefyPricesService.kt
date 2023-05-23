@@ -20,7 +20,7 @@ class BeefyPricesService(
     private val client: HttpClient
 ) {
 
-    val cache = Cache.Builder().expireAfterWrite(1.hours).build<String, Map<String, BigDecimal>>()
+    val cache = Cache.Builder<String, Map<String, BigDecimal>>().expireAfterWrite(1.hours).build()
 
     fun getPrices(): Map<String, BigDecimal> {
         return runBlocking {

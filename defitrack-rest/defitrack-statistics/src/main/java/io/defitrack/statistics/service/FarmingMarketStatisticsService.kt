@@ -17,7 +17,7 @@ class FarmingMarketStatisticsService(
     private val defitrackClient: DefitrackClient
 ) {
 
-    val cache: Cache<String, MarketStatisticVO> = Cache.Builder()
+    val cache = Cache.Builder<String, MarketStatisticVO>()
         .expireAfterWrite(1.hours)
         .build()
 

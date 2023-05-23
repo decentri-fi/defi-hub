@@ -15,7 +15,7 @@ class ABIResource(
     private val client: HttpClient
 ) {
 
-    val cache = Cache.Builder().build<String, String>()
+    val cache = Cache.Builder<String, String>().build()
 
     suspend fun getABI(abi: String): String {
         return cache.get(abi) {

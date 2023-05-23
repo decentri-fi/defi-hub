@@ -12,7 +12,7 @@ import kotlin.time.Duration.Companion.hours
 @Component
 class UniswapAPRService(private val abstractUniswapV2Service: List<AbstractUniswapV2Service>) {
 
-    val cache = Cache.Builder().expireAfterWrite(10.hours).build<String, BigDecimal>()
+    val cache = Cache.Builder<String, BigDecimal>().expireAfterWrite(10.hours).build()
 
     fun getAPR(address: String, network: Network): BigDecimal = runBlocking {
         cache.get("$address-${network.slug}") {

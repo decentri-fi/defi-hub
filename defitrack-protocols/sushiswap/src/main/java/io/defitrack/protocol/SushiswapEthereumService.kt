@@ -19,7 +19,7 @@ class SushiswapEthereumService(
     )
 
     private val pairCache =
-        Cache.Builder().expireAfterWrite(1.days).build<String, List<SushiswapPair>>()
+        Cache.Builder<String, List<SushiswapPair>>().expireAfterWrite(1.days).build()
 
     override suspend fun getPairs(): List<SushiswapPair> {
         return pairCache.get("all") {

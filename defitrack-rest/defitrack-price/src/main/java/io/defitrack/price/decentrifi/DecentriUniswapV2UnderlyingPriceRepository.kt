@@ -19,7 +19,7 @@ class DecentriUniswapV2UnderlyingPriceRepository(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    val prices = Cache.Builder().build<String, List<BigDecimal>>()
+    val prices = Cache.Builder<String, List<BigDecimal>>().build()
 
     @PostConstruct
     suspend fun populatePrices() {

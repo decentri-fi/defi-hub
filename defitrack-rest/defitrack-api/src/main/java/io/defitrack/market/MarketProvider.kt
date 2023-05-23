@@ -35,7 +35,7 @@ import kotlin.time.Duration.Companion.hours
 
 abstract class MarketProvider<T : DefiMarket> : ProtocolService {
 
-    val cache = Cache.Builder().expireAfterWrite(4.hours).build<String, T>()
+    val cache = Cache.Builder<String, T>().expireAfterWrite(4.hours).build()
     val logger: Logger = LoggerFactory.getLogger(this.javaClass)
 
     val semaphore = Semaphore(10)

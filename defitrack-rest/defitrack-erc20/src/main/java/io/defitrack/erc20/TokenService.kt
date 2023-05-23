@@ -33,7 +33,7 @@ class TokenService(
     private lateinit var tokenIdentifiers: List<TokenIdentifier>
 
     val logger = LoggerFactory.getLogger(this.javaClass)
-    val tokenCache: Cache<String, List<TokenInformation>> = Cache.Builder().build()
+    val tokenCache= Cache.Builder<String, List<TokenInformation>>().build()
 
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 3, initialDelay = 1000 * 60 * 60 * 3)
     fun refreshCaches() = runBlocking {
@@ -84,7 +84,7 @@ class TokenService(
         return tokenCache.get("tokens-${network}") ?: emptyList()
     }
 
-    val tokenInformationCache = Cache.Builder().build<String, TokenInformation>()
+    val tokenInformationCache = Cache.Builder<String, TokenInformation>().build()
 
     suspend fun getTokenInformation(address: String, network: Network): TokenInformation {
         if (address == "0x0" || address.lowercase() == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") {

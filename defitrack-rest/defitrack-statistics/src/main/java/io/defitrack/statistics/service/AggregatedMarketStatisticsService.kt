@@ -3,7 +3,10 @@ package io.defitrack.statistics.service
 import io.defitrack.statistics.client.DefitrackClient
 import io.defitrack.statistics.domain.MarketStatisticVO
 import io.github.reactivecircus.cache4k.Cache
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Component
 import kotlin.time.Duration.Companion.hours
 
@@ -12,7 +15,7 @@ class AggregatedMarketStatisticsService(
     private val defitrackClient: DefitrackClient
 ) {
 
-    val cache: Cache<String, MarketStatisticVO> = Cache.Builder()
+    val cache = Cache.Builder<String, MarketStatisticVO>()
         .expireAfterWrite(1.hours)
         .build()
 

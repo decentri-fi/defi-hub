@@ -9,7 +9,7 @@ import kotlin.time.Duration.Companion.hours
 
 abstract class PoolingAprCalculator {
 
-    private val cache = Cache.Builder().expireAfterWrite(10.hours).build<String, BigDecimal>()
+    private val cache = Cache.Builder<String, BigDecimal>().expireAfterWrite(10.hours).build()
 
     suspend fun calculateApr(): BigDecimal = runBlocking {
         cache.get("apr") {

@@ -33,15 +33,15 @@ class DecentrifiERC20Resource(
 
     val semaphore = Semaphore(4)
 
-    val tokensCache: Cache<String, List<TokenInformationVO>> = Cache.Builder()
+    val tokensCache = Cache.Builder<String, List<TokenInformationVO>>()
         .expireAfterWrite(1.hours)
         .build()
 
-    val tokenCache: Cache<String, TokenInformationVO> = Cache.Builder()
+    val tokenCache = Cache.Builder<String, TokenInformationVO>()
         .expireAfterWrite(1.hours)
         .build()
 
-    val wrappedCache: Cache<Network, WrappedToken> = Cache.Builder().build()
+    val wrappedCache = Cache.Builder<Network, WrappedToken>().build()
 
     val erc20ABI by lazy {
         runBlocking {

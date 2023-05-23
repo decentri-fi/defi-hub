@@ -20,9 +20,9 @@ class BeefyAPYService(
     private val client: HttpClient
 ) {
 
-    val cache = Cache.Builder()
+    val cache = Cache.Builder<String, Map<String, BigDecimal>>()
         .expireAfterWrite(1.hours)
-        .build<String, Map<String, BigDecimal>>()
+        .build()
 
     fun getAPYS(): Map<String, BigDecimal> {
         return runBlocking {

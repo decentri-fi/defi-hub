@@ -18,8 +18,8 @@ class LabelAddressesResource(
         private val logger = LoggerFactory.getLogger(this::class.java)
     }
 
-    val cache = Cache.Builder()
-        .build<String, LabeledAddress>()
+    val cache = Cache.Builder<String, LabeledAddress>()
+        .build()
 
     suspend fun getLabel(address: String): LabeledAddress {
         return try {

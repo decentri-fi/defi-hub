@@ -28,7 +28,7 @@ class DfynService(
     }
 
     private val pairCache =
-        Cache.Builder().expireAfterWrite(1.days).build<String, List<Pair>>()
+        Cache.Builder<String, List<Pair>>().expireAfterWrite(1.days).build()
 
     suspend fun getPairs(): List<Pair> {
         val query = """

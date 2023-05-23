@@ -40,9 +40,9 @@ class QuickswapAPRService(
         }
     }
 
-    val cache = Cache.Builder().expireAfterWrite(
+    val cache = Cache.Builder<String, BigDecimal>().expireAfterWrite(
         1.hours
-    ).build<String, BigDecimal>()
+    ).build()
 
     suspend fun getDualPoolAPR(address: String): BigDecimal {
         return cache.get("dual-rewardpool-$address") {

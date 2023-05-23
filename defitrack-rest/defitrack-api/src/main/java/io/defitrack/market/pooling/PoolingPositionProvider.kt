@@ -6,9 +6,9 @@ import kotlin.time.Duration.Companion.minutes
 
 abstract class PoolingPositionProvider {
 
-    val cache = Cache.Builder().expireAfterWrite(
+    val cache = Cache.Builder<String, List<PoolingPosition>>().expireAfterWrite(
         1.minutes
-    ).build<String, List<PoolingPosition>>()
+    ).build()
 
     suspend fun userPoolings(address: String): List<PoolingPosition> {
         return cache.get(address) {

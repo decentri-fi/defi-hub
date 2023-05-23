@@ -26,7 +26,7 @@ class HopService(
 
     val addressesUrl = "https://raw.githubusercontent.com/defitrack/data/master/protocols/hop/addresses.json"
 
-    val lpCache = Cache.Builder().build<Network, List<HopLpToken>>()
+    val lpCache = Cache.Builder<Network, List<HopLpToken>>().build()
 
     fun getStakingRewards(network: Network): List<String> {
         return abstractHopServices.firstOrNull {

@@ -19,7 +19,7 @@ class SpookyFantomService(
 
     fun getMasterchef() = "0x2b2929e785374c651a81a63878ab22742656dcdd"
 
-    private val pairCache = Cache.Builder().expireAfterWrite(1.days).build<String, List<SushiswapPair>>()
+    private val pairCache = Cache.Builder<String, List<SushiswapPair>>().expireAfterWrite(1.days).build()
 
     override suspend fun getPairs() = pairCache.get("all") {
         spookyService.getPairs()

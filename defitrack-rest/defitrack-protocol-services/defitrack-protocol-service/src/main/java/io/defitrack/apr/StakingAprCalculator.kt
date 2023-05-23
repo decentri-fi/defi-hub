@@ -5,7 +5,6 @@ import io.defitrack.common.utils.BigDecimalExtensions.isZero
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.github.reactivecircus.cache4k.Cache
-import kotlinx.coroutines.runBlocking
 import java.math.BigDecimal
 import java.math.RoundingMode
 import kotlin.time.Duration.Companion.hours
@@ -15,7 +14,7 @@ abstract class StakingAprCalculator(
 ) {
 
     private val secondsPerYear = BigDecimal.valueOf(60 * 60 * 24 * 365)
-    private val cache = Cache.Builder().expireAfterWrite(1.hours).build<String, BigDecimal>()
+    private val cache = Cache.Builder<String, BigDecimal>().expireAfterWrite(1.hours).build()
 
     suspend fun calculateApr(): BigDecimal {
         return cache.get("apr") {
