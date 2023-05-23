@@ -34,7 +34,7 @@ class PoolingMarketVOMapper(
                 price = price.get(),
                 totalSupply = totalSupply.get(),
                 metadata = metadata,
-                updatedAt = Date.from(updatedAt.get().toInstant(ZoneOffset.UTC))
+                updatedAt = Date.from(updatedAt.get().toInstant(ZoneOffset.UTC)).time
             )
         }
     }
