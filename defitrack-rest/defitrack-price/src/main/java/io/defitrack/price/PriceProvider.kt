@@ -1,6 +1,5 @@
 package io.defitrack.price
 
-import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.price.external.ExternalPriceService
 import kotlinx.coroutines.Dispatchers
@@ -21,13 +20,13 @@ class PriceProvider(
         "WBTC" to "BTC"
     )
 
-    suspend fun getPrice(token: TokenInformationVO): BigDecimal {
+    suspend fun getPrice(token: TokenInformationVO): BigDecimal? {
         return externalPriceServices.find {
             it.appliesTo(token)
         }?.getPrice(token) ?: beefyPriceService.getPrices()
             .getOrDefault(synonyms.getOrDefault(token.symbol.uppercase(), token.symbol.uppercase()), null)
         ?: withContext(
             Dispatchers.IO
-        ) { coinGeckoPriceService.getPrice(token.symbol) } ?: BigDecimal.ZERO
+        ) { coinGeckoPriceService.getPrice(token.symbol) }
     }
 }

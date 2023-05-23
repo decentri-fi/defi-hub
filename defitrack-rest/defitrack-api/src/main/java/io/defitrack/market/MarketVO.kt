@@ -1,5 +1,6 @@
 package io.defitrack.market
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import io.defitrack.network.NetworkVO
 import io.defitrack.protocol.ProtocolVO
 import org.springframework.format.annotation.DateTimeFormat
@@ -16,6 +17,5 @@ abstract class MarketVO(
     val exitPositionSupported: Boolean,
     val marketSize: BigDecimal?,
     val marketType: String,
-    @field:DateTimeFormat(pattern = "dd/MM/yyyy hh:mm")
-    val updatedAt: Date
+    val updatedAt: Long
 )

@@ -10,11 +10,11 @@ class DecentrifiLendingPriceService(
     private val decentrifiLendingPriceRepository: DecentrifiLendingPriceRepository
 ) : ExternalPriceService {
 
-    override fun appliesTo(tokenInformationVO: TokenInformationVO): Boolean {
-        return decentrifiLendingPriceRepository.contains(tokenInformationVO.address.lowercase())
+    override fun appliesTo(token: TokenInformationVO): Boolean {
+        return decentrifiLendingPriceRepository.contains(token)
     }
 
-    override suspend fun getPrice(tokenInformationVO: TokenInformationVO): BigDecimal {
-        return decentrifiLendingPriceRepository.getPrice(tokenInformationVO.address.lowercase())
+    override suspend fun getPrice(token: TokenInformationVO): BigDecimal {
+        return decentrifiLendingPriceRepository.getPrice(token)
     }
 }

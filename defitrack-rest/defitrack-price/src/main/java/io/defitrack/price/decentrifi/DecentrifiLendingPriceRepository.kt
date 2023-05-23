@@ -1,6 +1,8 @@
 package io.defitrack.price.decentrifi
 
+import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.lending.vo.LendingMarketVO
+import io.defitrack.network.NetworkVO
 import io.defitrack.protocol.ProtocolVO
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
@@ -37,7 +39,7 @@ class DecentrifiLendingPriceRepository(
                         if (price == null) {
                             logger.error("Price for market ${market.name} in ${market.protocol.name} is null")
                         } else {
-                            cache.put(market.marketToken!!.address.lowercase(), price)
+                            cache.put(toIndex(market.network, market.marketToken!!.address.lowercase()), price)
                         }
                     }
             } catch (ex: Exception) {
@@ -48,9 +50,11 @@ class DecentrifiLendingPriceRepository(
         logger.info("Decentrifi Lending Price Repository populated with ${cache.asMap().entries.size} prices")
     }
 
-    fun contains(address: String): Boolean {
-        return cache.get(address.lowercase()) != null
+    fun contains(token: TokenInformationVO): Boolean {
+        return cache.get(toIndex(token.network, token.address)) != null
     }
+
+    private fun toIndex(network: NetworkVO, address: String) = "${network.name}-${address.lowercase()}"
 
     suspend fun getProtocols(): List<ProtocolVO> {
         return httpClient.get("https://api.decentri.fi/protocols").body()
@@ -66,7 +70,7 @@ class DecentrifiLendingPriceRepository(
         }
     }
 
-    suspend fun getPrice(address: String): BigDecimal {
-        return cache.get(address.lowercase()) ?: BigDecimal.ZERO
+    suspend fun getPrice(token: TokenInformationVO): BigDecimal {
+        return cache.get(toIndex(token.network, token.address)) ?: BigDecimal.ZERO
     }
 }

@@ -10,11 +10,11 @@ class DecentrifiPoolingPriceService(
     private val decentrifiPoolingPriceRepository: DecentrifiPoolingPriceRepository
 ) : ExternalPriceService {
 
-    override fun appliesTo(tokenInformationVO: TokenInformationVO): Boolean {
-        return decentrifiPoolingPriceRepository.contains(tokenInformationVO.address.lowercase())
+    override fun appliesTo(token: TokenInformationVO): Boolean {
+        return decentrifiPoolingPriceRepository.contains(token)
     }
 
-    override suspend fun getPrice(tokenInformationVO: TokenInformationVO): BigDecimal {
-        return decentrifiPoolingPriceRepository.getPrice(tokenInformationVO.address)
+    override suspend fun getPrice(token: TokenInformationVO): BigDecimal {
+        return decentrifiPoolingPriceRepository.getPrice(token)
     }
 }

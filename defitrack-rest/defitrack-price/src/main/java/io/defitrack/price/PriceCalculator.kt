@@ -6,7 +6,6 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.token.ERC20Resource
-import io.defitrack.token.TokenType
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -41,25 +40,21 @@ class PriceCalculator(
         return retry(limitAttempts(5)) {
             val token = erc20Service.getTokenInformation(priceRequest.network, tokenAddress)
 
-            val tokenType = (priceRequest.type ?: token.type)
-            val price = when {
-                tokenType.standardLpToken -> {
-                    calculateLpHoldings(priceRequest, token)
-                }
+            val tokenPrice = priceProvider.getPrice(token)
 
-                tokenType == TokenType.CURVE -> {
-                    calculateLpHoldings(priceRequest, token)
-                }
-
-                else -> {
-                    calculateTokenWorth(
-                        priceRequest.network,
-                        token,
-                        priceRequest.amount
-                    )
+            val price = if (tokenPrice != null) {
+                priceRequest.amount.times(tokenPrice)
+            } else {
+                val tokenType = (priceRequest.type ?: token.type)
+                when {
+                    tokenType.standardLpToken -> {
+                        calculateLpHolding(priceRequest, token)
+                    }
+                    else -> {
+                        BigDecimal.ZERO
+                    }
                 }
             }
-
 
             price.times(
                 BigDecimal.TEN.pow(18)
@@ -67,12 +62,12 @@ class PriceCalculator(
         }
     }
 
-    private suspend fun calculateLpHoldings(
+    private suspend fun calculateLpHolding(
         priceRequest: PriceRequest,
         tokenInformation: TokenInformationVO
     ): BigDecimal {
         return try {
-            return calculateLpHoldings(
+            return calculateSingleLpHolding(
                 priceRequest.network,
                 tokenInformation.address,
                 priceRequest.amount,
@@ -86,16 +81,7 @@ class PriceCalculator(
         }
     }
 
-    suspend fun calculateTokenWorth(
-        network: Network,
-        token: TokenInformationVO,
-        amount: BigDecimal,
-    ): BigDecimal {
-        val tokenPrice = priceProvider.getPrice(token)
-        return amount.times(tokenPrice)
-    }
-
-    suspend fun calculateLpHoldings(
+    suspend fun calculateSingleLpHolding(
         network: Network,
         lpAddress: String,
         userLPAmount: BigDecimal,
@@ -107,7 +93,7 @@ class PriceCalculator(
         )
 
         return underlyingTokens.map { underlyingToken ->
-            val price = priceProvider.getPrice(underlyingToken)
+            val price = priceProvider.getPrice(underlyingToken) ?: BigDecimal.ZERO
             val underlyingTokenBalance = erc20Service.getBalance(network, underlyingToken.address, lpAddress)
             val userTokenAmount = underlyingTokenBalance.toBigDecimal().times(userShare)
 

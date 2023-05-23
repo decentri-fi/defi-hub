@@ -1,6 +1,8 @@
 package io.defitrack.price.decentrifi
 
+import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.pooling.vo.PoolingMarketVO
+import io.defitrack.network.NetworkVO
 import io.defitrack.protocol.ProtocolVO
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
@@ -33,7 +35,7 @@ class DecentrifiPoolingPriceRepository(
                     if (price == null) {
                         logger.error("Price for pool ${pool.address} in ${pool.protocol.name} is null")
                     } else {
-                        cache.put(pool.address.lowercase(), price)
+                        cache.put(toIndex(pool.network, pool.address), price)
                     }
                 }
             } catch (ex: Exception) {
@@ -44,9 +46,12 @@ class DecentrifiPoolingPriceRepository(
         logger.info("Decentrifi Pooling Price Repository populated with ${cache.asMap().entries.size} prices")
     }
 
-    fun contains(address: String): Boolean {
-        return cache.get(address.lowercase()) != null
+    fun contains(token: TokenInformationVO): Boolean {
+        return cache.get(toIndex(token.network, token.address)) != null
     }
+
+    private fun toIndex(network: NetworkVO, address: String) =
+        "${network.name}-${address.lowercase()}"
 
     suspend fun getProtocols(): List<ProtocolVO> {
         return httpClient.get("https://api.decentri.fi/protocols").body()
@@ -62,7 +67,7 @@ class DecentrifiPoolingPriceRepository(
         }
     }
 
-    suspend fun getPrice(address: String): BigDecimal {
-        return cache.get(address.lowercase()) ?: BigDecimal.ZERO
+    suspend fun getPrice(token: TokenInformationVO): BigDecimal {
+        return cache.get(toIndex(token.network, token.address)) ?: BigDecimal.ZERO
     }
 }

@@ -117,7 +117,7 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
     }
 
     fun getMarkets(): List<T> = runBlocking(Dispatchers.Default) {
-        cache.asMap().values.toList()
+        cache.asMap().values.toList().toMutableList()
     }
 
     val chainGw: BlockchainGateway by lazy {

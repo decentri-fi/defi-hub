@@ -25,5 +25,5 @@ class FarmingMarketVO(
     val expired: Boolean,
     updatedAt: Date
 ) : MarketVO(
-    id, network, protocol, name, prepareInvestmentSupported, exitPositionSupported, marketSize, "farming", updatedAt
+    id, network, protocol, name, prepareInvestmentSupported, exitPositionSupported, marketSize, "farming", updatedAt.time
 )
