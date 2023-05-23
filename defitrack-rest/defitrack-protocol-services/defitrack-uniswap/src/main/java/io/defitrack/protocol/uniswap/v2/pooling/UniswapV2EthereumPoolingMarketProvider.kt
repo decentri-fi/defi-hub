@@ -40,6 +40,12 @@ class UniswapV2EthereumPoolingMarketProvider(
                                         token0.toFungibleToken(),
                                         token1.toFungibleToken()
                                     ),
+                                    breakdown = defaultBreakdown(
+                                        listOf(
+                                            token0,
+                                            token1
+                                        ), token.address
+                                    ),
                                     apr = uniswapAPRService.getAPR(it.id, getNetwork()),
                                     marketSize = refreshable(it.reserveUSD), //todo: fetch this from the blockchain
                                     tokenType = TokenType.UNISWAP,
