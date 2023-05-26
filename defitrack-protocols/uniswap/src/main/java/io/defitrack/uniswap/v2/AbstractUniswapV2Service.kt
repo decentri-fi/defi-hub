@@ -33,7 +33,7 @@ abstract class AbstractUniswapV2Service(
         return pairCache.get("all") {
             val query = """
             {
-            	pairs(orderDirection: desc, orderBy: reserveUSD, where: {reserveUSD_gt: 10000}) {
+            	pairs(orderDirection: desc, orderBy: reserveUSD, where: {reserveUSD_gt: 10000}, first: 1000) {
                 id
                 reserveUSD
                 token0 {
