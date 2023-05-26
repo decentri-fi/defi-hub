@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component
 class BalancerPolygonPoolingMarketProvider : BalancerPoolingMarketProvider(
     listOf(
         "0xAB2372275809E15198A7968C7f324053867cdB0C",
+        "0x8e9aa87e45e92bad84d5f8dd1bff34fb92637de9",
+        "0x7bc6C0E73EDAa66eF3F6E2f27b0EE8661834c6C9",
         "0x6Ab5549bBd766A43aFb687776ad8466F8b42f777",
         "0x5C5fCf8fBd4cd563cED27e7D066b88ee20E1867A",
         "0xB8Dfa4fd0F083de2B7EDc0D5eeD5E684e54bA45D",

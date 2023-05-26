@@ -14,8 +14,6 @@ import io.defitrack.protocol.balancer.contract.BalancerLiquidityGaugeFactoryCont
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.sync.Semaphore
-import kotlinx.coroutines.sync.withPermit
 
 abstract class BalancerGaugeFarmingMarketProvider(
     private val poolingMarketProvider: PoolingMarketProvider,
@@ -42,6 +40,10 @@ abstract class BalancerGaugeFarmingMarketProvider(
                 throttled {
                     try {
                         val gauge = factory.getPoolGauge(pool.address)
+
+                        if (gauge == "0x0000000000000000000000000000000000000000") {
+                            return@throttled null
+                        }
 
                         val stakedToken = getToken(pool.address)
                         val gaugecontract = BalancerGaugeContract(

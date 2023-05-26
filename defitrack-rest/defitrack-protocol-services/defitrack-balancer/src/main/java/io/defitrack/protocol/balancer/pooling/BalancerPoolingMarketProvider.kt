@@ -87,7 +87,9 @@ abstract class BalancerPoolingMarketProvider(
                         it.first.symbol
                     }
                 } Pool",
-                tokens = emptyList(),
+                tokens = underlying.map {
+                    it.first.toFungibleToken()
+                },
                 symbol = underlying.joinToString("/") {
                     it.first.symbol
                 },
