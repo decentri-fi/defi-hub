@@ -31,12 +31,11 @@ import org.web3j.abi.datatypes.Function
 import java.math.BigDecimal
 import java.math.BigInteger
 import kotlin.system.measureTimeMillis
-import kotlin.time.Duration.Companion.hours
 
 abstract class MarketProvider<T : DefiMarket> : ProtocolService {
 
-    val cache = Cache.Builder<String, T>()
-        .expireAfterWrite(4.hours).build()
+    val cache = Cache.Builder<String, T>().build()
+
     val logger: Logger = LoggerFactory.getLogger(this.javaClass)
 
     val semaphore = Semaphore(10)
@@ -118,7 +117,13 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
     }
 
     fun getMarkets(): List<T> {
-        return cache.asMap().values.toMutableList()
+        return try {
+            val hashmap: Map<in String, T> = HashMap(cache.asMap())
+            hashmap.values.toMutableList()
+        } catch (ex: Exception) {
+            logger.error("Unable to get markets from map", ex)
+            emptyList()
+        }
     }
 
     val chainGw: BlockchainGateway by lazy {

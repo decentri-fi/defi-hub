@@ -59,11 +59,11 @@ class DecentrifiPoolingPriceRepository(
 
     suspend fun getPools(protocol: String): List<PoolingMarketVO> {
         val result = httpClient.get("https://api.decentri.fi/$protocol/pooling/all-markets")
-        if (result.status.isSuccess())
-            return result.body()
+        return if (result.status.isSuccess())
+            result.body()
         else {
             logger.error("Unable to fetch pools for $protocol")
-            return emptyList()
+            emptyList()
         }
     }
 
