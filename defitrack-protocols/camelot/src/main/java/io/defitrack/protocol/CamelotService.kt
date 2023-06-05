@@ -7,6 +7,7 @@ import io.defitrack.protocol.algebra.AlgebraPoolContract
 import io.defitrack.protocol.algebra.AlgebraPosition
 import io.defitrack.protocol.algebra.AlgebraPositionsV2Contract
 import io.github.reactivecircus.cache4k.Cache
+import jakarta.annotation.PostConstruct
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -15,7 +16,7 @@ import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import jakarta.annotation.PostConstruct
+import java.util.concurrent.Executors
 import kotlin.time.Duration.Companion.hours
 
 private const val CAMELOT_NFT = "0xacdcc3c6a2339d08e0ac9f694e4de7c52f890db3"
@@ -46,9 +47,13 @@ class CamelotService(
 
     @PostConstruct
     fun init() = runBlocking {
-        logger.info("importing camelot markets")
-        cache.put("all", getPools())
-        logger.info("done importing camelot markets")
+        Executors.newSingleThreadExecutor().submit {
+            runBlocking {
+                logger.info("importing camelot markets")
+                cache.put("all", getPools())
+                logger.info("done importing camelot markets")
+            }
+        }
     }
 
     suspend fun getPools(): List<AlgebraPoolContract> = coroutineScope {
