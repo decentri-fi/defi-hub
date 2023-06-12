@@ -11,9 +11,9 @@ import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerGaugeContract
 import io.defitrack.protocol.balancer.contract.BalancerLiquidityGaugeFactoryContract
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.launch
 
 abstract class BalancerGaugeFarmingMarketProvider(
     private val poolingMarketProvider: PoolingMarketProvider,
@@ -31,62 +31,63 @@ abstract class BalancerGaugeFarmingMarketProvider(
         )
     }
 
-    override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
+    override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
 
         val pools = poolingMarketProvider.getMarkets()
 
-        pools.map { pool ->
-            async {
+        pools.forEach { pool ->
+            launch {
                 throttled {
                     try {
                         val gauge = factory.getPoolGauge(pool.address)
 
                         if (gauge == "0x0000000000000000000000000000000000000000") {
-                            return@throttled null
-                        }
+                            logger.debug("no gauge for ${pool.address}")
+                        } else {
+                            val stakedToken = getToken(pool.address)
+                            val gaugecontract = BalancerGaugeContract(
+                                getBlockchainGateway(),
+                                gauge
+                            )
 
-                        val stakedToken = getToken(pool.address)
-                        val gaugecontract = BalancerGaugeContract(
-                            getBlockchainGateway(),
-                            gauge
-                        )
-
-                        create(
-                            identifier = pool.id,
-                            name = stakedToken.underlyingTokens.joinToString("/") {
-                                it.symbol
-                            } + " Gauge",
-                            stakedToken = stakedToken.toFungibleToken(),
-                            rewardTokens = getRewardTokens(
-                                gaugecontract
-                            ).map { reward ->
-                                reward.toFungibleToken()
-                            },
-                            vaultType = "balancerGauge",
-                            balanceFetcher = PositionFetcher(
-                                gaugecontract.address,
-                                { user -> balanceOfFunction(user) }
-                            ),
-                            farmType = ContractType.STAKING,
-                            metadata = mapOf("address" to pool.id),
-                            exitPositionPreparer = prepareExit {
-                                PreparedExit(
-                                    function = gaugecontract.exitPosition(it.amount),
-                                    to = gaugecontract.address,
+                            send(
+                                create(
+                                    identifier = pool.id,
+                                    name = stakedToken.underlyingTokens.joinToString("/") {
+                                        it.symbol
+                                    } + " Gauge",
+                                    stakedToken = stakedToken.toFungibleToken(),
+                                    rewardTokens = getRewardTokens(
+                                        gaugecontract
+                                    ).map { reward ->
+                                        reward.toFungibleToken()
+                                    },
+                                    vaultType = "balancerGauge",
+                                    balanceFetcher = PositionFetcher(
+                                        gaugecontract.address,
+                                        { user -> balanceOfFunction(user) }
+                                    ),
+                                    farmType = ContractType.STAKING,
+                                    metadata = mapOf("address" to pool.address),
+                                    exitPositionPreparer = prepareExit {
+                                        PreparedExit(
+                                            function = gaugecontract.exitPosition(it.amount),
+                                            to = gaugecontract.address,
+                                        )
+                                    }
                                 )
-                            }
-                        )
+                            )
+                        }
                     } catch (ex: Exception) {
                         ex.printStackTrace()
                         logger.error(
                             "Error while fetching balancer gauge: ${ex.message}"
                         )
-                        null
                     }
                 }
             }
         }
-    }.awaitAll().filterNotNull()
+    }
 
 
     private suspend fun getRewardTokens(balancerGaugeContract: BalancerGaugeContract): List<TokenInformationVO> {
