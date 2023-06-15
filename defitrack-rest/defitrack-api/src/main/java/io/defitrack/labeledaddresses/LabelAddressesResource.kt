@@ -24,9 +24,8 @@ class LabelAddressesResource(
     suspend fun getLabel(address: String): LabeledAddress {
         return try {
             cache.get(address) {
-                val result: LabeledAddressVO = client.get(labeledAddressesResourceLocation) {
+                val result: LabeledAddressVO = client.get(labeledAddressesResourceLocation + "/" + address) {
                     this.header("Content-Type", "application/json")
-                    setBody(address)
                 }.body()
                 LabeledAddress(
                     address = result.address,
