@@ -70,6 +70,15 @@ class NativeTokenService(private val logoService: LogoService) {
                 logo = nativeLogo,
                 network = network
             )
+            Network.POLYGON_ZKEVM -> TokenInformation(
+                address = nullAddress,
+                name = "ETH",
+                decimals = 18,
+                symbol = "ETH",
+                type = TokenType.NATIVE,
+                logo = nativeLogo,
+                network = network
+            )
             else -> throw java.lang.IllegalArgumentException("native token for $network not supported")
         }
     }
