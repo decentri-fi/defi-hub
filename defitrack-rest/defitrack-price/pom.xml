@@ -24,7 +24,10 @@
             <groupId>io.defitrack</groupId>
             <artifactId>arbitrum</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>polygon-zkevm</artifactId>
+        </dependency>
         <dependency>
             <groupId>io.defitrack</groupId>
             <artifactId>ethereum</artifactId>
