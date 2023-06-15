@@ -77,6 +77,8 @@ abstract class BalancerPoolingMarketProvider(
             val poolTokens = vault.getPoolTokens(poolId)
             val underlying = poolTokens.tokens.mapIndexed { index, it ->
                 getToken(it) to poolTokens.balances[index]
+            }.filter {
+                it.first.address.lowercase() != pool.lowercase()
             }
 
             return create(
@@ -101,6 +103,8 @@ abstract class BalancerPoolingMarketProvider(
                         val token = getToken(address)
                         val balance = poolInfo.balances[index]
                         token to balance
+                    }.filter {
+                        it.first.address != pool
                     }
 
 
