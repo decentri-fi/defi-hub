@@ -37,9 +37,5 @@
             <groupId>io.defitrack</groupId>
             <artifactId>arbitrum</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
-            <artifactId>binance</artifactId>
-        </dependency>
     </dependencies>
 </project>

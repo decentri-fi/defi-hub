@@ -5,7 +5,6 @@ enum class Network(val logo: String, val chainId: Int, val slug: String, val has
     OPTIMISM("optimism.png", 10, "optimism"),
     ARBITRUM("arbitrum.png", 42161, "arbitrum"),
     FANTOM("fantom.png", 250, "fantom"),
-    BINANCE("bsc.svg", 56, "binance"),
     POLYGON("polygon.png", 137, "polygon"),
     POLYGON_ZKEVM("polygon-zkevm.png", 1101, "polygon-zkevm"),
     STARKET("starknet.png", 0, "starknet", false);

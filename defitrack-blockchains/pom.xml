@@ -18,7 +18,6 @@
         <module>ethereum</module>
         <module>polygon</module>
         <module>polygon-zkevm</module>
-        <module>binance</module>
         <module>arbitrum</module>
         <module>fantom</module>
         <module>optimism</module>

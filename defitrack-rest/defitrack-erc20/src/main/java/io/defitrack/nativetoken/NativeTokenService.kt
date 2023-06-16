@@ -61,15 +61,6 @@ class NativeTokenService(private val logoService: LogoService) {
                 logo = nativeLogo,
                 network = network
             )
-            Network.BINANCE -> TokenInformation(
-                address = nullAddress,
-                name = "BNB",
-                decimals = 18,
-                symbol = "BNB",
-                type = TokenType.NATIVE,
-                logo = nativeLogo,
-                network = network
-            )
             Network.POLYGON_ZKEVM -> TokenInformation(
                 address = nullAddress,
                 name = "ETH",

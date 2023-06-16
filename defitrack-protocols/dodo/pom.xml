@@ -36,10 +36,6 @@
         </dependency>
         <dependency>
             <groupId>io.defitrack</groupId>
-            <artifactId>binance</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
             <artifactId>optimism</artifactId>
         </dependency>
     </dependencies>

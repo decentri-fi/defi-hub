@@ -51,7 +51,7 @@ The project is entirely written in Kotlin. The only prerequisite is to have a JD
 
 ### Decentrifi Blockchains
 
-The Decentrifi ecosystem currently supports an array of prominent networks, including Ethereum, Binance Smart Chain, Polygon, and more. You can find the complete list of active supported networks at https://api.decentri.fi/networks, which is automatically updated to reflect our expanding network compatibility.
+The Decentrifi ecosystem currently supports an array of prominent networks, including Ethereum, Polygon, and more. You can find the complete list of active supported networks at https://api.decentri.fi/networks, which is automatically updated to reflect our expanding network compatibility.
 
 ### Decentrifi Protocols
 

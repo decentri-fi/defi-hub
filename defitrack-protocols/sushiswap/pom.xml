@@ -16,9 +16,5 @@
             <artifactId>protocol</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
-            <artifactId>binance</artifactId>
-        </dependency>
     </dependencies>
 </project>

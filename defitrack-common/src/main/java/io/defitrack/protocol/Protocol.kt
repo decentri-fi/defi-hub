@@ -45,7 +45,6 @@ enum class Protocol(
             Network.OPTIMISM,
             Network.POLYGON,
             Network.ARBITRUM,
-            Network.BINANCE
         ),
         company = Company.STARGATE
     ),
@@ -249,7 +248,7 @@ enum class Protocol(
         website = "https://beefy.com",
         primitives = listOf(DefiPrimitive.FARMING),
         company = Company.BEEFY,
-        networks = listOf(Network.POLYGON, Network.ARBITRUM, Network.FANTOM, Network.BINANCE)
+        networks = listOf(Network.POLYGON, Network.ARBITRUM, Network.FANTOM)
     ),
     QUICKSWAP(
         logo = "quickswap.png",
@@ -393,7 +392,7 @@ enum class Protocol(
         website = "https://dodoex.io",
         primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
         company = Company.DODO,
-        networks = listOf(Network.POLYGON, Network.ARBITRUM, Network.BINANCE, Network.ETHEREUM)
+        networks = listOf(Network.POLYGON, Network.ARBITRUM, Network.ETHEREUM)
     ),
     CONVEX(
         logo = "convex.png",
