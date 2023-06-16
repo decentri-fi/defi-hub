@@ -10,6 +10,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import jakarta.annotation.PostConstruct
+import org.springframework.scheduling.annotation.Scheduled
 
 @Component
 class ERC20Repository(
@@ -34,7 +35,7 @@ class ERC20Repository(
         )
     }
 
-    @PostConstruct
+    @Scheduled(fixedDelay = 1000 * 60 * 60 * 24 * 7) //every week
     fun populateTokens() = runBlocking {
         tokenList = listOf(
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/polygon/quickswap-default.tokenlist.json",
