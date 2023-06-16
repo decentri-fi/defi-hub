@@ -8,9 +8,9 @@ import io.defitrack.nativetoken.NativeTokenService
 import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
 import io.github.reactivecircus.cache4k.Cache
-import jakarta.annotation.PostConstruct
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
@@ -33,7 +33,7 @@ class TokenService(
     private lateinit var tokenIdentifiers: List<TokenIdentifier>
 
     val logger = LoggerFactory.getLogger(this.javaClass)
-    val tokenCache= Cache.Builder<String, List<TokenInformation>>().build()
+    val tokenCache = Cache.Builder<String, List<TokenInformation>>().build()
 
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 3, initialDelay = 1000 * 60 * 60 * 3)
     fun refreshCaches() = runBlocking {
@@ -48,13 +48,7 @@ class TokenService(
         }
     }
 
-    @PostConstruct
-    fun populateCaches() = runBlocking {
-        initialPopulation()
-    }
-
-    fun initialPopulation() = runBlocking {
-        logger.info("refreshing token cache")
+    suspend fun initialPopulation() = coroutineScope {
         val semaphore = Semaphore(8)
         Network.values().map { network ->
             val millis = measureTimeMillis {

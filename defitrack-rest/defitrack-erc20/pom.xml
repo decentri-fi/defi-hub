@@ -40,10 +40,6 @@
         </dependency>
         <dependency>
             <groupId>io.defitrack</groupId>
-            <artifactId>camelot</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
             <artifactId>ethereum</artifactId>
         </dependency>
         <dependency>
