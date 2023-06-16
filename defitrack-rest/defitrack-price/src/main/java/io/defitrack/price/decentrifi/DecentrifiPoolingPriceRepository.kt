@@ -29,7 +29,7 @@ class DecentrifiPoolingPriceRepository(
         val protocols = getProtocols()
         protocols.map { protocol ->
             try {
-                val pools = getPools(protocol.slug)
+                val pools = getPools(protocol)
                 pools.forEach { pool ->
                     val price = pool.price
                     if (price == null) {
@@ -57,8 +57,8 @@ class DecentrifiPoolingPriceRepository(
         return httpClient.get("https://api.decentri.fi/protocols").body()
     }
 
-    suspend fun getPools(protocol: String): List<PoolingMarketVO> {
-        val result = httpClient.get("https://api.decentri.fi/$protocol/pooling/all-markets")
+    suspend fun getPools(protocol: ProtocolVO): List<PoolingMarketVO> {
+        val result = httpClient.get("https://api.decentri.fi/$protocol/pooling/markets?protocol=${protocol.name}")
         return if (result.status.isSuccess())
             result.body()
         else {

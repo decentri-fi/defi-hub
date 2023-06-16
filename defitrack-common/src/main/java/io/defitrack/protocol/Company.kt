@@ -86,11 +86,11 @@ enum class Company(
     ),
     POLYGON(
         prettyName = "Polygon",
-        slug = "polygon"
+        slug = "polygon-protocol"
     ),
     IRON_BANK(
         prettyName = "Iron Bank",
-        slug = "ironbank"
+        slug = "iron-bank"
     ),
     AAVE(
         prettyName = "Aave",
@@ -158,11 +158,11 @@ enum class Company(
     ),
     SPOOKY(
         prettyName = "SpookySwap",
-        slug = "spookyswap"
+        slug = "spooky"
     ),
     SPIRITSWAP(
         prettyName = "SpiritSwap",
-        slug = "spiritswap"
+        slug = "spirit"
     ),
     RIBBON(
         prettyName = "Ribbon",
