@@ -11,6 +11,15 @@ import org.web3j.protocol.core.methods.response.Log
 
 abstract class EventDecoder {
 
+    companion object {
+        inline fun <reified T> org.web3j.abi.datatypes.Event.getNonIndexedParameter(log: Log, index: Int): T {
+            return FunctionReturnDecoder.decode(
+                log.data,
+                nonIndexedParameters
+            )[index].value as T
+        }
+    }
+
     @Autowired
     lateinit var erC20Resource: ERC20Resource
 
@@ -26,12 +35,7 @@ abstract class EventDecoder {
         return erC20Resource.getTokenInformation(network, address)
     }
 
-    inline fun <reified T> org.web3j.abi.datatypes.Event.getNonIndexedParameter(log: Log, index: Int): T {
-        return FunctionReturnDecoder.decode(
-            log.data,
-            nonIndexedParameters
-        )[index].value as T
-    }
+
 
     inline fun <reified T> org.web3j.abi.datatypes.Event.getIndexedParameter(log: Log, index: Int): T {
         return FunctionReturnDecoder.decodeIndexedValue(

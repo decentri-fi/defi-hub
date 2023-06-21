@@ -21,7 +21,7 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
         val addresses: (markets: List<PoolingMarket>) -> List<String> = { markets -> markets.map { it.address } },
         val topic: String,
         val optionalTopics: (user: String) -> List<String?>,
-        val toMarketEvent: (logObject: LogObject) -> DefiEvent
+        val toMarketEvent: suspend (logObject: LogObject) -> DefiEvent
     )
 
     open fun historicEventExtractor(): HistoricEventExtractor? {
