@@ -4,9 +4,12 @@ import com.google.gson.JsonParser
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.event.DefiEvent
+import io.defitrack.event.DefiEventType
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
+import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerPoolContract
@@ -18,6 +21,8 @@ import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
 import org.web3j.abi.EventEncoder
 import org.web3j.abi.FunctionReturnDecoder
+import org.web3j.abi.TypeEncoder
+import org.web3j.abi.datatypes.Address
 import java.math.BigDecimal
 import java.math.BigInteger
 
@@ -133,5 +138,24 @@ abstract class BalancerPoolingMarketProvider(
 
     override fun getProtocol(): Protocol {
         return Protocol.BALANCER
+    }
+
+    override fun historicEventExtractor(): HistoricEventExtractor? {
+        return HistoricEventExtractor(
+            addresses = {
+                listOf("0xba12222222228d8ba445958a75a0704d566bf2c8")
+            },
+            optionalTopics = { user ->
+                listOf(null, "0x${TypeEncoder.encode(Address(user))}")
+            },
+            topic = "0xe5ce249087ce04f05a957192435400fd97868dba0e6a4b4c049abf8af80dae78",
+            toMarketEvent = { event ->
+                DefiEvent(
+                    network = getNetwork().toVO(),
+                    DefiEventType.ADD_LIQUIDITY,
+                    metadata = emptyMap()
+                )
+            }
+        )
     }
 }

@@ -7,6 +7,7 @@ import io.defitrack.event.DefiEvent
 import io.defitrack.event.DefiEventType
 import io.defitrack.event.EventDecoder
 import io.defitrack.event.EventUtils.Companion.appliesTo
+import io.defitrack.network.toVO
 import org.springframework.stereotype.Component
 import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.datatypes.Event
@@ -45,7 +46,8 @@ class ApprovalEventDecoder : EventDecoder() {
 
         return DefiEvent(
             type = DefiEventType.APPROVAL,
-            metadata = mapOf(owner, spender, asset, amount)
+            metadata = mapOf(owner, spender, asset, amount),
+            network = network.toVO()
         )
     }
 

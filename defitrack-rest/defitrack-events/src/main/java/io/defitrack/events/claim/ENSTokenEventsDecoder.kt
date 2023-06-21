@@ -6,6 +6,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.event.DefiEvent
 import io.defitrack.event.DefiEventType
 import io.defitrack.event.EventDecoder
+import io.defitrack.network.toVO
 import org.springframework.stereotype.Component
 import org.web3j.abi.EventEncoder
 import org.web3j.protocol.core.methods.response.Log
@@ -30,6 +31,7 @@ class ENSTokenEventsDecoder : EventDecoder() {
         val amount = claimEvent.getNonIndexedParameter<BigInteger>(log, 0)
 
         return DefiEvent(
+            network = network.toVO(),
             type = DefiEventType.CLAIM,
             metadata = mapOf(
                 "user" to user,
