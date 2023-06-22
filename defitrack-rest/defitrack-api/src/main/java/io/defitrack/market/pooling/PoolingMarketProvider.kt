@@ -17,16 +17,7 @@ import java.math.BigDecimal
 
 abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
 
-    data class HistoricEventExtractor(
-        val addresses: (markets: List<PoolingMarket>) -> List<String> = { markets -> markets.map { it.address } },
-        val topic: String,
-        val optionalTopics: (user: String) -> List<String?>,
-        val toMarketEvent: suspend (logObject: LogObject) -> DefiEvent
-    )
 
-    open fun historicEventExtractor(): HistoricEventExtractor? {
-        return null
-    }
 
     suspend fun create(
         name: String,

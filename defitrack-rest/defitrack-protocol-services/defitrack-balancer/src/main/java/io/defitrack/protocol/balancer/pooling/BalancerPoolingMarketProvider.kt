@@ -7,6 +7,7 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.event.DefiEvent
 import io.defitrack.event.DefiEventType
+import io.defitrack.event.EventDecoder.Companion.getIndexedParameter
 import io.defitrack.event.EventDecoder.Companion.getNonIndexedParameter
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.pooling.PoolingMarketProvider
@@ -21,6 +22,7 @@ import io.defitrack.token.TokenType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
+import org.apache.commons.codec.binary.Hex
 import org.web3j.abi.EventEncoder
 import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.TypeEncoder
@@ -74,8 +76,6 @@ abstract class BalancerPoolingMarketProvider(
     ): PoolingMarket? {
 
         try {
-
-
             val poolContract = BalancerPoolContract(
                 getBlockchainGateway(), pool
             )
@@ -108,6 +108,9 @@ abstract class BalancerPoolingMarketProvider(
                     it.first.symbol
                 },
                 apr = BigDecimal.ZERO,
+                metadata = mapOf(
+                    "poolId" to poolId,
+                ),
                 marketSize = Refreshable.refreshable {
                     val poolInfo = vault.getPoolTokens(poolId)
 
@@ -147,64 +150,5 @@ abstract class BalancerPoolingMarketProvider(
         return Protocol.BALANCER
     }
 
-    val PoolBalanceChangedEvent = Event(
-        "PoolBalanceChanged",
-        listOf(
-            TypeUtils.bytes32(true),
-            address(true),
-            object : TypeReference<DynamicArray<Address>>(false) {},
-            object : TypeReference<DynamicArray<Int256>>(false) {},
-            object : TypeReference<DynamicArray<Uint256>>(false) {},
-        )
-    )
 
-    override fun historicEventExtractor(): HistoricEventExtractor? {
-        return HistoricEventExtractor(
-            addresses = {
-                listOf("0xba12222222228d8ba445958a75a0704d566bf2c8")
-            },
-            optionalTopics = { user ->
-                listOf(null, "0x${TypeEncoder.encode(Address(user))}")
-            },
-            topic = "0xe5ce249087ce04f05a957192435400fd97868dba0e6a4b4c049abf8af80dae78",
-            toMarketEvent = { event ->
-                val log = event.get()
-                val deltas = PoolBalanceChangedEvent.getNonIndexedParameter<List<Int256>>(
-                    log, 1
-                ).map {
-                    it.value as BigInteger
-                }
-
-                val tokens = PoolBalanceChangedEvent.getNonIndexedParameter<List<Address>>(
-                    log, 0
-                ).map {
-                    it.value as String
-                }
-
-                val type = if (deltas.none { it < BigInteger.ZERO }) {
-                    DefiEventType.ADD_LIQUIDITY
-                } else {
-                    DefiEventType.REMOVE_LIQUIDITY
-                }
-
-                DefiEvent(
-                    type = type,
-                    protocol = Protocol.BALANCER,
-                    network = getNetwork().toVO(),
-                    metadata = mapOf(
-                        "assets" to tokens.mapIndexed { index, token ->
-                            if (deltas[index] == BigInteger.ZERO) {
-                                null
-                            } else {
-                                mapOf(
-                                    "token" to getToken(token),
-                                    "amount" to deltas[index].toString()
-                                )
-                            }
-                        }.filterNotNull()
-                    )
-                )
-            }
-        )
-    }
 }

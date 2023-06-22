@@ -18,6 +18,12 @@ abstract class EventDecoder {
                 nonIndexedParameters
             )[index].value as T
         }
+
+        inline fun <reified T> org.web3j.abi.datatypes.Event.getIndexedParameter(log: Log, index: Int): T {
+            return FunctionReturnDecoder.decodeIndexedValue(
+                log.topics[index + 1], indexedParameters[index]
+            ).value as T
+        }
     }
 
     @Autowired
@@ -37,11 +43,7 @@ abstract class EventDecoder {
 
 
 
-    inline fun <reified T> org.web3j.abi.datatypes.Event.getIndexedParameter(log: Log, index: Int): T {
-        return FunctionReturnDecoder.decodeIndexedValue(
-            log.topics[index + 1], indexedParameters[index]
-        ).value as T
-    }
+
 
     suspend fun getLabeledAddress(address: String): LabeledAddress {
         return labelAddressesResource.getLabel(address)
