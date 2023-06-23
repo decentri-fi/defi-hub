@@ -3,7 +3,6 @@ package io.defitrack.nft.rest
 import io.defitrack.common.network.Network
 import io.defitrack.nft.service.ERC1155Service
 import kotlinx.coroutines.runBlocking
-import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestParam
@@ -14,8 +13,6 @@ import java.math.BigInteger
 class NftRestController(
     private val erC1155Service: ERC1155Service
 ) {
-
-    val logger = LoggerFactory.getLogger(this::class.java)
 
     @GetMapping("/{nft}/{address}/balance-of/{tokenId}")
     @Deprecated("Use ERC-specific endpoints now")
@@ -41,6 +38,4 @@ class NftRestController(
             "balance" to erC1155Service.balanceOf(nft, address, tokenId, network)
         )
     }
-
-
 }
