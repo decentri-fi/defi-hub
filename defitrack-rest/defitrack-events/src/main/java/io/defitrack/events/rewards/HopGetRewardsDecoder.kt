@@ -47,6 +47,7 @@ class HopGetRewardsDecoder(
         val token = "asset" to erC20Resource.getTokenInformation(network, "0xc5102fe9359fd9a28f877a67e36b0f050d81a3cc")
 
         return DefiEvent(
+            transactionId = log.transactionHash,
             network = network.toVO(),
             protocol = Protocol.HOP,
             type = DefiEventType.GET_REWARD,

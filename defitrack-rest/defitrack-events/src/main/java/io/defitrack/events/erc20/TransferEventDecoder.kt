@@ -46,6 +46,7 @@ class TransferEventDecoder : EventDecoder() {
 
         if (to.second.address == "0x0000000000000000000000000000000000000000") {
             return DefiEvent(
+                transactionId = log.transactionHash,
                 type = DefiEventType.BURN,
                 metadata = mapOf(from, asset, amount),
                 network = network.toVO()
@@ -53,6 +54,7 @@ class TransferEventDecoder : EventDecoder() {
         }
 
         return DefiEvent(
+            transactionId = log.transactionHash,
             type = DefiEventType.TRANSFER,
             metadata = mapOf(from, to, asset, amount),
             network = network.toVO()

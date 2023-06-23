@@ -54,6 +54,7 @@ class HopRemoveLiquidityDecoder(
         val token2 = erC20Resource.getTokenInformation(network, contract.getToken(1))
 
         return DefiEvent(
+            transactionId = log.transactionHash,
             network = network.toVO(),
             DefiEventType.REMOVE_LIQUIDITY,
             protocol = Protocol.HOP,

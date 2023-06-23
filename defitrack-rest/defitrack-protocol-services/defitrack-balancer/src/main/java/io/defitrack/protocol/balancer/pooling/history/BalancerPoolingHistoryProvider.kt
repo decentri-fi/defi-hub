@@ -83,6 +83,7 @@ abstract class BalancerPoolingHistoryProvider(
                     }
 
                     DefiEvent(
+                        transactionId = log.transactionHash,
                         type = type,
                         protocol = Protocol.BALANCER,
                         network = getNetwork().toVO(),

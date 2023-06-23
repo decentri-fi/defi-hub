@@ -31,6 +31,7 @@ class ENSTokenEventsDecoder : EventDecoder() {
         val amount = claimEvent.getNonIndexedParameter<BigInteger>(log, 0)
 
         return DefiEvent(
+            transactionId = log.transactionHash,
             network = network.toVO(),
             type = DefiEventType.CLAIM,
             metadata = mapOf(
