@@ -88,9 +88,12 @@ abstract class BalancerPoolingHistoryProvider(
                         protocol = Protocol.BALANCER,
                         network = getNetwork().toVO(),
                         metadata = mapOf(
-                            "market" to (allMarkets.find {
-                                it.metadata["poolId"] == poolId
-                            }?.id ?: "unknown"),
+                            "market" to mapOf(
+                                "id" to (allMarkets.find {
+                                    it.metadata["poolId"] == poolId
+                                }?.id ?: "unknown"),
+                                "type" to "pooling"
+                            ),
                             "assets" to tokens.mapIndexed { index, token ->
                                 if (deltas[index] == BigInteger.ZERO) {
                                     null
