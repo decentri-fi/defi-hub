@@ -6,9 +6,7 @@ import com.github.michaelbull.retry.policy.binaryExponentialBackoff
 import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.policy.plus
 import com.github.michaelbull.retry.retry
-import com.google.gson.Gson
 import com.google.gson.JsonParser
-import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.common.network.Network
@@ -19,11 +17,13 @@ import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.apache.commons.codec.binary.Hex
 import org.apache.commons.lang3.StringUtils
+import org.slf4j.LoggerFactory
 import org.web3j.abi.FunctionEncoder
 import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.TypeReference
@@ -33,13 +33,10 @@ import org.web3j.abi.datatypes.DynamicStruct
 import org.web3j.abi.datatypes.Type
 import org.web3j.abi.datatypes.generated.Uint256
 import org.web3j.protocol.core.methods.response.EthCall
-import org.web3j.protocol.core.methods.response.EthLog
 import org.web3j.protocol.core.methods.response.EthLog.LogObject
-import org.web3j.protocol.core.methods.response.EthLog.LogResult
 import org.web3j.protocol.core.methods.response.Log
 import java.math.BigDecimal
 import java.math.BigInteger
-import java.time.DateTimeException
 import java.util.Collections.emptyList
 import org.web3j.abi.datatypes.Function as Web3Function
 
@@ -51,6 +48,9 @@ open class BlockchainGateway(
     val httpClient: HttpClient,
     val endpoint: String
 ) {
+
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     val mapper = jacksonObjectMapper().configure(
         DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false
     )
@@ -85,7 +85,8 @@ open class BlockchainGateway(
                 mapper.readValue(it.toString(), LogObject::class.java)
             }
         } else {
-            kotlin.collections.emptyList()
+            logger.error("Unable to get events from blockchain, result was ${result.bodyAsText()}")
+            return emptyList()
         }
     }
 
