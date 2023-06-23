@@ -7,6 +7,7 @@ import io.defitrack.event.DefiEvent
 import io.defitrack.event.DefiEventType
 import io.defitrack.event.EventDecoder
 import io.defitrack.event.EventUtils.Companion.appliesTo
+import io.defitrack.network.toVO
 import io.defitrack.protocol.HopPolygonService
 import io.defitrack.protocol.Protocol
 import org.springframework.stereotype.Component
@@ -46,6 +47,7 @@ class HopGetRewardsDecoder(
         val token = "asset" to erC20Resource.getTokenInformation(network, "0xc5102fe9359fd9a28f877a67e36b0f050d81a3cc")
 
         return DefiEvent(
+            network = network.toVO(),
             protocol = Protocol.HOP,
             type = DefiEventType.GET_REWARD,
             metadata = mapOf(

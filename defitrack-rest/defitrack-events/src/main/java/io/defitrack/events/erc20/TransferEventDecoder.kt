@@ -7,6 +7,7 @@ import io.defitrack.event.DefiEvent
 import io.defitrack.event.DefiEventType
 import io.defitrack.event.EventDecoder
 import io.defitrack.event.EventUtils.Companion.appliesTo
+import io.defitrack.network.toVO
 import org.springframework.stereotype.Component
 import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.datatypes.Event
@@ -46,13 +47,15 @@ class TransferEventDecoder : EventDecoder() {
         if (to.second.address == "0x0000000000000000000000000000000000000000") {
             return DefiEvent(
                 type = DefiEventType.BURN,
-                metadata = mapOf(from, asset, amount)
+                metadata = mapOf(from, asset, amount),
+                network = network.toVO()
             )
         }
 
         return DefiEvent(
             type = DefiEventType.TRANSFER,
-            metadata = mapOf(from, to, asset, amount)
+            metadata = mapOf(from, to, asset, amount),
+            network = network.toVO()
         )
     }
 

@@ -1,9 +1,14 @@
 package io.defitrack.evm.contract
 
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.michaelbull.retry.policy.binaryExponentialBackoff
 import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.policy.plus
 import com.github.michaelbull.retry.retry
+import com.google.gson.Gson
+import com.google.gson.JsonParser
+import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.common.network.Network
@@ -28,9 +33,13 @@ import org.web3j.abi.datatypes.DynamicStruct
 import org.web3j.abi.datatypes.Type
 import org.web3j.abi.datatypes.generated.Uint256
 import org.web3j.protocol.core.methods.response.EthCall
+import org.web3j.protocol.core.methods.response.EthLog
+import org.web3j.protocol.core.methods.response.EthLog.LogObject
+import org.web3j.protocol.core.methods.response.EthLog.LogResult
 import org.web3j.protocol.core.methods.response.Log
 import java.math.BigDecimal
 import java.math.BigInteger
+import java.time.DateTimeException
 import java.util.Collections.emptyList
 import org.web3j.abi.datatypes.Function as Web3Function
 
@@ -42,6 +51,9 @@ open class BlockchainGateway(
     val httpClient: HttpClient,
     val endpoint: String
 ) {
+    val mapper = jacksonObjectMapper().configure(
+        DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false
+    )
 
     suspend fun getNativeBalance(address: String): BigDecimal = withContext(Dispatchers.IO) {
         val balance: BigInteger = httpClient.get("$endpoint/balance/$address").body()
@@ -59,6 +71,21 @@ open class BlockchainGateway(
             result.body()
         } else {
             null
+        }
+    }
+
+    suspend fun getEventsAsEthLog(getEventsLog: GetEventLogsCommand): List<LogObject> {
+        val result = httpClient.post("$endpoint/events/logs") {
+            contentType(ContentType.Application.Json)
+            setBody(getEventsLog)
+        }
+        return if (result.status.isSuccess()) {
+            val body: String = result.body()
+            JsonParser.parseString(body).asJsonObject["result"].asJsonArray.map {
+                mapper.readValue(it.toString(), LogObject::class.java)
+            }
+        } else {
+            kotlin.collections.emptyList()
         }
     }
 

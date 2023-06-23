@@ -6,6 +6,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.event.DefiEvent
 import io.defitrack.event.DefiEventType
 import io.defitrack.event.EventDecoder
+import io.defitrack.network.toVO
 import io.defitrack.protocol.Protocol
 import org.springframework.stereotype.Component
 import org.web3j.abi.EventEncoder
@@ -43,7 +44,8 @@ class HopTokenEventsDecoder : EventDecoder() {
                 "user" to user,
                 "amount" to amount,
                 "asset" to getToken("0xc5102fe9359fd9a28f877a67e36b0f050d81a3cc", Network.ETHEREUM)
-            )
+            ),
+            network = network.toVO()
         )
 
 

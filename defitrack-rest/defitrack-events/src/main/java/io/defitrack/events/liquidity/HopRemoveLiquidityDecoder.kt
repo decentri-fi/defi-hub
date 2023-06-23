@@ -9,6 +9,7 @@ import io.defitrack.event.DefiEventType
 import io.defitrack.event.EventDecoder
 import io.defitrack.event.EventUtils.Companion.appliesTo
 import io.defitrack.evm.contract.BlockchainGatewayProvider
+import io.defitrack.network.toVO
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.contract.HopLpTokenContract
 import org.springframework.stereotype.Component
@@ -53,6 +54,7 @@ class HopRemoveLiquidityDecoder(
         val token2 = erC20Resource.getTokenInformation(network, contract.getToken(1))
 
         return DefiEvent(
+            network = network.toVO(),
             DefiEventType.REMOVE_LIQUIDITY,
             protocol = Protocol.HOP,
             metadata = mapOf(

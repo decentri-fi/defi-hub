@@ -1,12 +1,18 @@
 package io.defitrack.protocol.balancer.pooling
 
 import com.google.gson.JsonParser
+import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.event.DefiEvent
+import io.defitrack.event.DefiEventType
+import io.defitrack.event.EventDecoder.Companion.getIndexedParameter
+import io.defitrack.event.EventDecoder.Companion.getNonIndexedParameter
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
+import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerPoolContract
@@ -16,8 +22,16 @@ import io.defitrack.token.TokenType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
+import org.apache.commons.codec.binary.Hex
 import org.web3j.abi.EventEncoder
 import org.web3j.abi.FunctionReturnDecoder
+import org.web3j.abi.TypeEncoder
+import org.web3j.abi.TypeReference
+import org.web3j.abi.datatypes.Address
+import org.web3j.abi.datatypes.DynamicArray
+import org.web3j.abi.datatypes.Event
+import org.web3j.abi.datatypes.generated.Int256
+import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigDecimal
 import java.math.BigInteger
 
@@ -62,8 +76,6 @@ abstract class BalancerPoolingMarketProvider(
     ): PoolingMarket? {
 
         try {
-
-
             val poolContract = BalancerPoolContract(
                 getBlockchainGateway(), pool
             )
@@ -96,6 +108,9 @@ abstract class BalancerPoolingMarketProvider(
                     it.first.symbol
                 },
                 apr = BigDecimal.ZERO,
+                metadata = mapOf(
+                    "poolId" to poolId,
+                ),
                 marketSize = Refreshable.refreshable {
                     val poolInfo = vault.getPoolTokens(poolId)
 
@@ -134,4 +149,6 @@ abstract class BalancerPoolingMarketProvider(
     override fun getProtocol(): Protocol {
         return Protocol.BALANCER
     }
+
+
 }

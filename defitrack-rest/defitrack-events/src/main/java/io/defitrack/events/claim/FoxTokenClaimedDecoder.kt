@@ -6,6 +6,7 @@ import io.defitrack.event.DefiEvent
 import io.defitrack.event.DefiEventType
 import io.defitrack.event.EventDecoder
 import io.defitrack.event.EventUtils.Companion.appliesTo
+import io.defitrack.network.toVO
 import org.springframework.stereotype.Component
 import org.web3j.protocol.core.methods.response.Log
 import java.math.BigInteger
@@ -39,7 +40,8 @@ class FoxTokenClaimedDecoder : EventDecoder() {
 
         return DefiEvent(
             type = DefiEventType.CLAIM,
-            metadata = mapOf(user, asset, amount)
+            metadata = mapOf(user, asset, amount),
+            network = network.toVO()
         )
     }
 

@@ -107,5 +107,4 @@ class ERC20RestController(
             ResponseEntity.ok(BigInteger.ZERO)
         }
     }
-
 }
