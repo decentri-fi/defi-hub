@@ -25,7 +25,6 @@
         <module>defitrack-blockchain-services</module>
         <module>defitrack-statistics</module>
         <module>defitrack-events</module>
-        <module>defitrack-transactions</module>
     </modules>
 
     <dependencies>

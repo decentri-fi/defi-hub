@@ -15,7 +15,6 @@ class TransactionRestController(
     private val web3j: Web3j
 ) {
 
-    @OptIn(ExperimentalStdlibApi::class)
     @GetMapping("/{txId}")
     fun getTransaction(@PathVariable("txId") txId: String): TransactionVO? {
         return web3j.ethGetTransactionByHash(txId).send().transaction.map {

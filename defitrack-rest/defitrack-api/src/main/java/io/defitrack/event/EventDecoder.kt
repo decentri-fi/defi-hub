@@ -42,9 +42,6 @@ abstract class EventDecoder {
     }
 
 
-
-
-
     suspend fun getLabeledAddress(address: String): LabeledAddress {
         return labelAddressesResource.getLabel(address)
     }

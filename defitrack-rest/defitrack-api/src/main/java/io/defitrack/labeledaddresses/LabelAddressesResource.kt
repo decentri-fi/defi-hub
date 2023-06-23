@@ -33,8 +33,6 @@ class LabelAddressesResource(
                 )
             }
         } catch (ex: Exception) {
-            logger.error("unable to fetch label for $address")
-            ex.printStackTrace()
             LabeledAddress(
                 address = address,
                 label = null
