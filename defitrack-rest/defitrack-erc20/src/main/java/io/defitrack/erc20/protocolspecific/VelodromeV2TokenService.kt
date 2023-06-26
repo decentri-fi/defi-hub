@@ -6,27 +6,27 @@ import io.defitrack.erc20.LpContractReader
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.VelodromeOptimismService
+import io.defitrack.protocol.contract.PoolFactoryContract
 import io.defitrack.token.TokenType
-import io.defitrack.uniswap.v2.PairFactoryContract
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 
 @Service
-class VelodromeTokenService(
+class VelodromeV2TokenService(
     private val velodromeOptimismService: VelodromeOptimismService,
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
     lpContractReader: LpContractReader
 ) : DefaultLpIdentifier(
-    Protocol.VELODROME_V1, TokenType.VELODROME, lpContractReader
+    Protocol.VELODROME_V2, TokenType.VELODROME, lpContractReader
 ) {
 
     val optimismPools by lazy {
         runBlocking {
-            val pairFactoryContract = PairFactoryContract(
+            val pairFactoryContract = PoolFactoryContract(
                 blockchainGateway = blockchainGatewayProvider.getGateway(Network.OPTIMISM),
-                contractAddress = velodromeOptimismService.getV1PoolFactory()
+                contractAddress = velodromeOptimismService.getV2PoolFactory()
             )
-            pairFactoryContract.allPairs()
+            pairFactoryContract.allPools()
         }
     }
 
