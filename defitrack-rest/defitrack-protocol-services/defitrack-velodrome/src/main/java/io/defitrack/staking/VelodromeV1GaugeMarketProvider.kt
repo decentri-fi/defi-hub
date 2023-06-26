@@ -76,7 +76,7 @@ class VelodromeV1GaugeMarketProvider(
     }
 
     override fun getProtocol(): Protocol {
-        return Protocol.VELODROME_V2
+        return Protocol.VELODROME_V1
     }
 
     override fun getNetwork(): Network {
