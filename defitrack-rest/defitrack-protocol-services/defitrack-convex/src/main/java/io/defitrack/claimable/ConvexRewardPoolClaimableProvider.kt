@@ -15,8 +15,8 @@ import java.math.BigInteger
 @Service
 class ConvexRewardPoolClaimableProvider(
     private val convexEthereumRewardPoolMarketProvider: ConvexEthereumRewardPoolMarketProvider,
-    private val blockchainGatewayProvider: BlockchainGatewayProvider,
-    private val erC20Resource: ERC20Resource
+    private val blockchainGatewayProvider: BlockchainGatewayProvider
+
 ) : ClaimableRewardProvider() {
     override suspend fun claimables(address: String): List<Claimable> {
         val gateway = blockchainGatewayProvider.getGateway(getNetwork())

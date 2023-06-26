@@ -14,7 +14,6 @@ class CvxRewardPoolContract(
     address: String,
 ) : ERC20Contract(solidityBasedContractAccessor, abi, address) {
 
-
     suspend fun rewardToken(): String {
         return readWithoutAbi(
             "rewardToken",
