@@ -44,18 +44,17 @@ abstract class EvmContract(
         )
     }
 
-    suspend fun readMultiple(requests: List<ReadRequest>): List<List<Type<*>>> {
-        val functions = requests.map {
-            val abiFunction = blockchainGateway.getFunction(abi, it.method)
-            val function = BlockchainGateway.createFunctionWithAbi(
-                abiFunction, it.inputs, it.outputs
-            )
-            MultiCallElement(
-                function,
-                address
-            )
-        }
-        return blockchainGateway.readMultiCall(functions)
+    suspend fun readMultiCall(
+        functions: List<Function>
+    ): List<List<Type<*>>> {
+        return blockchainGateway.readMultiCall(
+            functions.map {
+                MultiCallElement(
+                    it,
+                    address
+                )
+            }
+        )
     }
 
     suspend fun readWithoutAbi(

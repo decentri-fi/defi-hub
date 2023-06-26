@@ -7,7 +7,6 @@ import io.defitrack.network.toVO
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.convex.contract.CvxRewardPoolContract
 import io.defitrack.protocol.convex.staking.ConvexEthereumRewardPoolMarketProvider
-import io.defitrack.token.ERC20Resource
 import io.defitrack.transaction.PreparedTransaction
 import org.springframework.stereotype.Service
 import java.math.BigInteger
@@ -16,7 +15,6 @@ import java.math.BigInteger
 class ConvexRewardPoolClaimableProvider(
     private val convexEthereumRewardPoolMarketProvider: ConvexEthereumRewardPoolMarketProvider,
     private val blockchainGatewayProvider: BlockchainGatewayProvider
-
 ) : ClaimableRewardProvider() {
     override suspend fun claimables(address: String): List<Claimable> {
         val gateway = blockchainGatewayProvider.getGateway(getNetwork())

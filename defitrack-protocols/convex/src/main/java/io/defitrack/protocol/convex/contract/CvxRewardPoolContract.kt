@@ -6,6 +6,7 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
+import io.defitrack.evm.contract.multicall.MultiCallElement
 import org.web3j.abi.datatypes.Function
 
 class CvxRewardPoolContract(
@@ -13,6 +14,13 @@ class CvxRewardPoolContract(
     abi: String,
     address: String,
 ) : ERC20Contract(solidityBasedContractAccessor, abi, address) {
+
+
+    fun Function.toMultiCall(): MultiCallElement {
+        return MultiCallElement(
+            this, address
+        )
+    }
 
     suspend fun rewardToken(): String {
         return readWithoutAbi(

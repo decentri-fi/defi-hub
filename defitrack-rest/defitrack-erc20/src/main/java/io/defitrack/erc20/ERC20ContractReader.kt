@@ -5,9 +5,9 @@ import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.ERC20Contract
 import io.github.reactivecircus.cache4k.Cache
-import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.math.BigInteger
 
 @Service
 class ERC20ContractReader(
@@ -16,11 +16,6 @@ class ERC20ContractReader(
 ) {
 
     val erc20Buffer = Cache.Builder<String, ERC20Contract>().build()
-    val erc20ABI by lazy {
-        runBlocking {
-            abiService.getABI("general/ERC20.json")
-        }
-    }
 
     val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -32,18 +27,33 @@ class ERC20ContractReader(
             return erc20Buffer.get(key) {
                 ERC20Contract(
                     blockchainGatewayProvider.getGateway(network),
-                    erc20ABI,
+                    "",
                     correctAddress
                 )
             }.let {
-                ERC20(
-                    name = it.name(),
-                    symbol = it.symbol(),
-                    decimals = it.decimals(),
-                    network = network,
-                    address = correctAddress.lowercase(),
-                    totalSupply = it.totalSupply()
-                )
+
+                try {
+                    //as multicall
+                    val retVal = it.readData()
+                    ERC20(
+                        name = retVal[0].first().value as String,
+                        symbol = retVal[1].first().value as String,
+                        decimals = (retVal[2].first().value as BigInteger).toInt(),
+                        network = network,
+                        address = correctAddress.lowercase(),
+                        totalSupply = retVal[3].first().value as BigInteger,
+                    )
+                } catch (ex: Exception) {
+                    logger.error("Unable to do it in a single call for token ${address} on network ${network.name}")
+                    ERC20(
+                        name = it.name(),
+                        symbol = it.symbol(),
+                        decimals = it.decimals(),
+                        network = network,
+                        address = correctAddress.lowercase(),
+                        totalSupply = it.totalSupply()
+                    )
+                }
             }
         } catch (ex: Exception) {
             logger.error("Unable to fetch erc20 info", ex)
@@ -53,14 +63,14 @@ class ERC20ContractReader(
 
     suspend fun getBalance(network: Network, address: String, userAddress: String) = ERC20Contract(
         blockchainGatewayProvider.getGateway(network),
-        erc20ABI,
+        "",
         address
     ).balanceOf(userAddress)
 
     suspend fun getAllowance(network: Network, address: String, userAddress: String, spenderAddress: String) =
         ERC20Contract(
             blockchainGatewayProvider.getGateway(network),
-            erc20ABI,
+            "",
             address
         ).allowance(userAddress, spenderAddress)
 }

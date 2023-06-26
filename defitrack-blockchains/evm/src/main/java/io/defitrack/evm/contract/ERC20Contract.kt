@@ -7,6 +7,7 @@ import io.defitrack.abi.TypeUtils.Companion.uint256
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.web3j.abi.datatypes.Function
+import org.web3j.abi.datatypes.Type
 import java.math.BigInteger
 
 open class ERC20Contract(
@@ -14,7 +15,7 @@ open class ERC20Contract(
     abi: String,
     address: String
 ) :
-    EvmContract(blockchainGateway, abi, address) {
+    EvmContract(blockchainGateway,abi,  address) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
@@ -44,9 +45,20 @@ open class ERC20Contract(
         }
     }
 
+    suspend fun readData(): List<List<Type<*>>> {
+        return readMultiCall(
+            listOf(
+                createFunction("name", outputs = listOf(string())),
+                createFunction("symbol", outputs = listOf(string())),
+                createFunction("decimals", outputs = listOf(uint256())),
+                createFunction("totalSupply", outputs = listOf(uint256())),
+            )
+        )
+    }
+
 
     suspend fun allowance(owner: String, spender: String): BigInteger {
-        return readWithAbi(
+        return readWithoutAbi(
             "allowance",
             listOf(owner.toAddress(), spender.toAddress()),
             listOf(uint256())
