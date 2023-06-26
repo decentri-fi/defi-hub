@@ -44,7 +44,7 @@ class ERC20ContractReader(
                         totalSupply = retVal[3].first().value as BigInteger,
                     )
                 } catch (ex: Exception) {
-                    logger.error("Unable to do it in a single call for token ${address} on network ${network.name}")
+                    logger.debug("Unable to do it in a single call for token ${address} on network ${network.name}")
                     ERC20(
                         name = it.name(),
                         symbol = it.symbol(),
