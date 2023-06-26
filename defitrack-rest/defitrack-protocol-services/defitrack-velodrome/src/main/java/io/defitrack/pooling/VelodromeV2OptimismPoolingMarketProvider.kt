@@ -67,7 +67,7 @@ class VelodromeV2OptimismPoolingMarketProvider(
 
 
     override fun getProtocol(): Protocol {
-        return Protocol.VELODROME
+        return Protocol.VELODROME_V2
     }
 
     override fun getNetwork(): Network {

@@ -32,7 +32,7 @@ class VeVeloStakingMarketProvider : FarmingMarketProvider() {
     }
 
     override fun getProtocol(): Protocol {
-        return Protocol.VELODROME
+        return Protocol.VELODROME_V1
     }
 
     override fun getNetwork(): Network {

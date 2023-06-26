@@ -80,7 +80,15 @@ enum class Protocol(
         networks = listOf(Network.ETHEREUM),
         company = Company.LIDO
     ),
-    VELODROME(
+    VELODROME_V2(
+        logo = "velodrome.svg",
+        slug = "velodrome",
+        primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
+        "https://app.velodrome.finance",
+        networks = listOf(Network.OPTIMISM),
+        company = Company.VELODROME
+    ),
+    VELODROME_V1(
         logo = "velodrome.svg",
         slug = "velodrome",
         primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
