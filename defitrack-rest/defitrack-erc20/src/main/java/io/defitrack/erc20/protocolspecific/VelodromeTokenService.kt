@@ -17,7 +17,7 @@ class VelodromeTokenService(
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
     lpContractReader: LpContractReader
 ) : DefaultLpIdentifier(
-    Protocol.VELODROME, TokenType.VELODROME, lpContractReader
+    Protocol.VELODROME_V1, TokenType.VELODROME, lpContractReader
 ) {
 
     val optimismPools by lazy {
