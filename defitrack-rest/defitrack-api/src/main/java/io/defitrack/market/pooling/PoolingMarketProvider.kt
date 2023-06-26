@@ -35,7 +35,8 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
         breakdown: List<PoolingMarketTokenShare>? = null,
         erc20Compatible: Boolean = true,
         price: Refreshable<BigDecimal>? = null,
-        metadata: Map<String, Any> = emptyMap()
+        metadata: Map<String, Any> = emptyMap(),
+        deprecated: Boolean = false,
     ): PoolingMarket {
         return PoolingMarket(
             id = "lp_${getNetwork().slug}-${getProtocol().slug}-${identifier}",
@@ -55,7 +56,8 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
             erc20Compatible = erc20Compatible,
             totalSupply = totalSupply,
             price = price ?: calculatePrice(marketSize, totalSupply),
-            metadata = metadata
+            metadata = metadata,
+            deprecated = deprecated
         )
     }
 

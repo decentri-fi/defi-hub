@@ -23,16 +23,16 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <web3j.version>4.10.1</web3j.version>
-        <commons-codec.version>1.15</commons-codec.version>
+        <commons-codec.version>1.16.0</commons-codec.version>
         <spring-cloud-dependencies.version>2022.0.3</spring-cloud-dependencies.version>
         <commons-collections.version>4.4</commons-collections.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
-        <jacoco-maven-plugin.version>0.8.6</jacoco-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
         <jersey.version>2.33</jersey.version>
         <commons-io.version>2.12.0</commons-io.version>
         <okhttp.version>4.11.0</okhttp.version>
         <kotlin.version>1.8.22</kotlin.version>
-        <jackson-module-kotlin.version>2.14.2</jackson-module-kotlin.version>
+        <jackson-module-kotlin.version>2.15.2</jackson-module-kotlin.version>
         <coroutines.version>1.7.1</coroutines.version>
         <ktor.version>2.3.1</ktor.version>
         <kotlin-retry.version>1.0.9</kotlin-retry.version>

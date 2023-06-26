@@ -33,6 +33,7 @@ data class PoolingMarket(
     val price: Refreshable<BigDecimal>,
     val metadata: Map<String, Any>,
     val enterMarketEvent: Event? = null,
+    val deprecated: Boolean,
 ) : DefiMarket(id) {
     init {
         addRefetchableValue(totalSupply)

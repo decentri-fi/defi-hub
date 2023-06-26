@@ -24,7 +24,7 @@ class VelodromeTokenService(
         runBlocking {
             val pairFactoryContract = PairFactoryContract(
                 blockchainGateway = blockchainGatewayProvider.getGateway(Network.OPTIMISM),
-                contractAddress = velodromeOptimismService.getPoolFactory()
+                contractAddress = velodromeOptimismService.getV1PoolFactory()
             )
             pairFactoryContract.allPairs()
         }

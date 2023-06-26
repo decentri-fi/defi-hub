@@ -25,7 +25,8 @@ class PoolingMarketVO(
     val price: BigDecimal = BigDecimal.ZERO,
     val totalSupply: BigDecimal = BigDecimal.ZERO,
     val metadata: Map<String, Any>,
-    updatedAt: Long
+    updatedAt: Long,
+    deprecated: Boolean,
 ) : MarketVO(
     id, network, protocol, name, prepareInvestmentSupported, exitPositionSupported, marketSize, "pooling", updatedAt
 )
