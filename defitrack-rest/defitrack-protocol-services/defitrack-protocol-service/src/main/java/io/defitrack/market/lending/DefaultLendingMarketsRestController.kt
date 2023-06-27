@@ -11,32 +11,40 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/lending")
+@RequestMapping("/{protocol}/lending")
 class DefaultLendingMarketsRestController(
     private val lendingMarketProviders: List<LendingMarketProvider>,
     private val lendingMarketVOMapper: LendingMarketVOMapper
 ) {
 
     @GetMapping(value = ["/all-markets"])
-    fun getAllMarkets(): List<LendingMarketVO> {
-        return lendingMarketProviders.flatMap {
-            it.getMarkets()
-        }.map(lendingMarketVOMapper::map)
+    fun getAllMarkets(
+        @PathVariable("protocol") protocol: String,
+    ): List<LendingMarketVO> {
+        return lendingMarketProviders
+            .filter {
+                it.getProtocol().slug == protocol
+            }
+            .flatMap {
+                it.getMarkets()
+            }.map(lendingMarketVOMapper::map)
     }
 
     @GetMapping(value = ["/markets"], params = ["token"])
     fun searchByToken(
+        @PathVariable("protocol") protocol: String,
         @RequestParam("token") token: String,
         @RequestParam("network") network: Network
     ): List<LendingMarketVO> {
-        return lendingMarketProviders
-            .filter {
-                it.getNetwork() == network
-            }.flatMap {
-                it.getMarkets()
-            }.filter {
-                it.token.address.lowercase() == token
-            }.map(lendingMarketVOMapper::map)
+        return lendingMarketProviders.filter {
+            it.getProtocol().slug == protocol
+        }.filter {
+            it.getNetwork() == network
+        }.flatMap {
+            it.getMarkets()
+        }.filter {
+            it.token.address.lowercase() == token
+        }.map(lendingMarketVOMapper::map)
     }
 
 

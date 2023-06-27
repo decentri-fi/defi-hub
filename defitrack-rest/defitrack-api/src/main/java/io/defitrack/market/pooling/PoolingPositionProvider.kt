@@ -10,11 +10,11 @@ abstract class PoolingPositionProvider {
         1.minutes
     ).build()
 
-    suspend fun userPoolings(address: String): List<PoolingPosition> {
-        return cache.get(address) {
-            fetchUserPoolings(address)
+    suspend fun userPoolings(protocol: String, address: String): List<PoolingPosition> {
+        return cache.get("$protocol-$address") {
+            fetchUserPoolings(protocol, address)
         }
     }
 
-    abstract suspend fun fetchUserPoolings(address: String): List<PoolingPosition>
+    abstract suspend fun fetchUserPoolings(protocol: String, address: String): List<PoolingPosition>
 }

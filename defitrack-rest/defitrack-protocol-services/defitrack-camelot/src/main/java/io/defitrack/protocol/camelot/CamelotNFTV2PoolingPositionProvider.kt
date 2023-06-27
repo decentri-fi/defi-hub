@@ -19,7 +19,7 @@ class CamelotNFTV2PoolingPositionProvider(
         )
     }
 
-    override suspend fun fetchUserPoolings(address: String): List<PoolingPosition> {
+    override suspend fun fetchUserPoolings(protocol: String, address: String): List<PoolingPosition> {
         val positions = algebraPositionsContract.getUserPositions(address)
         return positions.map {
             PoolingPosition(

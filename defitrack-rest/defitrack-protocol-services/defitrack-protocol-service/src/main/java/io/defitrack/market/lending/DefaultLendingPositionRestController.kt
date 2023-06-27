@@ -3,7 +3,6 @@ package io.defitrack.market.lending
 import io.defitrack.common.network.Network
 import io.defitrack.market.lending.mapper.LendingPositionVOMapper
 import io.defitrack.market.lending.vo.LendingPositionVO
-import io.defitrack.network.toVO
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -11,7 +10,7 @@ import org.springframework.web.bind.annotation.*
 import org.web3j.crypto.WalletUtils
 
 @RestController
-@RequestMapping("/lending")
+@RequestMapping("/{protocol}/lending")
 class DefaultLendingPositionRestController(
     private val lendingPositionProvider: LendingPositionProvider,
     private val lendingPositionVOMapper: LendingPositionVOMapper
@@ -22,7 +21,10 @@ class DefaultLendingPositionRestController(
     }
 
     @GetMapping("/{userId}/positions")
-    fun getPoolingMarkets(@PathVariable("userId") address: String): List<LendingPositionVO> = runBlocking {
+    fun getPoolingMarkets(
+        @PathVariable("protocol") protocol: String,
+        @PathVariable("userId") address: String
+    ): List<LendingPositionVO> = runBlocking {
         lendingPositionProvider.getLendings(address).map { lendingPositionVOMapper.map(it) }
     }
 

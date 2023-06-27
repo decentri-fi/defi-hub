@@ -10,7 +10,6 @@ import io.defitrack.uniswap.v3.UniswapV3PoolContract
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.BigInteger
 
@@ -29,7 +28,7 @@ abstract class UniswapV3PoolingPositionProvider(
     }
 
 
-    override suspend fun fetchUserPoolings(address: String): List<PoolingPosition> = coroutineScope {
+    override suspend fun fetchUserPoolings(protocol: String, address: String): List<PoolingPosition> = coroutineScope {
         val positionsForUser = poolingNftContract.getUserPositions(address)
         positionsForUser.filter {
             it.liquidity > BigInteger.ZERO

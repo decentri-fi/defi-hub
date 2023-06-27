@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/borrowing")
+@RequestMapping("/{protocol}/borrowing")
 class DefaultBorrowingRestController(
     private val borrowingServices: List<BorrowService>,
     private val priceResource: PriceResource,
@@ -29,16 +29,23 @@ class DefaultBorrowingRestController(
     }
 
     @GetMapping("/{userId}/positions")
-    fun getPoolingMarkets(@PathVariable("userId") address: String): List<BorrowPositionVO> =
+    fun getPoolingMarkets(
+        @PathVariable("protocol") protocol: String,
+        @PathVariable("userId") address: String
+    ): List<BorrowPositionVO> =
         runBlocking {
-            borrowingServices.flatMap {
-                try {
-                    it.getBorrows(address)
-                } catch (ex: Exception) {
-                    logger.error("Something went wrong trying to fetch the user lendings: ${ex.message}")
-                    emptyList()
+            borrowingServices
+                .filter {
+                    it.getProtocol().slug == protocol
                 }
-            }.map { it.toVO() }
+                .flatMap {
+                    try {
+                        it.getBorrows(address)
+                    } catch (ex: Exception) {
+                        logger.error("Something went wrong trying to fetch the user lendings: ${ex.message}")
+                        emptyList()
+                    }
+                }.map { it.toVO() }
         }
 
     suspend fun BorrowPosition.toVO(): BorrowPositionVO {

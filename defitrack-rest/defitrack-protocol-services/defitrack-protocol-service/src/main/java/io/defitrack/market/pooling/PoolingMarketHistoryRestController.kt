@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/pooling")
+@RequestMapping("/{protocol}/pooling")
 class PoolingMarketHistoryRestController(
     private val poolingHistoryProviders: List<PoolingHistoryProvider>
 ) {
@@ -23,8 +23,13 @@ class PoolingMarketHistoryRestController(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @GetMapping("/{user}/history")
-    fun getEnterMarketEvents(@PathVariable("user") user: String): List<DefiEvent> = runBlocking {
-        poolingHistoryProviders.flatMap {
+    fun getEnterMarketEvents(
+        @PathVariable("protocol") protocol: String,
+        @PathVariable("user") user: String
+    ): List<DefiEvent> = runBlocking {
+        poolingHistoryProviders.filter {
+            it.poolingMarketProvider.getProtocol().slug == protocol
+        }.flatMap {
             try {
                 retry(limitAttempts(3) + binaryExponentialBackoff(1000, 10000)) {
                     val historicEventExtractor = it.historicEventExtractor()

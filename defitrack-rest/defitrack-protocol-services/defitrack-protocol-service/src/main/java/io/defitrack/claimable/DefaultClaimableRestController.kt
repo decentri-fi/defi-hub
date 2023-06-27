@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/{protocol}")
 class DefaultClaimableRestController(
     private val claimableRewardProviders: List<ClaimableRewardProvider>,
     private val priceResource: PriceResource,
@@ -28,10 +28,11 @@ class DefaultClaimableRestController(
 
     @GetMapping(value = ["/{address}/claimables"])
     fun claimables(
+        @PathVariable("protocol") protocol: String,
         @PathVariable("address") address: String,
     ): List<ClaimableVO> = runBlocking {
         val fromProviders = async {
-            getFromProviders(address).map { toVO(it) }
+            getFromProviders(protocol, address).map { toVO(it) }
         }
 
         val fromDefaultProvider = async {
@@ -52,7 +53,10 @@ class DefaultClaimableRestController(
         return defaultClaimableRewardProvider.claimables(user)
     }
 
-    private suspend fun getFromProviders(address: String) = claimableRewardProviders.flatMap {
-        it.claimables(address)
-    }
+    private suspend fun getFromProviders(protocol: String, address: String) = claimableRewardProviders
+        .filter {
+            it.getProtocol().slug == protocol
+        }.flatMap {
+            it.claimables(address)
+        }
 }

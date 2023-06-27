@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*
 
 
 @RestController
-@RequestMapping("/pooling")
+@RequestMapping("/{protocol}/pooling")
 class DefaultPoolingMarketRestController(
     private val poolingMarketProviders: List<PoolingMarketProvider>,
     private val erC20Resource: DecentrifiERC20Resource,
@@ -32,8 +32,8 @@ class DefaultPoolingMarketRestController(
 
     @GetMapping("/markets")
     fun getMarkets(
-        pageable: Pageable,
-        @RequestParam(required = false, name = "protocol") protocol: String?
+        @PathVariable("protocol") protocol: String,
+        pageable: Pageable
     ): Page<PoolingMarketVO> = runBlocking {
         val allMarkets = getAllMarkets(
             protocol = protocol
@@ -47,8 +47,8 @@ class DefaultPoolingMarketRestController(
 
     @GetMapping(value = ["/all-markets"])
     fun allMarkets(
+        @PathVariable("protocol") protocol: String,
         @RequestParam(required = false, name = "network") network: Network?,
-        @RequestParam(required = false, name = "protocol") protocol: String?
     ): List<PoolingMarketVO> =
         runBlocking {
             getAllMarkets(
@@ -59,7 +59,7 @@ class DefaultPoolingMarketRestController(
 
     private suspend fun getAllMarkets(
         network: Network? = null,
-        protocol: String? = null
+        protocol: String
     ): List<PoolingMarket> = coroutineScope {
 
         val pro = Protocol.values().find {
@@ -68,7 +68,7 @@ class DefaultPoolingMarketRestController(
 
         poolingMarketProviders
             .filter {
-                pro?.let { pro -> it.getProtocol() == pro } ?: true
+                it.getProtocol().slug == protocol
             }
             .filter {
                 network?.let { network -> it.getNetwork() == network } ?: true
@@ -82,6 +82,7 @@ class DefaultPoolingMarketRestController(
 
     @PostMapping(value = ["/markets/{id}/invest"])
     fun prepareInvestment(
+        @PathVariable("protocol") protocol: String,
         @PathVariable("id") id: String,
         @RequestBody prepareInvestmentCommand: PrepareInvestmentCommand
     ): ResponseEntity<TransactionPreparationVO> = runBlocking(Dispatchers.Default) {
@@ -96,10 +97,14 @@ class DefaultPoolingMarketRestController(
 
     @GetMapping(value = ["/markets"], params = ["token", "network"])
     fun searchByToken(
+        @PathVariable("protocol") protocol: String,
         @RequestParam("token") tokenAddress: String,
         @RequestParam("network") network: Network
     ): List<PoolingMarketVO> {
         return poolingMarketProviders
+            .filter {
+                it.getProtocol().slug == protocol
+            }
             .filter {
                 it.getNetwork() == network
             }
@@ -131,6 +136,7 @@ class DefaultPoolingMarketRestController(
 
     @GetMapping(value = ["/markets/alternatives"], params = ["token", "network"])
     fun findAlternatives(
+        @PathVariable("protocol") protocol: String,
         @RequestParam("token") tokenAddress: String,
         @RequestParam("network") network: Network
     ): List<PoolingMarketVO> = runBlocking {
@@ -138,6 +144,9 @@ class DefaultPoolingMarketRestController(
             network, tokenAddress,
         )
         poolingMarketProviders
+            .filter {
+                it.getProtocol().slug == protocol
+            }
             .filter {
                 it.getNetwork() == network
             }

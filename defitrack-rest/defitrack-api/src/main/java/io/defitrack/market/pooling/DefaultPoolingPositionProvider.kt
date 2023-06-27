@@ -17,38 +17,43 @@ class DefaultPoolingPositionProvider(
 
     val logger = LoggerFactory.getLogger(this::class.java)
 
-    override suspend fun fetchUserPoolings(address: String): List<PoolingPosition> = coroutineScope {
-        poolingMarketProviders.map { provider ->
-            return@map async {
-                try {
-                    val markets = provider.getMarkets().filter { it.positionFetcher != null }
-
-                    if (markets.isEmpty()) {
-                        return@async emptyList()
-                    }
-
-                    gateway.getGateway(provider.getNetwork()).readMultiCall(
-                        markets.map { market ->
-                            market.positionFetcher!!.toMulticall(address)
-                        }
-                    ).mapIndexed { index, retVal ->
-                        val market = markets[index]
-                        val position = market.positionFetcher!!.extractBalance(retVal)
-
-                        if (position.underlyingAmount > BigInteger.ONE) {
-                            PoolingPosition(
-                                position.tokenAmount,
-                                market
-                            )
-                        } else {
-                            null
-                        }
-                    }.filterNotNull()
-                } catch (ex: Exception) {
-                    logger.error("Unable to fetch user poolings for provider ${provider.javaClass}: ${ex.message}")
-                    emptyList()
-                }
+    override suspend fun fetchUserPoolings(protocol: String, address: String): List<PoolingPosition> = coroutineScope {
+        poolingMarketProviders
+            .filter {
+                it.getProtocol().slug == protocol
             }
-        }.awaitAll().flatten()
+            .map { provider ->
+                return@map async {
+                    try {
+                        val markets = provider.getMarkets().filter { it.positionFetcher != null }
+
+                        if (markets.isEmpty()) {
+                            return@async emptyList()
+                        }
+
+                        gateway.getGateway(provider.getNetwork()).readMultiCall(
+                            markets.map { market ->
+                                market.positionFetcher!!.toMulticall(address)
+                            }
+                        ).mapIndexed { index, retVal ->
+                            val market = markets[index]
+                            val position = market.positionFetcher!!.extractBalance(retVal)
+
+                            if (position.underlyingAmount > BigInteger.ONE) {
+                                PoolingPosition(
+                                    position.tokenAmount,
+                                    market
+                                )
+                            } else {
+                                null
+                            }
+                        }.filterNotNull()
+                    } catch (ex: Exception) {
+                        logger.error("Unable to fetch user poolings for provider ${provider.javaClass}: ${ex.message}")
+                        emptyList()
+                    }
+                }
+            }.awaitAll().flatten()
     }
+
 }

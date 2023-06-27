@@ -13,25 +13,6 @@ import org.springframework.web.reactive.function.server.ServerResponse
 @Configuration
 class CompanyRouterConfig {
     @Bean
-    fun companyRoutes(builder: RouteLocatorBuilder): RouteLocator {
-        val routeBuilder = builder.routes()
-
-        Company.values().forEach { company ->
-            routeBuilder.route(company.name) {
-                it.path(true, "/${company.slug}/**")
-                    .filters { filter ->
-                        filter.rewritePath(
-                            "/${company.slug}/(?<segment>.*)",
-                            "/\${segment}"
-                        )
-                    }
-                    .uri("http://defitrack-${company.slug}:8080/api")
-            }
-        }
-        return routeBuilder.build()
-    }
-
-    @Bean
     fun companiesRoute(companyHandler: CompanyHandler): RouterFunction<ServerResponse> {
         return RouterFunctions
             .route(GET("/companies"), companyHandler::getCompanies)

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/pooling")
+@RequestMapping("/{protocol}/pooling")
 class DefaultPoolingPositionRestController(
     private val poolingPositionProviders: List<PoolingPositionProvider>,
     private val poolingPositionVOMapper: PoolingPositionVOMapper,
@@ -22,11 +22,14 @@ class DefaultPoolingPositionRestController(
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     @GetMapping("/{userId}/positions")
-    fun getUserPoolings(@PathVariable("userId") address: String): List<PoolingPositionVO> = runBlocking {
+    fun getUserPoolings(
+        @PathVariable("protocol") protocol: String,
+        @PathVariable("userId") address: String
+    ): List<PoolingPositionVO> = runBlocking {
         poolingPositionProviders.map {
             async {
                 try {
-                    it.userPoolings(address)
+                    it.userPoolings(protocol, address)
                 } catch (ex: Exception) {
                     ex.printStackTrace()
                     emptyList()
