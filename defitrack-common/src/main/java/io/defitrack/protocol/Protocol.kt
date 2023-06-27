@@ -82,7 +82,7 @@ enum class Protocol(
     ),
     VELODROME_V2(
         logo = "velodrome.svg",
-        slug = "velodrome",
+        slug = "velodrome_v2",
         primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
         "https://app.velodrome.finance",
         networks = listOf(Network.OPTIMISM),
@@ -90,7 +90,7 @@ enum class Protocol(
     ),
     VELODROME_V1(
         logo = "velodrome.svg",
-        slug = "velodrome",
+        slug = "velodrome_v1",
         primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
         "https://app.velodrome.finance",
         networks = listOf(Network.OPTIMISM),
@@ -119,14 +119,6 @@ enum class Protocol(
         primitives = listOf(DefiPrimitive.FARMING),
         networks = listOf(Network.POLYGON),
         company = Company.QIDAO
-    ),
-    TOKEMAK(
-        logo = "tokemak.png",
-        slug = "tokemak",
-        website = "https://tokemak.xyz",
-        primitives = listOf(DefiPrimitive.FARMING),
-        networks = listOf(Network.ETHEREUM),
-        company = Company.TOKEMAK
     ),
     CHAINLINK(
         logo = "chainlink.png",
@@ -202,7 +194,7 @@ enum class Protocol(
     ),
     AAVE_V2(
         logo = "aave.png",
-        slug = "aave",
+        slug = "aave_2",
         website = "https://aave.com/",
         primitives = listOf(
             DefiPrimitive.LENDING,
@@ -215,7 +207,7 @@ enum class Protocol(
     ),
     AAVE_V3(
         logo = "aave.png",
-        slug = "aave",
+        slug = "aave_v3",
         website = "https://aave.com/",
         primitives = listOf(
             DefiPrimitive.LENDING,
@@ -300,7 +292,7 @@ enum class Protocol(
     ),
     UNISWAP_V2(
         logo = "uniswap.png",
-        slug = "uniswap",
+        slug = "uniswap_v2",
         website = "https://uniswap.org",
         primitives = listOf(element = DefiPrimitive.POOLING),
         networks = listOf(Network.ETHEREUM, Network.POLYGON),
@@ -308,7 +300,7 @@ enum class Protocol(
     ),
     UNISWAP_V3(
         logo = "uniswap.png",
-        slug = "uniswap",
+        slug = "uniswap_v3",
         website = "https://uniswap.org",
         primitives = listOf(element = DefiPrimitive.POOLING),
         networks = listOf(Network.ETHEREUM, Network.POLYGON),
