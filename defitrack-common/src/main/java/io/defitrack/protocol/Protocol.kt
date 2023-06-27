@@ -194,7 +194,7 @@ enum class Protocol(
     ),
     AAVE_V2(
         logo = "aave.png",
-        slug = "aave_2",
+        slug = "aave_v2",
         website = "https://aave.com/",
         primitives = listOf(
             DefiPrimitive.LENDING,
