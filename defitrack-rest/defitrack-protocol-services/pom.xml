@@ -58,7 +58,6 @@
         <module>defitrack-tokemak</module>
         <module>defitrack-qidao</module>
         <module>defitrack-pooltogether</module>
-        <module>defitrack-10kswap</module>
         <module>defitrack-tornadocash</module>
         <module>defitrack-blur</module>
         <module>defitrack-protocol-service</module>

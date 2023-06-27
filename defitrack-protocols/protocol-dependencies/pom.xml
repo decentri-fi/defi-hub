@@ -49,11 +49,7 @@
                 <artifactId>aura</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>io.defitrack</groupId>
-                <artifactId>10kswap</artifactId>
-                <version>${project.version}</version>
-            </dependency>
+
             <dependency>
                 <groupId>io.defitrack</groupId>
                 <artifactId>swapfish</artifactId>

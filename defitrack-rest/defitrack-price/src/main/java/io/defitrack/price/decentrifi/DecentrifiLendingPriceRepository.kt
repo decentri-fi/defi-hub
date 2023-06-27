@@ -8,6 +8,7 @@ import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
@@ -26,7 +27,11 @@ class DecentrifiLendingPriceRepository(
 
     @Scheduled(fixedDelay = 1000 * 60 * 10)
     fun populatePoolPrices() = runBlocking {
-        val protocols = getProtocols()
+        val protocols = getProtocols().map {
+            it.company
+        }.distinctBy {
+            it.slug
+        }
         protocols.map { protocol ->
             try {
                 val pools = getLendingMarkets(protocol.slug)
@@ -43,7 +48,7 @@ class DecentrifiLendingPriceRepository(
                         }
                     }
             } catch (ex: Exception) {
-                logger.error("Unable to import price for protocol ${protocol.slug}", ex)
+                logger.error("Unable to import price for company ${protocol.slug}", ex)
             }
         }
 
@@ -65,7 +70,9 @@ class DecentrifiLendingPriceRepository(
         return if (result.status.isSuccess())
             result.body()
         else {
-            logger.error("Unable to fetch lending markets for $protocol")
+            logger.error(
+                "Unable to fetch lending markets for $protocol (${result.bodyAsText()}"
+            )
             emptyList()
         }
     }

@@ -8,6 +8,7 @@ import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
@@ -27,9 +28,9 @@ class DecentrifiPoolingPriceRepository(
     @Scheduled(fixedDelay = 1000 * 60 * 10)
     fun populatePoolPrices() = runBlocking {
         val protocols = getProtocols()
-        protocols.map { protocol ->
+        protocols.map { proto ->
             try {
-                val pools = getPools(protocol)
+                val pools = getPools(proto)
                 pools.forEach { pool ->
                     val price = pool.price
                     if (price == null) {
@@ -39,7 +40,7 @@ class DecentrifiPoolingPriceRepository(
                     }
                 }
             } catch (ex: Exception) {
-                logger.error("Unable to import price for protocol ${protocol.slug}", ex)
+                logger.error("Unable to import price for proto ${proto.slug}", ex)
             }
         }
 
@@ -58,11 +59,12 @@ class DecentrifiPoolingPriceRepository(
     }
 
     suspend fun getPools(protocol: ProtocolVO): List<PoolingMarketVO> {
-        val result = httpClient.get("https://api.decentri.fi/$protocol/pooling/markets?protocol=${protocol.name}")
+        val result =
+            httpClient.get("https://api.decentri.fi/${protocol.company.slug}/pooling/all-markets?protocol=${protocol.name}")
         return if (result.status.isSuccess())
             result.body()
         else {
-            logger.error("Unable to fetch pools for $protocol")
+            logger.error("Unable to fetch pools for ${protocol.name} ${result.bodyAsText()}")
             emptyList()
         }
     }
