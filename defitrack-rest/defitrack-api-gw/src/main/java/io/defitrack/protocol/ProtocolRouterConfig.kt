@@ -22,7 +22,7 @@ class ProtocolRouterConfig {
                 it.path(true, "/${protocol.slug}/**")
                     .filters { filter ->
                         filter.rewritePath(
-                            "/${protocol.company.slug}/${protocol.slug}/(?<segment>.*)",
+                            "/${protocol.slug}/(?<segment>.*)",
                             "/${protocol.slug}/\${segment}"
                         )
                     }
