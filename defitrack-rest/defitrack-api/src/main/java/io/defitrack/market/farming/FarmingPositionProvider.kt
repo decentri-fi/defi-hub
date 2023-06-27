@@ -15,9 +15,9 @@ abstract class FarmingPositionProvider {
     @Autowired
     lateinit var blockchainGatewayProvider: BlockchainGatewayProvider
 
-    abstract suspend fun getStakings(address: String): List<FarmingPosition>
-    open suspend fun getStaking(address: String, stakingMarketId: String): FarmingPosition? {
-        return getStakings(address).firstOrNull {
+    abstract suspend fun getStakings(protocol: String, address: String): List<FarmingPosition>
+    open suspend fun getStaking(protocol: String, address: String, stakingMarketId: String): FarmingPosition? {
+        return getStakings(protocol, address).firstOrNull {
             it.market.id == stakingMarketId
         }
     }

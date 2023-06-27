@@ -22,7 +22,7 @@ class VeVeloStakingPositionProvider(
         }
     }
 
-    override suspend fun getStakings(address: String): List<FarmingPosition> {
+    override suspend fun getStakings(protocol: String, address: String): List<FarmingPosition> {
         val tokensIds = veVeloContract.getTokenIdsForOwner(address)
         val results = veVeloStakingMarketProvider.getBlockchainGateway().readMultiCall(
             tokensIds.map { veVeloContract.lockedFn(it) }.map {

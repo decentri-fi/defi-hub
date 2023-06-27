@@ -10,27 +10,31 @@ import org.web3j.crypto.WalletUtils
 import java.math.BigInteger
 
 @RestController
-@RequestMapping(*["/staking", "/farming"])
+@RequestMapping(*["/{protocol}/staking", "/{protocol}/farming"])
 class DefaultFarmingPositionRestController(
     private val farmingPositionProviders: List<FarmingPositionProvider>,
     private val farmingPositionVOMapper: FarmingPositionVOMapper
 ) {
 
     @GetMapping("/{userAddress}/positions")
-    fun getPositions(@PathVariable("userAddress") address: String): List<FarmingPositionVO> = runBlocking {
+    fun getPositions(
+        @PathVariable("protocol") protocol: String,
+        @PathVariable("userAddress") address: String
+    ): List<FarmingPositionVO> = runBlocking {
         if (WalletUtils.isValidAddress(address)) {
-            val results = farmingPositionProviders.flatMap {
-                try {
-                    it.getStakings(address).filter {
-                        it.underlyingAmount > BigInteger.ZERO
+            val results = farmingPositionProviders
+                .flatMap {
+                    try {
+                        it.getStakings(protocol, address).filter {
+                            it.underlyingAmount > BigInteger.ZERO
+                        }
+                    } catch (ex: Exception) {
+                        logger.error("Something went wrong trying to fetch the user stakings: ${ex.message}")
+                        emptyList()
                     }
-                } catch (ex: Exception) {
-                    logger.error("Something went wrong trying to fetch the user stakings: ${ex.message}")
-                    emptyList()
+                }.map {
+                    farmingPositionVOMapper.map(it)
                 }
-            }.map {
-                farmingPositionVOMapper.map(it)
-            }
             results
         } else {
             emptyList()
@@ -39,13 +43,14 @@ class DefaultFarmingPositionRestController(
 
     @GetMapping(value = ["/{userAddress}/positions"], params = ["stakingElementId"])
     fun getStakingById(
+        @PathVariable("protocol") protocol: String,
         @PathVariable("userAddress") address: String,
         @RequestParam("stakingElementId") stakingElementId: String,
     ): FarmingPositionVO? = runBlocking {
         if (WalletUtils.isValidAddress(address)) {
             farmingPositionProviders.firstNotNullOfOrNull {
                 try {
-                    it.getStaking(address, stakingElementId)
+                    it.getStaking(protocol, address, stakingElementId)
                 } catch (ex: Exception) {
                     logger.error("Something went wrong trying to fetch the user farms: ${ex.message}")
                     null

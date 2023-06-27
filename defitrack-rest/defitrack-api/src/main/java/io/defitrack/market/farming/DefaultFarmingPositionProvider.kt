@@ -15,11 +15,13 @@ class DefaultFarmingPositionProvider(
     val farmingMarketProvider: List<FarmingMarketProvider>,
     val gateway: BlockchainGatewayProvider
 ) : FarmingPositionProvider() {
-    override suspend fun getStakings(address: String): List<FarmingPosition> = coroutineScope {
+    override suspend fun getStakings(protocol: String, address: String): List<FarmingPosition> = coroutineScope {
 
         val semaphore = Semaphore(16)
 
-        farmingMarketProvider.flatMap { provider ->
+        farmingMarketProvider.filter {
+            it.getProtocol().slug == protocol
+        }.flatMap { provider ->
             val markets = provider.getMarkets().filter { it.balanceFetcher != null }
             if (markets.isEmpty()) {
                 return@flatMap emptyList()
