@@ -15,7 +15,7 @@ open class ERC20Contract(
     abi: String,
     address: String
 ) :
-    EvmContract(blockchainGateway,abi,  address) {
+    EvmContract(blockchainGateway, abi, address) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
@@ -67,11 +67,17 @@ open class ERC20Contract(
 
 
     suspend fun balanceOf(address: String): BigInteger {
-        return readWithoutAbi(
+        val retVal = readWithoutAbi(
             "balanceOf",
             inputs = listOf(address.toAddress()),
             outputs = listOf(uint256())
-        )[0].value as BigInteger
+        )
+        return if (retVal.isEmpty()) {
+            logger.info("Unable to fetch balance of on ${blockchainGateway.network} for $address")
+            BigInteger.ZERO
+        } else {
+            retVal[0].value as BigInteger
+        }
     }
 
 
