@@ -48,7 +48,7 @@ class VelodromeV2GaugeMarketProvider(
                             val rewardToken = getToken(contract.rewardToken())
 
                             val market = create(
-                                name = stakedToken.name + " Gauge V1",
+                                name = stakedToken.name + " Gauge V2",
                                 identifier = stakedToken.symbol + "-v1-${gauge}",
                                 farmType = ContractType.LIQUIDITY_MINING,
                                 rewardTokens = listOf(rewardToken.toFungibleToken()),
