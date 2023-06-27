@@ -27,11 +27,7 @@ class DecentrifiLendingPriceRepository(
 
     @Scheduled(fixedDelay = 1000 * 60 * 10)
     fun populatePoolPrices() = runBlocking {
-        val protocols = getProtocols().map {
-            it.company
-        }.distinctBy {
-            it.slug
-        }
+        val protocols = getProtocols()
         protocols.map { protocol ->
             try {
                 val pools = getLendingMarkets(protocol.slug)
@@ -48,7 +44,7 @@ class DecentrifiLendingPriceRepository(
                         }
                     }
             } catch (ex: Exception) {
-                logger.error("Unable to import price for company ${protocol.slug}", ex)
+                logger.error("Unable to import price for protocol ${protocol.slug}", ex)
             }
         }
 
