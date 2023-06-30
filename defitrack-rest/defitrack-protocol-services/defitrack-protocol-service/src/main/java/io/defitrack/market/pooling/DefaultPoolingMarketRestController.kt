@@ -6,7 +6,6 @@ import io.defitrack.market.farming.vo.TransactionPreparationVO
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.mapper.PoolingMarketVOMapper
 import io.defitrack.market.pooling.vo.PoolingMarketVO
-import io.defitrack.protocol.Protocol
 import io.defitrack.token.DecentrifiERC20Resource
 import io.defitrack.token.TokenType
 import io.defitrack.utils.PageUtils.createPageFromList
@@ -30,7 +29,7 @@ class DefaultPoolingMarketRestController(
         val logger: Logger = LoggerFactory.getLogger(this::class.java)
     }
 
-    @GetMapping("/markets")
+    @GetMapping("/markets", params = ["paged"])
     fun getMarkets(
         @PathVariable("protocol") protocol: String,
         pageable: Pageable
@@ -48,7 +47,7 @@ class DefaultPoolingMarketRestController(
     @GetMapping(value = ["/all-markets"])
     fun allMarkets(
         @PathVariable("protocol") protocol: String,
-        @RequestParam(required = false, name = "network") network: Network?,
+        @RequestParam(required = false, name = "network") network: String?,
     ): List<PoolingMarketVO> =
         runBlocking {
             getAllMarkets(
@@ -58,20 +57,18 @@ class DefaultPoolingMarketRestController(
         }
 
     private suspend fun getAllMarkets(
-        network: Network? = null,
+        network: String? = null,
         protocol: String
     ): List<PoolingMarket> = coroutineScope {
-
-        val pro = Protocol.values().find {
-            it.slug == protocol
-        }
-
         poolingMarketProviders
             .filter {
                 it.getProtocol().slug == protocol
             }
             .filter {
-                network?.let { network -> it.getNetwork() == network } ?: true
+                network?.let { network ->
+                    it.getNetwork().name == network
+                            || it.getNetwork().slug == network
+                } ?: true
             }
             .map {
                 async {
