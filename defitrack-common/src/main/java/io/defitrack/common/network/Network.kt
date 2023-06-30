@@ -19,5 +19,11 @@ enum class Network(val logo: String, val chainId: Int, val slug: String, val has
                 it.chainId == chainId
             }
         }
+
+        fun fromString(str: String): Network? {
+            return values().firstOrNull {
+                it.slug == str || it.name == str
+            }
+        }
     }
 }

@@ -21,9 +21,11 @@ class EventDecoderRestController(
     @GetMapping("/{txId}", params = ["network"])
     fun decodeTransaction(
         @PathVariable("txId") txId: String,
-        @RequestParam("network") network: Network,
+        @RequestParam("network") network: String,
         @RequestParam("type", required = false) type: DefiEventType? = null
     ): List<DefiEvent> = runBlocking {
+        val network = Network.fromString(network) ?: throw IllegalArgumentException("Invalid network $network")
+
         val logs = gatewayProvider.getGateway(network).getLogs(txId)
         logs.flatMap {
             eventDecoders

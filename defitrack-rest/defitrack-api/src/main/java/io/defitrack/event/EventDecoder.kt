@@ -41,7 +41,6 @@ abstract class EventDecoder {
         return erC20Resource.getTokenInformation(network, address)
     }
 
-
     suspend fun getLabeledAddress(address: String): LabeledAddress {
         return labelAddressesResource.getLabel(address)
     }
