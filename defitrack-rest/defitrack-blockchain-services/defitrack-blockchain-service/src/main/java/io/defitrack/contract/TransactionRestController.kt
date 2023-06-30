@@ -1,5 +1,6 @@
 package io.defitrack.contract
 
+import io.micrometer.core.annotation.Timed
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -16,6 +17,7 @@ class TransactionRestController(
 ) {
 
     @GetMapping("/{txId}")
+    @Timed("blockchain.transaction.by-id")
     fun getTransaction(@PathVariable("txId") txId: String): TransactionVO? {
         return web3j.ethGetTransactionByHash(txId).send().transaction.map {
             TransactionVO(
@@ -30,6 +32,7 @@ class TransactionRestController(
     }
 
     @GetMapping("/{txId}/logs")
+    @Timed("blockchain.transaction.by-id.logs")
     fun getLogs(@PathVariable("txId") txId: String): List<Log> {
         return web3j.ethGetTransactionReceipt(txId).send().transactionReceipt.map {
             it.logs

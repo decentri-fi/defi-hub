@@ -1,5 +1,6 @@
 package io.defitrack.contract
 
+import io.micrometer.core.annotation.Timed
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -19,6 +20,7 @@ class NativeTransactionRestController(
 ) {
 
     @PostMapping("/logs")
+    @Timed("blockchain.events.logs")
     fun getEvents(@RequestBody getEventLogsCommand: GetEventLogsCommand): CompletableFuture<EthLog> {
         require(getEventLogsCommand.addresses.isNotEmpty()) { "Address must not be empty" }
         val ethFilter =

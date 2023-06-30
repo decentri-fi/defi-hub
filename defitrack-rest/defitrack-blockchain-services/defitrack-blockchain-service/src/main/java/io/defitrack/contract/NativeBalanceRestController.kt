@@ -1,5 +1,6 @@
 package io.defitrack.contract
 
+import io.micrometer.core.annotation.Timed
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -14,6 +15,7 @@ class NativeBalanceRestController(
     private val web3j: Web3j
 ) {
     @GetMapping("/{address}")
+    @Timed("blockchain.native.balance")
     fun getNativeBalance(@PathVariable("address") address: String): BigInteger {
         return web3j.ethGetBalance(address, DefaultBlockParameterName.PENDING).send().balance
     }
