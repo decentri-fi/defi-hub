@@ -9,7 +9,7 @@ class ExceptionControllerAdvice {
 
     @ExceptionHandler(value = [TransactionPreparationException::class])
     fun handleTransactionPreparation(investException: TransactionPreparationException): ResponseEntity<ExceptionResult> {
-        return ResponseEntity.ok(
+        return ResponseEntity.badRequest().body(
             ExceptionResult(
                 investException.msg
             )
