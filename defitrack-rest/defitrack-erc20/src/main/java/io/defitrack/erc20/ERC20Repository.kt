@@ -44,6 +44,7 @@ class ERC20Repository(
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/fantom/fantomfinance.tokenlist.json",
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/bsc/pancakeswap-extended.json",
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/optimism/optimism.tokenlist.json",
+            "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/polygon-zkevm/tokenlist.json",
         ).flatMap {
             fetchFromTokenList(it)
         }.groupBy({
