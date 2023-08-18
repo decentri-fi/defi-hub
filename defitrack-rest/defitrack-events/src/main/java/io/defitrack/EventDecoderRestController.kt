@@ -5,7 +5,11 @@ import io.defitrack.event.DefiEvent
 import io.defitrack.event.DefiEventType
 import io.defitrack.event.EventDecoder
 import io.defitrack.evm.contract.BlockchainGatewayProvider
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
 
@@ -22,29 +26,35 @@ class EventDecoderRestController(
     fun decodeTransaction(
         @PathVariable("txId") txId: String,
         @RequestParam("network") network: String,
-        @RequestParam("type", required = false) type: DefiEventType? = null
+        @RequestParam("type", required = false) type: DefiEventType? = null,
+        @RequestParam("max-logs", required = false) maxLogs: Int? = 100
     ): List<DefiEvent> = runBlocking {
         val network = Network.fromString(network) ?: throw IllegalArgumentException("Invalid network $network")
 
-        val logs = gatewayProvider.getGateway(network).getLogs(txId)
-        logs.flatMap {
-            eventDecoders
-                .filter {
-                    (type == null || it.eventTypes().contains(type))
-                }
-                .map { decoder ->
-                    try {
-                        if (decoder.appliesTo(it, network)) {
-                            decoder.extract(it, network)
-                        } else {
-                            null
+        val sema = Semaphore(16)
+
+        gatewayProvider.getGateway(network).getLogs(txId).take(maxLogs ?: 100).map {
+            async {
+                eventDecoders
+                        .filter {
+                            (type == null || it.eventTypes().contains(type))
                         }
-                    } catch (ex: Exception) {
-                        logger.error("Error decoding event for tx $txId", ex)
-                        null
-                    }
-                }
-        }.filterNotNull().filter {
+                        .map { decoder ->
+                            try {
+                                if (decoder.appliesTo(it, network)) {
+                                    sema.withPermit {
+                                        decoder.extract(it, network)
+                                    }
+                                } else {
+                                    null
+                                }
+                            } catch (ex: Exception) {
+                                logger.debug("Error decoding event for tx $txId")
+                                null
+                            }
+                        }
+            }
+        }.awaitAll().flatten().filterNotNull().filter {
             type == null || it.type == type
         }
     }
