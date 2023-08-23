@@ -38,12 +38,6 @@ class BalancerLiquidityDecoder : EventDecoder() {
     }
 
     override suspend fun extract(log: Log, network: Network): DefiEvent {
-        val poolId = Hex.encodeHexString(
-            poolBalanceChanged.getIndexedParameter<ByteArray>(
-                log, 0
-            )
-        );
-
         val deltas = poolBalanceChanged.getNonIndexedParameter<List<Int256>>(
             log, 1
         ).map {

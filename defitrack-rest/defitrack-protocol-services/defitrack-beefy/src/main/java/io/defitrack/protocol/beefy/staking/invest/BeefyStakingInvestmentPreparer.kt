@@ -33,14 +33,8 @@ class BeefyStakingInvestmentPreparer(
         coroutineScope {
             async {
                 val requiredBalance = getInvestmentAmount(prepareInvestmentCommand)
-                prepareInvestmentCommand.amount?.let { amount ->
-                    PreparedTransaction(
-                        function = beefyVault.depositFunction(requiredBalance),
-                        to = getEntryContract(),
-                        network = beefyVault.blockchainGateway.network.toVO()
-                    )
-                } ?: PreparedTransaction(
-                    function = beefyVault.depositAllFunction(),
+                PreparedTransaction(
+                    function = beefyVault.depositFunction(requiredBalance),
                     to = getEntryContract(),
                     network = beefyVault.blockchainGateway.network.toVO()
                 )

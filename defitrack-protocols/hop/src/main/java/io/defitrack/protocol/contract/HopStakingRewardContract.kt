@@ -7,7 +7,7 @@ import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
 import org.web3j.abi.datatypes.Function
 
-class HopStakingReward(
+class HopStakingRewardContract(
     solidityBasedContractAccessor: BlockchainGateway,
     abi: String,
     address: String,
@@ -17,10 +17,10 @@ class HopStakingReward(
 ) {
 
     suspend fun rewardsTokenAddress(): String {
-        return readWithAbi(
+        return readSingle(
             "rewardsToken",
-            outputs = listOf(address())
-        )[0].value as String
+             address()
+        )
     }
 
     fun earnedFunction(address: String): Function {
@@ -40,9 +40,9 @@ class HopStakingReward(
     }
 
     suspend fun stakingTokenAddress(): String {
-        return readWithAbi(
-            method = "stakingToken",
-            outputs = listOf(address())
-        )[0].value as String
+        return readSingle(
+         "stakingToken",
+            address()
+        )
     }
 }

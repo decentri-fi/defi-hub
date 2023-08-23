@@ -10,7 +10,7 @@ import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.HopService
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.contract.HopStakingReward
+import io.defitrack.protocol.contract.HopStakingRewardContract
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
@@ -34,7 +34,7 @@ abstract class HopFarmingMarketProvider(
 
     private suspend fun toStakingMarket(stakingReward: String): FarmingMarket? {
         return try {
-            val pool = HopStakingReward(
+            val pool = HopStakingRewardContract(
                 getBlockchainGateway(),
                 abiResource.getABI("quickswap/StakingRewards.json"),
                 stakingReward
@@ -66,7 +66,7 @@ abstract class HopFarmingMarketProvider(
 
     private suspend fun getMarketSize(
         stakedTokenInformation: TokenInformationVO,
-        pool: HopStakingReward
+        pool: HopStakingRewardContract
     ) = BigDecimal.valueOf(
         getPriceResource().calculatePrice(
             PriceRequest(
