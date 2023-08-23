@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
+import java.math.BigDecimal
 
 @Component
 class VelodromeV2OptimismPoolingMarketProvider(
@@ -51,10 +52,12 @@ class VelodromeV2OptimismPoolingMarketProvider(
                                 tokens = poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
                                 tokenType = TokenType.VELODROME,
                                 totalSupply = refreshable(poolingToken.totalSupply.asEth(poolingToken.decimals)) {
-                                    val poolingToken = getToken(it)
-                                    poolingToken.totalSupply.asEth(poolingToken.decimals)
+                                    getToken(it).totalSupply.asEth(poolingToken.decimals)
                                 },
-                                deprecated = true
+                                deprecated = false,
+                                price = refreshable {
+                                    BigDecimal.ZERO
+                                }
                             )
                         )
                     } catch (ex: Exception) {

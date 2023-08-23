@@ -34,7 +34,7 @@ class ClaimableVOMapper(
                 protocol = protocolVOMapper.map(protocol),
                 network = network.toVO(),
                 token = claimableTokens.first(),
-                amount = amount.asEth(claimableTokens.first().decimals).toDouble(),
+                amount = amount.toDouble(),
                 dollarValue = claimableInDollar,
                 claimTransaction = claimTransaction
             )
