@@ -38,10 +38,6 @@
             <groupId>io.defitrack</groupId>
             <artifactId>arbitrum</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
-            <artifactId>fantom</artifactId>
-        </dependency>
     </dependencies>
 
 </project>

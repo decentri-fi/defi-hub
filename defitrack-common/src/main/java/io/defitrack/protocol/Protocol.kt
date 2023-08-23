@@ -141,7 +141,7 @@ enum class Protocol(
         slug = "beethovenx",
         website = "https://beets.fi",
         primitives = listOf(DefiPrimitive.FARMING, DefiPrimitive.POOLING),
-        networks = listOf(Network.FANTOM),
+        networks = listOf(Network.OPTIMISM),
         company = Company.BEETHOVENX
     ),
     SET(
@@ -189,7 +189,7 @@ enum class Protocol(
         slug = "iron-bank",
         website = "https://ib.xyz/",
         primitives = listOf(DefiPrimitive.LENDING, DefiPrimitive.BORROWING),
-        networks = listOf(Network.ETHEREUM, Network.FANTOM),
+        networks = listOf(Network.ETHEREUM),
         company = Company.IRON_BANK
     ),
     AAVE_V2(
@@ -248,7 +248,7 @@ enum class Protocol(
         website = "https://beefy.com",
         primitives = listOf(DefiPrimitive.FARMING),
         company = Company.BEEFY,
-        networks = listOf(Network.POLYGON, Network.ARBITRUM, Network.FANTOM)
+        networks = listOf(Network.POLYGON, Network.ARBITRUM)
     ),
     QUICKSWAP(
         logo = "quickswap.png",
@@ -328,7 +328,7 @@ enum class Protocol(
         website = "https://sushi.com",
         primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
         company = Company.SUSHISWAP,
-        networks = listOf(Network.POLYGON, Network.ARBITRUM, Network.FANTOM, Network.ETHEREUM)
+        networks = listOf(Network.POLYGON, Network.ARBITRUM, Network.ETHEREUM)
     ),
     KYBER_SWAP(
         logo = "dmm.png",
@@ -345,22 +345,6 @@ enum class Protocol(
         primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
         company = Company.BALANCER,
         networks = listOf(Network.POLYGON, Network.ARBITRUM)
-    ),
-    SPOOKY(
-        logo = "spooky.png",
-        slug = "spooky",
-        website = "https://spooky.fi",
-        primitives = listOf(DefiPrimitive.FARMING),
-        networks = listOf(Network.FANTOM),
-        company = Company.SPOOKY
-    ),
-    SPIRITSWAP(
-        logo = "spirit.png",
-        slug = "spirit",
-        website = "https://www.spiritswap.finance",
-        primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
-        networks = listOf(Network.FANTOM),
-        company = Company.SPIRITSWAP
     ),
     RIBBON(
         logo = "ribbon.png",

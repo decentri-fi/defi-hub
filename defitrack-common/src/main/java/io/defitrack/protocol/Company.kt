@@ -156,14 +156,6 @@ enum class Company(
         prettyName = "Balancer",
         slug = "balancer"
     ),
-    SPOOKY(
-        prettyName = "SpookySwap",
-        slug = "spooky"
-    ),
-    SPIRITSWAP(
-        prettyName = "SpiritSwap",
-        slug = "spirit"
-    ),
     RIBBON(
         prettyName = "Ribbon",
         slug = "ribbon"

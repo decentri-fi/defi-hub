@@ -43,15 +43,6 @@ class NativeTokenService(private val logoService: LogoService) {
                 logo = nativeLogo,
                 network = network
             )
-            Network.FANTOM -> TokenInformation(
-                address = nullAddress,
-                name = "Fantom",
-                decimals = 18,
-                symbol = "FTM",
-                type = TokenType.NATIVE,
-                logo = nativeLogo,
-                network = network
-            )
             Network.OPTIMISM -> TokenInformation(
                 address = nullAddress,
                 name = "ETH",

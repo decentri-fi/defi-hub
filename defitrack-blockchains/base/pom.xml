@@ -3,30 +3,20 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>crv</artifactId>
+    <artifactId>base</artifactId>
+    <packaging>jar</packaging>
 
     <parent>
         <groupId>io.defitrack</groupId>
-        <artifactId>defitrack-protocols</artifactId>
+        <artifactId>defitrack-blockchains</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
     <dependencies>
         <dependency>
             <groupId>io.defitrack</groupId>
-            <artifactId>ethereum</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
-            <artifactId>polygon</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
-            <artifactId>arbitrum</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
-            <artifactId>optimism</artifactId>
+            <artifactId>evm</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>

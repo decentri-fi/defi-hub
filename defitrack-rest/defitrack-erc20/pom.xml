@@ -60,10 +60,6 @@
         </dependency>
         <dependency>
             <groupId>io.defitrack</groupId>
-            <artifactId>fantom</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
             <artifactId>optimism</artifactId>
         </dependency>
         <dependency>

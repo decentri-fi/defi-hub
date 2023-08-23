@@ -19,8 +19,7 @@
         <module>polygon</module>
         <module>polygon-zkevm</module>
         <module>arbitrum</module>
-        <module>fantom</module>
         <module>optimism</module>
-        <module>starknet</module>
+        <module>base</module>
     </modules>
 </project>

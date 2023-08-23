@@ -44,16 +44,6 @@
                 <artifactId>arbitrum</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>io.defitrack</groupId>
-                <artifactId>fantom</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.defitrack</groupId>
-                <artifactId>starknet</artifactId>
-                <version>${project.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>
