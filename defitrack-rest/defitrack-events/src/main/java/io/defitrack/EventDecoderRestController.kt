@@ -33,7 +33,14 @@ class EventDecoderRestController(
 
         val sema = Semaphore(16)
 
-        gatewayProvider.getGateway(network).getLogs(txId).take(maxLogs ?: 100).map {
+
+        val logs = gatewayProvider.getGateway(network).getLogs(txId)
+
+        if (logs.size > 500) {
+            return@runBlocking emptyList()
+        }
+
+        logs.take(maxLogs ?: 100).map {
             async {
                 eventDecoders
                         .filter {
