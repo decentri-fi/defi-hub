@@ -14,6 +14,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
+import java.math.BigDecimal
 
 
 @Component
@@ -63,7 +64,8 @@ class CamelotNFTV2PoolingMarketProvider(
                     listOf(token0.toFungibleToken(), token1.toFungibleToken()),
                     pool.address
                 )
-            }
+            },
+            price = Refreshable.refreshable { BigDecimal.ZERO }
         )
     }
 

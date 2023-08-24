@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.math.BigDecimal
 
 //@Component
 class CamelotArbitrumPoolingMarketProvider(
@@ -54,7 +55,8 @@ class CamelotArbitrumPoolingMarketProvider(
                                 positionFetcher = defaultPositionFetcher(poolingToken.address),
                                 totalSupply = Refreshable.refreshable(poolingToken.totalDecimalSupply()) {
                                     getToken(pool).totalDecimalSupply()
-                                }
+                                },
+                                price = Refreshable.refreshable { BigDecimal.ZERO }
                             )
                         )
                     } catch (ex: Exception) {

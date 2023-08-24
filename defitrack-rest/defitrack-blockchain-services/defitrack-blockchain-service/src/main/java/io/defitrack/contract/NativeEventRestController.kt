@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture
 
 @RestController
 @RequestMapping("/events")
-class NativeTransactionRestController(
+class NativeEventRestController(
     private val web3j: Web3j
 ) {
 
