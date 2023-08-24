@@ -8,5 +8,6 @@ class TransactionVO(
     val from: String,
     val to: String?,
     val time: Long,
-    val value: BigInteger
+    val value: BigInteger,
+    val possibleSpam: Boolean,
 )

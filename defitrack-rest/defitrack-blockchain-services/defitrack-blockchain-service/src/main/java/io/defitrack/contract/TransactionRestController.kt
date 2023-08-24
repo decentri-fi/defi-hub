@@ -20,13 +20,18 @@ class TransactionRestController(
     @Timed("blockchain.transaction.by-id")
     fun getTransaction(@PathVariable("txId") txId: String): TransactionVO? {
         return web3j.ethGetTransactionByHash(txId).send().transaction.map {
+            val possibleSpam =  web3j.ethGetTransactionReceipt(txId).send().transactionReceipt.map {
+                it.logs.size > 400
+            }.orElse(false)
+
             TransactionVO(
                 hash = it.hash,
                 blockNumber = it.blockNumber,
                 from = it.from,
                 to = it.to,
                 time = web3j.ethGetBlockByHash(it.blockHash, false).send().block.timestamp.longValueExact(),
-                value = it.value
+                value = it.value,
+                possibleSpam = possibleSpam
             )
         }.getOrNull()
     }
