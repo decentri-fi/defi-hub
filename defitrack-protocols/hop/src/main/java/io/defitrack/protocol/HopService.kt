@@ -85,6 +85,8 @@ class HopService(
                     canonicalToken = it.value.asJsonObject["l2CanonicalToken"].asString,
                 )
             }
+        }.filter {
+            it.lpToken != "0x0000000000000000000000000000000000000000"
         }
     }
 }

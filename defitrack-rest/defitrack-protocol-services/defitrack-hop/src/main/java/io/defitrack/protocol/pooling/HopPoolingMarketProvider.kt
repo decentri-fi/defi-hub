@@ -82,7 +82,7 @@ abstract class HopPoolingMarketProvider(
                 }
             )
         } catch (ex: Exception) {
-            ex.printStackTrace()
+            logger.error("unable to generate market for lptoken {}", hopLpToken)
             null
         }
     }

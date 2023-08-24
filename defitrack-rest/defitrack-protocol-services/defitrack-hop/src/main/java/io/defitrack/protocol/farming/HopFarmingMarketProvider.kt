@@ -34,29 +34,32 @@ abstract class HopFarmingMarketProvider(
 
     private suspend fun toStakingMarket(stakingReward: String): FarmingMarket? {
         return try {
-            val pool = HopStakingRewardContract(
+            val stakingRewards = HopStakingRewardContract(
                 getBlockchainGateway(),
                 abiResource.getABI("quickswap/StakingRewards.json"),
                 stakingReward
             )
 
-            val stakedToken = getToken(pool.stakingTokenAddress())
-            val rewardToken = getToken(pool.rewardsTokenAddress())
+            val stakedToken = getToken(stakingRewards.stakingTokenAddress())
+            val rewardToken = getToken(stakingRewards.rewardsTokenAddress())
 
             return create(
-                identifier = pool.address,
+                identifier = stakingRewards.address,
                 name = "${stakedToken.name} Staking Rewards",
                 stakedToken = stakedToken.toFungibleToken(),
                 rewardTokens = listOf(rewardToken.toFungibleToken()),
                 vaultType = "hop-staking-rewards",
                 marketSize = Refreshable.refreshable {
-                    getMarketSize(stakedToken, pool)
+                    getMarketSize(stakedToken, stakingRewards)
                 },
                 balanceFetcher = PositionFetcher(
-                    address = pool.address,
+                    address = stakingRewards.address,
                     function = { user -> balanceOfFunction(user) }
                 ),
-                farmType = ContractType.LIQUIDITY_MINING
+                farmType = ContractType.LIQUIDITY_MINING,
+                metadata = mapOf(
+                    "contract" to stakingRewards
+                )
             )
         } catch (ex: Exception) {
             ex.printStackTrace()

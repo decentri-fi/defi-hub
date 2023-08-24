@@ -16,6 +16,7 @@ class HopStakingRewardContract(
     abi, address
 ) {
 
+
     suspend fun rewardsTokenAddress(): String {
         return readSingle(
             "rewardsToken",
@@ -23,7 +24,7 @@ class HopStakingRewardContract(
         )
     }
 
-    fun earnedFunction(address: String): Function {
+    fun earnedFn(address: String): Function {
         return createFunction(
             "earned",
             inputs = listOf(
