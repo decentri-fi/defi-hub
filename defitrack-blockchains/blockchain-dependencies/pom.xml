@@ -44,6 +44,11 @@
                 <artifactId>arbitrum</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>io.defitrack</groupId>
+                <artifactId>base</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>
