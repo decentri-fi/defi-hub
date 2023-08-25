@@ -27,6 +27,10 @@
         </dependency>
         <dependency>
             <groupId>io.defitrack</groupId>
+            <artifactId>base</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
             <artifactId>arbitrum</artifactId>
         </dependency>
         <dependency>
