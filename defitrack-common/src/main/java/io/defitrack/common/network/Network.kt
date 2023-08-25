@@ -8,9 +8,6 @@ enum class Network(val logo: String, val chainId: Int, val slug: String, val has
     POLYGON_ZKEVM("polygon-zkevm.png", 1101, "polygon-zkevm"),
     BASE("base.png", 8453, "base");
 
-    val imageBasePath = "https://github.com/defitrack/data/raw/master/logo/network/"
-
-    fun getImage(): String = imageBasePath + logo
 
     companion object {
         fun fromChainId(chainId: Int): Network? {
