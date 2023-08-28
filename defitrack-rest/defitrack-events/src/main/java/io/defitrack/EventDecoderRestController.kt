@@ -29,37 +29,37 @@ class EventDecoderRestController(
         @RequestParam("type", required = false) type: DefiEventType? = null,
         @RequestParam("max-logs", required = false) maxLogs: Int? = 100
     ): List<DefiEvent> = runBlocking {
-        val network = Network.fromString(networkAsString) ?: throw IllegalArgumentException("Invalid network $networkAsString")
+        val network =
+            Network.fromString(networkAsString) ?: throw IllegalArgumentException("Invalid network $networkAsString")
 
         val sema = Semaphore(16)
 
-
         val logs = gatewayProvider.getGateway(network).getLogs(txId)
 
-        if (logs.size > 500) {
+        if (logs.size > 300) {
             return@runBlocking emptyList()
         }
 
         logs.take(maxLogs ?: 100).map {
             async {
                 eventDecoders
-                        .filter {
-                            (type == null || it.eventTypes().contains(type))
-                        }
-                        .map { decoder ->
-                            try {
+                    .filter {
+                        (type == null || it.eventTypes().contains(type))
+                    }
+                    .map { decoder ->
+                        try {
+                            sema.withPermit {
                                 if (decoder.appliesTo(it, network)) {
-                                    sema.withPermit {
-                                        decoder.extract(it, network)
-                                    }
+                                    decoder.extract(it, network)
                                 } else {
                                     null
                                 }
-                            } catch (ex: Exception) {
-                                logger.debug("Error decoding event for tx $txId")
-                                null
                             }
+                        } catch (ex: Exception) {
+                            logger.debug("Error decoding event for tx $txId")
+                            null
                         }
+                    }
             }
         }.awaitAll().flatten().filterNotNull().filter {
             type == null || it.type == type

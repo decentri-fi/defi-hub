@@ -2,6 +2,8 @@ package io.defitrack.event
 
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.labeledaddresses.LabelAddressesResource
 import io.defitrack.labeledaddresses.LabeledAddress
 import io.defitrack.token.ERC20Resource
@@ -10,6 +12,10 @@ import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.protocol.core.methods.response.Log
 
 abstract class EventDecoder {
+
+
+    @Autowired
+    private lateinit var blockchainGatewayProvider: BlockchainGatewayProvider;
 
     companion object {
         inline fun <reified T> org.web3j.abi.datatypes.Event.getNonIndexedParameter(log: Log, index: Int): T {
@@ -43,5 +49,9 @@ abstract class EventDecoder {
 
     suspend fun getLabeledAddress(address: String): LabeledAddress {
         return labelAddressesResource.getLabel(address)
+    }
+
+    fun getGateway(network: Network): BlockchainGateway {
+        return blockchainGatewayProvider.getGateway(network)
     }
 }
