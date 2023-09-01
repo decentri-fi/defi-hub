@@ -21,6 +21,5 @@
         <module>defitrack-optimism</module>
         <module>defitrack-arbitrum</module>
         <module>defitrack-base</module>
-        <module>defitrack-starknet</module>
     </modules>
 </project>
