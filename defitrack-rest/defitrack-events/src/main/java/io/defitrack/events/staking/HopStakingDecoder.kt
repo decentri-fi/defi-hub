@@ -13,6 +13,7 @@ import io.defitrack.protocol.HopPolygonService
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.contract.HopStakingRewardContract
 import org.springframework.stereotype.Component
+import org.web3j.abi.datatypes.Event
 import org.web3j.protocol.core.methods.response.Log
 import java.math.BigInteger
 
@@ -27,7 +28,7 @@ class HopStakingDecoder(
         Network.POLYGON to hopPolygonService.getStakingRewards()
     )
 
-    val stakedEvent = org.web3j.abi.datatypes.Event(
+    val stakedEvent = Event(
         "Staked",
         listOf(
             address(true),
@@ -43,9 +44,9 @@ class HopStakingDecoder(
 
     override suspend fun extract(log: Log, network: Network): DefiEvent {
         val user = "user" to getLabeledAddress(
-            stakedEvent.getIndexedParameter<String>(log, 0)
+            stakedEvent.extract<String>(log, true, 0)
         );
-        val amount = "amount" to stakedEvent.getNonIndexedParameter<BigInteger>(log, 0)
+        val amount = "amount" to stakedEvent.extract<BigInteger>(log, false, 0)
 
         val contract = HopStakingRewardContract(
             blockchainGatewayProvider.getGateway(network),

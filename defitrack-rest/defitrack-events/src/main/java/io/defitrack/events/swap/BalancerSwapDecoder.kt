@@ -35,10 +35,10 @@ class BalancerSwapDecoder(
     }
 
     override suspend fun extract(log: Log, network: Network): DefiEvent {
-        val tokenIn = swapEvent.getIndexedParameter<String>(log, 1)
-        val tokenOut = swapEvent.getIndexedParameter<String>(log, 2)
-        val amountIn = swapEvent.getNonIndexedParameter<BigInteger>(log, 0)
-        val amountOut = swapEvent.getNonIndexedParameter<BigInteger>(log, 1)
+        val tokenIn = swapEvent.extract<String>(log, true, 1)
+        val tokenOut = swapEvent.extract<String>(log, true,2)
+        val amountIn = swapEvent.extract<BigInteger>(log, false, 0)
+        val amountOut = swapEvent.extract<BigInteger>(log, false, 1)
 
         return DefiEvent(
             transactionId = log.transactionHash,

@@ -34,10 +34,10 @@ class VelodromeGetRewardsDecoder(
 
     override suspend fun extract(log: Log, network: Network): DefiEvent {
         val user = "user" to getLabeledAddress(
-            rewardPairEvent.getIndexedParameter<String>(log, 0)
-        );
-        val amount = "amount" to rewardPairEvent.getNonIndexedParameter<BigInteger>(log, 0)
+            rewardPairEvent.extract<String>(log, true, 0)
+        )
 
+        val amount = "amount" to rewardPairEvent.extract<BigInteger>(log, false, 0)
 
         val rewardToken = getToken(
             VelodromeV2GaugeContract(

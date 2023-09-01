@@ -24,7 +24,7 @@ class HopGetRewardsDecoder(
         Network.POLYGON to hopPolygonService.getStakingRewards()
     )
 
-    val rewardPairEvent = org.web3j.abi.datatypes.Event(
+    val event = org.web3j.abi.datatypes.Event(
         "RewardPaid",
         listOf(
             address(true),
@@ -33,18 +33,15 @@ class HopGetRewardsDecoder(
     )
 
     override fun appliesTo(log: Log, network: Network): Boolean {
-        return log.appliesTo(rewardPairEvent) && (pairMap[network]?.map {
+        return log.appliesTo(event) && (pairMap[network]?.map {
             it.lowercase()
         }?.contains(log.address.lowercase()) ?: false)
     }
 
     override suspend fun extract(log: Log, network: Network): DefiEvent {
-        val user = "user" to getLabeledAddress(
-            rewardPairEvent.getIndexedParameter<String>(log, 0)
-        );
-        val amount = "amount" to rewardPairEvent.getNonIndexedParameter<BigInteger>(log, 0)
-
-        val token = "asset" to erC20Resource.getTokenInformation(network, "0xc5102fe9359fd9a28f877a67e36b0f050d81a3cc")
+        val user = "user" to getLabeledAddress(event.extract<String>(log, true, 0));
+        val amount = "amount" to event.extract<BigInteger>(log, false, 0)
+        val token = "asset" to getToken("0xc5102fe9359fd9a28f877a67e36b0f050d81a3cc", network)
 
         return DefiEvent(
             transactionId = log.transactionHash,
