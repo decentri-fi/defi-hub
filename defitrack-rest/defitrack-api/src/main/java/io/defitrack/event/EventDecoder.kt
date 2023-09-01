@@ -19,6 +19,15 @@ abstract class EventDecoder {
     private lateinit var blockchainGatewayProvider: BlockchainGatewayProvider;
 
     companion object {
+
+        inline fun <reified T> org.web3j.abi.datatypes.Event.extract(log: Log, indexed: Boolean, index: Int): T {
+            return if (indexed) {
+                getIndexedParameter(log, index)
+            } else {
+                getNonIndexedParameter(log, index)
+            }
+        }
+
         inline fun <reified T> org.web3j.abi.datatypes.Event.getNonIndexedParameter(log: Log, index: Int): T {
             return FunctionReturnDecoder.decode(
                 log.data,

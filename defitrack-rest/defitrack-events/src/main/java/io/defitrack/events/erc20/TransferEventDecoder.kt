@@ -17,37 +17,29 @@ import java.math.BigInteger
 @Component
 class TransferEventDecoder : EventDecoder() {
 
-    val transferEvent = Event("Transfer", listOf(address(true), address(true), uint256()))
+    val event = Event("Transfer", listOf(address(true), address(true), uint256()))
 
     override fun appliesTo(log: Log, network: Network): Boolean {
-        return log.appliesTo(transferEvent)
+        return log.appliesTo(event)
     }
 
     override suspend fun extract(log: Log, network: Network): DefiEvent {
-        val from =
-            "from" to getLabeledAddress(
-                FunctionReturnDecoder.decodeIndexedValue(
-                    log.topics[1], address()
-                ).value as String
-            )
-
-        val to = "to" to getLabeledAddress(
-            FunctionReturnDecoder.decodeIndexedValue(
-                log.topics[2], address()
-            ).value as String
-        )
-
-        val amount = "amount" to FunctionReturnDecoder.decode(
-            log.data,
-            transferEvent.nonIndexedParameters
-        )[0].value as BigInteger
-
+        val from = "from" to getLabeledAddress(event.extract<String>(log, true, 0))
+        val to = "to" to getLabeledAddress(event.extract<String>(log, true, 1))
+        val amount = "amount" to event.extract<BigInteger>(log, false, 0)
         val asset = "asset" to getToken(log.address, network)
 
         if (to.second.address == "0x0000000000000000000000000000000000000000") {
             return DefiEvent(
                 transactionId = log.transactionHash,
                 type = DefiEventType.BURN,
+                metadata = mapOf(from, asset, amount),
+                network = network.toVO()
+            )
+        } else if (from.second.address == "0x0000000000000000000000000000000000000000") {
+            return DefiEvent(
+                transactionId = log.transactionHash,
+                type = DefiEventType.MINT,
                 metadata = mapOf(from, asset, amount),
                 network = network.toVO()
             )
@@ -63,7 +55,7 @@ class TransferEventDecoder : EventDecoder() {
 
     override fun eventTypes(): List<DefiEventType> {
         return listOf(
-            DefiEventType.TRANSFER, DefiEventType.BURN
+            DefiEventType.TRANSFER, DefiEventType.BURN, DefiEventType.MINT
         )
     }
 }

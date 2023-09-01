@@ -24,11 +24,11 @@ class ApprovalEventDecoder : EventDecoder() {
     }
 
     override suspend fun extract(log: Log, network: Network): DefiEvent {
-        val owner = "owner" to getLabeledAddress(event.getIndexedParameter<String>(log, 0));
+        val owner = "owner" to getLabeledAddress(event.extract<String>(log, true, 0));
 
-        val spender = "spender" to getLabeledAddress(event.getIndexedParameter<String>(log, 1))
+        val spender = "spender" to getLabeledAddress(event.extract<String>(log, true, 1))
 
-        val amount = "amount" to event.getNonIndexedParameter<BigInteger>(log, 0)
+        val amount = "amount" to event.extract<BigInteger>(log, false, 0)
 
         val asset = "asset" to getToken(log.address, network)
 
