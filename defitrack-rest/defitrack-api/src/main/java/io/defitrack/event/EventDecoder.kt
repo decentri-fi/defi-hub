@@ -7,6 +7,7 @@ import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.labeledaddresses.LabelAddressesResource
 import io.defitrack.labeledaddresses.LabeledAddress
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.FungibleToken
 import org.springframework.beans.factory.annotation.Autowired
 import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.protocol.core.methods.response.Log
@@ -53,5 +54,19 @@ abstract class EventDecoder {
 
     fun getGateway(network: Network): BlockchainGateway {
         return blockchainGatewayProvider.getGateway(network)
+    }
+
+    suspend fun createBridgeMetadata(
+        token: FungibleToken,
+        from: String,
+        to: String,
+        amount: String
+    ): Map<String, Any> {
+        return mapOf(
+            "assset" to token,
+            "from" to getLabeledAddress(from),
+            "to" to getLabeledAddress(to),
+            "amount" to amount
+        )
     }
 }
