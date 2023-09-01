@@ -17,30 +17,18 @@ import java.math.BigInteger
 @Component
 class ApprovalEventDecoder : EventDecoder() {
 
-    val approvalEvent = Event("Approval", listOf(address(true), address(true), uint256()))
+    val event = Event("Approval", listOf(address(true), address(true), uint256()))
 
     override fun appliesTo(log: Log, network: Network): Boolean {
-        return log.appliesTo(approvalEvent)
+        return log.appliesTo(event)
     }
 
     override suspend fun extract(log: Log, network: Network): DefiEvent {
-        val owner =
-            "owner" to getLabeledAddress(
-                FunctionReturnDecoder.decodeIndexedValue(
-                    log.topics[1], address()
-                ).value as String
-            );
+        val owner = "owner" to getLabeledAddress(event.getIndexedParameter<String>(log, 0));
 
-        val spender = "spender" to getLabeledAddress(
-            FunctionReturnDecoder.decodeIndexedValue(
-                log.topics[2], address()
-            ).value as String
-        )
+        val spender = "spender" to getLabeledAddress(event.getIndexedParameter<String>(log, 1))
 
-        val amount = "amount" to FunctionReturnDecoder.decode(
-            log.data,
-            approvalEvent.nonIndexedParameters
-        )[0].value as BigInteger
+        val amount = "amount" to event.getNonIndexedParameter<BigInteger>(log, 0)
 
         val asset = "asset" to getToken(log.address, network)
 
