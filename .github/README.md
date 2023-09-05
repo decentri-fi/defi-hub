@@ -57,7 +57,7 @@ The Decentrifi ecosystem currently supports an array of prominent networks, incl
 
 Decentrifi embraces the collaborative spirit of decentralized finance by supporting a diverse range of protocols that have been fully integrated into our ecosystem, reflecting their onchain activity. These protocols represent the cutting edge of innovation and play a pivotal role in shaping the future of decentralized finance.
 
-To explore the impressive lineup of supported protocols and their onchain contributions, please visit https://decentri.fi/protocols. This comprehensive resource provides valuable insights into the thriving ecosystem of protocols that actively participate in the Decentrifi network.
+To explore the impressive lineup of supported protocols and their onchain contributions, please visit https://track.decentri.fi/protocols. This comprehensive resource provides valuable insights into the thriving ecosystem of protocols that actively participate in the Decentrifi network.
 
 By integrating these protocols into our ecosystem, we unlock new possibilities and unleash the full potential of decentralized finance. These protocols cover a wide spectrum of functionalities, from lending and borrowing to decentralized exchanges, yield farming, and much more.
 
