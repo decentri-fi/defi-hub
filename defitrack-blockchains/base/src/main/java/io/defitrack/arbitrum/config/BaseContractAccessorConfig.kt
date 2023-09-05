@@ -19,7 +19,7 @@ class BaseContractAccessorConfig(
     fun baseContractAccessor(): BlockchainGateway {
         return BlockchainGateway(
             abiDecoder,
-            Network.ARBITRUM,
+            Network.BASE,
             "0x9036f1834e18adcdfa075b41aae52cc2a5486574",
             httpClient,
             endpoint
