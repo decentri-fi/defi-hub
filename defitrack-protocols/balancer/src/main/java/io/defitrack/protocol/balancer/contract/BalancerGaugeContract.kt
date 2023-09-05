@@ -11,10 +11,11 @@ import io.defitrack.token.FungibleToken
 import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
 
-class BalancerGaugeContract(
+open class BalancerGaugeContract(
     blockchainGateway: BlockchainGateway,
     address: String
 ) : ERC20Contract(blockchainGateway, "", address) {
+
 
     fun exitPosition(amount: BigInteger): Function {
         return Function(
@@ -26,7 +27,7 @@ class BalancerGaugeContract(
         )
     }
 
-    fun getClaimableRewardFunction(address: String, token: String): Function {
+    open fun getClaimableRewardFunction(address: String, token: String): Function {
         return createFunction(
             "claimable_reward_write",
             listOf(
@@ -87,6 +88,14 @@ class BalancerGaugeContract(
         return readWithoutAbi(
             "reward_tokens",
             listOf(index.toBigInteger().toUint256()),
+            listOf(address())
+        )[0].value as String
+    }
+
+    suspend fun getStakedToken(): String {
+        return readWithoutAbi(
+            "lp_token",
+            listOf(),
             listOf(address())
         )[0].value as String
     }
