@@ -9,10 +9,7 @@ import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.token.ERC20Resource
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import org.springframework.web.bind.annotation.*
 import java.math.BigDecimal
 
@@ -26,7 +23,7 @@ class BalanceRestController(
 
     @Deprecated("use the network-specific call")
     @GetMapping("/{address}/native-balance")
-    fun getBalance(@PathVariable("address") address: String): List<BalanceElement> = runBlocking {
+    suspend fun getBalance(@PathVariable("address") address: String): List<BalanceElement> = coroutineScope {
         balanceServices.map {
             async {
                 val balance = it.getNativeBalance(address)
