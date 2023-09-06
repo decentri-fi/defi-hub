@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service
 
 @Service
 class PolygonBalanceService(
-    erC20Service: ERC20Resource,
+    erc20Resource: ERC20Resource,
     blockchainGatewayProvider: BlockchainGatewayProvider,
-) : BalanceService(blockchainGatewayProvider, erC20Service) {
+) : BalanceService(blockchainGatewayProvider, erc20Resource) {
 
     override fun getNetwork(): Network = Network.POLYGON
 

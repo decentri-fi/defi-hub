@@ -1,4 +1,4 @@
-package io.defitrack.logo
+package io.defitrack.erc20.logo
 
 import io.defitrack.common.network.Network
 import org.springframework.stereotype.Service

@@ -1,4 +1,4 @@
-package io.defitrack
+package io.defitrack.ens.service
 
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.string
@@ -6,7 +6,6 @@ import io.defitrack.abi.TypeUtils.Companion.toUtf8String
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.github.reactivecircus.cache4k.Cache
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import org.web3j.abi.datatypes.generated.Bytes32
 import org.web3j.ens.NameHash
@@ -22,8 +21,8 @@ class EnsNameService(
 
     val cache = Cache.Builder<String, String>().expireAfterWrite(24.hours).build()
 
-    fun getAvatar(name: String) = runBlocking {
-        cache.get("${name}:avatar") {
+    suspend fun getAvatar(name: String): String {
+        return cache.get("${name}:avatar") {
             val resolver = getResolver(name)
 
             ethereumProvider.readFunction(
@@ -35,8 +34,8 @@ class EnsNameService(
         }
     }
 
-    fun getEnsByName(name: String) = runBlocking {
-        cache.get(name) {
+    suspend fun getEnsByName(name: String): String {
+        return cache.get(name) {
             val resolver = getResolver(name)
 
             ethereumProvider.readFunction(
@@ -59,8 +58,8 @@ class EnsNameService(
         return resolver
     }
 
-    fun getEnsByAddress(address: String) = runBlocking {
-        cache.get("reverse-$address") {
+    suspend fun getEnsByAddress(address: String): String {
+        return cache.get("reverse-$address") {
             val reverseName = Numeric.cleanHexPrefix(address) + ".addr.reverse"
             val resolver = getResolver(reverseName)
 

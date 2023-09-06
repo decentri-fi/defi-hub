@@ -1,4 +1,4 @@
-package io.defitrack.domain
+package fi.decentri.ens.domain
 
 class ENSResult(
     val name: String,

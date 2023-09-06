@@ -4,7 +4,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.erc20.ERC20
 import io.defitrack.erc20.ERC20ContractReader
-import io.defitrack.erc20.TokenService
+import io.defitrack.erc20.ERC20Service
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.BalancerPoolGraphProvider
 import io.defitrack.token.TokenInformation
@@ -19,7 +19,7 @@ class BalancerTokenService(
 ) : TokenIdentifier {
 
     @Autowired
-    private lateinit var tokenService: TokenService
+    private lateinit var ERC20Service: ERC20Service
 
     override suspend fun isProtocolToken(
         token: ERC20,
@@ -55,7 +55,7 @@ class BalancerTokenService(
                     erC20ContractReader.getERC20(token.network, token.address).totalSupply
                 },
                 underlyingTokens = underlying.map { underlyingPoolToken ->
-                    val underlying = tokenService.getTokenInformation(underlyingPoolToken.address, token.network)
+                    val underlying = ERC20Service.getTokenInformation(underlyingPoolToken.address, token.network)
                     TokenInformation(
                         name = underlyingPoolToken.name,
                         symbol = underlyingPoolToken.symbol,

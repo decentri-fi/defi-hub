@@ -4,7 +4,7 @@ import io.defitrack.common.utils.Refreshable
 import io.defitrack.erc20.ERC20
 import io.defitrack.erc20.ERC20ContractReader
 import io.defitrack.erc20.ERC20ToTokenInformationMapper
-import io.defitrack.erc20.TokenService
+import io.defitrack.erc20.ERC20Service
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.crv.CurvePoolGraphProvider
 import io.defitrack.token.TokenInformation
@@ -21,7 +21,7 @@ class CurveTokenService(
 
 
     @Autowired
-    private lateinit var tokenService: TokenService
+    private lateinit var ERC20Service: ERC20Service
 
     override suspend fun getTokenInfo(token: ERC20): TokenInformation {
         return getCurveInfo(token) ?: erc20ToTokenInformationMapper.map(
@@ -38,7 +38,7 @@ class CurveTokenService(
         return if (pool != null) {
             try {
                 val underlyingTokens = pool.coins.map { coin ->
-                    tokenService.getTokenInformation(coin, token.network)
+                    ERC20Service.getTokenInformation(coin, token.network)
                 }
 
                 TokenInformation(

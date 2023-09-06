@@ -3,7 +3,7 @@ package io.defitrack.erc20.protocolspecific
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.erc20.ERC20
 import io.defitrack.erc20.LpContractReader
-import io.defitrack.erc20.TokenService
+import io.defitrack.erc20.ERC20Service
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
@@ -16,7 +16,7 @@ abstract class DefaultLpIdentifier(
 ) : TokenIdentifier {
 
     @Autowired
-    private lateinit var tokenService: TokenService
+    private lateinit var ERC20Service: ERC20Service
 
     override suspend fun getTokenInfo(token: ERC20): TokenInformation {
         return fromLP(protocol, token, tokenType)
@@ -25,8 +25,8 @@ abstract class DefaultLpIdentifier(
     suspend fun fromLP(protocol: Protocol, erc20: ERC20, tokenType: TokenType): TokenInformation {
         val lp = lpContractReader.getLP(erc20.network, erc20.address)
 
-        val token0 = tokenService.getTokenInformation(lp.token0(), erc20.network)
-        val token1 = tokenService.getTokenInformation(lp.token1(), erc20.network)
+        val token0 = ERC20Service.getTokenInformation(lp.token0(), erc20.network)
+        val token1 = ERC20Service.getTokenInformation(lp.token1(), erc20.network)
 
         return TokenInformation(
             name = "${token0.symbol}/${token1.symbol} LP",

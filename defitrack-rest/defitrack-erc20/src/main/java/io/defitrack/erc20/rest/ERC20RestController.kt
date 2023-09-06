@@ -1,11 +1,11 @@
-package io.defitrack.rest
+package io.defitrack.erc20.rest
 
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.ERC20ContractReader
 import io.defitrack.erc20.ERC20Repository
 import io.defitrack.erc20.TokenInformationVO
-import io.defitrack.erc20.TokenService
-import io.defitrack.toVO
+import io.defitrack.erc20.ERC20Service
+import io.defitrack.erc20.toVO
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withTimeout
 import org.slf4j.LoggerFactory
@@ -19,7 +19,7 @@ import java.math.BigInteger
 @RestController
 class ERC20RestController(
     private val erC20ContractReader: ERC20ContractReader,
-    private val tokenService: TokenService
+    private val ERC20Service: ERC20Service
 ) {
 
     val logger = LoggerFactory.getLogger(this::class.java)
@@ -29,7 +29,7 @@ class ERC20RestController(
         @PathVariable("network") network: Network,
     ): ResponseEntity<List<TokenInformationVO>> = coroutineScope {
         ResponseEntity.ok(
-            tokenService.getAllTokensForNetwork(network).map {
+            ERC20Service.getAllTokensForNetwork(network).map {
                 it.toVO()
             }
         )
@@ -52,7 +52,7 @@ class ERC20RestController(
         try {
             withTimeout(12000L) {
                 ResponseEntity.ok(
-                    tokenService.getTokenInformation(
+                    ERC20Service.getTokenInformation(
                         address, network
                     ).toVO()
                 )

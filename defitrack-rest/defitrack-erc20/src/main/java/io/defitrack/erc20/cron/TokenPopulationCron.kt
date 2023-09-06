@@ -1,7 +1,7 @@
-package io.defitrack
+package io.defitrack.erc20.cron
 
 import io.defitrack.erc20.ERC20Repository
-import io.defitrack.erc20.TokenService
+import io.defitrack.erc20.ERC20Service
 import jakarta.annotation.PostConstruct
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
@@ -13,7 +13,7 @@ import java.util.concurrent.Executors
 @ConditionalOnProperty("token-population.enabled", havingValue = "true")
 class TokenPopulationCron(
     private val erC20Repository: ERC20Repository,
-    private val tokenService: TokenService
+    private val ERC20Service: ERC20Service
 ) {
 
     val logger = LoggerFactory.getLogger(this::class.java)
@@ -25,7 +25,7 @@ class TokenPopulationCron(
             runBlocking {
                 logger.info("Starting token population")
                 erC20Repository.populateTokens()
-                tokenService.initialPopulation()
+                ERC20Service.initialPopulation()
                 logger.info("end of token population")
             }
         }

@@ -1,6 +1,5 @@
 package io.defitrack.erc20
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.ERC20Contract
@@ -11,12 +10,10 @@ import java.math.BigInteger
 
 @Service
 class ERC20ContractReader(
-    private val abiService: ABIResource,
     private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) {
 
     val erc20Buffer = Cache.Builder<String, ERC20Contract>().build()
-
     val logger = LoggerFactory.getLogger(this::class.java)
 
     suspend fun getERC20(network: Network, address: String): ERC20 {
@@ -33,15 +30,14 @@ class ERC20ContractReader(
             }.let {
 
                 try {
-                    //as multicall
-                    val retVal = it.readData()
+                    val result = it.readData()
                     ERC20(
-                        name = retVal[0].first().value as String,
-                        symbol = retVal[1].first().value as String,
-                        decimals = (retVal[2].first().value as BigInteger).toInt(),
+                        name = result[0].first().value as String,
+                        symbol = result[1].first().value as String,
+                        decimals = (result[2].first().value as BigInteger).toInt(),
                         network = network,
                         address = correctAddress.lowercase(),
-                        totalSupply = retVal[3].first().value as BigInteger,
+                        totalSupply = result[3].first().value as BigInteger,
                     )
                 } catch (ex: Exception) {
                     logger.debug("Unable to do it in a single call for token ${address} on network ${network.name}")

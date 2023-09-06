@@ -3,8 +3,8 @@ package io.defitrack.erc20
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.erc20.protocolspecific.TokenIdentifier
-import io.defitrack.logo.LogoService
-import io.defitrack.nativetoken.NativeTokenService
+import io.defitrack.erc20.logo.LogoService
+import io.defitrack.erc20.nativetoken.NativeTokenService
 import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
 import io.github.reactivecircus.cache4k.Cache
@@ -21,11 +21,10 @@ import org.springframework.stereotype.Service
 import kotlin.system.measureTimeMillis
 
 @Service
-class TokenService(
+class ERC20Service(
     private val erc20ContractReader: ERC20ContractReader,
     private val erC20Repository: ERC20Repository,
     private val nativeTokenService: NativeTokenService,
-
     private val logoService: LogoService
 ) {
 

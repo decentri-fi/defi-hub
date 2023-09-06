@@ -1,6 +1,5 @@
-package io.defitrack
+package io.defitrack.erc20
 
-import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.network.toVO
 import io.defitrack.token.TokenInformation
 

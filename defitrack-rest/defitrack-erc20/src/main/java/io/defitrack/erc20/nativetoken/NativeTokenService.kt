@@ -1,7 +1,7 @@
-package io.defitrack.nativetoken
+package io.defitrack.erc20.nativetoken
 
 import io.defitrack.common.network.Network
-import io.defitrack.logo.LogoService
+import io.defitrack.erc20.logo.LogoService
 import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
