@@ -1,9 +1,12 @@
 package io.defitrack.rest
 
 import io.defitrack.common.network.Network
-import io.defitrack.erc20.*
+import io.defitrack.erc20.ERC20ContractReader
+import io.defitrack.erc20.ERC20Repository
+import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.erc20.TokenService
 import io.defitrack.toVO
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withTimeout
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
@@ -22,9 +25,9 @@ class ERC20RestController(
     val logger = LoggerFactory.getLogger(this::class.java)
 
     @GetMapping("/{network}")
-    fun getAllTokensForNetwork(
+    suspend fun getAllTokensForNetwork(
         @PathVariable("network") network: Network,
-    ): ResponseEntity<List<TokenInformationVO>> = runBlocking {
+    ): ResponseEntity<List<TokenInformationVO>> = coroutineScope {
         ResponseEntity.ok(
             tokenService.getAllTokensForNetwork(network).map {
                 it.toVO()
@@ -42,10 +45,10 @@ class ERC20RestController(
     }
 
     @GetMapping("/{network}/{address}/token")
-    fun getTokenInformation(
+    suspend fun getTokenInformation(
         @PathVariable("network") network: Network,
         @PathVariable("address") address: String
-    ): ResponseEntity<TokenInformationVO> = runBlocking {
+    ): ResponseEntity<TokenInformationVO> = coroutineScope {
         try {
             withTimeout(12000L) {
                 ResponseEntity.ok(
@@ -61,20 +64,20 @@ class ERC20RestController(
     }
 
     @GetMapping("/{network}/{address}/{userAddress}")
-    fun getBalance(
+    suspend fun getBalance(
         @PathVariable("network") network: Network,
         @PathVariable("address") address: String,
         @PathVariable("userAddress") userAddress: String
-    ): ResponseEntity<BigInteger> = runBlocking {
+    ): ResponseEntity<BigInteger> = coroutineScope {
 
         if (!WalletUtils.isValidAddress(address)) {
-            return@runBlocking ResponseEntity.badRequest().build()
+            return@coroutineScope ResponseEntity.badRequest().build()
         }
         if (!WalletUtils.isValidAddress(userAddress)) {
-            return@runBlocking ResponseEntity.badRequest().build()
+            return@coroutineScope ResponseEntity.badRequest().build()
         }
 
-        return@runBlocking try {
+        return@coroutineScope try {
             ResponseEntity.ok(erC20ContractReader.getBalance(network, address, userAddress))
         } catch (ex: Exception) {
             ex.printStackTrace()
@@ -83,24 +86,24 @@ class ERC20RestController(
     }
 
     @GetMapping("/{network}/allowance/{token}/{userAddress}/{spenderAddress}")
-    fun getApproval(
+    suspend fun getApproval(
         @PathVariable("network") network: Network,
         @PathVariable("token") token: String,
         @PathVariable("userAddress") userAddress: String,
         @PathVariable("spenderAddress") spenderAddress: String,
-    ): ResponseEntity<BigInteger> = runBlocking {
+    ): ResponseEntity<BigInteger> = coroutineScope {
 
         if (!WalletUtils.isValidAddress(token)) {
-            return@runBlocking ResponseEntity.badRequest().build()
+            return@coroutineScope ResponseEntity.badRequest().build()
         }
         if (!WalletUtils.isValidAddress(userAddress)) {
-            return@runBlocking ResponseEntity.badRequest().build()
+            return@coroutineScope ResponseEntity.badRequest().build()
         }
         if (!WalletUtils.isValidAddress(spenderAddress)) {
-            return@runBlocking ResponseEntity.badRequest().build()
+            return@coroutineScope ResponseEntity.badRequest().build()
         }
 
-        return@runBlocking try {
+        return@coroutineScope try {
             ResponseEntity.ok(erC20ContractReader.getAllowance(network, token, userAddress, spenderAddress))
         } catch (ex: Exception) {
             ex.printStackTrace()

@@ -5,10 +5,12 @@ import io.defitrack.erc20.TokenService
 import jakarta.annotation.PostConstruct
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Configuration
 import java.util.concurrent.Executors
 
 @Configuration
+@ConditionalOnProperty("token-population.enabled", havingValue = "true")
 class TokenPopulationCron(
     private val erC20Repository: ERC20Repository,
     private val tokenService: TokenService
