@@ -8,29 +8,24 @@ import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aura.AuraBoosterContract
 import io.defitrack.protocol.aura.CrvRewardsContract
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import org.springframework.stereotype.Service
 
 @Service
 class AuraDepositVaultFarmingMarketProvider(
 ) : FarmingMarketProvider() {
 
-    val booster by lazy {
-        runBlocking {
-            AuraBoosterContract(
-                getBlockchainGateway()
-            )
-        }
+    val booster = GlobalScope.async(start = CoroutineStart.LAZY) {
+        AuraBoosterContract(
+            getBlockchainGateway()
+        )
     }
 
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
-        booster.poolInfos().map {
+        booster.await().poolInfos().map {
             async {
                 try {
-                    val crvrewards = CrvRewardsContract(getBlockchainGateway(), it.crvRewards)
+                    val crvrewards = crvRewardsContract(it.crvRewards)
                     val asset = getToken(crvrewards.asset())
 
                     create(
@@ -38,10 +33,10 @@ class AuraDepositVaultFarmingMarketProvider(
                         identifier = crvrewards.address,
                         farmType = ContractType.VAULT,
                         stakedToken = asset.toFungibleToken(),
-                        rewardTokens = listOf(getToken(crvrewards.rewardToken()).toFungibleToken()),
+                        rewardTokens = listOf(getToken(crvrewards.rewardToken.await()).toFungibleToken()),
                         vaultType = "aura-deposit",
                         marketSize = Refreshable.refreshable {
-                            getMarketSize(asset.toFungibleToken(), crvrewards.rewardToken())
+                            getMarketSize(asset.toFungibleToken(), crvrewards.rewardToken.await())
                         },
                         balanceFetcher = defaultPositionFetcher(crvrewards.address)
                     )
@@ -51,6 +46,10 @@ class AuraDepositVaultFarmingMarketProvider(
                 }
             }
         }.awaitAll().filterNotNull()
+    }
+
+    private suspend fun crvRewardsContract(crvRewards: String): CrvRewardsContract {
+        return CrvRewardsContract(getBlockchainGateway(), crvRewards)
     }
 
     override fun getProtocol(): Protocol {
