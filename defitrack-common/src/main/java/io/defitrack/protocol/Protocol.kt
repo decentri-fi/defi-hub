@@ -27,6 +27,14 @@ enum class Protocol(
         networks = listOf(Network.ETHEREUM),
         company = Company.TORNADO_CASH
     ),
+    GMX(
+        logo = "gmx.png",
+        slug = "gmx",
+        primitives = listOf(DefiPrimitive.FARMING),
+        website = "https://tornadocash.eth.link",
+        networks = listOf(Network.ETHEREUM, Network.ARBITRUM),
+        company = Company.GMX
+    ),
     CAMELOT(
         logo = "camelot.png",
         slug = "camelot",

@@ -22,6 +22,7 @@
         <module>cowswap</module>
         <module>bancor</module>
         <module>dinoswap</module>
+        <module>gmx</module>
         <module>hop</module>
         <module>algebra</module>
         <module>apeswap</module>

@@ -12,6 +12,10 @@ enum class Company(
         prettyName = "Tornado Cash",
         slug = "tornadocash"
     ),
+    GMX(
+        prettyName = "GMX",
+        slug = "gmx"
+    ),
     CAMELOT(
         prettyName = "Camelot",
         slug = "camelot"

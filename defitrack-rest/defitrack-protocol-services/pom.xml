@@ -29,6 +29,7 @@
         <module>defitrack-curve</module>
         <module>defitrack-dfyn</module>
         <module>defitrack-dinoswap</module>
+        <module>defitrack-gmx</module>
         <module>defitrack-iron-bank</module>
         <module>defitrack-dodo</module>
         <module>defitrack-kyberswap</module>
