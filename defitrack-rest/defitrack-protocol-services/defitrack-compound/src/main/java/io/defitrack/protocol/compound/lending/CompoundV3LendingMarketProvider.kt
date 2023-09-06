@@ -15,12 +15,12 @@ class CompoundV3LendingMarketProvider(
     private val compoundEthereumService: CompoundEthereumService
 ) : LendingMarketProvider() {
     override suspend fun fetchMarkets(): List<LendingMarket> {
-        return compoundEthereumService.getV3Tokens().map { cTokenAddress ->
+        return compoundEthereumService.getV3Tokens().flatMap { cTokenAddress ->
             val assetContract = CompoundV3AssetContract(
                 getBlockchainGateway(), cTokenAddress
             )
 
-            return assetContract.getAssetInfos().map { assetInfo ->
+            assetContract.getAssetInfos().map { assetInfo ->
                 val lendingToken = getToken(assetInfo.asset)
                 val cToken = getToken(cTokenAddress)
                 create(
@@ -30,6 +30,7 @@ class CompoundV3LendingMarketProvider(
                     poolType = "compoundv3",
                     marketToken = cToken.toFungibleToken(),
                     erc20Compatible = true,
+                    positionFetcher = defaultPositionFetcher(cTokenAddress),
                     totalSupply = refreshable(cToken.totalSupply.asEth()) {
                         val cToken = getToken(cTokenAddress)
                         cToken.totalSupply.asEth()
