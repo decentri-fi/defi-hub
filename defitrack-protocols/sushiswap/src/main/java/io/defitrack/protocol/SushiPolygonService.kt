@@ -14,7 +14,7 @@ class SushiPolygonService(
 ) : SushiswapService {
 
     companion object {
-        fun getMiniChefs() = "0x0769fd68dfb93167989c6f7254cd0d766fb2841f"
+        fun getMiniChefs() = listOf("0x0769fd68dfb93167989c6f7254cd0d766fb2841f")
     }
 
     private val sushiswapService = SushiswapGraphGateway(

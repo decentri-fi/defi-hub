@@ -2,8 +2,8 @@ package io.defitrack.protocol.sushiswap.staking
 
 import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.AsyncUtils.lazyAsync
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.AsyncUtils
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
@@ -12,35 +12,33 @@ import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.contract.MasterChefBasedContract
 import io.defitrack.protocol.contract.MasterChefPoolInfo
+import io.defitrack.protocol.contract.MasterChefV2PoolInfo
+import io.defitrack.protocol.contract.MasterchefV2Contract
 import io.defitrack.protocol.sushiswap.apr.MasterchefBasedfStakingAprCalculator
 import io.defitrack.transaction.PreparedTransaction
-import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 
+@Component
+class SushiswapEthereumMasterchefV2MarketProvider : FarmingMarketProvider() {
 
-//@Component
-class SushiswapEthereumMasterchefMarketProvider : FarmingMarketProvider() {
+    private val masterchefV2ContractAddress = "0xef0881ec094552b2e128cf945ef17a6752b4ec5d"
 
-    private val masterchefContractAddress = "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd"
-
-    val deferredContract = lazyAsync {
-        MasterChefBasedContract(
-            "sushi",
-            "sushiPerBlock",
-            "pendingSushi",
+    val deferredContract = AsyncUtils.lazyAsync {
+        MasterchefV2Contract(
             getBlockchainGateway(),
-            masterchefContractAddress
+            masterchefV2ContractAddress
         )
     }
 
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
         val contract = deferredContract.await()
-        contract.poolInfos().mapIndexed { poolIndex, poolInfo ->
+        contract.poolInfos().forEachIndexed { poolIndex, poolInfo ->
             launch {
                 throttled {
-                    toStakingMarketElement(poolInfo, contract, poolIndex)?.let {
+                    toStakingMarketElement(contract, poolIndex)?.let {
                         send(it)
                     }
                 }
@@ -57,12 +55,11 @@ class SushiswapEthereumMasterchefMarketProvider : FarmingMarketProvider() {
     }
 
     private suspend fun toStakingMarketElement(
-        poolInfo: MasterChefPoolInfo,
-        chef: MasterChefBasedContract,
+        chef: MasterchefV2Contract,
         poolId: Int
     ): FarmingMarket? {
         return try {
-            val stakedtoken = getToken(poolInfo.lpToken)
+            val stakedtoken = getToken(chef.lpToken(poolId))
             val rewardToken = getToken(chef.rewardToken.await())
             create(
                 identifier = "${chef.address}-${poolId}",
@@ -71,8 +68,8 @@ class SushiswapEthereumMasterchefMarketProvider : FarmingMarketProvider() {
                 rewardTokens = listOf(
                     rewardToken.toFungibleToken()
                 ),
-                vaultType = "sushi-masterchef",
-                marketSize = refreshable {
+                vaultType = "sushi-masterchef-v2",
+                marketSize = Refreshable.refreshable {
                     getMarketSize(stakedtoken.toFungibleToken(), chef.address)
                 },
                 claimableRewardFetcher = ClaimableRewardFetcher(
@@ -89,12 +86,6 @@ class SushiswapEthereumMasterchefMarketProvider : FarmingMarketProvider() {
                         )
                     }
                 ),
-                apr = MasterchefBasedfStakingAprCalculator(
-                    getERC20Resource(),
-                    getPriceResource(),
-                    chef,
-                    poolId
-                ).calculateApr(),
                 balanceFetcher = PositionFetcher(
                     chef.address,
                     { user -> chef.userInfoFunction(poolId, user) }

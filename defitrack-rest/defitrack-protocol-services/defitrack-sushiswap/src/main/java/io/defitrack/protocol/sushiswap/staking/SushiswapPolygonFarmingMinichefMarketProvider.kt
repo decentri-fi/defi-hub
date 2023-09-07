@@ -26,100 +26,11 @@ import java.math.RoundingMode
 
 @Component
 class SushiswapPolygonFarmingMinichefMarketProvider(
-) : FarmingMarketProvider() {
-
-    val minichefABI by lazy {
-        runBlocking {
-            getAbi("sushi/MiniChefV2.json")
-        }
-    }
-
-    override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
-        val chef = MiniChefV2Contract(
-            getBlockchainGateway(),
-            minichefABI,
-            SushiPolygonService.getMiniChefs()
-        )
-
-        (0 until chef.poolLength()).map { poolId ->
-            async {
-                toStakingMarketElement(chef, poolId)
-
-            }
-        }.awaitAll().filterNotNull()
-    }
-
-    override fun getProtocol(): Protocol {
-        return Protocol.SUSHISWAP
-    }
+) : SushiMinichefV2FarmingMarketProvider(
+    SushiPolygonService.getMiniChefs()
+) {
 
     override fun getNetwork(): Network {
         return Network.POLYGON
-    }
-
-    private suspend fun toStakingMarketElement(
-        chef: MiniChefV2Contract,
-        poolId: Int
-    ): FarmingMarket? {
-        try {
-            val stakedtoken = getToken(chef.getLpTokenForPoolId(poolId))
-            val rewardToken = getToken(chef.rewardToken())
-            return create(
-                identifier = "${chef.address}-${poolId}",
-                name = stakedtoken.name + " Farm",
-                stakedToken = stakedtoken.toFungibleToken(),
-                rewardTokens = listOf(
-                    rewardToken.toFungibleToken()
-                ),
-                vaultType = "sushi-minichefV2",
-                marketSize = Refreshable.refreshable {
-                    calculateMarketSize(chef, stakedtoken)
-                },
-                apr = MinichefStakingAprCalculator(getERC20Resource(), getPriceResource(), chef, poolId).calculateApr(),
-                balanceFetcher = PositionFetcher(
-                    chef.address,
-                    { user -> chef.userInfoFunction(poolId, user) }
-                ),
-                claimableRewardFetcher = ClaimableRewardFetcher(
-                    address = chef.address,
-                    function = { user -> chef.pendingSushiFunction(poolId, user) },
-                    preparedTransaction = { user ->
-                        PreparedTransaction(
-                            getNetwork().toVO(),
-                            chef.harvestFunction(poolId, user),
-                            chef.address,
-                            user
-                        )
-                    }
-                ),
-                farmType = ContractType.LIQUIDITY_MINING
-            )
-        } catch (ex: Exception) {
-            logger.error("Error while fetching market for poolId $poolId", ex)
-            return null
-        }
-    }
-
-    private suspend fun calculateMarketSize(
-        chef: MiniChefV2Contract,
-        stakedTokenInformation: TokenInformationVO
-    ): BigDecimal {
-        val balance =
-            getERC20Resource().getBalance(getNetwork(), stakedTokenInformation.address, chef.address)
-        return BigDecimal.valueOf(
-            getPriceResource().calculatePrice(
-                PriceRequest(
-                    stakedTokenInformation.address,
-                    getNetwork(),
-                    balance.toBigDecimal()
-                        .divide(
-                            BigDecimal.TEN.pow(stakedTokenInformation.decimals),
-                            18,
-                            RoundingMode.HALF_UP
-                        ),
-                    TokenType.SUSHISWAP
-                )
-            )
-        )
     }
 }

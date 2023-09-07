@@ -6,41 +6,40 @@ import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint128
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.abi.TypeUtils.Companion.uint64
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.multicall.MultiCallElement
-import org.web3j.abi.TypeReference
+import kotlinx.coroutines.Deferred
 import org.web3j.abi.datatypes.Function
-import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
 class MiniChefV2Contract(
     blockchainGateway: BlockchainGateway,
-    abi: String, address: String
-) : EvmContract(blockchainGateway, abi, address) {
+    address: String
+) : EvmContract(blockchainGateway, "", address) {
 
     fun userInfoFunction(poolId: Int, user: String): Function {
-        return createFunctionWithAbi(
+        return createFunction(
             "userInfo",
             listOf(
                 poolId.toBigInteger().toUint256(),
                 user.toAddress()
             ),
             listOf(
-                TypeReference.create(Uint256::class.java),
-                TypeReference.create(Uint256::class.java)
+                uint256(),
+                uint256()
             )
         )
     }
 
     fun harvestFunction(pid: Int, to: String): Function {
-        return createFunctionWithAbi(
+        return createFunction(
             "harvest",
             listOf(
                 pid.toBigInteger().toUint256(),
                 to.toAddress()
-            ),
-            listOf()
+            )
         )
     }
 
@@ -48,7 +47,7 @@ class MiniChefV2Contract(
     suspend fun poolInfos(): List<MinichefPoolInfo> {
         val multicalls = (0 until poolLength()).map { poolIndex ->
             MultiCallElement(
-                createFunctionWithAbi(
+                createFunction(
                     "poolInfo",
                     inputs = listOf(poolIndex.toBigInteger().toUint256()),
                     outputs = listOf(
@@ -78,36 +77,30 @@ class MiniChefV2Contract(
     }
 
     suspend fun poolLength(): Int {
-        return (readWithAbi(
-            "poolLength",
-            outputs = listOf(TypeReference.create(Uint256::class.java))
-        )[0].value as BigInteger).toInt()
+        return readSingle<BigInteger>("poolLength", uint256()).toInt()
     }
 
-    private suspend fun lps(): List<String> {
+    val lps: Deferred<List<String>> = lazyAsync {
         val multicalls = (0 until poolLength()).map { poolIndex ->
             MultiCallElement(
-                createFunctionWithAbi(
+                createFunction(
                     "lpToken",
                     inputs = listOf(poolIndex.toBigInteger().toUint256()),
                     outputs = listOf(address())
                 ),
-                this.address
+                address
             )
         }
-        val results = this.blockchainGateway.readMultiCall(multicalls)
-        return results.map { retVal ->
+        val results = blockchainGateway.readMultiCall(multicalls)
+        results.map { retVal ->
             retVal[0].value as String
         }
     }
 
-    suspend fun getLpTokenForPoolId(poolIndex: Int): String = lps()[poolIndex]
+    suspend fun getLpTokenForPoolId(poolIndex: Int): String = lps.await()[poolIndex]
 
-    suspend fun rewardToken(): String {
-        return readWithAbi(
-            "SUSHI",
-            outputs = listOf(address())
-        )[0].value as String
+    val rewardToken: Deferred<String> = lazyAsync {
+        readSingle("SUSHI", address())
     }
 
     fun pendingSushiFunction(pid: Int, address: String): Function {
@@ -122,17 +115,11 @@ class MiniChefV2Contract(
     }
 
 
-    suspend fun sushiPerSecond(): BigInteger {
-        return readWithAbi(
-            "sushiPerSecond",
-            outputs = listOf(uint256())
-        )[0].value as BigInteger
+    val  sushiPerSecond: Deferred<BigInteger> = lazyAsync {
+        readSingle("sushiPerSecond", uint256())
     }
 
-    suspend fun totalAllocPoint(): BigInteger {
-        return readWithAbi(
-            "totalAllocPoint",
-            outputs = listOf(uint256())
-        )[0].value as BigInteger
+    val totalAllocPoint: Deferred<BigInteger> = lazyAsync {
+        readSingle("totalAllocPoint", uint256())
     }
 }
