@@ -20,7 +20,7 @@ class EnsRouterConfig {
                         "/\${segment}"
                     )
                 }
-                .uri("http://defitrack-ens:8080")
+                .uri("http://defitrack-ens.default.svc.cluster.local:8080")
         }.build()
         return routeBuilder.build()
     }

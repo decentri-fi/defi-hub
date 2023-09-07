@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration
 class PolygonZKEVMContractAccessorConfig(
     private val abiDecoder: AbiDecoder,
     private val httpClient: HttpClient,
-    @Value("\${io.defitrack.services.polygon-zkevm.endpoint:http://defitrack-polygon-zkevm:8080}") private val endpoint: String,
+    @Value("\${io.defitrack.services.polygon-zkevm.endpoint:http://defitrack-polygon-zkevm.default.svc.cluster.local:8080}") private val endpoint: String,
 ) {
 
     @Bean

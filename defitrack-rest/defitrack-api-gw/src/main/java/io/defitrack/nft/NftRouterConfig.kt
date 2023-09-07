@@ -20,7 +20,7 @@ class NftRouterConfig {
                         "/\${segment}"
                     )
                 }
-                .uri("http://defitrack-nft:8080")
+                .uri("http://defitrack-nft.default.svc.cluster.local:8080")
         }.build()
         return routeBuilder.build()
     }

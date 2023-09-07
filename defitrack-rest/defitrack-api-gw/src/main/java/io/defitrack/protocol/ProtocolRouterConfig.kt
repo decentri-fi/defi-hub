@@ -26,7 +26,7 @@ class ProtocolRouterConfig {
                             "/${protocol.slug}/\${segment}"
                         )
                     }
-                    .uri("http://defitrack-${protocol.company.slug}:8080/api")
+                    .uri("http://defitrack-${protocol.company.slug}.default.svc.cluster.local:8080/api")
             }
         }
         return routeBuilder.build()

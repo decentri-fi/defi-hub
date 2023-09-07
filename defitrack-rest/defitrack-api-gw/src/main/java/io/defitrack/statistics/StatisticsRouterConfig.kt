@@ -20,7 +20,7 @@ class StatisticsRouterConfig {
                         "/\${segment}"
                     )
                 }
-                .uri("http://defitrack-statistics:8080")
+                .uri("http://defitrack-statistics.default.svc.cluster.local:8080")
         }.build()
         return routeBuilder.build()
     }

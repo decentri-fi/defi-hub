@@ -20,7 +20,7 @@ class LabelAddressesRouterConfig {
                         "/\${segment}"
                     )
                 }
-                .uri("http://labeled-addresses:8080")
+                .uri("http://labeled-addresses:8080.default.svc.cluster.local")
         }.route("labeladdresses") {
             it.path(true, "/labeled-addresses/**")
                 .filters { filter ->
@@ -29,7 +29,7 @@ class LabelAddressesRouterConfig {
                         "/\${segment}"
                     )
                 }
-                .uri("http://labeled-addresses:8080")
+                .uri("http://labeled-addresses.default.svc.cluster.local:8080")
         }.build()
         return routeBuilder.build()
     }

@@ -20,7 +20,7 @@ class BalanceRouterConfig {
                         "/\${segment}"
                     )
                 }
-                .uri("http://defitrack-balance:8080")
+                .uri("http://defitrack-balance.default.svc.cluster.local:8080")
         }
         return routeBuilder.build()
     }

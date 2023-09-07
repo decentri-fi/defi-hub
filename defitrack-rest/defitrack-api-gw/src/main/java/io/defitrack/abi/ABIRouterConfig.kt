@@ -20,7 +20,7 @@ class ABIRouterConfig {
                         "/\${segment}"
                     )
                 }
-                .uri("http://defitrack-abi:8080")
+                .uri("http://defitrack-abi.default.svc.cluster.local:8080")
         }
         return routeBuilder.build()
     }

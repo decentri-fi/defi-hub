@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration
 class OptimismContractAccessorConfig(
     private val abiDecoder: AbiDecoder,
     private val httpClient: HttpClient,
-    @Value("\${io.defitrack.services.optimism.endpoint:http://defitrack-optimism:8080}") private val endpoint: String,
+    @Value("\${io.defitrack.services.optimism.endpoint:http://defitrack-optimism.default.svc.cluster.local:8080}") private val endpoint: String,
 ) {
 
     @Bean

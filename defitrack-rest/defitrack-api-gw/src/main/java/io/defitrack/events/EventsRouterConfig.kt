@@ -20,7 +20,7 @@ class EventsRouterConfig {
                         "/\${segment}"
                     )
                 }
-                .uri("http://defitrack-events:8080")
+                .uri("http://defitrack-events.default.svc.cluster.local:8080")
         }.build()
         return routeBuilder.build()
     }

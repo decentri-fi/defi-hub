@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration
 class BaseContractAccessorConfig(
     private val abiDecoder: AbiDecoder,
     private val httpClient: HttpClient,
-    @Value("\${io.defitrack.services.base.endpoint:http://defitrack-base:8080}") private val endpoint: String,
+    @Value("\${io.defitrack.services.base.endpoint:http://defitrack-base.default.svc.cluster.local:8080}") private val endpoint: String,
 ) {
 
     @Bean

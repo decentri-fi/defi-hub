@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class LabelAddressesResource(
-    @Value("\${labeledAddressesResourceLocation:http://labeled-addresses:8080}") val labeledAddressesResourceLocation: String,
+    @Value("\${labeledAddressesResourceLocation:http://labeled-addresses.default.svc.cluster.local:8080}") val labeledAddressesResourceLocation: String,
     private val client: HttpClient
 ) {
 

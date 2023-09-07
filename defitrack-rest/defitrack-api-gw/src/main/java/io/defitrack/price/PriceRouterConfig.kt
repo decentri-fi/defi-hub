@@ -20,7 +20,7 @@ class PriceRouterConfig {
                         "/\${segment}"
                     )
                 }
-                .uri("http://defitrack-price:8080")
+                .uri("http://defitrack-price.default.svc.cluster.local:8080")
         }.route("prices") {
             it.path(true, "/price/**")
                 .filters { filter ->
@@ -29,7 +29,7 @@ class PriceRouterConfig {
                         "/\${segment}"
                     )
                 }
-                .uri("http://defitrack-price:8080")
+                .uri("http://defitrack-price.default.svc.cluster.local:8080")
         }.build()
         return routeBuilder.build()
     }

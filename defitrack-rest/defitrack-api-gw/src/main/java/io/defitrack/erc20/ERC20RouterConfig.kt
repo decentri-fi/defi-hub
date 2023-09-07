@@ -19,7 +19,7 @@ class ERC20RouterConfig {
                         "/\${segment}"
                     )
                 }
-                .uri("http://defitrack-erc20:8080")
+                .uri("http://defitrack-erc20.default.svc.cluster.local:8080")
         }.build()
     }
 }

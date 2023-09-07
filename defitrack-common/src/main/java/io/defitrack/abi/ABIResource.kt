@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class ABIResource(
-    @Value("\${abiResourceLocation:http://defitrack-abi:8080}") val abiResourceLocation: String,
+    @Value("\${abiResourceLocation:http://defitrack-abi.default.svc.cluster.local:8080}") val abiResourceLocation: String,
     private val client: HttpClient
 ) {
 
