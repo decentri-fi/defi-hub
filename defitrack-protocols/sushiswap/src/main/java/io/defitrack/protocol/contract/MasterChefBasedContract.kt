@@ -4,9 +4,11 @@ import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.multicall.MultiCallElement
+import kotlinx.coroutines.Deferred
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Function
@@ -22,6 +24,29 @@ class MasterChefBasedContract(
 ) : EvmContract(
     blockchainGateway, "", address
 ) {
+
+    fun harvestFunction(poolId: Int): Function {
+        return createFunction(
+            "withdraw",
+            listOf(
+                poolId.toBigInteger().toUint256(),
+                BigInteger.ZERO.toUint256()
+            ),
+        )
+    }
+
+    fun pendingFunction(poolId: Int, user: String): Function {
+        return createFunction(
+            pendingName,
+            listOf(
+                poolId.toBigInteger().toUint256(),
+                user.toAddress()
+            ),
+            listOf(
+                uint256()
+            )
+        )
+    }
 
     suspend fun poolLength(): Int {
         return (readWithoutAbi(
@@ -62,37 +87,17 @@ class MasterChefBasedContract(
 
     suspend fun getLpTokenForPoolId(poolIndex: Int): MasterChefPoolInfo = poolInfos()[poolIndex]
 
-    suspend fun rewardToken(): String {
-        return readWithoutAbi(
-            rewardTokenName,
-            outputs = listOf(TypeReference.create(Address::class.java))
-        )[0].value as String
+    val rewardToken: Deferred<String> = lazyAsync {
+        readSingle(rewardTokenName, address())
     }
 
 
-    suspend fun totalAllocPoint(): BigInteger {
-        return readWithoutAbi(
-            "totalAllocPoint",
-            outputs = listOf(TypeReference.create(Uint256::class.java))
-        )[0].value as BigInteger
+    val totalAllocPoint: Deferred<BigInteger> = lazyAsync {
+        readSingle("totalAllocPoint", uint256())
     }
 
-    suspend fun pending(poolId: Int, user: String): BigInteger {
-        return readWithoutAbi(
-            method = pendingName,
-            inputs = listOf(
-                poolId.toBigInteger().toUint256(),
-                user.toAddress()
-            ),
-            outputs = listOf(TypeReference.create(Uint256::class.java))
-        )[0].value as BigInteger
-    }
-
-    suspend fun perSecond(): BigInteger {
-        return readWithoutAbi(
-            perSecondName,
-            outputs = listOf(TypeReference.create(Uint256::class.java))
-        )[0].value as BigInteger
+    val perSecond: Deferred<BigInteger> = lazyAsync {
+        readSingle(perSecondName, uint256())
     }
 
     fun userInfoFunction(poolId: Int, user: String): Function {

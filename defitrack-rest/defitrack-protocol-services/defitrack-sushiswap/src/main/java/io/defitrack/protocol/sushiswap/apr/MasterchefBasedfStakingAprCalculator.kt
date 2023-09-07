@@ -21,10 +21,10 @@ class MasterchefBasedfStakingAprCalculator(
 
     suspend fun getNativeReward(): Reward {
         val poolInfo = chef.poolInfos()[poolId]
-        val allSushiPerSecond = chef.perSecond()
-        val poolBlockRewards = allSushiPerSecond.times(poolInfo.allocPoint).divide(chef.totalAllocPoint())
+        val allSushiPerSecond = chef.perSecond.await()
+        val poolBlockRewards = allSushiPerSecond.times(poolInfo.allocPoint).divide(chef.totalAllocPoint.await())
         return Reward(
-            address = chef.rewardToken(),
+            address = chef.rewardToken.await(),
             network = chef.blockchainGateway.network,
             amount = poolBlockRewards.toBigDecimal().divide(BigDecimal.TEN.pow(18), 18, RoundingMode.HALF_UP),
             tokenType = TokenType.SINGLE
