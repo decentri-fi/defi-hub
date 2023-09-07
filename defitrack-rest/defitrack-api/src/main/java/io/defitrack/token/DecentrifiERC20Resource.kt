@@ -28,7 +28,7 @@ class DecentrifiERC20Resource(
     private val client: HttpClient,
     private val abiResource: ABIResource,
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
-    @Value("\${erc20ResourceLocation:http://defitrack-erc20:8080}") private val erc20ResourceLocation: String
+    @Value("\${erc20ResourceLocation:http://defitrack-erc20.default.svc.cluster.local:8080}") private val erc20ResourceLocation: String
 ) : ERC20Resource {
 
     val semaphore = Semaphore(4)
