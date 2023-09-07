@@ -30,6 +30,7 @@
         <module>defitrack-dfyn</module>
         <module>defitrack-dinoswap</module>
         <module>defitrack-gmx</module>
+        <module>defitrack-stakefish</module>
         <module>defitrack-iron-bank</module>
         <module>defitrack-dodo</module>
         <module>defitrack-kyberswap</module>
