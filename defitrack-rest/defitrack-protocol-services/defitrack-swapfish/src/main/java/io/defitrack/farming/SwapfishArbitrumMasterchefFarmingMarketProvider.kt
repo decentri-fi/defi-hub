@@ -46,7 +46,7 @@ class SwapfishArbitrumMasterchefFarmingMarketProvider(
     ): FarmingMarket? {
         return try {
             val stakedtoken = getToken(chef.getLpTokenForPoolId(poolId).lpToken)
-            val rewardToken = getToken(chef.rewardToken())
+            val rewardToken = getToken(chef.rewardToken.await())
             create(
                 identifier = "${chef.address}-${poolId}",
                 name = stakedtoken.name + " Farm",
