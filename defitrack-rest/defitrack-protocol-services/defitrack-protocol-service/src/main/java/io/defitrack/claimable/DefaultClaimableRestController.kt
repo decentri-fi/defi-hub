@@ -60,6 +60,7 @@ class DefaultClaimableRestController(
             try {
                 it.claimables(address)
             } catch (ex: Exception) {
+                ex.printStackTrace()
                 logger.error("Unable to fetch claimables for provider ${it.getProtocol().slug}")
                 emptyList()
             }

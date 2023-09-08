@@ -109,6 +109,8 @@ class UniswapPositionsV3Contract(
         it[7].value as BigInteger,
         it[5].value as BigInteger,
         it[6].value as BigInteger,
+        it[8].value as BigInteger,
+        it[9].value as BigInteger,
     )
 
     fun ownerOfFn(tokenId: BigInteger): Function {

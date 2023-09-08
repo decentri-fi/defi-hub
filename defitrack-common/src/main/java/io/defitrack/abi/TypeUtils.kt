@@ -27,6 +27,10 @@ class TypeUtils {
         fun BigInteger.toUint24(): Uint24 {
             return Uint24(this)
         }
+        fun BigInteger.toInt24(): Int24 {
+            return Int24(this)
+        }
+
 
         fun BigInteger.Int128(): Int128 {
             return Int128(this)
@@ -43,6 +47,12 @@ class TypeUtils {
         fun uint256(indexed: Boolean = false): TypeReference<Uint256> {
             return TypeReference.create(Uint256::class.java, indexed)
         }
+
+
+        fun int56(indexed: Boolean = false): TypeReference<Int56> {
+            return TypeReference.create(Int56::class.java, indexed)
+        }
+
 
         fun uint88(indexed: Boolean = false): TypeReference<Uint88> {
             return TypeReference.create(Uint88::class.java, indexed)
@@ -82,6 +92,10 @@ class TypeUtils {
 
         fun uint128(): TypeReference<Uint128> {
             return TypeReference.create(Uint128::class.java)
+        }
+
+        fun int128(): TypeReference<Int128> {
+            return TypeReference.create(Int128::class.java)
         }
 
         fun uint32(): TypeReference<Uint32> {

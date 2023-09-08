@@ -17,8 +17,6 @@ import java.math.BigDecimal
 
 abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
 
-
-
     suspend fun create(
         name: String,
         identifier: String,

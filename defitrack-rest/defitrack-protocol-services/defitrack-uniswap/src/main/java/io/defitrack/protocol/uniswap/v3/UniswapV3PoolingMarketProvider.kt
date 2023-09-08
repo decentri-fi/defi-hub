@@ -3,6 +3,7 @@ package io.defitrack.protocol.uniswap.v3
 import com.google.gson.JsonParser
 import io.defitrack.abi.TypeUtils
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
@@ -21,7 +22,7 @@ import org.web3j.abi.datatypes.Event
 import java.math.BigInteger
 
 abstract class UniswapV3PoolingMarketProvider(
-    private val fromBlock: String, private val poolFactoryAddress: String
+    private val fromBlocks: List<String>, private val poolFactoryAddress: String
 ) : PoolingMarketProvider() {
 
     val poolCreatedEvent = Event(
@@ -40,38 +41,39 @@ abstract class UniswapV3PoolingMarketProvider(
         )
     }
 
-    val poolAddresses by lazy {
-        runBlocking {
-            val gateway = getBlockchainGateway()
-            val logs = gateway.getEvents(
-                BlockchainGateway.GetEventLogsCommand(
-                    addresses = listOf(poolFactoryAddress),
-                    topic = "0x783cca1c0412dd0d695e784568c96da2e9c22ff989357a2e8b1d9b2b4e6b7118",
-                    fromBlock = BigInteger(fromBlock, 10)
-                )
-            )
+    val poolAddresses = lazyAsync {
+        fromBlocks.mapIndexed { index, block ->
+            getLogsBetweenBlocks(block, fromBlocks.getOrNull(index + 1))
+        }.flatten()
+    }
 
-            JsonParser().parse(logs).asJsonObject["result"].asJsonArray.map {
-                val data = it.asJsonObject["data"].asString
-                FunctionReturnDecoder.decode(
-                    data, poolCreatedEvent.nonIndexedParameters
-                )[1].value as String
-            }
+    suspend fun getLogsBetweenBlocks(fromBlock: String, toBlock: String?): List<String> {
+        val gateway = getBlockchainGateway()
+        val logs = gateway.getEvents(
+            BlockchainGateway.GetEventLogsCommand(
+                addresses = listOf(poolFactoryAddress),
+                topic = "0x783cca1c0412dd0d695e784568c96da2e9c22ff989357a2e8b1d9b2b4e6b7118",
+                fromBlock = BigInteger(fromBlock, 10),
+                toBlock = toBlock?.let { BigInteger(toBlock, 10) }
+            )
+        )
+
+        return JsonParser().parse(logs).asJsonObject["result"].asJsonArray.map {
+            val data = it.asJsonObject["data"].asString
+            FunctionReturnDecoder.decode(
+                data, poolCreatedEvent.nonIndexedParameters
+            )[1].value as String
         }
     }
 
     override suspend fun produceMarkets(): Flow<PoolingMarket> {
         return channelFlow {
-            poolAddresses.forEach {
+            poolAddresses.await().forEach {
                 launch {
                     try {
                         throttled {
-                            val uniswapV3Pool = UniswapV3PoolContract(
-                                getBlockchainGateway(), it
-                            )
-                            send(
-                                toMarket(uniswapV3Pool)
-                            )
+                            val uniswapV3Pool = UniswapV3PoolContract(getBlockchainGateway(), it)
+                            send(toMarket(uniswapV3Pool))
                         }
                     } catch (ex: Exception) {
                         ex.printStackTrace()
