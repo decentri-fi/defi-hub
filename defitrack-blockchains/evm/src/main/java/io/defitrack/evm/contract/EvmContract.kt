@@ -99,3 +99,7 @@ abstract class EvmContract(
         return readWithAbi(function)[0].value as T
     }
 }
+
+fun Function.toMultiCall(contractAddress: String): MultiCallElement {
+    return MultiCallElement(this, contractAddress)
+}
