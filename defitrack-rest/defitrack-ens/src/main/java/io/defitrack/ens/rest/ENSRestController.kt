@@ -12,16 +12,24 @@ class ENSRestController(private val ensNameService: EnsNameService) {
     @GetMapping("/by-name/{ens}")
     suspend fun getAddressInformation(@PathVariable("ens") ens: String): ENSResult {
         val result = ensNameService.getEnsByName(ens)
+
         return ENSResult(
-            ens, result, 0
+            ens, result, if (result.isNotBlank()) {
+                ensNameService.getExpires(ens).toLong()
+            } else 0
         )
     }
 
     @GetMapping("/by-address/{address}")
     suspend fun getMapping(@PathVariable("address") address: String): ENSResult {
         val result = ensNameService.getEnsByAddress(address)
+
         return ENSResult(
-            result, address, 0
+            result, address, if (result.isNotBlank()) {
+                ensNameService.getExpires(result).toLong()
+            } else {
+                0
+            }
         )
     }
 

@@ -2,7 +2,9 @@ package io.defitrack.ens.service
 
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.string
+import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.toUtf8String
+import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.github.reactivecircus.cache4k.Cache
@@ -60,9 +62,17 @@ class EnsNameService(
         return resolver
     }
 
-    suspend fun getExpires(label: String) {
-        val sha = Hash.sha3(label)
-        val tokenId = BigInteger(sha, 16)
+    suspend fun getExpires(label: String): BigInteger {
+        val splitted = label.split(".")
+        val sha = Hash.sha3String(splitted[splitted.size - 2])
+        val tokenId = BigInteger(sha.removePrefix("0x"), 16)
+
+        return ethereumProvider.readFunction(
+            "0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85",
+            "nameExpires",
+            listOf(tokenId.toUint256()),
+            listOf(uint256())
+        )[0].value as BigInteger
     }
 
     suspend fun getEnsByAddress(address: String): String {
