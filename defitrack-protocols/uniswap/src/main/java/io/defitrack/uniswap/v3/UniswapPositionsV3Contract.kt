@@ -6,6 +6,7 @@ import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.multicall.MultiCallElement
+import io.defitrack.evm.contract.toMultiCall
 import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.Type
 import java.math.BigInteger
@@ -16,15 +17,12 @@ class UniswapPositionsV3Contract(
     blockchainGateway, "", address
 ) {
 
-
     suspend fun getUserPositions(owner: String): List<UniswapPosition> {
         val balance = balanceOf(owner).toInt()
         val tokensOfOwner = getTokensOfOwner(balance, owner)
         return blockchainGateway.readMultiCall(
             tokensOfOwner.map {
-                getPosition(it.toInt())
-            }.map {
-                MultiCallElement(it, address)
+                getPosition(it.toInt()).toMultiCall(address)
             }
         ).map {
             uniswapPosition(it)
@@ -36,9 +34,7 @@ class UniswapPositionsV3Contract(
         owner: String
     ): List<BigInteger> {
         val multicalls = (0 until balance).map { tokenOfOwnerByIndex(owner, it) }.map {
-            MultiCallElement(
-                it, address
-            )
+            it.toMultiCall(address)
         }
         return blockchainGateway.readMultiCall(
             multicalls
