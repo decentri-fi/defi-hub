@@ -17,7 +17,7 @@ import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.datatypes.Event
 import java.math.BigInteger
 
-//@Component
+@Component
 class UniswapV3ArbitrumPoolingMarketProvider() : UniswapV3PoolingMarketProvider(
     listOf("165"),
     "0x1f98431c8ad98523631ae4a59f267346ea31f984"

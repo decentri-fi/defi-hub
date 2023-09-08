@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 
-//@Component
+@Component
 class UniswapV2EthereumPoolingMarketProvider(
     private val uniswapServices: List<AbstractUniswapV2Service>,
     private val uniswapAPRService: UniswapAPRService,

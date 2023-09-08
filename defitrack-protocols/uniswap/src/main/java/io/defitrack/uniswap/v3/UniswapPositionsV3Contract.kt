@@ -80,21 +80,14 @@ class UniswapPositionsV3Contract(
     }
 
     suspend fun getAllPositions(): List<UniswapPosition> {
-        println("getting indexes")
         val indexes = getIndexes()
-        println("got indexes")
         val positions = blockchainGateway.readMultiCall(
             indexes.map {
-                getPosition(it.toInt())
-            }.map {
-                MultiCallElement(
-                    it, address
-                )
+                getPosition(it.toInt()).toMultiCall(address)
             }
         ).map {
             uniswapPosition(it)
         }
-        println("got positions")
         return positions
     }
 
