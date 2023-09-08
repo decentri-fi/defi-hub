@@ -45,6 +45,7 @@
         <module>crv</module>
         <module>mStable</module>
         <module>ribbon</module>
+        <module>stakefish</module>
         <module>yearn</module>
         <module>compound</module>
         <module>beefy</module>

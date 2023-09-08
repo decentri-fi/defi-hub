@@ -19,6 +19,14 @@ enum class Protocol(
         networks = listOf(Network.ETHEREUM),
         company = Company.BLUR
     ),
+    STAKEFISH(
+        logo = "stakefish.png",
+        slug = "stakefish",
+        primitives = listOf(DefiPrimitive.FARMING),
+        website = "https://stake.fish",
+        networks = listOf(Network.ETHEREUM),
+        company = Company.STAKEFISH
+    ),
     TORNADO_CASH(
         logo = "tornado.png",
         slug = "tornadocash",
