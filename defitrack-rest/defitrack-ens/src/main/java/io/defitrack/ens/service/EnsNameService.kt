@@ -8,8 +8,10 @@ import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.github.reactivecircus.cache4k.Cache
 import org.springframework.stereotype.Service
 import org.web3j.abi.datatypes.generated.Bytes32
+import org.web3j.crypto.Hash
 import org.web3j.ens.NameHash
 import org.web3j.utils.Numeric
+import java.math.BigInteger
 import kotlin.time.Duration.Companion.hours
 
 @Service
@@ -56,6 +58,11 @@ class EnsNameService(
             inputs = listOf(Bytes32(nameHash))
         )[0].value as String
         return resolver
+    }
+
+    suspend fun getExpires(label: String) {
+        val sha = Hash.sha3(label)
+        val tokenId = BigInteger(sha, 16)
     }
 
     suspend fun getEnsByAddress(address: String): String {

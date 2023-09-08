@@ -3,6 +3,7 @@ package io.defitrack.uniswap.v3
 import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
+import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.multicall.MultiCallElement
@@ -33,9 +34,7 @@ class UniswapPositionsV3Contract(
         balance: Int,
         owner: String
     ): List<BigInteger> {
-        val multicalls = (0 until balance).map { tokenOfOwnerByIndex(owner, it) }.map {
-            it.toMultiCall(address)
-        }
+        val multicalls = (0 until balance).map { tokenOfOwnerByIndex(owner, it).toMultiCall(address) }
         return blockchainGateway.readMultiCall(
             multicalls
         ).map {
@@ -47,7 +46,7 @@ class UniswapPositionsV3Contract(
         return createFunction(
             "tokenOfOwnerByIndex",
             listOf(owner.toAddress(), index.toBigInteger().toUint256()),
-            listOf(TypeUtils.uint256())
+            listOf(uint256())
         )
     }
 
@@ -55,7 +54,7 @@ class UniswapPositionsV3Contract(
         return readWithoutAbi(
             "balanceOf",
             listOf(owner.toAddress()),
-            listOf(TypeUtils.uint256())
+            listOf(uint256())
         )[0].value as BigInteger
     }
 
@@ -71,24 +70,12 @@ class UniswapPositionsV3Contract(
                 TypeUtils.int24(),
                 TypeUtils.int24(),
                 TypeUtils.uint128(),
-                TypeUtils.uint256(),
-                TypeUtils.uint256(),
+                uint256(),
+                uint256(),
                 TypeUtils.uint128(),
                 TypeUtils.uint128()
             )
         )
-    }
-
-    suspend fun getAllPositions(): List<UniswapPosition> {
-        val indexes = getIndexes()
-        val positions = blockchainGateway.readMultiCall(
-            indexes.map {
-                getPosition(it.toInt()).toMultiCall(address)
-            }
-        ).map {
-            uniswapPosition(it)
-        }
-        return positions
     }
 
     private fun uniswapPosition(it: List<Type<*>>) = UniswapPosition(
@@ -102,39 +89,7 @@ class UniswapPositionsV3Contract(
         it[9].value as BigInteger,
     )
 
-    fun ownerOfFn(tokenId: BigInteger): Function {
-        return createFunction(
-            "ownerOf",
-            inputs = listOf(tokenId.toUint256()),
-            outputs = listOf(TypeUtils.address())
-        )
-    }
-
-    suspend fun getIndexes(): List<BigInteger> {
-        val map = blockchainGateway.readMultiCall(
-            (0 until totalSupply().toInt()).map {
-                tokenByIndex(it)
-            }.map {
-                MultiCallElement(
-                    it, address
-                )
-            }
-        ).map {
-            it[0].value as BigInteger
-        }
-        println("returning indexes")
-        return map
-    }
-
     suspend fun totalSupply(): BigInteger {
-        return readSingle("totalSupply", TypeUtils.uint256())
-    }
-
-    fun tokenByIndex(index: Int): Function {
-        return createFunction(
-            "tokenByIndex",
-            inputs = listOf(index.toBigInteger().toUint256()),
-            outputs = listOf(TypeUtils.uint256())
-        )
+        return readSingle("totalSupply", uint256())
     }
 }

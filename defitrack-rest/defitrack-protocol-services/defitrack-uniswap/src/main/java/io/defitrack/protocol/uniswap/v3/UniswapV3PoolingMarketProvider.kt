@@ -5,21 +5,22 @@ import io.defitrack.abi.TypeUtils
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.TokenType
 import io.defitrack.uniswap.v3.UniswapFactoryContract
 import io.defitrack.uniswap.v3.UniswapV3PoolContract
+import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.datatypes.Event
 import java.math.BigInteger
+import kotlin.time.Duration.Companion.hours
 
 abstract class UniswapV3PoolingMarketProvider(
     private val fromBlocks: List<String>, private val poolFactoryAddress: String
@@ -73,7 +74,7 @@ abstract class UniswapV3PoolingMarketProvider(
                     try {
                         throttled {
                             val uniswapV3Pool = UniswapV3PoolContract(getBlockchainGateway(), it)
-                            send(toMarket(uniswapV3Pool))
+                            send(getMarket(uniswapV3Pool))
                         }
                     } catch (ex: Exception) {
                         ex.printStackTrace()
@@ -84,7 +85,12 @@ abstract class UniswapV3PoolingMarketProvider(
         }
     }
 
-    suspend fun toMarket(pool: UniswapV3PoolContract): PoolingMarket {
+
+    val uniswapPoolCache = Cache.Builder<String, PoolingMarket>()
+        .expireAfterWrite(4.hours)
+        .build()
+
+    suspend fun getMarket(pool: UniswapV3PoolContract): PoolingMarket = uniswapPoolCache.get(pool.address) {
         val token = getToken(pool.address)
         val token0 = getToken(pool.token0())
         val token1 = getToken(pool.token1())
@@ -94,7 +100,7 @@ abstract class UniswapV3PoolingMarketProvider(
         )
         val breakdown = defaultBreakdown(underlyingTokens, pool.address)
 
-        return create(
+        create(
             identifier = "v3-${pool.address}",
             name = "${token0.symbol}/${token1.symbol}",
             address = pool.address,
@@ -111,8 +117,7 @@ abstract class UniswapV3PoolingMarketProvider(
             tokenType = TokenType.UNISWAP,
             positionFetcher = null,
             totalSupply = refreshable(token.totalSupply.asEth(token.decimals)) {
-                val token = getToken(pool.address)
-                token.totalSupply.asEth(token.decimals)
+                getToken(pool.address).totalSupply.asEth(token.decimals)
             },
             erc20Compatible = false
         )

@@ -18,6 +18,10 @@
             <artifactId>defitrack-common</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>kotlinx-coroutines-reactor</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.defitrack</groupId>
             <artifactId>ethereum</artifactId>
         </dependency>

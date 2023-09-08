@@ -1,6 +1,6 @@
 package io.defitrack.ens.rest
 
-import fi.decentri.ens.domain.ENSResult
+import io.defitrack.ens.domain.ENSResult
 import io.defitrack.ens.service.EnsNameService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -13,7 +13,7 @@ class ENSRestController(private val ensNameService: EnsNameService) {
     suspend fun getAddressInformation(@PathVariable("ens") ens: String): ENSResult {
         val result = ensNameService.getEnsByName(ens)
         return ENSResult(
-            ens, result
+            ens, result, 0
         )
     }
 
@@ -21,7 +21,7 @@ class ENSRestController(private val ensNameService: EnsNameService) {
     suspend fun getMapping(@PathVariable("address") address: String): ENSResult {
         val result = ensNameService.getEnsByAddress(address)
         return ENSResult(
-            result, address
+            result, address, 0
         )
     }
 

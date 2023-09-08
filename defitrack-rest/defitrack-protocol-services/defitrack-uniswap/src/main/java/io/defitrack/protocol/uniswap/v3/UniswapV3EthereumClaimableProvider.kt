@@ -93,7 +93,7 @@ class UniswapV3EthereumClaimableProvider(
             position.liquidity,
         )
 
-        val market = uniswapV3PoolingMarketProvider.toMarket(poolContract)
+        val market = uniswapV3PoolingMarketProvider.getMarket(poolContract)
 
         val token1 = token1Async.await()
         val token0 = token0Async.await()

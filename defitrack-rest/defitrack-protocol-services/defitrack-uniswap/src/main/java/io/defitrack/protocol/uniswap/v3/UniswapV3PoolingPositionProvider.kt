@@ -67,7 +67,7 @@ abstract class UniswapV3PoolingPositionProvider(
                         1
                     )
 
-                    val market = uniswapV3PoolingMarketProvider.toMarket(poolContract)
+                    val market = uniswapV3PoolingMarketProvider.getMarket(poolContract)
 
                     val totalToken0Usd = if (userTokens0 > BigDecimal.ZERO) {
                         uniswapV3PoolingMarketProvider.getPriceResource()
