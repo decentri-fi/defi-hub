@@ -6,16 +6,17 @@ import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.compound.CompoundEthereumService
+import io.defitrack.protocol.compound.CompoundAddressesProvider
 import io.defitrack.protocol.compound.v3.contract.CompoundV3AssetContract
 import org.springframework.stereotype.Component
 
 @Component
-class CompoundV3LendingMarketProvider(
-    private val compoundEthereumService: CompoundEthereumService
+class CompoundV3PolygonLendingMarketProvider(
 ) : LendingMarketProvider() {
     override suspend fun fetchMarkets(): List<LendingMarket> {
-        return compoundEthereumService.getV3Tokens().flatMap { cTokenAddress ->
+        val compoundAddresses = CompoundAddressesProvider.CONFIG[getNetwork()] ?: return emptyList()
+
+        return compoundAddresses.v3Tokens.flatMap { cTokenAddress ->
             val assetContract = CompoundV3AssetContract(
                 getBlockchainGateway(), cTokenAddress
             )
@@ -45,6 +46,6 @@ class CompoundV3LendingMarketProvider(
     }
 
     override fun getNetwork(): Network {
-        return Network.ETHEREUM
+        return Network.POLYGON
     }
 }

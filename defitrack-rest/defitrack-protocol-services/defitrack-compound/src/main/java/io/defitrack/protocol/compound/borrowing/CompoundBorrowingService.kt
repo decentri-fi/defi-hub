@@ -7,7 +7,7 @@ import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.market.borrowing.BorrowService
 import io.defitrack.market.borrowing.domain.BorrowPosition
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.compound.CompoundEthereumService
+import io.defitrack.protocol.compound.CompoundAddressesProvider
 import io.defitrack.protocol.compound.v2.contract.CompoundComptrollerContract
 import io.defitrack.protocol.compound.v2.contract.CompoundTokenContract
 import io.defitrack.token.ERC20Resource
@@ -19,7 +19,6 @@ import java.math.RoundingMode
 
 @Service
 class CompoundBorrowingService(
-    private val compoundEthereumService: CompoundEthereumService,
     private val abiResource: ABIResource,
     private val erC20Resource: ERC20Resource,
     blockchainGatewayProvider: BlockchainGatewayProvider,
@@ -51,7 +50,7 @@ class CompoundBorrowingService(
     private suspend fun getTokenContracts() = CompoundComptrollerContract(
         gateway,
         comptrollerABI,
-        compoundEthereumService.getComptroller()
+        CompoundAddressesProvider.CONFIG[getNetwork()]!!.v2Controller!!
     ).getMarkets().map {
         CompoundTokenContract(
             gateway,

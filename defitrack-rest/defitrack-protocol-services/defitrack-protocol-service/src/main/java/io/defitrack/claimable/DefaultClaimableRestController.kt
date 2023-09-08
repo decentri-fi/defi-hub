@@ -4,6 +4,7 @@ import io.defitrack.claimable.mapper.ClaimableVOMapper
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.mapper.ProtocolVOMapper
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -16,9 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/{protocol}")
 class DefaultClaimableRestController(
     private val claimableRewardProviders: List<ClaimableRewardProvider>,
-    private val priceResource: PriceResource,
     private val defaultClaimableRewardProvider: DefaultClaimableRewardProvider,
-    private val protocolVOMapper: ProtocolVOMapper,
     private val claimableVOMapper: ClaimableVOMapper
 ) {
 
@@ -39,7 +38,8 @@ class DefaultClaimableRestController(
             getFromDefaultProvider(address).map { toVO(it) }
         }
 
-        (fromProviders.await() + fromDefaultProvider.await()).filterNotNull()
+
+        awaitAll(fromProviders, fromDefaultProvider).flatten().filterNotNull()
     }
 
     private suspend fun toVO(it: Claimable) = try {
@@ -57,6 +57,11 @@ class DefaultClaimableRestController(
         .filter {
             it.getProtocol().slug == protocol
         }.flatMap {
-            it.claimables(address)
+            try {
+                it.claimables(address)
+            } catch (ex: Exception) {
+                logger.error("Unable to fetch claimables for provider ${it.getProtocol().slug}")
+                emptyList()
+            }
         }
 }

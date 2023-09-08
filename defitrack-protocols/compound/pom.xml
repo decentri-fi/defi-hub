@@ -17,5 +17,17 @@
             <groupId>io.defitrack</groupId>
             <artifactId>ethereum</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>polygon</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>arbitrum</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>base</artifactId>
+        </dependency>
     </dependencies>
 </project>
