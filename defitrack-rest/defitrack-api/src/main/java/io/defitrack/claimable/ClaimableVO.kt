@@ -14,5 +14,5 @@ class ClaimableVO(
     val dollarValue: Double,
     val amount: Double,
     val token: FungibleToken,
-    val claimTransaction: PreparedTransaction
+    val claimTransaction: PreparedTransaction?
 )

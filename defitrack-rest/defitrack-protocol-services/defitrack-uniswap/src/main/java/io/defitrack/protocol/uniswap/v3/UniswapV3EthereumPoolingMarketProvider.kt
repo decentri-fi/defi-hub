@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class UniswapV3EthereumPoolingMarketProvider() : UniswapV3PoolingMarketProvider(
-    "12629885",
+    listOf("12629885", "15090817"),
     "0x1f98431c8ad98523631ae4a59f267346ea31f984"
 ) {
 

@@ -16,7 +16,7 @@ class Claimable(
     val network: Network,
     val claimableTokens: List<FungibleToken>,
     val amount: BigInteger,
-    val claimTransaction: PreparedTransaction
+    val claimTransaction: PreparedTransaction? = null
 )
 
 class Reward(

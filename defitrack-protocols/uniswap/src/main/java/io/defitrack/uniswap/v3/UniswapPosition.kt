@@ -8,5 +8,7 @@ data class UniswapPosition(
     val fee: BigInteger,
     val liquidity: BigInteger,
     val tickLower: BigInteger,
-    val tickUpper: BigInteger
+    val tickUpper: BigInteger,
+    val feeGrowthInside0LastX128: BigInteger,
+    val feeGrowthInside1LastX128: BigInteger,
 )
