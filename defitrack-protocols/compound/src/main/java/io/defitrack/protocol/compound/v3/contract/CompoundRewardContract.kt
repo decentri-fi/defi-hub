@@ -2,6 +2,7 @@ package io.defitrack.protocol.compound.v3.contract
 
 import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
+import io.defitrack.abi.TypeUtils.Companion.toBool
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
@@ -24,6 +25,13 @@ class CompoundRewardContract(
             "getRewardOwed",
             listOf(comet.toAddress(), user.toAddress()),
             listOf(TypeUtils.address(), uint256())
+        )
+    }
+
+    fun claimFn(comet: String, user: String): Function {
+        return createFunction(
+            method = "claim",
+            inputs = listOf(comet.toAddress(), user.toAddress(), true.toBool()),
         )
     }
 

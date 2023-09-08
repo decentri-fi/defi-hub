@@ -6,23 +6,22 @@ import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.toMultiCall
 import io.defitrack.network.toVO
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.compound.CompoundEthereumService
+import io.defitrack.protocol.compound.CompoundAddressesProvider
 import io.defitrack.protocol.compound.v3.contract.CompoundRewardContract
 import io.defitrack.transaction.PreparedTransaction
 import org.springframework.stereotype.Component
 import java.math.BigInteger
 
 @Component
-class CompoundRewardProvider(
-    private val compoundEthereumService: CompoundEthereumService
+class CompoundArbitrumRewardProvider(
 ) : ClaimableRewardProvider() {
 
     val contract by lazy {
-        CompoundRewardContract(getBlockchainGateway(), "0x1B0e765F6224C21223AeA2af16c1C46E38885a40")
+        CompoundRewardContract(getBlockchainGateway(), CompoundAddressesProvider.CONFIG[getNetwork()]!!.rewards)
     }
 
     override suspend fun claimables(address: String): List<Claimable> {
-        val markets = compoundEthereumService.getV3Tokens()
+        val markets = CompoundAddressesProvider.CONFIG[getNetwork()]!!.v3Tokens
 
         val results = getBlockchainGateway().readMultiCall(
             markets.map { cTokenAddress ->
@@ -66,6 +65,6 @@ class CompoundRewardProvider(
     }
 
     override fun getNetwork(): Network {
-        return Network.ETHEREUM
+        return Network.ARBITRUM
     }
 }

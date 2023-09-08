@@ -10,7 +10,7 @@ import io.defitrack.market.lending.domain.Position
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.compound.CompoundEthereumService
+import io.defitrack.protocol.compound.CompoundAddressesProvider
 import io.defitrack.protocol.compound.lending.invest.CompoundLendingInvestmentPreparer
 import io.defitrack.protocol.compound.v2.contract.CompoundComptrollerContract
 import io.defitrack.protocol.compound.v2.contract.CompoundTokenContract
@@ -26,7 +26,6 @@ import java.math.RoundingMode
 
 @Component
 class CompoundLendingMarketProvider(
-    private val compoundEthereumService: CompoundEthereumService,
 ) : LendingMarketProvider() {
 
     val comptrollerABI by lazy {
@@ -134,7 +133,7 @@ class CompoundLendingMarketProvider(
         return CompoundComptrollerContract(
             getBlockchainGateway(),
             comptrollerABI,
-            compoundEthereumService.getComptroller()
+            CompoundAddressesProvider.CONFIG[getNetwork()]!!.v2Controller!!
         )
     }
 }
