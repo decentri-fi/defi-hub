@@ -7,13 +7,13 @@ import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.policy.plus
 import com.github.michaelbull.retry.retry
 import com.google.gson.JsonParser
-import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.evm.abi.AbiDecoder
 import io.defitrack.evm.abi.domain.AbiContractFunction
 import io.defitrack.evm.contract.multicall.MultiCallElement
+import io.defitrack.evm.contract.multicall.MultiCallCaller
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -21,17 +21,12 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.apache.commons.codec.binary.Hex
 import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
 import org.web3j.abi.FunctionEncoder
 import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.TypeReference
-import org.web3j.abi.datatypes.DynamicArray
-import org.web3j.abi.datatypes.DynamicBytes
-import org.web3j.abi.datatypes.DynamicStruct
 import org.web3j.abi.datatypes.Type
-import org.web3j.abi.datatypes.generated.Uint256
 import org.web3j.protocol.core.methods.response.EthCall
 import org.web3j.protocol.core.methods.response.EthLog.LogObject
 import org.web3j.protocol.core.methods.response.Log
@@ -44,11 +39,10 @@ import org.web3j.abi.datatypes.Function as Web3Function
 open class BlockchainGateway(
     val abiDecoder: AbiDecoder,
     val network: Network,
-    val multicallContractAddress: String,
+    val multicallCaller: MultiCallCaller,
     val httpClient: HttpClient,
     val endpoint: String
-) {
-
+) : MultiCallCaller by multicallCaller {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     val mapper = jacksonObjectMapper().configure(
@@ -60,6 +54,14 @@ open class BlockchainGateway(
         balance.toBigDecimal().dividePrecisely(
             BigDecimal.TEN.pow(18)
         )
+    }
+
+    suspend fun readMultiCall(
+        elements: List<MultiCallElement>,
+    ): List<List<Type<*>>> {
+        return multicallCaller.readMultiCall(elements) { address, function ->
+            executeCall(address, function)
+        }
     }
 
     suspend fun getEvents(getEventsLog: GetEventLogsCommand): String? {
@@ -94,43 +96,6 @@ open class BlockchainGateway(
         httpClient.get("$endpoint/tx/${txId}/logs").body()
     }
 
-    open suspend fun readMultiCall(elements: List<MultiCallElement>): List<List<Type<*>>> {
-        if (elements.isEmpty()) {
-            return kotlin.collections.emptyList()
-        } else if (elements.size > 500) {
-            return elements.chunked(100).map {
-                readMultiCall(it)
-            }.flatten()
-        }
-
-        val encodedFunctions = elements.map {
-            DynamicStruct(
-                it.address.toAddress(),
-                DynamicBytes(Hex.decodeHex(FunctionEncoder.encode(it.function).substring(2)))
-            )
-        }
-
-        val aggregateFunction = org.web3j.abi.datatypes.Function(
-            "aggregate",
-            listOf(
-                DynamicArray(
-                    encodedFunctions
-                )
-            ),
-            listOf(object : TypeReference<Uint256?>() {},
-                object : TypeReference<DynamicArray<DynamicBytes?>?>() {})
-        )
-
-        val executeCall = executeCall(multicallContractAddress, aggregateFunction)
-        if (executeCall.isEmpty()) {
-            println("empty multicall")
-        }
-        val data = executeCall[1].value as List<DynamicBytes>
-        return data.map {
-            val element = elements[data.indexOf(it)]
-            FunctionReturnDecoder.decode(Hex.encodeHexString(it.value), element.function.outputParameters)
-        }
-    }
 
     suspend fun readFunction(
         address: String,

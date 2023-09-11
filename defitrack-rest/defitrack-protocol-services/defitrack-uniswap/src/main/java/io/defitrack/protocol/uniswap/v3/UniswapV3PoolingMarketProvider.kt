@@ -71,12 +71,14 @@ abstract class UniswapV3PoolingMarketProvider(
                 launch {
                     try {
                         throttled {
-                            val uniswapV3Pool = UniswapV3PoolContract(getBlockchainGateway(), it)
-                            send(getMarket(uniswapV3Pool))
+                            send(
+                                getMarket(
+                                    UniswapV3PoolContract(getBlockchainGateway(), it)
+                                )
+                            )
                         }
                     } catch (ex: Exception) {
-                        ex.printStackTrace()
-                        logger.error("something went wrong trying to import uniswap market ${it}")
+                        logger.error("something went wrong trying to import uniswap market ${it}", ex)
                     }
                 }
             }
