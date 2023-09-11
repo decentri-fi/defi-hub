@@ -15,6 +15,7 @@
     <modules>
         <module>defitrack-aave</module>
         <module>defitrack-alienbase</module>
+        <module>defitrack-aerodrome</module>
         <module>defitrack-aura</module>
         <module>defitrack-adamant</module>
         <module>defitrack-aelin</module>

@@ -19,6 +19,14 @@ enum class Protocol(
         networks = listOf(Network.BASE),
         company = Company.ALIENBASE
     ),
+    AERODROME(
+        logo = "aerodrome.png",
+        slug = "aerodrome",
+        primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
+        website = "https://aerodrome.finance",
+        networks = listOf(Network.BASE),
+        company = Company.AERODROME
+    ),
     BLUR(
         logo = "blur.png",
         slug = "blur",
