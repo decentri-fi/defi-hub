@@ -1,4 +1,4 @@
-package io.defitrack.alienbase
+package io.defitrack.alienbase.pooling
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
