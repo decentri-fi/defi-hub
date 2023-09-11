@@ -19,13 +19,13 @@ import org.web3j.abi.datatypes.Event
 import java.math.BigInteger
 
 @Component
-@ConditionalOnProperty("arbitrum.enabled", havingValue = "true", matchIfMissing = true)
-class UniswapV3ArbitrumPoolingMarketProvider() : UniswapV3PoolingMarketProvider(
-    listOf("165"),
-    "0x1f98431c8ad98523631ae4a59f267346ea31f984"
+@ConditionalOnProperty("base.enabled", havingValue = "true", matchIfMissing = true)
+class UniswapV3BasePoolingMarketProvider() : UniswapV3PoolingMarketProvider(
+    listOf("1371680"),
+    "0x33128a8fC17869897dcE68Ed026d694621f6FDfD"
 ) {
 
     override fun getNetwork(): Network {
-        return Network.ARBITRUM
+        return Network.BASE
     }
 }

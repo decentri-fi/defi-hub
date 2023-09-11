@@ -10,9 +10,11 @@ import io.defitrack.token.TokenType
 import io.defitrack.uniswap.v2.AbstractUniswapV2Service
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 
 @Component
+@ConditionalOnProperty("ethereum.enabled", havingValue = "true", matchIfMissing = true)
 class UniswapV2EthereumPoolingMarketProvider(
     private val uniswapServices: List<AbstractUniswapV2Service>,
     private val uniswapAPRService: UniswapAPRService,

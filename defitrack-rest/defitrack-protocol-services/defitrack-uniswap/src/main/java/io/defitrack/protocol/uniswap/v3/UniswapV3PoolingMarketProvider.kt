@@ -6,6 +6,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.event.EventDecoder.Companion.extract
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
@@ -36,7 +37,7 @@ abstract class UniswapV3PoolingMarketProvider(
         )
     )
 
-    val poolFactory by lazy {
+    val poolFactory = lazyAsync {
         UniswapFactoryContract(
             getBlockchainGateway(), poolFactoryAddress
         )
@@ -50,7 +51,7 @@ abstract class UniswapV3PoolingMarketProvider(
 
     suspend fun getLogsBetweenBlocks(fromBlock: String, toBlock: String?): List<String> {
         val gateway = getBlockchainGateway()
-        val logs = gateway.getEvents(
+        val logs = gateway.getEventsAsEthLog(
             BlockchainGateway.GetEventLogsCommand(
                 addresses = listOf(poolFactoryAddress),
                 topic = "0x783cca1c0412dd0d695e784568c96da2e9c22ff989357a2e8b1d9b2b4e6b7118",
@@ -59,11 +60,8 @@ abstract class UniswapV3PoolingMarketProvider(
             )
         )
 
-        return JsonParser().parse(logs).asJsonObject["result"].asJsonArray.map {
-            val data = it.asJsonObject["data"].asString
-            FunctionReturnDecoder.decode(
-                data, poolCreatedEvent.nonIndexedParameters
-            )[1].value as String
+        return logs.map {
+            poolCreatedEvent.extract(it, false, 1) as String
         }
     }
 

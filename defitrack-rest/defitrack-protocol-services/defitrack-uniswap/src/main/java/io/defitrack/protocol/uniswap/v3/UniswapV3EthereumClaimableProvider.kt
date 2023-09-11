@@ -10,10 +10,12 @@ import io.defitrack.uniswap.v3.UniswapV3PoolContract
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 import java.math.BigInteger
 
 @Component
+@ConditionalOnProperty("ethereum.enabled", havingValue = "true", matchIfMissing = true)
 class UniswapV3EthereumClaimableProvider(
     private val uniswapV3PoolingMarketProvider: UniswapV3EthereumPoolingMarketProvider,
 ) : ClaimableRewardProvider() {
@@ -59,7 +61,7 @@ class UniswapV3EthereumClaimableProvider(
         position: UniswapPosition,
         address: String
     ): List<Claimable> = coroutineScope {
-        val poolAddress = uniswapV3PoolingMarketProvider.poolFactory.getPool(
+        val poolAddress = uniswapV3PoolingMarketProvider.poolFactory.await().getPool(
             position.token0,
             position.token1,
             position.fee

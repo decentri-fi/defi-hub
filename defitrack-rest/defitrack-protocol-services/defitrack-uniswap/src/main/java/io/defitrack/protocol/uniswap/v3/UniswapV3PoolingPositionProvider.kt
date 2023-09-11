@@ -35,7 +35,7 @@ abstract class UniswapV3PoolingPositionProvider(
         }.map { position ->
             async {
                 try {
-                    val poolAddress = uniswapV3PoolingMarketProvider.poolFactory.getPool(
+                    val poolAddress = uniswapV3PoolingMarketProvider.poolFactory.await().getPool(
                         position.token0,
                         position.token1,
                         position.fee
