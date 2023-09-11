@@ -63,6 +63,23 @@ class BasedDistributorV2Contract(
         }
     }
 
+    fun claimFunction(poolid: Int): Function {
+        return createFunction(
+            "deposit",
+            inputs = listOf(poolid.toBigInteger().toUint256(), BigInteger.ZERO.toUint256()),
+        )
+    }
+
+    fun pendingFunction(poolId: Int, user: String): Function {
+        return createFunction(
+            "pendingTokens",
+            inputs = listOf(poolId.toBigInteger().toUint256(), user.toAddress()),
+            outputs = listOf(
+                uint256(),
+            )
+        )
+    }
+
     fun userInfoFunction(user: String, poolIndex: Int): Function {
         return createFunction(
             "userInfo",

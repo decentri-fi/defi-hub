@@ -1,14 +1,17 @@
 package io.defitrack.alienbase.farming
 
+import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
+import io.defitrack.network.toVO
 import io.defitrack.protocol.BasedDistributorV2Contract
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
+import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import org.springframework.stereotype.Component
@@ -48,6 +51,20 @@ class AlienbaseFarmingMarketProvider : FarmingMarketProvider() {
                                     user, poolId
                                 )
                             },
+                        ),
+                        claimableRewardFetcher = ClaimableRewardFetcher(
+                            address = farmingContractAddress,
+                            function = { user ->
+                                contract.pendingFunction(poolId, user)
+                            },
+                            preparedTransaction = { user ->
+                                PreparedTransaction(
+                                    getNetwork().toVO(),
+                                    contract.claimFunction(poolId),
+                                    farmingContractAddress,
+                                    user
+                                )
+                            }
                         ),
                         vaultType = "alienbase-reward",
                         farmType = ContractType.LIQUIDITY_MINING
