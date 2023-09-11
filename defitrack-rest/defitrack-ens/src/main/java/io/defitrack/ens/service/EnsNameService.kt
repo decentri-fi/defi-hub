@@ -62,7 +62,7 @@ class EnsNameService(
         }
     }
 
-    suspend fun getEnsByAddress(address: String): String? {
+    suspend fun getEnsByAddress(address: String): String {
         return cache.get("reverse-$address") {
             try {
                 val reverseName = Numeric.cleanHexPrefix(address) + ".addr.reverse"

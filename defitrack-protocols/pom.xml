@@ -16,6 +16,7 @@
         <module>protocol-dependencies</module>
         <module>protocol</module>
         <module>aelin</module>
+        <module>alienbase</module>
         <module>aura</module>
         <module>adamant</module>
         <module>beethovenx</module>
