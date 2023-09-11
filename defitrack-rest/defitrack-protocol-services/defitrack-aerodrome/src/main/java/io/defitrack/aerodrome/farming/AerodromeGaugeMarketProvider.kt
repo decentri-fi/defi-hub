@@ -1,14 +1,17 @@
 package io.defitrack.aerodrome.farming
 
 import io.defitrack.aerodrome.pooling.AerodromePoolingMarketProvider
+import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.network.toVO
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.contract.VelodromeV2GaugeContract
 import io.defitrack.protocol.contract.VoterContract
+import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
@@ -16,7 +19,7 @@ import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 
 @Service
-class VelodromeV2GaugeMarketProvider(
+class AerodromeGaugeMarketProvider(
     private val poolingMarketProvider: AerodromePoolingMarketProvider
 ) : FarmingMarketProvider() {
 
@@ -59,11 +62,25 @@ class VelodromeV2GaugeMarketProvider(
                                     )
                                 },
                                 stakedToken = stakedToken.toFungibleToken(),
-                                vaultType = "velodrome-gauge",
+                                vaultType = "aerodrome-gauge",
                                 balanceFetcher = defaultPositionFetcher(gauge),
                                 rewardsFinished = false,
                                 metadata = mapOf("address" to gauge,
-                                    "contract" to contract)
+                                    "contract" to contract),
+                                claimableRewardFetcher = ClaimableRewardFetcher(
+                                    address = contract.address,
+                                    function = { user ->
+                                        contract.earnedFn(user)
+                                    },
+                                    preparedTransaction = { user ->
+                                        PreparedTransaction(
+                                            network = getNetwork().toVO(),
+                                            function = contract.getRewardFn(user),
+                                            to = contract.address,
+                                            from = user
+                                        )
+                                    }
+                                )
                             )
 
                             send(market)
