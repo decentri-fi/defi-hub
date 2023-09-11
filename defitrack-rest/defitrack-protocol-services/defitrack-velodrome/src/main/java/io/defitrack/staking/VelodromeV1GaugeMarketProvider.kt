@@ -1,6 +1,7 @@
 package io.defitrack.staking
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -12,7 +13,6 @@ import io.defitrack.protocol.contract.VoterContract
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 
 @Component
@@ -22,18 +22,16 @@ class VelodromeV1GaugeMarketProvider(
 
     val voter = "0x09236cff45047dbee6b921e00704bed6d6b8cf7e"
 
-    val voterContract by lazy {
-        runBlocking {
-            VoterContract(
-                getBlockchainGateway(),
-                voter
-            )
-        }
+    val voterContract = lazyAsync {
+        VoterContract(
+            getBlockchainGateway(),
+            voter
+        )
     }
 
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
         velodromeV1OptimismPoolingMarketProvider.getMarkets().forEach {
-            val gauge = voterContract.gauges(it.address)
+            val gauge = voterContract.await().gauges(it.address)
 
             launch {
                 throttled {
