@@ -1,18 +1,20 @@
 package io.defitrack.farming
 
+import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
+import io.defitrack.network.toVO
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.StargateService
 import io.defitrack.protocol.contract.LPStakingContract
-import kotlinx.coroutines.runBlocking
-import org.springframework.stereotype.Component
+import io.defitrack.transaction.PreparedTransaction
 
-@Component
 abstract class StargateFarmingMarketProvider(
-    private val stargateOptimismService: StargateService,
+    private val stargateService: StargateService,
+    private val pendingFunctionName: String = "pendingStargate",
+    private val emissionTokenName: String = "stargate"
 ) : FarmingMarketProvider() {
 
 
@@ -20,19 +22,14 @@ abstract class StargateFarmingMarketProvider(
         return Protocol.STARGATE
     }
 
-    val lpStakingContractAbi by lazy {
-        runBlocking {
-            getAbi("stargate/LPStaking.json")
-        }
-    }
-
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         val lpStakingContract = LPStakingContract(
             getBlockchainGateway(),
-            lpStakingContractAbi,
-            stargateOptimismService.getLpFarm()
+            stargateService.getLpFarm(),
+            pendingFunctionName,
+            emissionTokenName
         )
-        val stargate = getToken(lpStakingContract.stargate())
+        val stargate = getToken(lpStakingContract.emissionToken())
 
         return lpStakingContract.poolInfos().mapIndexed { index, info ->
             val stakedToken = getToken(info.lpToken)
@@ -45,6 +42,20 @@ abstract class StargateFarmingMarketProvider(
                 rewardTokens = rewardTokens.map { it.toFungibleToken() },
                 vaultType = "stargate-lp-staking",
                 farmType = ContractType.LIQUIDITY_MINING,
+                claimableRewardFetcher = ClaimableRewardFetcher(
+                    address = lpStakingContract.address,
+                    function = {user ->
+                         lpStakingContract.pendingFn(index, user)
+                    },
+                    preparedTransaction = { user ->
+                        PreparedTransaction(
+                            getNetwork().toVO(),
+                            lpStakingContract.claimFn(index),
+                            lpStakingContract.address,
+                            user
+                        )
+                    }
+                ),
                 balanceFetcher = PositionFetcher(
                     lpStakingContract.address,
                     { user: String -> lpStakingContract.userInfo(index, user) },

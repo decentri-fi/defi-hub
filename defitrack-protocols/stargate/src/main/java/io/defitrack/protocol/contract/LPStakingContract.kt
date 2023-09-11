@@ -7,24 +7,24 @@ import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.multicall.MultiCallElement
-import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Function
-import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
 class LPStakingContract(
     blockchainGateway: BlockchainGateway,
-    abi: String, address: String
+    address: String,
+    private val pendingFunctionName: String,
+    private val emissionTokenName: String
 ) : EvmContract(
-    blockchainGateway, abi, address
+    blockchainGateway, "", address
 ) {
 
-    suspend fun stargate(): String {
-        return readWithAbi("stargate")[0].value as String
+    suspend fun emissionToken(): String {
+        return readSingle(emissionTokenName, address())
     }
 
     suspend fun lpBalances(index: Int): BigInteger {
-        return readWithAbi(
+        return readWithoutAbi(
             "lpBalances",
             inputs = listOf(index.toBigInteger().toUint256()),
             outputs = listOf(uint256())
@@ -35,7 +35,7 @@ class LPStakingContract(
 
         val multicalls = (0 until poolLength()).map { poolIndex ->
             MultiCallElement(
-                createFunctionWithAbi(
+                createFunction(
                     "poolInfo",
                     inputs = listOf(poolIndex.toBigInteger().toUint256()),
                     outputs = listOf(
@@ -71,10 +71,7 @@ class LPStakingContract(
 
 
     suspend fun poolLength(): Int {
-        return (readWithAbi(
-            "poolLength",
-            outputs = listOf(TypeReference.create(Uint256::class.java))
-        )[0].value as BigInteger).toInt()
+        return readSingle<BigInteger>("poolLength", uint256()).toInt()
     }
 
     fun userInfo(poolId: Int, user: String): Function {
@@ -88,6 +85,26 @@ class LPStakingContract(
                 uint256(),
                 uint256()
             )
+        )
+    }
+
+    fun pendingFn(poolId: Int, user: String): Function {
+        return createFunction(
+            pendingFunctionName,
+            inputs = listOf(
+                poolId.toBigInteger().toUint256(),
+                user.toAddress()
+            ),
+            outputs = listOf(
+                uint256()
+            )
+        )
+    }
+
+    fun claimFn(poolId: Int): Function {
+        return createFunction(
+            "deposit",
+            listOf(poolId.toBigInteger().toUint256(), BigInteger.ZERO.toUint256())
         )
     }
 }
