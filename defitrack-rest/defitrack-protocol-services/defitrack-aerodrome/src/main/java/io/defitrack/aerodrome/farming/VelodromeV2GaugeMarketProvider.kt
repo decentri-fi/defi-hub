@@ -1,0 +1,86 @@
+package io.defitrack.aerodrome.farming
+
+import io.defitrack.aerodrome.pooling.AerodromePoolingMarketProvider
+import io.defitrack.common.network.Network
+import io.defitrack.common.utils.Refreshable
+import io.defitrack.market.farming.FarmingMarketProvider
+import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.protocol.ContractType
+import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.contract.VelodromeV2GaugeContract
+import io.defitrack.protocol.contract.VoterContract
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import org.springframework.stereotype.Service
+
+@Service
+class VelodromeV2GaugeMarketProvider(
+    private val poolingMarketProvider: AerodromePoolingMarketProvider
+) : FarmingMarketProvider() {
+
+    val voter = "0x16613524e02ad97edfef371bc883f2f5d6c480a5"
+
+    val voterContract by lazy {
+        runBlocking {
+            VoterContract(
+                getBlockchainGateway(),
+                voter
+            )
+        }
+    }
+
+    override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
+        poolingMarketProvider.getMarkets().forEach {
+            val gauge = voterContract.gauges(it.address)
+
+            launch {
+                throttled {
+                    if (gauge != "0x0000000000000000000000000000000000000000") {
+                        try {
+                            val contract = VelodromeV2GaugeContract(
+                                getBlockchainGateway(),
+                                gauge
+                            )
+
+                            val stakedToken = getToken(contract.stakedToken())
+                            val rewardToken = getToken(contract.rewardToken())
+
+                            val market = create(
+                                name = stakedToken.name + " Gauge V2",
+                                identifier = stakedToken.symbol + "-v1-${gauge}",
+                                farmType = ContractType.LIQUIDITY_MINING,
+                                rewardTokens = listOf(rewardToken.toFungibleToken()),
+                                marketSize = Refreshable.refreshable {
+                                    getMarketSize(
+                                        stakedToken.toFungibleToken(),
+                                        contract.address
+                                    )
+                                },
+                                stakedToken = stakedToken.toFungibleToken(),
+                                vaultType = "velodrome-gauge",
+                                balanceFetcher = defaultPositionFetcher(gauge),
+                                rewardsFinished = false,
+                                metadata = mapOf("address" to gauge,
+                                    "contract" to contract)
+                            )
+
+                            send(market)
+                        } catch (ex: Exception) {
+                            logger.error("Failed to fetch gauge market with pooling market {}", it.address, ex)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    override fun getProtocol(): Protocol {
+        return Protocol.AERODROME
+    }
+
+    override fun getNetwork(): Network {
+        return Network.BASE
+    }
+}
