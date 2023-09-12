@@ -4,6 +4,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.evm.abi.AbiDecoder
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.multicall.MultiCallV1Caller
+import io.defitrack.evm.contract.multicall.MultiCallV2Caller
 import io.ktor.client.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -21,7 +22,7 @@ class OptimismContractAccessorConfig(
         return BlockchainGateway(
             abiDecoder,
             Network.OPTIMISM,
-            MultiCallV1Caller("0xaFE0A0302134df664f0EE212609CA8Fb89255BE4"),
+            MultiCallV2Caller("0x054FfF7ee30953DdB739458e11EAAd51224343a1"),
             httpClient,
             endpoint
         )
