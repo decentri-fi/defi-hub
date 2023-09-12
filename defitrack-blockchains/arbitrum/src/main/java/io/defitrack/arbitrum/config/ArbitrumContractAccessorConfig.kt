@@ -4,6 +4,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.evm.abi.AbiDecoder
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.multicall.MultiCallV1Caller
+import io.defitrack.evm.contract.multicall.MultiCallV2Caller
 import io.ktor.client.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -21,7 +22,7 @@ class ArbitrumContractAccessorConfig(
         return BlockchainGateway(
             abiDecoder,
             Network.ARBITRUM,
-            MultiCallV1Caller("0x2d7aca3bD909bc5DC6DC70894669Adfb6483Bf5F"),
+            MultiCallV2Caller("0x5B2bAa4d451916cec20a3a4ECe2A6c30c1F09a62"),
             httpClient,
             endpoint
         )
