@@ -4,7 +4,7 @@ package io.defitrack.ethereum.config
 import io.defitrack.common.network.Network
 import io.defitrack.evm.abi.AbiDecoder
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.multicall.MultiCallV1Caller
+import io.defitrack.evm.contract.multicall.MultiCallV2Caller
 import io.ktor.client.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -22,7 +22,7 @@ class EthereumContractAccessorConfig(
         return BlockchainGateway(
             abiDecoder,
             Network.ETHEREUM,
-            MultiCallV1Caller("0xeefba1e63905ef1d7acba5a8513c70307c1ce441"),
+            MultiCallV2Caller("0x8896D23AfEA159a5e9b72C9Eb3DC4E2684A38EA3"),
             httpClient,
             endpoint
         )
