@@ -23,7 +23,7 @@ class DefaultLendingPositionProvider(
                 }
             ).mapIndexed { index, retVal ->
                 val market = markets[index]
-                val balance = market.positionFetcher!!.extractBalance(retVal)
+                val balance = market.positionFetcher!!.extractBalance(retVal.data)
 
                 if (balance.underlyingAmount > BigInteger.ONE) {
                     LendingPosition(

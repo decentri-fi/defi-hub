@@ -38,7 +38,7 @@ class DefaultClaimableRewardProvider(
                         }
                     ).mapIndexed { index, retVal ->
                         val market = entry.value[index]
-                        val earned = market.claimableRewardFetcher!!.extract(retVal)
+                        val earned = market.claimableRewardFetcher!!.extract(retVal.data)
 
                         if (earned > BigInteger.ONE) {
                             Claimable(

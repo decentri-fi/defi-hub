@@ -7,7 +7,7 @@ import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.bancor.BancorEthereumProvider
 import io.defitrack.protocol.bancor.contract.BancorNetworkContract
-import io.defitrack.protocol.bancor.contract.BancorPoolCollection
+import io.defitrack.protocol.bancor.contract.BancorPoolCollectionContract
 import io.defitrack.protocol.bancor.contract.PoolTokenContract
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
@@ -25,9 +25,9 @@ class BancorEthereumPoolingMarketProvider(
         return Protocol.BANCOR
     }
 
-    val bancorPoolCollection by lazy {
+    val bancorPoolCollectionContract by lazy {
         runBlocking {
-            BancorPoolCollection(
+            BancorPoolCollectionContract(
                 getBlockchainGateway(),
                 bancorEthreumProvider.bancorPoolCollection
             )
@@ -52,7 +52,7 @@ class BancorEthereumPoolingMarketProvider(
     }
 
     override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
-        bancorPoolCollection.allPools().map { pool ->
+        bancorPoolCollectionContract.allPools().map { pool ->
             async {
                 try {
                     val token = getToken(pool)

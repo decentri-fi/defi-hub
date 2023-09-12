@@ -69,7 +69,7 @@ class CompoundBorrowingService(
                 )
             }
         ).mapIndexed { index, retVal ->
-            val balance = retVal[0].value as BigInteger
+            val balance = retVal.data[0].value as BigInteger
             if (balance > BigInteger.ZERO) {
                 val compoundTokenContract = tokenContracts[index]
                 val underlying = compoundTokenContract.underlyingAddress().let { tokenAddress ->

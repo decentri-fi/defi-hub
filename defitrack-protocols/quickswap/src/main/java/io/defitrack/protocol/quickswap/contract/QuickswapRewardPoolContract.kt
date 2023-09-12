@@ -39,11 +39,11 @@ class QuickswapRewardPoolContract(
     }
 
     suspend fun rewardsTokenAddress(): String {
-        return readWithAboi("rewardsToken")
+        return readSingle("rewardsToken", address())
     }
 
     suspend fun rewardRate(): BigInteger {
-        return readWithAboi("rewardRate")
+        return readSingle("rewardRate", address())
     }
 
     fun getRewardFunction(): Function {

@@ -65,9 +65,9 @@ class MiniChefV2Contract(
         )
         return results.map { retVal ->
             MinichefPoolInfo(
-                retVal[0].value as BigInteger,
-                retVal[1].value as BigInteger,
-                retVal[2].value as BigInteger,
+                retVal.data[0].value as BigInteger,
+                retVal.data[1].value as BigInteger,
+                retVal.data[2].value as BigInteger,
             )
         }
     }
@@ -93,7 +93,7 @@ class MiniChefV2Contract(
         }
         val results = blockchainGateway.readMultiCall(multicalls)
         results.map { retVal ->
-            retVal[0].value as String
+            retVal.data[0].value as String
         }
     }
 

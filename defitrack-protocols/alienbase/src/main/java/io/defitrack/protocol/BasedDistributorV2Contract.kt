@@ -7,7 +7,6 @@ import io.defitrack.abi.TypeUtils.Companion.uint16
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.contract.multicall.MultiCallElement
 import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
 
@@ -29,50 +28,45 @@ class BasedDistributorV2Contract(
     }
 
     suspend fun poolInfos(): List<PoolInfo> {
-        val multicalls = (0 until poolLength()).map { poolIndex ->
-            MultiCallElement(
-                createFunction(
-                    "poolInfo",
-                    inputs = listOf(poolIndex.toBigInteger().toUint256()),
-                    outputs = listOf(
-                        TypeUtils.address(),
-                        uint256(),
-                        uint256(),
-                        uint256(),
-                        uint16(),
-                        uint256(),
-                        uint256(),
-                    )
-                ),
-                this.address
+        val functions = (0 until poolLength()).map { poolIndex ->
+            createFunction(
+                "poolInfo",
+                inputs = listOf(poolIndex.toBigInteger().toUint256()),
+                outputs = listOf(
+                    TypeUtils.address(),
+                    uint256(),
+                    uint256(),
+                    uint256(),
+                    uint16(),
+                    uint256(),
+                    uint256(),
+                )
             )
         }
-        val results = blockchainGateway.readMultiCall(
-            multicalls
-        )
+        val results = readMultiCall(functions)
         return results.map { retVal ->
             PoolInfo(
-                retVal[0].value as String,
-                retVal[1].value as BigInteger,
-                retVal[2].value as BigInteger,
-                retVal[3].value as BigInteger,
-                retVal[4].value as BigInteger,
-                retVal[5].value as BigInteger,
-                retVal[6].value as BigInteger,
+                retVal.data[0].value as String,
+                retVal.data[1].value as BigInteger,
+                retVal.data[2].value as BigInteger,
+                retVal.data[3].value as BigInteger,
+                retVal.data[4].value as BigInteger,
+                retVal.data[5].value as BigInteger,
+                retVal.data[6].value as BigInteger,
             )
         }
     }
 
     fun claimFunction(poolid: Int): Function {
         return createFunction(
-            "deposit",
+            method = "deposit",
             inputs = listOf(poolid.toBigInteger().toUint256(), BigInteger.ZERO.toUint256()),
         )
     }
 
     fun pendingFunction(poolId: Int, user: String): Function {
         return createFunction(
-            "pendingTokens",
+            method = "pendingTokens",
             inputs = listOf(poolId.toBigInteger().toUint256(), user.toAddress()),
             outputs = listOf(
                 uint256(),
@@ -82,7 +76,7 @@ class BasedDistributorV2Contract(
 
     fun userInfoFunction(user: String, poolIndex: Int): Function {
         return createFunction(
-            "userInfo",
+            method = "userInfo",
             inputs = listOf(poolIndex.toBigInteger().toUint256(), user.toAddress()),
             outputs = listOf(
                 uint256(),

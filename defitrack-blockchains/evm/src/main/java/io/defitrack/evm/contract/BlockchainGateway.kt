@@ -14,6 +14,7 @@ import io.defitrack.evm.abi.AbiDecoder
 import io.defitrack.evm.abi.domain.AbiContractFunction
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.evm.contract.multicall.MultiCallCaller
+import io.defitrack.evm.contract.multicall.MultiCallResult
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -58,7 +59,7 @@ open class BlockchainGateway(
 
     suspend fun readMultiCall(
         elements: List<MultiCallElement>,
-    ): List<List<Type<*>>> {
+    ): List<MultiCallResult> {
         return multicallCaller.readMultiCall(elements) { address, function ->
             executeCall(address, function)
         }

@@ -1,5 +1,6 @@
 package io.defitrack.staking
 
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.market.farming.FarmingPositionProvider
 import io.defitrack.market.farming.domain.FarmingPosition
@@ -13,19 +14,18 @@ class VeVeloStakingPositionProvider(
     private val veVeloStakingMarketProvider: VeVeloStakingMarketProvider
 ) : FarmingPositionProvider() {
 
-    val veVeloContract by lazy {
-        runBlocking {
-            VeVeloContract(
-                veVeloStakingMarketProvider.getBlockchainGateway(),
-                veVeloStakingMarketProvider.veVelo
-            )
-        }
+    val deferredVeVeloContract = lazyAsync {
+        VeVeloContract(
+            veVeloStakingMarketProvider.getBlockchainGateway(),
+            veVeloStakingMarketProvider.veVelo
+        )
     }
 
     override suspend fun getStakings(protocol: String, address: String): List<FarmingPosition> {
-        val tokensIds = veVeloContract.getTokenIdsForOwner(address)
+        val contract = deferredVeVeloContract.await()
+        val tokensIds = contract.getTokenIdsForOwner(address)
         val results = veVeloStakingMarketProvider.getBlockchainGateway().readMultiCall(
-            tokensIds.map { veVeloContract.lockedFn(it) }.map {
+            tokensIds.map { contract.lockedFn(it) }.map {
                 MultiCallElement(it, veVeloStakingMarketProvider.veVelo)
             }
         )
@@ -33,8 +33,8 @@ class VeVeloStakingPositionProvider(
         return results.map {
             create(
                 veVeloStakingMarketProvider.getMarkets().first(),
-                it[0].value as BigInteger,
-                it[0].value as BigInteger, //[1] is unlock itme
+                it.data[0].value as BigInteger,
+                it.data[0].value as BigInteger, //[1] is unlock itme
             )
         }
     }

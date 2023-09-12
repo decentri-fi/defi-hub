@@ -3,9 +3,10 @@ package io.defitrack.protocol.contract
 import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
+import io.defitrack.abi.TypeUtils.Companion.uint128
+import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
-import io.defitrack.evm.contract.multicall.MultiCallElement
 import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
 
@@ -17,20 +18,17 @@ class VeVeloContract(
 
     suspend fun getTokenIdsForOwner(owner: String): List<BigInteger> {
         val balance = balanceOf(owner)
-        return blockchainGateway.readMultiCall(
+        return readMultiCall(
             (0 until balance.toInt()).map { index ->
-                MultiCallElement(
                     createFunction(
                         "tokenOfOwnerByIndex",
                         inputs = listOf(owner.toAddress(), index.toBigInteger().toUint256()),
                         outputs = listOf(
-                            TypeUtils.uint256(),
+                            uint256(),
                         )
-                    ),
-                    address
-                )
+                    )
             }).map {
-            it[0].value as BigInteger
+            it.data[0].value as BigInteger
         }
     }
 
@@ -39,8 +37,8 @@ class VeVeloContract(
             "locked",
             listOf(tokenIndex.toUint256()),
             listOf(
-                TypeUtils.uint128(),
-                TypeUtils.uint256(),
+                uint128(),
+                uint256(),
             )
         )
     }

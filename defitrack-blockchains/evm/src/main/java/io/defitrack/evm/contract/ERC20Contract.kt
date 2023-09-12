@@ -4,6 +4,7 @@ import io.defitrack.abi.TypeUtils.Companion.string
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
+import io.defitrack.evm.contract.multicall.MultiCallResult
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.web3j.abi.datatypes.Function
@@ -45,7 +46,7 @@ open class ERC20Contract(
         }
     }
 
-    suspend fun readData(): List<List<Type<*>>> {
+    suspend fun readData(): List<MultiCallResult> {
         return readMultiCall(
             listOf(
                 createFunction("name", outputs = listOf(string())),

@@ -4,6 +4,7 @@ import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.bool
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC721Contract
 import io.defitrack.evm.contract.multicall.MultiCallElement
@@ -21,10 +22,7 @@ class QidaoVaultContract(
 ) {
 
     suspend fun vaultCount(): BigInteger {
-        return readWithoutAbi(
-            method = "vaultCount",
-            outputs = listOf(uint256())
-        )[0].value as BigInteger
+        return readSingle("vaultCount", uint256())
     }
 
     suspend fun exists(vaultId: BigInteger): Boolean {
@@ -63,16 +61,12 @@ class QidaoVaultContract(
     }
 
     suspend fun getVaults(user: String): List<Int> {
-        return blockchainGateway.readMultiCall(
-            existingVaults.map {
+        return readMultiCall(
+            existingVaults.await().map {
                 ownerOfFunction(it.toBigInteger())
-            }.map {
-                MultiCallElement(
-                    it, address
-                )
             }
         ).mapIndexed { index, value ->
-            if ((value[0].value as String).lowercase() == user.lowercase()) {
+            if ((value.data[0].value as String).lowercase() == user.lowercase()) {
                 return@mapIndexed index
             } else {
                 return@mapIndexed null
@@ -80,23 +74,21 @@ class QidaoVaultContract(
         }.filterNotNull()
     }
 
-    private val existingVaults by lazy {
-       runBlocking {
-           (0 until vaultCount().toInt()).map {
-               async {
-                   exists(it.toBigInteger())
-               }
-           }.awaitAll().mapIndexed { index, value ->
-               if (value) {
-                   return@mapIndexed index
-               } else {
-                   return@mapIndexed null
-               }
-           }.filterNotNull()
-       }
+    private val existingVaults = lazyAsync {
+        (0 until vaultCount().toInt()).map {
+            async {
+                exists(it.toBigInteger())
+            }
+        }.awaitAll().mapIndexed { index, value ->
+            if (value) {
+                return@mapIndexed index
+            } else {
+                return@mapIndexed null
+            }
+        }.filterNotNull()
     }
 
-    fun populateVaultOwners() {
-        logger.info("populated ${existingVaults.count()} owners")
+    suspend fun populateVaultOwners() {
+        logger.info("populated ${existingVaults.await().count()} owners")
     }
 }

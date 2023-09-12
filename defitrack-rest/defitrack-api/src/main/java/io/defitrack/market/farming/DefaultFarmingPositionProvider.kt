@@ -35,7 +35,7 @@ class DefaultFarmingPositionProvider(
                 semaphore.withPermit {
                     async {
                         val market = markets[index]
-                        val balance = market.balanceFetcher!!.extractBalance(retVal)
+                        val balance = market.balanceFetcher!!.extractBalance(retVal.data)
 
                         if (balance.underlyingAmount > BigInteger.ONE) {
                             FarmingPosition(

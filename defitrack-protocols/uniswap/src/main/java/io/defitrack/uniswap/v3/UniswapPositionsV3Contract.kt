@@ -6,8 +6,6 @@ import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.contract.multicall.MultiCallElement
-import io.defitrack.evm.contract.toMultiCall
 import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.Type
 import java.math.BigInteger
@@ -21,12 +19,12 @@ class UniswapPositionsV3Contract(
     suspend fun getUserPositions(owner: String): List<UniswapPosition> {
         val balance = balanceOf(owner).toInt()
         val tokensOfOwner = getTokensOfOwner(balance, owner)
-        return blockchainGateway.readMultiCall(
+        return readMultiCall(
             tokensOfOwner.map {
-                getPosition(it.toInt()).toMultiCall(address)
+                getPosition(it.toInt())
             }
         ).map {
-            uniswapPosition(it)
+            uniswapPosition(it.data)
         }
     }
 
@@ -34,15 +32,13 @@ class UniswapPositionsV3Contract(
         balance: Int,
         owner: String
     ): List<BigInteger> {
-        val multicalls = (0 until balance).map { tokenOfOwnerByIndex(owner, it).toMultiCall(address) }
-        return blockchainGateway.readMultiCall(
-            multicalls
-        ).map {
-            it[0].value as BigInteger
+        val functions = (0 until balance).map { tokenOfOwnerByIndex(owner, it) }
+        return readMultiCall(functions).map {
+            it.data[0].value as BigInteger
         }
     }
 
-    suspend fun tokenOfOwnerByIndex(owner: String, index: Int): Function {
+    fun tokenOfOwnerByIndex(owner: String, index: Int): Function {
         return createFunction(
             "tokenOfOwnerByIndex",
             listOf(owner.toAddress(), index.toBigInteger().toUint256()),

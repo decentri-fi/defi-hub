@@ -20,17 +20,14 @@ class AlgebraPositionsV2Contract(
     blockchainGateway, "", address
 ) {
 
-
     suspend fun getUserPositions(owner: String): List<AlgebraPosition> {
         val balance = balanceOf(owner).toInt()
-        return blockchainGateway.readMultiCall(
+        return readMultiCall(
             (0 until balance).map { tokenOfOwnerByIndex(owner, it) }.map {
                 getPosition(it.toInt())
-            }.map {
-                MultiCallElement(it, address)
             }
         ).map {
-            algebraPosition(it)
+            algebraPosition(it.data)
         }
     }
 
@@ -72,16 +69,12 @@ class AlgebraPositionsV2Contract(
 
     suspend fun getAllPositions(): List<AlgebraPosition> {
         val indexes = getIndexes()
-        return blockchainGateway.readMultiCall(
+        return readMultiCall(
             indexes.map {
                 getPosition(it.toInt())
-            }.map {
-                MultiCallElement(
-                    it, address
-                )
             }
         ).map {
-            algebraPosition(it)
+            algebraPosition(it.data)
         }
     }
 
@@ -102,16 +95,12 @@ class AlgebraPositionsV2Contract(
     }
 
     suspend fun getIndexes(): List<BigInteger> {
-        return blockchainGateway.readMultiCall(
+        return readMultiCall(
             (0 until totalSupply().toInt()).map {
                 tokenByIndex(it)
-            }.map {
-                MultiCallElement(
-                    it, address
-                )
             }
         ).map {
-            it[0].value as BigInteger
+            it.data[0].value as BigInteger
         }
     }
 

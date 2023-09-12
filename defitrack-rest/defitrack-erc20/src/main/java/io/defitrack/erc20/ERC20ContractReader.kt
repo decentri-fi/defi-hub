@@ -32,12 +32,12 @@ class ERC20ContractReader(
                 try {
                     val result = it.readData()
                     ERC20(
-                        name = result[0].first().value as String,
-                        symbol = result[1].first().value as String,
-                        decimals = (result[2].first().value as BigInteger).toInt(),
+                        name = result[0].data.first().value as String,
+                        symbol = result[1].data.first().value as String,
+                        decimals = (result[2].data.first().value as BigInteger).toInt(),
                         network = network,
                         address = correctAddress.lowercase(),
-                        totalSupply = result[3].first().value as BigInteger,
+                        totalSupply = result[3].data.first().value as BigInteger,
                     )
                 } catch (ex: Exception) {
                     logger.debug("Unable to do it in a single call for token ${address} on network ${network.name}")

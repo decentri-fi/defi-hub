@@ -1,23 +1,15 @@
 package io.defitrack.protocol.compound.v3.contract
 
 import io.defitrack.abi.TypeUtils
-import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.toUint8
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
-import io.defitrack.evm.contract.multicall.MultiCallElement
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
-import org.web3j.abi.datatypes.DynamicBytes
-import org.web3j.abi.datatypes.DynamicStruct
 import org.web3j.abi.datatypes.StaticStruct
 import org.web3j.abi.datatypes.generated.Uint128
-import org.web3j.abi.datatypes.generated.Uint256
 import org.web3j.abi.datatypes.generated.Uint64
 import org.web3j.abi.datatypes.generated.Uint8
-import org.web3j.tuples.Tuple
-import org.web3j.tuples.generated.Tuple1
-import org.web3j.tuples.generated.Tuple8
 import java.math.BigInteger
 
 class CompoundV3AssetContract(
@@ -49,25 +41,20 @@ class CompoundV3AssetContract(
     }
 
     suspend fun getAssetInfos(): List<AssetInfo> {
-        val multicalls = (0 until numAssets().toInt()).map { assetIndex ->
-            MultiCallElement(
-                createFunction(
-                    "getAssetInfo",
-                    inputs = listOf(assetIndex.toBigInteger().toUint8()),
-                    outputs = listOf(
-                        object: TypeReference<AssetInfo>() {},
-                    ),
+        val functions = (0 until numAssets().toInt()).map { assetIndex ->
+            createFunction(
+                "getAssetInfo",
+                inputs = listOf(assetIndex.toBigInteger().toUint8()),
+                outputs = listOf(
+                    object : TypeReference<AssetInfo>() {},
                 ),
-                this.address
             )
         }
 
-        val results = this.blockchainGateway.readMultiCall(
-            multicalls
-        )
+        val results = this.readMultiCall(functions)
 
         return results.map {
-            it[0] as AssetInfo
+            it.data[0] as AssetInfo
         }
     }
 

@@ -113,7 +113,11 @@ class DecentrifiERC20Resource(
                 )
             }).map {
                 try {
-                    it[0].value as BigInteger
+                    if (!it.success) {
+                        BigInteger.ZERO
+                    } else {
+                        it.data[0].value as BigInteger
+                    }
                 } catch (_: Exception) {
                     BigInteger.ZERO
                 }

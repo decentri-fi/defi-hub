@@ -55,29 +55,23 @@ class MasterchefV2Contract(
     }
 
     suspend fun poolInfos(): List<MasterChefV2PoolInfo> {
-        val multicalls = (0 until poolLength()).map { poolIndex ->
-            MultiCallElement(
-                createFunction(
-                    "poolInfo",
-                    inputs = listOf(poolIndex.toBigInteger().toUint256()),
-                    outputs = listOf(
-                        uint128(),
-                        uint64(),
-                        uint64()
-                    )
-                ),
-                this.address
+        val functions = (0 until poolLength()).map { poolIndex ->
+            createFunction(
+                "poolInfo",
+                inputs = listOf(poolIndex.toBigInteger().toUint256()),
+                outputs = listOf(
+                    uint128(),
+                    uint64(),
+                    uint64()
+                )
             )
         }
 
-        val results = this.blockchainGateway.readMultiCall(
-            multicalls
-        )
-        return results.map { retVal ->
+        return this.readMultiCall(functions).map { retVal ->
             MasterChefV2PoolInfo(
-                retVal[0].value as BigInteger,
-                retVal[1].value as BigInteger,
-                retVal[2].value as BigInteger,
+                retVal.data[0].value as BigInteger,
+                retVal.data[1].value as BigInteger,
+                retVal.data[2].value as BigInteger,
             )
         }
     }

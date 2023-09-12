@@ -1,11 +1,11 @@
 package io.defitrack.protocol.contract
 
 import io.defitrack.abi.TypeUtils
+import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.contract.multicall.MultiCallElement
 import java.math.BigInteger
 
 class PoolFactoryContract(
@@ -15,30 +15,19 @@ class PoolFactoryContract(
     blockchainGateway, "", contractAddress
 ) {
     suspend fun allPairsLength(): BigInteger {
-        return readWithoutAbi(
-            "allPoolsLength",
-            outputs = listOf(uint256())
-        )[0].value as BigInteger
+        return readSingle("allPoolsLength", uint256())
     }
 
     suspend fun allPools(): List<String> {
-        val multicalls = (0 until allPairsLength().toInt()).map { poolIndex ->
-            MultiCallElement(
-                createFunction(
-                    "allPools",
-                    inputs = listOf(poolIndex.toBigInteger().toUint256()),
-                    outputs = listOf(
-                        TypeUtils.address(),
-                    )
-                ),
-                this.address
+        val functions = (0 until allPairsLength().toInt()).map { poolIndex ->
+            createFunction(
+                "allPools",
+                inputs = listOf(poolIndex.toBigInteger().toUint256()),
+                outputs = listOf(address(),)
             )
         }
 
-        val results = this.blockchainGateway.readMultiCall(
-            multicalls
-        )
-        return results.map { it[0].value as String }
+        val results = readMultiCall(functions)
+        return results.map { it.data[0].value as String }
     }
-
 }

@@ -77,10 +77,10 @@ class MasterChefBasedContract(
         )
         return results.map { retVal ->
             MasterChefPoolInfo(
-                retVal[0].value as String,
-                retVal[1].value as BigInteger,
-                retVal[2].value as BigInteger,
-                retVal[3].value as BigInteger,
+                retVal.data[0].value as String,
+                retVal.data[1].value as BigInteger,
+                retVal.data[2].value as BigInteger,
+                retVal.data[3].value as BigInteger,
             )
         }
     }

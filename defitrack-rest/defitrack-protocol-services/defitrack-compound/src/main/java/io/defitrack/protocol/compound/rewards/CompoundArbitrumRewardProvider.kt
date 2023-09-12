@@ -3,7 +3,7 @@ package io.defitrack.protocol.compound.rewards
 import io.defitrack.claimable.Claimable
 import io.defitrack.claimable.ClaimableRewardProvider
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.toMultiCall
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.network.toVO
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.compound.CompoundAddressesProvider
@@ -16,24 +16,25 @@ import java.math.BigInteger
 class CompoundArbitrumRewardProvider(
 ) : ClaimableRewardProvider() {
 
-    val contract by lazy {
+    val deferredContract = lazyAsync {
         CompoundRewardContract(getBlockchainGateway(), CompoundAddressesProvider.CONFIG[getNetwork()]!!.rewards)
     }
 
     override suspend fun claimables(address: String): List<Claimable> {
+        val contract = deferredContract.await()
         val markets = CompoundAddressesProvider.CONFIG[getNetwork()]!!.v3Tokens
 
-        val results = getBlockchainGateway().readMultiCall(
+        val results = contract.readMultiCall(
             markets.map { cTokenAddress ->
-                contract.getRewardOwedFn(cTokenAddress, address).toMultiCall(contract.address)
+                contract.getRewardOwedFn(cTokenAddress, address)
             }
         )
 
         return results.mapIndexed { index, result ->
-            val positionSize = result[1].value as BigInteger
+            val positionSize = result.data[1].value as BigInteger
             if (positionSize > BigInteger.ZERO) {
 
-                val rewardToken = result[0].value as String
+                val rewardToken = result.data[0].value as String
 
                 val market = markets[index]
 

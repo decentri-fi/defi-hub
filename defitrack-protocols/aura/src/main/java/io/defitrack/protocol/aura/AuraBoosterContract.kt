@@ -16,43 +16,33 @@ class AuraBoosterContract(
 ) {
 
     suspend fun poolLength(): Int {
-        return (readWithoutAbi(
-            "poolLength",
-            outputs = listOf(uint256())
-        )[0].value as BigInteger).toInt()
+        return readSingle<BigInteger>("poolLength", uint256()).toInt()
     }
 
-
     suspend fun poolInfos(): List<PoolInfo> {
-        val multicalls = (0 until poolLength()).map { poolIndex ->
-            MultiCallElement(
-                createFunction(
-                    "poolInfo",
-                    inputs = listOf(poolIndex.toBigInteger().toUint256()),
-                    outputs = listOf(
-                        address(),
-                        address(),
-                        address(),
-                        address(),
-                        address(),
-                        bool(),
-                    )
-                ),
-                this.address
+        val functions = (0 until poolLength()).map { poolIndex ->
+            createFunction(
+                "poolInfo",
+                inputs = listOf(poolIndex.toBigInteger().toUint256()),
+                outputs = listOf(
+                    address(),
+                    address(),
+                    address(),
+                    address(),
+                    address(),
+                    bool(),
+                )
             )
         }
 
-        val results = this.blockchainGateway.readMultiCall(
-            multicalls
-        )
-        return results.map { retVal ->
+        return readMultiCall(functions).map { retVal ->
             PoolInfo(
-                retVal[0].value as String,
-                retVal[1].value as String,
-                retVal[2].value as String,
-                retVal[3].value as String,
-                retVal[4].value as String,
-                retVal[5].value as Boolean,
+                retVal.data[0].value as String,
+                retVal.data[1].value as String,
+                retVal.data[2].value as String,
+                retVal.data[3].value as String,
+                retVal.data[4].value as String,
+                retVal.data[5].value as Boolean,
             )
         }
     }

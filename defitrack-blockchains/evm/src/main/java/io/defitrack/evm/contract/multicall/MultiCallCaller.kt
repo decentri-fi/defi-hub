@@ -8,5 +8,5 @@ interface MultiCallCaller {
     suspend fun readMultiCall(
         elements: List<MultiCallElement>,
         executeCall: suspend (address: String, function: Function) -> List<Type<*>>
-    ): List<List<Type<*>>>
+    ): List<MultiCallResult>
 }

@@ -14,7 +14,10 @@ import org.web3j.abi.datatypes.generated.Uint256
 
 class MultiCallV1Caller(val address: String) : MultiCallCaller {
 
-    override suspend fun readMultiCall(elements: List<MultiCallElement>, executeCall: suspend (address: String, function: Function) -> List<Type<*>>): List<List<Type<*>>> {
+    override suspend fun readMultiCall(
+        elements: List<MultiCallElement>,
+        executeCall: suspend (address: String, function: Function) -> List<Type<*>>
+    ): List<MultiCallResult> {
         if (elements.isEmpty()) {
             return emptyList()
         } else if (elements.size > 500) {
@@ -30,7 +33,7 @@ class MultiCallV1Caller(val address: String) : MultiCallCaller {
             )
         }
 
-        val aggregateFunction = org.web3j.abi.datatypes.Function(
+        val aggregateFunction = Function(
             "aggregate",
             listOf(
                 DynamicArray(
@@ -43,12 +46,18 @@ class MultiCallV1Caller(val address: String) : MultiCallCaller {
 
         val executeCall = executeCall(address, aggregateFunction)
         if (executeCall.isEmpty()) {
-            println("empty multicall")
+            println("empty multicall, it failed")
+            return elements.map {
+                MultiCallResult(false, emptyList())
+            }
         }
         val data = executeCall[1].value as List<DynamicBytes>
         return data.map {
             val element = elements[data.indexOf(it)]
-            FunctionReturnDecoder.decode(Hex.encodeHexString(it.value), element.function.outputParameters)
+            MultiCallResult(
+                true,
+                FunctionReturnDecoder.decode(Hex.encodeHexString(it.value), element.function.outputParameters)
+            )
         }
     }
 

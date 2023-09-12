@@ -1,6 +1,7 @@
 package io.defitrack.evm.contract
 
 import io.defitrack.evm.contract.multicall.MultiCallElement
+import io.defitrack.evm.contract.multicall.MultiCallResult
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.Type
@@ -46,7 +47,7 @@ abstract class EvmContract(
 
     suspend fun readMultiCall(
         functions: List<Function>
-    ): List<List<Type<*>>> {
+    ): List<MultiCallResult> {
         return blockchainGateway.readMultiCall(
             functions.map {
                 MultiCallElement(
@@ -93,13 +94,5 @@ abstract class EvmContract(
             outputs = listOf(output)
         )[0].value as T
     }
-
-
-    suspend inline fun <reified T : Any> readWithAboi(function: String): T {
-        return readWithAbi(function)[0].value as T
-    }
 }
 
-fun Function.toMultiCall(contractAddress: String): MultiCallElement {
-    return MultiCallElement(this, contractAddress)
-}

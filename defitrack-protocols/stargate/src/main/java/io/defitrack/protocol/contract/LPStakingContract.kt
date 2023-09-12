@@ -32,32 +32,25 @@ class LPStakingContract(
     }
 
     suspend fun poolInfos(): List<PoolInfo> {
-
-        val multicalls = (0 until poolLength()).map { poolIndex ->
-            MultiCallElement(
-                createFunction(
-                    "poolInfo",
-                    inputs = listOf(poolIndex.toBigInteger().toUint256()),
-                    outputs = listOf(
-                        address(),
-                        uint256(),
-                        uint256(),
-                        uint256()
-                    )
-                ),
-                this.address
+        val functions = (0 until poolLength()).map { poolIndex ->
+            createFunction(
+                "poolInfo",
+                inputs = listOf(poolIndex.toBigInteger().toUint256()),
+                outputs = listOf(
+                    address(),
+                    uint256(),
+                    uint256(),
+                    uint256()
+                )
             )
         }
 
-        val results = this.blockchainGateway.readMultiCall(
-            multicalls
-        )
-        return results.map { retVal ->
+        return readMultiCall(functions).map { retVal ->
             PoolInfo(
-                retVal[0].value as String,
-                retVal[1].value as BigInteger,
-                retVal[2].value as BigInteger,
-                retVal[3].value as BigInteger,
+                retVal.data[0].value as String,
+                retVal.data[1].value as BigInteger,
+                retVal.data[2].value as BigInteger,
+                retVal.data[3].value as BigInteger,
             )
         }
     }

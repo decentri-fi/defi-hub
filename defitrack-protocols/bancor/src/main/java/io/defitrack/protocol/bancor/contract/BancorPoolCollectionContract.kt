@@ -4,12 +4,11 @@ import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.contract.multicall.MultiCallElement
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.DynamicArray
 
-class BancorPoolCollection(
+class BancorPoolCollectionContract(
     blockchainGateway: BlockchainGateway, address: String
 ) : EvmContract(
     blockchainGateway, "", address
@@ -28,23 +27,17 @@ class BancorPoolCollection(
     }
 
     suspend fun allPools(): List<String> {
-        val multicalls = allTokens().map { token ->
-            MultiCallElement(
-                createFunction(
-                    "poolToken",
-                    inputs = listOf(token.toAddress()),
-                    outputs = listOf(
-                        TypeUtils.address(),
-                    )
-                ),
-                this.address
+        val functions = allTokens().map { token ->
+            createFunction(
+                "poolToken",
+                inputs = listOf(token.toAddress()),
+                outputs = listOf(TypeUtils.address())
             )
         }
 
-        val results = this.blockchainGateway.readMultiCall(
-            multicalls
+        val results = this.readMultiCall(
+            functions
         )
-        return results.map { it[0].value as String }
+        return results.map { it.data[0].value as String }
     }
-
 }

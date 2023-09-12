@@ -37,7 +37,7 @@ class DefaultPoolingPositionProvider(
                             }
                         ).mapIndexed { index, retVal ->
                             val market = markets[index]
-                            val position = market.positionFetcher!!.extractBalance(retVal)
+                            val position = market.positionFetcher!!.extractBalance(retVal.data)
 
                             if (position.underlyingAmount > BigInteger.ONE) {
                                 PoolingPosition(

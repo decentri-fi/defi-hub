@@ -18,11 +18,9 @@ open class BalancerGaugeContract(
 
 
     fun exitPosition(amount: BigInteger): Function {
-        return Function(
+        return createFunction(
             "withdraw",
-            listOf(
-                amount.toUint256()
-            ),
+            listOf(amount.toUint256()),
             listOf()
         )
     }
@@ -47,18 +45,15 @@ open class BalancerGaugeContract(
     }
 
     suspend fun getBalances(user: String, rewardTokens: List<FungibleToken>): List<BalancerGaugeBalance> {
-        return blockchainGateway.readMultiCall(
+        return readMultiCall(
             rewardTokens.map { token ->
-                MultiCallElement(
-                    getClaimableRewardFunction(user, token.address),
-                    this.address
-                )
+                getClaimableRewardFunction(user, token.address)
             }
         ).mapIndexed { index, retVal ->
             val token = rewardTokens[index]
             BalancerGaugeBalance(
                 token = token,
-                retVal[0].value as BigInteger
+                retVal.data[0].value as BigInteger
             )
         }
     }
@@ -93,10 +88,6 @@ open class BalancerGaugeContract(
     }
 
     suspend fun getStakedToken(): String {
-        return readWithoutAbi(
-            "lp_token",
-            listOf(),
-            listOf(address())
-        )[0].value as String
+        return readSingle("lp_token", address())
     }
 }

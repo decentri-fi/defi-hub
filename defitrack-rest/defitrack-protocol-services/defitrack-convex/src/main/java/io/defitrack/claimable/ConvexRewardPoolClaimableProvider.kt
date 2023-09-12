@@ -29,7 +29,7 @@ class ConvexRewardPoolClaimableProvider(
                 )
             }
         ).mapIndexed { index, retVal ->
-            val amount = retVal[0].value as BigInteger
+            val amount = retVal.data[0].value as BigInteger
             if (amount > BigInteger.ZERO) {
                 val market = markets[index]
                 val contract = market.metadata["contract"] as CvxRewardPoolContract

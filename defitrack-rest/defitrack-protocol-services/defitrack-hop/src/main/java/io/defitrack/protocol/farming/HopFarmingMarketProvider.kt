@@ -1,16 +1,19 @@
 package io.defitrack.protocol.farming
 
+import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
+import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.HopService
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.contract.HopStakingRewardContract
+import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
@@ -34,35 +37,47 @@ abstract class HopFarmingMarketProvider(
 
     private suspend fun toStakingMarket(stakingReward: String): FarmingMarket? {
         return try {
-            val stakingRewards = HopStakingRewardContract(
+            val contract = HopStakingRewardContract(
                 getBlockchainGateway(),
                 abiResource.getABI("quickswap/StakingRewards.json"),
                 stakingReward
             )
 
-            val stakedToken = getToken(stakingRewards.stakingTokenAddress())
-            val rewardToken = getToken(stakingRewards.rewardsTokenAddress())
+            val stakedToken = getToken(contract.stakingTokenAddress())
+            val rewardToken = getToken(contract.rewardsTokenAddress())
 
             return create(
-                identifier = stakingRewards.address,
+                identifier = contract.address,
                 name = "${stakedToken.name} Staking Rewards",
                 stakedToken = stakedToken.toFungibleToken(),
                 rewardTokens = listOf(rewardToken.toFungibleToken()),
                 vaultType = "hop-staking-rewards",
                 marketSize = Refreshable.refreshable {
-                    getMarketSize(stakedToken, stakingRewards)
+                    getMarketSize(stakedToken, contract)
                 },
                 balanceFetcher = PositionFetcher(
-                    address = stakingRewards.address,
+                    address = contract.address,
                     function = { user -> balanceOfFunction(user) }
                 ),
                 farmType = ContractType.LIQUIDITY_MINING,
                 metadata = mapOf(
-                    "contract" to stakingRewards
-                )
+                    "contract" to contract
+                ),
+                claimableRewardFetcher = ClaimableRewardFetcher(
+                    address = contract.address,
+                    function = { user -> contract.earnedFn(user) },
+                    preparedTransaction = { user ->
+                        PreparedTransaction(
+                            getNetwork().toVO(),
+                            contract.getRewardFn(),
+                            contract.address,
+                            user
+                        )
+                    }
+                ),
             )
         } catch (ex: Exception) {
-            ex.printStackTrace()
+            logger.info("Error while fetching staking market $stakingReward", ex)
             null
         }
     }

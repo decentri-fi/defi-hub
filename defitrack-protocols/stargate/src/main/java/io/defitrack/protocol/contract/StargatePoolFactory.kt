@@ -24,20 +24,16 @@ class StargatePoolFactory(
     }
 
     suspend fun getPools(): List<String> {
-        val multicalls = (0 until poolLength()).map { poolIndex ->
-            MultiCallElement(
-                createFunction(
-                    "allPools",
-                    inputs = listOf(poolIndex.toBigInteger().toUint256()),
-                    outputs = listOf(TypeUtils.address())
-                ),
-                this.address
+        val functions = (0 until poolLength()).map { poolIndex ->
+            createFunction(
+                "allPools",
+                inputs = listOf(poolIndex.toBigInteger().toUint256()),
+                outputs = listOf(TypeUtils.address())
             )
         }
-        val results = this.blockchainGateway.readMultiCall(multicalls)
+        val results = readMultiCall(functions)
         return results.map { retVal ->
-            retVal[0].value as String
+            retVal.data[0].value as String
         }
     }
-
 }
