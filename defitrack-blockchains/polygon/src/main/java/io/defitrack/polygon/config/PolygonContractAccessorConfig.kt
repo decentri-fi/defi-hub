@@ -4,6 +4,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.evm.abi.AbiDecoder
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.multicall.MultiCallV1Caller
+import io.defitrack.evm.contract.multicall.MultiCallV2Caller
 import io.ktor.client.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -21,7 +22,7 @@ class PolygonContractAccessorConfig(
         return BlockchainGateway(
             abiDecoder,
             Network.POLYGON,
-            MultiCallV1Caller("0x11ce4B23bD875D7F5C6a31084f55fDe1e9A87507"),
+            MultiCallV2Caller("0x4499487181455E46Fc4592a59a93508bd8dB8A6e"),
             httpClient,
             endpoint
         )
