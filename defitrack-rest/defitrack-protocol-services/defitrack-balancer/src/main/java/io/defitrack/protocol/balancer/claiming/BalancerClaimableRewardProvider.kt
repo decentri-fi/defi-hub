@@ -9,7 +9,6 @@ import io.defitrack.protocol.balancer.contract.BalancerGaugeContract
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 import java.math.BigInteger
 import java.util.*
 

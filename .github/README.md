@@ -25,6 +25,29 @@ Join us on this exhilarating quest to redefine the boundaries of defi. Together,
 
 Welcome to the Decentrifi Defi Hub, where the only limit is your imagination.
 
+## Claimables
+
+Claimables are a defi primitive that can indicate any on-chain activity that can be claimed by a user. This can be airdrops, rewards, or any other type of claimable asset. Claimables are a core primitive in the Decentrifi ecosystem, and are used to track on-chain activity for protocols and networks.
+
+### Types of Claimables
+
+| Protocol   | Name                | URL |
+|------------|---------------------|-----|
+| Convex     | Reward Pool Rewards |     |
+| Balancer   | Staking Rewards     |     |
+| Compound   | Rewards             |     |        
+| Uniswap V3 | Pooling Yield       |     |        
+| Aave       | Aave Staking        |     |        
+| Quickswap  | Quickswap Staking   |     |        
+| Quickswap  | Quickswap Staking   |     |        
+| Sushiswap  | Sushiswap Staking   |     |        
+| Aelin      | Aelin Rewards       |     |        
+| Velodrome  | Velodrome Staking   |     |        
+| Hop        | Hop Staking         |     |        
+| Alienbase  | Staking             |     |        
+| Aerodrome  |  Staking            |     |
+
+
 ## Unified DeFi Model
 
 Decentrifi takes a pioneering approach in the decentralized finance (DeFi) space by introducing a unified model that encompasses all DeFi primitives. Our mission is to streamline and consolidate the vast array of DeFi functionalities into a cohesive framework, simplifying the development and integration process for developers and integrators.
