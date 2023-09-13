@@ -11,6 +11,14 @@ enum class Protocol(
     val networks: List<Network>,
     val company: Company,
 ) {
+    BASESWAP(
+        logo = "baseswap.png",
+        slug = "baseswap",
+        primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
+        website = "https://baseswap.fi",
+        networks = listOf(Network.BASE),
+        company = Company.BASESWAP
+    ),
     ALIENBASE(
         logo = "alienbase.png",
         slug = "alienbase",

@@ -8,6 +8,10 @@ enum class Company(
         prettyName = "Alienbase",
         slug = "alienbase"
     ),
+    BASESWAP(
+        prettyName = "Baseswap",
+        slug = "baseswap"
+    ),
     AERODROME(
         prettyName = "Aerodrome",
         slug = "aerodrome"
