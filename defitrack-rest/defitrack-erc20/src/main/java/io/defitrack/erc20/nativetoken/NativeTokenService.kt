@@ -25,6 +25,15 @@ class NativeTokenService(private val logoService: LogoService) {
                 logo = nativeLogo,
                 network = network
             )
+            Network.BASE -> TokenInformation(
+                address = nullAddress,
+                name = "ETH",
+                decimals = 18,
+                symbol = "ETH",
+                type = TokenType.NATIVE,
+                logo = nativeLogo,
+                network = network
+            )
             Network.ARBITRUM -> TokenInformation(
                 address = nullAddress,
                 name = "ETH",
