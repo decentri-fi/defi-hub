@@ -10,6 +10,7 @@ import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.*
+import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
 import java.math.BigDecimal
 
@@ -21,31 +22,39 @@ class BalanceRestController(
     private val erC20Resource: ERC20Resource,
 ) {
 
+    private val log = LoggerFactory.getLogger(this::class.java)
+
     @Deprecated("use the network-specific call")
     @GetMapping("/{address}/native-balance")
     suspend fun getBalance(@PathVariable("address") address: String): List<BalanceElement> = coroutineScope {
         balanceServices.map {
             async {
-                val balance = it.getNativeBalance(address)
+                try {
+                    val balance = it.getNativeBalance(address)
 
-                if (balance > BigDecimal.ZERO) {
-                    val price = priceResource.calculatePrice(
-                        PriceRequest(
-                            "0x0", it.getNetwork(), 1.0.toBigDecimal()
+                    if (balance > BigDecimal.ZERO) {
+                        val price = priceResource.calculatePrice(
+                            PriceRequest(
+                                "0x0", it.getNetwork(), 1.0.toBigDecimal()
+                            )
                         )
-                    )
-                    BalanceElement(
-                        amount = balance.toDouble(),
-                        network = it.getNetwork().toVO(),
-                        token = erC20Resource.getTokenInformation(
-                            it.getNetwork(), "0x0"
-                        ).toFungibleToken(),
-                        dollarValue = price.times(balance.toDouble()),
-                        price = price
-                    )
-                } else {
+                        BalanceElement(
+                            amount = balance.toDouble(),
+                            network = it.getNetwork().toVO(),
+                            token = erC20Resource.getTokenInformation(
+                                it.getNetwork(), "0x0"
+                            ).toFungibleToken(),
+                            dollarValue = price.times(balance.toDouble()),
+                            price = price
+                        )
+                    } else {
+                        null
+                    }
+                } catch (ex: Exception) {
+                    log.error("Unable to fetch balance for ${it.getNetwork()}", ex)
                     null
                 }
+
             }
         }.awaitAll().filterNotNull()
     }
