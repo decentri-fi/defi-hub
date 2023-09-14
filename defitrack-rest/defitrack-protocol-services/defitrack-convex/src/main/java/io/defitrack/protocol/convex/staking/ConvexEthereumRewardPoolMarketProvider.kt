@@ -34,7 +34,7 @@ class ConvexEthereumRewardPoolMarketProvider(
             val stakingToken = getToken(it.stakingToken())
             val rewardToken = getToken(it.rewardToken())
             create(
-                name = it.name(),
+                name = "Convex Reward Pool",
                 identifier = it.address,
                 stakedToken = stakingToken.toFungibleToken(),
                 rewardTokens = listOf(rewardToken.toFungibleToken()),
