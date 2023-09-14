@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component
 
 @Component
 class HopTokenService(
-    private val abiResource: ABIResource,
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val hopService: HopService,
     private val erC20ContractReader: ERC20ContractReader,
@@ -31,7 +30,6 @@ class HopTokenService(
 
             val saddleToken = HopLpTokenContract(
                 blockchainGateway = blockchainGatewayProvider.getGateway(token.network),
-                abiResource.getABI("hop/SaddleToken.json"),
                 token.address
             )
 

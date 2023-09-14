@@ -1,7 +1,5 @@
 package io.defitrack.contract
 
-import io.defitrack.evm.web3j.RateLimiterInterceptor
-import io.defitrack.evm.web3j.SimpleRateLimiter
 import okhttp3.OkHttpClient
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -61,11 +59,6 @@ class Web3JProvider(@Value("\${io.defitrack.evm.endpoint.url}") private val endp
             builder.writeTimeout(60, TimeUnit.SECONDS)
             builder.readTimeout(60, TimeUnit.SECONDS)
             builder.callTimeout(60, TimeUnit.SECONDS)
-            builder.addInterceptor(
-                RateLimiterInterceptor(
-                    SimpleRateLimiter(10.0)
-                )
-            )
             HttpService(endpoint, false)
         }
     }

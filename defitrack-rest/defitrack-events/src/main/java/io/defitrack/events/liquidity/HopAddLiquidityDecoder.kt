@@ -45,7 +45,7 @@ class HopAddLiquidityDecoder(
 
         val contract = HopLpTokenContract(
             blockchainGatewayProvider.getGateway(network),
-            "", log.address
+            log.address
         )
 
         val amounts = addLiquidityEvent.getNonIndexedParameter(log, 0) as List<Uint256>

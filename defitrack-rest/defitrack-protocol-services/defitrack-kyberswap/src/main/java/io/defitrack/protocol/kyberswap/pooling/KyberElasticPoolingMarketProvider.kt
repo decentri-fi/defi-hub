@@ -1,6 +1,7 @@
 package io.defitrack.protocol.kyberswap.pooling
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
@@ -20,17 +21,15 @@ class KyberElasticPoolingMarketProvider(
 
 ) : PoolingMarketProvider() {
 
-    val kyberswapElastic by lazy {
-        runBlocking {
+    val kyberswapElastic = lazyAsync {
             KyberswapElasticContract(
                 getBlockchainGateway(),
                 "0xb85ebe2e4ea27526f817ff33fb55fb240057c03f"
             )
-        }
     }
 
     override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
-        kyberswapElastic.allPairs().map { poolInfo ->
+        kyberswapElastic.await().allPairs().map { poolInfo ->
             async {
                 val poolingToken = getToken(poolInfo.address)
                 val tokens = poolingToken.underlyingTokens

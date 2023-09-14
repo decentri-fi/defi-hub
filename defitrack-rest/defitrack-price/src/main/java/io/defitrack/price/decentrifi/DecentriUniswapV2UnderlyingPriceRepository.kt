@@ -27,7 +27,7 @@ class DecentriUniswapV2UnderlyingPriceRepository(
     val prices = Cache.Builder<String, List<BigDecimal>>().build()
 
     @PostConstruct
-    fun populatePrices() = runBlocking {
+    fun populatePrices() {
         Executors.newSingleThreadExecutor().submit {
             runBlocking {
                 val pools = getUniswapV2Pools()

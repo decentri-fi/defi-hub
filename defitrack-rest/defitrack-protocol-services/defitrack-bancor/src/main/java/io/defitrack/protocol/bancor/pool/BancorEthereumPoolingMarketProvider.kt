@@ -1,6 +1,7 @@
 package io.defitrack.protocol.bancor.pool
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
@@ -13,7 +14,6 @@ import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 
 @Component
@@ -25,40 +25,30 @@ class BancorEthereumPoolingMarketProvider(
         return Protocol.BANCOR
     }
 
-    val bancorPoolCollectionContract by lazy {
-        runBlocking {
-            BancorPoolCollectionContract(
-                getBlockchainGateway(),
-                bancorEthreumProvider.bancorPoolCollection
-            )
-        }
+    val bancorPoolCollectionContract = lazyAsync {
+        BancorPoolCollectionContract(
+            getBlockchainGateway(),
+            bancorEthreumProvider.bancorPoolCollection
+        )
     }
 
-    val poolTokenContractAbi by lazy {
-        runBlocking {
-            getAbi("bancor/PoolToken.json")
-        }
-    }
-    val bancorNetworkAbi by lazy {
-        runBlocking {
-            getAbi("bancor/BancorNetwork.json")
-        }
+    val bancorNetworkAbi = lazyAsync {
+        getAbi("bancor/BancorNetwork.json")
     }
 
-    val bancorNetworkContract by lazy {
+    val bancorNetworkContract = lazyAsync {
         BancorNetworkContract(
-            getBlockchainGateway(), bancorNetworkAbi, bancorEthreumProvider.bancorNetwork
+            getBlockchainGateway(), bancorNetworkAbi.await(), bancorEthreumProvider.bancorNetwork
         )
     }
 
     override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
-        bancorPoolCollectionContract.allPools().map { pool ->
+        bancorPoolCollectionContract.await().allPools().map { pool ->
             async {
                 try {
                     val token = getToken(pool)
                     val poolTokenContract = PoolTokenContract(
                         getBlockchainGateway(),
-                        poolTokenContractAbi,
                         pool
                     )
 
@@ -74,7 +64,7 @@ class BancorEthereumPoolingMarketProvider(
                         ),
                         tokenType = TokenType.BANCOR,
                         investmentPreparer = BancorPoolInvestmentPreparer(
-                            getERC20Resource(), bancorNetworkContract, underlying.address
+                            getERC20Resource(), bancorNetworkContract.await(), underlying.address
                         ),
                         positionFetcher = defaultPositionFetcher(token.address),
                         totalSupply = Refreshable.refreshable {

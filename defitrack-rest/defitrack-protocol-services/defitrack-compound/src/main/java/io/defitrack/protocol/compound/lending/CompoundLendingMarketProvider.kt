@@ -1,9 +1,10 @@
 package io.defitrack.protocol.compound.lending
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.lending.domain.Position
@@ -18,7 +19,6 @@ import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -28,16 +28,12 @@ import java.math.RoundingMode
 class CompoundLendingMarketProvider(
 ) : LendingMarketProvider() {
 
-    val comptrollerABI by lazy {
-        runBlocking {
-            getAbi("compound/comptroller.json")
-        }
+    val comptrollerABI = lazyAsync {
+        getAbi("compound/comptroller.json")
     }
 
-    val cTokenABI by lazy {
-        runBlocking {
-            getAbi("compound/ctoken.json")
-        }
+    val cTokenABI = lazyAsync {
+        getAbi("compound/ctoken.json")
     }
 
     override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
@@ -123,16 +119,16 @@ class CompoundLendingMarketProvider(
         return getComptroller().getMarkets().map { market ->
             CompoundTokenContract(
                 getBlockchainGateway(),
-                cTokenABI,
+                cTokenABI.await(),
                 market
             )
         }
     }
 
-    private fun getComptroller(): CompoundComptrollerContract {
+    private suspend fun getComptroller(): CompoundComptrollerContract {
         return CompoundComptrollerContract(
             getBlockchainGateway(),
-            comptrollerABI,
+            comptrollerABI.await(),
             CompoundAddressesProvider.CONFIG[getNetwork()]!!.v2Controller!!
         )
     }

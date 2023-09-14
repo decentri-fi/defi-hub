@@ -16,18 +16,11 @@ class ConvexEthereumRewardPoolMarketProvider(
     private val convexService: ConvexEthereumService,
 ) : FarmingMarketProvider() {
 
-    val cvxRewardPoolABI by lazy {
-        runBlocking {
-            getAbi("convex/CvxRewardPool.json")
-        }
-    }
-
     override suspend fun fetchMarkets(): List<FarmingMarket> {
 
         return convexService.providePools().map {
             CvxRewardPoolContract(
                 getBlockchainGateway(),
-                cvxRewardPoolABI,
                 it,
             )
         }.map {

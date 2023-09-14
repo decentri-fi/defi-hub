@@ -1,8 +1,9 @@
 package io.defitrack.protocol.iron.lending
 
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.lending.domain.Position
@@ -16,7 +17,6 @@ import io.defitrack.protocol.iron.lending.invest.CompoundLendingInvestmentPrepar
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
@@ -25,29 +25,20 @@ abstract class IronBankLendingMarketProvider(
     private val ironBankService: IronBankService,
 ) : LendingMarketProvider() {
 
-    val comptrollerABI by lazy {
-        runBlocking {
-            getAbi("compound/comptroller.json")
-        }
-    }
-
-    val cTokenABI by lazy {
-        runBlocking {
-            getAbi("compound/ctoken.json")
-        }
+    val comptrollerABI = lazyAsync {
+        getAbi("compound/comptroller.json")
     }
 
 
-    override suspend fun fetchMarkets(): List<LendingMarket> =
-        coroutineScope {
-            getTokenContracts().map {
-                async {
-                    throttled {
-                        toLendingMarket(it)
-                    }
+    override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
+        getTokenContracts().map {
+            async {
+                throttled {
+                    toLendingMarket(it)
                 }
-            }.awaitAll().filterNotNull()
-        }
+            }
+        }.awaitAll().filterNotNull()
+    }
 
     private suspend fun toLendingMarket(ctokenContract: IronbankTokenContract): LendingMarket? {
         return try {
@@ -119,16 +110,15 @@ abstract class IronBankLendingMarketProvider(
         return getComptroller().getMarkets().map { market ->
             IronbankTokenContract(
                 getBlockchainGateway(),
-                cTokenABI,
                 market
             )
         }
     }
 
-    private fun getComptroller(): IronBankComptrollerContract {
+    private suspend fun getComptroller(): IronBankComptrollerContract {
         return IronBankComptrollerContract(
             getBlockchainGateway(),
-            comptrollerABI,
+            comptrollerABI.await(),
             ironBankService.getComptroller()
         )
     }

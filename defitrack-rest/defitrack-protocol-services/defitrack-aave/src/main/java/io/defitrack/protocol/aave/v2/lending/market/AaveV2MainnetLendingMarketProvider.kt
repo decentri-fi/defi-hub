@@ -2,6 +2,7 @@ package io.defitrack.protocol.aave.v2.lending.market
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
@@ -22,7 +23,6 @@ import io.defitrack.protocol.aave.v2.lending.invest.AaveV2LendingInvestmentPrepa
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -35,24 +35,20 @@ class AaveV2MainnetLendingMarketProvider(
     private val priceResource: PriceResource,
 ) : LendingMarketProvider() {
 
-    val lendingPoolAddressesProviderContract by lazy {
-        runBlocking {
-            LendingPoolAddressProviderContract(
-                blockchainGatewayProvider.getGateway(getNetwork()),
-                abiResource.getABI("aave/LendingPoolAddressesProvider.json"),
-                aaveV2MainnetService.getLendingPoolAddressesProvider()
-            )
-        }
+    val lendingPoolAddressesProviderContract = lazyAsync {
+        LendingPoolAddressProviderContract(
+            blockchainGatewayProvider.getGateway(getNetwork()),
+            abiResource.getABI("aave/LendingPoolAddressesProvider.json"),
+            aaveV2MainnetService.getLendingPoolAddressesProvider()
+        )
     }
 
-    val lendingPoolContract by lazy {
-        runBlocking {
-            LendingPoolContract(
-                blockchainGatewayProvider.getGateway(getNetwork()),
-                abiResource.getABI("aave/LendingPool.json"),
-                lendingPoolAddressesProviderContract.lendingPoolAddress()
-            )
-        }
+    val lendingPoolContract = lazyAsync {
+        LendingPoolContract(
+            blockchainGatewayProvider.getGateway(getNetwork()),
+            abiResource.getABI("aave/LendingPool.json"),
+            lendingPoolAddressesProviderContract.await().lendingPoolAddress()
+        )
     }
 
     override suspend fun produceMarkets(): Flow<LendingMarket> = channelFlow {
@@ -74,7 +70,7 @@ class AaveV2MainnetLendingMarketProvider(
                                 marketSize = calculateMarketSize(it, aToken, token),
                                 investmentPreparer = AaveV2LendingInvestmentPreparer(
                                     token.address,
-                                    lendingPoolContract,
+                                    lendingPoolContract.await(),
                                     getERC20Resource()
                                 ),
                                 rate = it.lendingRate.toBigDecimal(),

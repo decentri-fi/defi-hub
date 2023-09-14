@@ -9,11 +9,9 @@ import java.math.BigInteger
 
 class QuickswapDualRewardPoolContract(
     solidityBasedContractAccessor: BlockchainGateway,
-    abi: String,
     address: String,
 ) : ERC20Contract(
-    solidityBasedContractAccessor,
-    abi, address
+    solidityBasedContractAccessor, address
 ) {
 
     suspend fun rewardsTokenAddressA(): String {
@@ -32,7 +30,6 @@ class QuickswapDualRewardPoolContract(
         return readSingle("rewardRateA", uint256())
     }
 
-
     suspend fun periodFinish(): BigInteger {
         return readSingle("periodFinish", uint256())
     }
@@ -42,7 +39,7 @@ class QuickswapDualRewardPoolContract(
     }
 
     suspend fun earnedA(address: String): BigInteger {
-        return readWithAbi(
+        return readWithoutAbi(
             "earnedA",
             listOf(address.toAddress()),
             listOf(uint256())
@@ -50,7 +47,7 @@ class QuickswapDualRewardPoolContract(
     }
 
     suspend fun earnedB(address: String): BigInteger {
-        return readWithAbi(
+        return readWithoutAbi(
             "earnedB",
             listOf(address.toAddress()),
             listOf(uint256())

@@ -1,33 +1,20 @@
 package io.defitrack.protocol.convex.contract
 
-import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
-import io.defitrack.evm.contract.multicall.MultiCallElement
 import org.web3j.abi.datatypes.Function
 
 class CvxRewardPoolContract(
     solidityBasedContractAccessor: BlockchainGateway,
-    abi: String,
     address: String,
-) : ERC20Contract(solidityBasedContractAccessor, abi, address) {
+) : ERC20Contract(solidityBasedContractAccessor, address) {
 
-
-    fun Function.toMultiCall(): MultiCallElement {
-        return MultiCallElement(
-            this, address
-        )
-    }
 
     suspend fun rewardToken(): String {
-        return readWithoutAbi(
-            "rewardToken",
-            emptyList(),
-            listOf(TypeUtils.address())
-        )[0].value as String
+        return readSingle("rewardToken", address())
     }
 
     fun getRewardFunction(user: String): Function {
@@ -46,9 +33,6 @@ class CvxRewardPoolContract(
     }
 
     suspend fun stakingToken(): String {
-        return readWithAbi(
-            "stakingToken",
-            outputs = listOf(address())
-        )[0].value as String
+        return readSingle("stakingToken", address())
     }
 }

@@ -15,7 +15,7 @@ class SetTokenContract(
     blockchainGateway: BlockchainGateway,
     address: String
 ) : ERC20Contract(
-    blockchainGateway, "", address
+    blockchainGateway, address
 ) {
 
     suspend fun getPositions(): List<Position> {

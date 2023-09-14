@@ -5,7 +5,6 @@ import io.defitrack.common.network.Network
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
-import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -32,7 +31,7 @@ class ERC20Repository(
         )
     }
 
-    suspend fun populateTokens()  {
+    suspend fun populateTokens() {
         tokenList = listOf(
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/polygon/quickswap-default.tokenlist.json",
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/polygon/polygon.vetted.tokenlist.json",
@@ -46,7 +45,7 @@ class ERC20Repository(
         ).flatMap {
             try {
                 fetchFromTokenList(it)
-            } catch(exception: Exception) {
+            } catch (exception: Exception) {
                 logger.error("failed to fetch $it", exception)
                 emptyList()
             }

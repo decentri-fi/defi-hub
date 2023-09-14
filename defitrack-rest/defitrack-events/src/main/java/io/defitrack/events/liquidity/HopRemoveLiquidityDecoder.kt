@@ -42,8 +42,7 @@ class HopRemoveLiquidityDecoder(
     override suspend fun extract(log: Log, network: Network): DefiEvent {
 
         val contract = HopLpTokenContract(
-            blockchainGatewayProvider.getGateway(network),
-            "", log.address
+            blockchainGatewayProvider.getGateway(network), log.address
         )
 
         val amounts = removeLiquidityEvent.getNonIndexedParameter(log, 0) as List<Uint256>

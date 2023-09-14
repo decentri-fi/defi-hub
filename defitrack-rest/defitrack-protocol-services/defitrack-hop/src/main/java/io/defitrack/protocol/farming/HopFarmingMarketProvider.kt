@@ -39,7 +39,6 @@ abstract class HopFarmingMarketProvider(
         return try {
             val contract = HopStakingRewardContract(
                 getBlockchainGateway(),
-                abiResource.getABI("quickswap/StakingRewards.json"),
                 stakingReward
             )
 

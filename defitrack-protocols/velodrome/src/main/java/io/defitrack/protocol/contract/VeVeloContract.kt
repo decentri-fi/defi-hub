@@ -13,7 +13,7 @@ import java.math.BigInteger
 class VeVeloContract(
     blockchainGateway: BlockchainGateway, address: String
 ) : ERC20Contract(
-    blockchainGateway, "", address
+    blockchainGateway, address
 ) {
 
     suspend fun getTokenIdsForOwner(owner: String): List<BigInteger> {

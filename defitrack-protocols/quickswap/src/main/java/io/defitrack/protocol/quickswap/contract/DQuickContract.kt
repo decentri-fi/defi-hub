@@ -10,15 +10,14 @@ import java.math.BigInteger
 
 class DQuickContract(
     contractAccessor: BlockchainGateway,
-    abi: String,
     address: String,
 ) : ERC20Contract(
-    contractAccessor, abi, address
+    contractAccessor, address
 ) {
 
 
     fun exitFunction(amount: BigInteger): Function {
-        return Function(
+        return createFunction(
             "leave",
             listOf(amount.toUint256()),
             listOf()
@@ -26,17 +25,15 @@ class DQuickContract(
     }
 
     suspend fun quickBalance(address: String): BigInteger {
-        return readWithAbi(
+        return readWithoutAbi(
             "QUICKBalance",
             inputs = listOf(address.toAddress()),
-            outputs = listOf(
-                uint256()
-            )
+            outputs = listOf(uint256())
         )[0].value as BigInteger
     }
 
     fun enterFunction(amount: BigInteger): Function {
-        return createFunctionWithAbi("enter", listOf(amount.toUint256()), emptyList())
+        return createFunction("enter", listOf(amount.toUint256()), emptyList())
     }
 
     suspend fun dquickForQuick(amount: BigInteger): BigInteger {

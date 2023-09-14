@@ -1,17 +1,17 @@
 package io.defitrack.protocol.bancor.contract
 
+import io.defitrack.abi.TypeUtils
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
 
 class PoolTokenContract(
     gateway: BlockchainGateway,
-    abi: String,
     address: String
 ) : ERC20Contract(
-    gateway, abi, address
+    gateway, address
 ) {
 
     suspend fun reserveToken(): String {
-        return readWithAbi("reserveToken")[0].value as String
+        return readSingle("reserveToken", TypeUtils.address())
     }
 }

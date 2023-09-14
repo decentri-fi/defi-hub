@@ -7,7 +7,6 @@ import com.github.michaelbull.retry.retry
 import io.defitrack.event.DefiEvent
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.pooling.history.PoolingHistoryProvider
-import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -23,11 +22,11 @@ class PoolingMarketHistoryRestController(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @GetMapping("/{user}/history")
-    fun getEnterMarketEvents(
+    suspend fun getEnterMarketEvents(
         @PathVariable("protocol") protocol: String,
         @PathVariable("user") user: String
-    ): List<DefiEvent> = runBlocking {
-        poolingHistoryProviders.filter {
+    ): List<DefiEvent>  {
+        return poolingHistoryProviders.filter {
             it.poolingMarketProvider.getProtocol().slug == protocol
         }.flatMap {
             try {

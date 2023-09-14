@@ -14,7 +14,7 @@ import java.math.BigInteger
 open class BalancerGaugeContract(
     blockchainGateway: BlockchainGateway,
     address: String
-) : ERC20Contract(blockchainGateway, "", address) {
+) : ERC20Contract(blockchainGateway, address) {
 
 
     fun exitPosition(amount: BigInteger): Function {

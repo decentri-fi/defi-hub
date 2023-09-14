@@ -1,6 +1,5 @@
 package io.defitrack.protocol.quickswap.apr
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.price.PriceRequest
@@ -9,7 +8,6 @@ import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.contract.QuickswapDualRewardPoolContract
 import io.defitrack.protocol.quickswap.contract.QuickswapRewardPoolContract
 import io.github.reactivecircus.cache4k.Cache
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -23,22 +21,9 @@ private const val BLOCKS_PER_YEAR = 31536000L
 @Component
 class QuickswapAPRService(
     private val quickswapService: QuickswapService,
-    private val abiResource: ABIResource,
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val priceResource: PriceResource,
 ) {
-
-    val stakingRewardsABI by lazy {
-        runBlocking {
-            abiResource.getABI("quickswap/StakingRewards.json")
-        }
-    }
-
-    val stakingDualRewards by lazy {
-        runBlocking {
-            abiResource.getABI("quickswap/DualStakingRewards.json")
-        }
-    }
 
     val cache = Cache.Builder<String, BigDecimal>().expireAfterWrite(
         1.hours
@@ -59,7 +44,6 @@ class QuickswapAPRService(
     private suspend fun calculateDualRewardPool(address: String): BigDecimal {
         val contract = QuickswapDualRewardPoolContract(
             blockchainGatewayProvider.getGateway(Network.POLYGON),
-            stakingDualRewards,
             address
         )
         val quickRewardsPerYear =
@@ -99,7 +83,6 @@ class QuickswapAPRService(
     private suspend fun calculateSingleRewardPool(address: String): BigDecimal {
         val contract = QuickswapRewardPoolContract(
             blockchainGatewayProvider.getGateway(Network.POLYGON),
-            stakingRewardsABI,
             address
         )
 

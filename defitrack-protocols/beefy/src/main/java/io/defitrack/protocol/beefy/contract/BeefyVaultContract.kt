@@ -10,12 +10,11 @@ import java.math.BigInteger
 
 class BeefyVaultContract(
     solidityBasedContractAccessor: BlockchainGateway,
-    abi: String,
     address: String,
     val vaultId: String,
 ) :
     ERC20Contract(
-        solidityBasedContractAccessor, abi, address
+        solidityBasedContractAccessor, address
     ) {
 
     fun exitFunction(amount: BigInteger): Function {
@@ -32,25 +31,15 @@ class BeefyVaultContract(
     }
 
     suspend fun balance(): BigInteger {
-        return readWithAbi(
-            "balance",
-            outputs = listOf(uint256())
-        )[0].value as BigInteger
-    }
-
-    fun depositAllFunction(): Function {
-        return createFunctionWithAbi("depositAll", emptyList(), emptyList())
+        return readSingle("balance", uint256())
     }
 
     fun depositFunction(amount: BigInteger): Function {
-        return createFunctionWithAbi("deposit", listOf(amount.toUint256()), emptyList())
+        return createFunction("deposit", listOf(amount.toUint256()), emptyList())
     }
 
     suspend fun getPricePerFullShare(): BigInteger {
-        return readWithAbi(
-            "getPricePerFullShare",
-            outputs = listOf(uint256())
-        )[0].value as BigInteger
+        return readSingle("getPricePerFullShare", uint256())
     }
 
     suspend fun want(): String {
@@ -69,14 +58,14 @@ class BeefyVaultContract(
             )
         }
         if (read.isEmpty()) {
-            read = readWithAbi(
+            read = readWithoutAbi(
                 "token",
                 inputs = emptyList(),
                 outputs = listOf(address())
             )
         }
         if (read.isEmpty()) {
-            read = readWithAbi(
+            read = readWithoutAbi(
                 "wbnb",
                 inputs = emptyList(),
                 outputs = listOf(address())

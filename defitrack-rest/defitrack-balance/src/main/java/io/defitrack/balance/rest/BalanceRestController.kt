@@ -10,7 +10,9 @@ import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.token.ERC20Resource
 import kotlinx.coroutines.*
+import org.apache.coyote.Response
 import org.slf4j.LoggerFactory
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.math.BigDecimal
 
@@ -60,9 +62,12 @@ class BalanceRestController(
     }
 
     @GetMapping(value = ["/{address}/native-balance"], params = ["network"])
-    fun getBalanceByNetwork(
-        @PathVariable("address") address: String, @RequestParam("network") network: Network
-    ): BalanceElement = runBlocking {
+    suspend fun getBalanceByNetwork(
+        @PathVariable("address") address: String, @RequestParam("network") networkName: String
+    ): ResponseEntity<BalanceElement> {
+
+        val network = Network.fromString(networkName) ?: return ResponseEntity.notFound().build()
+
         val balanceService = balanceServices.first {
             it.getNetwork() == network
         }
@@ -76,15 +81,17 @@ class BalanceRestController(
             )
         )
 
-        BalanceElement(
-            amount = balance.toDouble(), network = network.toVO(), token = erC20Resource.getTokenInformation(
-                network, "0x0"
-            ).toFungibleToken(), dollarValue = price.times(balance.toDouble()), price = price
+        return ResponseEntity.ok(
+            BalanceElement(
+                amount = balance.toDouble(), network = network.toVO(), token = erC20Resource.getTokenInformation(
+                    network, "0x0"
+                ).toFungibleToken(), dollarValue = price.times(balance.toDouble()), price = price
+            )
         )
     }
 
     @GetMapping("/{address}/token-balances")
-    fun getTokenBalance(@PathVariable("address") address: String): List<BalanceElement> = runBlocking {
+    suspend fun getTokenBalance(@PathVariable("address") address: String): List<BalanceElement> = coroutineScope {
         balanceServices.map {
             async {
                 try {
@@ -102,14 +109,14 @@ class BalanceRestController(
     }
 
     @GetMapping(value = ["/{address}/token-balances"], params = ["network"])
-    fun getTokenBalanceByNetwork(
+    suspend fun getTokenBalanceByNetwork(
         @PathVariable("address") address: String, @RequestParam("network") network: Network
-    ): List<BalanceElement> = runBlocking(Dispatchers.IO) {
+    ): List<BalanceElement> {
         val balanceService = balanceServices.firstOrNull {
             it.getNetwork() == network
         }
 
-        balanceService?.getTokenBalances(address)?.map { it.toBalanceElement() } ?: emptyList()
+        return balanceService?.getTokenBalances(address)?.map { it.toBalanceElement() } ?: emptyList()
     }
 
     suspend fun TokenBalance.toBalanceElement(): BalanceElement {

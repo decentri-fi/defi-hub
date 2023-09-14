@@ -9,7 +9,9 @@ import io.defitrack.market.pooling.vo.PoolingMarketVO
 import io.defitrack.token.DecentrifiERC20Resource
 import io.defitrack.token.TokenType
 import io.defitrack.utils.PageUtils.createPageFromList
-import kotlinx.coroutines.*
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
@@ -30,14 +32,15 @@ class DefaultPoolingMarketRestController(
     }
 
     @GetMapping("/markets", params = ["paged"])
-    fun getMarkets(
+    suspend fun getMarkets(
         @PathVariable("protocol") protocol: String,
         pageable: Pageable
-    ): Page<PoolingMarketVO> = runBlocking {
+    ): Page<PoolingMarketVO> {
         val allMarkets = getAllMarkets(
             protocol = protocol
         )
-        createPageFromList(
+
+        return createPageFromList(
             allMarkets, pageable
         ).map {
             poolingMarketVOMapper.map(it)
@@ -45,16 +48,15 @@ class DefaultPoolingMarketRestController(
     }
 
     @GetMapping(value = ["/all-markets"])
-    fun allMarkets(
+    suspend fun allMarkets(
         @PathVariable("protocol") protocol: String,
         @RequestParam(required = false, name = "network") network: String?,
-    ): List<PoolingMarketVO> =
-        runBlocking {
-            getAllMarkets(
-                network = network,
-                protocol = protocol
-            ).map(poolingMarketVOMapper::map)
-        }
+    ): List<PoolingMarketVO> {
+        return getAllMarkets(
+            network = network,
+            protocol = protocol
+        ).map(poolingMarketVOMapper::map)
+    }
 
     private suspend fun getAllMarkets(
         network: String? = null,
@@ -78,12 +80,12 @@ class DefaultPoolingMarketRestController(
     }
 
     @PostMapping(value = ["/markets/{id}/invest"])
-    fun prepareInvestment(
+    suspend fun prepareInvestment(
         @PathVariable("protocol") protocol: String,
         @PathVariable("id") id: String,
         @RequestBody prepareInvestmentCommand: PrepareInvestmentCommand
-    ): ResponseEntity<TransactionPreparationVO> = runBlocking(Dispatchers.Default) {
-        poolingMarketById(id)?.investmentPreparer?.prepare(prepareInvestmentCommand)?.let { transactions ->
+    ): ResponseEntity<TransactionPreparationVO> {
+        return poolingMarketById(id)?.investmentPreparer?.prepare(prepareInvestmentCommand)?.let { transactions ->
             ResponseEntity.ok(
                 TransactionPreparationVO(
                     transactions
@@ -93,7 +95,7 @@ class DefaultPoolingMarketRestController(
     }
 
     @GetMapping(value = ["/markets"], params = ["token", "network"])
-    fun searchByToken(
+    suspend fun searchByToken(
         @PathVariable("protocol") protocol: String,
         @RequestParam("token") tokenAddress: String,
         @RequestParam("network") network: Network
@@ -132,15 +134,15 @@ class DefaultPoolingMarketRestController(
     }
 
     @GetMapping(value = ["/markets/alternatives"], params = ["token", "network"])
-    fun findAlternatives(
+    suspend fun findAlternatives(
         @PathVariable("protocol") protocol: String,
         @RequestParam("token") tokenAddress: String,
         @RequestParam("network") network: Network
-    ): List<PoolingMarketVO> = runBlocking {
+    ): List<PoolingMarketVO> {
         val token = erC20Resource.getTokenInformation(
             network, tokenAddress,
         )
-        poolingMarketProviders
+        return poolingMarketProviders
             .filter {
                 it.getProtocol().slug == protocol
             }

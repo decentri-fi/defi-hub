@@ -11,18 +11,16 @@ import java.math.BigInteger
 
 class QuickswapRewardPoolContract(
     solidityBasedContractAccessor: BlockchainGateway,
-    abi: String,
     address: String,
 ) : ERC20Contract(
-    solidityBasedContractAccessor,
-    abi, address
+    solidityBasedContractAccessor, address
 ) {
 
     fun exitFunction(amount: BigInteger): Function {
-        return Function(
+        return createFunction(
             "leave",
             listOf(amount.toUint256()),
-            listOf()
+            emptyList()
         )
     }
 
@@ -30,12 +28,8 @@ class QuickswapRewardPoolContract(
         return readSingle("periodFinish", uint256())
     }
 
-
     suspend fun stakingTokenAddress(): String {
-        return readWithAbi(
-            method = "stakingToken",
-            outputs = listOf(address())
-        )[0].value as String
+        return readSingle("stakingToken", address())
     }
 
     suspend fun rewardsTokenAddress(): String {

@@ -2,7 +2,6 @@ package io.defitrack.statistics.rest
 
 import io.defitrack.statistics.domain.MarketStatisticVO
 import io.defitrack.statistics.service.FarmingMarketStatisticsService
-import kotlinx.coroutines.runBlocking
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -14,7 +13,7 @@ class FarmingMarketStatisticsRestController(
 ) {
 
     @GetMapping("/markets/count")
-    fun totalMarkets(): MarketStatisticVO = runBlocking {
-        farmingMarketStatisticsService.getStatistics()
+    suspend fun totalMarkets(): MarketStatisticVO  {
+       return farmingMarketStatisticsService.getStatistics()
     }
 }

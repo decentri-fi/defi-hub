@@ -1,11 +1,9 @@
 package io.defitrack.claimable
 
 import io.defitrack.claimable.mapper.ClaimableVOMapper
-import io.defitrack.price.PriceResource
-import io.defitrack.protocol.mapper.ProtocolVOMapper
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.coroutineScope
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
@@ -26,10 +24,10 @@ class DefaultClaimableRestController(
     }
 
     @GetMapping(value = ["/{address}/claimables"])
-    fun claimables(
+    suspend fun claimables(
         @PathVariable("protocol") protocol: String,
         @PathVariable("address") address: String,
-    ): List<ClaimableVO> = runBlocking {
+    ): List<ClaimableVO> = coroutineScope {
         val fromProviders = async {
             getFromProviders(protocol, address).map { toVO(it) }
         }

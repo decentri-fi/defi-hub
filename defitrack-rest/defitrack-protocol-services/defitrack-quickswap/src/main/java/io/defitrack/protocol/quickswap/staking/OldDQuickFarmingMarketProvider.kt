@@ -18,18 +18,11 @@ class OldDQuickFarmingMarketProvider(
     private val quickswapService: QuickswapService,
 ) : FarmingMarketProvider() {
 
-    val dquickStakingABI by lazy {
-        runBlocking {
-            getAbi("quickswap/dquick.json")
-        }
-    }
-
     val oldDQuick by lazy {
         runBlocking {
             DQuickContract(
                 getBlockchainGateway(),
-                dquickStakingABI,
-                quickswapService.getOldDQuickContract(),
+                quickswapService.getOldDQuickContractAddress(),
             )
         }
     }

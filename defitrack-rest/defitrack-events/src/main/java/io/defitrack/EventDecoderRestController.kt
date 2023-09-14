@@ -7,7 +7,7 @@ import io.defitrack.event.EventDecoder
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import org.slf4j.LoggerFactory
@@ -23,12 +23,12 @@ class EventDecoderRestController(
     val logger = LoggerFactory.getLogger(this::class.java)
 
     @GetMapping("/{txId}", params = ["network"])
-    fun decodeTransaction(
+    suspend fun decodeTransaction(
         @PathVariable("txId") txId: String,
         @RequestParam("network") networkAsString: String,
         @RequestParam("type", required = false) type: DefiEventType? = null,
         @RequestParam("max-logs", required = false) maxLogs: Int? = 100
-    ): List<DefiEvent> = runBlocking {
+    ): List<DefiEvent> {
         val network =
             Network.fromString(networkAsString) ?: throw IllegalArgumentException("Invalid network $networkAsString")
 
@@ -37,32 +37,34 @@ class EventDecoderRestController(
         val logs = gatewayProvider.getGateway(network).getLogs(txId)
 
         if (logs.size > 300) {
-            return@runBlocking emptyList()
+            return emptyList()
         }
 
-        logs.take(maxLogs ?: 100).map {
-            async {
-                eventDecoders
-                    .filter {
-                        (type == null || it.eventTypes().contains(type))
-                    }
-                    .map { decoder ->
-                        try {
-                            sema.withPermit {
-                                if (decoder.appliesTo(it, network)) {
-                                    decoder.extract(it, network)
-                                } else {
-                                    null
-                                }
-                            }
-                        } catch (ex: Exception) {
-                            logger.debug("Error decoding event for tx $txId")
-                            null
+        return coroutineScope {
+            logs.take(maxLogs ?: 100).map {
+                async {
+                    eventDecoders
+                        .filter {
+                            (type == null || it.eventTypes().contains(type))
                         }
-                    }
+                        .map { decoder ->
+                            try {
+                                sema.withPermit {
+                                    if (decoder.appliesTo(it, network)) {
+                                        decoder.extract(it, network)
+                                    } else {
+                                        null
+                                    }
+                                }
+                            } catch (ex: Exception) {
+                                logger.debug("Error decoding event for tx $txId")
+                                null
+                            }
+                        }
+                }
+            }.awaitAll().flatten().filterNotNull().filter {
+                type == null || it.type == type
             }
-        }.awaitAll().flatten().filterNotNull().filter {
-            type == null || it.type == type
         }
     }
 }

@@ -4,28 +4,28 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
-import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import kotlin.time.Duration.Companion.hours
-import kotlin.time.ExperimentalTime
 
 @Service
 class BeefyAPYService(
-    private val beefyAPIEndpoint: String = "https://api.beefy.finance",
     private val objectMapper: ObjectMapper,
     private val client: HttpClient
 ) {
+
+    private val beefyAPIEndpoint: String = "https://api.beefy.finance"
 
     val cache = Cache.Builder<String, Map<String, BigDecimal>>()
         .expireAfterWrite(1.hours)
         .build()
 
-    fun getAPYS(): Map<String, BigDecimal> {
-        return runBlocking {
+    suspend fun getAPYS(): Map<String, BigDecimal> {
+        return withContext(Dispatchers.IO) {
             cache.get("beefy-api-apys") {
                 val result: String = client.get(with(HttpRequestBuilder()) {
                     url("$beefyAPIEndpoint/apy")

@@ -9,8 +9,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.DependsOn
-import org.springframework.core.annotation.Order
 import org.springframework.scheduling.annotation.Scheduled
 
 @Configuration
@@ -24,7 +22,7 @@ class MarketCacheRefresher(
     @Scheduled(
         fixedDelay = 1000 * 60 * 60 * 24 * 3, //every 3 days
     )
-    fun populateCaches() {
+    fun populateCaches() = runBlocking {
         logger.info("Initial population of all caches.")
         poolingMarketProviders.forEach {
             it.populateCaches()

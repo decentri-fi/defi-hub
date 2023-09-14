@@ -3,7 +3,6 @@ package io.defitrack.protocol.uniswap.v2.apr
 import io.defitrack.common.network.Network
 import io.defitrack.uniswap.v2.AbstractUniswapV2Service
 import io.github.reactivecircus.cache4k.Cache
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -14,8 +13,8 @@ class UniswapAPRService(private val abstractUniswapV2Service: List<AbstractUnisw
 
     val cache = Cache.Builder<String, BigDecimal>().expireAfterWrite(10.hours).build()
 
-    fun getAPR(address: String, network: Network): BigDecimal = runBlocking {
-        cache.get("$address-${network.slug}") {
+    suspend fun getAPR(address: String, network: Network): BigDecimal {
+        return cache.get("$address-${network.slug}") {
             try {
                 val pairData =
                     abstractUniswapV2Service.firstOrNull { it.getNetwork() == network }?.getPairDayData(address)

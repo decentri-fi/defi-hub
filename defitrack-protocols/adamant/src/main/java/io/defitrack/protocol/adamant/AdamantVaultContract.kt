@@ -1,5 +1,6 @@
 package io.defitrack.protocol.adamant
 
+import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
@@ -10,10 +11,10 @@ class AdamantVaultContract(
     solidityBasedContractAccessor: BlockchainGateway,
     abi: String,
     address: String,
-) : ERC20Contract(solidityBasedContractAccessor, abi, address) {
+) : ERC20Contract(solidityBasedContractAccessor, address) {
 
     suspend fun token(): String {
-        return readWithAbi("token")[0].value as String
+        return readSingle("token", address())
     }
 
     fun getPendingRewardFunction(address: String): Function {
@@ -27,7 +28,7 @@ class AdamantVaultContract(
     }
 
     fun getClaimFunction(): Function {
-        return createFunctionWithAbi(
+        return createFunction(
             "claim",
             emptyList(),
             emptyList()

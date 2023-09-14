@@ -1,9 +1,10 @@
 package io.defitrack.pooling
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
@@ -18,32 +19,36 @@ class BlurDepositPoolingMarketProvider : PoolingMarketProvider() {
 
     val blurEthDeposit = "0x0000000000a39bb272e79075ade125fd351887ac"
 
-    val blurEthDepositContract by lazy {
+    val blurEthDepositContract = lazyAsync {
         ERC20Contract(
             getBlockchainGateway(),
-            "", blurEthDeposit
+            blurEthDeposit
         )
     }
 
-    override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
-        val ether = getToken("0x0")
-        listOf(
-            create(
-                name = "BlurEth",
-                identifier = blurEthDeposit,
-                marketSize = Refreshable.refreshable {
-                    calculateMarketSize()
-                },
-                address = blurEthDeposit,
-                symbol = "blurEth",
-                tokenType = TokenType.BLUR,
-                tokens = listOf(ether.toFungibleToken()),
-                totalSupply = Refreshable.refreshable {
-                    blurEthDepositContract.totalSupply().asEth(blurEthDepositContract.decimals())
-                },
-                positionFetcher = defaultPositionFetcher(blurEthDeposit),
+    override suspend fun fetchMarkets(): List<PoolingMarket> {
+        val contract = blurEthDepositContract.await()
+
+        return coroutineScope {
+            val ether = getToken("0x0")
+            listOf(
+                create(
+                    name = "BlurEth",
+                    identifier = blurEthDeposit,
+                    marketSize = Refreshable.refreshable {
+                        calculateMarketSize()
+                    },
+                    address = blurEthDeposit,
+                    symbol = "blurEth",
+                    tokenType = TokenType.BLUR,
+                    tokens = listOf(ether.toFungibleToken()),
+                    totalSupply = Refreshable.refreshable {
+                        contract.totalSupply().asEth(contract.decimals())
+                    },
+                    positionFetcher = defaultPositionFetcher(blurEthDeposit),
+                )
             )
-        )
+        }
     }
 
     override fun getProtocol(): Protocol {

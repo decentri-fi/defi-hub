@@ -2,9 +2,10 @@ package io.defitrack.protocol.aave.v3.lending.market
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
@@ -17,7 +18,6 @@ import io.defitrack.protocol.aave.v3.lending.invest.AaveV3LendingInvestmentPrepa
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 
 abstract class AaveV3LendingMarketProvider(
     private val network: Network,
@@ -25,36 +25,33 @@ abstract class AaveV3LendingMarketProvider(
     aaveV3DataProvider: AaveV3DataProvider,
 ) : LendingMarketProvider() {
 
-    val pool by lazy {
-        runBlocking {
-            PoolContract(
-                getBlockchainGateway(),
-                abiResource.getABI("aave/v3/Pool.json"),
-                aaveV3DataProvider.poolAddress
-            )
-        }
+    val pool = lazyAsync {
+        PoolContract(
+            getBlockchainGateway(),
+            abiResource.getABI("aave/v3/Pool.json"),
+            aaveV3DataProvider.poolAddress
+        )
     }
 
-    val poolDataProvider by lazy {
-        runBlocking {
-            PoolDataProvider(
-                getBlockchainGateway(),
-                abiResource.getABI("aave/v3/AaveProtocolDataProvider.json"),
-                aaveV3DataProvider.poolDataProvider
-            )
-        }
+    val poolDataProvider = lazyAsync {
+        PoolDataProvider(
+            getBlockchainGateway(),
+            abiResource.getABI("aave/v3/AaveProtocolDataProvider.json"),
+            aaveV3DataProvider.poolDataProvider
+        )
     }
 
     override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
-        pool.reservesList().map {
+        pool.await().reservesList().map {
             async {
                 try {
 
-                    val reserveData = poolDataProvider.getReserveData(it)
-                    val reserveTokenAddresses = poolDataProvider.getReserveTokensAddresses(it)
+                    val contract = poolDataProvider.await()
+                    val reserveData = contract.getReserveData(it)
+                    val reserveTokenAddresses = contract.getReserveTokensAddresses(it)
                     val aToken = getToken(reserveTokenAddresses.aTokenAddress)
                     val underlying = getToken(it)
-                    val totalSupply = poolDataProvider.getATokenTotalSupply(it)
+                    val totalSupply = contract.getATokenTotalSupply(it)
 
                     create(
                         identifier = aToken.address,
@@ -64,7 +61,7 @@ abstract class AaveV3LendingMarketProvider(
                         rate = reserveData.liquidityRate.asEth(27),
                         investmentPreparer = AaveV3LendingInvestmentPreparer(
                             underlying.address,
-                            pool,
+                            pool.await(),
                             getERC20Resource()
                         ),
                         marketSize = Refreshable.refreshable {

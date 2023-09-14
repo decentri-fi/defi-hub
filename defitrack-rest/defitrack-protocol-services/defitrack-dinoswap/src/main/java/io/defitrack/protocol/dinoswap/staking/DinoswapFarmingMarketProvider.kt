@@ -1,6 +1,7 @@
 package io.defitrack.protocol.dinoswap.staking
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -12,7 +13,6 @@ import io.defitrack.protocol.dinoswap.contract.DinoswapFossilFarmsContract
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 
 @Service
@@ -20,17 +20,15 @@ class DinoswapFarmingMarketProvider(
     private val dinoswapService: DinoswapService,
 ) : FarmingMarketProvider() {
 
-    val fossilFarms by lazy {
-        runBlocking {
-            getAbi("dinoswap/FossilFarms.json")
-        }
+    val fossilFarms = lazyAsync {
+        getAbi("dinoswap/FossilFarms.json")
     }
 
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
         return@coroutineScope dinoswapService.getDinoFossilFarms().map {
             DinoswapFossilFarmsContract(
                 getBlockchainGateway(),
-                fossilFarms,
+                fossilFarms.await(),
                 it
             )
         }.flatMap { chef ->

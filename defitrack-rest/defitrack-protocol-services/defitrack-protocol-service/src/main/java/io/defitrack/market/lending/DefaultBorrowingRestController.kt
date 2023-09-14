@@ -8,7 +8,6 @@ import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.mapper.ProtocolVOMapper
-import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
@@ -29,24 +28,23 @@ class DefaultBorrowingRestController(
     }
 
     @GetMapping("/{userId}/positions")
-    fun getPoolingMarkets(
+    suspend fun getPoolingMarkets(
         @PathVariable("protocol") protocol: String,
         @PathVariable("userId") address: String
-    ): List<BorrowPositionVO> =
-        runBlocking {
-            borrowingServices
-                .filter {
-                    it.getProtocol().slug == protocol
+    ): List<BorrowPositionVO> {
+        return borrowingServices
+            .filter {
+                it.getProtocol().slug == protocol
+            }
+            .flatMap {
+                try {
+                    it.getBorrows(address)
+                } catch (ex: Exception) {
+                    logger.error("Something went wrong trying to fetch the user lendings: ${ex.message}")
+                    emptyList()
                 }
-                .flatMap {
-                    try {
-                        it.getBorrows(address)
-                    } catch (ex: Exception) {
-                        logger.error("Something went wrong trying to fetch the user lendings: ${ex.message}")
-                        emptyList()
-                    }
-                }.map { it.toVO() }
-        }
+            }.map { it.toVO() }
+    }
 
     suspend fun BorrowPosition.toVO(): BorrowPositionVO {
         return with(this) {

@@ -42,13 +42,11 @@ abstract class HopPoolingMarketProvider(
         return try {
             val contract = HopLpTokenContract(
                 blockchainGateway = gateway,
-                abiResource.getABI("hop/SaddleToken.json"),
                 hopLpToken.lpToken
             )
 
             val swapContract = HopSwapContract(
                 blockchainGateway = gateway,
-                abiResource.getABI("hop/Swap.json"),
                 contract.swap()
             )
 

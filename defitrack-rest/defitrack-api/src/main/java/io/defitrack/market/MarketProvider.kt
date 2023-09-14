@@ -87,7 +87,7 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
         logger.info("cache refresh took ${millis / 1000}s")
     }
 
-    fun populateCaches() = runBlocking(Dispatchers.Default) {
+    suspend fun populateCaches() {
         val millis = measureTimeMillis {
             try {
                 val markets = populate()

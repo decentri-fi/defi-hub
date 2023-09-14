@@ -1,8 +1,9 @@
 package io.defitrack.protocol.apeswap
 
 import io.defitrack.common.network.Network
-import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -11,7 +12,6 @@ import io.defitrack.uniswap.v2.PairFactoryContract
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import org.springframework.stereotype.Component
@@ -25,14 +25,12 @@ class ApeswapPolygonPoolingMarketProvider(
         return Protocol.APESWAP
     }
 
-    val pools by lazy {
-        runBlocking {
+    val pools = lazyAsync {
             val pairFactoryContract = PairFactoryContract(
                 blockchainGateway = getBlockchainGateway(),
                 contractAddress = apeswapPolygonService.provideFactory()
             )
             pairFactoryContract.allPairs()
-        }
     }
 
 
@@ -40,7 +38,7 @@ class ApeswapPolygonPoolingMarketProvider(
         val semaphore = Semaphore(16)
 
         return coroutineScope {
-            pools.map { pool ->
+            pools.await().map { pool ->
                 semaphore.withPermit {
                     async {
                         try {

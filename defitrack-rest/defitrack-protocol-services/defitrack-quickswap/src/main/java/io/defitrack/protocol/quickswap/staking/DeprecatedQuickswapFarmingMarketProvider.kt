@@ -3,6 +3,7 @@ package io.defitrack.protocol.quickswap.staking
 import io.defitrack.abi.ABIResource
 import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -35,25 +36,17 @@ class DeprecatedQuickswapFarmingMarketProvider(
     private val quickswapAPRService: QuickswapAPRService,
 ) : FarmingMarketProvider() {
 
-
-    val stakingRewardsABI by lazy {
-        runBlocking {
-            abiService.getABI("quickswap/StakingRewards.json")
-        }
-    }
-
-    val rewardFactoryContract by lazy {
-        runBlocking {
-            RewardFactoryContract(
-                getBlockchainGateway(),
-                quickswapService.getDeprecatedRewardFactory(),
-            )
-        }
+    val rewardFactoryContract = lazyAsync {
+        RewardFactoryContract(
+            getBlockchainGateway(),
+            quickswapService.getDeprecatedRewardFactory(),
+        )
     }
 
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
-        val rewardPools = rewardFactoryContract.getStakingTokens().map {
-            rewardFactoryContract.stakingRewardsInfoByStakingToken(it)
+        val contract = rewardFactoryContract.await()
+        val rewardPools = contract.getStakingTokens().map {
+            contract.stakingRewardsInfoByStakingToken(it)
         }
 
         logger.info("importing ${rewardPools.size} reward pools")
@@ -63,7 +56,6 @@ class DeprecatedQuickswapFarmingMarketProvider(
         rewardPools.map {
             QuickswapRewardPoolContract(
                 getBlockchainGateway(),
-                stakingRewardsABI,
                 it
             )
         }.map { rewardPool ->

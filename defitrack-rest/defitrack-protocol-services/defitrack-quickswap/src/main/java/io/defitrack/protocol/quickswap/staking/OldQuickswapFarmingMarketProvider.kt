@@ -3,6 +3,7 @@ package io.defitrack.protocol.quickswap.staking
 import io.defitrack.abi.ABIResource
 import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.erc20.TokenInformationVO
@@ -34,30 +35,22 @@ class OldQuickswapFarmingMarketProvider(
     private val quickswapAPRService: QuickswapAPRService,
 ) : FarmingMarketProvider() {
 
-    val stakingRewardsABI by lazy {
-        runBlocking {
-            abiService.getABI("quickswap/StakingRewards.json")
-        }
-    }
-
-    val rewardFactoryContract by lazy {
-        runBlocking {
-            RewardFactoryContract(
-                getBlockchainGateway(),
-                quickswapService.getOldRewardFactory(),
-            )
-        }
+    val rewardFactoryContract = lazyAsync {
+        RewardFactoryContract(
+            getBlockchainGateway(),
+            quickswapService.getOldRewardFactory(),
+        )
     }
 
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
-        val rewardPools = rewardFactoryContract.getStakingTokens().map {
-            rewardFactoryContract.stakingRewardsInfoByStakingToken(it)
+        val contract = rewardFactoryContract.await()
+        val rewardPools = contract.getStakingTokens().map {
+            contract.stakingRewardsInfoByStakingToken(it)
         }
 
         rewardPools.map {
             QuickswapRewardPoolContract(
                 getBlockchainGateway(),
-                stakingRewardsABI,
                 it
             )
         }.map { rewardPool ->

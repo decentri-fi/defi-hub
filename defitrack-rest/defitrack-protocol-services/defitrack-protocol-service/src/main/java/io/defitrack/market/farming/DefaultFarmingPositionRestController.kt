@@ -2,7 +2,6 @@ package io.defitrack.market.farming
 
 import io.defitrack.market.farming.mapper.FarmingPositionVOMapper
 import io.defitrack.market.farming.vo.FarmingPositionVO
-import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
@@ -17,11 +16,11 @@ class DefaultFarmingPositionRestController(
 ) {
 
     @GetMapping("/{userAddress}/positions")
-    fun getPositions(
+    suspend fun getPositions(
         @PathVariable("protocol") protocol: String,
         @PathVariable("userAddress") address: String
-    ): List<FarmingPositionVO> = runBlocking {
-        if (WalletUtils.isValidAddress(address)) {
+    ): List<FarmingPositionVO>  {
+     return   if (WalletUtils.isValidAddress(address)) {
             val results = farmingPositionProviders
                 .flatMap {
                     try {
@@ -42,12 +41,12 @@ class DefaultFarmingPositionRestController(
     }
 
     @GetMapping(value = ["/{userAddress}/positions"], params = ["stakingElementId"])
-    fun getStakingById(
+   suspend fun getStakingById(
         @PathVariable("protocol") protocol: String,
         @PathVariable("userAddress") address: String,
         @RequestParam("stakingElementId") stakingElementId: String,
-    ): FarmingPositionVO? = runBlocking {
-        if (WalletUtils.isValidAddress(address)) {
+    ): FarmingPositionVO?  {
+      return  if (WalletUtils.isValidAddress(address)) {
             farmingPositionProviders.firstNotNullOfOrNull {
                 try {
                     it.getStaking(protocol, address, stakingElementId)

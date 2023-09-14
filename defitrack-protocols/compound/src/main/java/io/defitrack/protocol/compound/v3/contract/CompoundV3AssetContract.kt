@@ -18,7 +18,7 @@ class CompoundV3AssetContract(
     blockchainGateway: BlockchainGateway,
     address: String
 ) : ERC20Contract(
-    blockchainGateway, "", address
+    blockchainGateway, address
 ) {
 
     fun collateralBalanceOfFunction(account: String, asset: String): Function {

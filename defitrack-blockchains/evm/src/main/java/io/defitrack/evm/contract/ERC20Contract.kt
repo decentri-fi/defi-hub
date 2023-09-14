@@ -13,10 +13,9 @@ import java.math.BigInteger
 
 open class ERC20Contract(
     blockchainGateway: BlockchainGateway,
-    abi: String,
     address: String
 ) :
-    EvmContract(blockchainGateway, abi, address) {
+    EvmContract(blockchainGateway, "", address) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 

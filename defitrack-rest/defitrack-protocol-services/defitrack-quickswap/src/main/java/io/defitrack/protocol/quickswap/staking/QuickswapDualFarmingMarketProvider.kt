@@ -1,6 +1,7 @@
 package io.defitrack.protocol.quickswap.staking
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.ERC20Contract
@@ -27,31 +28,22 @@ class QuickswapDualFarmingMarketProvider(
     private val quickswapAPRService: QuickswapAPRService,
 ) : FarmingMarketProvider() {
 
-    val stakingRewardsABI by lazy {
-        runBlocking {
-            getAbi("quickswap/DualStakingRewards.json")
-        }
-    }
-
-    val dualStakingFactory by lazy {
-        runBlocking {
-            DualRewardFactoryContract(
-                getBlockchainGateway(),
-                quickswapService.getDualRewardFactory(),
-            )
-        }
+    val dualStakingFactory = lazyAsync {
+        DualRewardFactoryContract(
+            getBlockchainGateway(),
+            quickswapService.getDualRewardFactory(),
+        )
     }
 
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
 
-        val dualPools = dualStakingFactory.getStakingTokens().map {
-            dualStakingFactory.stakingRewardsInfoByStakingToken(it)
+        val dualPools = dualStakingFactory.await().getStakingTokens().map {
+            dualStakingFactory.await().stakingRewardsInfoByStakingToken(it)
         }
 
         dualPools.map {
             QuickswapDualRewardPoolContract(
                 getBlockchainGateway(),
-                stakingRewardsABI,
                 it
             )
         }.forEach { pool ->

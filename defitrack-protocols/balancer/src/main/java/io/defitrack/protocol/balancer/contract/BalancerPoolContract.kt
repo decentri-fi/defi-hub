@@ -9,7 +9,7 @@ class BalancerPoolContract(
     blockchainGateway: BlockchainGateway,
     address: String
 ) : ERC20Contract(
-    blockchainGateway, "", address
+    blockchainGateway, address
 ) {
 
     suspend fun getPoolId(): String {

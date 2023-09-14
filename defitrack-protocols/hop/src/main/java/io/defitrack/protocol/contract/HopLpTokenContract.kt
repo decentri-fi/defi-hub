@@ -7,12 +7,11 @@ import io.defitrack.evm.contract.ERC20Contract
 
 class HopLpTokenContract(
     blockchainGateway: BlockchainGateway,
-    abi: String,
     address: String
-) : ERC20Contract(blockchainGateway, abi, address) {
+) : ERC20Contract(blockchainGateway, address) {
 
     suspend fun swap(): String {
-        return readWithAbi("swap")[0].value as String
+        return readSingle("swap", address())
     }
 
     suspend fun getToken(index: Int): String {

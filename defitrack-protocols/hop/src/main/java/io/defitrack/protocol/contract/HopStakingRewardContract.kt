@@ -9,18 +9,17 @@ import org.web3j.abi.datatypes.Function
 
 class HopStakingRewardContract(
     solidityBasedContractAccessor: BlockchainGateway,
-    abi: String,
     address: String,
 ) : ERC20Contract(
     solidityBasedContractAccessor,
-    abi, address
+    address
 ) {
 
 
     suspend fun rewardsTokenAddress(): String {
         return readSingle(
             "rewardsToken",
-             address()
+            address()
         )
     }
 
@@ -41,9 +40,6 @@ class HopStakingRewardContract(
     }
 
     suspend fun stakingTokenAddress(): String {
-        return readSingle(
-         "stakingToken",
-            address()
-        )
+        return readSingle("stakingToken", address())
     }
 }

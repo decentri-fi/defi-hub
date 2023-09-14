@@ -2,6 +2,7 @@ package io.defitrack.protocol.compound.borrowing
 
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.market.borrowing.BorrowService
@@ -24,14 +25,12 @@ class CompoundBorrowingService(
     blockchainGatewayProvider: BlockchainGatewayProvider,
 ) : BorrowService {
 
-    val comptrollerABI by lazy {
+    val comptrollerABI = lazyAsync {
         runBlocking { abiResource.getABI("compound/comptroller.json") }
     }
 
-    val cTokenABI by lazy {
-        runBlocking {
-            abiResource.getABI("compound/ctoken.json")
-        }
+    val cTokenABI = lazyAsync {
+        abiResource.getABI("compound/ctoken.json")
     }
 
     val gateway = blockchainGatewayProvider.getGateway(getNetwork())
@@ -49,12 +48,12 @@ class CompoundBorrowingService(
 
     private suspend fun getTokenContracts() = CompoundComptrollerContract(
         gateway,
-        comptrollerABI,
+        comptrollerABI.await(),
         CompoundAddressesProvider.CONFIG[getNetwork()]!!.v2Controller!!
     ).getMarkets().map {
         CompoundTokenContract(
             gateway,
-            cTokenABI,
+            cTokenABI.await(),
             it
         )
     }

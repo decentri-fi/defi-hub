@@ -2,6 +2,7 @@ package io.defitrack.protocol.adamant.staking
 
 import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -14,7 +15,6 @@ import io.defitrack.protocol.adamant.claimable.AdamantVaultClaimPreparer
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 
 @Service
@@ -27,16 +27,12 @@ class AdamantVaultMarketProvider(
     }
 
 
-    val genericVault by lazy {
-        runBlocking {
-            getAbi("adamant/GenericVault.json")
-        }
+    val genericVault = lazyAsync {
+        getAbi("adamant/GenericVault.json")
     }
 
-    val addy by lazy {
-        runBlocking {
-            getToken("0xc3fdbadc7c795ef1d6ba111e06ff8f16a20ea539")
-        }
+    val addy = lazyAsync {
+        getToken("0xc3fdbadc7c795ef1d6ba111e06ff8f16a20ea539")
     }
 
 
@@ -45,7 +41,7 @@ class AdamantVaultMarketProvider(
             adamantService.adamantGenericVaults().map {
                 AdamantVaultContract(
                     getBlockchainGateway(),
-                    genericVault,
+                    genericVault.await(),
                     it.vaultAddress
                 )
             }.map { vault ->
@@ -57,7 +53,7 @@ class AdamantVaultMarketProvider(
                             identifier = vault.address,
                             stakedToken = token.toFungibleToken(),
                             rewardTokens = listOf(
-                                addy.toFungibleToken()
+                                addy.await().toFungibleToken()
                             ),
                             vaultType = "adamant-generic-vault",
                             balanceFetcher = PositionFetcher(

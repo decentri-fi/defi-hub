@@ -1,6 +1,5 @@
 package io.defitrack.protocol
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.sushi.domain.PairDayData
 import io.defitrack.protocol.sushi.domain.SushiswapPair
@@ -28,10 +27,8 @@ class SushiArbitrumService(
         Cache.Builder<String, List<SushiswapPair>>().expireAfterWrite(1.days).build()
 
     override suspend fun getPairs(): List<SushiswapPair> {
-        return runBlocking {
-            pairCache.get("all") {
-                sushiswapService.getPairs()
-            }
+        return pairCache.get("all") {
+            sushiswapService.getPairs()
         }
     }
 

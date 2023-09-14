@@ -9,7 +9,7 @@ import java.math.BigInteger
 class GOHMContract(
     blockchainGateway: BlockchainGateway,
     address: String
-) : ERC20Contract(blockchainGateway, "", address) {
+) : ERC20Contract(blockchainGateway, address) {
 
     suspend fun balanceFrom(from: BigInteger): BigInteger {
         return readWithoutAbi(
@@ -26,5 +26,4 @@ class GOHMContract(
             outputs = listOf(uint256())
         )[0].value as BigInteger
     }
-
 }

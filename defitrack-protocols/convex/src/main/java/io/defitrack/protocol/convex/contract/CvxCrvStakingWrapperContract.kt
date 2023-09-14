@@ -8,7 +8,7 @@ import kotlinx.coroutines.Deferred
 
 class CvxCrvStakingWrapperContract(
     blockchainGateway: BlockchainGateway, address: String
-) : ERC20Contract(blockchainGateway, "", address) {
+) : ERC20Contract(blockchainGateway, address) {
 
     val crv: Deferred<String> = lazyAsync {
         readSingle("crv", TypeUtils.address())

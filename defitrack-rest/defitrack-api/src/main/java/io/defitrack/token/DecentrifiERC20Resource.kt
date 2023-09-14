@@ -4,6 +4,7 @@ import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.retry
 import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.ERC20Contract
@@ -13,20 +14,17 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
-import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
 import kotlin.time.Duration.Companion.hours
 
 @Component
 class DecentrifiERC20Resource(
     private val client: HttpClient,
-    private val abiResource: ABIResource,
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
     @Value("\${erc20ResourceLocation:http://defitrack-erc20.default.svc.cluster.local:8080}") private val erc20ResourceLocation: String
 ) : ERC20Resource {
@@ -42,12 +40,6 @@ class DecentrifiERC20Resource(
         .build()
 
     val wrappedCache = Cache.Builder<Network, WrappedToken>().build()
-
-    val erc20ABI by lazy {
-        runBlocking {
-            abiResource.getABI("general/ERC20.json")
-        }
-    }
 
     override suspend fun getAllTokens(network: Network): List<TokenInformationVO> = withContext(Dispatchers.IO) {
         tokensCache.get("tokens-${network}") {
@@ -82,19 +74,10 @@ class DecentrifiERC20Resource(
         }
     }
 
-    fun getApproveFunction(
-        token: String,
-        spender: String,
-        amount: BigInteger
-    ): Function {
-        return ERC20Contract.approveFunction(spender, amount)
-    }
-
     override suspend fun getAllowance(network: Network, token: String, owner: String, spender: String): BigInteger {
         return with(blockchainGatewayProvider.getGateway(network)) {
             ERC20Contract(
                 this,
-                erc20ABI,
                 token
             ).allowance(owner, spender)
         }

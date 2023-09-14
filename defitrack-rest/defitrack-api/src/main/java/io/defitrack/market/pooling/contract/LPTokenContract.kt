@@ -1,19 +1,19 @@
 package io.defitrack.market.pooling.contract
 
+import io.defitrack.abi.TypeUtils
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
 
 class LPTokenContract(
     solidityBasedContractAccessor: BlockchainGateway,
-    abi: String,
     address: String
-) : ERC20Contract(solidityBasedContractAccessor, abi, address) {
+) : ERC20Contract(solidityBasedContractAccessor, address) {
 
     suspend fun token0(): String {
-        return readWithAbi("token0")[0].value as String
+        return readSingle("token0", TypeUtils.address())
     }
 
     suspend fun token1(): String {
-        return readWithAbi("token1")[0].value as String
+        return readSingle("token1", TypeUtils.address())
     }
 }

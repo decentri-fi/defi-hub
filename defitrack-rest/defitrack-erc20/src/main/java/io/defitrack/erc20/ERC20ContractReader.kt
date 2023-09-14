@@ -24,7 +24,6 @@ class ERC20ContractReader(
             return erc20Buffer.get(key) {
                 ERC20Contract(
                     blockchainGatewayProvider.getGateway(network),
-                    "",
                     correctAddress
                 )
             }.let {
@@ -59,14 +58,12 @@ class ERC20ContractReader(
 
     suspend fun getBalance(network: Network, address: String, userAddress: String) = ERC20Contract(
         blockchainGatewayProvider.getGateway(network),
-        "",
         address
     ).balanceOf(userAddress)
 
     suspend fun getAllowance(network: Network, address: String, userAddress: String, spenderAddress: String) =
         ERC20Contract(
             blockchainGatewayProvider.getGateway(network),
-            "",
             address
         ).allowance(userAddress, spenderAddress)
 }

@@ -50,7 +50,7 @@ class HopStakingDecoder(
 
         val contract = HopStakingRewardContract(
             blockchainGatewayProvider.getGateway(network),
-            "", log.address
+            log.address
         )
 
         val token = "token" to getToken(contract.stakingTokenAddress(), network).toFungibleToken()

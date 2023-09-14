@@ -11,7 +11,6 @@ import io.defitrack.protocol.mstable.contract.MStableEthereumBoostedSavingsVault
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 
 @Service
@@ -19,17 +18,10 @@ class MStableEthereumFarmingMarketProvider(
     private val mStableEthereumService: MStableEthereumService,
 ) : FarmingMarketProvider() {
 
-    val boostedSavingsVaultABI by lazy {
-        runBlocking {
-            getAbi("mStable/BoostedSavingsVault.json")
-        }
-    }
-
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
         mStableEthereumService.getBoostedSavingsVaults().map {
             MStableEthereumBoostedSavingsVaultContract(
                 getBlockchainGateway(),
-                boostedSavingsVaultABI,
                 it
             )
         }.map { contract ->

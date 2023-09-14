@@ -35,12 +35,6 @@ abstract class BeefyFarmingMarketProvider(
         return Protocol.BEEFY
     }
 
-    val vaultV6ABI by lazy {
-        runBlocking {
-            getAbi("beefy/VaultV6.json")
-        }
-    }
-
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
         val semaphore = Semaphore(10)
         vaults.map {
@@ -56,7 +50,6 @@ abstract class BeefyFarmingMarketProvider(
         return try {
             val contract = BeefyVaultContract(
                 getBlockchainGateway(),
-                vaultV6ABI,
                 beefyVault.earnContractAddress,
                 beefyVault.id
             )
@@ -120,7 +113,7 @@ abstract class BeefyFarmingMarketProvider(
         )
     )
 
-    private fun getAPY(beefyVault: BeefyVaultContract): BigDecimal {
+    private suspend fun getAPY(beefyVault: BeefyVaultContract): BigDecimal {
         return try {
             (beefyAPYService.getAPYS().getOrDefault(beefyVault.vaultId, null)) ?: BigDecimal.ZERO
         } catch (ex: Exception) {

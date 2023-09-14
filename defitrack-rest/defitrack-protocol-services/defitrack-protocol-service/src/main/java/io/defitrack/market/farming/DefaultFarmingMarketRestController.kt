@@ -80,10 +80,10 @@ class DefaultFarmingMarketRestController(
     }
 
     @PostMapping(value = ["/markets/{id}/enter"])
-    fun prepareInvestment(
+    suspend fun prepareInvestment(
         @PathVariable("id") id: String, @RequestBody prepareInvestmentCommand: PrepareInvestmentCommand
-    ): ResponseEntity<TransactionPreparationVO> = runBlocking {
-        getStakingMarketById(id)?.investmentPreparer?.prepare(prepareInvestmentCommand)?.let { transactions ->
+    ): ResponseEntity<TransactionPreparationVO> {
+        return getStakingMarketById(id)?.investmentPreparer?.prepare(prepareInvestmentCommand)?.let { transactions ->
             ResponseEntity.ok(
                 TransactionPreparationVO(
                     transactions
@@ -93,9 +93,9 @@ class DefaultFarmingMarketRestController(
     }
 
     @PostMapping(value = ["/markets/{id}/exit"])
-    fun prepareExit(
+    suspend fun prepareExit(
         @PathVariable("id") id: String, @RequestBody exitPositionCommand: ExitPositionCommand
-    ) = runBlocking {
+    ) {
         getStakingMarketById(id)?.exitPositionPreparer?.prepare(exitPositionCommand)?.let { transactions ->
             ResponseEntity.ok(
                 TransactionPreparationVO(

@@ -10,25 +10,18 @@ import java.math.BigInteger
 class VelodromeV1GaugeContract(
     blockchainGateway: BlockchainGateway, address: String
 ) : ERC20Contract(
-    blockchainGateway, "", address
+    blockchainGateway, address
 ) {
 
     suspend fun stakedToken(): String {
-        return readWithoutAbi(
-            "stake",
-            inputs = listOf(),
-            outputs = listOf(TypeUtils.address())
-        )[0].value as String
+        return readSingle("stake", TypeUtils.address())
     }
 
     suspend fun getRewardListLength(): BigInteger {
-        return readWithoutAbi(
-            "rewardsListLength",
-            listOf(),
-            listOf(uint256())
-        )[0].value as BigInteger
+        return readSingle("rewardsListLength", uint256())
     }
 
+    //Todo: multicall it
     suspend fun getRewardList(): List<String> {
         return (0 until getRewardListLength().toInt()).map {
             readWithoutAbi(

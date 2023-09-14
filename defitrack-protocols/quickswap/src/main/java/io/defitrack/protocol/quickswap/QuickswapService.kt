@@ -28,7 +28,7 @@ class QuickswapService(
         1.days
     ).build()
 
-    fun getOldDQuickContract(): String {
+    fun getOldDQuickContractAddress(): String {
         return "0xf28164a485b0b2c90639e47b0f377b4a438a16b1"
     }
 

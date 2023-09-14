@@ -3,6 +3,7 @@ package io.defitrack.aerodrome.farming
 import io.defitrack.aerodrome.pooling.AerodromePoolingMarketProvider
 import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -15,7 +16,6 @@ import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 
 @Service
@@ -25,18 +25,16 @@ class AerodromeGaugeMarketProvider(
 
     val voter = "0x16613524e02ad97edfef371bc883f2f5d6c480a5"
 
-    val voterContract by lazy {
-        runBlocking {
+    val voterContract = lazyAsync {
             VoterContract(
                 getBlockchainGateway(),
                 voter
             )
-        }
     }
 
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
         poolingMarketProvider.getMarkets().forEach {
-            val gauge = voterContract.gauges(it.address)
+            val gauge = voterContract.await().gauges(it.address)
 
             launch {
                 throttled {

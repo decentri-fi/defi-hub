@@ -7,11 +7,8 @@ import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC721Contract
-import io.defitrack.evm.contract.multicall.MultiCallElement
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 import java.math.BigInteger
 
 class QidaoVaultContract(
