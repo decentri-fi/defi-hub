@@ -48,10 +48,9 @@ class MasterChefBasedContract(
     }
 
     suspend fun poolLength(): Int {
-        return (read(
-            "poolLength",
-            outputs = listOf(TypeReference.create(Uint256::class.java))
-        )[0].value as BigInteger).toInt()
+        return (readSingle<BigInteger>(
+            "poolLength", uint256()
+        )).toInt()
     }
 
     suspend fun poolInfos(): List<MasterChefPoolInfo> {
@@ -107,8 +106,8 @@ class MasterChefBasedContract(
                 user.toAddress()
             ),
             listOf(
-                TypeReference.create(Uint256::class.java),
-                TypeReference.create(Uint256::class.java)
+                uint256(),
+                uint256()
             )
         )
     }

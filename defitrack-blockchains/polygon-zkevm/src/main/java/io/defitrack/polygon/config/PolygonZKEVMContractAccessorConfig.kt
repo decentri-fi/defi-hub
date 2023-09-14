@@ -1,7 +1,6 @@
 package io.defitrack.polygon.config
 
 import io.defitrack.common.network.Network
-import io.defitrack.evm.abi.AbiDecoder
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.multicall.MultiCallV2Caller
 import io.ktor.client.*

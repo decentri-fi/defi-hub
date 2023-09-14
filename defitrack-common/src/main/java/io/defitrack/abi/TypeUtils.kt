@@ -1,16 +1,17 @@
 package io.defitrack.abi
 
 import org.web3j.abi.TypeReference
-import org.web3j.abi.datatypes.Address
-import org.web3j.abi.datatypes.Bool
-import org.web3j.abi.datatypes.Bytes
-import org.web3j.abi.datatypes.Utf8String
+import org.web3j.abi.datatypes.*
 import org.web3j.abi.datatypes.generated.*
 import java.math.BigInteger
 
 class TypeUtils {
 
     companion object {
+
+        inline fun <reified T : Type<*>> createTypeReference(): TypeReference<T> {
+            return object : TypeReference<T>() {}
+        }
 
         fun BigInteger.toUint256(): Uint256 {
             return Uint256(this)
@@ -27,6 +28,7 @@ class TypeUtils {
         fun BigInteger.toUint24(): Uint24 {
             return Uint24(this)
         }
+
         fun BigInteger.toInt24(): Int24 {
             return Int24(this)
         }

@@ -10,7 +10,6 @@ import com.google.gson.JsonParser
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
-import io.defitrack.evm.abi.AbiDecoder
 import io.defitrack.evm.abi.domain.AbiContractFunction
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.evm.contract.multicall.MultiCallCaller
@@ -106,7 +105,7 @@ class BlockchainGateway(
         return executeCall(address, createFunction(function, inputs, outputs))
     }
 
-    open suspend fun executeCall(
+    suspend fun executeCall(
         address: String,
         function: org.web3j.abi.datatypes.Function,
     ): List<Type<*>> {
@@ -148,73 +147,6 @@ class BlockchainGateway(
                 outputs
             )
         }
-
-        fun createFunctionWithAbi(
-            function: AbiContractFunction,
-            inputs: List<Type<*>>?,
-            outputs: List<TypeReference<out Type<*>>>? = null
-        ): org.web3j.abi.datatypes.Function {
-            return Web3Function(function.name,
-                inputs ?: emptyList(),
-                outputs ?: function.outputs
-                    .map { it.type }
-                    .map { fromDataTypes(it, false) }
-                    .toList()
-            )
-        }
-
-        fun fromDataTypes(type: String, indexed: Boolean): TypeReference<out Type<*>>? {
-            return try {
-                when (type) {
-                    "dynamicbytes" -> {
-                        val typeclass = Class.forName("org.web3j.abi.datatypes.DynamicBytes") as Class<Type<*>>
-                        indexedTypeReference(typeclass, indexed)
-                    }
-
-                    "tuple[]" -> {
-                        null
-                    }
-
-                    "tuple" -> {
-                        val typeclass = Class.forName("org.web3j.abi.datatypes.DynamicStruct") as Class<Type<*>>
-                        indexedTypeReference(typeclass, indexed)
-                    }
-
-                    else -> {
-                        val typeClass =
-                            Class.forName("org.web3j.abi.datatypes." + StringUtils.capitalize(type)) as Class<Type<*>>
-                        indexedTypeReference(typeClass, indexed)
-                    }
-                }
-            } catch (ex: Exception) {
-                fromGeneratedDataTypes(type, indexed)
-            }
-        }
-
-        private fun fromGeneratedDataTypes(type: String, indexed: Boolean): TypeReference<out Type<*>> {
-            return try {
-                val typeClass =
-                    Class.forName("org.web3j.abi.datatypes.generated." + StringUtils.capitalize(type)) as Class<Type<*>>
-                indexedTypeReference(typeClass, indexed)
-            } catch (ex: Exception) {
-                val typeClass =
-                    Class.forName("org.web3j.abi.datatypes.Utf8String") as Class<Type<*>>
-                indexedTypeReference(typeClass, indexed)
-            }
-        }
-
-        fun <T : Type<*>> indexedTypeReference(cls: Class<T>, indexed: Boolean): TypeReference<T> {
-            return object : TypeReference<T>() {
-                override fun getType(): java.lang.reflect.Type {
-                    return cls
-                }
-
-                override fun isIndexed(): Boolean {
-                    return indexed
-                }
-            }
-        }
-
 
         val MAX_UINT256 = BigInteger.TWO.pow(256).minus(BigInteger.ONE).toUint256()
     }
