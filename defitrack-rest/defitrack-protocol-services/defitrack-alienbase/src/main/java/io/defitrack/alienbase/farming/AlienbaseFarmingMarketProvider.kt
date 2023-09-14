@@ -52,7 +52,7 @@ class AlienbaseFarmingMarketProvider : FarmingMarketProvider() {
                                 )
                             },
                         ),
-                        claimableRewardFetcher = ClaimableRewardFetcher(
+                        /*claimableRewardFetcher = ClaimableRewardFetcher(
                             address = farmingContractAddress,
                             function = { user ->
                                 contract.pendingFunction(poolId, user)
@@ -65,7 +65,7 @@ class AlienbaseFarmingMarketProvider : FarmingMarketProvider() {
                                     user
                                 )
                             }
-                        ),
+                        ),*/
                         vaultType = "alienbase-reward",
                         farmType = ContractType.LIQUIDITY_MINING
                     )
