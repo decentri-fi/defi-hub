@@ -11,7 +11,7 @@ class StakingRewardsContract(
     blockchainGateway: BlockchainGateway,
     address: String
 ) : EvmContract(
-    blockchainGateway, "", address
+    blockchainGateway, address
 ) {
 
     suspend fun rewardRate(): BigInteger {

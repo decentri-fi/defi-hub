@@ -9,7 +9,6 @@ import org.web3j.abi.datatypes.Function
 
 class AdamantVaultContract(
     solidityBasedContractAccessor: BlockchainGateway,
-    abi: String,
     address: String,
 ) : ERC20Contract(solidityBasedContractAccessor, address) {
 

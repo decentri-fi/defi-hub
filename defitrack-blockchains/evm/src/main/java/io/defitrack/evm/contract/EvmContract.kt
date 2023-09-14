@@ -8,7 +8,6 @@ import org.web3j.abi.datatypes.Type
 
 abstract class EvmContract(
     val blockchainGateway: BlockchainGateway,
-    val abi: String,
     val address: String
 ) {
 

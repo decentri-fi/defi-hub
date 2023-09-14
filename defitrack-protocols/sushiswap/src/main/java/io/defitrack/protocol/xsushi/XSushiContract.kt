@@ -1,16 +1,7 @@
 package io.defitrack.protocol.xsushi
 
-import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.EvmContract
-import java.math.BigInteger
+import io.defitrack.evm.contract.ERC20Contract
 
-class XSushiContract(blockchainGateway: BlockchainGateway, abi: String, address: String) :
-    EvmContract(blockchainGateway, abi, address) {
-
-    suspend fun totalSupply(): BigInteger {
-        return read("totalSupply", emptyList(), listOf(
-            uint256()
-        ))[0].value as BigInteger
-    }
-}
+class XSushiContract(blockchainGateway: BlockchainGateway, address: String) :
+    ERC20Contract(blockchainGateway, address)

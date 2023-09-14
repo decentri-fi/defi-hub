@@ -1,6 +1,5 @@
 package io.defitrack.protocol.convex.staking
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -8,7 +7,6 @@ import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.convex.ConvexEthereumService
 import io.defitrack.protocol.convex.contract.CvxRewardPoolContract
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 
 @Service

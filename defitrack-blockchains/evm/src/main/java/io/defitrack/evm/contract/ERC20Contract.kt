@@ -14,7 +14,7 @@ open class ERC20Contract(
     blockchainGateway: BlockchainGateway,
     address: String
 ) :
-    EvmContract(blockchainGateway, "", address) {
+    EvmContract(blockchainGateway, address) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 

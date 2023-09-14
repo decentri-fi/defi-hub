@@ -2,7 +2,6 @@ package io.defitrack.ethereum.config
 
 
 import io.defitrack.common.network.Network
-import io.defitrack.evm.abi.AbiDecoder
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.multicall.MultiCallV2Caller
 import io.ktor.client.*
@@ -12,7 +11,6 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class EthereumContractAccessorConfig(
-    private val abiDecoder: AbiDecoder,
     private val httpClient: HttpClient,
     @Value("\${io.defitrack.services.ethereum.endpoint:http://defitrack-ethereum.default.svc.cluster.local:8080}") private val endpoint: String
 ) {
@@ -20,7 +18,6 @@ class EthereumContractAccessorConfig(
     @Bean
     fun ethereumContractAccessor(): BlockchainGateway {
         return BlockchainGateway(
-            abiDecoder,
             Network.ETHEREUM,
             MultiCallV2Caller("0x8896D23AfEA159a5e9b72C9Eb3DC4E2684A38EA3"),
             httpClient,

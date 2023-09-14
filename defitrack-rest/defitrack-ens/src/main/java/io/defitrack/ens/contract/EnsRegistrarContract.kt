@@ -10,17 +10,16 @@ import java.math.BigInteger
 class EnsRegistrarContract(
     blockchainGateway: BlockchainGateway,
     address: String
-) : EvmContract(blockchainGateway, "", address) {
+) : EvmContract(blockchainGateway, address) {
 
     suspend fun getExpires(ensName: String): BigInteger {
         val splitted = ensName.split(".")
         val sha = Hash.sha3String(splitted[splitted.size - 2])
         val tokenId = BigInteger(sha.removePrefix("0x"), 16)
-        return read(
+        return readSingle(
             "nameExpires",
             listOf(tokenId.toUint256()),
-            listOf(TypeUtils.uint256())
-        )[0].value as BigInteger
+            TypeUtils.uint256()
+        )
     }
-
 }

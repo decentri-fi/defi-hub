@@ -1,6 +1,5 @@
 package io.defitrack.protocol.aave.v3.lending.market
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
@@ -21,14 +20,12 @@ import kotlinx.coroutines.coroutineScope
 
 abstract class AaveV3LendingMarketProvider(
     private val network: Network,
-    abiResource: ABIResource,
     aaveV3DataProvider: AaveV3DataProvider,
 ) : LendingMarketProvider() {
 
     val pool = lazyAsync {
         PoolContract(
             getBlockchainGateway(),
-            abiResource.getABI("aave/v3/Pool.json"),
             aaveV3DataProvider.poolAddress
         )
     }
@@ -36,7 +33,6 @@ abstract class AaveV3LendingMarketProvider(
     val poolDataProvider = lazyAsync {
         PoolDataProvider(
             getBlockchainGateway(),
-            abiResource.getABI("aave/v3/AaveProtocolDataProvider.json"),
             aaveV3DataProvider.poolDataProvider
         )
     }
@@ -80,8 +76,7 @@ abstract class AaveV3LendingMarketProvider(
                         ),
                         marketToken = aToken.toFungibleToken(),
                         totalSupply = Refreshable.refreshable(aToken.totalSupply.asEth(aToken.decimals)) {
-                            val aToken = getToken(aToken.address)
-                            aToken.totalSupply.asEth(aToken.decimals)
+                            getToken(aToken.address).totalSupply.asEth(aToken.decimals)
                         }
                     )
                 } catch (ex: Exception) {

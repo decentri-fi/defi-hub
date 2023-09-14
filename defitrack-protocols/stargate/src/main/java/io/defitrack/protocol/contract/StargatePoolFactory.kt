@@ -2,6 +2,7 @@ package io.defitrack.protocol.contract
 
 import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toUint256
+import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.TypeReference
@@ -12,13 +13,13 @@ class StargatePoolFactory(
     blockchainGateway: BlockchainGateway,
     address: String
 ) : EvmContract(
-    blockchainGateway, "", address
+    blockchainGateway,address
 ) {
 
     suspend fun poolLength(): Int {
         return (read(
             "allPoolsLength",
-            outputs = listOf(TypeReference.create(Uint256::class.java))
+            outputs = listOf(uint256())
         )[0].value as BigInteger).toInt()
     }
 

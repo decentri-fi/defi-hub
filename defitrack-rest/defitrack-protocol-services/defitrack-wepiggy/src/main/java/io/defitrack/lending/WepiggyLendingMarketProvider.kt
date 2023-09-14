@@ -28,18 +28,6 @@ class WepiggyLendingMarketProvider(
     private val wepiggyPolygonService: WepiggyPolygonService,
 ) : LendingMarketProvider() {
 
-    val comptrollerABI by lazy {
-        runBlocking {
-            getAbi("compound/comptroller.json")
-        }
-    }
-
-    val cTokenABI by lazy {
-        runBlocking {
-            getAbi("compound/ctoken.json")
-        }
-    }
-
     override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
         getTokenContracts().map {
             async {
@@ -87,8 +75,7 @@ class WepiggyLendingMarketProvider(
                     marketToken = cToken.toFungibleToken(),
                     erc20Compatible = true,
                     totalSupply = refreshable(ctokenContract.totalSupply().asEth(ctokenContract.decimals())) {
-                        val cToken = getToken(ctokenContract.address)
-                        ctokenContract.totalSupply().asEth(cToken.decimals)
+                        getToken(ctokenContract.address).totalSupply.asEth(cToken.decimals)
                     }
                 )
             }
@@ -121,7 +108,6 @@ class WepiggyLendingMarketProvider(
         return getComptroller().getMarkets().map { market ->
             CompoundTokenContract(
                 getBlockchainGateway(),
-                cTokenABI,
                 market
             )
         }
@@ -130,7 +116,6 @@ class WepiggyLendingMarketProvider(
     private fun getComptroller(): CompoundComptrollerContract {
         return CompoundComptrollerContract(
             getBlockchainGateway(),
-            comptrollerABI,
             wepiggyPolygonService.getComptroller()
         )
     }

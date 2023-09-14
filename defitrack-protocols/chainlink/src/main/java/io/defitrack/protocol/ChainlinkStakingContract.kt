@@ -12,7 +12,7 @@ class ChainlinkStakingContract(
     blockchainGateway: BlockchainGateway,
     address: String
 ) : EvmContract(
-    blockchainGateway, "", address
+    blockchainGateway, address
 ) {
 
     fun getStake(user: String): Function {

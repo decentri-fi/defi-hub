@@ -12,9 +12,8 @@ import io.defitrack.abi.TypeUtils.Companion.address
 
 class PoolDataProvider(
     blockchainGateway: BlockchainGateway,
-    abi: String,
     address: String
-) : EvmContract(blockchainGateway, abi, address) {
+) : EvmContract(blockchainGateway, address) {
 
     suspend fun getReserveTokensAddresses(asset: String): ReserveTokenAddresses {
         val retVal = read(

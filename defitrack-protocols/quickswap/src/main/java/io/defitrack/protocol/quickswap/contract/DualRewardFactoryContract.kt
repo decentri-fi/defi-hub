@@ -10,7 +10,7 @@ import io.defitrack.evm.contract.EvmContract
 class DualRewardFactoryContract(
     blockchainGateway: BlockchainGateway, address: String
 ) : EvmContract(
-    blockchainGateway, "", address
+    blockchainGateway, address
 ) {
 
     suspend fun getStakingTokens(): List<String> {

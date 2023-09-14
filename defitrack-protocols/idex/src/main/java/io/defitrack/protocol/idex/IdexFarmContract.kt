@@ -9,9 +9,8 @@ import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Function
 
 class IdexFarmContract(
-    blockchainGateway: BlockchainGateway,
-    abi: String, address: String
-) : EvmContract(blockchainGateway, abi, address) {
+    blockchainGateway: BlockchainGateway, address: String
+) : EvmContract(blockchainGateway, address) {
 
 
     fun userInfoFunction(poolId: Int, user: String): Function {

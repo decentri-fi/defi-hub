@@ -1,7 +1,6 @@
 package io.defitrack.protocol.dinoswap.staking
 
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -20,15 +19,10 @@ class DinoswapFarmingMarketProvider(
     private val dinoswapService: DinoswapService,
 ) : FarmingMarketProvider() {
 
-    val fossilFarms = lazyAsync {
-        getAbi("dinoswap/FossilFarms.json")
-    }
-
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
         return@coroutineScope dinoswapService.getDinoFossilFarms().map {
             DinoswapFossilFarmsContract(
                 getBlockchainGateway(),
-                fossilFarms.await(),
                 it
             )
         }.flatMap { chef ->
@@ -55,8 +49,6 @@ class DinoswapFarmingMarketProvider(
     ): FarmingMarket {
         val stakedtoken = getToken(chef.getLpTokenForPoolId(poolId))
         val rewardToken = getToken(chef.rewardToken())
-
-        val marketBalance = getERC20Resource().getBalance(getNetwork(), stakedtoken.address, chef.address)
 
         return create(
             identifier = "${chef.address}-${poolId}",

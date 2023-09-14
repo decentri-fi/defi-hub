@@ -10,16 +10,14 @@ import java.math.BigInteger
 class CurvePolygonGaugeControllerContract(
     blockchainGateway: BlockchainGateway, address: String
 ) : EvmContract(
-    blockchainGateway, "", address
+    blockchainGateway, address
 ) {
 
     suspend fun getGaugeCount(): BigInteger {
-        return read(
-            "get_gauge_count",
-            outputs = listOf(uint256())
-        )[0].value as BigInteger
+        return readSingle("get_gauge_count", uint256())
     }
 
+    //todo: multicall
     suspend fun getGaugeAddresses(): List<String> {
         return (0 until getGaugeCount().toInt()).map {
             read(

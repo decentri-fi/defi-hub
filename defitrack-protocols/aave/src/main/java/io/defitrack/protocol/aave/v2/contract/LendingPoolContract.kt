@@ -8,9 +8,9 @@ import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
 
-class LendingPoolContract(blockchainGateway: BlockchainGateway, abi: String, address: String) :
+class LendingPoolContract(blockchainGateway: BlockchainGateway, address: String) :
     EvmContract(
-        blockchainGateway, abi, address
+        blockchainGateway, address
     ) {
 
     fun depositFunction(asset: String, amount: BigInteger): Function {

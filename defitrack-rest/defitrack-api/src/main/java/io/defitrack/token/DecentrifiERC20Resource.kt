@@ -2,9 +2,7 @@ package io.defitrack.token
 
 import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.retry
-import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.ERC20Contract

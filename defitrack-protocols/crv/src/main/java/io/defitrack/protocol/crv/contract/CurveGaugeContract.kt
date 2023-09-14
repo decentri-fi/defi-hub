@@ -12,16 +12,16 @@ class CurveGaugeContract(
     blockchainGateway: BlockchainGateway,
     address: String
 ) : EvmContract(
-    blockchainGateway, "", address
+    blockchainGateway, address
 
 ) {
 
     suspend fun lpToken(): String {
-        return read(
-            "lp_token",
-            outputs = listOf(address())
-        )[0].value as String
+        return readSingle(
+            "lp_token", address()
+        )
     }
+
     fun getClaimRewardsFunction(): Function {
         return createFunction(
             "claim_rewards"

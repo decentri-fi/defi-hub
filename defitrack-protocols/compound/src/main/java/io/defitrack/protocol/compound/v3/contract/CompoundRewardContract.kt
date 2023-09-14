@@ -17,7 +17,7 @@ class CompoundRewardContract(
     blockchainGateway: BlockchainGateway,
     address: String
 ) : EvmContract(
-    blockchainGateway, "", address
+    blockchainGateway, address
 ) {
 
     fun getRewardOwedFn(comet: String, user: String): Function {
@@ -33,20 +33,5 @@ class CompoundRewardContract(
             method = "claim",
             inputs = listOf(comet.toAddress(), user.toAddress(), true.toBool()),
         )
-    }
-
-    class RewardOwed : DynamicStruct {
-        val rewardOwed: String
-        val owed: BigInteger
-
-        constructor(_rewardOwed: String, _owed: BigInteger) : super(_rewardOwed.toAddress(), _owed.toUint256()) {
-            rewardOwed = _rewardOwed
-            owed = _owed
-        }
-
-        constructor(rewardOwed: Address, owed: Uint) {
-            this.rewardOwed = rewardOwed.value
-            this.owed = owed.value
-        }
     }
 }

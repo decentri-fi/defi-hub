@@ -59,8 +59,7 @@ class QuickswapPoolingMarketProvider(
             tokenType = TokenType.QUICKSWAP,
             positionFetcher = defaultPositionFetcher(token.address),
             totalSupply = refreshable(token.totalSupply.asEth(token.decimals)) {
-                val token = getToken(it.id)
-                token.totalSupply.asEth(token.decimals)
+                getToken(it.id).totalSupply.asEth(token.decimals)
             }
         )
     }

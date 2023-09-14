@@ -11,7 +11,7 @@ class UniswapFactoryContract(
     blockchainGateway: BlockchainGateway,
     address: String
 ) : EvmContract(
-    blockchainGateway, "", address
+    blockchainGateway, address
 ) {
     suspend fun getPool(
         token0: String,

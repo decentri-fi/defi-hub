@@ -14,7 +14,7 @@ class IncentivesControllerContract(
     blockchainGateway: BlockchainGateway,
     address: String
 ) : EvmContract(
-    blockchainGateway, "", address
+    blockchainGateway, address
 ) {
 
     fun claimRewardsFn(user: String): Function {

@@ -1,6 +1,5 @@
 package io.defitrack.claimable
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.CompanyProvider
@@ -12,9 +11,6 @@ abstract class ClaimableRewardProvider : ProtocolService {
 
     @Autowired
     private lateinit var companyProvider: CompanyProvider;
-
-    @Autowired
-    lateinit var abiResource: ABIResource;
 
     @Autowired
     lateinit var erC20Resource: ERC20Resource;

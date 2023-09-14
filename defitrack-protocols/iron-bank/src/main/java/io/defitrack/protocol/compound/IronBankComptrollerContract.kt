@@ -8,9 +8,9 @@ import org.web3j.abi.datatypes.DynamicArray
 
 class IronBankComptrollerContract(
     blockchainGateway: BlockchainGateway,
-    abi: String, address: String
+    address: String
 ) : EvmContract(
-    blockchainGateway, abi, address
+    blockchainGateway, address
 ) {
 
     suspend fun getMarkets(): List<String> {

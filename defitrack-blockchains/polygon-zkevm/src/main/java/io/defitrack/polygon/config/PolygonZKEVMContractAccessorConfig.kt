@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class PolygonZKEVMContractAccessorConfig(
-    private val abiDecoder: AbiDecoder,
     private val httpClient: HttpClient,
     @Value("\${io.defitrack.services.polygon-zkevm.endpoint:http://defitrack-polygon-zkevm.default.svc.cluster.local:8080}") private val endpoint: String,
 ) {
@@ -19,7 +18,6 @@ class PolygonZKEVMContractAccessorConfig(
     @Bean
     fun polygonZkevmGateway(): BlockchainGateway {
         return BlockchainGateway(
-            abiDecoder,
             Network.POLYGON_ZKEVM,
             MultiCallV2Caller("0x7f593DEdebE173CA12954164dc3db56131FCA0F7"),
             httpClient,

@@ -22,16 +22,7 @@ class AaveV3LendingInvestmentPreparer(
         coroutineScope {
             async {
                 val requiredBalance = getInvestmentAmount(prepareInvestmentCommand)
-
-                prepareInvestmentCommand.amount?.let {
-                    PreparedTransaction(
-                        function = poolContract.getSupplyFunction(
-                            underlying, requiredBalance, prepareInvestmentCommand.user
-                        ),
-                        to = getEntryContract(),
-                        network = getNetwork().toVO()
-                    )
-                } ?: PreparedTransaction(
+                PreparedTransaction(
                     function = poolContract.getSupplyFunction(
                         underlying, requiredBalance, prepareInvestmentCommand.user
                     ),

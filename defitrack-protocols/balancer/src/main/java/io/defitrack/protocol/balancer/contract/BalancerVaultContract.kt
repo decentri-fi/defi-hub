@@ -15,7 +15,7 @@ class BalancerVaultContract(
     blockchainGateway: BlockchainGateway,
     address: String
 ) : EvmContract(
-    blockchainGateway, "", address
+    blockchainGateway, address
 ) {
 
     suspend fun getPoolTokens(poolId: String): PoolTokenResult {

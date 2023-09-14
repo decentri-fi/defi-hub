@@ -14,7 +14,7 @@ class BasedDistributorV2Contract(
     blockchainGateway: BlockchainGateway,
     contractAddress: String
 ) : EvmContract(
-    blockchainGateway, "", contractAddress
+    blockchainGateway, contractAddress
 ) {
 
 

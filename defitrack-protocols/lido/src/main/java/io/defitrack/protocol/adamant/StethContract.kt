@@ -11,29 +11,19 @@ import java.math.BigInteger
 class StethContract(
     blockchainGateway: BlockchainGateway, address: String
 ) : EvmContract(
-    blockchainGateway, "", address
+    blockchainGateway, address
 ) {
 
     suspend fun getTotalShares(): BigInteger {
-        return read(
-            "getTotalShares",
-            outputs = listOf(uint256())
-        )[0].value as BigInteger
+        return readSingle("getTotalShares", uint256())
     }
 
     suspend fun getPooledEthByShares(shares: BigInteger): BigInteger {
-        return read(
+        return readSingle(
             "getPooledEthByShares",
             inputs = listOf(shares.toUint256()),
-            outputs = listOf(uint256())
-        )[0].value as BigInteger
-    }
-
-    suspend fun getTotalSupply(): BigInteger {
-        return read(
-            "totalSupply",
-            outputs = listOf(uint256())
-        )[0].value as BigInteger
+            uint256()
+        )
     }
 
     fun sharesOfFunction(address: String): Function {
@@ -43,5 +33,4 @@ class StethContract(
             outputs = listOf(uint256())
         )
     }
-
 }

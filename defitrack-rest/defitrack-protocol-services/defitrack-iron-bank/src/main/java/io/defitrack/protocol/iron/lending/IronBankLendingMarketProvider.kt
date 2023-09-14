@@ -25,11 +25,6 @@ abstract class IronBankLendingMarketProvider(
     private val ironBankService: IronBankService,
 ) : LendingMarketProvider() {
 
-    val comptrollerABI = lazyAsync {
-        getAbi("compound/comptroller.json")
-    }
-
-
     override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
         getTokenContracts().map {
             async {
@@ -115,10 +110,9 @@ abstract class IronBankLendingMarketProvider(
         }
     }
 
-    private suspend fun getComptroller(): IronBankComptrollerContract {
+    private fun getComptroller(): IronBankComptrollerContract {
         return IronBankComptrollerContract(
             getBlockchainGateway(),
-            comptrollerABI.await(),
             ironBankService.getComptroller()
         )
     }

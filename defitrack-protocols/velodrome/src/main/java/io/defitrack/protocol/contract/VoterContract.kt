@@ -9,7 +9,7 @@ import io.defitrack.evm.contract.EvmContract
 class VoterContract(
     blockchainGateway: BlockchainGateway, address: String
 ) : EvmContract(
-    blockchainGateway, "", address
+    blockchainGateway, address
 ) {
 
     suspend fun gauges(poolAddress: String): String {

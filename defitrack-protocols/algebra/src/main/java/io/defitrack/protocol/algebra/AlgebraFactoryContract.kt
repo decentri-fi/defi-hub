@@ -8,15 +8,14 @@ import io.defitrack.evm.contract.EvmContract
 class AlgebraFactoryContract(
     blockchainGateway: BlockchainGateway, abi: String
 ) : EvmContract(
-    blockchainGateway, "", abi
+    blockchainGateway, abi
 ) {
 
     suspend fun getPoolByPair(token0: String, token1: String): String {
-        return read(
+        return readSingle(
             "poolByPair",
             listOf(token0.toAddress(), token1.toAddress()),
-            listOf(address())
-        )[0].value as String
+            address()
+        )
     }
-
 }

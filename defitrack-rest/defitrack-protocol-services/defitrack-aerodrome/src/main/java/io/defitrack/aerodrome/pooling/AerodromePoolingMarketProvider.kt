@@ -30,7 +30,7 @@ class AerodromePoolingMarketProvider(
     }
 
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
-            poolFactoryContract.await().allPools().forEach {
+        poolFactoryContract.await().allPools().forEach {
             launch {
                 throttled {
                     val poolingToken = getToken(it)
@@ -54,8 +54,9 @@ class AerodromePoolingMarketProvider(
                                 tokens = poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
                                 tokenType = TokenType.VELODROME,
                                 totalSupply = Refreshable.refreshable(poolingToken.totalSupply.asEth(poolingToken.decimals)) {
-                                    val poolingToken = getToken(it)
-                                    poolingToken.totalSupply.asEth(poolingToken.decimals)
+                                    with(getToken(it)) {
+                                        totalSupply.asEth(decimals)
+                                    }
                                 },
                                 deprecated = true
                             )

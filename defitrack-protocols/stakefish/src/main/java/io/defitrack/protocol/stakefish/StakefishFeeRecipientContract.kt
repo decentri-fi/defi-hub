@@ -10,7 +10,7 @@ import java.math.BigInteger
 
 class StakefishFeeRecipientContract(
     blockchainGateway: BlockchainGateway, address: String
-) : EvmContract(blockchainGateway, "", address) {
+) : EvmContract(blockchainGateway, address) {
 
     fun claimFunction(user: String): Function {
         return createFunction(

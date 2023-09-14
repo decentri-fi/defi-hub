@@ -13,7 +13,7 @@ import java.math.BigInteger
 class UniswapPositionsV3Contract(
     blockchainGateway: BlockchainGateway, address: String
 ) : EvmContract(
-    blockchainGateway, "", address
+    blockchainGateway, address
 ) {
 
     suspend fun getUserPositions(owner: String): List<UniswapPosition> {

@@ -42,7 +42,7 @@ class UniswapV3EthereumClaimableProvider(
 
     override suspend fun claimables(address: String): List<Claimable> = coroutineScope {
         val positionsForUser = poolingNftContract.getUserPositions(address)
-        positionsForUser.mapIndexed { index, position ->
+        positionsForUser.map { position ->
             val hasYield =
                 position.liquidity > BigInteger.ZERO &&
                         (position.feeGrowthInside0LastX128 > BigInteger.ZERO || position.feeGrowthInside1LastX128 > BigInteger.ZERO)

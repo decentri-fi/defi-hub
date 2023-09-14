@@ -1,8 +1,6 @@
 package io.defitrack.price.external
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
@@ -19,7 +17,6 @@ import kotlin.time.Duration.Companion.hours
 class DQuickExternalPriceService(
     quickswapService: QuickswapService,
     private val beefyPricesService: BeefyPricesService,
-    private val abiResource: ABIResource,
     private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) : ExternalPriceService {
 

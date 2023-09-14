@@ -32,13 +32,9 @@ class BancorEthereumPoolingMarketProvider(
         )
     }
 
-    val bancorNetworkAbi = lazyAsync {
-        getAbi("bancor/BancorNetwork.json")
-    }
-
     val bancorNetworkContract = lazyAsync {
         BancorNetworkContract(
-            getBlockchainGateway(), bancorNetworkAbi.await(), bancorEthreumProvider.bancorNetwork
+            getBlockchainGateway(), bancorEthreumProvider.bancorNetwork
         )
     }
 

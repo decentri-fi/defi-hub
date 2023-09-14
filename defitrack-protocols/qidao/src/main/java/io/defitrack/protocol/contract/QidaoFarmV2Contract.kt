@@ -17,7 +17,7 @@ class QidaoFarmV2Contract(
     contractAccessor: BlockchainGateway,
     address: String,
 ) : EvmContract(
-    contractAccessor, "", address
+    contractAccessor, address
 ) {
 
     suspend fun poolLength(): Int {

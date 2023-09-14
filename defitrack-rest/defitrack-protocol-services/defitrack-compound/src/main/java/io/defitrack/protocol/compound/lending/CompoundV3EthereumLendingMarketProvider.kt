@@ -39,8 +39,7 @@ class CompoundV3EthereumLendingMarketProvider(
                         },
                     ),
                     totalSupply = refreshable(cToken.totalSupply.asEth()) {
-                        val cToken = getToken(cTokenAddress)
-                        cToken.totalSupply.asEth()
+                        getToken(cTokenAddress).totalSupply.asEth()
                     }
                 )
             }

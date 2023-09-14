@@ -1,6 +1,5 @@
 package io.defitrack.protocol.aave.v2.lending.market
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
@@ -29,7 +28,6 @@ import java.math.BigInteger
 
 @Service
 class AaveV2MainnetLendingMarketProvider(
-    abiResource: ABIResource,
     blockchainGatewayProvider: BlockchainGatewayProvider,
     private val aaveV2MainnetService: AaveV2MainnetService,
     private val priceResource: PriceResource,
@@ -38,7 +36,6 @@ class AaveV2MainnetLendingMarketProvider(
     val lendingPoolAddressesProviderContract = lazyAsync {
         LendingPoolAddressProviderContract(
             blockchainGatewayProvider.getGateway(getNetwork()),
-            abiResource.getABI("aave/LendingPoolAddressesProvider.json"),
             aaveV2MainnetService.getLendingPoolAddressesProvider()
         )
     }
@@ -46,7 +43,6 @@ class AaveV2MainnetLendingMarketProvider(
     val lendingPoolContract = lazyAsync {
         LendingPoolContract(
             blockchainGatewayProvider.getGateway(getNetwork()),
-            abiResource.getABI("aave/LendingPool.json"),
             lendingPoolAddressesProviderContract.await().lendingPoolAddress()
         )
     }
@@ -82,8 +78,7 @@ class AaveV2MainnetLendingMarketProvider(
                                 ),
                                 marketToken = aToken.toFungibleToken(),
                                 totalSupply = refreshable(aToken.totalSupply.asEth(aToken.decimals)) {
-                                    val aToken = getToken(it.aToken.id)
-                                    aToken.totalSupply.asEth(aToken.decimals)
+                                    getToken(it.aToken.id).totalSupply.asEth(aToken.decimals)
                                 }
                             )
 

@@ -1,15 +1,16 @@
 package io.defitrack.protocol.aave.v2.contract
 
 import io.defitrack.abi.TypeUtils
+import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
 
-class LendingPoolAddressProviderContract(blockchainGateway: BlockchainGateway, abi: String, address: String) :
+class LendingPoolAddressProviderContract(blockchainGateway: BlockchainGateway, address: String) :
     EvmContract(
-        blockchainGateway, abi, address
+        blockchainGateway, address
     ) {
 
     suspend fun lendingPoolAddress(): String {
-        return readSingle("getLendingPool", TypeUtils.address())
+        return readSingle("getLendingPool", address())
     }
 }

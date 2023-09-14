@@ -7,11 +7,8 @@ import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.DynamicArray
 
 class CompoundComptrollerContract(
-    ethereumContractAccessor: BlockchainGateway,
-    abi: String, address: String
-) : EvmContract(
-    ethereumContractAccessor, abi, address
-) {
+    ethereumContractAccessor: BlockchainGateway, address: String
+) : EvmContract(ethereumContractAccessor, address) {
 
     suspend fun getMarkets(): List<String> {
         return (read(

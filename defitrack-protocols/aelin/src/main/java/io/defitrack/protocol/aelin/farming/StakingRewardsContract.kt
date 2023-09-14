@@ -10,7 +10,7 @@ import java.math.BigInteger
 class StakingRewardsContract(
     blockchainGateway: BlockchainGateway,
 ): EvmContract(
-    blockchainGateway, "", "0xfe757a40f3eda520845b339c698b321663986a4d"
+    blockchainGateway, "0xfe757a40f3eda520845b339c698b321663986a4d"
 ) {
 
     suspend fun rewardRate(): BigInteger {

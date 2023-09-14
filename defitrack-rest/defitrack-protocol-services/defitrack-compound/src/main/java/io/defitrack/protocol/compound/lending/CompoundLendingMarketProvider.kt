@@ -28,14 +28,6 @@ import java.math.RoundingMode
 class CompoundLendingMarketProvider(
 ) : LendingMarketProvider() {
 
-    val comptrollerABI = lazyAsync {
-        getAbi("compound/comptroller.json")
-    }
-
-    val cTokenABI = lazyAsync {
-        getAbi("compound/ctoken.json")
-    }
-
     override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
         getTokenContracts().map {
             async {
@@ -88,10 +80,11 @@ class CompoundLendingMarketProvider(
                     ),
                     marketToken = getToken(ctokenContract.address).toFungibleToken(),
                     erc20Compatible = true,
-                    totalSupply = refreshable({
-                        val cToken = getToken(ctokenContract.address)
-                        cToken.totalSupply.asEth(cToken.decimals)
-                    })
+                    totalSupply = refreshable {
+                        with(getToken(ctokenContract.address)) {
+                            totalSupply.asEth(decimals)
+                        }
+                    }
                 )
             }
         } catch (ex: Exception) {
@@ -119,7 +112,6 @@ class CompoundLendingMarketProvider(
         return getComptroller().getMarkets().map { market ->
             CompoundTokenContract(
                 getBlockchainGateway(),
-                cTokenABI.await(),
                 market
             )
         }
@@ -128,7 +120,6 @@ class CompoundLendingMarketProvider(
     private suspend fun getComptroller(): CompoundComptrollerContract {
         return CompoundComptrollerContract(
             getBlockchainGateway(),
-            comptrollerABI.await(),
             CompoundAddressesProvider.CONFIG[getNetwork()]!!.v2Controller!!
         )
     }

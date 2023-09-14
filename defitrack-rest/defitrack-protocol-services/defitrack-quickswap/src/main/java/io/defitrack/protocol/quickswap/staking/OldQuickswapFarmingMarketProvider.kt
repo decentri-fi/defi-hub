@@ -1,10 +1,8 @@
 package io.defitrack.protocol.quickswap.staking
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
-import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -22,7 +20,6 @@ import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -30,7 +27,6 @@ import java.math.RoundingMode
 @Service
 class OldQuickswapFarmingMarketProvider(
     private val quickswapService: QuickswapService,
-    private val abiService: ABIResource,
     private val priceResource: PriceResource,
     private val quickswapAPRService: QuickswapAPRService,
 ) : FarmingMarketProvider() {

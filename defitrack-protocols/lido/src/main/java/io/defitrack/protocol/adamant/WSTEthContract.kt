@@ -4,40 +4,23 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
 
 class WSTEthContract(
     blockchainGateway: BlockchainGateway, address: String
-) : EvmContract(
-    blockchainGateway, "", address
+) : ERC20Contract(
+    blockchainGateway, address
 ) {
 
     suspend fun getStethByWstethFunction(wsteth: BigInteger): BigInteger {
-        return read(
+        return readSingle(
             "getStETHByWstETH",
             inputs = listOf(wsteth.toUint256()),
-            outputs = listOf(uint256())
-        )[0].value as BigInteger
-    }
-
-    suspend fun stEthPerToken() {
-        return readSingle("stEthPerToken", uint256())
-    }
-
-    suspend fun getTotalShares(): BigInteger {
-        return read(
-            "getTotalShares",
-            outputs = listOf(uint256())
-        )[0].value as BigInteger
-    }
-
-    suspend fun getTotalSupply(): BigInteger {
-        return read(
-            "totalSupply",
-            outputs = listOf(uint256())
-        )[0].value as BigInteger
+            uint256()
+        )
     }
 
     fun sharesOfFunction(address: String): Function {
@@ -47,5 +30,4 @@ class WSTEthContract(
             outputs = listOf(uint256())
         )
     }
-
 }

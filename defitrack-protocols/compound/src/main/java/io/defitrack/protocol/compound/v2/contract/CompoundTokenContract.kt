@@ -11,7 +11,6 @@ import java.math.BigInteger
 
 class CompoundTokenContract(
     ethereumContractAccessor: BlockchainGateway,
-    abi: String,
     address: String,
 ) : ERC20Contract(
     ethereumContractAccessor, address

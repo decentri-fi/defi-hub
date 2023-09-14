@@ -18,10 +18,6 @@ class RibbonEthereumFarmingMarketProvider(
     private val ribbonEthereumGraphProvider: RibbonEthereumGraphProvider,
 ) : FarmingMarketProvider() {
 
-    val ribbonVaultAbi = lazyAsync {
-        abiResource.getABI("ribbon/vault.json")
-    }
-
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         return ribbonEthereumGraphProvider.getVaults().map {
             val stakedToken = getToken(it.underlyingAsset)

@@ -9,7 +9,7 @@ class BalancerLiquidityGaugeFactoryContract(
     blockchainGateway: BlockchainGateway,
     address: String
 ) : EvmContract(
-    blockchainGateway, "", address
+    blockchainGateway, address
 ) {
 
     suspend fun getPoolGauge(poolAddress: String): String {

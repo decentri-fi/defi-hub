@@ -9,7 +9,7 @@ import org.web3j.ens.NameHash
 class EnsRegistryContract(
     blockchainGateway: BlockchainGateway,
     address: String
-) : EvmContract(blockchainGateway, "", address) {
+) : EvmContract(blockchainGateway, address) {
 
     suspend fun getResolver(name: String): String {
         val nameHash = NameHash.nameHashAsBytes(name)

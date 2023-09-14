@@ -51,8 +51,7 @@ class VelodromeV1OptimismPoolingMarketProvider(
                                 tokens = poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
                                 tokenType = TokenType.VELODROME,
                                 totalSupply = refreshable(poolingToken.totalSupply.asEth(poolingToken.decimals)) {
-                                    val poolingToken = getToken(it)
-                                    poolingToken.totalSupply.asEth(poolingToken.decimals)
+                                    getToken(it).totalSupply.asEth(poolingToken.decimals)
                                 },
                                 deprecated = true
                             )

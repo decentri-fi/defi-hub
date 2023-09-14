@@ -1,6 +1,5 @@
 package io.defitrack.protocol.quickswap.staking
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
@@ -21,7 +20,6 @@ import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import org.springframework.stereotype.Service
@@ -31,7 +29,6 @@ import java.math.RoundingMode
 @Service
 class DeprecatedQuickswapFarmingMarketProvider(
     private val quickswapService: QuickswapService,
-    private val abiService: ABIResource,
     private val priceResource: PriceResource,
     private val quickswapAPRService: QuickswapAPRService,
 ) : FarmingMarketProvider() {
@@ -48,8 +45,6 @@ class DeprecatedQuickswapFarmingMarketProvider(
         val rewardPools = contract.getStakingTokens().map {
             contract.stakingRewardsInfoByStakingToken(it)
         }
-
-        logger.info("importing ${rewardPools.size} reward pools")
 
         val semaphore = Semaphore(8)
 

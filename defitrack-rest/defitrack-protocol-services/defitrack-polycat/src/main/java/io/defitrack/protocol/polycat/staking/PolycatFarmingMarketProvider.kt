@@ -21,15 +21,10 @@ class PolycatFarmingMarketProvider(
     private val polycatService: PolycatService,
 ) : FarmingMarketProvider() {
 
-    val masterChefABI by lazy {
-        runBlocking { getAbi("polycat/MasterChef.json") }
-    }
-
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         return polycatService.getPolycatFarms().map {
             PolycatMasterChefContract(
                 getBlockchainGateway(),
-                masterChefABI,
                 it
             )
         }.flatMap { chef ->

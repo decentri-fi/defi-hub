@@ -18,7 +18,7 @@ class UniswapV3PoolContract(
     blockchaingateway: BlockchainGateway,
     address: String
 ) : EvmContract(
-    blockchaingateway, "", address
+    blockchaingateway, address
 ) {
 
     suspend fun slot0(): Slot0 {
@@ -49,7 +49,7 @@ class UniswapV3PoolContract(
         return readSingle("token1", TypeUtils.address())
     }
 
-    val  feeGrowthGlobal0X128: Deferred<BigInteger> = lazyAsync {
+    val feeGrowthGlobal0X128: Deferred<BigInteger> = lazyAsync {
         readSingle("feeGrowthGlobal0X128", uint256())
     }
 

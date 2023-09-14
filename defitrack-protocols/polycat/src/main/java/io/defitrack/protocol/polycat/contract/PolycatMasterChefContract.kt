@@ -12,10 +12,9 @@ import java.math.BigInteger
 
 class PolycatMasterChefContract(
     contractAccessor: BlockchainGateway,
-    abi: String,
     address: String,
 ) : EvmContract(
-    contractAccessor, abi, address
+    contractAccessor, address
 ) {
 
     suspend fun poolLength(): Int {

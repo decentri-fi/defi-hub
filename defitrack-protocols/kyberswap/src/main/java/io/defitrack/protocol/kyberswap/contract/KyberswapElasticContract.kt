@@ -2,6 +2,7 @@ package io.defitrack.protocol.kyberswap.contract
 
 import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toUint256
+import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.multicall.MultiCallElement
@@ -10,10 +11,10 @@ import java.math.BigInteger
 class KyberswapElasticContract(
     blockchainGateway: BlockchainGateway,
     address: String
-) : EvmContract(blockchainGateway, "", address) {
+) : EvmContract(blockchainGateway, address) {
 
     suspend fun poolLength(): BigInteger {
-        return readSingle("poolLength", TypeUtils.uint256())
+        return readSingle("poolLength", uint256())
     }
 
     suspend fun allPairs(): List<PoolInfo> {
@@ -26,9 +27,9 @@ class KyberswapElasticContract(
                     TypeUtils.uint32(),
                     TypeUtils.uint32(),
                     TypeUtils.uint32(),
-                    TypeUtils.uint256(),
-                    TypeUtils.uint256(),
-                    TypeUtils.uint256(),
+                    uint256(),
+                    uint256(),
+                    uint256(),
                 )
             )
         }

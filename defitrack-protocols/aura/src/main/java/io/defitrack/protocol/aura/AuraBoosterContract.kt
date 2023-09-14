@@ -6,13 +6,12 @@ import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.contract.multicall.MultiCallElement
 import java.math.BigInteger
 
 class AuraBoosterContract(
     blockchainGateway: BlockchainGateway
 ) : EvmContract(
-    blockchainGateway, "", "0xa57b8d98dae62b26ec3bcc4a365338157060b234"
+    blockchainGateway, "0xa57b8d98dae62b26ec3bcc4a365338157060b234"
 ) {
 
     suspend fun poolLength(): Int {

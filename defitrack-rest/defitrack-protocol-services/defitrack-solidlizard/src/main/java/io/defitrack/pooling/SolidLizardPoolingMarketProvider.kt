@@ -44,8 +44,7 @@ class SolidLizardPoolingMarketProvider : PoolingMarketProvider() {
                         breakdown = defaultBreakdown(tokens, token.address),
                         address = token.address,
                         totalSupply = refreshable(token.totalSupply.asEth(token.decimals)) {
-                            val token = getToken(it)
-                            token.totalSupply.asEth(token.decimals)
+                            getToken(it).totalSupply.asEth(token.decimals)
                         }
                     )
                 } catch (ex: Exception) {

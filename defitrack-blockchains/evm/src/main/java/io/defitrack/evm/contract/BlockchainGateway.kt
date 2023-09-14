@@ -37,8 +37,7 @@ import java.util.Collections.emptyList
 import org.web3j.abi.datatypes.Function as Web3Function
 
 
-open class BlockchainGateway(
-    val abiDecoder: AbiDecoder,
+class BlockchainGateway(
     val network: Network,
     val multicallCaller: MultiCallCaller,
     val httpClient: HttpClient,
@@ -107,22 +106,6 @@ open class BlockchainGateway(
         return executeCall(address, createFunction(function, inputs, outputs))
     }
 
-    suspend fun readFunctionWithAbi(
-        address: String,
-        function: AbiContractFunction,
-    ): List<Type<*>> {
-        return executeCall(address, createFunctionWithAbi(function, null, null))
-    }
-
-    suspend fun readFunctionWithAbi(
-        address: String,
-        function: AbiContractFunction,
-        inputs: List<Type<*>>,
-        outputs: List<TypeReference<out Type<*>>>? = null
-    ): List<Type<*>> {
-        return executeCall(address, createFunctionWithAbi(function, inputs, outputs))
-    }
-
     open suspend fun executeCall(
         address: String,
         function: org.web3j.abi.datatypes.Function,
@@ -150,21 +133,6 @@ open class BlockchainGateway(
             }
             post.body()
         }
-    }
-
-    fun getConstantFunction(abi: String, method: String): AbiContractFunction {
-        return abiDecoder.decode(abi)
-            .elements
-            .filterIsInstance<AbiContractFunction>()
-            .filter { it.isConstant }
-            .first { it.name.equals(method, ignoreCase = true) }
-    }
-
-    fun getFunction(abi: String, method: String): AbiContractFunction {
-        return abiDecoder.decode(abi)
-            .elements
-            .filterIsInstance<AbiContractFunction>()
-            .first { it.name.equals(method, ignoreCase = true) }
     }
 
     companion object {

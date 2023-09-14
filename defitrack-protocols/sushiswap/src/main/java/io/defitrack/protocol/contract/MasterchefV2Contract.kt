@@ -19,7 +19,7 @@ class MasterchefV2Contract(
     blockchainGateway: BlockchainGateway,
     address: String
 ) : EvmContract(
-    blockchainGateway, "", address
+    blockchainGateway, address
 ) {
 
     fun harvestFunction(poolId: Int): Function {

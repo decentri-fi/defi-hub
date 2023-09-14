@@ -11,9 +11,8 @@ import java.math.BigInteger
 
 class ConvexBoosterContract(
     blockchainGateway: BlockchainGateway,
-    abi: String,
     address: String
-) : EvmContract(blockchainGateway, abi, address) {
+) : EvmContract(blockchainGateway, address) {
 
     suspend fun poolLength(): Int {
         return readSingle<BigInteger>("poolLength", uint256()).toInt()

@@ -8,6 +8,7 @@ import io.defitrack.abi.TypeUtils.Companion.uint128
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.abi.TypeUtils.Companion.uint88
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.Type
@@ -15,8 +16,8 @@ import java.math.BigInteger
 
 class AlgebraPositionsV2Contract(
     blockchainGateway: BlockchainGateway, address: String
-) : EvmContract(
-    blockchainGateway, "", address
+) : ERC20Contract(
+    blockchainGateway, address
 ) {
 
     suspend fun getUserPositions(owner: String): List<AlgebraPosition> {
@@ -34,14 +35,6 @@ class AlgebraPositionsV2Contract(
         return read(
             "tokenOfOwnerByIndex",
             listOf(owner.toAddress(), index.toBigInteger().toUint256()),
-            listOf(uint256())
-        )[0].value as BigInteger
-    }
-
-    suspend fun balanceOf(owner: String): BigInteger {
-        return read(
-            "balanceOf",
-            listOf(owner.toAddress()),
             listOf(uint256())
         )[0].value as BigInteger
     }
@@ -101,10 +94,6 @@ class AlgebraPositionsV2Contract(
         ).map {
             it.data[0].value as BigInteger
         }
-    }
-
-    suspend fun totalSupply(): BigInteger {
-        return readSingle("totalSupply", uint256())
     }
 
     fun tokenByIndex(index: Int): Function {

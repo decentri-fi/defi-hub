@@ -15,7 +15,7 @@ class QidaoVaultContract(
     blockchainGateway: BlockchainGateway,
     address: String
 ) : ERC721Contract(
-    blockchainGateway, "", address
+    blockchainGateway, address
 ) {
 
     suspend fun vaultCount(): BigInteger {

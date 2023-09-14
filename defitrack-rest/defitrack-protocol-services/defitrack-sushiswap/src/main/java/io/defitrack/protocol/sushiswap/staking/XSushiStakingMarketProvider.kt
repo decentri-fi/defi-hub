@@ -23,7 +23,7 @@ class XSushiStakingMarketProvider(
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
 
-        val xSushiContract = XSushiContract(getBlockchainGateway(), "", xsushi)
+        val xSushiContract = XSushiContract(getBlockchainGateway(), xsushi)
         val sushiToken = getToken(sushi)
         val totalStakedSushi = getERC20Resource().getBalance(getNetwork(), sushi, xsushi)
 

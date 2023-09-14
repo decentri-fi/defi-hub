@@ -15,7 +15,7 @@ class LPStakingContract(
     private val pendingFunctionName: String,
     private val emissionTokenName: String
 ) : EvmContract(
-    blockchainGateway, "", address
+    blockchainGateway, address
 ) {
 
     suspend fun emissionToken(): String {

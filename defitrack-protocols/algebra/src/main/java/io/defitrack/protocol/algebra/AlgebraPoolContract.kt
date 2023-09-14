@@ -9,7 +9,7 @@ import java.math.BigInteger
 class AlgebraPoolContract(
     blockchainGateway: BlockchainGateway, abi: String
 ) : EvmContract(
-    blockchainGateway, "", abi
+    blockchainGateway, abi
 ) {
 
     suspend fun liquidity(): BigInteger {

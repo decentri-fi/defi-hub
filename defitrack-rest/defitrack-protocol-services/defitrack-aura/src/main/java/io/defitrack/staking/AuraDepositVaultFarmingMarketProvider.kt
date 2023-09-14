@@ -1,6 +1,7 @@
 package io.defitrack.staking
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Service
 class AuraDepositVaultFarmingMarketProvider(
 ) : FarmingMarketProvider() {
 
-    val booster = GlobalScope.async(start = CoroutineStart.LAZY) {
+    val booster = lazyAsync {
         AuraBoosterContract(
             getBlockchainGateway()
         )

@@ -1,6 +1,7 @@
 package io.defitrack.ens.contract
 
 import io.defitrack.abi.TypeUtils
+import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toUtf8String
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
@@ -10,29 +11,29 @@ import org.web3j.ens.NameHash
 class EnsResolverContract(
     blockchainGateway: BlockchainGateway,
     address: String
-) : EvmContract(blockchainGateway, "", address) {
+) : EvmContract(blockchainGateway, address) {
 
     suspend fun getText(ensName: String, textName: String): String {
-        return read(
+        return readSingle(
             "text",
-            outputs = listOf(TypeUtils.string()),
-            inputs = listOf(Bytes32(NameHash.nameHashAsBytes(ensName)), textName.toUtf8String())
-        )[0].value as String
+            listOf(Bytes32(NameHash.nameHashAsBytes(ensName)), textName.toUtf8String()),
+            TypeUtils.string()
+        )
     }
 
     suspend fun getAddress(ensName: String): String {
-        return read(
+        return readSingle(
             "addr",
-            outputs = listOf(TypeUtils.address()),
-            inputs = listOf(Bytes32(NameHash.nameHashAsBytes(ensName)))
-        )[0].value as String
+            listOf(Bytes32(NameHash.nameHashAsBytes(ensName))),
+            address(),
+        )
     }
 
     suspend fun getName(name: String): String {
-        return read(
+        return readSingle(
             "name",
-            outputs = listOf(TypeUtils.string()),
-            inputs = listOf(Bytes32(NameHash.nameHashAsBytes(name)))
-        )[0].value as String
+            listOf(Bytes32(NameHash.nameHashAsBytes(name))),
+            TypeUtils.string(),
+        )
     }
 }

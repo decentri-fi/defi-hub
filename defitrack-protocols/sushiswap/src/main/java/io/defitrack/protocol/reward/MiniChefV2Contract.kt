@@ -17,7 +17,7 @@ import java.math.BigInteger
 class MiniChefV2Contract(
     blockchainGateway: BlockchainGateway,
     address: String
-) : EvmContract(blockchainGateway, "", address) {
+) : EvmContract(blockchainGateway, address) {
 
     fun userInfoFunction(poolId: Int, user: String): Function {
         return createFunction(

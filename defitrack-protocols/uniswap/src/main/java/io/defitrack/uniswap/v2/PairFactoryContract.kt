@@ -11,7 +11,7 @@ class PairFactoryContract(
     blockchainGateway: BlockchainGateway,
     contractAddress: String
 ) : EvmContract(
-    blockchainGateway, "", contractAddress
+    blockchainGateway, contractAddress
 ) {
     suspend fun allPairsLength(): BigInteger {
         return readSingle("allPairsLength", uint256())

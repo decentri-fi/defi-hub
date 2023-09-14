@@ -1,6 +1,5 @@
 package io.defitrack.market
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGateway
@@ -24,7 +23,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
-import org.apache.commons.lang3.SerializationUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -52,10 +50,6 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
 
     @Autowired
     lateinit var marketSizeService: MarketSizeService
-
-
-    @Autowired
-    lateinit var abiResource: ABIResource
 
 
     @Autowired
@@ -195,9 +189,5 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
 
     suspend inline fun <T> throttled(action: () -> T): T {
         return semaphore.withPermit(action)
-    }
-
-    suspend fun getAbi(name: String): String {
-        return abiResource.getABI(name)
     }
 }

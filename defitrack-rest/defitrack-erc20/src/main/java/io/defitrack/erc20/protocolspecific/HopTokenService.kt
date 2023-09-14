@@ -1,6 +1,5 @@
 package io.defitrack.erc20.protocolspecific
 
-import io.defitrack.abi.ABIResource
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.erc20.ERC20
 import io.defitrack.erc20.ERC20ContractReader

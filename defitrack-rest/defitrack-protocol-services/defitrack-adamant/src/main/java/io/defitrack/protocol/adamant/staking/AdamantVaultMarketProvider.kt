@@ -26,11 +26,6 @@ class AdamantVaultMarketProvider(
         return Protocol.ADAMANT
     }
 
-
-    val genericVault = lazyAsync {
-        getAbi("adamant/GenericVault.json")
-    }
-
     val addy = lazyAsync {
         getToken("0xc3fdbadc7c795ef1d6ba111e06ff8f16a20ea539")
     }
@@ -41,7 +36,6 @@ class AdamantVaultMarketProvider(
             adamantService.adamantGenericVaults().map {
                 AdamantVaultContract(
                     getBlockchainGateway(),
-                    genericVault.await(),
                     it.vaultAddress
                 )
             }.map { vault ->

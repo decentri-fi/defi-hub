@@ -19,18 +19,10 @@ class IdexFarmingMarketProvider(
     private val idexService: IdexService
 ) : FarmingMarketProvider() {
 
-
-    val minichefABI by lazy {
-        runBlocking {
-            getAbi("idex/IdexFarm.json")
-        }
-    }
-
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
         idexService.idexFarm().map {
             IdexFarmContract(
                 getBlockchainGateway(),
-                minichefABI,
                 it
             )
         }.flatMap { chef ->
@@ -49,7 +41,6 @@ class IdexFarmingMarketProvider(
 
     override fun getProtocol(): Protocol {
         return Protocol.IDEX
-
     }
 
     override fun getNetwork(): Network {

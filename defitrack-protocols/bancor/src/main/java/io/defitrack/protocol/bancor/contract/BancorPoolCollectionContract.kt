@@ -11,7 +11,7 @@ import org.web3j.abi.datatypes.DynamicArray
 class BancorPoolCollectionContract(
     blockchainGateway: BlockchainGateway, address: String
 ) : EvmContract(
-    blockchainGateway, "", address
+    blockchainGateway, address
 ) {
 
     suspend fun allTokens(): List<String> {

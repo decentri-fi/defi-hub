@@ -10,10 +10,9 @@ import org.web3j.abi.datatypes.Function
 
 class DinoswapFossilFarmsContract(
     contractAccessor: BlockchainGateway,
-    abi: String,
     address: String,
 ) : EvmContract(
-    contractAccessor, abi, address
+    contractAccessor, address
 ) {
 
     suspend fun poolLength(): Int {

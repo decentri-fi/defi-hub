@@ -12,7 +12,7 @@ class PoolFactoryContract(
     blockchainGateway: BlockchainGateway,
     contractAddress: String
 ) : EvmContract(
-    blockchainGateway, "", contractAddress
+    blockchainGateway, contractAddress
 ) {
     suspend fun allPairsLength(): BigInteger {
         return readSingle("allPoolsLength", uint256())

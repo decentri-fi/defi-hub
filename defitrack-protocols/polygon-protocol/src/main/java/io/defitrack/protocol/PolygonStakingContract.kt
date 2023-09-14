@@ -10,7 +10,7 @@ import org.web3j.abi.datatypes.Function
 class PolygonStakingContract(
     blockchainGateway: BlockchainGateway, address: String
 ) : EvmContract(
-    blockchainGateway, "", address
+    blockchainGateway, address
 ) {
 
     fun totalStakedForFn(user: String): Function {
