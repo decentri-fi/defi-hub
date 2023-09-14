@@ -8,9 +8,7 @@ import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
 
 @Component
-class CompanyHandler(
-    private val protocolVOMapper: ProtocolVOMapper
-) {
+class CompanyHandler {
 
     fun getCompanies(serverRequest: ServerRequest) = ServerResponse.ok()
         .contentType(APPLICATION_JSON)
