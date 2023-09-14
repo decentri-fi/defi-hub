@@ -9,10 +9,8 @@ import io.defitrack.abi.TypeUtils.Companion.uint64
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.contract.multicall.MultiCallElement
 import kotlinx.coroutines.Deferred
 import org.web3j.abi.TypeReference
-import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
@@ -48,7 +46,7 @@ class MasterchefV2Contract(
     }
 
     suspend fun poolLength(): Int {
-        return (readWithoutAbi(
+        return (read(
             "poolLength",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger).toInt()
@@ -77,7 +75,7 @@ class MasterchefV2Contract(
     }
 
     suspend fun lpToken(poolId: Int): String {
-        return readWithoutAbi(
+        return read(
             "lpToken",
             listOf(poolId.toBigInteger().toUint256()),
             listOf(address())

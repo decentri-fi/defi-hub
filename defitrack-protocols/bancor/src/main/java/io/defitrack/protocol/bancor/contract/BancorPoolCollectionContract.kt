@@ -15,7 +15,7 @@ class BancorPoolCollectionContract(
 ) {
 
     suspend fun allTokens(): List<String> {
-        val result = readWithoutAbi(
+        val result = read(
             "pools",
             outputs = listOf(
                 object : TypeReference<DynamicArray<Address>>() {}

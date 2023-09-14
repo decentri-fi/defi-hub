@@ -8,7 +8,6 @@ import io.defitrack.evm.contract.multicall.MultiCallResult
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.web3j.abi.datatypes.Function
-import org.web3j.abi.datatypes.Type
 import java.math.BigInteger
 
 open class ERC20Contract(
@@ -58,7 +57,7 @@ open class ERC20Contract(
 
 
     suspend fun allowance(owner: String, spender: String): BigInteger {
-        return readWithoutAbi(
+        return read(
             "allowance",
             listOf(owner.toAddress(), spender.toAddress()),
             listOf(uint256())
@@ -67,7 +66,7 @@ open class ERC20Contract(
 
 
     suspend fun balanceOf(address: String): BigInteger {
-        val retVal = readWithoutAbi(
+        val retVal = read(
             "balanceOf",
             inputs = listOf(address.toAddress()),
             outputs = listOf(uint256())

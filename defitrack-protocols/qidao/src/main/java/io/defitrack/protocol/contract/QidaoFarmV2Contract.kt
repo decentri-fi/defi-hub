@@ -21,7 +21,7 @@ class QidaoFarmV2Contract(
 ) {
 
     suspend fun poolLength(): Int {
-        return (readWithoutAbi(
+        return (read(
             "poolLength",
             outputs = listOf(uint256())
         )[0].value as BigInteger).toInt()
@@ -36,14 +36,14 @@ class QidaoFarmV2Contract(
     }
 
     suspend fun rewardToken(): String {
-        return readWithoutAbi(
+        return read(
             "erc20",
             outputs = listOf(TypeReference.create(Address::class.java))
         )[0].value as String
     }
 
     suspend fun getLpTokenForPoolId(poolIndex: Int): String {
-        return readWithoutAbi(
+        return read(
             "poolInfo",
             inputs = listOf(poolIndex.toBigInteger().toUint256()),
             outputs = listOf(

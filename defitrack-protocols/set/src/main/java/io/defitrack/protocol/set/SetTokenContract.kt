@@ -19,7 +19,7 @@ class SetTokenContract(
 ) {
 
     suspend fun getPositions(): List<Position> {
-        return readWithoutAbi(
+        return read(
             "getPositions",
             outputs = listOf(
                 object : TypeReference<DynamicArray<Position>>() {}

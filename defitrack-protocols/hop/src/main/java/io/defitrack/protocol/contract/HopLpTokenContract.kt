@@ -15,7 +15,7 @@ class HopLpTokenContract(
     }
 
     suspend fun getToken(index: Int): String {
-        return readWithoutAbi(
+        return read(
             "getToken",
             listOf(index.toBigInteger().toUint8()),
             listOf(address())

@@ -30,7 +30,7 @@ class PoolContract(
     }
 
     suspend fun reservesList(): List<String> {
-        return (readWithoutAbi("getReservesList", emptyList(), listOf(
+        return (read("getReservesList", emptyList(), listOf(
             object : TypeReference<DynamicArray<Address>>() {}
         ))[0].value as List<Address>).map {
             it.value as String

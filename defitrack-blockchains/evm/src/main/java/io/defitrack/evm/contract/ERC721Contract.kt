@@ -38,7 +38,7 @@ open class ERC721Contract(
     }
 
     suspend fun balanceOf(address: String): BigInteger {
-        return readWithoutAbi(
+        return read(
             "balanceOf",
             inputs = listOf(address.toAddress()),
             outputs = listOf(uint256())
@@ -47,7 +47,7 @@ open class ERC721Contract(
 
     suspend fun name(): String {
         return try {
-            readWithoutAbi("name", outputs = listOf(string()))[0].value as String
+            read("name", outputs = listOf(string()))[0].value as String
         } catch (ex: Exception) {
             "unknown"
         }
@@ -55,7 +55,7 @@ open class ERC721Contract(
 
     suspend fun symbol(): String {
         return try {
-            readWithoutAbi("symbol", outputs = listOf(string()))[0].value as String
+            read("symbol", outputs = listOf(string()))[0].value as String
         } catch (ex: Exception) {
             "UNKWN"
         }
@@ -64,7 +64,7 @@ open class ERC721Contract(
 
     suspend fun totalSupply(): BigInteger {
         return try {
-            readWithoutAbi("totalSupply", outputs = listOf(uint256()))[0].value as BigInteger
+            read("totalSupply", outputs = listOf(uint256()))[0].value as BigInteger
         } catch (ex: Exception) {
             BigInteger.ZERO
         }

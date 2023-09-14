@@ -13,7 +13,7 @@ class VoterContract(
 ) {
 
     suspend fun gauges(poolAddress: String): String {
-        return readWithoutAbi(
+        return read(
             "gauges",
             inputs = listOf(poolAddress.toAddress()),
             outputs = listOf(address())

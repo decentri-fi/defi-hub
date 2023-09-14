@@ -14,7 +14,7 @@ class CompoundComptrollerContract(
 ) {
 
     suspend fun getMarkets(): List<String> {
-        return (readWithoutAbi(
+        return (read(
             "getAllMarkets",
             inputs = emptyList(),
             outputs = listOf(

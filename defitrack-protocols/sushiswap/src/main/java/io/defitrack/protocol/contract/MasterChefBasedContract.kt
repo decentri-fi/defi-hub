@@ -10,7 +10,6 @@ import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import kotlinx.coroutines.Deferred
 import org.web3j.abi.TypeReference
-import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
@@ -49,7 +48,7 @@ class MasterChefBasedContract(
     }
 
     suspend fun poolLength(): Int {
-        return (readWithoutAbi(
+        return (read(
             "poolLength",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger).toInt()

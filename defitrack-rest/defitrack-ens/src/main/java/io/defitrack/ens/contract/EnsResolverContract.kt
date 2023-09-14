@@ -13,7 +13,7 @@ class EnsResolverContract(
 ) : EvmContract(blockchainGateway, "", address) {
 
     suspend fun getText(ensName: String, textName: String): String {
-        return readWithoutAbi(
+        return read(
             "text",
             outputs = listOf(TypeUtils.string()),
             inputs = listOf(Bytes32(NameHash.nameHashAsBytes(ensName)), textName.toUtf8String())
@@ -21,7 +21,7 @@ class EnsResolverContract(
     }
 
     suspend fun getAddress(ensName: String): String {
-        return readWithoutAbi(
+        return read(
             "addr",
             outputs = listOf(TypeUtils.address()),
             inputs = listOf(Bytes32(NameHash.nameHashAsBytes(ensName)))
@@ -29,7 +29,7 @@ class EnsResolverContract(
     }
 
     suspend fun getName(name: String): String {
-        return readWithoutAbi(
+        return read(
             "name",
             outputs = listOf(TypeUtils.string()),
             inputs = listOf(Bytes32(NameHash.nameHashAsBytes(name)))

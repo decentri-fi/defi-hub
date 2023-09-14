@@ -20,7 +20,7 @@ class BalancerVaultContract(
 
     suspend fun getPoolTokens(poolId: String): PoolTokenResult {
         val bytes = Hex.decode(poolId.removePrefix("0x"))
-        val result = readWithoutAbi(
+        val result = read(
             method = "getPoolTokens",
             inputs = listOf(bytes.toBytes32()),
             outputs = listOf(

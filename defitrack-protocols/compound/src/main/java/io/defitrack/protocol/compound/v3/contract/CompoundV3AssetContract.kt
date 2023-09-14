@@ -33,21 +33,21 @@ class CompoundV3AssetContract(
     }
 
     suspend fun baseToken(): String {
-        return readWithoutAbi(
+        return read(
             "baseToken",
             outputs = listOf(TypeUtils.address())
         )[0].value as String
     }
 
     suspend fun borrowBalanceOf(): BigInteger {
-        return readWithoutAbi(
+        return read(
             "borrowBalanceOf",
             outputs = listOf(TypeUtils.uint256())
         )[0].value as BigInteger
     }
 
     suspend fun numAssets(): BigInteger {
-        return readWithoutAbi(
+        return read(
             "numAssets",
             outputs = listOf(TypeUtils.uint256())
         )[0].value as BigInteger

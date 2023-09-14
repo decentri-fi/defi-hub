@@ -4,7 +4,6 @@ import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.contract.multicall.MultiCallElement
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
@@ -17,7 +16,7 @@ class StargatePoolFactory(
 ) {
 
     suspend fun poolLength(): Int {
-        return (readWithoutAbi(
+        return (read(
             "allPoolsLength",
             outputs = listOf(TypeReference.create(Uint256::class.java))
         )[0].value as BigInteger).toInt()

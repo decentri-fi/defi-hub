@@ -24,7 +24,7 @@ class QidaoVaultContract(
 
     suspend fun exists(vaultId: BigInteger): Boolean {
         return try {
-            readWithoutAbi(
+            read(
                 method = "exists",
                 inputs = listOf(vaultId.toUint256()),
                 outputs = listOf(bool())
@@ -35,7 +35,7 @@ class QidaoVaultContract(
     }
 
     suspend fun vaultDebt(vaultId: BigInteger): BigInteger {
-        return readWithoutAbi(
+        return read(
             "vaultDebt",
             inputs = listOf(vaultId.toUint256()),
             outputs = listOf(uint256())
@@ -43,7 +43,7 @@ class QidaoVaultContract(
     }
 
     suspend fun vaultCollateral(vaultId: BigInteger): BigInteger {
-        return readWithoutAbi(
+        return read(
             "vaultCollateral",
             inputs = listOf(vaultId.toUint256()),
             outputs = listOf(uint256())
@@ -51,7 +51,7 @@ class QidaoVaultContract(
     }
 
     suspend fun collateral(): String {
-        return readWithoutAbi(
+        return read(
             "collateral",
             outputs = listOf(address())
         )[0].value as String

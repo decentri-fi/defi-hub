@@ -16,7 +16,7 @@ class EnsRegistrarContract(
         val splitted = ensName.split(".")
         val sha = Hash.sha3String(splitted[splitted.size - 2])
         val tokenId = BigInteger(sha.removePrefix("0x"), 16)
-        return readWithoutAbi(
+        return read(
             "nameExpires",
             listOf(tokenId.toUint256()),
             listOf(TypeUtils.uint256())

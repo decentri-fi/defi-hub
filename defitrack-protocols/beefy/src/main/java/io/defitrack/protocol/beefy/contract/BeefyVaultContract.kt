@@ -43,13 +43,13 @@ class BeefyVaultContract(
     }
 
     suspend fun want(): String {
-        var read = readWithoutAbi(
+        var read = read(
             "want",
             inputs = emptyList(),
             outputs = listOf(address())
         )
         if (read.isEmpty()) {
-            read = readWithoutAbi(
+            read = read(
                 "wmatic",
                 inputs = emptyList(),
                 outputs = listOf(
@@ -58,14 +58,14 @@ class BeefyVaultContract(
             )
         }
         if (read.isEmpty()) {
-            read = readWithoutAbi(
+            read = read(
                 "token",
                 inputs = emptyList(),
                 outputs = listOf(address())
             )
         }
         if (read.isEmpty()) {
-            read = readWithoutAbi(
+            read = read(
                 "wbnb",
                 inputs = emptyList(),
                 outputs = listOf(address())

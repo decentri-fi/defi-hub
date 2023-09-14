@@ -24,7 +24,7 @@ class VelodromeV1GaugeContract(
     //Todo: multicall it
     suspend fun getRewardList(): List<String> {
         return (0 until getRewardListLength().toInt()).map {
-            readWithoutAbi(
+            read(
                 "rewards",
                 listOf(it.toBigInteger().toUint256()),
                 listOf(TypeUtils.address())

@@ -15,7 +15,7 @@ class WSTEthContract(
 ) {
 
     suspend fun getStethByWstethFunction(wsteth: BigInteger): BigInteger {
-        return readWithoutAbi(
+        return read(
             "getStETHByWstETH",
             inputs = listOf(wsteth.toUint256()),
             outputs = listOf(uint256())
@@ -27,14 +27,14 @@ class WSTEthContract(
     }
 
     suspend fun getTotalShares(): BigInteger {
-        return readWithoutAbi(
+        return read(
             "getTotalShares",
             outputs = listOf(uint256())
         )[0].value as BigInteger
     }
 
     suspend fun getTotalSupply(): BigInteger {
-        return readWithoutAbi(
+        return read(
             "totalSupply",
             outputs = listOf(uint256())
         )[0].value as BigInteger

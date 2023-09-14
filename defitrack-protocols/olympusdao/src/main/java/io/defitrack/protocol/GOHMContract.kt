@@ -12,7 +12,7 @@ class GOHMContract(
 ) : ERC20Contract(blockchainGateway, address) {
 
     suspend fun balanceFrom(from: BigInteger): BigInteger {
-        return readWithoutAbi(
+        return read(
             "balanceFrom",
             inputs = listOf(from.toUint256()),
             outputs = listOf(uint256())
@@ -20,7 +20,7 @@ class GOHMContract(
     }
 
     suspend fun balanceTo(to: BigInteger): BigInteger {
-        return readWithoutAbi(
+        return read(
             "balanceto",
             inputs = listOf(to.toUint256()),
             outputs = listOf(uint256())

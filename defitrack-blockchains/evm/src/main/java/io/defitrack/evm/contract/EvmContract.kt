@@ -35,7 +35,7 @@ abstract class EvmContract(
         )
     }
 
-    suspend fun readWithoutAbi(
+    suspend fun read(
         method: String,
         inputs: List<Type<*>> = emptyList(),
         outputs: List<TypeReference<out Type<*>>>? = null
@@ -48,8 +48,21 @@ abstract class EvmContract(
         )
     }
 
+    suspend inline fun <reified T : Any> readSingle(
+        method: String,
+        inputs: List<Type<*>>,
+        output: TypeReference<out Type<*>>
+    ): T {
+        return blockchainGateway.readFunction(
+            address = address,
+            inputs = inputs,
+            outputs = listOf(output),
+            function = method
+        )[0].value as T
+    }
+
     suspend inline fun <reified T : Any> readSingle(function: String, output: TypeReference<out Type<*>>): T {
-        return readWithoutAbi(
+        return read(
             function,
             outputs = listOf(output)
         )[0].value as T

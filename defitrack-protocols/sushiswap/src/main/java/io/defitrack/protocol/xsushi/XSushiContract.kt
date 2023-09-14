@@ -9,7 +9,7 @@ class XSushiContract(blockchainGateway: BlockchainGateway, abi: String, address:
     EvmContract(blockchainGateway, abi, address) {
 
     suspend fun totalSupply(): BigInteger {
-        return readWithoutAbi("totalSupply", emptyList(), listOf(
+        return read("totalSupply", emptyList(), listOf(
             uint256()
         ))[0].value as BigInteger
     }

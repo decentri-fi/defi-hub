@@ -1,7 +1,6 @@
 package io.defitrack.protocol.aave.staking
 
 import io.defitrack.abi.TypeUtils.Companion.toAddress
-import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
@@ -18,7 +17,7 @@ class StakedAaveContract(
 ) {
 
     suspend fun totalSupply(): BigInteger {
-        return readWithoutAbi(
+        return read(
             "totalSupply",
             emptyList(),
             listOf(uint256())

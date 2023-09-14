@@ -39,7 +39,7 @@ class QuickswapDualRewardPoolContract(
     }
 
     suspend fun earnedA(address: String): BigInteger {
-        return readWithoutAbi(
+        return read(
             "earnedA",
             listOf(address.toAddress()),
             listOf(uint256())
@@ -47,7 +47,7 @@ class QuickswapDualRewardPoolContract(
     }
 
     suspend fun earnedB(address: String): BigInteger {
-        return readWithoutAbi(
+        return read(
             "earnedB",
             listOf(address.toAddress()),
             listOf(uint256())

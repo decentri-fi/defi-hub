@@ -14,7 +14,7 @@ class CurvePolygonGaugeControllerContract(
 ) {
 
     suspend fun getGaugeCount(): BigInteger {
-        return readWithoutAbi(
+        return read(
             "get_gauge_count",
             outputs = listOf(uint256())
         )[0].value as BigInteger
@@ -22,7 +22,7 @@ class CurvePolygonGaugeControllerContract(
 
     suspend fun getGaugeAddresses(): List<String> {
         return (0 until getGaugeCount().toInt()).map {
-            readWithoutAbi(
+            read(
                 "get_gauge",
                 listOf(it.toBigInteger().toUint256()),
                 listOf(address())

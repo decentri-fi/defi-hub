@@ -13,7 +13,7 @@ class EnsRegistryContract(
 
     suspend fun getResolver(name: String): String {
         val nameHash = NameHash.nameHashAsBytes(name)
-        return readWithoutAbi(
+        return read(
             "resolver",
             outputs = listOf(TypeUtils.address()),
             inputs = listOf(Bytes32(nameHash))

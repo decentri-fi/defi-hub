@@ -7,7 +7,6 @@ import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Function
-import org.web3j.abi.datatypes.Type
 
 class CurveGaugeContract(
     blockchainGateway: BlockchainGateway,
@@ -18,7 +17,7 @@ class CurveGaugeContract(
 ) {
 
     suspend fun lpToken(): String {
-        return readWithoutAbi(
+        return read(
             "lp_token",
             outputs = listOf(address())
         )[0].value as String
@@ -40,7 +39,7 @@ class CurveGaugeContract(
     suspend fun rewardTokens(): List<String> {
         return (0..3).mapNotNull {
             try {
-                readWithoutAbi(
+                read(
                     "reward_tokens",
                     listOf(it.toBigInteger().toUint256()),
                     listOf(address())

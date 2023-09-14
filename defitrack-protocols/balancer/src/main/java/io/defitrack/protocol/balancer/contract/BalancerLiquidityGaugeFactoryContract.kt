@@ -13,7 +13,7 @@ class BalancerLiquidityGaugeFactoryContract(
 ) {
 
     suspend fun getPoolGauge(poolAddress: String): String {
-        return readWithoutAbi(
+        return read(
             "getPoolGauge",
             listOf(poolAddress.toAddress()),
             listOf(TypeUtils.address())

@@ -6,7 +6,6 @@ import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.contract.multicall.MultiCallElement
 import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
 
@@ -24,7 +23,7 @@ class LPStakingContract(
     }
 
     suspend fun lpBalances(index: Int): BigInteger {
-        return readWithoutAbi(
+        return read(
             "lpBalances",
             inputs = listOf(index.toBigInteger().toUint256()),
             outputs = listOf(uint256())

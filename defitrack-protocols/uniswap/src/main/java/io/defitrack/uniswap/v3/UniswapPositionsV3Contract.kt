@@ -47,7 +47,7 @@ class UniswapPositionsV3Contract(
     }
 
     suspend fun balanceOf(owner: String): BigInteger {
-        return readWithoutAbi(
+        return read(
             "balanceOf",
             listOf(owner.toAddress()),
             listOf(uint256())

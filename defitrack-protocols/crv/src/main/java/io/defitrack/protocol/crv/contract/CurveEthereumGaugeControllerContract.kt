@@ -14,7 +14,7 @@ class CurveEthereumGaugeControllerContract(
 ) {
 
     suspend fun getGaugeCount(): BigInteger {
-        return readWithoutAbi(
+        return read(
             "n_gauges",
             outputs = listOf(uint256())
         )[0].value as BigInteger
@@ -22,7 +22,7 @@ class CurveEthereumGaugeControllerContract(
 
     suspend fun getGaugeAddresses(): List<String> {
         return (0 until getGaugeCount().toInt()).map {
-            readWithoutAbi(
+            read(
                 "gauges",
                 listOf(it.toBigInteger().toUint256()),
                 listOf(address())

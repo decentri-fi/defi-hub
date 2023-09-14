@@ -25,7 +25,7 @@ class DQuickContract(
     }
 
     suspend fun quickBalance(address: String): BigInteger {
-        return readWithoutAbi(
+        return read(
             "QUICKBalance",
             inputs = listOf(address.toAddress()),
             outputs = listOf(uint256())
@@ -37,7 +37,7 @@ class DQuickContract(
     }
 
     suspend fun dquickForQuick(amount: BigInteger): BigInteger {
-        return readWithoutAbi(
+        return read(
             "dQUICKForQUICK",
             inputs = listOf(amount.toUint256()),
             outputs = listOf(uint256())

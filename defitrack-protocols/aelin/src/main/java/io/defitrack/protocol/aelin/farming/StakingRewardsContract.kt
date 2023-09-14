@@ -1,6 +1,5 @@
 package io.defitrack.protocol.aelin.farming
 
-import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
@@ -15,7 +14,7 @@ class StakingRewardsContract(
 ) {
 
     suspend fun rewardRate(): BigInteger {
-        return readWithoutAbi("rewardRate", outputs = listOf(
+        return read("rewardRate", outputs = listOf(
             uint256()
         ))[0].value as BigInteger
     }

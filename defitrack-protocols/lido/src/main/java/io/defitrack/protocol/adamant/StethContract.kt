@@ -15,14 +15,14 @@ class StethContract(
 ) {
 
     suspend fun getTotalShares(): BigInteger {
-        return readWithoutAbi(
+        return read(
             "getTotalShares",
             outputs = listOf(uint256())
         )[0].value as BigInteger
     }
 
     suspend fun getPooledEthByShares(shares: BigInteger): BigInteger {
-        return readWithoutAbi(
+        return read(
             "getPooledEthByShares",
             inputs = listOf(shares.toUint256()),
             outputs = listOf(uint256())
@@ -30,7 +30,7 @@ class StethContract(
     }
 
     suspend fun getTotalSupply(): BigInteger {
-        return readWithoutAbi(
+        return read(
             "totalSupply",
             outputs = listOf(uint256())
         )[0].value as BigInteger

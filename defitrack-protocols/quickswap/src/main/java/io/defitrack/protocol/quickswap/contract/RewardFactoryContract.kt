@@ -15,7 +15,7 @@ class RewardFactoryContract(
 
     suspend fun getStakingTokens(): List<String> {
         return (0 until 200).mapNotNull { index ->
-            val retVal = readWithoutAbi(
+            val retVal = read(
                 method = "stakingTokens",
                 inputs = listOf(index.toBigInteger().toUint256()),
                 outputs = listOf(address())
@@ -29,7 +29,7 @@ class RewardFactoryContract(
     }
 
     suspend fun stakingRewardsInfoByStakingToken(stakingToken: String): String {
-        return readWithoutAbi(
+        return read(
             "stakingRewardsInfoByStakingToken",
             listOf(stakingToken.toAddress()),
             listOf(

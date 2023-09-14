@@ -4,7 +4,6 @@ import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.int128
 import io.defitrack.abi.TypeUtils.Companion.int56
 import io.defitrack.abi.TypeUtils.Companion.toInt24
-import io.defitrack.abi.TypeUtils.Companion.toUint24
 import io.defitrack.abi.TypeUtils.Companion.uint128
 import io.defitrack.abi.TypeUtils.Companion.uint160
 import io.defitrack.abi.TypeUtils.Companion.uint256
@@ -23,7 +22,7 @@ class UniswapV3PoolContract(
 ) {
 
     suspend fun slot0(): Slot0 {
-        val retVal = readWithoutAbi(
+        val retVal = read(
             "slot0",
             listOf(),
             listOf(
@@ -59,7 +58,7 @@ class UniswapV3PoolContract(
     }
 
     suspend fun ticks(tick: BigInteger): Ticks {
-        val retVal = readWithoutAbi(
+        val retVal = read(
             "ticks",
             listOf(tick.toInt24()),
             listOf(

@@ -9,7 +9,6 @@ import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.abi.TypeUtils.Companion.uint88
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.contract.multicall.MultiCallElement
 import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.Type
 import java.math.BigInteger
@@ -32,7 +31,7 @@ class AlgebraPositionsV2Contract(
     }
 
     suspend fun tokenOfOwnerByIndex(owner: String, index: Int): BigInteger {
-        return readWithoutAbi(
+        return read(
             "tokenOfOwnerByIndex",
             listOf(owner.toAddress(), index.toBigInteger().toUint256()),
             listOf(uint256())
@@ -40,7 +39,7 @@ class AlgebraPositionsV2Contract(
     }
 
     suspend fun balanceOf(owner: String): BigInteger {
-        return readWithoutAbi(
+        return read(
             "balanceOf",
             listOf(owner.toAddress()),
             listOf(uint256())

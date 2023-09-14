@@ -18,7 +18,7 @@ class UniswapFactoryContract(
         token1: String,
         fee: BigInteger
     ): String {
-        return readWithoutAbi(
+        return read(
             "getPool",
             listOf(
                 token0.toAddress(),
