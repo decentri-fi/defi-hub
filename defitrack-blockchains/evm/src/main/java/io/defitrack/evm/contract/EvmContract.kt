@@ -22,19 +22,6 @@ abstract class EvmContract(
         }
     }
 
-    fun createFunctionWithAbi(
-        method: String,
-        inputs: List<Type<*>> = emptyList(),
-        outputs: List<TypeReference<out Type<*>>>? = null
-    ): Function {
-        return BlockchainGateway.createFunctionWithAbi(
-            blockchainGateway.getFunction(abi, method),
-            inputs,
-            outputs
-        )
-    }
-
-
     suspend fun readConstant(method: String): List<Type<*>> {
         return blockchainGateway.readFunctionWithAbi(
             address = address,

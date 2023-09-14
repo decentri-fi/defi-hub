@@ -18,7 +18,7 @@ class PoolContract(
 ) : EvmContract(blockchainGateway, abi, address) {
 
     fun getSupplyFunction(asset: String, amount: BigInteger, onBehalfOf: String): Function {
-        return createFunctionWithAbi(
+        return createFunction(
             "supply",
             listOf(
                 asset.toAddress(),

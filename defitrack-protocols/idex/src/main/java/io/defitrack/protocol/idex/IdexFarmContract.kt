@@ -16,7 +16,7 @@ class IdexFarmContract(
 
 
     fun userInfoFunction(poolId: Int, user: String): Function {
-        return createFunctionWithAbi(
+        return createFunction(
             "userInfo",
             listOf(
                 poolId.toBigInteger().toUint256(),
@@ -31,23 +31,11 @@ class IdexFarmContract(
 
 
     suspend fun poolLength(): Int {
-        return (readWithAbi(
-            "poolLength",
-            outputs = listOf(uint256())
-        )[0].value as BigInteger).toInt()
-    }
-
-    suspend fun rewardPerBlock(): BigInteger {
-        return readWithAbi(
-            "rewardTokenPerBlock",
-            outputs = listOf(
-                uint256()
-            )
-        )[0].value as BigInteger
+        return readSingle("poolLength", uint256())
     }
 
     suspend fun getLpTokenForPoolId(poolIndex: Int): String {
-        return readWithAbi(
+        return readWithoutAbi(
             "poolInfo",
             inputs = listOf(poolIndex.toBigInteger().toUint256()),
             outputs = listOf(
@@ -60,9 +48,6 @@ class IdexFarmContract(
     }
 
     suspend fun rewardToken(): String {
-        return readWithAbi(
-            "rewardToken",
-            outputs = listOf(address())
-        )[0].value as String
+        return readSingle("rewardToken", address())
     }
 }

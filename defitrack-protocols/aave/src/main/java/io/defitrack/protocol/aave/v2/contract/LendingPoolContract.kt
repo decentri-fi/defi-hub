@@ -14,7 +14,7 @@ class LendingPoolContract(blockchainGateway: BlockchainGateway, abi: String, add
     ) {
 
     fun depositFunction(asset: String, amount: BigInteger): Function {
-        return createFunctionWithAbi(
+        return createFunction(
             "deposit",
             listOf(
                 asset.toAddress(),

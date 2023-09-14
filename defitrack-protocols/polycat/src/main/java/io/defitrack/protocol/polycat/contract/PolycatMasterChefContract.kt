@@ -19,22 +19,16 @@ class PolycatMasterChefContract(
 ) {
 
     suspend fun poolLength(): Int {
-        return (readWithAbi(
-            "poolLength",
-            outputs = listOf(uint256())
-        )[0].value as BigInteger).toInt()
+        return readSingle("poolLength", uint256())
     }
 
     suspend fun rewardToken(): String {
-        return readWithAbi(
-            "fish",
-            outputs = listOf(address())
-        )[0].value as String
+        return readSingle("fish", address())
     }
 
     suspend fun poolInfos(): List<PoolInfo> {
         val functions = (0 until poolLength()).map { poolIndex ->
-            createFunctionWithAbi(
+            createFunction(
                 "poolInfo",
                 inputs = listOf(poolIndex.toBigInteger().toUint256()),
                 outputs = listOf(
@@ -71,36 +65,17 @@ class PolycatMasterChefContract(
 
 
     suspend fun totalAllocPoint(): BigInteger {
-        return readWithAbi(
-            "totalAllocPoint",
-            outputs = listOf(uint256())
-        )[0].value as BigInteger
+        return readSingle("totalAllocPoint", uint256())
     }
 
     fun userInfoFunction(user: String, poolIndex: Int): Function {
-        return createFunctionWithAbi(
+        return createFunction(
             "userInfo",
             inputs = listOf(poolIndex.toBigInteger().toUint256(), user.toAddress()),
             outputs = listOf(
                 uint256(),
                 uint256(),
             )
-        )
-    }
-
-    suspend fun userInfo(address: String, poolIndex: Int): UserInfo {
-        val result = readWithAbi(
-            "userInfo",
-            inputs = listOf(poolIndex.toBigInteger().toUint256(), address.toAddress()),
-            outputs = listOf(
-                uint256(),
-                uint256(),
-            )
-        )
-
-        return UserInfo(
-            amount = result[0].value as BigInteger,
-            rewardDebt = result[1].value as BigInteger
         )
     }
 }

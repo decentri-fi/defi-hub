@@ -21,7 +21,7 @@ class ConvexBoosterContract(
 
     suspend fun poolInfos(): List<PoolInfo> {
         val functions = (0 until poolLength()).map { poolIndex ->
-            createFunctionWithAbi(
+            createFunction(
                 "poolInfo",
                 inputs = listOf(poolIndex.toBigInteger().toUint256()),
                 outputs = listOf(

@@ -45,7 +45,7 @@ class DinoswapFossilFarmsContract(
     }
 
     fun userInfoFunction(address: String, poolIndex: Int): Function {
-        return createFunctionWithAbi(
+        return createFunction(
             "userInfo",
             inputs = listOf(poolIndex.toBigInteger().toUint256(), address.toAddress()),
             outputs = listOf(
