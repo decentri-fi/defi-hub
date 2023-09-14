@@ -1,6 +1,5 @@
 package io.defitrack.protocol.uniswap.v3
 
-import com.google.gson.JsonParser
 import io.defitrack.abi.TypeUtils
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
@@ -91,7 +90,6 @@ abstract class UniswapV3PoolingMarketProvider(
         .build()
 
     suspend fun getMarket(pool: UniswapV3PoolContract): PoolingMarket = uniswapPoolCache.get(pool.address) {
-        val token = getToken(pool.address)
         val token0 = getToken(pool.token0())
         val token1 = getToken(pool.token1())
 
@@ -116,8 +114,8 @@ abstract class UniswapV3PoolingMarketProvider(
             },
             tokenType = TokenType.UNISWAP,
             positionFetcher = null,
-            totalSupply = refreshable(token.totalSupply.asEth(token.decimals)) {
-                getToken(pool.address).totalSupply.asEth(token.decimals)
+            totalSupply = refreshable {
+                pool.liquidity().asEth()
             },
             erc20Compatible = false
         )

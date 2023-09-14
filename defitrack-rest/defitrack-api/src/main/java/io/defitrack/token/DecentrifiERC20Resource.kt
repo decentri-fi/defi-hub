@@ -11,10 +11,10 @@ import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.sync.Semaphore
-import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.math.BigInteger
@@ -27,47 +27,56 @@ class DecentrifiERC20Resource(
     @Value("\${erc20ResourceLocation:http://defitrack-erc20.default.svc.cluster.local:8080}") private val erc20ResourceLocation: String
 ) : ERC20Resource {
 
-    val semaphore = Semaphore(4)
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
-    val tokensCache = Cache.Builder<String, List<TokenInformationVO>>()
-        .expireAfterWrite(1.hours)
-        .build()
+    val tokensCache = Cache.Builder<String, List<TokenInformationVO>>().expireAfterWrite(1.hours).build()
 
-    val tokenCache = Cache.Builder<String, TokenInformationVO>()
-        .expireAfterWrite(1.hours)
-        .build()
+    val tokenCache = Cache.Builder<String, TokenInformationVO>().expireAfterWrite(1.hours).build()
 
     val wrappedCache = Cache.Builder<Network, WrappedToken>().build()
 
     override suspend fun getAllTokens(network: Network): List<TokenInformationVO> = withContext(Dispatchers.IO) {
         tokensCache.get("tokens-${network}") {
-            retry(limitAttempts(3)) { client.get("$erc20ResourceLocation/${network.name}").body() }
+            val get = client.get("$erc20ResourceLocation/${network.name}")
+            if (!get.status.isSuccess()) {
+                emptyList()
+            } else {
+                get.body<List<TokenInformationVO>>()
+            }
         }
     }
 
     override suspend fun getBalance(network: Network, tokenAddress: String, user: String): BigInteger =
         withContext(Dispatchers.IO) {
-            semaphore.withPermit {
-                client.get("$erc20ResourceLocation/${network.name}/$tokenAddress/$user").body()
+            val get = client.get("$erc20ResourceLocation/${network.name}/$tokenAddress/$user")
+            if (get.status.isSuccess()) {
+                get.body()
+            } else {
+                logger.debug("Failed to get balance for $tokenAddress and $user")
+                BigInteger.ZERO
             }
         }
 
     override suspend fun getTokenInformation(network: Network, address: String): TokenInformationVO {
         return withContext(Dispatchers.IO) {
             tokenCache.get("token-${network}-${address}") {
-                semaphore.withPermit {
-                    retry(limitAttempts(3)) {
-                        client.get("$erc20ResourceLocation/${network.name}/$address/token").body()
-                    }
+                val result = client.get("$erc20ResourceLocation/${network.name}/$address/token")
+                if (!result.status.isSuccess()) {
+                    throw RuntimeException("Failed to get token information for $address")
                 }
+                result.body()
             }
         }
     }
 
-    override suspend fun getWrappedToken(network: Network): WrappedToken {
-        return withContext(Dispatchers.IO) {
-            wrappedCache.get(network) {
-                retry(limitAttempts(3)) { client.get("$erc20ResourceLocation/${network.name}/wrapped").body() }
+    override suspend fun getWrappedToken(network: Network): WrappedToken = withContext(Dispatchers.IO) {
+        wrappedCache.get(network) {
+            retry(limitAttempts(3)) {
+                val result = client.get("$erc20ResourceLocation/${network.name}/wrapped")
+                if (!result.status.isSuccess()) {
+                    throw RuntimeException("Failed to get wrapped token for $network")
+                }
+                result.body()
             }
         }
     }
@@ -75,8 +84,7 @@ class DecentrifiERC20Resource(
     override suspend fun getAllowance(network: Network, token: String, owner: String, spender: String): BigInteger {
         return with(blockchainGatewayProvider.getGateway(network)) {
             ERC20Contract(
-                this,
-                token
+                this, token
             ).allowance(owner, spender)
         }
     }
@@ -89,8 +97,7 @@ class DecentrifiERC20Resource(
         with(blockchainGatewayProvider.getGateway(network)) {
             return readMultiCall(tokens.map {
                 MultiCallElement(
-                    ERC20Contract.balanceOfFunction(address),
-                    it
+                    ERC20Contract.balanceOfFunction(address), it
                 )
             }).map {
                 try {

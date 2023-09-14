@@ -10,6 +10,7 @@ import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.abi.TypeUtils.Companion.uint32
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.contract.EvmContract
 import kotlinx.coroutines.Deferred
 import java.math.BigInteger
@@ -17,9 +18,13 @@ import java.math.BigInteger
 class UniswapV3PoolContract(
     blockchaingateway: BlockchainGateway,
     address: String
-) : EvmContract(
+) : ERC20Contract(
     blockchaingateway, address
 ) {
+
+    suspend fun liquidity(): BigInteger {
+        return readSingle("liquidity", TypeUtils.uint128())
+    }
 
     suspend fun slot0(): Slot0 {
         val retVal = read(
