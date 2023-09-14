@@ -22,16 +22,6 @@ abstract class EvmContract(
         }
     }
 
-    suspend fun readConstant(method: String): List<Type<*>> {
-        return blockchainGateway.readFunctionWithAbi(
-            address = address,
-            function = blockchainGateway.getConstantFunction(
-                abi,
-                method
-            )
-        )
-    }
-
     suspend fun readMultiCall(
         functions: List<Function>
     ): List<MultiCallResult> {
@@ -57,23 +47,6 @@ abstract class EvmContract(
             function = method
         )
     }
-
-    suspend fun readWithAbi(
-        method: String,
-        inputs: List<Type<*>> = emptyList(),
-        outputs: List<TypeReference<out Type<*>>>? = null
-    ): List<Type<*>> {
-        return blockchainGateway.readFunctionWithAbi(
-            address = address,
-            inputs = inputs,
-            outputs = outputs,
-            function = blockchainGateway.getFunction(
-                abi,
-                method
-            )
-        )
-    }
-
 
     suspend inline fun <reified T : Any> readSingle(function: String, output: TypeReference<out Type<*>>): T {
         return readWithoutAbi(

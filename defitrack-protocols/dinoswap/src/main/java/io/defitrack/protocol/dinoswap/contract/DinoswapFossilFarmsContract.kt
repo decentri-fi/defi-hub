@@ -18,21 +18,15 @@ class DinoswapFossilFarmsContract(
 ) {
 
     suspend fun poolLength(): Int {
-        return (readWithAbi(
-            "poolLength",
-            outputs = listOf(uint256())
-        )[0].value as BigInteger).toInt()
+        return readSingle("poolLength", uint256())
     }
 
     suspend fun rewardToken(): String {
-        return readWithAbi(
-            "dino",
-            outputs = listOf(uint256())
-        )[0].value as String
+        return readSingle("dino", address())
     }
 
     suspend fun getLpTokenForPoolId(poolIndex: Int): String {
-        return readWithAbi(
+        return readWithoutAbi(
             "poolInfo",
             inputs = listOf(poolIndex.toBigInteger().toUint256()),
             outputs = listOf(

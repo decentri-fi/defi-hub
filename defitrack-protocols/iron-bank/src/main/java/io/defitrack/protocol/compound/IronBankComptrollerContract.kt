@@ -14,7 +14,7 @@ class IronBankComptrollerContract(
 ) {
 
     suspend fun getMarkets(): List<String> {
-        return (readWithAbi(
+        return (readWithoutAbi(
             "getAllMarkets",
             inputs = emptyList(),
             outputs = listOf(

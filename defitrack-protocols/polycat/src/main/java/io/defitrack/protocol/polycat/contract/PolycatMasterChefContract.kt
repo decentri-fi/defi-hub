@@ -57,10 +57,7 @@ class PolycatMasterChefContract(
     }
 
     suspend fun rewardPerBlock(): BigInteger {
-        return readWithAbi(
-            "fishPerBlock",
-            outputs = listOf(uint256())
-        )[0].value as BigInteger
+        return readSingle("fishPerBlock", uint256())
     }
 
 
@@ -79,8 +76,3 @@ class PolycatMasterChefContract(
         )
     }
 }
-
-data class UserInfo(
-    val amount: BigInteger,
-    val rewardDebt: BigInteger
-)
