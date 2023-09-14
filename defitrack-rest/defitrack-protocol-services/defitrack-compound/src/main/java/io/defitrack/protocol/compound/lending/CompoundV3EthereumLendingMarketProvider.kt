@@ -5,6 +5,7 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
+import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.compound.CompoundAddressesProvider
 import io.defitrack.protocol.compound.v3.contract.CompoundV3AssetContract
@@ -31,7 +32,12 @@ class CompoundV3EthereumLendingMarketProvider(
                     poolType = "compoundv3",
                     marketToken = cToken.toFungibleToken(),
                     erc20Compatible = true,
-                    positionFetcher = defaultPositionFetcher(cTokenAddress),
+                    positionFetcher = PositionFetcher(
+                        address = cTokenAddress,
+                        function = { user ->
+                            assetContract.collateralBalanceOfFunction(user, lendingToken.address)
+                        },
+                    ),
                     totalSupply = refreshable(cToken.totalSupply.asEth()) {
                         val cToken = getToken(cTokenAddress)
                         cToken.totalSupply.asEth()

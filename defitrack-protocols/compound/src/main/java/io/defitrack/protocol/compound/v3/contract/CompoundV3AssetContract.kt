@@ -1,11 +1,13 @@
 package io.defitrack.protocol.compound.v3.contract
 
 import io.defitrack.abi.TypeUtils
+import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint8
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
+import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.StaticStruct
 import org.web3j.abi.datatypes.generated.Uint128
 import org.web3j.abi.datatypes.generated.Uint64
@@ -18,6 +20,17 @@ class CompoundV3AssetContract(
 ) : ERC20Contract(
     blockchainGateway, "", address
 ) {
+
+    fun collateralBalanceOfFunction(account: String, asset: String): Function {
+        return createFunction(
+            "collateralBalanceOf",
+            inputs = listOf(
+                account.toAddress(),
+                asset.toAddress()
+            ),
+            outputs = listOf(TypeUtils.uint256())
+        )
+    }
 
     suspend fun baseToken(): String {
         return readWithoutAbi(
