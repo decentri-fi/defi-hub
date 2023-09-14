@@ -26,8 +26,11 @@ class ERC20RestController(
 
     @GetMapping("/{network}")
     suspend fun getAllTokensForNetwork(
-        @PathVariable("network") network: Network,
+        @PathVariable("network") networkName: String,
     ): ResponseEntity<List<TokenInformationVO>> = coroutineScope {
+
+        val network = Network.fromString(networkName) ?: return@coroutineScope ResponseEntity.badRequest().build()
+
         ResponseEntity.ok(
             ERC20Service.getAllTokensForNetwork(network).map {
                 it.toVO()
@@ -36,7 +39,9 @@ class ERC20RestController(
     }
 
     @GetMapping("/{network}/wrapped")
-    fun getWrappedToken(@PathVariable("network") network: Network): ResponseEntity<Map<String, String>> {
+    fun getWrappedToken(@PathVariable("network") networkName: String): ResponseEntity<Map<String, String>> {
+        val network = Network.fromString(networkName) ?: return ResponseEntity.badRequest().build()
+
         return ResponseEntity.ok(
             mapOf(
                 "address" to ERC20Repository.NATIVE_WRAP_MAPPING[network]!!
@@ -46,9 +51,12 @@ class ERC20RestController(
 
     @GetMapping("/{network}/{address}/token")
     suspend fun getTokenInformation(
-        @PathVariable("network") network: Network,
+        @PathVariable("network") networkName: String,
         @PathVariable("address") address: String
     ): ResponseEntity<TokenInformationVO> = coroutineScope {
+
+        val network = Network.fromString(networkName) ?: return@coroutineScope ResponseEntity.badRequest().build()
+
         try {
             withTimeout(12000L) {
                 ResponseEntity.ok(
@@ -65,10 +73,12 @@ class ERC20RestController(
 
     @GetMapping("/{network}/{address}/{userAddress}")
     suspend fun getBalance(
-        @PathVariable("network") network: Network,
+        @PathVariable("network") networkName: String,
         @PathVariable("address") address: String,
         @PathVariable("userAddress") userAddress: String
     ): ResponseEntity<BigInteger> = coroutineScope {
+
+        val network = Network.fromString(networkName) ?: return@coroutineScope ResponseEntity.badRequest().build()
 
         if (!WalletUtils.isValidAddress(address)) {
             return@coroutineScope ResponseEntity.badRequest().build()
@@ -87,11 +97,13 @@ class ERC20RestController(
 
     @GetMapping("/{network}/allowance/{token}/{userAddress}/{spenderAddress}")
     suspend fun getApproval(
-        @PathVariable("network") network: Network,
+        @PathVariable("network") networkName: String,
         @PathVariable("token") token: String,
         @PathVariable("userAddress") userAddress: String,
         @PathVariable("spenderAddress") spenderAddress: String,
     ): ResponseEntity<BigInteger> = coroutineScope {
+
+        val network = Network.fromString(networkName) ?: return@coroutineScope ResponseEntity.badRequest().build()
 
         if (!WalletUtils.isValidAddress(token)) {
             return@coroutineScope ResponseEntity.badRequest().build()
