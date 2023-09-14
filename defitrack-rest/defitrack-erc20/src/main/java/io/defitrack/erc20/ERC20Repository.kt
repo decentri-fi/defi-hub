@@ -44,7 +44,12 @@ class ERC20Repository(
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/polygon-zkevm/tokenlist.json",
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/base/tokenlist.json",
         ).flatMap {
-            fetchFromTokenList(it)
+            try {
+                fetchFromTokenList(it)
+            } catch(exception: Exception) {
+                logger.error("failed to fetch $it", exception)
+                emptyList()
+            }
         }.groupBy({
             it.first
         }, {

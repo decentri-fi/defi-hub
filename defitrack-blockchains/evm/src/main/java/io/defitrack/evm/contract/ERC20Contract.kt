@@ -74,7 +74,7 @@ open class ERC20Contract(
             outputs = listOf(uint256())
         )
         return if (retVal.isEmpty()) {
-            logger.info("Unable to fetch balance of on ${blockchainGateway.network} for $address")
+            logger.debug("Unable to fetch balance of on {} for {}", blockchainGateway.network, address)
             BigInteger.ZERO
         } else {
             retVal[0].value as BigInteger
