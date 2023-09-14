@@ -11,5 +11,5 @@ class BaseSwapApplication : ProtocolApplication() {
 }
 
 fun main(args: Array<String>) {
-    runApplication<AaveApplication>(*args)
+    runApplication<BaseSwapApplication>(*args)
 }
