@@ -14,11 +14,12 @@ abstract class AbstractSetProvider(
 
     override suspend fun getSets(): List<String> {
         val returnValue = httpClient.get(tokenLocation).bodyAsText()
-        return JsonParser.parseString(returnValue).asJsonObject["tokens"].asJsonArray.map {
+        return JsonParser.parseString(returnValue).asJsonObject["tokens"].asJsonArray.filter {
+            it.asJsonObject["chainId"] == null ||  it.asJsonObject["chainId"].asInt == network.chainId
+        }.map {
             it.asJsonObject["address"].asString
-        } + listOf(
-            "0x3ad707da309f3845cd602059901e39c4dcd66473",
-            "0xf287d97b6345bad3d88856b26fb7c0ab3f2c7976"
-        )
+        } + extraSets()
     }
+
+    open fun extraSets(): List<String> = emptyList()
 }

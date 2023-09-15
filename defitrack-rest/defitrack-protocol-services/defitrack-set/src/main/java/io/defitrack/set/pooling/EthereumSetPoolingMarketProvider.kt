@@ -28,11 +28,8 @@ class EthereumSetPoolingMarketProvider(
                 )
 
                 val supply = tokenContract.totalSupply().asEth(tokenContract.decimals())
-
                 val token = getToken(it)
-
                 val positions = tokenContract.getPositions()
-
 
                 create(
                     identifier = it,
