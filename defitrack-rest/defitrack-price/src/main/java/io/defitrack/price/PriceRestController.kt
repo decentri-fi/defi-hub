@@ -28,10 +28,8 @@ class PriceRestController(
         @RequestParam("network") networkName: String
     ): Map<String, Any> {
 
-        val network = Network.fromString(networkName) ?: ResponseEntity.ok(
-            mapOf(
-                "price" to BigDecimal.ZERO
-            )
+        val network = Network.fromString(networkName) ?: return mapOf(
+            "price" to BigDecimal.ZERO
         )
 
         return mapOf(
