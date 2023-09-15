@@ -45,8 +45,8 @@ class SwapEventDecoder(
         val gateway = blockchainGatewayProvider.getGateway(network)
 
         val tokenContract = UniswapV3PoolContract(gateway, log.address)
-        val token0 = tokenContract.token0()
-        val token1 = tokenContract.token1()
+        val token0 = tokenContract.token0.await()
+        val token1 = tokenContract.token1.await()
 
         val fromToken = if (amount0In > BigInteger.ZERO) {
             token0
