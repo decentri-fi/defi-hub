@@ -38,9 +38,9 @@ class WepiggyLendingMarketProvider(
 
     private suspend fun toLendingMarket(ctokenContract: CompoundTokenContract): LendingMarket? {
         return try {
-            getToken(ctokenContract.underlyingAddress()).let { underlyingToken ->
+            getToken(ctokenContract.getUnderlyingAddress()).let { underlyingToken ->
                 val cToken = getToken(ctokenContract.address)
-                val exchangeRate = ctokenContract.exchangeRate()
+                val exchangeRate = ctokenContract.exchangeRate
                 create(
                     identifier = ctokenContract.address,
                     name = ctokenContract.name(),
@@ -51,7 +51,7 @@ class WepiggyLendingMarketProvider(
                             PriceRequest(
                                 underlyingToken.address,
                                 getNetwork(),
-                                ctokenContract.cash().add(ctokenContract.totalBorrows()).toBigDecimal().asEth(
+                                ctokenContract.cash.await().add(ctokenContract.totalBorrows()).toBigDecimal().asEth(
                                     underlyingToken.decimals
                                 ),
                                 TokenType.SINGLE
@@ -65,7 +65,7 @@ class WepiggyLendingMarketProvider(
                         { retVal ->
                             val tokenBalance = retVal[0].value as BigInteger
                             Position(
-                                tokenBalance.times(exchangeRate).asEth().toBigInteger(),
+                                tokenBalance.times(exchangeRate.await()).asEth().toBigInteger(),
                                 tokenBalance
                             )
 
@@ -88,7 +88,7 @@ class WepiggyLendingMarketProvider(
     suspend fun getSupplyRate(compoundTokenContract: CompoundTokenContract): BigDecimal {
         val blocksPerDay = 6463
         val dailyRate =
-            (compoundTokenContract.supplyRatePerBlock().toBigDecimal().divide(BigDecimal.TEN.pow(18)) * BigDecimal(
+            (compoundTokenContract.supplyRatePerBlock.await().toBigDecimal().divide(BigDecimal.TEN.pow(18)) * BigDecimal(
                 blocksPerDay
             )) + BigDecimal.ONE
 

@@ -44,8 +44,8 @@ class CompoundLendingMarketProvider(
 
     private suspend fun toLendingMarket(ctokenContract: CompoundTokenContract): LendingMarket? {
         return try {
-            getToken(ctokenContract.underlyingAddress()).let { underlyingToken ->
-                val exchangeRate = ctokenContract.exchangeRate()
+            getToken(ctokenContract.getUnderlyingAddress()).let { underlyingToken ->
+                val exchangeRate = ctokenContract.exchangeRate.await()
                 create(
                     identifier = ctokenContract.address,
                     name = ctokenContract.name(),
@@ -56,7 +56,7 @@ class CompoundLendingMarketProvider(
                             PriceRequest(
                                 underlyingToken.address,
                                 getNetwork(),
-                                ctokenContract.cash().add(ctokenContract.totalBorrows()).toBigDecimal()
+                                ctokenContract.cash.await().add(ctokenContract.totalBorrows()).toBigDecimal()
                                     .asEth(underlyingToken.decimals),
                                 TokenType.SINGLE
                             )
@@ -96,7 +96,7 @@ class CompoundLendingMarketProvider(
     suspend fun getSupplyRate(compoundTokenContract: CompoundTokenContract): BigDecimal {
         val blocksPerDay = 6463
         val dailyRate =
-            (compoundTokenContract.supplyRatePerBlock().toBigDecimal().divide(BigDecimal.TEN.pow(18)) * BigDecimal(
+            (compoundTokenContract.supplyRatePerBlock.await().toBigDecimal().divide(BigDecimal.TEN.pow(18)) * BigDecimal(
                 blocksPerDay
             )) + BigDecimal.ONE
 

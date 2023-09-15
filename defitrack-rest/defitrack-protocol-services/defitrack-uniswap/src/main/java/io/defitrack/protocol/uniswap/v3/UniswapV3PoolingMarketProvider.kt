@@ -17,8 +17,8 @@ import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
-import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.datatypes.Event
+import java.math.BigDecimal
 import java.math.BigInteger
 import kotlin.time.Duration.Companion.hours
 
@@ -67,17 +67,17 @@ abstract class UniswapV3PoolingMarketProvider(
     override suspend fun produceMarkets(): Flow<PoolingMarket> {
         return channelFlow {
             poolAddresses.await().forEach {
-                launch {
-                    try {
-                        throttled {
-                            send(
-                                getMarket(
-                                    UniswapV3PoolContract(getBlockchainGateway(), it)
-                                )
-                            )
+                throttled {
+                    launch {
+                        try {
+                            getMarket(it)?.let {
+                                send(it)
+                            }
+                        } catch (marketZero: MarketSizeZeroException) {
+                            logger.info("market size is zero for ${it}")
+                        } catch (ex: Exception) {
+                            logger.error("something went wrong trying to import uniswap market ${it}")
                         }
-                    } catch (ex: Exception) {
-                        logger.error("something went wrong trying to import uniswap market ${it}", ex)
                     }
                 }
             }
@@ -89,36 +89,45 @@ abstract class UniswapV3PoolingMarketProvider(
         .expireAfterWrite(4.hours)
         .build()
 
-    suspend fun getMarket(pool: UniswapV3PoolContract): PoolingMarket = uniswapPoolCache.get(pool.address) {
-        val token0 = getToken(pool.token0())
-        val token1 = getToken(pool.token1())
+    suspend fun getMarket(address: String): PoolingMarket = uniswapPoolCache.get(address) {
+        val pool = UniswapV3PoolContract(getBlockchainGateway(), address)
+        val token0 = getToken(pool.token0.await())
+        val token1 = getToken(pool.token1.await())
 
         val underlyingTokens = listOf(
             token0, token1
         )
         val breakdown = defaultBreakdown(underlyingTokens, pool.address)
 
-        create(
-            identifier = "v3-${pool.address}",
-            name = "${token0.symbol}/${token1.symbol}",
-            address = pool.address,
-            symbol = "${token0.symbol}-${token1.symbol}",
-            breakdown = breakdown,
-            tokens = underlyingTokens.map { it.toFungibleToken() },
-            marketSize = refreshable(breakdown.sumOf {
-                it.reserveUSD
-            }) {
-                defaultBreakdown(underlyingTokens, pool.address).sumOf {
-                    it.reserveUSD
-                }
-            },
-            tokenType = TokenType.UNISWAP,
-            positionFetcher = null,
-            totalSupply = refreshable {
-                pool.liquidity().asEth()
-            },
-            erc20Compatible = false
-        )
+        val marketSize = breakdown.sumOf {
+            it.reserveUSD
+        }
+
+        if (marketSize != BigDecimal.ZERO) {
+            logger.info("marketsize not zero")
+            create(
+                identifier = "v3-${pool.address}",
+                name = "${token0.symbol}/${token1.symbol}",
+                address = pool.address,
+                symbol = "${token0.symbol}-${token1.symbol}",
+                breakdown = breakdown,
+                tokens = underlyingTokens.map { it.toFungibleToken() },
+                marketSize = refreshable(marketSize) {
+                    defaultBreakdown(underlyingTokens, pool.address).sumOf {
+                        it.reserveUSD
+                    }
+                },
+                tokenType = TokenType.UNISWAP,
+                positionFetcher = null,
+                totalSupply = refreshable(pool.liquidity.await().asEth()) {
+                    pool.refreshLiquidity().asEth()
+                },
+                erc20Compatible = false,
+                metadata = mapOf("contract" to pool)
+            )
+        } else {
+            throw MarketSizeZeroException("market size is zero for ${pool.address}")
+        }
     }
 
     override fun getNetwork(): Network {
@@ -128,4 +137,9 @@ abstract class UniswapV3PoolingMarketProvider(
     override fun getProtocol(): Protocol {
         return Protocol.UNISWAP_V3
     }
+
+    class MarketSizeZeroException(msg: String) : RuntimeException(msg) {
+
+    }
+
 }

@@ -16,8 +16,6 @@ open class ERC721Contract(
 ) :
     EvmContract(blockchainGateway, address) {
 
-    val logger: Logger = LoggerFactory.getLogger(this::class.java)
-
     fun ownerOfFunction(tokenId: BigInteger): Function {
         return createFunction(
             "ownerOf",

@@ -26,7 +26,8 @@ class CompoundBorrowingService(
     suspend fun getBorrowRate(compoundTokenContract: CompoundTokenContract): BigDecimal {
         val blocksPerDay = 6463
         val dailyRate =
-            (compoundTokenContract.borrowRatePerBlock().toBigDecimal().divide(BigDecimal.TEN.pow(18)) * BigDecimal(
+            (compoundTokenContract.borrowRatePerBlock.await().toBigDecimal()
+                .divide(BigDecimal.TEN.pow(18)) * BigDecimal(
                 blocksPerDay
             ))
 
@@ -57,7 +58,7 @@ class CompoundBorrowingService(
             val balance = retVal.data[0].value as BigInteger
             if (balance > BigInteger.ZERO) {
                 val compoundTokenContract = tokenContracts[index]
-                val underlying = compoundTokenContract.underlyingAddress().let { tokenAddress ->
+                val underlying = compoundTokenContract.getUnderlyingAddress().let { tokenAddress ->
                     erC20Resource.getTokenInformation(getNetwork(), tokenAddress)
                 }
                 val token = underlying.toFungibleToken()

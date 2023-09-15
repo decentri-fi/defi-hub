@@ -67,13 +67,13 @@ class UniswapV3EthereumClaimableProvider(
             position.fee
         )
 
-        val poolContract = UniswapV3PoolContract(
-            uniswapV3PoolingMarketProvider.getBlockchainGateway(),
-            poolAddress
-        )
+        val market = uniswapV3PoolingMarketProvider.getMarket(poolAddress)
 
-        val token0Async = async { uniswapV3PoolingMarketProvider.getToken(poolContract.token0()) }
-        val token1Async = async { uniswapV3PoolingMarketProvider.getToken(poolContract.token1()) }
+
+        val poolContract = market.metadata["contract"] as UniswapV3PoolContract
+
+        val token0Async = async { uniswapV3PoolingMarketProvider.getToken(poolContract.token0.await()) }
+        val token1Async = async { uniswapV3PoolingMarketProvider.getToken(poolContract.token1.await()) }
 
         val (upperTicks, lowerTicks) = awaitAll(
             async { poolContract.ticks(position.tickUpper) }, async { poolContract.ticks(position.tickLower) }
@@ -94,8 +94,6 @@ class UniswapV3EthereumClaimableProvider(
             position.feeGrowthInside1LastX128,
             position.liquidity,
         )
-
-        val market = uniswapV3PoolingMarketProvider.getMarket(poolContract)
 
         val token1 = token1Async.await()
         val token0 = token0Async.await()

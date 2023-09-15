@@ -41,20 +41,21 @@ abstract class UniswapV3PoolingPositionProvider(
                         position.fee
                     )
 
-                    val poolContract = UniswapV3PoolContract(
-                        uniswapV3PoolingMarketProvider.getBlockchainGateway(),
-                        poolAddress
-                    )
+                    val market = uniswapV3PoolingMarketProvider.getMarket(poolAddress)
 
-                    val token0 = uniswapV3PoolingMarketProvider.getToken(poolContract.token0())
-                    val token1 = uniswapV3PoolingMarketProvider.getToken(poolContract.token1())
 
+                    val poolContract = market.metadata["contract"] as UniswapV3PoolContract
+
+                    val token0 = uniswapV3PoolingMarketProvider.getToken(poolContract.token0.await())
+                    val token1 = uniswapV3PoolingMarketProvider.getToken(poolContract.token1.await())
+
+                    val slot0 = poolContract.slot0()
                     val userTokens0 = calculateAmount(
                         position.tickLower,
                         position.liquidity,
                         position.tickUpper,
                         token0.decimals,
-                        poolContract.slot0().tick.toInt(),
+                        slot0.tick.toInt(),
                         0
                     )
 
@@ -63,11 +64,10 @@ abstract class UniswapV3PoolingPositionProvider(
                         position.liquidity,
                         position.tickUpper,
                         token1.decimals,
-                        poolContract.slot0().tick.toInt(),
+                        slot0.tick.toInt(),
                         1
                     )
 
-                    val market = uniswapV3PoolingMarketProvider.getMarket(poolContract)
 
                     val totalToken0Usd = if (userTokens0 > BigDecimal.ZERO) {
                         uniswapV3PoolingMarketProvider.getPriceResource()

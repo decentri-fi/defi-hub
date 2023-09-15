@@ -16,8 +16,6 @@ open class ERC20Contract(
 ) :
     EvmContract(blockchainGateway, address) {
 
-    val logger: Logger = LoggerFactory.getLogger(this::class.java)
-
     companion object {
         fun approveFunction(spender: String, amount: BigInteger): Function {
             return createFunction(

@@ -1,17 +1,20 @@
 package io.defitrack.uniswap.v3
 
 import io.defitrack.abi.TypeUtils
+import io.defitrack.abi.TypeUtils.Companion.bool
 import io.defitrack.abi.TypeUtils.Companion.int128
+import io.defitrack.abi.TypeUtils.Companion.int24
 import io.defitrack.abi.TypeUtils.Companion.int56
 import io.defitrack.abi.TypeUtils.Companion.toInt24
 import io.defitrack.abi.TypeUtils.Companion.uint128
+import io.defitrack.abi.TypeUtils.Companion.uint16
 import io.defitrack.abi.TypeUtils.Companion.uint160
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.abi.TypeUtils.Companion.uint32
+import io.defitrack.abi.TypeUtils.Companion.uint8
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
-import io.defitrack.evm.contract.EvmContract
 import kotlinx.coroutines.Deferred
 import java.math.BigInteger
 
@@ -22,8 +25,9 @@ class UniswapV3PoolContract(
     blockchaingateway, address
 ) {
 
-    suspend fun liquidity(): BigInteger {
-        return readSingle("liquidity", TypeUtils.uint128())
+    val liquidity: Deferred<BigInteger> = constant("liquidity", uint128())
+    suspend fun refreshLiquidity(): BigInteger {
+        return readSingle("liquidity", uint128())
     }
 
     suspend fun slot0(): Slot0 {
@@ -31,13 +35,13 @@ class UniswapV3PoolContract(
             "slot0",
             listOf(),
             listOf(
-                TypeUtils.uint160(),
-                TypeUtils.int24(),
-                TypeUtils.uint16(),
-                TypeUtils.uint16(),
-                TypeUtils.uint16(),
-                TypeUtils.uint8(),
-                TypeUtils.bool(),
+                uint160(),
+                int24(),
+                uint16(),
+                uint16(),
+                uint16(),
+                uint8(),
+                bool(),
             )
         )
 
@@ -46,13 +50,9 @@ class UniswapV3PoolContract(
         )
     }
 
-    suspend fun token0(): String {
-        return readSingle("token0", TypeUtils.address())
-    }
+    val token0: Deferred<String> = constant("token0", TypeUtils.address())
+    val token1: Deferred<String> = constant("token1", TypeUtils.address())
 
-    suspend fun token1(): String {
-        return readSingle("token1", TypeUtils.address())
-    }
 
     val feeGrowthGlobal0X128: Deferred<BigInteger> = lazyAsync {
         readSingle("feeGrowthGlobal0X128", uint256())
@@ -74,7 +74,7 @@ class UniswapV3PoolContract(
                 int56(),
                 uint160(),
                 uint32(),
-                TypeUtils.bool()
+                bool()
             )
         )
 
