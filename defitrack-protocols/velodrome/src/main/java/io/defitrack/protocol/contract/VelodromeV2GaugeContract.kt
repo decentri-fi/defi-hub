@@ -5,6 +5,7 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
+import kotlinx.coroutines.Deferred
 import org.web3j.abi.datatypes.Function
 
 class VelodromeV2GaugeContract(
@@ -13,14 +14,9 @@ class VelodromeV2GaugeContract(
     blockchainGateway, address
 ) {
 
-    suspend fun stakedToken(): String {
-        return readSingle("stakingToken", address())
-    }
+   val  stakedToken: Deferred<String> = constant("stakingToken", address())
 
-
-    suspend fun rewardToken(): String {
-        return readSingle("rewardToken", address())
-    }
+    val rewardToken: Deferred<String>  = constant("rewardToken", address())
 
     fun getRewardFn(address: String): Function {
         return createFunction(

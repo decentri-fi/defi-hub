@@ -29,8 +29,8 @@ class VelodromeV2OptimismPoolingMarketProvider(
         )
 
         pairFactoryContract.allPools().forEach {
-            launch {
-                throttled {
+            throttled {
+                launch {
                     val poolingToken = getToken(it)
                     val tokens = poolingToken.underlyingTokens
 

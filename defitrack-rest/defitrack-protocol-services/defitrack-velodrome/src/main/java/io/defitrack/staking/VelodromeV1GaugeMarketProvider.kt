@@ -42,7 +42,7 @@ class VelodromeV1GaugeMarketProvider(
                                 gauge
                             )
 
-                            val stakedToken = getToken(contract.stakedToken())
+                            val stakedToken = getToken(contract.stakedToken.await())
 
                             val market = create(
                                 name = stakedToken.name + " Gauge",

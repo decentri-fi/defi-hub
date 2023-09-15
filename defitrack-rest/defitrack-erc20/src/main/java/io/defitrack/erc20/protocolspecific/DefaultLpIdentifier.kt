@@ -25,15 +25,15 @@ abstract class DefaultLpIdentifier(
     suspend fun fromLP(protocol: Protocol, erc20: ERC20, tokenType: TokenType): TokenInformation {
         val lp = lpContractReader.getLP(erc20.network, erc20.address)
 
-        val token0 = ERC20Service.getTokenInformation(lp.token0(), erc20.network)
-        val token1 = ERC20Service.getTokenInformation(lp.token1(), erc20.network)
+        val token0 = ERC20Service.getTokenInformation(lp.token0.await(), erc20.network)
+        val token1 = ERC20Service.getTokenInformation(lp.token1.await(), erc20.network)
 
         return TokenInformation(
             name = "${token0.symbol}/${token1.symbol} LP",
             symbol = "${token0.symbol}-${token1.symbol}",
             address = erc20.address,
             decimals = erc20.decimals,
-            totalSupply = Refreshable.refreshable {
+            totalSupply = Refreshable.refreshable(lp.totalSupply()) {
                 lp.totalSupply()
             },
             type = tokenType,

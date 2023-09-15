@@ -26,10 +26,10 @@ class AerodromeGaugeMarketProvider(
     val voter = "0x16613524e02ad97edfef371bc883f2f5d6c480a5"
 
     val voterContract = lazyAsync {
-            VoterContract(
-                getBlockchainGateway(),
-                voter
-            )
+        VoterContract(
+            getBlockchainGateway(),
+            voter
+        )
     }
 
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
@@ -45,8 +45,8 @@ class AerodromeGaugeMarketProvider(
                                 gauge
                             )
 
-                            val stakedToken = getToken(contract.stakedToken())
-                            val rewardToken = getToken(contract.rewardToken())
+                            val stakedToken = getToken(contract.stakedToken.await())
+                            val rewardToken = getToken(contract.rewardToken.await())
 
                             val market = create(
                                 name = stakedToken.name + " Gauge V2",
@@ -63,8 +63,10 @@ class AerodromeGaugeMarketProvider(
                                 vaultType = "aerodrome-gauge",
                                 balanceFetcher = defaultPositionFetcher(gauge),
                                 rewardsFinished = false,
-                                metadata = mapOf("address" to gauge,
-                                    "contract" to contract),
+                                metadata = mapOf(
+                                    "address" to gauge,
+                                    "contract" to contract
+                                ),
                                 claimableRewardFetcher = ClaimableRewardFetcher(
                                     address = contract.address,
                                     function = { user ->

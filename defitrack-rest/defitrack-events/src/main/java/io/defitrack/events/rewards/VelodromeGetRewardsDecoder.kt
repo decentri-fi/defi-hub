@@ -42,7 +42,7 @@ class VelodromeGetRewardsDecoder(
         val rewardToken = getToken(
             VelodromeV2GaugeContract(
                 getGateway(network), log.address
-            ).rewardToken(), network
+            ).rewardToken.await(), network
         )
 
         val token = "asset" to rewardToken

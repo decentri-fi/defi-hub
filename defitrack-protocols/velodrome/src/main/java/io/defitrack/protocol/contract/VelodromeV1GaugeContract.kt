@@ -5,6 +5,7 @@ import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
+import kotlinx.coroutines.Deferred
 import java.math.BigInteger
 
 class VelodromeV1GaugeContract(
@@ -13,22 +14,20 @@ class VelodromeV1GaugeContract(
     blockchainGateway, address
 ) {
 
-    suspend fun stakedToken(): String {
-        return readSingle("stake", TypeUtils.address())
-    }
+    val stakedToken: Deferred<String> = constant("stake", TypeUtils.address())
+    val getRewardListLength: Deferred<BigInteger> = constant("rewardsListLength", uint256())
 
-    suspend fun getRewardListLength(): BigInteger {
-        return readSingle("rewardsListLength", uint256())
-    }
-
-    //Todo: multicall it
     suspend fun getRewardList(): List<String> {
-        return (0 until getRewardListLength().toInt()).map {
-            read(
+        return readMultiCall((0 until getRewardListLength.await().toInt()).map {
+            createFunction(
                 "rewards",
                 listOf(it.toBigInteger().toUint256()),
                 listOf(TypeUtils.address())
-            )[0].value as String
+            )
+        }).mapNotNull {
+            if (it.success) it.data else null
+        }.map {
+            it[0].value as String
         }
     }
 }

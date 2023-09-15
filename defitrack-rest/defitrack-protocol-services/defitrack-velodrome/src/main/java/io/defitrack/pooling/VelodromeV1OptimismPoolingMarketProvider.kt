@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
+import kotlin.math.log
 
 @Component
 class VelodromeV1OptimismPoolingMarketProvider(
@@ -39,7 +40,7 @@ class VelodromeV1OptimismPoolingMarketProvider(
                                 identifier = "v1-$it",
                                 marketSize = refreshable {
                                     getMarketSize(
-                                        poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
+                                        tokens.map(TokenInformationVO::toFungibleToken),
                                         it
                                     )
                                 },

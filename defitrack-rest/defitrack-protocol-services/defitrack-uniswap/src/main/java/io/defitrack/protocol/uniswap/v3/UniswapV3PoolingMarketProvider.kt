@@ -67,12 +67,11 @@ abstract class UniswapV3PoolingMarketProvider(
     override suspend fun produceMarkets(): Flow<PoolingMarket> {
         return channelFlow {
             poolAddresses.await().forEach {
-                throttled {
-                    launch {
+                launch {
+                    throttled {
+
                         try {
-                            getMarket(it)?.let {
-                                send(it)
-                            }
+                            send(getMarket(it))
                         } catch (marketZero: MarketSizeZeroException) {
                             logger.info("market size is zero for ${it}")
                         } catch (ex: Exception) {
@@ -104,7 +103,6 @@ abstract class UniswapV3PoolingMarketProvider(
         }
 
         if (marketSize != BigDecimal.ZERO) {
-            logger.info("marketsize not zero")
             create(
                 identifier = "v3-${pool.address}",
                 name = "${token0.symbol}/${token1.symbol}",

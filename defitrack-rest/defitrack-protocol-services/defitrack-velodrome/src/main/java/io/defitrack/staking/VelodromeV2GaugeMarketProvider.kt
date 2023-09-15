@@ -2,6 +2,7 @@ package io.defitrack.staking
 
 import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -25,21 +26,19 @@ class VelodromeV2GaugeMarketProvider(
 
     val voter = "0x41c914ee0c7e1a5edcd0295623e6dc557b5abf3c"
 
-    val voterContract by lazy {
-        runBlocking {
-            VoterContract(
-                getBlockchainGateway(),
-                voter
-            )
-        }
+    val voterContract = lazyAsync {
+        VoterContract(
+            getBlockchainGateway(),
+            voter
+        )
     }
 
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
+        val contract = voterContract.await()
         poolingMarketProvider.getMarkets().forEach {
-            val gauge = voterContract.gauges(it.address)
-
-            launch {
-                throttled {
+            val gauge = contract.gauges(it.address)
+            throttled {
+                launch {
                     if (gauge != "0x0000000000000000000000000000000000000000") {
                         try {
                             val contract = VelodromeV2GaugeContract(
@@ -47,8 +46,8 @@ class VelodromeV2GaugeMarketProvider(
                                 gauge
                             )
 
-                            val stakedToken = getToken(contract.stakedToken())
-                            val rewardToken = getToken(contract.rewardToken())
+                            val stakedToken = getToken(contract.stakedToken.await())
+                            val rewardToken = getToken(contract.rewardToken.await())
 
                             val market = create(
                                 name = stakedToken.name + " Gauge V2",

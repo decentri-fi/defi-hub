@@ -4,6 +4,7 @@ import io.defitrack.market.MarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.pooling.domain.PoolingMarket
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -22,7 +23,7 @@ class MarketCacheRefresher(
     @Scheduled(
         fixedDelay = 1000 * 60 * 60 * 24 * 3, //every 3 days
     )
-    fun populateCaches() = runBlocking {
+    fun populateCaches() = runBlocking(Dispatchers.Default) {
         logger.info("Initial population of all caches.")
         poolingMarketProviders.forEach {
             it.populateCaches()
@@ -39,7 +40,7 @@ class MarketCacheRefresher(
         fixedDelay = 1000 * 60 * 60 * 3,
         initialDelay = 1000 * 60 * 60 * 3
     ) //todo: make sure every one is just a refresh
-    fun refreshCaches() = runBlocking {
+    fun refreshCaches() = runBlocking(Dispatchers.Default) {
         logger.info("Refreshing all caches. No full population.")
         poolingMarketProviders.map {
             launch {
