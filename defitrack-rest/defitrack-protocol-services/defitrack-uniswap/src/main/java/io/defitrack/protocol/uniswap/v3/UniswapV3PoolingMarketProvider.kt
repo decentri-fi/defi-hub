@@ -121,7 +121,7 @@ abstract class UniswapV3PoolingMarketProvider(
                     pool.refreshLiquidity().asEth()
                 },
                 erc20Compatible = false,
-                metadata = mapOf("contract" to pool)
+                internalMetadata = mapOf("contract" to pool)
             )
         } else {
             throw MarketSizeZeroException("market size is zero for ${pool.address}")

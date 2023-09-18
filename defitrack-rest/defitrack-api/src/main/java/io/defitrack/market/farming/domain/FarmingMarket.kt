@@ -27,6 +27,7 @@ data class FarmingMarket(
     val exitPositionPreparer: ExitPositionPreparer? = null,
     val claimableRewardFetcher: ClaimableRewardFetcher? = null,
     val metadata: Map<String, Any> = emptyMap(),
+    val internalMetadata: Map<String, Any> = emptyMap(),
     val expired: Boolean = false
 ) : DefiMarket(id) {
 

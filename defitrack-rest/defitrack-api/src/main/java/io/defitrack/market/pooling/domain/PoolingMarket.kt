@@ -32,6 +32,7 @@ data class PoolingMarket(
     val erc20Compatible: Boolean = true,
     val price: Refreshable<BigDecimal>,
     val metadata: Map<String, Any>,
+    val internalMetadata: Map<String, Any>,
     val enterMarketEvent: Event? = null,
     val deprecated: Boolean,
 ) : DefiMarket(id) {

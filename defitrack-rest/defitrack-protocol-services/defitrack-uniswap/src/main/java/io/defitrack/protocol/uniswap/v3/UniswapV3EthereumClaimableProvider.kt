@@ -70,7 +70,7 @@ class UniswapV3EthereumClaimableProvider(
         val market = uniswapV3PoolingMarketProvider.getMarket(poolAddress)
 
 
-        val poolContract = market.metadata["contract"] as UniswapV3PoolContract
+        val poolContract = market.internalMetadata["contract"] as UniswapV3PoolContract
 
         val token0Async = async { uniswapV3PoolingMarketProvider.getToken(poolContract.token0.await()) }
         val token1Async = async { uniswapV3PoolingMarketProvider.getToken(poolContract.token1.await()) }

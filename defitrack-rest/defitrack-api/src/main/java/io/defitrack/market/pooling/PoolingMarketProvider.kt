@@ -34,6 +34,7 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
         erc20Compatible: Boolean = true,
         price: Refreshable<BigDecimal>? = null,
         metadata: Map<String, Any> = emptyMap(),
+        internalMetadata: Map<String, Any> = emptyMap(),
         deprecated: Boolean = false,
     ): PoolingMarket {
         return PoolingMarket(
@@ -55,6 +56,7 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
             totalSupply = totalSupply,
             price = price ?: calculatePrice(marketSize, totalSupply),
             metadata = metadata,
+            internalMetadata = internalMetadata,
             deprecated = deprecated
         )
     }

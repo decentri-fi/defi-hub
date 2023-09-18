@@ -36,7 +36,7 @@ class ConvexEthereumRewardPoolMarketProvider(
                     it.address
                 ),
                 farmType = ContractType.STAKING,
-                metadata = mapOf("contract" to it)
+                internalMetadata = mapOf("contract" to it)
             )
         }
     }

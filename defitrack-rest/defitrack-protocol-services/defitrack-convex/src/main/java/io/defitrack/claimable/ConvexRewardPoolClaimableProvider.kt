@@ -22,7 +22,7 @@ class ConvexRewardPoolClaimableProvider(
 
         return gateway.readMultiCall(
             markets.map {
-                val contract = it.metadata["contract"] as CvxRewardPoolContract
+                val contract = it.internalMetadata["contract"] as CvxRewardPoolContract
                 val function = contract.earnedFunction(address)
                 MultiCallElement(
                     function, contract.address
@@ -32,7 +32,7 @@ class ConvexRewardPoolClaimableProvider(
             val amount = retVal.data[0].value as BigInteger
             if (amount > BigInteger.ZERO) {
                 val market = markets[index]
-                val contract = market.metadata["contract"] as CvxRewardPoolContract
+                val contract = market.internalMetadata["contract"] as CvxRewardPoolContract
 
                 val rewardToken = erC20Resource.getTokenInformation(
                     getNetwork(), contract.rewardToken()

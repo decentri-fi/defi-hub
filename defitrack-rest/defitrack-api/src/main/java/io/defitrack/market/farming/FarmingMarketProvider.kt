@@ -27,6 +27,7 @@ abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>() {
         exitPositionPreparer: ExitPositionPreparer? = null,
         farmType: ContractType,
         metadata: Map<String, Any> = emptyMap(),
+        internalMetadata: Map<String, Any> = emptyMap(),
         rewardsFinished: Boolean = false
     ): FarmingMarket {
         return FarmingMarket(
@@ -44,6 +45,7 @@ abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>() {
             investmentPreparer = investmentPreparer,
             claimableRewardFetcher = claimableRewardFetcher,
             metadata = metadata,
+            internalMetadata = internalMetadata,
             expired = rewardsFinished,
             exitPositionPreparer = exitPositionPreparer
         )
