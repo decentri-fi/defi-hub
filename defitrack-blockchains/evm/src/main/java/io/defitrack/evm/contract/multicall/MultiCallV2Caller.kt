@@ -1,5 +1,7 @@
 package io.defitrack.evm.contract.multicall
 
+import com.kenai.jffi.Aggregate
+import io.defitrack.abi.TypeUtils.Companion.dynamicArray
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toBool
 import org.apache.commons.codec.binary.Hex
@@ -43,8 +45,7 @@ class MultiCallV2Caller(val address: String) : MultiCallCaller {
                     encodedFunctions
                 )
             ),
-            listOf(
-                object : TypeReference<DynamicArray<AggregateResult>>() {})
+            listOf(dynamicArray<AggregateResult>())
         )
 
         val executedCall = executeCall(address, aggregateFunction)

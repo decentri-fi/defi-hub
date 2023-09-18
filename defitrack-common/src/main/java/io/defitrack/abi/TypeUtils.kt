@@ -132,8 +132,8 @@ class TypeUtils {
             return Bool(this)
         }
 
-        inline fun <reified T : Type<*>> dynamicArray(): TypeReference<DynamicArray<T>> {
-            return object : TypeReference<DynamicArray<T>>() {}
+        inline fun <reified T : Type<*>> dynamicArray(indexed: Boolean = false): TypeReference<DynamicArray<T>> {
+            return object : TypeReference<DynamicArray<T>>(indexed) {}
         }
     }
 

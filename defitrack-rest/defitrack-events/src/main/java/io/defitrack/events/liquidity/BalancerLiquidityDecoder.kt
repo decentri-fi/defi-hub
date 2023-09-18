@@ -1,6 +1,7 @@
 package io.defitrack.events.liquidity
 
 import io.defitrack.abi.TypeUtils
+import io.defitrack.abi.TypeUtils.Companion.dynamicArray
 import io.defitrack.common.network.Network
 import io.defitrack.event.DefiEvent
 import io.defitrack.event.DefiEventType
@@ -8,7 +9,6 @@ import io.defitrack.event.EventDecoder
 import io.defitrack.event.EventUtils.Companion.appliesTo
 import io.defitrack.network.toVO
 import io.defitrack.protocol.Protocol
-import org.apache.commons.codec.binary.Hex
 import org.springframework.stereotype.Component
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
@@ -27,9 +27,9 @@ class BalancerLiquidityDecoder : EventDecoder() {
         listOf(
             TypeUtils.bytes32(true),
             TypeUtils.address(true),
-            object : TypeReference<DynamicArray<Address>>(false) {},
-            object : TypeReference<DynamicArray<Int256>>(false) {},
-            object : TypeReference<DynamicArray<Uint256>>(false) {},
+            dynamicArray<Address>(),
+            dynamicArray<Int256>(),
+            dynamicArray<Uint256>(),
         )
     )
 
