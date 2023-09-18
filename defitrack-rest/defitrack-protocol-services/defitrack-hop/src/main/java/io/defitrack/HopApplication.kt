@@ -5,8 +5,11 @@ import io.defitrack.protocol.Protocol
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.cache.annotation.EnableCaching
+import org.springframework.context.ApplicationContext
 
-class HopApplication : ProtocolApplication() {
+class HopApplication(applicationContext: ApplicationContext) : ProtocolApplication(
+    applicationContext
+) {
     override fun getCompany(): Company {
         return Company.HOP
     }

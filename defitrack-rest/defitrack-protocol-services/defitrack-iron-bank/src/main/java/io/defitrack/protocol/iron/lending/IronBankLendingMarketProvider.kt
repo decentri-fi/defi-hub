@@ -75,8 +75,7 @@ abstract class IronBankLendingMarketProvider(
                     marketToken = ctoken.toFungibleToken(),
                     erc20Compatible = true,
                     totalSupply = refreshable(ctokenContract.totalSupply().asEth(ctoken.decimals)) {
-                        val ctoken = getToken(ctokenContract.address)
-                        ctokenContract.totalSupply().asEth(ctoken.decimals)
+                        getToken(ctokenContract.address).totalSupply.asEth(ctoken.decimals)
                     }
                 )
             }
