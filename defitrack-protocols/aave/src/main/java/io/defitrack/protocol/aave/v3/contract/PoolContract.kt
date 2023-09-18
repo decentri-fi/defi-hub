@@ -31,7 +31,7 @@ class PoolContract(
 
     suspend fun reservesList(): List<String> {
         return (read("getReservesList", emptyList(), listOf(
-           address()
+            object : TypeReference<DynamicArray<Address>>() {}
         ))[0].value as List<Address>).map {
             it.value as String
         }

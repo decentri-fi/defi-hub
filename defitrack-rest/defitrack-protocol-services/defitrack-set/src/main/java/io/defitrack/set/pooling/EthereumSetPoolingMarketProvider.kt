@@ -63,8 +63,7 @@ class EthereumSetPoolingMarketProvider(
                     positionFetcher = defaultPositionFetcher(it),
                     investmentPreparer = null,
                     totalSupply = refreshable(token.totalDecimalSupply()) {
-                        val token = getToken(it)
-                        token.totalDecimalSupply()
+                        getToken(it).totalDecimalSupply()
                     })
             } catch (ex: Exception) {
                 logger.error("Unable to import set with address $it")

@@ -20,68 +20,70 @@ import kotlinx.coroutines.coroutineScope
 
 abstract class AaveV3LendingMarketProvider(
     private val network: Network,
-    aaveV3DataProvider: AaveV3DataProvider,
+    dataProvider: AaveV3DataProvider,
 ) : LendingMarketProvider() {
 
     val pool = lazyAsync {
         PoolContract(
             getBlockchainGateway(),
-            aaveV3DataProvider.poolAddress
+            dataProvider.poolAddress()
         )
     }
 
     val poolDataProvider = lazyAsync {
         PoolDataProvider(
             getBlockchainGateway(),
-            aaveV3DataProvider.poolDataProvider
+            dataProvider.poolDataProvider()
         )
     }
 
     override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
         pool.await().reservesList().map {
             async {
-                try {
+                throttled {
+                    try {
 
-                    val contract = poolDataProvider.await()
-                    val reserveData = contract.getReserveData(it)
-                    val reserveTokenAddresses = contract.getReserveTokensAddresses(it)
-                    val aToken = getToken(reserveTokenAddresses.aTokenAddress)
-                    val underlying = getToken(it)
-                    val totalSupply = contract.getATokenTotalSupply(it)
+                        val contract = poolDataProvider.await()
+                        val reserveData = contract.getReserveData(it)
+                        val reserveTokenAddresses = contract.getReserveTokensAddresses(it)
+                        val aToken = getToken(reserveTokenAddresses.aTokenAddress)
+                        val underlying = getToken(it)
+                        val totalSupply = contract.getATokenTotalSupply(it)
 
-                    create(
-                        identifier = aToken.address,
-                        name = "aave v3 " + aToken.name,
-                        token = underlying.toFungibleToken(),
-                        poolType = "aave-v3",
-                        rate = reserveData.liquidityRate.asEth(27),
-                        investmentPreparer = AaveV3LendingInvestmentPreparer(
-                            underlying.address,
-                            pool.await(),
-                            getERC20Resource()
-                        ),
-                        marketSize = Refreshable.refreshable {
-                            getPriceResource().calculatePrice(
-                                PriceRequest(
-                                    underlying.address,
-                                    getNetwork(),
-                                    totalSupply.asEth(aToken.decimals),
-                                    underlying.type
-                                )
-                            ).toBigDecimal()
-                        },
-                        positionFetcher = PositionFetcher(
-                            aToken.address,
-                            { user -> balanceOfFunction(user) },
-                        ),
-                        marketToken = aToken.toFungibleToken(),
-                        totalSupply = Refreshable.refreshable(aToken.totalSupply.asEth(aToken.decimals)) {
-                            getToken(aToken.address).totalSupply.asEth(aToken.decimals)
-                        }
-                    )
-                } catch (ex: Exception) {
-                    logger.error("Unable to fetch V3 Lending market with address $it", ex)
-                    null
+                        create(
+                            identifier = aToken.address,
+                            name = "aave v3 " + aToken.name,
+                            token = underlying.toFungibleToken(),
+                            poolType = "aave-v3",
+                            rate = reserveData.liquidityRate.asEth(27),
+                            investmentPreparer = AaveV3LendingInvestmentPreparer(
+                                underlying.address,
+                                pool.await(),
+                                getERC20Resource()
+                            ),
+                            marketSize = Refreshable.refreshable {
+                                getPriceResource().calculatePrice(
+                                    PriceRequest(
+                                        underlying.address,
+                                        getNetwork(),
+                                        totalSupply.asEth(aToken.decimals),
+                                        underlying.type
+                                    )
+                                ).toBigDecimal()
+                            },
+                            positionFetcher = PositionFetcher(
+                                aToken.address,
+                                { user -> balanceOfFunction(user) },
+                            ),
+                            marketToken = aToken.toFungibleToken(),
+                            totalSupply = Refreshable.refreshable(aToken.totalSupply.asEth(aToken.decimals)) {
+                                getToken(aToken.address).totalSupply.asEth(aToken.decimals)
+                            }
+                        )
+                    } catch (ex: Exception) {
+                        logger.error("Unable to fetch V3 Lending market with address $it", ex)
+                        null
+                    }
                 }
             }
         }.awaitAll().filterNotNull()
