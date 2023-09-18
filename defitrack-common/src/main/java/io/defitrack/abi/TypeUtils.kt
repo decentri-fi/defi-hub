@@ -131,6 +131,10 @@ class TypeUtils {
         fun Boolean.toBool(): Bool {
             return Bool(this)
         }
+
+        inline fun <reified T : Type<*>> dynamicArray(): TypeReference<DynamicArray<T>> {
+            return object : TypeReference<DynamicArray<T>>() {}
+        }
     }
 
 }
