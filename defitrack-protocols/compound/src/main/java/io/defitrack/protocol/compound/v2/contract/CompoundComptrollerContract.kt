@@ -1,5 +1,6 @@
 package io.defitrack.protocol.compound.v2.contract
 
+import io.defitrack.abi.TypeUtils.Companion.dynamicArray
 import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.BlockchainGateway
 import org.web3j.abi.TypeReference
@@ -14,9 +15,7 @@ class CompoundComptrollerContract(
         return (read(
             "getAllMarkets",
             inputs = emptyList(),
-            outputs = listOf(
-                object : TypeReference<DynamicArray<Address>>() {}
-            )
+            outputs = listOf(dynamicArray<Address>())
         )[0].value as List<Address>).map {
             it.value as String
         }
