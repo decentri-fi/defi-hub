@@ -15,13 +15,15 @@ class RabbitEventService(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
     override fun publish(routeKey: String, event: Any?) {
-        if (event != null) {
+        if (event == null) {
             return
         }
+        val serializedEvent = mapper.writeValueAsString(event)
         rabbitTemplate.convertAndSend(
             "domain-events",
             routeKey,
-            mapper.writeValueAsString(event)
+            serializedEvent
         )
+        logger.info("sent event $serializedEvent to $routeKey")
     }
 }

@@ -10,7 +10,7 @@ class NoopEventService : EventService {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
     override fun publish(routeKey: String, event: Any?) {
-        if (event != null) {
+        if (event == null) {
             return
         }
         logger.info("not sending event, no rabbit active")

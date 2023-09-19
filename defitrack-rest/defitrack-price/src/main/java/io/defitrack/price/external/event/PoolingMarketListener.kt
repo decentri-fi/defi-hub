@@ -39,7 +39,7 @@ class PoolingMarketListener(
                 market.address,
                 market.price
             )
-            logger.info("Price for ${market.address} in ${market.network.name} updated to ${market.price}")
+            logger.debug("Price for {} in {} updated to {}", market.address, market.network.name, market.price)
         }
     }
 }
