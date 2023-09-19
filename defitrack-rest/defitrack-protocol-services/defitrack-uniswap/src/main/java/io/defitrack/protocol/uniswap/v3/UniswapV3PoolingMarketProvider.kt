@@ -69,13 +69,12 @@ abstract class UniswapV3PoolingMarketProvider(
             poolAddresses.await().forEach {
                 launch {
                     throttled {
-
                         try {
                             send(getMarket(it))
                         } catch (marketZero: MarketTooLowException) {
                             logger.debug("market size is too low for ${it}")
                         } catch (ex: Exception) {
-                            logger.error("something went wrong trying to import uniswap market ${it}")
+                            logger.error("something went wrong trying to import uniswap market $it : {}", ex.message)
                         }
                     }
                 }
@@ -133,8 +132,6 @@ abstract class UniswapV3PoolingMarketProvider(
         return Protocol.UNISWAP_V3
     }
 
-    class MarketTooLowException(msg: String) : RuntimeException(msg) {
-
-    }
+    class MarketTooLowException(msg: String) : RuntimeException(msg)
 
 }
