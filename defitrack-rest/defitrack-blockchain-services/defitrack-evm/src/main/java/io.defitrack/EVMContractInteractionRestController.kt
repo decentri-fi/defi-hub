@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.core.methods.request.Transaction
+import org.web3j.protocol.core.methods.response.EthCall
 import org.web3j.protocol.exceptions.ClientConnectionException
 
 @RestController
@@ -28,17 +29,23 @@ class EVMContractInteractionRestController(
         performCall(evmContractInteractionCommand)
     }
 
-    suspend fun performCall(evmContractInteractionCommand: EvmContractInteractionCommand): Any =
+    suspend fun performCall(evmContractInteractionCommand: EvmContractInteractionCommand): EthCall =
         withContext(Dispatchers.IO) {
             with(evmContractInteractionCommand) {
                 try {
-                    web3j.ethCall(
+                    val result = web3j.ethCall(
                         Transaction.createEthCallTransaction(
                             from,
                             contract,
                             function
                         ), DefaultBlockParameterName.PENDING
-                    )!!.send()!!
+                    ).send()
+                    if (result.hasError() && result.error.code == 429) {
+                        delay(1000L)
+                        performCall(evmContractInteractionCommand)
+                    } else {
+                        result
+                    }
                 } catch (ex: ClientConnectionException) {
                     if (ex.message?.contains("429") == true) {
                         delay(1000L)

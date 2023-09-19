@@ -13,6 +13,6 @@ class NoopEventService : EventService {
         if (event == null) {
             return
         }
-        logger.info("not sending event, no rabbit active")
+        logger.debug("not sending event, no rabbit active")
     }
 }

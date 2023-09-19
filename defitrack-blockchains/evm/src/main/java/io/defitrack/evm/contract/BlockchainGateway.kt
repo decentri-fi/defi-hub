@@ -10,9 +10,8 @@ import com.google.gson.JsonParser
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
-import io.defitrack.evm.abi.domain.AbiContractFunction
-import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.evm.contract.multicall.MultiCallCaller
+import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.evm.contract.multicall.MultiCallResult
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -21,7 +20,6 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
 import org.web3j.abi.FunctionEncoder
 import org.web3j.abi.FunctionReturnDecoder
