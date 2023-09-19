@@ -66,7 +66,7 @@ class CoinGeckoPriceService(
                 }
             }
         } catch (ex: Exception) {
-            logger.error("error trying to fetch price for $symbol")
+            logger.debug("error trying to fetch price for $symbol")
             null
         }
     }
