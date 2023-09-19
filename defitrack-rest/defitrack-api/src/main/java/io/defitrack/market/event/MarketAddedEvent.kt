@@ -5,10 +5,10 @@ import io.defitrack.market.pooling.domain.PoolingMarket
 
 abstract class MarketAddedEvent(val type: String) {
     companion object {
-        fun create(defiMarket: DefiMarket): MarketAddedEvent {
+        fun create(defiMarket: DefiMarket): MarketAddedEvent? {
             return when (defiMarket) {
                 is PoolingMarket -> PoolMarketAddedEvent.createPoolMarketAddedEvent( defiMarket)
-                else -> throw IllegalArgumentException("Unknown market type")
+                else -> null
             }
         }
     }

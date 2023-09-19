@@ -1,7 +1,6 @@
 package io.defitrack.event
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -15,7 +14,10 @@ class RabbitEventService(
 ) : EventService {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
-    override fun publish(routeKey: String, event: Any) {
+    override fun publish(routeKey: String, event: Any?) {
+        if (event != null) {
+            return
+        }
         rabbitTemplate.convertAndSend(
             "domain-events",
             routeKey,

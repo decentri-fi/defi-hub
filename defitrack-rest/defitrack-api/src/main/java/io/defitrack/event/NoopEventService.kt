@@ -6,10 +6,13 @@ import org.springframework.stereotype.Service
 
 @Service
 @ConditionalOnProperty(name = ["rabbitmq.enabled"], havingValue = "false", matchIfMissing = true)
-class NoopEventService : EventService{
+class NoopEventService : EventService {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
-    override fun publish(routeKey: String, event: Any) {
+    override fun publish(routeKey: String, event: Any?) {
+        if (event != null) {
+            return
+        }
         logger.info("not sending event, no rabbit active")
     }
 }
