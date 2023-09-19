@@ -28,17 +28,17 @@ class AggregatedMarketStatisticsService(
                 .map {
                     it to listOf(
                         async {
-                            defitrackClient.getPoolingMarkets(it)
+                            defitrackClient.getPoolingMarketsCount(it)
                         },
                         async {
-                            defitrackClient.getFarmingMarkets(it)
+                            defitrackClient.getFarmingMarketsCount(it)
                         },
                         async {
-                            defitrackClient.getLendingMarkets(it)
+                            defitrackClient.getLendingMarketCount(it)
                         }
                     )
                 }.map {
-                    it.first to it.second.awaitAll().flatten()
+                    it.first to it.second.awaitAll()
                 }
 
             MarketStatisticVO(

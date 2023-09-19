@@ -1,5 +1,6 @@
 package io.defitrack.market.farming.mapper
 
+import io.defitrack.market.MarketVOMapper
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.vo.FarmingMarketVO
 import io.defitrack.network.toVO
@@ -11,10 +12,10 @@ import java.util.*
 @Component
 class FarmingMarketVOMapper(
     private val protocolVOMapper: ProtocolVOMapper
-) {
+) : MarketVOMapper<FarmingMarket> {
 
-    fun map(farmingMarket: FarmingMarket): FarmingMarketVO {
-        return with(farmingMarket) {
+    override fun map(market: FarmingMarket): FarmingMarketVO {
+        return with(market) {
             FarmingMarketVO(
                 id = this.id,
                 network = this.network.toVO(),

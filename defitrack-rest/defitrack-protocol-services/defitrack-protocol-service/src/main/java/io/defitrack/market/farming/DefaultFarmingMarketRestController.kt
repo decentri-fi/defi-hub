@@ -3,6 +3,8 @@ package io.defitrack.market.farming
 import io.defitrack.common.network.Network
 import io.defitrack.exit.ExitPositionCommand
 import io.defitrack.invest.PrepareInvestmentCommand
+import io.defitrack.market.DefaultMarketRestController
+import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.mapper.FarmingMarketVOMapper
 import io.defitrack.market.farming.vo.FarmingMarketVO
 import io.defitrack.market.farming.vo.TransactionPreparationVO
@@ -18,23 +20,9 @@ class DefaultFarmingMarketRestController(
     private val farmingMarketProviders: List<FarmingMarketProvider>,
     private val erC20Resource: DecentrifiERC20Resource,
     private val farmingMarketVOMapper: FarmingMarketVOMapper
+) : DefaultMarketRestController<FarmingMarket>(
+    farmingMarketProviders, farmingMarketVOMapper
 ) {
-
-
-    @GetMapping("/all-markets")
-    fun stakingMarkets(
-        @PathVariable("protocol") protocol: String, @RequestParam("network") network: Network?
-    ): List<FarmingMarketVO> {
-        return farmingMarketProviders.filter {
-            it.getProtocol().slug == protocol
-        }.filter { marketService ->
-            network?.let {
-                marketService.getNetwork() == it
-            } ?: true
-        }.flatMap {
-            it.getMarkets()
-        }.map(farmingMarketVOMapper::map)
-    }
 
     @GetMapping(value = ["/markets"], params = ["token", "network"])
     fun searchByToken(

@@ -2,10 +2,11 @@ package io.defitrack.market.lending
 
 import io.defitrack.common.network.Network
 import io.defitrack.invest.PrepareInvestmentCommand
+import io.defitrack.market.DefaultMarketRestController
 import io.defitrack.market.farming.vo.TransactionPreparationVO
+import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.lending.mapper.LendingMarketVOMapper
 import io.defitrack.market.lending.vo.LendingMarketVO
-import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -15,20 +16,10 @@ import org.springframework.web.bind.annotation.*
 class DefaultLendingMarketsRestController(
     private val lendingMarketProviders: List<LendingMarketProvider>,
     private val lendingMarketVOMapper: LendingMarketVOMapper
+) : DefaultMarketRestController<LendingMarket>(
+    lendingMarketProviders,
+    lendingMarketVOMapper
 ) {
-
-    @GetMapping(value = ["/all-markets"])
-    fun getAllMarkets(
-        @PathVariable("protocol") protocol: String,
-    ): List<LendingMarketVO> {
-        return lendingMarketProviders
-            .filter {
-                it.getProtocol().slug == protocol
-            }
-            .flatMap {
-                it.getMarkets()
-            }.map(lendingMarketVOMapper::map)
-    }
 
     @GetMapping(value = ["/markets"], params = ["token"])
     fun searchByToken(

@@ -27,18 +27,18 @@ class PoolingMarketStatisticsService(
                 it.primitives.contains(DefiPrimitive.POOLING)
             }.map {
                 it to async {
-                    defitrackClient.getPoolingMarkets(it)
+                    defitrackClient.getPoolingMarketsCount(it)
                 }
             }.map {
-                it.first to it.second.await(3000L, emptyList())
+                it.first to it.second.await(3000L, 0)
             }
 
             MarketStatisticVO(
-                total = marketsPerProtocol.flatMap {
+                total = marketsPerProtocol.sumOf {
                     it.second
-                }.count(),
+                },
                 marketsPerProtocol = marketsPerProtocol.associate {
-                    it.first to it.second.count()
+                    it.first to it.second
                 }.filter {
                     it.value > 0
                 }

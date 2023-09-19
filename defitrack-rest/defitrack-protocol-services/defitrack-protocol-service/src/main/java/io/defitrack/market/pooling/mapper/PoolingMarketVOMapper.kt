@@ -1,5 +1,6 @@
 package io.defitrack.market.pooling.mapper
 
+import io.defitrack.market.MarketVOMapper
 import io.defitrack.market.pooling.breakdown.PoolingBreakdownMapper
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.vo.PoolingMarketVO
@@ -13,9 +14,9 @@ import java.util.*
 class PoolingMarketVOMapper(
     private val poolingBreakdownMapper: PoolingBreakdownMapper,
     private val protocolVOMapper: ProtocolVOMapper
-) {
+) : MarketVOMapper<PoolingMarket> {
 
-    fun map(market: PoolingMarket): PoolingMarketVO {
+   override fun map(market: PoolingMarket): PoolingMarketVO {
         return with(market) {
             PoolingMarketVO(
                 name = name,
