@@ -80,7 +80,7 @@ abstract class HopPoolingMarketProvider(
                 }
             )
         } catch (ex: Exception) {
-            logger.error("unable to generate market for lptoken {}", hopLpToken)
+            logger.error("unable to generate market for lptoken {}", hopLpToken, ex)
             null
         }
     }
