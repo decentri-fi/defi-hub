@@ -4,6 +4,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
@@ -36,10 +37,11 @@ class AlienbasePoolingMarketProvider(
                     val tokens = poolingToken.underlyingTokens
 
                     try {
+                        val breakdown = fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address)
                         send(
                             create(
                                 identifier = it,
-                                marketSize = Refreshable.refreshable {
+                                marketSize = refreshable(breakdown.sumOf { it.reserveUSD }) {
                                     getMarketSize(
                                         poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
                                         it
@@ -48,11 +50,11 @@ class AlienbasePoolingMarketProvider(
                                 positionFetcher = defaultPositionFetcher(poolingToken.address),
                                 address = it,
                                 name = poolingToken.name,
-                                breakdown = defaultBreakdown(tokens, poolingToken.address),
+                                breakdown = breakdown,
                                 symbol = poolingToken.symbol,
                                 tokens = poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
                                 tokenType = TokenType.VELODROME,
-                                totalSupply = Refreshable.refreshable(poolingToken.totalSupply.asEth(poolingToken.decimals)) {
+                                totalSupply = refreshable(poolingToken.totalSupply.asEth(poolingToken.decimals)) {
                                     with(getToken(it)) {
                                         totalSupply.asEth(decimals)
                                     }

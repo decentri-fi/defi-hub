@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
-import kotlin.math.log
 
 @Component
 class VelodromeV1OptimismPoolingMarketProvider(
@@ -35,19 +34,17 @@ class VelodromeV1OptimismPoolingMarketProvider(
                     val tokens = poolingToken.underlyingTokens
 
                     try {
+                        val breakdown = fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address)
                         send(
                             create(
                                 identifier = "v1-$it",
-                                marketSize = refreshable {
-                                    getMarketSize(
-                                        tokens.map(TokenInformationVO::toFungibleToken),
-                                        it
-                                    )
+                                marketSize = refreshable(breakdown.sumOf { it.reserveUSD } ) {
+                                    fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address).sumOf { it.reserveUSD }
                                 },
                                 positionFetcher = defaultPositionFetcher(poolingToken.address),
                                 address = it,
                                 name = poolingToken.name,
-                                breakdown = defaultBreakdown(tokens, poolingToken.address),
+                                breakdown = breakdown,
                                 symbol = poolingToken.symbol,
                                 tokens = poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
                                 tokenType = TokenType.VELODROME,

@@ -32,12 +32,12 @@ class UniswapV2EthereumPoolingMarketProvider(
                             val token0 = getToken(it.token0.id)
                             val token1 = getToken(it.token1.id)
 
-                            val breakdown = defaultBreakdown(
-                                listOf(
-                                    token0,
-                                    token1
-                                ), token.address
+                            var breakdown = fiftyFiftyBreakdown(
+                                token0,
+                                token1,
+                                token.address
                             )
+
                             send(
                                 create(
                                     identifier = "v2-${it.id}",
@@ -55,22 +55,18 @@ class UniswapV2EthereumPoolingMarketProvider(
                                             it.reserveUSD
                                         }
                                     ) {
-                                        val breakdown = defaultBreakdown(
-                                            listOf(
-                                                token0,
-                                                token1
-                                            ), token.address
-                                        )
-
-                                        breakdown.sumOf {
+                                        fiftyFiftyBreakdown(
+                                            token0,
+                                            token1,
+                                            token.address
+                                        ).sumOf {
                                             it.reserveUSD
                                         }
-                                    }, //todo: fetch this from the blockchain
+                                    },
                                     tokenType = TokenType.UNISWAP,
                                     positionFetcher = defaultPositionFetcher(token.address),
                                     totalSupply = refreshable(token.totalSupply.asEth(token.decimals)) {
-                                        val token = getToken(it.id)
-                                        token.totalSupply.asEth(token.decimals)
+                                        getToken(it.id).totalSupply.asEth(token.decimals)
                                     }
                                 )
                             )

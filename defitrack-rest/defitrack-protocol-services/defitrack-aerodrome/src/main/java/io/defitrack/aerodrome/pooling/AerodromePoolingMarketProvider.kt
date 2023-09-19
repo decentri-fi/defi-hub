@@ -4,13 +4,13 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.contract.PoolFactoryContract
 import io.defitrack.token.TokenType
-import io.defitrack.uniswap.v2.PairFactoryContract
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
@@ -37,10 +37,11 @@ class AerodromePoolingMarketProvider(
                     val tokens = poolingToken.underlyingTokens
 
                     try {
+                        val breakdown = fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address)
                         send(
                             create(
                                 identifier = it,
-                                marketSize = Refreshable.refreshable {
+                                marketSize = refreshable(breakdown.sumOf { it.reserveUSD }) {
                                     getMarketSize(
                                         poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
                                         it
@@ -49,11 +50,11 @@ class AerodromePoolingMarketProvider(
                                 positionFetcher = defaultPositionFetcher(poolingToken.address),
                                 address = it,
                                 name = poolingToken.name,
-                                breakdown = defaultBreakdown(tokens, poolingToken.address),
+                                breakdown = breakdown,
                                 symbol = poolingToken.symbol,
                                 tokens = poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
                                 tokenType = TokenType.VELODROME,
-                                totalSupply = Refreshable.refreshable(poolingToken.totalSupply.asEth(poolingToken.decimals)) {
+                                totalSupply = refreshable(poolingToken.totalSupply.asEth(poolingToken.decimals)) {
                                     with(getToken(it)) {
                                         totalSupply.asEth(decimals)
                                     }

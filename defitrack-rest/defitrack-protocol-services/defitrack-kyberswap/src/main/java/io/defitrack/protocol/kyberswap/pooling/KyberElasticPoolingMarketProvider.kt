@@ -3,8 +3,8 @@ package io.defitrack.protocol.kyberswap.pooling
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -13,7 +13,6 @@ import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 
 @Component
@@ -35,17 +34,17 @@ class KyberElasticPoolingMarketProvider(
                 val tokens = poolingToken.underlyingTokens
 
                 try {
+                    val breakdown = fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address)
                     create(
                         identifier = poolInfo.address,
-                        marketSize = refreshable {
-                            getMarketSize(
-                                poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
-                                poolInfo.address
-                            )
+                        marketSize = refreshable(breakdown.sumOf { it.reserveUSD }) {
+                            fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address).sumOf {
+                                it.reserveUSD
+                            }
                         },
                         address = poolInfo.address,
                         name = poolingToken.name,
-                        breakdown = defaultBreakdown(tokens, poolingToken.address),
+                        breakdown = breakdown,
                         symbol = poolingToken.symbol,
                         tokens = poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
                         tokenType = TokenType.VELODROME,

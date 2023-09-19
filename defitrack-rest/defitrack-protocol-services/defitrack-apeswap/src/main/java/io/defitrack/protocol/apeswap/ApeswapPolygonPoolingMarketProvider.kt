@@ -3,6 +3,7 @@ package io.defitrack.protocol.apeswap
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
@@ -45,22 +46,21 @@ class ApeswapPolygonPoolingMarketProvider(
                             val poolingToken = getToken(pool)
                             val underlyingTokens = poolingToken.underlyingTokens
 
+                            val breakdown =
+                                fiftyFiftyBreakdown(underlyingTokens[0], underlyingTokens[1], poolingToken.address)
                             create(
                                 identifier = pool,
                                 address = pool,
                                 name = poolingToken.name,
                                 symbol = poolingToken.symbol,
-                                marketSize = Refreshable.refreshable {
-                                    getMarketSize(
-                                        poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
-                                        pool
-                                    )
+                                marketSize = refreshable(breakdown.sumOf { it.reserveUSD }) {
+                                   breakdown.sumOf { it.reserveUSD }
                                 },
-                                breakdown = defaultBreakdown(underlyingTokens, poolingToken.address),
+                                breakdown = breakdown,
                                 tokens = underlyingTokens.map { it.toFungibleToken() },
                                 tokenType = TokenType.APE,
                                 positionFetcher = defaultPositionFetcher(poolingToken.address),
-                                totalSupply = Refreshable.refreshable {
+                                totalSupply = refreshable {
                                     getToken(pool).totalDecimalSupply()
                                 }
                             )

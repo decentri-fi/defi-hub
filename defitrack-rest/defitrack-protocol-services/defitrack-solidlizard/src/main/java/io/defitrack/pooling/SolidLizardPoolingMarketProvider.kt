@@ -28,20 +28,18 @@ class SolidLizardPoolingMarketProvider : PoolingMarketProvider() {
                 val tokens = token.underlyingTokens
 
                 try {
+                    val breakdown = fiftyFiftyBreakdown(tokens[0], tokens[1], token.address)
                     create(
                         name = token.name,
                         identifier = token.address,
-                        marketSize = refreshable {
-                            getMarketSize(
-                                tokens.map(TokenInformationVO::toFungibleToken),
-                                it
-                            )
+                        marketSize = refreshable(breakdown.sumOf { it.reserveUSD }) {
+                            fiftyFiftyBreakdown(tokens[0], tokens[1], token.address).sumOf { it.reserveUSD }
                         },
                         positionFetcher = defaultPositionFetcher(token.address),
                         tokenType = TokenType.SOLIDLIZARD,
                         tokens = token.underlyingTokens.map(TokenInformationVO::toFungibleToken),
                         symbol = token.symbol,
-                        breakdown = defaultBreakdown(tokens, token.address),
+                        breakdown = breakdown,
                         address = token.address,
                         totalSupply = refreshable(token.totalSupply.asEth(token.decimals)) {
                             getToken(it).totalSupply.asEth(token.decimals)

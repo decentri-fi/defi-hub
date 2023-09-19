@@ -93,25 +93,22 @@ abstract class UniswapV3PoolingMarketProvider(
         val token0 = getToken(pool.token0.await())
         val token1 = getToken(pool.token1.await())
 
-        val underlyingTokens = listOf(
-            token0, token1
-        )
-        val breakdown = defaultBreakdown(underlyingTokens, pool.address)
+        val breakdown = fiftyFiftyBreakdown(token0, token1, pool.address)
 
         val marketSize = breakdown.sumOf {
             it.reserveUSD
         }
 
-        if (marketSize != BigDecimal.ZERO) {
+        if (marketSize != BigDecimal.ZERO && marketSize > BigDecimal.valueOf(100)) {
             create(
                 identifier = "v3-${pool.address}",
                 name = "${token0.symbol}/${token1.symbol}",
                 address = pool.address,
                 symbol = "${token0.symbol}-${token1.symbol}",
                 breakdown = breakdown,
-                tokens = underlyingTokens.map { it.toFungibleToken() },
+                tokens = listOf(token0.toFungibleToken(), token1.toFungibleToken()),
                 marketSize = refreshable(marketSize) {
-                    defaultBreakdown(underlyingTokens, pool.address).sumOf {
+                    fiftyFiftyBreakdown(token0, token1, pool.address).sumOf {
                         it.reserveUSD
                     }
                 },

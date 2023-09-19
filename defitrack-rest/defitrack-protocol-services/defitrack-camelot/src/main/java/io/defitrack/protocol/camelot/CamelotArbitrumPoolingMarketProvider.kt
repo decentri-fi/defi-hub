@@ -2,8 +2,8 @@ package io.defitrack.protocol.camelot
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.erc20.TokenInformationVO
-import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -35,26 +35,28 @@ class CamelotArbitrumPoolingMarketProvider(
                         val underlyingTokens = poolingToken.underlyingTokens
 
 
+                        val breakdown =
+                            fiftyFiftyBreakdown(underlyingTokens[0], underlyingTokens[1], poolingToken.address)
                         send(
                             create(
                                 identifier = pool,
                                 address = pool,
                                 name = poolingToken.name,
                                 symbol = poolingToken.symbol,
-                                marketSize = Refreshable.refreshable {
+                                marketSize = refreshable(breakdown.sumOf { it.reserveUSD }) {
                                     getMarketSize(
                                         poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
                                         pool
                                     )
                                 },
-                                breakdown = defaultBreakdown(underlyingTokens, poolingToken.address),
+                                breakdown = breakdown,
                                 tokens = underlyingTokens.map { it.toFungibleToken() },
                                 tokenType = TokenType.CAMELOT,
                                 positionFetcher = defaultPositionFetcher(poolingToken.address),
-                                totalSupply = Refreshable.refreshable(poolingToken.totalDecimalSupply()) {
+                                totalSupply = refreshable(poolingToken.totalDecimalSupply()) {
                                     getToken(pool).totalDecimalSupply()
                                 },
-                                price = Refreshable.refreshable { BigDecimal.ZERO }
+                                price = refreshable { BigDecimal.ZERO }
                             )
                         )
                     } catch (ex: Exception) {

@@ -35,19 +35,17 @@ class VelodromeV2OptimismPoolingMarketProvider(
                     val tokens = poolingToken.underlyingTokens
 
                     try {
+                        val breakdown = fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address)
                         send(
                             create(
                                 identifier = "v2-$it",
-                                marketSize = refreshable {
-                                    getMarketSize(
-                                        poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
-                                        it
-                                    )
+                                marketSize = refreshable(breakdown.sumOf { it.reserveUSD }) {
+                                    fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address).sumOf { it.reserveUSD }
                                 },
                                 positionFetcher = defaultPositionFetcher(poolingToken.address),
                                 address = it,
                                 name = poolingToken.name,
-                                breakdown = defaultBreakdown(tokens, poolingToken.address),
+                                breakdown = breakdown,
                                 symbol = poolingToken.symbol,
                                 tokens = poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
                                 tokenType = TokenType.VELODROME,

@@ -1,5 +1,6 @@
 package io.defitrack.protocol.uniswap.v3
 
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.market.pooling.PoolingPositionProvider
 import io.defitrack.market.pooling.domain.PoolingPosition
@@ -20,7 +21,7 @@ abstract class UniswapV3PoolingPositionProvider(
     val LOG_PRICE = BigDecimal.valueOf(1.0001)
     val POW_96 = BigInteger.valueOf(2).pow(96)
 
-    val poolingNftContract by lazy {
+    val poolingNftContract = lazyAsync {
         UniswapPositionsV3Contract(
             uniswapV3PoolingMarketProvider.getBlockchainGateway(),
             "0xC36442b4a4522E871399CD717aBDD847Ab11FE88"
@@ -29,7 +30,7 @@ abstract class UniswapV3PoolingPositionProvider(
 
 
     override suspend fun fetchUserPoolings(protocol: String, address: String): List<PoolingPosition> = coroutineScope {
-        val positionsForUser = poolingNftContract.getUserPositions(address)
+        val positionsForUser = poolingNftContract.await().getUserPositions(address)
         positionsForUser.filter {
             it.liquidity > BigInteger.ZERO
         }.map { position ->
