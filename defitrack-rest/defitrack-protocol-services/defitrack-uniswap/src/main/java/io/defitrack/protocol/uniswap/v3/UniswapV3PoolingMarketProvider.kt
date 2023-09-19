@@ -72,8 +72,8 @@ abstract class UniswapV3PoolingMarketProvider(
 
                         try {
                             send(getMarket(it))
-                        } catch (marketZero: MarketSizeZeroException) {
-                            logger.info("market size is zero for ${it}")
+                        } catch (marketZero: MarketTooLowException) {
+                            logger.debug("market size is too low for ${it}")
                         } catch (ex: Exception) {
                             logger.error("something went wrong trying to import uniswap market ${it}")
                         }
@@ -121,7 +121,7 @@ abstract class UniswapV3PoolingMarketProvider(
                 internalMetadata = mapOf("contract" to pool)
             )
         } else {
-            throw MarketSizeZeroException("market size is zero for ${pool.address}")
+            throw MarketTooLowException("market size is zero for ${pool.address}")
         }
     }
 
@@ -133,7 +133,7 @@ abstract class UniswapV3PoolingMarketProvider(
         return Protocol.UNISWAP_V3
     }
 
-    class MarketSizeZeroException(msg: String) : RuntimeException(msg) {
+    class MarketTooLowException(msg: String) : RuntimeException(msg) {
 
     }
 
