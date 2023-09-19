@@ -28,9 +28,9 @@ class StargatePriceService(
         "S*LUSD"
     )
 
-    override fun appliesTo(tokenInformationVO: TokenInformationVO): Boolean {
+    override fun appliesTo(token: TokenInformationVO): Boolean {
         return tokens.any {
-            tokenInformationVO.symbol == it
+            token.symbol == it
         }
     }
 

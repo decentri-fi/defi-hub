@@ -6,7 +6,8 @@ import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 
 abstract class DefiMarket(
-    open val id: String
+    open val id: String,
+    val type: String
 ) {
 
     val logger = LoggerFactory.getLogger(this::class.java)

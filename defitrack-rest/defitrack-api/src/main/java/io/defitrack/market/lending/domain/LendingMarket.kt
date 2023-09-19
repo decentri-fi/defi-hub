@@ -31,7 +31,7 @@ data class LendingMarket(
     val totalSupply: Refreshable<BigDecimal>,
     val price: Refreshable<BigDecimal>
 ) : DefiMarket(
-    id
+    id, "lending"
 ) {
 
     init {

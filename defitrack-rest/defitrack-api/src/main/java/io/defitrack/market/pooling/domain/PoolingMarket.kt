@@ -35,7 +35,7 @@ data class PoolingMarket(
     val internalMetadata: Map<String, Any>,
     val enterMarketEvent: Event? = null,
     val deprecated: Boolean,
-) : DefiMarket(id) {
+) : DefiMarket(id, "pooling") {
     init {
         addRefetchableValue(totalSupply)
         addRefetchableValue(marketSize)

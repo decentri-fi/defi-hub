@@ -47,6 +47,9 @@ class DecentrifiPoolingPriceRepository(
         logger.info("Decentrifi Pooling Price Repository populated with ${cache.asMap().entries.size} prices")
     }
 
+    fun putInCache(network: NetworkVO, address: String, price: BigDecimal) =
+        cache.put(toIndex(network, address), price)
+
     fun contains(token: TokenInformationVO): Boolean {
         return cache.get(toIndex(token.network, token.address)) != null
     }

@@ -2,11 +2,13 @@ package io.defitrack.market
 
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.event.EventService
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.exit.ExitPositionCommand
 import io.defitrack.exit.ExitPositionPreparer
+import io.defitrack.market.event.MarketAddedEvent
 import io.defitrack.market.lending.domain.Position
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.network.toVO
@@ -41,6 +43,9 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
 
     @Autowired
     private lateinit var erC20Resource: ERC20Resource
+
+    @Autowired
+    private lateinit var eventService: EventService
 
     @Autowired
     private lateinit var companyProvider: CompanyProvider
@@ -86,12 +91,21 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
             try {
                 val markets = populate()
                 markets.forEach {
+                    logger.debug("adding ${it.id}")
                     cache.put(it.id, it)
+                    eventService.publish(
+                        "markets.${it.type}.updated",
+                       MarketAddedEvent.create(it)
+                    )
                 }
 
                 produceMarkets().collect {
                     logger.debug("adding ${it.id}")
                     cache.put(it.id, it)
+                    eventService.publish(
+                        "markets.${it.type}.updated",
+                        MarketAddedEvent.create(it)
+                    )
                 }
                 logger.info("done adding ${cache.asMap().size} markets")
             } catch (ex: Exception) {
