@@ -24,6 +24,6 @@ class RabbitEventService(
             routeKey,
             serializedEvent
         )
-        logger.info("sent event $serializedEvent to $routeKey")
+        logger.debug("sent event $serializedEvent to $routeKey")
     }
 }
