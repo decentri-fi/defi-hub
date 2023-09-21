@@ -108,7 +108,7 @@ class BlockchainGateway(
         function: org.web3j.abi.datatypes.Function,
     ): List<Type<*>> {
         val encodedFunction = FunctionEncoder.encode(function)
-        val ethCall = call(null, address, encodedFunction)
+        val ethCall = call(null, address, encodedFunction) ?: return emptyList()
         return FunctionReturnDecoder.decode(ethCall.value, function.outputParameters)
     }
 
@@ -116,7 +116,7 @@ class BlockchainGateway(
         from: String?,
         contract: String,
         encodedFunction: String
-    ): EthCall = withContext(Dispatchers.IO) {
+    ): EthCall? = withContext(Dispatchers.IO) {
         retry(limitAttempts(5) + binaryExponentialBackoff(1000, 10000)) {
             val post = httpClient.post("$endpoint/contract/call") {
                 contentType(ContentType.Application.Json)
@@ -128,7 +128,12 @@ class BlockchainGateway(
                     )
                 )
             }
-            post.body()
+
+            if (!post.status.isSuccess()) {
+                null
+            } else {
+                post.body()
+            }
         }
     }
 
