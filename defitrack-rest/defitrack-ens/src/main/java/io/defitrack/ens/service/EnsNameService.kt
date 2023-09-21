@@ -61,6 +61,9 @@ class EnsNameService(
     val expiresCache = Cache.Builder<String, BigInteger>().expireAfterWrite(1.hours).build()
 
     suspend fun getExpires(ensName: String): BigInteger {
+        if (ensName == "0x0000000000000000000000000000000000000000") {
+            return BigInteger.ZERO
+        }
         return try {
             expiresCache.get(ensName) {
                 ensRegistrarContract.await().getExpires(ensName)
