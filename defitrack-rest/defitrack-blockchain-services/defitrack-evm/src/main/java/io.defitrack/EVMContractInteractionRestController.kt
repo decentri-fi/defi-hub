@@ -24,13 +24,13 @@ class EVMContractInteractionRestController(
     val simpleRateLimiter = SimpleRateLimiter(20.0)
 
     @PostMapping("/call")
-    suspend fun call(@RequestBody evmContractInteractionCommand: EvmContractInteractionCommand) {
+    suspend fun call(@RequestBody evmContractInteractionCommand: EvmContractInteractionCommand): EthCall {
         simpleRateLimiter.acquire()
-        performCall(evmContractInteractionCommand)
+        return performCall(evmContractInteractionCommand)
     }
 
-    suspend fun performCall(evmContractInteractionCommand: EvmContractInteractionCommand): EthCall =
-        withContext(Dispatchers.IO) {
+    suspend fun performCall(evmContractInteractionCommand: EvmContractInteractionCommand): EthCall {
+        return withContext(Dispatchers.IO) {
             with(evmContractInteractionCommand) {
                 try {
                     val result = web3j.ethCall(
@@ -40,6 +40,7 @@ class EVMContractInteractionRestController(
                             function
                         ), DefaultBlockParameterName.PENDING
                     ).send()
+
                     if (result.hasError() && result.error.code == 429) {
                         delay(1000L)
                         performCall(evmContractInteractionCommand)
@@ -49,11 +50,12 @@ class EVMContractInteractionRestController(
                 } catch (ex: ClientConnectionException) {
                     if (ex.message?.contains("429") == true) {
                         delay(1000L)
-                        performCall(evmContractInteractionCommand)
+                        return@with performCall(evmContractInteractionCommand)
                     } else {
                         throw ex
                     }
                 }
             }
         }
+    }
 }
