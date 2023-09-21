@@ -25,7 +25,6 @@
             <groupId>io.defitrack</groupId>
             <artifactId>crv</artifactId>
         </dependency>
-
         <dependency>
             <groupId>io.defitrack</groupId>
             <artifactId>set</artifactId>

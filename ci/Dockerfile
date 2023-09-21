@@ -3,7 +3,7 @@ FROM openjdk:20 as builder
 WORKDIR application
 ARG JAR_FILE=target/defitrack-*-SNAPSHOT.jar
 COPY ${JAR_FILE} application.jar
-ADD target/newrelic/newrelic.jar /opt/newrelic.jar
+ADD newrelic.jar /opt/newrelic.jar
 RUN java -Djarmode=layertools -jar application.jar extract
 
 FROM openjdk:20

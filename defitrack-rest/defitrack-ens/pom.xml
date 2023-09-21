@@ -12,7 +12,6 @@
     </parent>
 
     <dependencies>
-
         <dependency>
             <groupId>io.defitrack</groupId>
             <artifactId>defitrack-common</artifactId>
