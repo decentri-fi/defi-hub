@@ -49,8 +49,12 @@ class EnsNameService(
 
     suspend fun getEnsByName(name: String): String {
         return cache.get(name) {
-            val resolver = getResolverContract(name)
-            resolver.getAddress(name)
+            try {
+                val resolver = getResolverContract(name)
+                resolver.getAddress(name)
+            } catch (ex: Exception) {
+                ""
+            }
         }
     }
 
