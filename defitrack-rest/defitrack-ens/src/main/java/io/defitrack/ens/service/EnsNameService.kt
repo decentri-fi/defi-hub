@@ -69,7 +69,7 @@ class EnsNameService(
                 val resolver = getResolverContract(reverseName)
                 resolver.getName(reverseName)
             } catch (ex: Exception) {
-                logger.info("Unable to fetch ens for address $address")
+                logger.debug("Unable to fetch ens for address $address")
                 ""
             }
         }
