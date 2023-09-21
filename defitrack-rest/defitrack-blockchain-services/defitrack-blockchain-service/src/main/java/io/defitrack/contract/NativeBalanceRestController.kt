@@ -17,7 +17,7 @@ class NativeBalanceRestController(
     private val web3j: Web3j
 ) {
     @GetMapping("/{address}")
-    @Observed(name = "blockchain.balance.by-address")
+    @Timed("blockchain.balance.by-address")
     suspend fun getNativeBalance(@PathVariable("address") address: String): BigInteger {
         val send = web3j.ethGetBalance(address, DefaultBlockParameterName.PENDING).send()
         return if (send.hasError() && send.error.code == 429) {

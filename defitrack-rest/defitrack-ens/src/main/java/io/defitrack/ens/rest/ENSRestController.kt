@@ -2,6 +2,7 @@ package io.defitrack.ens.rest
 
 import io.defitrack.ens.domain.ENSResult
 import io.defitrack.ens.service.EnsNameService
+import io.micrometer.core.annotation.Timed
 import kotlinx.coroutines.runBlocking
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 class ENSRestController(private val ensNameService: EnsNameService) {
 
     @GetMapping("/by-name/{ens}")
+    @Timed("ens.by-name")
     fun getAddressInformation(@PathVariable("ens") ens: String): ENSResult = runBlocking {
         val result = ensNameService.getEnsByName(ens)
 
@@ -22,6 +24,7 @@ class ENSRestController(private val ensNameService: EnsNameService) {
     }
 
     @GetMapping("/by-address/{address}")
+    @Timed("ens.by-address")
     fun getMapping(@PathVariable("address") address: String): ENSResult = runBlocking {
         val result = ensNameService.getEnsByAddress(address)
 
@@ -35,6 +38,7 @@ class ENSRestController(private val ensNameService: EnsNameService) {
     }
 
     @GetMapping("/by-name/{name}/avatar")
+    @Timed("ens.by-name.avatar")
     suspend fun getAvatar(@PathVariable name: String): Map<String, String> {
         val result = ensNameService.getAvatar(name)
         return if (result.isNotBlank()) {
