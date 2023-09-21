@@ -2,6 +2,7 @@ package io.defitrack.ens.rest
 
 import io.defitrack.ens.domain.ENSResult
 import io.defitrack.ens.service.EnsNameService
+import kotlinx.coroutines.runBlocking
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
@@ -10,10 +11,10 @@ import org.springframework.web.bind.annotation.RestController
 class ENSRestController(private val ensNameService: EnsNameService) {
 
     @GetMapping("/by-name/{ens}")
-    suspend fun getAddressInformation(@PathVariable("ens") ens: String): ENSResult {
+    fun getAddressInformation(@PathVariable("ens") ens: String): ENSResult = runBlocking {
         val result = ensNameService.getEnsByName(ens)
 
-        return ENSResult(
+        ENSResult(
             ens, result, if (result.isNotBlank()) {
                 ensNameService.getExpires(ens).toLong()
             } else 0
@@ -21,10 +22,10 @@ class ENSRestController(private val ensNameService: EnsNameService) {
     }
 
     @GetMapping("/by-address/{address}")
-    suspend fun getMapping(@PathVariable("address") address: String): ENSResult {
+    fun getMapping(@PathVariable("address") address: String): ENSResult = runBlocking {
         val result = ensNameService.getEnsByAddress(address)
 
-        return ENSResult(
+       ENSResult(
             result, address, if (result.isNotBlank()) {
                 ensNameService.getExpires(result).toLong()
             } else {
