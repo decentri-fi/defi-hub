@@ -30,10 +30,15 @@ class EnsResolverContract(
     }
 
     suspend fun getName(name: String): String {
-        return readSingle(
+        val result: String =  readSingle(
             "name",
             listOf(Bytes32(NameHash.nameHashAsBytes(name))),
             TypeUtils.string(),
         )
+
+        if (result == "0x0000000000000000000000000000000000000000") {
+            return ""
+        }
+        return result;
     }
 }
