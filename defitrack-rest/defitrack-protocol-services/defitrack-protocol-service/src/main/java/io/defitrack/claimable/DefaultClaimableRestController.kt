@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import org.web3j.crypto.WalletUtils.isValidAddress
 
 @RestController
 @RequestMapping("/{protocol}")
@@ -28,6 +29,11 @@ class DefaultClaimableRestController(
         @PathVariable("protocol") protocol: String,
         @PathVariable("address") address: String,
     ): List<ClaimableVO> = coroutineScope {
+
+        if(!isValidAddress(address)) {
+            return@coroutineScope emptyList()
+        }
+
         val fromProviders = async {
             getFromProviders(protocol, address).map { toVO(it) }
         }

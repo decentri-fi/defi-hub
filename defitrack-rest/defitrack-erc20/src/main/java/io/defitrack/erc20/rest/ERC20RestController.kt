@@ -66,7 +66,7 @@ class ERC20RestController(
                 )
             }
         } catch (ex: Exception) {
-            logger.error("Error while getting token information", ex)
+            logger.debug("Error while getting token information", ex)
             ResponseEntity.notFound().build()
         }
     }

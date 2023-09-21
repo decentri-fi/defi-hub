@@ -75,8 +75,7 @@ class PriceCalculator(
                 tokenInformation.underlyingTokens
             )
         } catch (ex: Exception) {
-            logger.error("Unable to calculate price for ${priceRequest.address}")
-            ex.printStackTrace()
+            logger.error("Unable to calculate price for ${priceRequest.address}: {}", ex.message)
             BigDecimal.ZERO
         }
     }

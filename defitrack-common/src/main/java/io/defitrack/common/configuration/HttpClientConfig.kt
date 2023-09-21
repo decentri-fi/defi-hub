@@ -1,10 +1,8 @@
 package io.defitrack.common.configuration
 
-import com.fasterxml.jackson.module.kotlin.jsonMapper
 import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.http.*
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
