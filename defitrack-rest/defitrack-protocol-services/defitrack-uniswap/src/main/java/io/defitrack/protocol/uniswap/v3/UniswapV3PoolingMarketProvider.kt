@@ -101,10 +101,6 @@ abstract class UniswapV3PoolingMarketProvider(
             it.id == createId(identifier)
         }
 
-        if (prefetch == null) {
-            logger.info("no prefetch found for $address")
-        }
-
         val pool = UniswapV3PoolContract(getBlockchainGateway(), address)
         val token0 = prefetch?.tokens?.get(0) ?: getToken(pool.token0.await()).toFungibleToken()
         val token1 = prefetch?.tokens?.get(1) ?: getToken(pool.token1.await()).toFungibleToken()
