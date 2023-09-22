@@ -38,9 +38,11 @@ class MarketCacheRefresher(
     fun populateCaches() {
         runBlocking(Dispatchers.Default) {
             logger.info("Initial population of all caches.")
-            poolingMarketProviders.forEach {
-                it.populateCaches()
-            }
+            poolingMarketProviders.map {
+                launch {
+                    it.populateCaches()
+                }
+            }.joinAll()
             lendingMarketProviders.forEach {
                 it.populateCaches()
             }
