@@ -6,6 +6,5 @@ import java.math.BigInteger
 
 data class PoolingMarketTokenShare(
     val token: FungibleToken,
-    val reserve: BigInteger,
     val reserveUSD: BigDecimal
 )

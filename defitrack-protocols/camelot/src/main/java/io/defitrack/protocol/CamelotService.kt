@@ -1,6 +1,7 @@
 package io.defitrack.protocol
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.algebra.AlgebraFactoryContract
 import io.defitrack.protocol.algebra.AlgebraPoolContract
@@ -28,14 +29,14 @@ class CamelotService(
 ) {
     val logger = LoggerFactory.getLogger(this::class.java)
 
-    val algebraFactoryContract by lazy {
+    val algebraFactoryContract = lazyAsync {
         AlgebraFactoryContract(
             blockchainGateway = blockchainGatewayProvider.getGateway(Network.ARBITRUM),
             CAMELOT_FACTORY
         )
     }
 
-    val algebraPositionsContract by lazy {
+    val algebraPositionsContract = lazyAsync {
         AlgebraPositionsV2Contract(
             blockchainGateway = blockchainGatewayProvider.getGateway(Network.ARBITRUM),
             address = CAMELOT_NFT
@@ -65,7 +66,7 @@ class CamelotService(
         }.map {
             async {
                 sema.withPermit {
-                    algebraFactoryContract.getPoolByPair(it.token0, it.token1)
+                    algebraFactoryContract.await().getPoolByPair(it.token0, it.token1)
                 }
             }
         }.awaitAll().distinct().map {
@@ -76,9 +77,9 @@ class CamelotService(
         }
     }
 
-    suspend fun getPoolByPair(token0: String, token1: String) = algebraFactoryContract.getPoolByPair(token0, token1)
+    suspend fun getPoolByPair(token0: String, token1: String) = algebraFactoryContract.await().getPoolByPair(token0, token1)
 
     suspend fun getAllPositions(): List<AlgebraPosition> {
-        return algebraPositionsContract.getAllPositions()
+        return algebraPositionsContract.await().getAllPositions()
     }
 }

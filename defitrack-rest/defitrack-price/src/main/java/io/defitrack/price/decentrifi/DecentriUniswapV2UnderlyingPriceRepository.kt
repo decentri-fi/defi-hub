@@ -39,6 +39,7 @@ class DecentriUniswapV2UnderlyingPriceRepository(
                 }
 
                 usdPairs.forEach { pool ->
+                    logger.info("fetching pool ${pool.network.name} ${pool.address}")
                     val usdShare = pool.breakdown?.find { share ->
                         share.token.name == "USDC" || share.token.name == "USDT" || share.token.name == "DAI"
                     }

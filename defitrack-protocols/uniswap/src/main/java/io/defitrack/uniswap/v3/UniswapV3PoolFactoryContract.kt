@@ -7,7 +7,7 @@ import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
 import java.math.BigInteger
 
-class UniswapFactoryContract(
+class UniswapV3PoolFactoryContract(
     blockchainGateway: BlockchainGateway,
     address: String
 ) : EvmContract(

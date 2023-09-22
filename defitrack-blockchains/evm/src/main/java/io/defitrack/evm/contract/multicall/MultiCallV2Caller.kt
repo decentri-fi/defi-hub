@@ -4,7 +4,14 @@ import com.kenai.jffi.Aggregate
 import io.defitrack.abi.TypeUtils.Companion.dynamicArray
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toBool
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import org.apache.commons.codec.binary.Hex
+import org.slf4j.LoggerFactory
 import org.web3j.abi.FunctionEncoder
 import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.TypeReference
@@ -18,16 +25,24 @@ import org.web3j.abi.datatypes.Type
 
 class MultiCallV2Caller(val address: String) : MultiCallCaller {
 
+    val logger = LoggerFactory.getLogger(this::class.java)
+
+    val semaphore = Semaphore(10)
+
     override suspend fun readMultiCall(
         elements: List<MultiCallElement>,
         executeCall: suspend (address: String, function: Function) -> List<Type<*>>
-    ): List<MultiCallResult> {
+    ): List<MultiCallResult> = coroutineScope {
         if (elements.isEmpty()) {
-            return emptyList()
+            return@coroutineScope emptyList()
         } else if (elements.size > 500) {
-            return elements.chunked(100).map {
-                readMultiCall(it, executeCall)
-            }.flatten()
+            return@coroutineScope elements.chunked(300).map {
+                async {
+                    semaphore.withPermit {
+                        readMultiCall(it, executeCall)
+                    }
+                }
+            }.awaitAll().flatten()
         }
 
         val encodedFunctions = elements.map {
@@ -49,8 +64,8 @@ class MultiCallV2Caller(val address: String) : MultiCallCaller {
         )
 
         val executedCall = executeCall(address, aggregateFunction)
-        return if (executedCall.isEmpty()) {
-            println("empty multicall, it failed")
+        return@coroutineScope if (executedCall.isEmpty()) {
+            logger.info("empty multicall, it failed")
             elements.map {
                 MultiCallResult(false, emptyList())
             }

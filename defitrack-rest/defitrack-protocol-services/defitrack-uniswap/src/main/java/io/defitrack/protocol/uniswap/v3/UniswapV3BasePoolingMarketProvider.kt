@@ -19,7 +19,7 @@ import org.web3j.abi.datatypes.Event
 import java.math.BigInteger
 
 @Component
-@ConditionalOnProperty("base.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(value = ["base.enabled", "uniswapv3.enabled"], havingValue = "true", matchIfMissing = true)
 class UniswapV3BasePoolingMarketProvider() : UniswapV3PoolingMarketProvider(
     listOf("1371680"),
     "0x33128a8fC17869897dcE68Ed026d694621f6FDfD"

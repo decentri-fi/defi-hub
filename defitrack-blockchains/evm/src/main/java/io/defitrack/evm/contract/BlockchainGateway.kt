@@ -80,7 +80,12 @@ class BlockchainGateway(
         }
         return if (result.status.isSuccess()) {
             val body: String = result.body()
-            JsonParser.parseString(body).asJsonObject["result"].asJsonArray.map {
+            val parsed = JsonParser.parseString(body).asJsonObject
+            if (parsed.has("error") && !parsed["error"].isJsonNull) {
+                logger.error("Unable to get events from blockchain, result was ${result.bodyAsText()}")
+                return kotlin.collections.emptyList()
+            }
+            parsed["result"].asJsonArray.map {
                 mapper.readValue(it.toString(), LogObject::class.java)
             }
         } else {

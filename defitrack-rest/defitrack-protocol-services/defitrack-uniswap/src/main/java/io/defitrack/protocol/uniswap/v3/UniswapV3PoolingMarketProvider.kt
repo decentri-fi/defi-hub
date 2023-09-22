@@ -11,7 +11,7 @@ import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.TokenType
-import io.defitrack.uniswap.v3.UniswapFactoryContract
+import io.defitrack.uniswap.v3.UniswapV3PoolFactoryContract
 import io.defitrack.uniswap.v3.UniswapV3PoolContract
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.flow.Flow
@@ -37,7 +37,7 @@ abstract class UniswapV3PoolingMarketProvider(
     )
 
     val poolFactory = lazyAsync {
-        UniswapFactoryContract(
+        UniswapV3PoolFactoryContract(
             getBlockchainGateway(), poolFactoryAddress
         )
     }

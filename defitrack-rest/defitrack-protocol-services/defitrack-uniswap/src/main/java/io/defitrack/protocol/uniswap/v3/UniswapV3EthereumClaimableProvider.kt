@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component
 import java.math.BigInteger
 
 @Component
-@ConditionalOnProperty("ethereum.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(value = ["ethereum.enabled", "uniswapv3.enabled"], havingValue = "true", matchIfMissing = true)
 class UniswapV3EthereumClaimableProvider(
     private val uniswapV3PoolingMarketProvider: UniswapV3EthereumPoolingMarketProvider,
 ) : ClaimableRewardProvider() {

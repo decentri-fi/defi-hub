@@ -24,7 +24,6 @@ class PoolingBreakdownMapper {
         return tokenShares.map {
             PoolingMarketTokenShareVO(
                 token = it.token,
-                reserve = it.reserve,
                 reserveUSD = it.reserveUSD,
             )
         }
@@ -46,7 +45,6 @@ class PoolingBreakdownMapper {
         return toVO.map {
             PoolingPositionTokenshareVO(
                 token = it.token,
-                reserve = it.reserve.toBigDecimal().times(ratio).toBigInteger(),
                 reserveUSD = it.reserveUSD.times(ratio)
             )
         }

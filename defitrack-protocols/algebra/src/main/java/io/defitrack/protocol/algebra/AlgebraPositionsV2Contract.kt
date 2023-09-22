@@ -9,7 +9,6 @@ import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.abi.TypeUtils.Companion.uint88
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
-import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.Type
 import java.math.BigInteger
@@ -24,7 +23,7 @@ class AlgebraPositionsV2Contract(
         val balance = balanceOf(owner).toInt()
         return readMultiCall(
             (0 until balance).map { tokenOfOwnerByIndex(owner, it) }.map {
-                getPosition(it.toInt())
+                getPositionFunction(it.toInt())
             }
         ).map {
             algebraPosition(it.data)
@@ -39,7 +38,7 @@ class AlgebraPositionsV2Contract(
         )[0].value as BigInteger
     }
 
-    fun getPosition(tokenId: Int): Function {
+    fun getPositionFunction(tokenId: Int): Function {
         return createFunction(
             method = "positions",
             inputs = listOf(tokenId.toBigInteger().toUint256()),
@@ -63,7 +62,7 @@ class AlgebraPositionsV2Contract(
         val indexes = getIndexes()
         return readMultiCall(
             indexes.map {
-                getPosition(it.toInt())
+                getPositionFunction(it.toInt())
             }
         ).map {
             algebraPosition(it.data)
@@ -77,14 +76,6 @@ class AlgebraPositionsV2Contract(
         it[9].value as BigInteger,
         it[10].value as BigInteger
     )
-
-    fun ownerOfFn(tokenId: BigInteger): Function {
-        return createFunction(
-            "ownerOf",
-            inputs = listOf(tokenId.toUint256()),
-            outputs = listOf(address())
-        )
-    }
 
     suspend fun getIndexes(): List<BigInteger> {
         return readMultiCall(
