@@ -43,7 +43,7 @@ class UniswapV2EthereumPoolingMarketProvider(
                             token.address
                         )
 
-                        if (breakdown.sumOf { it.reserveUSD } > BigDecimal.valueOf(10000)) {
+                        if (breakdown.sumOf { it.reserveUSD } > BigDecimal.valueOf(50000)) {
                             send(
                                 create(
                                     identifier = "v2-${it}",
