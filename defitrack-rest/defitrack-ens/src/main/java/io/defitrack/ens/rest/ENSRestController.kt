@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 class ENSRestController(private val ensNameService: EnsNameService) {
 
     @GetMapping("/by-name/{ens}")
-    @Trace(metricName = "controller.ens.by-name")
+    @Trace(metricName = "controller.ens.by-name", nameTransaction = true)
     fun getAddressInformation(@PathVariable("ens") ens: String): ENSResult = runBlocking {
         val result = ensNameService.getEnsByName(ens)
 
@@ -29,7 +29,7 @@ class ENSRestController(private val ensNameService: EnsNameService) {
         val result = ensNameService.getEnsByAddress(address)
 
        ENSResult(
-            if(result.isNotBlank()) result else address, address, if (result.isNotBlank()) {
+            result, address, if (result.isNotBlank()) {
                 ensNameService.getExpires(result).toLong()
             } else {
                 0
