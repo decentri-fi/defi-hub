@@ -31,7 +31,7 @@ class VelodromeV1OptimismPoolingMarketProvider(
             launch {
                 throttled {
                     val poolingToken = getToken(it)
-                    val tokens = poolingToken.underlyingTokens
+                    val tokens = poolingToken.underlyingTokens.map { it.toFungibleToken() }
 
                     try {
                         val breakdown = fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address)

@@ -31,7 +31,9 @@ class KyberElasticPoolingMarketProvider(
         kyberswapElastic.await().allPairs().map { poolInfo ->
             async {
                 val poolingToken = getToken(poolInfo.address)
-                val tokens = poolingToken.underlyingTokens
+                val tokens = poolingToken.underlyingTokens.map {
+                    it.toFungibleToken()
+                }
 
                 try {
                     val breakdown = fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address)

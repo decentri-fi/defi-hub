@@ -34,7 +34,7 @@ abstract class EvmContract(
     }
 
     val resolvedConstants: Deferred<Map<Function, MultiCallResult>> = AsyncUtils.lazyAsync {
-        logger.debug("reading ${constantFunctions.size} constants from $address")
+        logger.info("reading ${constantFunctions.size} constants from $address")
         readMultiCall(constantFunctions).mapIndexed { index, result ->
             constantFunctions[index] to result
         }.toMap()

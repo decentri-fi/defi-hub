@@ -34,7 +34,7 @@ class AlienbasePoolingMarketProvider(
             launch {
                 throttled {
                     val poolingToken = getToken(it)
-                    val tokens = poolingToken.underlyingTokens
+                    val tokens = poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken)
 
                     try {
                         val breakdown = fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address)

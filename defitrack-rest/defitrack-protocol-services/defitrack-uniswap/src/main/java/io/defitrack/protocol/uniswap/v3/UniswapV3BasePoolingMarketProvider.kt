@@ -20,9 +20,12 @@ import java.math.BigInteger
 
 @Component
 @ConditionalOnProperty(value = ["base.enabled", "uniswapv3.enabled"], havingValue = "true", matchIfMissing = true)
-class UniswapV3BasePoolingMarketProvider() : UniswapV3PoolingMarketProvider(
+class UniswapV3BasePoolingMarketProvider(
+    uniswapV3Prefetcher: UniswapV3Prefetcher
+) : UniswapV3PoolingMarketProvider(
     listOf("1371680"),
-    "0x33128a8fC17869897dcE68Ed026d694621f6FDfD"
+    "0x33128a8fC17869897dcE68Ed026d694621f6FDfD",
+    uniswapV3Prefetcher
 ) {
 
     override fun getNetwork(): Network {

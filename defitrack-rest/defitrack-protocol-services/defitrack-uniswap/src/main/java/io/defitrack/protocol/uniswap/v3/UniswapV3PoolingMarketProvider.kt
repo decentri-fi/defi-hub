@@ -9,10 +9,11 @@ import io.defitrack.event.EventDecoder.Companion.extract
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
+import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.TokenType
-import io.defitrack.uniswap.v3.UniswapV3PoolFactoryContract
 import io.defitrack.uniswap.v3.UniswapV3PoolContract
+import io.defitrack.uniswap.v3.UniswapV3PoolFactoryContract
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
@@ -20,10 +21,12 @@ import kotlinx.coroutines.launch
 import org.web3j.abi.datatypes.Event
 import java.math.BigDecimal
 import java.math.BigInteger
-import kotlin.time.Duration.Companion.hours
+import kotlin.math.log
 
 abstract class UniswapV3PoolingMarketProvider(
-    private val fromBlocks: List<String>, private val poolFactoryAddress: String
+    private val fromBlocks: List<String>,
+    private val poolFactoryAddress: String,
+    private val uniswapV3Prefetcher: UniswapV3Prefetcher
 ) : PoolingMarketProvider() {
 
     val poolCreatedEvent = Event(
@@ -46,6 +49,10 @@ abstract class UniswapV3PoolingMarketProvider(
         fromBlocks.mapIndexed { index, block ->
             getLogsBetweenBlocks(block, fromBlocks.getOrNull(index + 1))
         }.flatten()
+    }
+
+    val prefetches = lazyAsync {
+        uniswapV3Prefetcher.getPrefetches(getNetwork())
     }
 
     suspend fun getLogsBetweenBlocks(fromBlock: String, toBlock: String?): List<String> {
@@ -84,28 +91,44 @@ abstract class UniswapV3PoolingMarketProvider(
 
 
     val uniswapPoolCache = Cache.Builder<String, PoolingMarket>()
-        .expireAfterWrite(4.hours)
         .build()
 
     suspend fun getMarket(address: String): PoolingMarket = uniswapPoolCache.get(address) {
-        val pool = UniswapV3PoolContract(getBlockchainGateway(), address)
-        val token0 = getToken(pool.token0.await())
-        val token1 = getToken(pool.token1.await())
 
-        val breakdown = fiftyFiftyBreakdown(token0, token1, pool.address)
+        val identifier = "v3-${address}"
+
+        val prefetch = prefetches.await().find {
+            it.id == createId(identifier)
+        }
+
+        if (prefetch == null) {
+            logger.info("no prefetch found for $address")
+        }
+
+        val pool = UniswapV3PoolContract(getBlockchainGateway(), address)
+        val token0 = prefetch?.tokens?.get(0) ?: getToken(pool.token0.await()).toFungibleToken()
+        val token1 = prefetch?.tokens?.get(1) ?: getToken(pool.token1.await()).toFungibleToken()
+
+        val breakdown = prefetch?.breakdown?.map {
+            PoolingMarketTokenShare(
+                it.token,
+                it.reserveUSD
+            )
+        } ?: fiftyFiftyBreakdown(token0, token1, address)
 
         val marketSize = breakdown.sumOf {
             it.reserveUSD
         }
 
         if (marketSize != BigDecimal.ZERO && marketSize > BigDecimal.valueOf(10000)) {
+            val totalSupply = prefetch?.totalSupply ?: pool.liquidity.await().asEth()
             create(
-                identifier = "v3-${pool.address}",
+                identifier = identifier,
                 name = "${token0.symbol}/${token1.symbol}",
                 address = pool.address,
                 symbol = "${token0.symbol}-${token1.symbol}",
                 breakdown = breakdown,
-                tokens = listOf(token0.toFungibleToken(), token1.toFungibleToken()),
+                tokens = listOf(token0, token1),
                 marketSize = refreshable(marketSize) {
                     fiftyFiftyBreakdown(token0, token1, pool.address).sumOf {
                         it.reserveUSD
@@ -113,7 +136,7 @@ abstract class UniswapV3PoolingMarketProvider(
                 },
                 tokenType = TokenType.UNISWAP,
                 positionFetcher = null,
-                totalSupply = refreshable(pool.liquidity.await().asEth()) {
+                totalSupply = refreshable(totalSupply) {
                     pool.refreshLiquidity().asEth()
                 },
                 erc20Compatible = false,

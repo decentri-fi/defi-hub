@@ -44,7 +44,7 @@ class ApeswapPolygonPoolingMarketProvider(
                     async {
                         try {
                             val poolingToken = getToken(pool)
-                            val underlyingTokens = poolingToken.underlyingTokens
+                            val underlyingTokens = poolingToken.underlyingTokens.map { it.toFungibleToken() }
 
                             val breakdown =
                                 fiftyFiftyBreakdown(underlyingTokens[0], underlyingTokens[1], poolingToken.address)
@@ -57,7 +57,7 @@ class ApeswapPolygonPoolingMarketProvider(
                                    breakdown.sumOf { it.reserveUSD }
                                 },
                                 breakdown = breakdown,
-                                tokens = underlyingTokens.map { it.toFungibleToken() },
+                                tokens = underlyingTokens,
                                 tokenType = TokenType.APE,
                                 positionFetcher = defaultPositionFetcher(poolingToken.address),
                                 totalSupply = refreshable {

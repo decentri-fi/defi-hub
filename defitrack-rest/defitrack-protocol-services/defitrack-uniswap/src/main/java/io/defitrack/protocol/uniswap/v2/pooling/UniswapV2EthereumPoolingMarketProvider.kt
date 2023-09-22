@@ -38,8 +38,8 @@ class UniswapV2EthereumPoolingMarketProvider(
                         val token0 = token.underlyingTokens[0]
                         val token1 = token.underlyingTokens[1]
                         val breakdown = fiftyFiftyBreakdown(
-                            token0,
-                            token1,
+                            token0.toFungibleToken(),
+                            token1.toFungibleToken(),
                             token.address
                         )
 
@@ -61,8 +61,8 @@ class UniswapV2EthereumPoolingMarketProvider(
                                         }
                                     ) {
                                         fiftyFiftyBreakdown(
-                                            token0,
-                                            token1,
+                                            token0.toFungibleToken(),
+                                            token1.toFungibleToken(),
                                             token.address
                                         ).sumOf {
                                             it.reserveUSD

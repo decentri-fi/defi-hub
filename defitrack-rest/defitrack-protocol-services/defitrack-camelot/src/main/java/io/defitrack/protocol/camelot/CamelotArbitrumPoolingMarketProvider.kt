@@ -32,7 +32,7 @@ class CamelotArbitrumPoolingMarketProvider(
                 launch {
                     try {
                         val poolingToken = getToken(pool)
-                        val underlyingTokens = poolingToken.underlyingTokens
+                        val underlyingTokens = poolingToken.underlyingTokens.map { it.toFungibleToken() }
 
 
                         val breakdown =
@@ -50,7 +50,7 @@ class CamelotArbitrumPoolingMarketProvider(
                                     )
                                 },
                                 breakdown = breakdown,
-                                tokens = underlyingTokens.map { it.toFungibleToken() },
+                                tokens = underlyingTokens,
                                 tokenType = TokenType.CAMELOT,
                                 positionFetcher = defaultPositionFetcher(poolingToken.address),
                                 totalSupply = refreshable(poolingToken.totalDecimalSupply()) {

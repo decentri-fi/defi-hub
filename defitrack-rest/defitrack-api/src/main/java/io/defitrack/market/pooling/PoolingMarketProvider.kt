@@ -36,7 +36,7 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
         deprecated: Boolean = false,
     ): PoolingMarket {
         return PoolingMarket(
-            id = "lp_${getNetwork().slug}-${getProtocol().slug}-${identifier}",
+            id = createId(identifier),
             network = getNetwork(),
             protocol = getProtocol(),
             name = name,
@@ -59,6 +59,8 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
         )
     }
 
+    fun createId(identifier: String) = "lp_${getNetwork().slug}-${getProtocol().slug}-${identifier}"
+
     private suspend fun calculatePrice(
         marketSize: Refreshable<BigDecimal>?,
         totalSupply: Refreshable<BigDecimal>,
@@ -76,21 +78,21 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
     }
 
     suspend fun fiftyFiftyBreakdown(
-        token0: TokenInformationVO,
-        token1: TokenInformationVO,
+        token0: FungibleToken,
+        token1: FungibleToken,
         poolAddress: String
     ): List<PoolingMarketTokenShare> {
 
-        val firstMarketShare = getMarketSize(token0.toFungibleToken(), poolAddress)
-        val secondMarketShare = getMarketSize(token1.toFungibleToken(), poolAddress)
+        val firstMarketShare = getMarketSize(token0, poolAddress)
+        val secondMarketShare = getMarketSize(token1, poolAddress)
 
         val firstShare = PoolingMarketTokenShare(
-            token = token0.toFungibleToken(),
+            token = token0,
             reserveUSD = if(firstMarketShare == BigDecimal.ZERO) secondMarketShare else firstMarketShare
         )
 
         val secondShare = PoolingMarketTokenShare(
-            token = token1.toFungibleToken(),
+            token = token1,
             reserveUSD = if(secondMarketShare == BigDecimal.ZERO) firstMarketShare else secondMarketShare
         )
         return listOf(

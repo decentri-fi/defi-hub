@@ -25,7 +25,7 @@ class SolidLizardPoolingMarketProvider : PoolingMarketProvider() {
             async {
 
                 val token = getToken(it)
-                val tokens = token.underlyingTokens
+                val tokens = token.underlyingTokens.map(TokenInformationVO::toFungibleToken)
 
                 try {
                     val breakdown = fiftyFiftyBreakdown(tokens[0], tokens[1], token.address)
