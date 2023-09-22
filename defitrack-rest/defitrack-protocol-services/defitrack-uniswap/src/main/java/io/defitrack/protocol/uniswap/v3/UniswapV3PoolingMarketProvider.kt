@@ -98,7 +98,7 @@ abstract class UniswapV3PoolingMarketProvider(
             it.reserveUSD
         }
 
-        if (marketSize != BigDecimal.ZERO && marketSize > BigDecimal.valueOf(100)) {
+        if (marketSize != BigDecimal.ZERO && marketSize > BigDecimal.valueOf(10000)) {
             create(
                 identifier = "v3-${pool.address}",
                 name = "${token0.symbol}/${token1.symbol}",
