@@ -32,7 +32,6 @@ class UniswapV2EthereumPoolingMarketProvider(
         contract.await().allPairs().forEach {
             launch {
                 throttled {
-                    logger.info("doing uniswap market ${it}")
                     try {
                         val token = getToken(it)
 
