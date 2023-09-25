@@ -4,13 +4,12 @@ import io.defitrack.claimable.ClaimableVO
 import io.defitrack.protocol.DefiPrimitive
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.mapper.ProtocolVOMapper
+import jakarta.servlet.http.HttpServletResponse
 import kotlinx.coroutines.*
 import org.slf4j.LoggerFactory
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import org.web3j.crypto.WalletUtils.isValidAddress
 import kotlin.time.measureTimedValue
@@ -45,7 +44,7 @@ class ClaimableAggregateRestController(
     }
 
     @GetMapping("/{address}", params = ["sse"])
-    fun getAggregateAsSSE(@PathVariable("address") address: String): ResponseEntity<ResponseBodyEmitter> {
+    fun getAggregateAsSSE(@PathVariable("address") address: String, httpServletResponse: HttpServletResponse): SseEmitter {
         return runBlocking {
             val emitter = SseEmitter()
 
@@ -61,7 +60,8 @@ class ClaimableAggregateRestController(
                 }.joinAll()
                 emitter.complete()
             }
-            ResponseEntity.ok(emitter)
+            httpServletResponse.addHeader("X-Accel-Buffering", "no")
+            emitter
         }
     }
 }
