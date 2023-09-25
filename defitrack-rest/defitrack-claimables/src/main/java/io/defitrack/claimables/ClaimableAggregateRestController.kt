@@ -7,17 +7,20 @@ import io.defitrack.protocol.mapper.ProtocolVOMapper
 import jakarta.servlet.http.HttpServletResponse
 import kotlinx.coroutines.*
 import org.slf4j.LoggerFactory
+import org.springframework.core.task.AsyncTaskExecutor
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import org.web3j.crypto.WalletUtils.isValidAddress
+import java.util.concurrent.Executors
 import kotlin.time.measureTimedValue
 
 @RestController
 class ClaimableAggregateRestController(
     private val claimablesClient: ClaimablesClient,
-    private val protocolVOMapper: ProtocolVOMapper
+    private val protocolVOMapper: ProtocolVOMapper,
+    private val asyncTaskExecutor: AsyncTaskExecutor
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -43,25 +46,33 @@ class ClaimableAggregateRestController(
         }
     }
 
+    val executor = Executors.newSingleThreadExecutor()
+
     @GetMapping("/{address}", params = ["sse"])
     fun getAggregateAsSSE(@PathVariable("address") address: String, httpServletResponse: HttpServletResponse): SseEmitter {
-        return runBlocking {
-            val emitter = SseEmitter()
+        val emitter = SseEmitter()
 
-            launch {
-                Protocol.entries.filter {
-                    it.primitives.contains(DefiPrimitive.CLAIMABLES)
-                }.map {
-                    launch {
-                        claimablesClient.getClaimables(address, protocolVOMapper.map(it)).forEach {
-                            emitter.send(it)
+        executor.submit {
+             runBlocking {
+
+                launch {
+                    Protocol.entries.filter {
+                        it.primitives.contains(DefiPrimitive.CLAIMABLES)
+                    }.map {
+                        delay(1000)
+                        launch {
+                            claimablesClient.getClaimables(address, protocolVOMapper.map(it)).forEach {
+                                println("sending")
+                                emitter.send(it)
+                            }
                         }
-                    }
-                }.joinAll()
-                emitter.complete()
+                    }.joinAll()
+                    emitter.complete()
+                }
+                httpServletResponse.addHeader("X-Accel-Buffering", "no")
             }
-            httpServletResponse.addHeader("X-Accel-Buffering", "no")
-            emitter
         }
+        println("returning emitter")
+        return emitter
     }
 }
