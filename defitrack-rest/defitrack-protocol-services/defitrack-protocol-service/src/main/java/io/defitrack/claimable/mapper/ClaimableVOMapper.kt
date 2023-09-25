@@ -7,12 +7,14 @@ import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.mapper.ProtocolVOMapper
+import io.defitrack.transaction.PreparedTransactionVOMapper
 import org.springframework.stereotype.Component
 
 @Component
 class ClaimableVOMapper(
     private val priceResource: PriceResource,
-    private val protocolVOMapper: ProtocolVOMapper
+    private val protocolVOMapper: ProtocolVOMapper,
+    private val preparedTransactionVOMapper: PreparedTransactionVOMapper
 ) {
 
     suspend fun map(claimable: Claimable): ClaimableVO {
@@ -36,7 +38,7 @@ class ClaimableVOMapper(
                 token = claimableTokens.first(),
                 amount = amount.toDouble(),
                 dollarValue = claimableInDollar,
-                claimTransaction = claimTransaction
+                claimTransaction = preparedTransactionVOMapper.map(claimTransaction)
             )
         }
     }
