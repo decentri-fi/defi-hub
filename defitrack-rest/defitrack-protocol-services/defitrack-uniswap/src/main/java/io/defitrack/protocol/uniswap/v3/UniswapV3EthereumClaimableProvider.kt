@@ -10,6 +10,7 @@ import io.defitrack.uniswap.v3.UniswapV3PoolContract
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 import java.math.BigInteger
@@ -19,6 +20,8 @@ import java.math.BigInteger
 class UniswapV3EthereumClaimableProvider(
     private val uniswapV3PoolingMarketProvider: UniswapV3EthereumPoolingMarketProvider,
 ) : ClaimableRewardProvider() {
+
+    val logger = LoggerFactory.getLogger(this::class.java)
 
 
     val poolingNftContract by lazy {
@@ -61,67 +64,71 @@ class UniswapV3EthereumClaimableProvider(
         position: UniswapPosition,
         address: String
     ): List<Claimable> = coroutineScope {
-        val poolAddress = uniswapV3PoolingMarketProvider.poolFactory.await().getPool(
-            position.token0,
-            position.token1,
-            position.fee
-        )
-
-        val market = uniswapV3PoolingMarketProvider.getMarket(poolAddress)
-
-
-        val poolContract = market.internalMetadata["contract"] as UniswapV3PoolContract
-
-        val token0Async = async { uniswapV3PoolingMarketProvider.getToken(poolContract.token0.await()) }
-        val token1Async = async { uniswapV3PoolingMarketProvider.getToken(poolContract.token1.await()) }
-
-        val (upperTicks, lowerTicks) = awaitAll(
-            async { poolContract.ticks(position.tickUpper) }, async { poolContract.ticks(position.tickLower) }
-        )
-
-        val owedTokens0 = calculateOwed(
-            poolContract.feeGrowthGlobal0X128.await(),
-            upperTicks.feeGrowthOutside0X128,
-            lowerTicks.feeGrowthOutside0X128,
-            position.feeGrowthInside0LastX128,
-            position.liquidity,
-        )
-
-        val owedToken1 = calculateOwed(
-            poolContract.feeGrowthGlobal1X128.await(),
-            upperTicks.feeGrowthOutside1X128,
-            lowerTicks.feeGrowthOutside1X128,
-            position.feeGrowthInside1LastX128,
-            position.liquidity,
-        )
-
-        val token1 = token1Async.await()
-        val token0 = token0Async.await()
-
-        listOf(
-            Claimable(
-                id = "$address-${token1.address}-${token1.address}",
-                name = market.name + " Yield",
-                type = "UNISWAP_V3",
-                protocol = getProtocol(),
-                network = getNetwork(),
-                claimableTokens = listOf(
-                    token1.toFungibleToken(),
-                ),
-                amount = owedTokens0,
-            ),
-            Claimable(
-                id = "$address-${token0.address}-${token1.address}",
-                name = market.name + " Yield",
-                type = "UNISWAP_V3",
-                protocol = getProtocol(),
-                network = getNetwork(),
-                claimableTokens = listOf(
-                    token1.toFungibleToken(),
-                ),
-                amount = owedToken1
+        try {
+            val poolAddress = uniswapV3PoolingMarketProvider.poolFactory.await().getPool(
+                position.token0,
+                position.token1,
+                position.fee
             )
-        )
+            val market = uniswapV3PoolingMarketProvider.getMarket(poolAddress)
+
+
+            val poolContract = market.internalMetadata["contract"] as UniswapV3PoolContract
+
+            val token0Async = async { uniswapV3PoolingMarketProvider.getToken(poolContract.token0.await()) }
+            val token1Async = async { uniswapV3PoolingMarketProvider.getToken(poolContract.token1.await()) }
+
+            val (upperTicks, lowerTicks) = awaitAll(
+                async { poolContract.ticks(position.tickUpper) }, async { poolContract.ticks(position.tickLower) }
+            )
+
+            val owedTokens0 = calculateOwed(
+                poolContract.feeGrowthGlobal0X128.await(),
+                upperTicks.feeGrowthOutside0X128,
+                lowerTicks.feeGrowthOutside0X128,
+                position.feeGrowthInside0LastX128,
+                position.liquidity,
+            )
+
+            val owedToken1 = calculateOwed(
+                poolContract.feeGrowthGlobal1X128.await(),
+                upperTicks.feeGrowthOutside1X128,
+                lowerTicks.feeGrowthOutside1X128,
+                position.feeGrowthInside1LastX128,
+                position.liquidity,
+            )
+
+            val token1 = token1Async.await()
+            val token0 = token0Async.await()
+
+            listOf(
+                Claimable(
+                    id = "$address-${token1.address}-${token1.address}",
+                    name = market.name + " Yield",
+                    type = "UNISWAP_V3",
+                    protocol = getProtocol(),
+                    network = getNetwork(),
+                    claimableTokens = listOf(
+                        token1.toFungibleToken(),
+                    ),
+                    amount = owedTokens0,
+                ),
+                Claimable(
+                    id = "$address-${token0.address}-${token1.address}",
+                    name = market.name + " Yield",
+                    type = "UNISWAP_V3",
+                    protocol = getProtocol(),
+                    network = getNetwork(),
+                    claimableTokens = listOf(
+                        token1.toFungibleToken(),
+                    ),
+                    amount = owedToken1
+                )
+            )
+        } catch (ex: Exception) {
+            logger.debug(ex.message)
+            emptyList()
+        }
     }
 
     override fun getProtocol(): Protocol {

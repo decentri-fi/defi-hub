@@ -57,7 +57,7 @@ class MarketCacheRefresher(
     @Scheduled(
         fixedDelay = 1000 * 60 * 60 * 3,
         initialDelay = 1000 * 60 * 60 * 3
-    ) //todo: make sure every one is just a refresh
+    )
     fun refreshCaches() = runBlocking(Dispatchers.Default) {
         logger.info("Refreshing all caches. No full population.")
         poolingMarketProviders.map {

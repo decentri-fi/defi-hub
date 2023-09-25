@@ -19,7 +19,7 @@ import java.math.BigInteger
 @RestController
 class ERC20RestController(
     private val erC20ContractReader: ERC20ContractReader,
-    private val ERC20Service: ERC20Service
+    private val erc20Service: ERC20Service
 ) {
 
     val logger = LoggerFactory.getLogger(this::class.java)
@@ -32,7 +32,7 @@ class ERC20RestController(
         val network = Network.fromString(networkName) ?: return@coroutineScope ResponseEntity.badRequest().build()
 
         ResponseEntity.ok(
-            ERC20Service.getAllTokensForNetwork(network).map {
+            erc20Service.getAllTokensForNetwork(network).map {
                 it.toVO()
             }
         )
@@ -60,7 +60,7 @@ class ERC20RestController(
         try {
             withTimeout(12000L) {
                 ResponseEntity.ok(
-                    ERC20Service.getTokenInformation(
+                    erc20Service.getTokenInformation(
                         address, network
                     ).toVO()
                 )

@@ -11,6 +11,7 @@ import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
 import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.uniswap.v3.prefetch.UniswapV3Prefetcher
 import io.defitrack.token.TokenType
 import io.defitrack.uniswap.v3.UniswapV3PoolContract
 import io.defitrack.uniswap.v3.UniswapV3PoolFactoryContract
@@ -21,7 +22,6 @@ import kotlinx.coroutines.launch
 import org.web3j.abi.datatypes.Event
 import java.math.BigDecimal
 import java.math.BigInteger
-import kotlin.math.log
 
 abstract class UniswapV3PoolingMarketProvider(
     private val fromBlocks: List<String>,

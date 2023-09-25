@@ -1,6 +1,7 @@
 package io.defitrack.protocol.uniswap.v3
 
 import io.defitrack.common.network.Network
+import io.defitrack.protocol.uniswap.v3.prefetch.UniswapV3Prefetcher
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 
