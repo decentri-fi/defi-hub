@@ -59,7 +59,6 @@ class ClaimableAggregateRestController(
                     Protocol.entries.filter {
                         it.primitives.contains(DefiPrimitive.CLAIMABLES)
                     }.map {
-                        delay(1000)
                         launch {
                             claimablesClient.getClaimables(address, protocolVOMapper.map(it)).forEach {
                                 println("sending")
@@ -72,7 +71,6 @@ class ClaimableAggregateRestController(
                 httpServletResponse.addHeader("X-Accel-Buffering", "no")
             }
         }
-        println("returning emitter")
         return emitter
     }
 }
