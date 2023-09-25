@@ -4,10 +4,11 @@ import io.defitrack.claimable.ClaimableVO
 import io.defitrack.protocol.DefiPrimitive
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.mapper.ProtocolVOMapper
+import io.micrometer.observation.Observation
+import io.micrometer.observation.ObservationRegistry
 import jakarta.servlet.http.HttpServletResponse
 import kotlinx.coroutines.*
 import org.slf4j.LoggerFactory
-import org.springframework.core.task.AsyncTaskExecutor
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
@@ -20,7 +21,7 @@ import kotlin.time.measureTimedValue
 class ClaimableAggregateRestController(
     private val claimablesClient: ClaimablesClient,
     private val protocolVOMapper: ProtocolVOMapper,
-    private val asyncTaskExecutor: AsyncTaskExecutor
+    private val observationRegistry: ObservationRegistry
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -49,24 +50,26 @@ class ClaimableAggregateRestController(
     val executor = Executors.newSingleThreadExecutor()
 
     @GetMapping("/{address}", params = ["sse"])
-    fun getAggregateAsSSE(@PathVariable("address") address: String, httpServletResponse: HttpServletResponse): SseEmitter {
+    fun getAggregateAsSSE(
+        @PathVariable("address") address: String,
+        httpServletResponse: HttpServletResponse
+    ): SseEmitter {
+        val observation = Observation.start("claimables.aggregate", observationRegistry)
         val emitter = SseEmitter()
-
         executor.submit {
-             runBlocking {
-
+            runBlocking {
                 launch {
                     Protocol.entries.filter {
                         it.primitives.contains(DefiPrimitive.CLAIMABLES)
                     }.map {
                         launch {
                             claimablesClient.getClaimables(address, protocolVOMapper.map(it)).forEach {
-                                println("sending")
                                 emitter.send(it)
                             }
                         }
                     }.joinAll()
                     emitter.complete()
+                    observation.stop();
                 }
                 httpServletResponse.addHeader("X-Accel-Buffering", "no")
             }
