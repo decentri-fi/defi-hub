@@ -30,7 +30,7 @@ enum class Protocol(
     AERODROME(
         logo = "aerodrome.png",
         slug = "aerodrome",
-        primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
+        primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING, DefiPrimitive.CLAIMABLES),
         website = "https://aerodrome.finance",
         networks = listOf(Network.BASE),
         company = Company.AERODROME
@@ -46,7 +46,7 @@ enum class Protocol(
     STAKEFISH(
         logo = "stakefish.png",
         slug = "stakefish",
-        primitives = listOf(DefiPrimitive.FARMING),
+        primitives = listOf(DefiPrimitive.FARMING, DefiPrimitive.CLAIMABLES),
         website = "https://stake.fish",
         networks = listOf(Network.ETHEREUM),
         company = Company.STAKEFISH
@@ -62,7 +62,7 @@ enum class Protocol(
     GMX(
         logo = "gmx.png",
         slug = "gmx",
-        primitives = listOf(DefiPrimitive.FARMING),
+        primitives = listOf(DefiPrimitive.FARMING, DefiPrimitive.CLAIMABLES),
         website = "https://tornadocash.eth.link",
         networks = listOf(Network.ETHEREUM, Network.ARBITRUM),
         company = Company.GMX
@@ -78,7 +78,7 @@ enum class Protocol(
     STARGATE(
         logo = "stargate.svg",
         slug = "stargate",
-        primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
+        primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING, DefiPrimitive.CLAIMABLES),
         website = "https://stargate.finance",
         networks = listOf(
             Network.ETHEREUM,
@@ -123,7 +123,7 @@ enum class Protocol(
     VELODROME_V2(
         logo = "velodrome.svg",
         slug = "velodrome_v2",
-        primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
+        primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING, DefiPrimitive.CLAIMABLES),
         "https://app.velodrome.finance",
         networks = listOf(Network.OPTIMISM),
         company = Company.VELODROME
@@ -204,7 +204,7 @@ enum class Protocol(
         logo = "aelin.jpeg",
         slug = "aelin",
         website = "https://aelin.xyz",
-        primitives = listOf(DefiPrimitive.FARMING),
+        primitives = listOf(DefiPrimitive.FARMING, DefiPrimitive.CLAIMABLES),
         networks = listOf(Network.OPTIMISM),
         company = Company.AELIN
     ),
@@ -253,7 +253,8 @@ enum class Protocol(
             DefiPrimitive.LENDING,
             DefiPrimitive.BORROWING,
             DefiPrimitive.FARMING,
-            DefiPrimitive.POOLING
+            DefiPrimitive.POOLING,
+            DefiPrimitive.CLAIMABLES,
         ),
         company = Company.AAVE,
         networks = listOf(Network.ETHEREUM, Network.POLYGON, Network.ARBITRUM, Network.OPTIMISM)
@@ -262,7 +263,7 @@ enum class Protocol(
         logo = "curve.png",
         slug = "curve",
         website = "https://curve.fi",
-        primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
+        primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING, DefiPrimitive.CLAIMABLES),
         networks = listOf(Network.ETHEREUM),
         company = Company.CURVE
     ),
@@ -278,7 +279,7 @@ enum class Protocol(
         logo = "compound.png",
         slug = "compound",
         website = "https://compound.finance",
-        primitives = listOf(DefiPrimitive.LENDING, DefiPrimitive.BORROWING),
+        primitives = listOf(DefiPrimitive.LENDING, DefiPrimitive.BORROWING, DefiPrimitive.FARMING, DefiPrimitive.CLAIMABLES),
         networks = listOf(Network.ETHEREUM),
         company = Company.COMPOUND
     ),
@@ -294,7 +295,7 @@ enum class Protocol(
         logo = "quickswap.png",
         slug = "quickswap",
         website = "https://quickswap.exchange/",
-        primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
+        primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING, DefiPrimitive.CLAIMABLES),
         networks = listOf(Network.POLYGON),
         company = Company.QUICKSWAP
     ),
@@ -302,7 +303,7 @@ enum class Protocol(
         logo = "polycat.webp",
         slug = "polycat",
         website = "https://polycat.finance",
-        primitives = listOf(DefiPrimitive.FARMING),
+        primitives = listOf(DefiPrimitive.FARMING, DefiPrimitive.CLAIMABLES),
         networks = listOf(Network.POLYGON),
         company = Company.POLYCAT
     ),
@@ -310,7 +311,7 @@ enum class Protocol(
         logo = "hop.jpg",
         slug = "hop",
         website = "https://hop.exchange",
-        primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
+        primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING, DefiPrimitive.CLAIMABLES),
         networks = listOf(Network.POLYGON),
         company = Company.HOP
     ),
@@ -366,7 +367,7 @@ enum class Protocol(
         logo = "sushiswap.png",
         slug = "sushiswap",
         website = "https://sushi.com",
-        primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
+        primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING, DefiPrimitive.CLAIMABLES),
         company = Company.SUSHISWAP,
         networks = listOf(Network.POLYGON, Network.ARBITRUM, Network.ETHEREUM)
     ),
@@ -382,7 +383,7 @@ enum class Protocol(
         logo = "balancer.png",
         slug = "balancer",
         website = "https://balancer.fi",
-        primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
+        primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING, DefiPrimitive.CLAIMABLES),
         company = Company.BALANCER,
         networks = listOf(Network.POLYGON, Network.ARBITRUM)
     ),
@@ -422,7 +423,7 @@ enum class Protocol(
         logo = "convex.png",
         slug = "convex",
         website = "https://convexfinance.com/",
-        primitives = listOf(DefiPrimitive.FARMING),
+        primitives = listOf(DefiPrimitive.FARMING, DefiPrimitive.CLAIMABLES),
         networks = listOf(Network.ETHEREUM),
         company = Company.CONVEX
     ),
