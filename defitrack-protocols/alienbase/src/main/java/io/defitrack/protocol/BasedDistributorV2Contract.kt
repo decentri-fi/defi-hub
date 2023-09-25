@@ -1,13 +1,17 @@
 package io.defitrack.protocol
 
 import io.defitrack.abi.TypeUtils
+import io.defitrack.abi.TypeUtils.Companion.dynamicArray
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint16
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
+import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Function
+import org.web3j.abi.datatypes.Utf8String
+import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
 class BasedDistributorV2Contract(
@@ -69,7 +73,10 @@ class BasedDistributorV2Contract(
             method = "pendingTokens",
             inputs = listOf(poolId.toBigInteger().toUint256(), user.toAddress()),
             outputs = listOf(
-                uint256(),
+                dynamicArray<Address>(),
+                dynamicArray<Utf8String>(),
+                dynamicArray<Uint256>(),
+                dynamicArray<Uint256>(),
             )
         )
     }
