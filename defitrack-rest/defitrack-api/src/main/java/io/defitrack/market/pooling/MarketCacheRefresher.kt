@@ -4,7 +4,6 @@ import io.defitrack.market.MarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.pooling.domain.PoolingMarket
-import jakarta.annotation.PostConstruct
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
@@ -12,15 +11,11 @@ import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
-import org.springframework.boot.availability.ApplicationAvailability
 import org.springframework.boot.availability.AvailabilityChangeEvent
 import org.springframework.boot.availability.ReadinessState
 import org.springframework.context.ApplicationContext
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.annotation.Configuration
 import org.springframework.scheduling.annotation.Scheduled
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 
 @Configuration
 class MarketCacheRefresher(
@@ -43,10 +38,8 @@ class MarketCacheRefresher(
             }
             logger.info("Initial population of all caches.")
             poolingMarketProviders.map {
-                launch {
-                    it.populateCaches()
-                }
-            }.joinAll()
+                it.populateCaches()
+            }
             lendingMarketProviders.forEach {
                 it.populateCaches()
             }
