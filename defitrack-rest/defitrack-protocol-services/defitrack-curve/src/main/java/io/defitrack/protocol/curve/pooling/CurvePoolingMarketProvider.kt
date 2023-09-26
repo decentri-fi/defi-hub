@@ -1,68 +1,71 @@
 package io.defitrack.protocol.curve.pooling
 
-import io.defitrack.common.network.Network
+import io.defitrack.common.utils.AsyncUtils
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.crv.CurvePoolGraphProvider
+import io.defitrack.protocol.crv.contract.CurveFactoryContract
+import io.defitrack.protocol.crv.contract.CurvePoolContract
 import io.defitrack.token.TokenType
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
 abstract class CurvePoolingMarketProvider(
-    private val curvePoolGraphProvider: CurvePoolGraphProvider
+    private val factoryAddress: String
 ) : PoolingMarketProvider() {
 
-    override fun getProtocol(): Protocol {
-        return Protocol.CURVE
+    val factory = AsyncUtils.lazyAsync {
+        CurveFactoryContract(
+            getBlockchainGateway(),
+            factoryAddress
+        )
     }
 
+
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
-        curvePoolGraphProvider.getPools().forEach { pool ->
-            launch {
-                throttled {
+        val contract = factory.await()
+        val coinsPerPool = contract.getCoins()
+        val balances = contract.getBalances()
+        coinsPerPool.forEach {
+            val pool = it.key
+
+            val underlyingTokens = it.value.filter { it != "0x0000000000000000000000000000000000000000" }.map {
+                getToken(it)
+            }
+
+            val poolContract = CurvePoolContract(getBlockchainGateway(), pool)
+            val poolAsERC20 = getToken(pool)
+
+            val balances = balances[it.key]!!
+
+            val market = create(
+                name = poolAsERC20.name,
+                address = pool,
+                identifier = createId(pool),
+                symbol = poolAsERC20.symbol,
+                tokenType = TokenType.CURVE,
+                tokens = underlyingTokens
+                    .map { it.toFungibleToken() },
+                totalSupply = Refreshable.refreshable(poolAsERC20.totalSupply.asEth(poolAsERC20.decimals)) {
+                    getToken(pool).totalSupply.asEth(poolAsERC20.decimals)
+                },
+                price = Refreshable.refreshable {
                     try {
-                        val tokens = pool.coins.map { coin ->
-                            getToken(coin)
-                        }.map { it.toFungibleToken() }
-
-                        val lpToken = getToken(pool.address)
-
-                        send(
-                            create(
-                                identifier = pool.lpToken,
-                                address = pool.address,
-                                name = lpToken.name,
-                                symbol = lpToken.symbol,
-                                tokens = tokens,
-                                apr = BigDecimal.ZERO,
-                                marketSize = Refreshable.refreshable {
-                                    marketSizeService.getMarketSize(tokens, lpToken.address, getNetwork())
-                                },
-                                tokenType = TokenType.CURVE,
-                                positionFetcher = if (lpToken.name == "unknown") null else defaultPositionFetcher(
-                                    lpToken.address
-                                ),
-                                totalSupply = Refreshable.refreshable(lpToken.totalDecimalSupply()) {
-                                    getToken(pool.address).totalDecimalSupply()
-                                }
-                            )
-                        )
+                        poolContract.virtualPrice.await().asEth(poolAsERC20.decimals)
                     } catch (ex: Exception) {
-                        logger.error("Unable to import curve pool ${pool.address}", ex)
+                        BigDecimal.ZERO
                     }
                 }
-            }
+            )
+
+            send(market)
         }
     }
 
-    override fun getNetwork(): Network {
-        return curvePoolGraphProvider.network
+    override fun getProtocol(): Protocol {
+        return Protocol.CURVE
     }
 }

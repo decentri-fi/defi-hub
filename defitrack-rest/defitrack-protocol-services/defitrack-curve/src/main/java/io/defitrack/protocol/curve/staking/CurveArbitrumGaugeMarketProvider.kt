@@ -1,15 +1,13 @@
-package io.defitrack.protocol.curve.pooling
+package io.defitrack.protocol.curve.staking
 
 import io.defitrack.common.network.Network
-import io.defitrack.protocol.crv.CurveArbitrumGraphProvider
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.Service
 
-@Component
+@Service
 @ConditionalOnProperty(value = ["arbitrum.enabled"], havingValue = "true", matchIfMissing = true)
-class CurveArbitrumPoolingMarketProvider(
-) : CurvePoolingMarketProvider(
-"0xb17b674d9c5cb2e441f8e196a2f048a81355d031"
+class CurveArbitrumGaugeMarketProvider : CurveGaugeFarmingMarketProvider(
+    "0xabc000d88f23bb45525e447528dbf656a9d55bf5"
 ) {
     override fun getNetwork(): Network {
         return Network.ARBITRUM
