@@ -56,8 +56,10 @@ class BlockchainGateway(
     suspend fun readMultiCall(
         elements: List<MultiCallElement>,
     ): List<MultiCallResult> {
-        return multicallCaller.readMultiCall(elements) { address, function ->
-            executeCall(address, function)
+        return retry(limitAttempts(5) + binaryExponentialBackoff(1000, 10000)) {
+            multicallCaller.readMultiCall(elements) { address, function ->
+                executeCall(address, function)
+            }
         }
     }
 

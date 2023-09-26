@@ -1,27 +1,19 @@
 package io.defitrack.evm.contract.multicall
 
-import com.kenai.jffi.Aggregate
 import io.defitrack.abi.TypeUtils.Companion.dynamicArray
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toBool
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import org.apache.commons.codec.binary.Hex
 import org.slf4j.LoggerFactory
 import org.web3j.abi.FunctionEncoder
 import org.web3j.abi.FunctionReturnDecoder
-import org.web3j.abi.TypeReference
-import org.web3j.abi.datatypes.Address
-import org.web3j.abi.datatypes.Bool
-import org.web3j.abi.datatypes.DynamicArray
-import org.web3j.abi.datatypes.DynamicBytes
-import org.web3j.abi.datatypes.DynamicStruct
+import org.web3j.abi.datatypes.*
 import org.web3j.abi.datatypes.Function
-import org.web3j.abi.datatypes.Type
 
 class MultiCallV2Caller(val address: String) : MultiCallCaller {
 
@@ -35,7 +27,7 @@ class MultiCallV2Caller(val address: String) : MultiCallCaller {
     ): List<MultiCallResult> = coroutineScope {
         if (elements.isEmpty()) {
             return@coroutineScope emptyList()
-        } else if (elements.size > 500) {
+        } else if (elements.size > 300) {
             return@coroutineScope elements.chunked(300).map {
                 async {
                     semaphore.withPermit {
@@ -66,9 +58,7 @@ class MultiCallV2Caller(val address: String) : MultiCallCaller {
         val executedCall = executeCall(address, aggregateFunction)
         return@coroutineScope if (executedCall.isEmpty()) {
             logger.info("empty multicall, it failed")
-            elements.map {
-                MultiCallResult(false, emptyList())
-            }
+            throw MulticallFailedException()
         } else {
             val results = executedCall[0].value as List<AggregateResult>
             results.mapIndexed { index, result ->
