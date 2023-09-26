@@ -24,7 +24,7 @@ class DecentriUniswapV2UnderlyingPriceRepository(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    val prices = Cache.Builder<String, List<BigDecimal>>().build()
+    val prices = Cache.Builder<String, BigDecimal>().build()
 
     @PostConstruct
     fun populatePrices() {
@@ -49,13 +49,12 @@ class DecentriUniswapV2UnderlyingPriceRepository(
                     }
 
                     if (usdShare != null && otherShare != null) {
-                        prices.put(toIndex(pool.network, usdShare.token.address), listOf(BigDecimal.valueOf(1.0)))
+                        prices.put(toIndex(pool.network, usdShare.token.address), BigDecimal.valueOf(1.0))
 
                         if (prices.get(otherShare.token.address) == null) prices.put(
-                            toIndex(pool.network, otherShare.token.address), listOf(
-                                otherShare.reserveUSD.asEth(otherShare.token.decimals).dividePrecisely(
-                                    usdShare.reserveUSD.asEth(usdShare.token.decimals)
-                                )
+                            toIndex(pool.network, otherShare.token.address),
+                            otherShare.reserveUSD.asEth(otherShare.token.decimals).dividePrecisely(
+                                usdShare.reserveUSD.asEth(usdShare.token.decimals)
                             )
                         )
                     }

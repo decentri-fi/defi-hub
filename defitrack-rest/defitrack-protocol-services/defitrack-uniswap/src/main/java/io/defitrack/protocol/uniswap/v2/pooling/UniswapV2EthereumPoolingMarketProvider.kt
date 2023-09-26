@@ -54,6 +54,7 @@ class UniswapV2EthereumPoolingMarketProvider(
                         val breakdown = prefetch?.breakdown?.map {
                             PoolingMarketTokenShare(
                                 it.token,
+                                it.reserve,
                                 it.reserveUSD
                             )
                         } ?: fiftyFiftyBreakdown(token0, token1, address)

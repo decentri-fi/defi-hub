@@ -46,18 +46,20 @@ class CoinGeckoPriceService(
         }
     }
 
-    suspend fun getTokenBySymbol(symbol: String): CoingeckoToken? {
+    suspend fun getTokenByAddress(address: String): CoingeckoToken? {
         return getCoingeckoTokens().firstOrNull { token ->
-            token.symbol.uppercase() == symbol.uppercase()
+            token.platforms.entries.any {
+                it.value.lowercase() == address.lowercase()
+            }
         }
     }
 
-    suspend fun getPrice(symbol: String): BigDecimal? {
+    suspend fun getPrice(address: String): BigDecimal? {
         return try {
-            if (symbol.isBlank()) {
+            if (address.isBlank()) {
                 BigDecimal.ZERO
             } else {
-                getTokenBySymbol(symbol)?.let { token ->
+                getTokenByAddress(address)?.let { token ->
                     val response: String =
                         httpClient.get("https://api.coingecko.com/api/v3/simple/price?ids=${token.id}&vs_currencies=usd")
                             .bodyAsText()
@@ -66,7 +68,7 @@ class CoinGeckoPriceService(
                 }
             }
         } catch (ex: Exception) {
-            logger.debug("error trying to fetch price for $symbol")
+            logger.debug("error trying to fetch price for $address")
             null
         }
     }

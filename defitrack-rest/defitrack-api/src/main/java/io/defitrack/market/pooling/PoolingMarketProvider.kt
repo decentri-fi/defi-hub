@@ -88,11 +88,13 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
 
         val firstShare = PoolingMarketTokenShare(
             token = token0,
+            reserve = getBalance(token0.address, poolAddress),
             reserveUSD = if(firstMarketShare == BigDecimal.ZERO) secondMarketShare else firstMarketShare
         )
 
         val secondShare = PoolingMarketTokenShare(
             token = token1,
+            reserve = getBalance(token1.address, poolAddress),
             reserveUSD = if(secondMarketShare == BigDecimal.ZERO) firstMarketShare else secondMarketShare
         )
         return listOf(

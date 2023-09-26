@@ -37,6 +37,10 @@ class MarketCacheRefresher(
     )
     fun populateCaches() {
         runBlocking(Dispatchers.Default) {
+            if (poolingMarketProviders.isEmpty() && lendingMarketProviders.isEmpty() && farmingMarketProviders.isEmpty()) {
+                AvailabilityChangeEvent.publish(applicationContext, ReadinessState.ACCEPTING_TRAFFIC)
+                return@runBlocking
+            }
             logger.info("Initial population of all caches.")
             poolingMarketProviders.map {
                 launch {
@@ -59,6 +63,10 @@ class MarketCacheRefresher(
         initialDelay = 1000 * 60 * 60 * 3
     )
     fun refreshCaches() = runBlocking(Dispatchers.Default) {
+        if (poolingMarketProviders.isEmpty() && lendingMarketProviders.isEmpty() && farmingMarketProviders.isEmpty()) {
+            return@runBlocking
+        }
+
         logger.info("Refreshing all caches. No full population.")
         poolingMarketProviders.map {
             launch {
