@@ -1,7 +1,6 @@
 package io.defitrack.protocol.curve.pooling
 
 import io.defitrack.common.network.Network
-import io.defitrack.protocol.crv.CurvePolygonPoolGraphProvider
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
 
