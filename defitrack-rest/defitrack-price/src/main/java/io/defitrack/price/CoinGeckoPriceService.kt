@@ -26,11 +26,11 @@ class CoinGeckoPriceService(
 ) {
 
     companion object {
-        val coinlistLocation = "https://raw.githubusercontent.com/defitrack/data/master/coingecko/coins.json"
+        val coinlistLocation = "https://api.coingecko.com/api/v3/coins/list?include_platform=true"
         val logger: Logger = LoggerFactory.getLogger(this::class.java)
     }
 
-    val tokenCache = Cache.Builder<String, Set<CoingeckoToken>>().expireAfterWrite(7.days).build()
+    val tokenCache = Cache.Builder<String, Set<CoingeckoToken>>().build()
 
     @PostConstruct
     fun init() = runBlocking {
