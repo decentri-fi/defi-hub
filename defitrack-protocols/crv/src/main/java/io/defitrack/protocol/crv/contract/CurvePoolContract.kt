@@ -9,7 +9,5 @@ import java.math.BigInteger
 class CurvePoolContract(blockchainGateway: BlockchainGateway, address: String) : EvmContract(
     blockchainGateway, address
 ) {
-
     val virtualPrice: Deferred<BigInteger> = constant("get_virtual_price", uint256())
-
 }

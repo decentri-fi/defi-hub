@@ -2,6 +2,7 @@ package io.defitrack.abi
 
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.*
+import org.web3j.abi.datatypes.Array
 import org.web3j.abi.datatypes.generated.*
 import java.math.BigInteger
 
@@ -134,6 +135,10 @@ class TypeUtils {
 
         inline fun <reified T : Type<*>> dynamicArray(indexed: Boolean = false): TypeReference<DynamicArray<T>> {
             return object : TypeReference<DynamicArray<T>>(indexed) {}
+        }
+
+        inline fun <reified T : Type<*>> array(indexed: Boolean = false): TypeReference<StaticArray<T>> {
+            return object : TypeReference<StaticArray<T>>(indexed) {}
         }
     }
 

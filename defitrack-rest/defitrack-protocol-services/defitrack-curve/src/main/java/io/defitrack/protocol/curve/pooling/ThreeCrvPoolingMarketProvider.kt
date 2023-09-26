@@ -10,10 +10,12 @@ import io.defitrack.protocol.crv.contract.CurvePoolContract
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
 @Component
+@ConditionalOnProperty(value = ["ethereum.enabled"], havingValue = "true", matchIfMissing = true)
 class ThreeCrvPoolingMarketProvider : PoolingMarketProvider() {
 
     val address = "0x6c3F90f043a72FA612cbac8115EE7e52BDe6E490"

@@ -70,10 +70,13 @@ abstract class EvmContract(
     ): Deferred<T> {
         return AsyncUtils.lazyAsync {
             val get = resolvedConstants.await().get(function)!!
-            get.data[0].value as T
+            if (get.success) {
+                get.data[0].value as T
+            } else {
+                throw RuntimeException("Unable to read constant ${function.name} on $address")
+            }
         }
     }
-
 
     suspend fun readMultiCall(
         functions: List<Function>
