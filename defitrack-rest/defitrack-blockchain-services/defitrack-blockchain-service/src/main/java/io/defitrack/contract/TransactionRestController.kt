@@ -16,7 +16,6 @@ import kotlin.jvm.optionals.getOrNull
 class TransactionRestController(
     private val web3j: Web3j
 ) {
-
     @GetMapping("/{txId}")
     @Timed("blockchain.transaction.by-id")
     fun getTransaction(@PathVariable("txId") txId: String): TransactionVO? {

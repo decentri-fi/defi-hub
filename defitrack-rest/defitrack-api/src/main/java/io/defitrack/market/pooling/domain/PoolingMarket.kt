@@ -24,7 +24,6 @@ data class PoolingMarket(
     val tokens: List<FungibleToken>,
     val apr: BigDecimal? = null,
     val marketSize: Refreshable<BigDecimal>? = null,
-    val tokenType: TokenType,
     val positionFetcher: PositionFetcher? = null,
     val investmentPreparer: InvestmentPreparer? = null,
     val exitPositionPreparer: ExitPositionCommand? = null,

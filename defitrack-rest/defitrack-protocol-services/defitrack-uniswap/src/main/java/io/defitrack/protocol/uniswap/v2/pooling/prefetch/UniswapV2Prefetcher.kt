@@ -20,7 +20,7 @@ class UniswapV2Prefetcher(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     val fetches = lazyAsync {
-        httpClient.get("https://api.decentri.fi/uniswap_v2/pooling/all-markets")
+        httpClient.get("https://raw.githubusercontent.com/decentri-fi/data/master/pre-fetches/uniswap/uniswap/uniswap_v2.json")
             .body<List<PoolingMarketVO>>()
     }
 

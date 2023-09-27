@@ -3,12 +3,12 @@ package io.defitrack.protocol.uniswap.v2.pooling
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
-import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
+import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.uniswap.v2.pooling.prefetch.UniswapV2Prefetcher
-import io.defitrack.token.TokenType
 import io.defitrack.uniswap.v2.PairFactoryContract
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
@@ -37,64 +37,50 @@ class UniswapV2EthereumPoolingMarketProvider(
 
 
     override suspend fun produceMarkets() = channelFlow {
-        contract.await().allPairs().forEach {address ->
+        prefetches.await().forEach { prefetch ->
             launch {
                 throttled {
                     try {
-                        val identifier = "v2-${address}"
-
-                        val prefetch = prefetches.await().find {
-                            it.id == createId(identifier)
-                        }
-
-                        val token = getToken(address)
-
-                        val token0 = prefetch?.tokens?.get(0) ?: token.underlyingTokens[0].toFungibleToken()
-                        val token1 = prefetch?.tokens?.get(1) ?:  token.underlyingTokens[1].toFungibleToken()
-                        val breakdown = prefetch?.breakdown?.map {
-                            PoolingMarketTokenShare(
-                                it.token,
-                                it.reserve,
-                                it.reserveUSD
+                        val refreshableMarketSize = refreshable(
+                            prefetch.marketSize ?: getMarketSize(
+                                prefetch.tokens,
+                                prefetch.address
                             )
-                        } ?: fiftyFiftyBreakdown(token0, token1, address)
-
-
-                        val marketSize = breakdown.sumOf {
-                            it.reserveUSD
+                        ) {
+                            getMarketSize(prefetch.tokens, prefetch.address)
                         }
+                        val refreshableTotalSupply = refreshable(prefetch.totalSupply) {
+                            getToken(prefetch.address).totalSupply.asEth(prefetch.decimals)
+                        }
+                        val refreshablePrice: Refreshable<BigDecimal> = calculatePrice(
+                            refreshableMarketSize, refreshableTotalSupply
+                        )
 
-                        if (breakdown.sumOf { it.reserveUSD } > BigDecimal.valueOf(50000)) {
-                            send(
-                                create(
-                                    identifier = identifier,
-                                    name = token.name,
-                                    address = address,
-                                    symbol = token.symbol,
-                                    tokens = listOf(token0, token1),
-                                    breakdown = breakdown,
-                                    marketSize = refreshable(marketSize) {
-                                        fiftyFiftyBreakdown(token0, token1, address).sumOf {
-                                            it.reserveUSD
-                                        }
-                                    },
-                                    tokenType = TokenType.UNISWAP,
-                                    positionFetcher = defaultPositionFetcher(token.address),
-                                    totalSupply = refreshable(token.totalSupply.asEth(token.decimals)) {
-                                        getToken(address).totalSupply.asEth(token.decimals)
-                                    }
-                                )
+                        send(
+                            PoolingMarket(
+                                id = prefetch.id,
+                                network = prefetch.network.toNetwork(),
+                                protocol = getProtocol(),
+                                address = prefetch.address,
+                                name = prefetch.name,
+                                decimals = prefetch.decimals,
+                                symbol = prefetch.tokens.map { it.symbol }.joinToString("-"),
+                                totalSupply = refreshableTotalSupply,
+                                tokens = prefetch.tokens,
+                                marketSize = refreshableMarketSize,
+                                deprecated = false,
+                                internalMetadata = emptyMap(),
+                                metadata = emptyMap(),
+                                price = refreshablePrice,
                             )
-                        }
+                        )
                     } catch (ex: Exception) {
-                        ex.printStackTrace()
-                        logger.error("something went wrong trying to import uniswap market ${address}")
+                        logger.info("Unable to get uniswap v2 market ${prefetch.name}")
                     }
                 }
             }
         }
     }
-
     override fun getProtocol(): Protocol {
         return Protocol.UNISWAP_V2
     }

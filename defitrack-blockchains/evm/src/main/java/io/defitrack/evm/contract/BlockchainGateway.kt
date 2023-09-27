@@ -160,12 +160,4 @@ class BlockchainGateway(
 
         val MAX_UINT256 = BigInteger.TWO.pow(256).minus(BigInteger.ONE).toUint256()
     }
-
-    class GetEventLogsCommand(
-        val addresses: List<String>,
-        val topic: String,
-        val optionalTopics: List<String?> = kotlin.collections.emptyList(),
-        val fromBlock: BigInteger? = null,
-        val toBlock: BigInteger? = null
-    )
 }

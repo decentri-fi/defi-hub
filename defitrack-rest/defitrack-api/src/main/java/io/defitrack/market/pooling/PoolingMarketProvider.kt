@@ -45,7 +45,6 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
             address = address,
             decimals = decimals,
             symbol = symbol,
-            tokenType = tokenType,
             tokens = tokens,
             positionFetcher = positionFetcher,
             investmentPreparer = investmentPreparer,
@@ -61,7 +60,7 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
 
     fun createId(identifier: String) = "lp_${getNetwork().slug}-${getProtocol().slug}-${identifier}"
 
-    private suspend fun calculatePrice(
+    suspend fun calculatePrice(
         marketSize: Refreshable<BigDecimal>?,
         totalSupply: Refreshable<BigDecimal>,
     ): Refreshable<BigDecimal> {
