@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.stereotype.Component
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.DefaultBlockParameterName
@@ -20,6 +21,7 @@ import org.web3j.protocol.exceptions.ClientConnectionException
 import java.math.BigInteger
 
 @Component
+@ConditionalOnBean(Web3j::class)
 class EvmGateway(
     private val primaryWeb3j: Web3j,
     @Qualifier("fallbackWeb3js") private val fallbacks: List<Web3j>,
