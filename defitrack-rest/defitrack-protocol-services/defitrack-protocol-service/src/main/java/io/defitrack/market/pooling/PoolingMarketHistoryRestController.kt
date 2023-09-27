@@ -6,6 +6,7 @@ import com.github.michaelbull.retry.policy.plus
 import com.github.michaelbull.retry.retry
 import io.defitrack.event.DefiEvent
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.GetEventLogsCommand
 import io.defitrack.market.pooling.history.PoolingHistoryProvider
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
@@ -34,7 +35,7 @@ class PoolingMarketHistoryRestController(
                     val historicEventExtractor = it.historicEventExtractor()
 
                     it.poolingMarketProvider.getBlockchainGateway().getEventsAsEthLog(
-                        BlockchainGateway.GetEventLogsCommand(
+                        GetEventLogsCommand(
                             addresses = historicEventExtractor.addresses(),
                             historicEventExtractor.topic,
                             historicEventExtractor.optionalTopics(user),
