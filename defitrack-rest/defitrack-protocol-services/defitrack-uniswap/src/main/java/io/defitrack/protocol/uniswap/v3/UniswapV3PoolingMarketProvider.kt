@@ -7,6 +7,7 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.event.EventDecoder.Companion.extract
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.GetEventLogsCommand
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
@@ -58,7 +59,7 @@ abstract class UniswapV3PoolingMarketProvider(
     suspend fun getLogsBetweenBlocks(fromBlock: String, toBlock: String?): List<String> {
         val gateway = getBlockchainGateway()
         val logs = gateway.getEventsAsEthLog(
-            BlockchainGateway.GetEventLogsCommand(
+            GetEventLogsCommand(
                 addresses = listOf(poolFactoryAddress),
                 topic = "0x783cca1c0412dd0d695e784568c96da2e9c22ff989357a2e8b1d9b2b4e6b7118",
                 fromBlock = BigInteger(fromBlock, 10),

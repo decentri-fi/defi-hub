@@ -28,36 +28,38 @@ class EvmGateway(
     private val observationRegistry: ObservationRegistry
 ) {
 
-    suspend fun getLogs(getEventLogsCommand: GetEventLogsCommand,
-                        _web3j: Web3j = primaryWeb3j): EthLog {
+    suspend fun getLogs(
+        getEventLogsCommand: GetEventLogsCommand,
+        _web3j: Web3j = primaryWeb3j
+    ): EthLog {
         val ethFilter = with(
-                EthFilter(
-                    getEventLogsCommand.fromBlock?.let {
-                        DefaultBlockParameterNumber(it)
-                    } ?: DefaultBlockParameterName.EARLIEST,
-                    getEventLogsCommand.toBlock?.let {
-                        DefaultBlockParameterNumber(it)
-                    } ?: DefaultBlockParameterName.LATEST,
-                    getEventLogsCommand.addresses
-                )
-            ) {
-                addSingleTopic(getEventLogsCommand.topic)
-                getEventLogsCommand.optionalTopics.forEach {
-                    if (it != null) {
-                        addOptionalTopics(it)
-                    } else {
-                        addNullTopic()
-                    }
+            EthFilter(
+                getEventLogsCommand.fromBlock?.let {
+                    DefaultBlockParameterNumber(it)
+                } ?: DefaultBlockParameterName.EARLIEST,
+                getEventLogsCommand.toBlock?.let {
+                    DefaultBlockParameterNumber(it)
+                } ?: DefaultBlockParameterName.LATEST,
+                getEventLogsCommand.addresses
+            )
+        ) {
+            addSingleTopic(getEventLogsCommand.topic)
+            getEventLogsCommand.optionalTopics.forEach {
+                if (it != null) {
+                    addOptionalTopics(it)
+                } else {
+                    addNullTopic()
                 }
-                this
             }
-        val result =  _web3j.ethGetLogs(ethFilter).send()
+            this
+        }
+        val result = _web3j.ethGetLogs(ethFilter).send()
         return if (result.hasError() && result.error.code == 429) {
             delay(1000)
             getLogs(getEventLogsCommand)
         } else if (result.hasError()) {
             fallbacks.shuffled().firstOrNull()?.let {
-                getLogs(getEventLogsCommand, fallbacks.shuffled().first())
+                getLogs(getEventLogsCommand, it)
             } ?: result
         } else {
             result
@@ -68,16 +70,22 @@ class EvmGateway(
         address: String,
         _web3j: Web3j = primaryWeb3j
     ): BigInteger = withContext(Dispatchers.IO) {
-        val send = _web3j.ethGetBalance(address, DefaultBlockParameterName.PENDING).send()
-        if (send.hasError() && send.error.code == 429) {
-            delay(1000)
-            ethGetBalance(address)
-        } else if (send.hasError()) {
+        try {
+            val send = _web3j.ethGetBalance(address, DefaultBlockParameterName.PENDING).send()
+            if (send.hasError() && send.error.code == 429) {
+                delay(1000)
+                ethGetBalance(address)
+            } else if (send.hasError()) {
+                fallbacks.shuffled().firstOrNull()?.let {
+                    ethGetBalance(address, fallbacks.shuffled().first())
+                } ?: send.balance
+            } else {
+                send.balance
+            }
+        } catch (ex: Exception) {
             fallbacks.shuffled().firstOrNull()?.let {
-                ethGetBalance(address, fallbacks.shuffled().first())
-            } ?: send.balance
-        } else {
-            send.balance
+                ethGetBalance(address, it)
+            } ?: throw ex
         }
     }
 
@@ -87,30 +95,34 @@ class EvmGateway(
     ): EthCall {
         return withContext(Dispatchers.IO) {
             with(evmContractInteractionCommand) {
-                val observation = Observation.createNotStarted("contract-interaction", observationRegistry)
-                try {
-                    val result = ethCall(evmContractInteractionCommand, _web3j)
+                val observation = Observation.start("contract-interaction", observationRegistry)
+                observation.openScope().use {
+                    try {
+                        val result = ethCall(evmContractInteractionCommand, _web3j)
 
-                    if (result.hasError() && result.error.code == 429) {
-                        observation.event(Observation.Event.of("429"))
-                        delay(1000L)
-                        call(evmContractInteractionCommand)
-                    } else if (result.hasError()) {
-                        fallbacks.shuffled().firstOrNull()?.let {
-                            call(evmContractInteractionCommand, fallbacks.shuffled().first())
-                        } ?: result
-                    } else {
-                        result
+                        if (result.hasError() && result.error.code == 429) {
+                            observation.event(Observation.Event.of("429"))
+                            delay(1000L)
+                            call(evmContractInteractionCommand)
+                        }else {
+                            result
+                        }
+                    } catch (ex: ClientConnectionException) {
+                        if (ex.message?.contains("429") == true) {
+                            observation.event(Observation.Event.of("endpoint.throttled", "thirdparty.endpoint.throttled"))
+                            delay(1000L)
+                            return@with call(evmContractInteractionCommand)
+
+                        } else if (ex.message?.contains("Monthly capacity limit exceeded") == true) {
+                            observation.event(Observation.Event.of("endpoint.capacity-exceeded", "thirdparty.monthly-capacity-limit-exceeded"))
+                            fallbacks.shuffled().firstOrNull()?.let {
+                                call(evmContractInteractionCommand, it)
+                            } ?: throw ex
+                        } else {
+                            throw ex
+                        }
                     }
-                } catch (ex: ClientConnectionException) {
-                    if (ex.message?.contains("429") == true) {
-                        observation.event(Observation.Event.of("429"))
-                        delay(1000L)
-                        return@with call(evmContractInteractionCommand)
-                    } else {
-                        throw ex
-                    }
-                } finally {
+                }.also {
                     observation.stop()
                 }
             }

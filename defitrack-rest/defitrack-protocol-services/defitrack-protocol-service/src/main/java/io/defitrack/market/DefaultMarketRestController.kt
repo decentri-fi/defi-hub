@@ -1,8 +1,8 @@
 package io.defitrack.market
 
-import io.defitrack.market.lending.mapper.LendingMarketVOMapper
-import io.defitrack.market.lending.vo.LendingMarketVO
 import io.defitrack.utils.PageUtils
+import io.micrometer.observation.Observation
+import io.micrometer.observation.ObservationRegistry
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.GetMapping

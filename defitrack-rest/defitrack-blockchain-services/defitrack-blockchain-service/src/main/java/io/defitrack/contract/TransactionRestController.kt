@@ -17,7 +17,7 @@ class TransactionRestController(
     private val web3j: Web3j
 ) {
     @GetMapping("/{txId}")
-    @Timed("blockchain.transaction.by-id")
+    @Observed(name = "requests.get.tx.by-id")
     fun getTransaction(@PathVariable("txId") txId: String): TransactionVO? {
         return web3j.ethGetTransactionByHash(txId).send().transaction.map {
             val possibleSpam =  web3j.ethGetTransactionReceipt(txId).send().transactionReceipt.map {
@@ -37,7 +37,7 @@ class TransactionRestController(
     }
 
     @GetMapping("/{txId}/logs")
-    @Timed("blockchain.transaction.by-id.logs")
+    @Observed(name = "requests.get.tx.by-id.logs")
     fun getLogs(@PathVariable("txId") txId: String): List<Log> {
         return web3j.ethGetTransactionReceipt(txId).send().transactionReceipt.map {
             it.logs

@@ -7,6 +7,7 @@ import io.defitrack.event.EventDecoder.Companion.extract
 import io.defitrack.event.EventDecoder.Companion.getIndexedParameter
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
+import io.defitrack.evm.contract.GetEventLogsCommand
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
@@ -30,7 +31,7 @@ class BalancerPolygonZkEvmGaugeMarketProvider(
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         val logs = getBlockchainGateway().getEventsAsEthLog(
-            BlockchainGateway.GetEventLogsCommand(
+            GetEventLogsCommand(
                 addresses = listOf("0x2498A2B0d6462d2260EAC50aE1C3e03F4829BA95"),
                 topic = "0xaa98436d09d130af48de49867af8b723bbbebb0d737638b5fe8f1bf31bbb71c0",
                 fromBlock = BigInteger.valueOf(203653L)

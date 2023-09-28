@@ -3,6 +3,7 @@ package io.defitrack.contract
 import io.defitrack.evm.contract.GetEventLogsCommand
 import io.defitrack.evm.web3j.EvmGateway
 import io.micrometer.core.annotation.Timed
+import io.micrometer.observation.annotation.Observed
 import kotlinx.coroutines.delay
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -22,7 +23,7 @@ class NativeEventRestController(
 ) {
 
     @PostMapping("/logs")
-    @Timed("blockchain.events.logs")
+    @Observed(name = "requests.post.events.logs")
     suspend fun getEvents(@RequestBody getEventLogsCommand: GetEventLogsCommand): EthLog {
         require(getEventLogsCommand.addresses.isNotEmpty()) { "Address must not be empty" }
         return evmGateway.getLogs(getEventLogsCommand)

@@ -10,6 +10,7 @@ import io.defitrack.event.DefiEventType
 import io.defitrack.event.EventDecoder.Companion.getIndexedParameter
 import io.defitrack.event.EventDecoder.Companion.getNonIndexedParameter
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.GetEventLogsCommand
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.network.toVO
@@ -46,7 +47,7 @@ abstract class BalancerPoolingMarketProvider(
             return@channelFlow
 
         val logs = getBlockchainGateway().getEvents(
-            BlockchainGateway.GetEventLogsCommand(
+            GetEventLogsCommand(
                 addresses = factories,
                 topic = EventEncoder.encode(BalancerPoolFactoryContract.POOL_CREATED_EVENT),
                 fromBlock = BigInteger(earliestBlock, 10),
