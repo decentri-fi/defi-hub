@@ -69,11 +69,7 @@ class UniswapV2EthereumPoolingMarketProvider(
                                 symbol = prefetch.tokens.joinToString("-") { it.symbol },
                                 totalSupply = refreshableTotalSupply,
                                 tokens = prefetch.tokens,
-                                breakdown = fiftyFiftyBreakdown(
-                                    prefetch.tokens[0],
-                                    prefetch.tokens[1],
-                                    prefetch.address
-                                ),
+                                breakdown = breakdown,
                                 marketSize = refreshableMarketSize,
                                 deprecated = false,
                                 internalMetadata = emptyMap(),

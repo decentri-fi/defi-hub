@@ -2,15 +2,12 @@ package io.defitrack.price
 
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.price.external.ExternalPriceService
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
 @Component
 class PriceProvider(
     private val externalPriceServices: List<ExternalPriceService>,
-    private val coinGeckoPriceService: CoinGeckoPriceService,
     private val beefyPriceService: BeefyPricesService
 ) {
     val synonyms = mapOf(
@@ -25,8 +22,5 @@ class PriceProvider(
             it.appliesTo(token)
         }?.getPrice(token) ?: beefyPriceService.getPrices()
             .getOrDefault(synonyms.getOrDefault(token.symbol.uppercase(), token.symbol.uppercase()), null)
-        ?:  withContext(
-            Dispatchers.IO
-        ) { coinGeckoPriceService.getPrice(token.address) }
     }
 }

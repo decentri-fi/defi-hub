@@ -54,8 +54,8 @@ class CoinGeckoPriceService(
         }
     }
 
-    suspend fun getPrice(address: String): BigDecimal? {
-        return try {
+    suspend fun getPrice(address: String): BigDecimal? = withContext(Dispatchers.IO){
+        try {
             if (address.isBlank()) {
                 BigDecimal.ZERO
             } else {
