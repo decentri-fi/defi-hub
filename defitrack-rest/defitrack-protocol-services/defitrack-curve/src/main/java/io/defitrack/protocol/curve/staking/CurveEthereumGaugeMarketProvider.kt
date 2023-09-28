@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service
 
 @Service
 @ConditionalOnProperty(value = ["ethereum.enabled"], havingValue = "true", matchIfMissing = true)
-class CurveEthereumFarmingMarketProvider : CurveGaugeFarmingMarketProvider(
+class CurveEthereumGaugeMarketProvider : CurveGaugeFarmingMarketProvider(
     "0x2F50D538606Fa9EDD2B11E2446BEb18C9D5846bB"
 ) {
 

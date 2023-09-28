@@ -1,11 +1,9 @@
 package io.defitrack.erc20.rest
 
 import io.defitrack.common.network.Network
-import io.defitrack.erc20.ERC20ContractReader
-import io.defitrack.erc20.ERC20Repository
-import io.defitrack.erc20.TokenInformationVO
-import io.defitrack.erc20.ERC20Service
-import io.defitrack.erc20.toVO
+import io.defitrack.erc20.*
+import io.micrometer.observation.Observation
+import io.micrometer.observation.ObservationRegistry
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withTimeout
 import org.slf4j.LoggerFactory
@@ -19,7 +17,8 @@ import java.math.BigInteger
 @RestController
 class ERC20RestController(
     private val erC20ContractReader: ERC20ContractReader,
-    private val erc20Service: ERC20Service
+    private val erc20Service: ERC20Service,
+    private val observationRegistry: ObservationRegistry
 ) {
 
     val logger = LoggerFactory.getLogger(this::class.java)
@@ -54,9 +53,9 @@ class ERC20RestController(
         @PathVariable("network") networkName: String,
         @PathVariable("address") address: String
     ): ResponseEntity<TokenInformationVO> = coroutineScope {
-
         val network = Network.fromString(networkName) ?: return@coroutineScope ResponseEntity.badRequest().build()
-
+        val observation = Observation.start("erc20.get-token-information", observationRegistry)
+            .lowCardinalityKeyValue("network", networkName)
         try {
             withTimeout(12000L) {
                 ResponseEntity.ok(
@@ -68,6 +67,8 @@ class ERC20RestController(
         } catch (ex: Exception) {
             logger.debug("Error while getting token information", ex)
             ResponseEntity.notFound().build()
+        } finally {
+            observation.stop()
         }
     }
 
