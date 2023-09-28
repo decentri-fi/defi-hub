@@ -28,10 +28,10 @@ class ClaimableAggregateRestController(
 
     @GetMapping("/{address}")
     suspend fun aggregate(@PathVariable("address") address: String): List<ClaimableVO> = coroutineScope {
-        val observation = Observation.start("requests.get.claimables.aggregate", observationRegistry)
         if (!isValidAddress(address)) {
             emptyList()
         } else {
+            val observation = Observation.start("requests.get.claimables.aggregate", observationRegistry)
             val result = measureTimedValue {
                 //todo: fetch protocols from api gw (cached), so we don't have to redeploy this service every time we add a new protocol
                 Protocol.entries.filter {
@@ -44,9 +44,8 @@ class ClaimableAggregateRestController(
             }
 
             logger.info("took ${result.duration.inWholeSeconds} seconds to aggregate ${result.value.size} claimables for $address")
-            result.value
-        }.also {
             observation.stop()
+            result.value
         }
     }
 
