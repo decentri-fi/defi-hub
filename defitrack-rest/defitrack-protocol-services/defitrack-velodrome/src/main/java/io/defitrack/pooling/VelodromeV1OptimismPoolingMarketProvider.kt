@@ -13,9 +13,11 @@ import io.defitrack.uniswap.v2.PairFactoryContract
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 
 @Component
+@ConditionalOnProperty(value = ["velodromev1.enabled"], havingValue = "true", matchIfMissing = true)
 class VelodromeV1OptimismPoolingMarketProvider(
     private val velodromeOptimismService: VelodromeOptimismService
 ) : PoolingMarketProvider() {

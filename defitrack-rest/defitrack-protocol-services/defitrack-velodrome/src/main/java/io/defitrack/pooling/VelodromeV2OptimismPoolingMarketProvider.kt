@@ -13,10 +13,12 @@ import io.defitrack.token.TokenType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
 @Component
+@ConditionalOnProperty(value = ["velodromev2.enabled"], havingValue = "true", matchIfMissing = true)
 class VelodromeV2OptimismPoolingMarketProvider(
     private val velodromeOptimismService: VelodromeOptimismService
 ) : PoolingMarketProvider() {

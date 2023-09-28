@@ -17,9 +17,12 @@ import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
 
-@Service
+@Component
+@ConditionalOnProperty(value = ["velodromev2.enabled"], havingValue = "true", matchIfMissing = true)
 class VelodromeV2GaugeMarketProvider(
     private val poolingMarketProvider: VelodromeV2OptimismPoolingMarketProvider
 ) : FarmingMarketProvider() {

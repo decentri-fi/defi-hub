@@ -6,7 +6,6 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.mapper.ProtocolVOMapper
 import io.micrometer.observation.Observation
 import io.micrometer.observation.ObservationRegistry
-import io.micrometer.observation.annotation.Observed
 import jakarta.servlet.http.HttpServletResponse
 import kotlinx.coroutines.*
 import org.slf4j.LoggerFactory
@@ -28,8 +27,8 @@ class ClaimableAggregateRestController(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @GetMapping("/{address}")
-    @Observed(name = "requests.get.claimables.aggregate")
     suspend fun aggregate(@PathVariable("address") address: String): List<ClaimableVO> = coroutineScope {
+        val observation = Observation.start("requests.get.claimables.aggregate", observationRegistry)
         if (!isValidAddress(address)) {
             emptyList()
         } else {
@@ -46,6 +45,8 @@ class ClaimableAggregateRestController(
 
             logger.info("took ${result.duration.inWholeSeconds} seconds to aggregate ${result.value.size} claimables for $address")
             result.value
+        }.also {
+            observation.stop()
         }
     }
 
@@ -56,7 +57,7 @@ class ClaimableAggregateRestController(
         @PathVariable("address") address: String,
         httpServletResponse: HttpServletResponse
     ): SseEmitter {
-        val observation = Observation.start("claimables.aggregate", observationRegistry)
+        val observation = Observation.start("requests.get.claimables.aggregate.sse", observationRegistry)
         val emitter = SseEmitter()
         executor.submit {
             runBlocking {
