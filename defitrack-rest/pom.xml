@@ -19,7 +19,6 @@
         <module>defitrack-erc20</module>
         <module>defitrack-nft</module>
         <module>defitrack-ens</module>
-        <module>defitrack-abi</module>
         <module>defitrack-balance</module>
         <module>defitrack-price</module>
         <module>defitrack-protocol-services</module>

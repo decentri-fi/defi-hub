@@ -41,12 +41,14 @@ class UniswapV2EthereumPoolingMarketProvider(
             launch {
                 throttled {
                     try {
+                        val breakdown = fiftyFiftyBreakdown(
+                            prefetch.tokens[0],
+                            prefetch.tokens[1],
+                            prefetch.address
+                        )
                         val refreshableMarketSize = refreshable(
-                            prefetch.marketSize ?: getMarketSize(
-                                prefetch.tokens,
-                                prefetch.address
-                            )
-                        ) {
+                            breakdown.sumOf { it.reserveUSD }
+                        ){
                             getMarketSize(prefetch.tokens, prefetch.address)
                         }
                         val refreshableTotalSupply = refreshable(prefetch.totalSupply) {
@@ -64,9 +66,14 @@ class UniswapV2EthereumPoolingMarketProvider(
                                 address = prefetch.address,
                                 name = prefetch.name,
                                 decimals = prefetch.decimals,
-                                symbol = prefetch.tokens.map { it.symbol }.joinToString("-"),
+                                symbol = prefetch.tokens.joinToString("-") { it.symbol },
                                 totalSupply = refreshableTotalSupply,
                                 tokens = prefetch.tokens,
+                                breakdown = fiftyFiftyBreakdown(
+                                    prefetch.tokens[0],
+                                    prefetch.tokens[1],
+                                    prefetch.address
+                                ),
                                 marketSize = refreshableMarketSize,
                                 deprecated = false,
                                 internalMetadata = emptyMap(),
@@ -81,6 +88,7 @@ class UniswapV2EthereumPoolingMarketProvider(
             }
         }
     }
+
     override fun getProtocol(): Protocol {
         return Protocol.UNISWAP_V2
     }

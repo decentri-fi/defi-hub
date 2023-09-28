@@ -10,7 +10,8 @@ import java.math.BigDecimal
 @Component
 class PriceProvider(
     private val externalPriceServices: List<ExternalPriceService>,
-    private val coinGeckoPriceService: CoinGeckoPriceService
+    private val coinGeckoPriceService: CoinGeckoPriceService,
+    private val beefyPriceService: BeefyPricesService
 ) {
     val synonyms = mapOf(
         "WETH" to "ETH",
@@ -22,7 +23,9 @@ class PriceProvider(
     suspend fun getPrice(token: TokenInformationVO): BigDecimal? {
         return externalPriceServices.find {
             it.appliesTo(token)
-        }?.getPrice(token) ?: withContext(
+        }?.getPrice(token) ?: beefyPriceService.getPrices()
+            .getOrDefault(synonyms.getOrDefault(token.symbol.uppercase(), token.symbol.uppercase()), null)
+        ?:  withContext(
             Dispatchers.IO
         ) { coinGeckoPriceService.getPrice(token.address) }
     }
