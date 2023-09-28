@@ -51,7 +51,7 @@ class DecentriUniswapV2UnderlyingPriceRepository(
                     if (usdShare != null && otherShare != null) {
                         prices.put(toIndex(pool.network, usdShare.token.address), BigDecimal.valueOf(1.0))
 
-                        if (prices.get(otherShare.token.address) == null) prices.put(
+                         if (prices.get(otherShare.token.address) == null) prices.put(
                             toIndex(pool.network, otherShare.token.address),
                             otherShare.reserveUSD.asEth(otherShare.token.decimals).dividePrecisely(
                                 usdShare.reserveUSD.asEth(usdShare.token.decimals)
