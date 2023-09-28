@@ -16,7 +16,6 @@ class EVMContractInteractionRestController(
 ) {
 
     @PostMapping("/call")
-    @Observed(name = "requests.post.contract.call")
     suspend fun call(@RequestBody evmContractInteractionCommand: EvmContractInteractionCommand): EthCall {
         return evmGateway.call(evmContractInteractionCommand)
     }
