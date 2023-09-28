@@ -32,24 +32,28 @@ class DefaultClaimableRewardProvider(
         return@coroutineScope markets.map { entry ->
             async {
                 try {
-                    blockchainGatewayProvider.getGateway(entry.key).readMultiCall(
-                        entry.value.map { market ->
-                            market.claimableRewardFetcher!!.toMulticall(address)
+                    val rewards = entry.value.flatMap { market ->
+                        market.claimableRewardFetcher!!.rewards.map {
+                            it to market
                         }
+                    }
+
+                    blockchainGatewayProvider.getGateway(entry.key).readMultiCall(
+                        rewards.map { it.first.toMulticall(address) }
                     ).mapIndexed { index, retVal ->
-                        val market = entry.value[index]
-                        val earned = market.claimableRewardFetcher!!.extract(retVal.data)
+                        val reward = rewards[index]
+                        val earned = reward.first.extractAmountFromRewardFunction(retVal.data)
 
                         if (earned > BigInteger.ONE) {
+
                             Claimable(
-                                id = "rwrd_${market.id}",
-                                type = market.contractType,
-                                name = market.name,
-                                protocol = market.protocol,
-                                network = market.network,
+                                id = "rwrd_${reward.second.id}",
+                                name = reward.second.name,
+                                protocol = reward.second.protocol,
+                                network = reward.second.network,
                                 amount = earned,
-                                claimableTokens = market.rewardTokens,
-                                claimTransaction = market.claimableRewardFetcher.preparedTransaction(address),
+                                claimableToken = reward.first.token,
+                                claimTransaction = reward.second.claimableRewardFetcher!!.preparedTransaction.invoke(address),
                             )
                         } else {
                             null

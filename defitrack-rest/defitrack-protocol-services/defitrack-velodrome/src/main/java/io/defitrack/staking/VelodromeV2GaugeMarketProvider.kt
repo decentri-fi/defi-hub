@@ -1,6 +1,7 @@
 package io.defitrack.staking
 
 import io.defitrack.claimable.ClaimableRewardFetcher
+import io.defitrack.claimable.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable
@@ -16,7 +17,6 @@ import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 
 @Service
@@ -69,10 +69,15 @@ class VelodromeV2GaugeMarketProvider(
                                     "contract" to contract
                                 ),
                                 claimableRewardFetcher = ClaimableRewardFetcher(
-                                    address = contract.address,
-                                    function = { user ->
-                                        contract.earnedFn(user)
-                                    },
+                                    listOf(
+                                        Reward(
+                                            token = rewardToken.toFungibleToken(),
+                                            contractAddress = contract.address,
+                                            getRewardFunction = { user ->
+                                                contract.earnedFn(user)
+                                            }
+                                        )
+                                    ),
                                     preparedTransaction = { user ->
                                         PreparedTransaction(
                                             network = getNetwork().toVO(),

@@ -1,9 +1,9 @@
 package io.defitrack.protocol.quickswap.staking
 
 import io.defitrack.claimable.ClaimableRewardFetcher
+import io.defitrack.claimable.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
-import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -18,7 +18,6 @@ import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -67,10 +66,13 @@ class QuickswapFarmingMarketProvider(
                             stakedToken.address
                         )),
                         claimableRewardFetcher = ClaimableRewardFetcher(
-                            rewardPool.address,
-                            { user ->
-                                rewardPool.earned(user)
-                            },
+                            Reward(
+                                token = rewardToken.toFungibleToken(),
+                                contractAddress = rewardPool.address,
+                                getRewardFunction = { user ->
+                                    rewardPool.earned(user)
+                                },
+                            ),
                             preparedTransaction = {
                                 PreparedTransaction(
                                     getNetwork().toVO(), rewardPool.getRewardFunction(), rewardPool.address

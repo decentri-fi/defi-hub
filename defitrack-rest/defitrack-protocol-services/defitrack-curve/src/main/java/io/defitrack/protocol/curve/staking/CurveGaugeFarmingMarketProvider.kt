@@ -1,6 +1,7 @@
 package io.defitrack.protocol.curve.staking
 
 import io.defitrack.claimable.ClaimableRewardFetcher
+import io.defitrack.claimable.Reward
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -68,12 +69,17 @@ abstract class CurveGaugeFarmingMarketProvider(
                                     balanceOfFunction(user)
                                 }
                             ),
-                            claimableRewardFetcher = rewardTokens.takeIf { it.isNotEmpty() }?.let {
+                            claimableRewardFetcher = rewardTokens.takeIf { it.isNotEmpty() }?.let { rewards ->
                                 ClaimableRewardFetcher(
-                                    address = contract.address,
-                                    function = { user ->
-                                        contract.getClaimableRewardFunction(
-                                            user, rewardTokens.first().address
+                                    rewards.map { reward ->
+                                        Reward(
+                                            token = reward,
+                                            contractAddress = contract.address,
+                                            getRewardFunction = { user ->
+                                                contract.getClaimableRewardFunction(
+                                                    user, rewardTokens.first().address
+                                                )
+                                            }
                                         )
                                     },
                                     preparedTransaction = {

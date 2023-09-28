@@ -42,12 +42,9 @@ class CompoundEthereumRewardProvider(
                 Claimable(
                     "",
                     "",
-                    type = "compoundv3",
                     getProtocol(),
                     getNetwork(),
-                    listOf(
-                        erC20Resource.getTokenInformation(getNetwork(), rewardToken).toFungibleToken()
-                    ),
+                    erC20Resource.getTokenInformation(getNetwork(), rewardToken).toFungibleToken(),
                     positionSize,
                     PreparedTransaction(
                         getNetwork().toVO(),

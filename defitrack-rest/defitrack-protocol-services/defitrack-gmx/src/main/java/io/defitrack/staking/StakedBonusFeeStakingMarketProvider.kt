@@ -1,6 +1,7 @@
 package io.defitrack.staking
 
 import io.defitrack.claimable.ClaimableRewardFetcher
+import io.defitrack.claimable.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -25,23 +26,26 @@ class StakedBonusFeeStakingMarketProvider : FarmingMarketProvider() {
 
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
         val contract = StakedGMXContract(getBlockchainGateway(), stakedGMX)
-
+        val rewardToken = getToken(contract.rewardToken.await())
         send(
             create(
                 name = "Staked GMX",
                 identifier = "staked-gmx-$stakedGMX",
                 stakedToken = getToken(gmx).toFungibleToken(),
                 rewardTokens = listOf(
-                    getToken(contract.rewardToken.await()).toFungibleToken()
+                    rewardToken.toFungibleToken()
                 ),
                 vaultType = "staked-gmx",
                 marketSize = Refreshable.refreshable { BigDecimal.ZERO },
                 farmType = ContractType.STAKING,
                 claimableRewardFetcher = ClaimableRewardFetcher(
-                    address = stakedGMX,
-                    function = { user ->
-                        contract.claimableFn(user)
-                    },
+                    Reward(
+                        token = rewardToken.toFungibleToken(),
+                        contractAddress = stakedGMX,
+                        getRewardFunction = { user ->
+                            contract.claimableFn(user)
+                        },
+                    ),
                     preparedTransaction = { user ->
                         PreparedTransaction(
                             getNetwork().toVO(),

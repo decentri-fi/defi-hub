@@ -1,7 +1,7 @@
 package io.defitrack.stakefish.staking
 
-import io.defitrack.claimable.Claimable
 import io.defitrack.claimable.ClaimableRewardFetcher
+import io.defitrack.claimable.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -12,7 +12,6 @@ import io.defitrack.protocol.stakefish.StakefishFeeRecipientContract
 import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import net.bytebuddy.dynamic.scaffold.MethodRegistry.Prepared
 import org.springframework.stereotype.Component
 
 @Component
@@ -27,31 +26,40 @@ class StakefishStakingMarketProvider : FarmingMarketProvider() {
         )
     }
 
-    override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
+    override suspend fun produceMarkets(): Flow<FarmingMarket> {
+        return channelFlow {
 
-        send(
-            create(
-                name = "Stakefish ETH",
-                identifier = "stakefish-eth",
-                stakedToken = getToken("0x0").toFungibleToken(),
-                rewardTokens = listOf(getToken("0x0").toFungibleToken()),
-                vaultType = "stakefish",
-                farmType = ContractType.STAKING,
-                claimableRewardFetcher = ClaimableRewardFetcher(
-                    address = stakefishFeeRecipient,
-                    function = { user ->
-                        stakefishStakingContract.getPendingRewardFunction(user)
-                    },
-                    preparedTransaction = { user ->
-                        PreparedTransaction(
-                            network = getNetwork().toVO(),
-                            function = stakefishStakingContract.claimFunction(user),
-                            to = stakefishFeeRecipient,
-                        )
-                    }
+            val rewardToken = getToken("0x0").toFungibleToken()
+
+            send(
+                create(
+                    name = "Stakefish ETH",
+                    identifier = "stakefish-eth",
+                    stakedToken = rewardToken,
+                    rewardTokens = listOf(rewardToken),
+                    vaultType = "stakefish",
+                    farmType = ContractType.STAKING,
+                    claimableRewardFetcher = ClaimableRewardFetcher(
+                        rewards = listOf(
+                            Reward(
+                                token = rewardToken,
+                                contractAddress = stakefishFeeRecipient,
+                                getRewardFunction = { user ->
+                                    stakefishStakingContract.getPendingRewardFunction(user)
+                                },
+                            )
+                        ),
+                        preparedTransaction = { user ->
+                            PreparedTransaction(
+                                network = getNetwork().toVO(),
+                                function = stakefishStakingContract.claimFunction(user),
+                                to = stakefishFeeRecipient,
+                            )
+                        }
+                    )
                 )
             )
-        )
+        }
     }
 
     override fun getProtocol(): Protocol {

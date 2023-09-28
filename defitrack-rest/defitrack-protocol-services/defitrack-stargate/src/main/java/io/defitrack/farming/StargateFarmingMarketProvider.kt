@@ -1,6 +1,7 @@
 package io.defitrack.farming
 
 import io.defitrack.claimable.ClaimableRewardFetcher
+import io.defitrack.claimable.Reward
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
@@ -33,20 +34,23 @@ abstract class StargateFarmingMarketProvider(
 
         return lpStakingContract.poolInfos().mapIndexed { index, info ->
             val stakedToken = getToken(info.lpToken)
-            val rewardTokens = listOf(stargate)
+            val rewardToken = stargate
 
             create(
                 identifier = "${lpStakingContract.address}-$index",
                 name = "Stargate ${stakedToken.name} Reward",
                 stakedToken = stakedToken.toFungibleToken(),
-                rewardTokens = rewardTokens.map { it.toFungibleToken() },
+                rewardTokens = listOf(rewardToken.toFungibleToken()),
                 vaultType = "stargate-lp-staking",
                 farmType = ContractType.LIQUIDITY_MINING,
                 claimableRewardFetcher = ClaimableRewardFetcher(
-                    address = lpStakingContract.address,
-                    function = {user ->
-                         lpStakingContract.pendingFn(index, user)
-                    },
+                    Reward(
+                        token =  rewardToken.toFungibleToken(),
+                        contractAddress = lpStakingContract.address,
+                        getRewardFunction = { user ->
+                            lpStakingContract.pendingFn(index, user)
+                        }
+                    ),
                     preparedTransaction = { user ->
                         PreparedTransaction(
                             getNetwork().toVO(),

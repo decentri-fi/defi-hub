@@ -41,12 +41,9 @@ class ConvexRewardPoolClaimableProvider(
                 Claimable(
                     id = "${market.id}-claimable-$address",
                     name = "${market.name} reward",
-                    type = "cvx_reward",
                     protocol = getProtocol(),
                     network = getNetwork(),
-                    claimableTokens = listOf(
-                        rewardToken.toFungibleToken()
-                    ),
+                    claimableToken = rewardToken.toFungibleToken(),
                     amount = amount,
                     claimTransaction = PreparedTransaction(
                         getNetwork().toVO(),

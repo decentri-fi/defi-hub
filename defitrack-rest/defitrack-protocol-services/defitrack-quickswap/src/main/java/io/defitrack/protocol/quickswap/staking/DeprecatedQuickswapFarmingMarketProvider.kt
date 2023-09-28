@@ -1,6 +1,7 @@
 package io.defitrack.protocol.quickswap.staking
 
 import io.defitrack.claimable.ClaimableRewardFetcher
+import io.defitrack.claimable.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable
@@ -72,10 +73,13 @@ class DeprecatedQuickswapFarmingMarketProvider(
                                 stakedToken.address
                             )),
                             claimableRewardFetcher = ClaimableRewardFetcher(
-                                rewardPool.address,
-                                { user ->
-                                    rewardPool.earned(user)
-                                },
+                                Reward(
+                                    token = rewardToken.toFungibleToken(),
+                                    contractAddress = rewardPool.address,
+                                    getRewardFunction = { user ->
+                                        rewardPool.earned(user)
+                                    },
+                                ),
                                 preparedTransaction = {
                                     PreparedTransaction(
                                         getNetwork().toVO(), rewardPool.getRewardFunction(), rewardPool.address

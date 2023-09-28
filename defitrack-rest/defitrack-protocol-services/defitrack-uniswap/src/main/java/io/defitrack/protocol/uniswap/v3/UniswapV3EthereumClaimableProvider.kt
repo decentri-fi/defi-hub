@@ -105,23 +105,17 @@ class UniswapV3EthereumClaimableProvider(
                 Claimable(
                     id = "$address-${token1.address}-${token1.address}",
                     name = market.name + " Yield",
-                    type = "UNISWAP_V3",
                     protocol = getProtocol(),
                     network = getNetwork(),
-                    claimableTokens = listOf(
-                        token1.toFungibleToken(),
-                    ),
+                    claimableToken = token1.toFungibleToken(),
                     amount = owedTokens0,
                 ),
                 Claimable(
                     id = "$address-${token0.address}-${token1.address}",
                     name = market.name + " Yield",
-                    type = "UNISWAP_V3",
                     protocol = getProtocol(),
                     network = getNetwork(),
-                    claimableTokens = listOf(
-                        token1.toFungibleToken(),
-                    ),
+                    claimableToken = token1.toFungibleToken(),
                     amount = owedToken1
                 )
             )

@@ -1,6 +1,7 @@
 package io.defitrack.protocol.aave.staking
 
 import io.defitrack.claimable.ClaimableRewardFetcher
+import io.defitrack.claimable.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
@@ -65,10 +66,13 @@ class StABPTStakingMarketProvider(
                 ),
                 farmType = ContractType.STAKING,
                 claimableRewardFetcher = ClaimableRewardFetcher(
-                    address = stABPT,
-                    function = { user ->
-                        stakingContract.getTotalRewardFunction(user)
-                    },
+                    Reward(
+                        token = aaveToken.toFungibleToken(),
+                        contractAddress = stABPT,
+                        getRewardFunction = { user ->
+                            stakingContract.getTotalRewardFunction(user)
+                        }
+                    ),
                     preparedTransaction = { user ->
                         PreparedTransaction(
                             getNetwork().toVO(),

@@ -1,6 +1,7 @@
 package io.defitrack.protocol.farming
 
 import io.defitrack.claimable.ClaimableRewardFetcher
+import io.defitrack.claimable.Reward
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
@@ -63,8 +64,11 @@ abstract class HopFarmingMarketProvider(
                     "contract" to contract
                 ),
                 claimableRewardFetcher = ClaimableRewardFetcher(
-                    address = contract.address,
-                    function = { user -> contract.earnedFn(user) },
+                    Reward(
+                        token = rewardToken.toFungibleToken(),
+                        contractAddress = contract.address,
+                        getRewardFunction = { user -> contract.earnedFn(user) },
+                    ),
                     preparedTransaction = { user ->
                         PreparedTransaction(
                             getNetwork().toVO(),

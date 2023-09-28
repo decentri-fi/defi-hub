@@ -38,10 +38,9 @@ class BalancerZkPolygonUserClaimingRewardProvider(
                                 Claimable(
                                     id = UUID.randomUUID().toString(),
                                     name = balanceResult.token.name + " reward",
-                                    type = "balancer-reward",
                                     protocol = getProtocol(),
                                     network = getNetwork(),
-                                    claimableTokens = listOf(balanceResult.token),
+                                    claimableToken = balanceResult.token,
                                     amount = balanceResult.balance,
                                     claimTransaction = claimTransaction
                                 )

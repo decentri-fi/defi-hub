@@ -1,6 +1,7 @@
 package io.defitrack.protocol.sushiswap.staking
 
 import io.defitrack.claimable.ClaimableRewardFetcher
+import io.defitrack.claimable.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
@@ -14,10 +15,9 @@ import io.defitrack.protocol.contract.MasterChefBasedContract
 import io.defitrack.protocol.contract.MasterChefPoolInfo
 import io.defitrack.protocol.sushiswap.apr.MasterchefBasedfStakingAprCalculator
 import io.defitrack.transaction.PreparedTransaction
-import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import org.springframework.stereotype.Component
+import kotlinx.coroutines.launch
 
 
 //@Component
@@ -76,10 +76,13 @@ class SushiswapEthereumMasterchefMarketProvider : FarmingMarketProvider() {
                     getMarketSize(stakedtoken.toFungibleToken(), chef.address)
                 },
                 claimableRewardFetcher = ClaimableRewardFetcher(
-                    address = chef.address,
-                    function = { user ->
-                        chef.pendingFunction(poolId, user)
-                    },
+                    Reward(
+                        token = rewardToken.toFungibleToken(),
+                        contractAddress = chef.address,
+                        getRewardFunction = { user ->
+                            chef.pendingFunction(poolId, user)
+                        }
+                    ),
                     preparedTransaction = { user ->
                         PreparedTransaction(
                             network = getNetwork().toVO(),

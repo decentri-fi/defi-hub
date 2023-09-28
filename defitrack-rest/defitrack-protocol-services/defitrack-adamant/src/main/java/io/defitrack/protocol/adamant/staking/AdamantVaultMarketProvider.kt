@@ -1,6 +1,7 @@
 package io.defitrack.protocol.adamant.staking
 
 import io.defitrack.claimable.ClaimableRewardFetcher
+import io.defitrack.claimable.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
@@ -42,12 +43,13 @@ class AdamantVaultMarketProvider(
                 async {
                     try {
                         val token = getToken(vault.token())
+                        val rewardToken = addy.await().toFungibleToken()
                         create(
                             name = "${token.name} vault",
                             identifier = vault.address,
                             stakedToken = token.toFungibleToken(),
                             rewardTokens = listOf(
-                                addy.await().toFungibleToken()
+                                rewardToken
                             ),
                             vaultType = "adamant-generic-vault",
                             balanceFetcher = PositionFetcher(
@@ -56,10 +58,13 @@ class AdamantVaultMarketProvider(
                             ),
                             farmType = ContractType.VAULT,
                             claimableRewardFetcher = ClaimableRewardFetcher(
-                                address = vault.address,
-                                function = { user ->
-                                    vault.getPendingRewardFunction(user)
-                                },
+                                Reward(
+                                    token = rewardToken,
+                                    contractAddress = vault.address,
+                                    getRewardFunction = { user ->
+                                        vault.getPendingRewardFunction(user)
+                                    }
+                                ),
                                 preparedTransaction = {
                                     AdamantVaultClaimPreparer(
                                         vault

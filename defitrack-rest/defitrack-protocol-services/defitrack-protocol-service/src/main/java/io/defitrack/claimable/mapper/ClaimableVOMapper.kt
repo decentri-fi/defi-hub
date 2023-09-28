@@ -19,23 +19,22 @@ class ClaimableVOMapper(
 
     suspend fun map(claimable: Claimable): ClaimableVO {
         return with(claimable) {
-            val amount = amount.asEth(claimableTokens.firstOrNull()?.decimals ?: 18)
+            val amount = amount.asEth(claimableToken.decimals)
             val claimableInDollar = priceResource.calculatePrice(
                 PriceRequest(
-                    address = claimableTokens.first().address,
+                    address = claimableToken.address,
                     network = network,
                     amount = amount,
-                    type = claimableTokens.first().type
+                    type = claimableToken.type
                 )
             )
 
             ClaimableVO(
                 id = id,
                 name = name,
-                type = type,
                 protocol = protocolVOMapper.map(protocol),
                 network = network.toVO(),
-                token = claimableTokens.first(),
+                token = claimableToken,
                 amount = amount.toDouble(),
                 dollarValue = claimableInDollar,
                 claimTransaction = preparedTransactionVOMapper.map(claimTransaction)

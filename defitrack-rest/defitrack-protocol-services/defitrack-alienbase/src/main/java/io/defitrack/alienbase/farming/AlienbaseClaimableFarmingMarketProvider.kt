@@ -37,10 +37,9 @@ class AlienbaseClaimableFarmingMarketProvider(
                         Claimable(
                             amount = amount,
                             network = getNetwork(),
-                            type = "alienbase",
                             id = "rwrd_${market.id}_${index}_${amountIndex}",
                             protocol = getProtocol(),
-                            claimableTokens = listOf(token.toFungibleToken()),
+                            claimableToken = token.toFungibleToken(),
                             name = "${market.name} ${token.name} Reward"
                         )
                     } else {

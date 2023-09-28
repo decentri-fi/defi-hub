@@ -39,16 +39,13 @@ class CompoundArbitrumRewardProvider(
                 val market = markets[index]
 
                 Claimable(
-                    "",
-                    "",
-                    type = "compoundv3",
-                    getProtocol(),
-                    getNetwork(),
-                    listOf(
-                        erC20Resource.getTokenInformation(getNetwork(), rewardToken).toFungibleToken()
-                    ),
-                    positionSize,
-                    PreparedTransaction(
+                    id = "",
+                    name = "",
+                    protocol = getProtocol(),
+                    network = getNetwork(),
+                    claimableToken = erC20Resource.getTokenInformation(getNetwork(), rewardToken).toFungibleToken(),
+                    amount = positionSize,
+                    claimTransaction = PreparedTransaction(
                         getNetwork().toVO(),
                         contract.getRewardOwedFn(market, address),
                         contract.address,

@@ -2,6 +2,7 @@ package io.defitrack.aerodrome.farming
 
 import io.defitrack.aerodrome.pooling.AerodromePoolingMarketProvider
 import io.defitrack.claimable.ClaimableRewardFetcher
+import io.defitrack.claimable.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable
@@ -68,10 +69,13 @@ class AerodromeGaugeMarketProvider(
                                     "contract" to contract
                                 ),
                                 claimableRewardFetcher = ClaimableRewardFetcher(
-                                    address = contract.address,
-                                    function = { user ->
-                                        contract.earnedFn(user)
-                                    },
+                                   Reward(
+                                       token = rewardToken.toFungibleToken(),
+                                       contractAddress = contract.address,
+                                       getRewardFunction = { user ->
+                                           contract.earnedFn(user)
+                                       }
+                                   ),
                                     preparedTransaction = { user ->
                                         PreparedTransaction(
                                             network = getNetwork().toVO(),

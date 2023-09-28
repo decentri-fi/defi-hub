@@ -1,8 +1,10 @@
 package io.defitrack.staking
 
 import io.defitrack.claimable.ClaimableRewardFetcher
+import io.defitrack.claimable.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.network.toVO
@@ -30,15 +32,16 @@ class AelinRewardMarketProvider(
     override suspend fun fetchMarkets(): List<FarmingMarket> {
 
         val aelin = getToken(aelinAddress)
+        val rewardToken = aelin.toFungibleToken()
 
         return listOf(
             create(
                 name = "aelin-staking",
                 identifier = "aelin-staking",
                 stakedToken = aelin.toFungibleToken(),
-                rewardTokens = listOf(aelin.toFungibleToken()),
+                rewardTokens = listOf(rewardToken),
                 vaultType = "staking-rewards",
-                marketSize = Refreshable.refreshable {
+                marketSize = refreshable {
                     getMarketSize(
                         aelin.toFungibleToken(),
                         rewardPool.address,
@@ -49,10 +52,13 @@ class AelinRewardMarketProvider(
                     rewardPool.address
                 ),
                 claimableRewardFetcher = ClaimableRewardFetcher(
-                    rewardPool.address,
-                    { user ->
-                        rewardPool.earned(user)
-                    },
+                    Reward(
+                        token = rewardToken,
+                        rewardPool.address,
+                        { user ->
+                            rewardPool.earned(user)
+                        }
+                    ),
                     preparedTransaction = {
                         PreparedTransaction(
                             getNetwork().toVO(), rewardPool.getRewardFunction(), rewardPool.address

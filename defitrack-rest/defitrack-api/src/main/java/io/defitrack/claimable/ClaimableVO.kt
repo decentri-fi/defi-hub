@@ -8,7 +8,6 @@ import io.defitrack.transaction.PreparedTransactionVO
 class ClaimableVO(
     val id: String,
     val name: String,
-    val type: String,
     val protocol: ProtocolVO,
     val network: NetworkVO,
     val dollarValue: Double,

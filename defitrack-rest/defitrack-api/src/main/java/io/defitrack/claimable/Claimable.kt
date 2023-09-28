@@ -11,15 +11,14 @@ import java.math.BigInteger
 class Claimable(
     val id: String,
     val name: String,
-    val type: String,
     val protocol: Protocol,
     val network: Network,
-    val claimableTokens: List<FungibleToken>,
+    val claimableToken: FungibleToken,
     val amount: BigInteger,
     val claimTransaction: PreparedTransaction? = null
 )
 
-class Reward(
+class RewardVO(
     val token: FungibleToken,
     val amount: BigDecimal
 )

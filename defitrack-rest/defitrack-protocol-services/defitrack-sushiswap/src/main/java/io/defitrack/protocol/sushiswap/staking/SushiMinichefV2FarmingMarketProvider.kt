@@ -1,6 +1,7 @@
 package io.defitrack.protocol.sushiswap.staking
 
 import io.defitrack.claimable.ClaimableRewardFetcher
+import io.defitrack.claimable.Reward
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -57,10 +58,13 @@ abstract class SushiMinichefV2FarmingMarketProvider(
                     getMarketSize(stakedtoken.toFungibleToken(), chef.address)
                 },
                 claimableRewardFetcher = ClaimableRewardFetcher(
-                    address = chef.address,
-                    function = { user ->
-                        chef.pendingSushiFunction(poolId, user)
-                    },
+                    Reward(
+                        token = rewardToken.toFungibleToken(),
+                        contractAddress = chef.address,
+                        getRewardFunction = { user ->
+                            chef.pendingSushiFunction(poolId, user)
+                        }
+                    ),
                     preparedTransaction = { user ->
                         PreparedTransaction(
                             network = getNetwork().toVO(),
