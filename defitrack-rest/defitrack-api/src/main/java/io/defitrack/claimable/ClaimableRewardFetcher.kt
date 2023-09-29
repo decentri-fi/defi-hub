@@ -6,7 +6,11 @@ class ClaimableRewardFetcher(
     val rewards: List<Reward>,
     val preparedTransaction: suspend (user: String) -> PreparedTransaction,
 ) {
-    constructor(reward: Reward, preparedTransaction: suspend (user: String) -> PreparedTransaction) : this(
+    constructor(
+        reward: Reward,
+        preparedTransaction: suspend (user: String) -> PreparedTransaction
+    ) : this(
         listOf(reward),
-        preparedTransaction)
+        preparedTransaction,
+    )
 }

@@ -1,7 +1,7 @@
 package io.defitrack.protocol.uniswap.v3
 
-import io.defitrack.claimable.Claimable
-import io.defitrack.claimable.ClaimableRewardProvider
+import io.defitrack.claimable.UserClaimable
+import io.defitrack.claimable.UserClaimableProvider
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
 import io.defitrack.uniswap.v3.UniswapPosition
@@ -19,7 +19,7 @@ import java.math.BigInteger
 @ConditionalOnProperty(value = ["ethereum.enabled", "uniswapv3.enabled"], havingValue = "true", matchIfMissing = true)
 class UniswapV3EthereumClaimableProvider(
     private val uniswapV3PoolingMarketProvider: UniswapV3EthereumPoolingMarketProvider,
-) : ClaimableRewardProvider() {
+) : UserClaimableProvider() {
 
     val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -43,7 +43,7 @@ class UniswapV3EthereumClaimableProvider(
             .times(liquidity).divide(BigInteger.TWO.pow(128))
     }
 
-    override suspend fun claimables(address: String): List<Claimable> = coroutineScope {
+    override suspend fun claimables(address: String): List<UserClaimable> = coroutineScope {
         val positionsForUser = poolingNftContract.getUserPositions(address)
         positionsForUser.map { position ->
             val hasYield =
@@ -63,7 +63,7 @@ class UniswapV3EthereumClaimableProvider(
     private suspend fun transformToClaimables(
         position: UniswapPosition,
         address: String
-    ): List<Claimable> = coroutineScope {
+    ): List<UserClaimable> = coroutineScope {
         try {
             val poolAddress = uniswapV3PoolingMarketProvider.poolFactory.await().getPool(
                 position.token0,
@@ -102,7 +102,7 @@ class UniswapV3EthereumClaimableProvider(
             val token0 = token0Async.await()
 
             listOf(
-                Claimable(
+                UserClaimable(
                     id = "$address-${token1.address}-${token1.address}",
                     name = market.name + " Yield",
                     protocol = getProtocol(),
@@ -110,7 +110,7 @@ class UniswapV3EthereumClaimableProvider(
                     claimableToken = token1.toFungibleToken(),
                     amount = owedTokens0,
                 ),
-                Claimable(
+                UserClaimable(
                     id = "$address-${token0.address}-${token1.address}",
                     name = market.name + " Yield",
                     protocol = getProtocol(),

@@ -1,7 +1,7 @@
 package io.defitrack.claimable.mapper
 
-import io.defitrack.claimable.Claimable
-import io.defitrack.claimable.ClaimableVO
+import io.defitrack.claimable.UserClaimable
+import io.defitrack.claimable.UserClaimableVO
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
@@ -17,8 +17,8 @@ class ClaimableVOMapper(
     private val preparedTransactionVOMapper: PreparedTransactionVOMapper
 ) {
 
-    suspend fun map(claimable: Claimable): ClaimableVO {
-        return with(claimable) {
+    suspend fun map(userClaimable: UserClaimable): UserClaimableVO {
+        return with(userClaimable) {
             val amount = amount.asEth(claimableToken.decimals)
             val claimableInDollar = priceResource.calculatePrice(
                 PriceRequest(
@@ -29,7 +29,7 @@ class ClaimableVOMapper(
                 )
             )
 
-            ClaimableVO(
+            UserClaimableVO(
                 id = id,
                 name = name,
                 protocol = protocolVOMapper.map(protocol),

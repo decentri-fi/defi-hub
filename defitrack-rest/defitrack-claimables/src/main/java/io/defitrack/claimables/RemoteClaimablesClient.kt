@@ -1,6 +1,6 @@
 package io.defitrack.claimables
 
-import io.defitrack.claimable.ClaimableVO
+import io.defitrack.claimable.UserClaimableVO
 import io.defitrack.protocol.ProtocolVO
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -19,7 +19,7 @@ class RemoteClaimablesClient(
 
     val baseUrl = "https://api.decentri.fi"
 
-    override suspend fun getClaimables(address: String, protocol: ProtocolVO): List<ClaimableVO> = withContext(Dispatchers.IO) {
+    override suspend fun getClaimables(address: String, protocol: ProtocolVO): List<UserClaimableVO> = withContext(Dispatchers.IO) {
         val response = httpClient.get("$baseUrl/${protocol.slug}/$address/claimables")
         if (response.status.isSuccess()) {
             response.body()

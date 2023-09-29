@@ -1,7 +1,7 @@
 package io.defitrack.alienbase.farming
 
-import io.defitrack.claimable.Claimable
-import io.defitrack.claimable.ClaimableRewardProvider
+import io.defitrack.claimable.UserClaimable
+import io.defitrack.claimable.UserClaimableProvider
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.protocol.BasedDistributorV2Contract
@@ -14,8 +14,8 @@ import java.math.BigInteger
 @Component
 class AlienbaseClaimableFarmingMarketProvider(
     private val farmingMarketProvider: AlienbaseFarmingMarketProvider
-): ClaimableRewardProvider() {
-    override suspend fun claimables(address: String): List<Claimable> {
+): UserClaimableProvider() {
+    override suspend fun claimables(address: String): List<UserClaimable> {
         val markets = farmingMarketProvider.getMarkets()
 
        return  getBlockchainGateway().readMultiCall(markets.map {
@@ -34,7 +34,7 @@ class AlienbaseClaimableFarmingMarketProvider(
                 amounts.mapIndexedNotNull { amountIndex, amount ->
                     if (amount > BigInteger.ZERO) {
                         val token = erC20Resource.getTokenInformation(getNetwork(), addresses[amountIndex])
-                        Claimable(
+                        UserClaimable(
                             amount = amount,
                             network = getNetwork(),
                             id = "rwrd_${market.id}_${index}_${amountIndex}",

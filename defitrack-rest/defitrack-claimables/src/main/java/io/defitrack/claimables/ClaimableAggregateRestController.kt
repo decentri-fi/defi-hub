@@ -1,6 +1,6 @@
 package io.defitrack.claimables
 
-import io.defitrack.claimable.ClaimableVO
+import io.defitrack.claimable.UserClaimableVO
 import io.defitrack.protocol.DefiPrimitive
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.mapper.ProtocolVOMapper
@@ -27,7 +27,7 @@ class ClaimableAggregateRestController(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @GetMapping("/{address}")
-    suspend fun aggregate(@PathVariable("address") address: String): List<ClaimableVO> = coroutineScope {
+    suspend fun aggregate(@PathVariable("address") address: String): List<UserClaimableVO> = coroutineScope {
         if (!isValidAddress(address)) {
             emptyList()
         } else {

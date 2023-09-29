@@ -5,7 +5,7 @@ import io.defitrack.protocol.ProtocolVO
 import io.defitrack.token.FungibleToken
 import io.defitrack.transaction.PreparedTransactionVO
 
-class ClaimableVO(
+class UserClaimableVO(
     val id: String,
     val name: String,
     val protocol: ProtocolVO,

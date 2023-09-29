@@ -7,7 +7,8 @@ import io.defitrack.protocol.ProtocolService
 import io.defitrack.token.ERC20Resource
 import org.springframework.beans.factory.annotation.Autowired
 
-abstract class ClaimableRewardProvider : ProtocolService {
+@Deprecated("use ClaimableProvider instead")
+abstract class UserClaimableProvider : ProtocolService {
 
     @Autowired
     private lateinit var companyProvider: CompanyProvider;
@@ -18,7 +19,7 @@ abstract class ClaimableRewardProvider : ProtocolService {
     @Autowired
     private lateinit var blockchainGatewayProvider: BlockchainGatewayProvider
 
-    abstract suspend fun claimables(address: String): List<Claimable>
+    abstract suspend fun claimables(address: String): List<UserClaimable>
 
     fun getBlockchainGateway(): BlockchainGateway {
         return blockchainGatewayProvider.getGateway(getNetwork())

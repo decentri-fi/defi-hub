@@ -1,6 +1,6 @@
 package io.defitrack.claimables
 
-import io.defitrack.claimable.ClaimableVO
+import io.defitrack.claimable.UserClaimableVO
 import io.defitrack.protocol.ProtocolVO
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -17,7 +17,7 @@ class LocalClaimablesClient(
     private val httpClient: HttpClient
 ) : ClaimablesClient {
 
-    override suspend fun getClaimables(address: String, protocol: ProtocolVO): List<ClaimableVO> = withContext(Dispatchers.IO) {
+    override suspend fun getClaimables(address: String, protocol: ProtocolVO): List<UserClaimableVO> = withContext(Dispatchers.IO) {
         val response = httpClient.get("http://defitrack-${protocol.company.slug}.default.svc.cluster.local:8080/${protocol.slug}/$address/claimables")
         if (response.status.isSuccess()) {
             response.body()

@@ -1,7 +1,8 @@
 package io.defitrack.protocol.compound.rewards
 
 import io.defitrack.claimable.Claimable
-import io.defitrack.claimable.ClaimableRewardProvider
+import io.defitrack.claimable.UserClaimable
+import io.defitrack.claimable.UserClaimableProvider
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.network.toVO
@@ -14,13 +15,13 @@ import java.math.BigInteger
 
 @Component
 class CompoundArbitrumRewardProvider(
-) : ClaimableRewardProvider() {
+) : UserClaimableProvider() {
 
     val deferredContract = lazyAsync {
         CompoundRewardContract(getBlockchainGateway(), CompoundAddressesProvider.CONFIG[getNetwork()]!!.rewards)
     }
 
-    override suspend fun claimables(address: String): List<Claimable> {
+    override suspend fun claimables(address: String): List<UserClaimable> {
         val contract = deferredContract.await()
         val markets = CompoundAddressesProvider.CONFIG[getNetwork()]!!.v3Tokens
 
@@ -38,7 +39,7 @@ class CompoundArbitrumRewardProvider(
 
                 val market = markets[index]
 
-                Claimable(
+                UserClaimable(
                     id = "",
                     name = "",
                     protocol = getProtocol(),

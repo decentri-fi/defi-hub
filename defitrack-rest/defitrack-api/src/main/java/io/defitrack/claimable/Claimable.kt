@@ -2,23 +2,11 @@ package io.defitrack.claimable
 
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol
-import io.defitrack.token.FungibleToken
-import io.defitrack.transaction.PreparedTransaction
-import java.math.BigDecimal
-import java.math.BigInteger
-
 
 class Claimable(
     val id: String,
     val name: String,
-    val protocol: Protocol,
     val network: Network,
-    val claimableToken: FungibleToken,
-    val amount: BigInteger,
-    val claimTransaction: PreparedTransaction? = null
-)
-
-class RewardVO(
-    val token: FungibleToken,
-    val amount: BigDecimal
+    val protocol: Protocol,
+    val claimableRewardFetcher: ClaimableRewardFetcher,
 )

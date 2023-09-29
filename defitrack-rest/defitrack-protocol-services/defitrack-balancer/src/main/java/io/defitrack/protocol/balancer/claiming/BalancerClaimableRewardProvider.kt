@@ -1,8 +1,6 @@
 package io.defitrack.protocol.balancer.claiming
 
-import io.defitrack.claimable.Claimable
-import io.defitrack.claimable.ClaimableRewardProvider
-import io.defitrack.claimable.PrepareClaimCommand
+import io.defitrack.claimable.*
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerGaugeContract
@@ -14,13 +12,13 @@ import java.util.*
 
 abstract class BalancerClaimableRewardProvider(
     private val farmingMarketProvider: FarmingMarketProvider
-) : ClaimableRewardProvider() {
+) : UserClaimableProvider() {
 
     override fun getProtocol(): Protocol {
         return Protocol.BALANCER
     }
 
-    override suspend fun claimables(address: String): List<Claimable> =
+    override suspend fun claimables(address: String): List<UserClaimable> =
         coroutineScope {
             farmingMarketProvider.getMarkets().map { liquidityGauge ->
                 async {
@@ -37,7 +35,7 @@ abstract class BalancerClaimableRewardProvider(
                         gaugeContract.getBalances(address, liquidityGauge.rewardTokens)
                             .filter { it.balance > BigInteger.ZERO }
                             .map { balanceResult ->
-                                Claimable(
+                                UserClaimable(
                                     id = UUID.randomUUID().toString(),
                                     name = balanceResult.token.name + " reward",
                                     protocol = getProtocol(),

@@ -1,7 +1,7 @@
 package io.defitrack.claimable
 
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.market.farming.FarmingMarketProvider
+import io.defitrack.market.farming.ClaimableMarketProvider
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -11,30 +11,28 @@ import java.math.BigInteger
 
 @Component
 class DefaultClaimableRewardProvider(
-    private val farmingMarketProviders: List<FarmingMarketProvider>,
+    private val farmingMarketProviders: List<ClaimableMarketProvider>,
     private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
-    suspend fun claimables(address: String): List<Claimable> = coroutineScope {
-        val markets = farmingMarketProviders.flatMap {
-            it.getMarkets()
-        }.filter {
-            it.claimableRewardFetcher != null
+    suspend fun claimables(address: String): List<UserClaimable> = coroutineScope {
+        val fetchersByNetwork = farmingMarketProviders.flatMap {
+            it.getClaimables()
         }.groupBy {
             it.network
         }
 
-        if (markets.isEmpty()) {
+        if (fetchersByNetwork.isEmpty()) {
             return@coroutineScope emptyList()
         }
 
-        return@coroutineScope markets.map { entry ->
+        return@coroutineScope fetchersByNetwork.map { entry ->
             async {
                 try {
-                    val rewards = entry.value.flatMap { market ->
-                        market.claimableRewardFetcher!!.rewards.map {
-                            it to market
+                    val rewards = entry.value.flatMap { claimable ->
+                        claimable.claimableRewardFetcher.rewards.map {
+                            it to claimable
                         }
                     }
 
@@ -46,14 +44,16 @@ class DefaultClaimableRewardProvider(
 
                         if (earned > BigInteger.ONE) {
 
-                            Claimable(
+                            UserClaimable(
                                 id = "rwrd_${reward.second.id}",
                                 name = reward.second.name,
                                 protocol = reward.second.protocol,
                                 network = reward.second.network,
                                 amount = earned,
                                 claimableToken = reward.first.token,
-                                claimTransaction = reward.second.claimableRewardFetcher!!.preparedTransaction.invoke(address),
+                                claimTransaction = reward.second.claimableRewardFetcher.preparedTransaction.invoke(
+                                    address
+                                ),
                             )
                         } else {
                             null

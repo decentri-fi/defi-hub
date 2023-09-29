@@ -30,7 +30,6 @@ class ERC20ContractReader(
 
                 try {
                     val result = it.readData()
-                    println("got data for $address on $network")
                     ERC20(
                         name = if (result[0].success) result[0].data.first().value as String else it.name(),
                         symbol = if (result[1].success) result[1].data.first().value as String else it.symbol(),

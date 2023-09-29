@@ -15,7 +15,7 @@ import org.web3j.crypto.WalletUtils.isValidAddress
 @RestController
 @RequestMapping("/{protocol}")
 class DefaultClaimableRestController(
-    private val claimableRewardProviders: List<ClaimableRewardProvider>,
+    private val userClaimableProviders: List<UserClaimableProvider>,
     private val defaultClaimableRewardProvider: DefaultClaimableRewardProvider,
     private val claimableVOMapper: ClaimableVOMapper
 ) {
@@ -28,7 +28,7 @@ class DefaultClaimableRestController(
     suspend fun claimables(
         @PathVariable("protocol") protocol: String,
         @PathVariable("address") address: String,
-    ): List<ClaimableVO> = coroutineScope {
+    ): List<UserClaimableVO> = coroutineScope {
 
         if(!isValidAddress(address)) {
             return@coroutineScope emptyList()
@@ -46,18 +46,18 @@ class DefaultClaimableRestController(
         awaitAll(fromProviders, fromDefaultProvider).flatten().filterNotNull()
     }
 
-    private suspend fun toVO(it: Claimable) = try {
+    private suspend fun toVO(it: UserClaimable) = try {
         claimableVOMapper.map(it)
     } catch (ex: Exception) {
         logger.error("Error while fetching claimable", ex)
         null
     }
 
-    private suspend fun getFromDefaultProvider(user: String): List<Claimable> {
+    private suspend fun getFromDefaultProvider(user: String): List<UserClaimable> {
         return defaultClaimableRewardProvider.claimables(user)
     }
 
-    private suspend fun getFromProviders(protocol: String, address: String) = claimableRewardProviders
+    private suspend fun getFromProviders(protocol: String, address: String) = userClaimableProviders
         .filter {
             it.getProtocol().slug == protocol
         }.flatMap {
