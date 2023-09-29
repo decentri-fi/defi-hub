@@ -59,7 +59,6 @@ class EthereumSetPoolingMarketProvider(
                         val supply = tokenContract.totalSupply().asEth(tokenContract.decimals())
                         price.times(supply)
                     },
-                    tokenType = TokenType.SET,
                     positionFetcher = defaultPositionFetcher(it),
                     investmentPreparer = null,
                     totalSupply = refreshable(token.totalDecimalSupply()) {

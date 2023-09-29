@@ -50,7 +50,6 @@ class PolygonSetPoolingMarketProvider(
                             val supply = token.totalSupply.asEth(token.decimals)
                             price.times(supply)
                         },
-                        tokenType = TokenType.SET,
                         positionFetcher = defaultPositionFetcher(it),
                         investmentPreparer = null,
                         totalSupply = refreshable(token.totalSupply.asEth(token.decimals)) {

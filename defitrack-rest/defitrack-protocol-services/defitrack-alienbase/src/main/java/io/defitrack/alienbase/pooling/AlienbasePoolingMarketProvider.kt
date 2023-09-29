@@ -53,7 +53,6 @@ class AlienbasePoolingMarketProvider(
                                 breakdown = breakdown,
                                 symbol = poolingToken.symbol,
                                 tokens = poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
-                                tokenType = TokenType.VELODROME,
                                 totalSupply = refreshable(poolingToken.totalSupply.asEth(poolingToken.decimals)) {
                                     with(getToken(it)) {
                                         totalSupply.asEth(decimals)

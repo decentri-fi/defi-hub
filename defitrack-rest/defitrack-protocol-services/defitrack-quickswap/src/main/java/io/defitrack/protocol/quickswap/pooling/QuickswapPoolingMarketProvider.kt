@@ -56,7 +56,6 @@ class QuickswapPoolingMarketProvider(
             ),
             apr = quickswapAPRService.getLPAPR(it.id),
             marketSize = refreshable(it.reserveUSD),
-            tokenType = TokenType.QUICKSWAP,
             positionFetcher = defaultPositionFetcher(token.address),
             totalSupply = refreshable(token.totalSupply.asEth(token.decimals)) {
                 getToken(it.id).totalSupply.asEth(token.decimals)

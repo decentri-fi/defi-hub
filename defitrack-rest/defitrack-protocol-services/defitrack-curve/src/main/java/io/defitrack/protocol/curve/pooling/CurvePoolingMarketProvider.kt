@@ -38,14 +38,11 @@ abstract class CurvePoolingMarketProvider(
             val poolContract = CurvePoolContract(getBlockchainGateway(), pool)
             val poolAsERC20 = getToken(pool)
 
-            val balances = balances[it.key]!!
-
             val market = create(
                 name = poolAsERC20.name,
                 address = pool,
                 identifier = createId(pool),
                 symbol = poolAsERC20.symbol,
-                tokenType = TokenType.CURVE,
                 tokens = underlyingTokens
                     .map { it.toFungibleToken() },
                 totalSupply = Refreshable.refreshable(poolAsERC20.totalSupply.asEth(poolAsERC20.decimals)) {

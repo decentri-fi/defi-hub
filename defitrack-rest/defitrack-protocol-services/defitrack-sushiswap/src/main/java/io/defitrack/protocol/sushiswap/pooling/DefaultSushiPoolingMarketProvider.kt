@@ -20,7 +20,6 @@ abstract class DefaultSushiPoolingMarketProvider(
     }
 
     override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
-
         sushiServices.filter { sushiswapService ->
             sushiswapService.getNetwork() == getNetwork()
         }.flatMap { service ->
@@ -44,7 +43,6 @@ abstract class DefaultSushiPoolingMarketProvider(
                                     apr = SushiPoolingAPRCalculator(service, it.id).calculateApr(),
                                     identifier = it.id,
                                     marketSize = refreshable(it.reserveUSD),
-                                    tokenType = TokenType.SUSHISWAP,
                                     positionFetcher = defaultPositionFetcher(token.address),
                                     totalSupply = Refreshable.refreshable(token.totalDecimalSupply()) {
                                         getToken(it.id).totalDecimalSupply()

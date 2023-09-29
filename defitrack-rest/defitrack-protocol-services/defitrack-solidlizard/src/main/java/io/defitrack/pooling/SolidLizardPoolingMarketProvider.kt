@@ -36,7 +36,6 @@ class SolidLizardPoolingMarketProvider : PoolingMarketProvider() {
                             fiftyFiftyBreakdown(tokens[0], tokens[1], token.address).sumOf { it.reserveUSD }
                         },
                         positionFetcher = defaultPositionFetcher(token.address),
-                        tokenType = TokenType.SOLIDLIZARD,
                         tokens = token.underlyingTokens.map(TokenInformationVO::toFungibleToken),
                         symbol = token.symbol,
                         breakdown = breakdown,

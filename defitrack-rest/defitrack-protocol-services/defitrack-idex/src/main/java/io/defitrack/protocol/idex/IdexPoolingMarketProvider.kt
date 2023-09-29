@@ -38,11 +38,9 @@ class IdexPoolingMarketProvider(
                                 ),
                                 apr = BigDecimal.ZERO,
                                 marketSize = Refreshable.refreshable(it.reserveUsd),
-                                tokenType = TokenType.IDEX,
                                 positionFetcher = defaultPositionFetcher(token.address),
                                 totalSupply = Refreshable.refreshable(token.totalSupply.asEth(token.decimals)) {
-                                    val token = getToken(it.liquidityToken)
-                                    token.totalSupply.asEth(token.decimals)
+                                    getToken(it.liquidityToken).totalDecimalSupply()
                                 }
                             )
                         } catch (ex: Exception) {

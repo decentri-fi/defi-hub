@@ -39,7 +39,6 @@ class PoolTogetherOptimismAUSDCTicketMarketProvider(
                         )
                     ).toBigDecimal()
                 },
-                tokenType = TokenType.POOLTOGETHER,
                 positionFetcher = defaultPositionFetcher(token.address),
                 totalSupply = refreshable(supply) {
                     val token = getToken(usdcTicketAddress)

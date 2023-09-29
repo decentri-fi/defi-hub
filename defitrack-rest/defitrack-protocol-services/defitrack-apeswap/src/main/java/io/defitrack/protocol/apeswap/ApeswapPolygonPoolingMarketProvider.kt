@@ -58,7 +58,6 @@ class ApeswapPolygonPoolingMarketProvider(
                                 },
                                 breakdown = breakdown,
                                 tokens = underlyingTokens,
-                                tokenType = TokenType.APE,
                                 positionFetcher = defaultPositionFetcher(poolingToken.address),
                                 totalSupply = refreshable {
                                     getToken(pool).totalDecimalSupply()

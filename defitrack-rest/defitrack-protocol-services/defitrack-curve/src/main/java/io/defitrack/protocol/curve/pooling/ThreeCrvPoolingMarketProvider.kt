@@ -53,7 +53,6 @@ class ThreeCrvPoolingMarketProvider : PoolingMarketProvider() {
                 },
                 tokens = underlyingTokens,
                 erc20Compatible = true,
-                tokenType = TokenType.CURVE,
                 totalSupply = refreshable(token.totalDecimalSupply()) {
                     getToken(address).totalDecimalSupply()
                 },

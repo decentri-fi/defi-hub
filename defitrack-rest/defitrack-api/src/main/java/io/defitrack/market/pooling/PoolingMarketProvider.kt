@@ -22,8 +22,6 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
         address: String,
         decimals: Int = 18,
         symbol: String,
-        //TODO: remove this
-        tokenType: TokenType,
         tokens: List<FungibleToken>,
         totalSupply: Refreshable<BigDecimal>,
         positionFetcher: PositionFetcher? = null,

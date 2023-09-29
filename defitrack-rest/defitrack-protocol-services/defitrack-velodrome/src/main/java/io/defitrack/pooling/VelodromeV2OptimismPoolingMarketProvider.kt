@@ -50,9 +50,8 @@ class VelodromeV2OptimismPoolingMarketProvider(
                                 breakdown = breakdown,
                                 symbol = poolingToken.symbol,
                                 tokens = poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
-                                tokenType = TokenType.VELODROME,
                                 totalSupply = refreshable(poolingToken.totalSupply.asEth(poolingToken.decimals)) {
-                                    getToken(it).totalSupply.asEth(poolingToken.decimals)
+                                    getToken(it).totalDecimalSupply()
                                 },
                                 deprecated = false,
                                 price = refreshable {

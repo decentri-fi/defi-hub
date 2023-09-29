@@ -33,7 +33,6 @@ class PoolTogetherEthereumAUSDCTicketMarketProvider : PoolingMarketProvider() {
                         PriceRequest(usdcAddress, getNetwork(), token.totalDecimalSupply())
                     ).toBigDecimal()
                 },
-                tokenType = TokenType.POOLTOGETHER,
                 positionFetcher = defaultPositionFetcher(token.address),
                 totalSupply = refreshable(token.totalSupply.asEth(token.decimals)) {
                     val token = getToken(usdcTicketAddress)

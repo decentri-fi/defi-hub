@@ -55,7 +55,6 @@ class CamelotNFTV2PoolingMarketProvider(
             symbol = token0.symbol + "/" + token1.symbol,
             breakdown = emptyList(),
             erc20Compatible = false,
-            tokenType = TokenType.ALGEBRA_NFT,
             totalSupply = Refreshable.refreshable {
                 pool.liquidity().asEth()
             },

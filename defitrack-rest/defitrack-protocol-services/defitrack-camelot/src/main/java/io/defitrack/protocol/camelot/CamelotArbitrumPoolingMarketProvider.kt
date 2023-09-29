@@ -51,7 +51,6 @@ class CamelotArbitrumPoolingMarketProvider(
                                 },
                                 breakdown = breakdown,
                                 tokens = underlyingTokens,
-                                tokenType = TokenType.CAMELOT,
                                 positionFetcher = defaultPositionFetcher(poolingToken.address),
                                 totalSupply = refreshable(poolingToken.totalDecimalSupply()) {
                                     getToken(pool).totalDecimalSupply()

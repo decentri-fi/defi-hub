@@ -73,7 +73,6 @@ abstract class HopPoolingMarketProvider(
                     getNetwork(),
                     marketSize
                 ),
-                tokenType = TokenType.HOP,
                 positionFetcher = defaultPositionFetcher(hopLpToken.lpToken),
                 totalSupply = refreshable {
                     contract.totalSupply().asEth(contract.decimals())

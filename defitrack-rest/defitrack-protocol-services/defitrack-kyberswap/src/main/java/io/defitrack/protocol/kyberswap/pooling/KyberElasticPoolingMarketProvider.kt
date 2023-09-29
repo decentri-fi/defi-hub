@@ -49,7 +49,6 @@ class KyberElasticPoolingMarketProvider(
                         breakdown = breakdown,
                         symbol = poolingToken.symbol,
                         tokens = poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
-                        tokenType = TokenType.VELODROME,
                         totalSupply = refreshable(poolingToken.totalSupply.asEth(poolingToken.decimals)) {
                             val token = getToken(poolInfo.address)
                             token.totalSupply.asEth(token.decimals)

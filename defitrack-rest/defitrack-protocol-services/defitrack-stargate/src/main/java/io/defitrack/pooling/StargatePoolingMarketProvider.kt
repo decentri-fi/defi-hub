@@ -51,7 +51,6 @@ abstract class StargatePoolingMarketProvider(
                             identifier = pool.address,
                             address = pool.address,
                             symbol = pool.symbol(),
-                            tokenType = TokenType.STARGATE,
                             tokens = listOf(underlying.toFungibleToken()),
                             decimals = pool.decimals(),
                             totalSupply = Refreshable.refreshable {

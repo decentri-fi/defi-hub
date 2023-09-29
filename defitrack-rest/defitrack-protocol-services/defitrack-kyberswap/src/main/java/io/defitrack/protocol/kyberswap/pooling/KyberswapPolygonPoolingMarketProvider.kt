@@ -42,9 +42,8 @@ class KyberswapPolygonPoolingMarketProvider(
                         ),
                         apr = kyberswapAPRService.getAPR(it.pair.id, getNetwork()),
                         marketSize = refreshable(it.reserveUSD),
-                        tokenType = TokenType.KYBER,
                         positionFetcher = defaultPositionFetcher(token.address),
-                        totalSupply = Refreshable.refreshable(supply) {
+                        totalSupply = refreshable(supply) {
                             val token = getToken(it.id)
                             token.totalSupply.asEth(token.decimals)
                         }

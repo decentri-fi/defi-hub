@@ -132,7 +132,6 @@ abstract class UniswapV3PoolingMarketProvider(
                         it.reserveUSD
                     }
                 },
-                tokenType = TokenType.UNISWAP,
                 positionFetcher = null,
                 totalSupply = refreshable(totalSupply) {
                     pool.refreshLiquidity().asEth()

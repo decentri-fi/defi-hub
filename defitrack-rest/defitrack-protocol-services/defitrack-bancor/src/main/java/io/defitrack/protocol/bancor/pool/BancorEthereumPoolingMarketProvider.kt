@@ -2,7 +2,7 @@ package io.defitrack.protocol.bancor.pool
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
-import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -10,7 +10,6 @@ import io.defitrack.protocol.bancor.BancorEthereumProvider
 import io.defitrack.protocol.bancor.contract.BancorNetworkContract
 import io.defitrack.protocol.bancor.contract.BancorPoolCollectionContract
 import io.defitrack.protocol.bancor.contract.PoolTokenContract
-import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -55,15 +54,12 @@ class BancorEthereumPoolingMarketProvider(
                         address = pool,
                         name = token.name,
                         symbol = token.symbol,
-                        tokens = listOf(
-                            underlying
-                        ),
-                        tokenType = TokenType.BANCOR,
+                        tokens = listOf(underlying),
                         investmentPreparer = BancorPoolInvestmentPreparer(
                             getERC20Resource(), bancorNetworkContract.await(), underlying.address
                         ),
                         positionFetcher = defaultPositionFetcher(token.address),
-                        totalSupply = Refreshable.refreshable {
+                        totalSupply = refreshable {
                             getToken(pool).totalDecimalSupply()
                         }
                     )

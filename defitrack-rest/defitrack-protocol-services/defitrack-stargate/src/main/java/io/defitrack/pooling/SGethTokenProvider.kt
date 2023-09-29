@@ -36,7 +36,6 @@ abstract class SGethTokenProvider(
                 },
                 address = address,
                 symbol = "sgeth",
-                tokenType = TokenType.STARGATE_VAULT,
                 tokens = listOf(underlying.toFungibleToken()),
                 totalSupply = Refreshable.refreshable(token.totalDecimalSupply()) {
                     getToken(address).totalDecimalSupply()

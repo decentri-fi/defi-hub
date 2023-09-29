@@ -3,6 +3,7 @@ package io.defitrack.protocol.aave.pooling
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -32,13 +33,12 @@ class ABPTPoolingMarketProvider() : PoolingMarketProvider(
                 name = "Aave Balance Pool Token",
                 symbol = "ABPT",
                 tokens = tokens,
-                marketSize = Refreshable.refreshable {
+                marketSize = refreshable {
                     getMarketSize(
                         tokens, bPool
                     )
                 },
-                tokenType = TokenType.BALANCER,
-                totalSupply = Refreshable.refreshable {
+                totalSupply = refreshable {
                     getToken(abptAddress).totalDecimalSupply()
                 }
             )

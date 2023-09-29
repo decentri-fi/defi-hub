@@ -134,7 +134,6 @@ abstract class BalancerPoolingMarketProvider(
                         )
                     }.toBigDecimal()
                 },
-                tokenType = TokenType.BALANCER,
                 positionFetcher = defaultPositionFetcher(pool),
                 totalSupply = Refreshable.refreshable {
                     getToken(pool).totalDecimalSupply()
