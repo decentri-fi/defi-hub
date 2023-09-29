@@ -57,13 +57,11 @@ class ERC20RestController(
         val observation = Observation.start("erc20.get-token-information", observationRegistry)
             .lowCardinalityKeyValue("network", networkName)
         try {
-            withTimeout(12000L) {
-                ResponseEntity.ok(
-                    erc20Service.getTokenInformation(
-                        address, network
-                    ).toVO()
-                )
-            }
+            ResponseEntity.ok(
+                erc20Service.getTokenInformation(
+                    address, network
+                ).toVO()
+            )
         } catch (ex: Exception) {
             logger.debug("Error while getting token information", ex)
             ResponseEntity.notFound().build()

@@ -56,10 +56,8 @@ class BlockchainGateway(
     suspend fun readMultiCall(
         elements: List<MultiCallElement>,
     ): List<MultiCallResult> {
-        return retry(limitAttempts(5) + binaryExponentialBackoff(1000, 10000)) {
-            multicallCaller.readMultiCall(elements) { address, function ->
-                executeCall(address, function)
-            }
+        return multicallCaller.readMultiCall(elements) { address, function ->
+            executeCall(address, function)
         }
     }
 
@@ -124,7 +122,7 @@ class BlockchainGateway(
         contract: String,
         encodedFunction: String
     ): EthCall? = withContext(Dispatchers.IO) {
-        retry(limitAttempts(5) + binaryExponentialBackoff(1000, 10000)) {
+        retry(limitAttempts(5) + binaryExponentialBackoff(200, 3000)) {
             val post = httpClient.post("$endpoint/contract/call") {
                 contentType(ContentType.Application.Json)
                 setBody(
@@ -143,6 +141,7 @@ class BlockchainGateway(
             }
         }
     }
+
 
     companion object {
 
