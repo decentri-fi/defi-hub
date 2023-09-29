@@ -21,6 +21,7 @@ import io.defitrack.token.MarketSizeService
 import io.defitrack.transaction.PreparedTransaction
 import io.github.reactivecircus.cache4k.Cache
 import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.core.instrument.Tag
 import io.micrometer.observation.ObservationRegistry
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
@@ -119,7 +120,9 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
             "markets.${it.type}.updated",
             MarketAddedEvent.create(it)
         )
-        meterregisty.counter("markets.${it.type}.added", it.protocol.slug).increment()
+        meterregisty.counter("markets.${it.type}.added", listOf(
+            Tag.of("protocol", it.protocol.slug)
+        )).increment()
     }
 
     private suspend fun populate() = try {

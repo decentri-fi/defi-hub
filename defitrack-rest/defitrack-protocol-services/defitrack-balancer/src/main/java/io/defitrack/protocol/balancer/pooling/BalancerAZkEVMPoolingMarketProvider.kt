@@ -1,9 +1,11 @@
 package io.defitrack.protocol.balancer.pooling
 
 import io.defitrack.common.network.Network
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 
 @Component
+@ConditionalOnProperty(value = ["polygon-zkevm.enabled"], havingValue = "true", matchIfMissing = true)
 class BalancerAZkEVMPoolingMarketProvider : BalancerPoolingMarketProvider(
     listOf(
         "0x4b7b369989e613ff2C65768B7Cf930cC927F901E",

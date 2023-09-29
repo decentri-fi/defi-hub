@@ -1,9 +1,11 @@
 package io.defitrack.protocol.balancer.pooling
 
 import io.defitrack.common.network.Network
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 
 @Component
+@ConditionalOnProperty(value = ["ethereum.enabled"], havingValue = "true", matchIfMissing = true)
 class BalancerEthereumPoolingMarketProvider : BalancerPoolingMarketProvider(
     listOf(
         "0x67d27634e44793fe63c467035e31ea8635117cd4", //meta stable pool factory

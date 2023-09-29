@@ -1,11 +1,13 @@
 package io.defitrack.protocol.balancer.pooling
 
 import io.defitrack.common.network.Network
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 import org.web3j.abi.TypeEncoder
 import org.web3j.abi.datatypes.Address
 
 @Component
+@ConditionalOnProperty(value = ["polygon.enabled"], havingValue = "true", matchIfMissing = true)
 class BalancerPolygonPoolingMarketProvider : BalancerPoolingMarketProvider(
     listOf(
         "0xAB2372275809E15198A7968C7f324053867cdB0C",

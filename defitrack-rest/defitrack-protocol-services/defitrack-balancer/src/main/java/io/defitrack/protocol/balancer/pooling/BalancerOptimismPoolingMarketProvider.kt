@@ -1,9 +1,11 @@
 package io.defitrack.protocol.balancer.pooling
 
 import io.defitrack.common.network.Network
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 
 @Component
+@ConditionalOnProperty(value = ["optimism.enabled"], havingValue = "true", matchIfMissing = true)
 class BalancerOptimismPoolingMarketProvider : BalancerPoolingMarketProvider(
     listOf(
         "0x7396f99B48e7436b152427bfA3DD6Aa8C7C6d05B",

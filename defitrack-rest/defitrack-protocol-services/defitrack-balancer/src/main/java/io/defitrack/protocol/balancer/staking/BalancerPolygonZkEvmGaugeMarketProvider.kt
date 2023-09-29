@@ -15,11 +15,13 @@ import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerGaugeContract
 import io.defitrack.protocol.balancer.pooling.BalancerAZkEVMPoolingMarketProvider
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 import org.web3j.abi.datatypes.Event
 import java.math.BigInteger
 
 @Component
+@ConditionalOnProperty(value = ["polygon-zkevm.enabled"], havingValue = "true", matchIfMissing = true)
 class BalancerPolygonZkEvmGaugeMarketProvider(
 ) : FarmingMarketProvider() {
 
