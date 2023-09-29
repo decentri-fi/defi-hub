@@ -39,22 +39,29 @@ class DefaultClaimableRewardProvider(
                     blockchainGatewayProvider.getGateway(entry.key).readMultiCall(
                         rewards.map { it.first.toMulticall(address) }
                     ).mapIndexed { index, retVal ->
-                        val reward = rewards[index]
-                        val earned = reward.first.extractAmountFromRewardFunction(retVal.data)
 
-                        if (earned > BigInteger.ONE) {
+                        if (retVal.success) {
 
-                            UserClaimable(
-                                id = "rwrd_${reward.second.id}",
-                                name = reward.second.name,
-                                protocol = reward.second.protocol,
-                                network = reward.second.network,
-                                amount = earned,
-                                claimableToken = reward.first.token,
-                                claimTransaction = reward.second.claimableRewardFetcher.preparedTransaction.invoke(
-                                    address
-                                ),
-                            )
+
+                            val reward = rewards[index]
+                            val earned = reward.first.extractAmountFromRewardFunction(retVal.data)
+
+                            if (earned > BigInteger.ONE) {
+
+                                UserClaimable(
+                                    id = "rwrd_${reward.second.id}",
+                                    name = reward.second.name,
+                                    protocol = reward.second.protocol,
+                                    network = reward.second.network,
+                                    amount = earned,
+                                    claimableToken = reward.first.token,
+                                    claimTransaction = reward.second.claimableRewardFetcher.preparedTransaction.invoke(
+                                        address
+                                    ),
+                                )
+                            } else {
+                                null
+                            }
                         } else {
                             null
                         }
