@@ -11,9 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired
 abstract class UserClaimableProvider : ProtocolService {
 
     @Autowired
-    private lateinit var companyProvider: CompanyProvider;
-
-    @Autowired
     lateinit var erC20Resource: ERC20Resource;
 
     @Autowired

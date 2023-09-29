@@ -1,6 +1,6 @@
 package io.defitrack.market.farming
 
-import io.defitrack.claimable.Claimable
+import io.defitrack.claimable.ClaimableMarket
 import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.exit.ExitPositionPreparer
@@ -50,11 +50,11 @@ abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>(), Claimabl
         )
     }
 
-    override suspend fun getClaimables(): List<Claimable> {
+    override suspend fun getClaimables(): List<ClaimableMarket> {
         return getMarkets().filter {
             it.claimableRewardFetcher != null
         }.map {
-            Claimable(
+            ClaimableMarket(
                 id = "rwrd_" + it.id,
                 name = it.name + " reward",
                 network = it.network,
