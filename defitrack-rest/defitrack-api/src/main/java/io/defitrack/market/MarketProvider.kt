@@ -20,6 +20,8 @@ import io.defitrack.token.FungibleToken
 import io.defitrack.token.MarketSizeService
 import io.defitrack.transaction.PreparedTransaction
 import io.github.reactivecircus.cache4k.Cache
+import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.observation.ObservationRegistry
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -45,6 +47,12 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
     private lateinit var erC20Resource: ERC20Resource
 
     @Autowired
+    private lateinit var observationRegistry: ObservationRegistry
+
+    @Autowired
+    private lateinit var meterregisty: MeterRegistry
+
+    @Autowired
     private lateinit var eventService: EventService
 
     @Autowired
@@ -55,7 +63,6 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
 
     @Autowired
     lateinit var marketSizeService: MarketSizeService
-
 
     @Autowired
     private lateinit var blockchainGatewayProvider: BlockchainGatewayProvider
@@ -91,21 +98,11 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
             try {
                 val markets = populate()
                 markets.forEach {
-                    logger.debug("adding ${it.id}")
-                    cache.put(it.id, it)
-                    eventService.publish(
-                        "markets.${it.type}.updated",
-                       MarketAddedEvent.create(it)
-                    )
+                    putInCache(it)
                 }
 
                 produceMarkets().collect {
-                    logger.debug("adding ${it.id}")
-                    cache.put(it.id, it)
-                    eventService.publish(
-                        "markets.${it.type}.updated",
-                        MarketAddedEvent.create(it)
-                    )
+                    putInCache(it)
                 }
                 logger.info("done adding ${cache.asMap().size} markets")
             } catch (ex: Exception) {
@@ -114,6 +111,16 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
         }
 
         logger.info("cache population took ${millis / 1000}s")
+    }
+
+    private fun putInCache(it: T) {
+        logger.debug("adding ${it.id}")
+        cache.put(it.id, it)
+        eventService.publish(
+            "markets.${it.type}.updated",
+            MarketAddedEvent.create(it)
+        )
+        meterregisty.counter("markets.${it.type}.added").increment()
     }
 
     private suspend fun populate() = try {

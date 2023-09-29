@@ -24,7 +24,6 @@ abstract class CurvePoolingMarketProvider(
         )
     }
 
-
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
         val contract = factory.await()
         val coinsPerPool = contract.getCoins()

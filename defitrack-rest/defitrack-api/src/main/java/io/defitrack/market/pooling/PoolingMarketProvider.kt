@@ -3,7 +3,6 @@ package io.defitrack.market.pooling
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.BigDecimalExtensions.isZero
 import io.defitrack.common.utils.Refreshable
-import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.MarketProvider
 import io.defitrack.market.farming.domain.InvestmentPreparer
 import io.defitrack.market.lending.domain.PositionFetcher
@@ -23,6 +22,7 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
         address: String,
         decimals: Int = 18,
         symbol: String,
+        //TODO: remove this
         tokenType: TokenType,
         tokens: List<FungibleToken>,
         totalSupply: Refreshable<BigDecimal>,
