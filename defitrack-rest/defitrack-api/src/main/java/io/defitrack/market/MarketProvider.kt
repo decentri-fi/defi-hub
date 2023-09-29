@@ -67,7 +67,6 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
     @Autowired
     private lateinit var blockchainGatewayProvider: BlockchainGatewayProvider
 
-
     protected open suspend fun produceMarkets(): Flow<T> {
         return emptyFlow()
     }
@@ -120,7 +119,7 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
             "markets.${it.type}.updated",
             MarketAddedEvent.create(it)
         )
-        meterregisty.counter("markets.${it.type}.added").increment()
+        meterregisty.counter("markets.${it.type}.added", it.protocol.slug).increment()
     }
 
     private suspend fun populate() = try {

@@ -2,12 +2,14 @@ package io.defitrack.market
 
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.protocol.Protocol
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 
 abstract class DefiMarket(
     open val id: String,
-    val type: String
+    val type: String,
+    open val protocol: Protocol
 ) {
 
     val logger = LoggerFactory.getLogger(this::class.java)

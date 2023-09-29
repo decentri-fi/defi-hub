@@ -8,14 +8,13 @@ import io.defitrack.market.farming.domain.InvestmentPreparer
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.FungibleToken
-import io.defitrack.token.TokenType
 import org.web3j.abi.datatypes.Event
 import java.math.BigDecimal
 
 data class PoolingMarket(
     override val id: String,
     val network: Network,
-    val protocol: Protocol,
+    override val protocol: Protocol,
     val address: String,
     val name: String,
     val decimals: Int = 18,
@@ -34,7 +33,7 @@ data class PoolingMarket(
     val internalMetadata: Map<String, Any>,
     val enterMarketEvent: Event? = null,
     val deprecated: Boolean,
-) : DefiMarket(id, "pooling") {
+) : DefiMarket(id, "pooling", protocol) {
     init {
         addRefetchableValue(totalSupply)
         addRefetchableValue(marketSize)

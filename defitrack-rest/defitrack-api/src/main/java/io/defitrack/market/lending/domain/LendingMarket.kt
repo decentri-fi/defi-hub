@@ -16,7 +16,7 @@ import java.math.BigInteger
 data class LendingMarket(
     override val id: String,
     val network: Network,
-    val protocol: Protocol,
+    override val protocol: Protocol,
     val name: String,
     val marketToken: FungibleToken?,
     val token: FungibleToken,
@@ -31,7 +31,7 @@ data class LendingMarket(
     val totalSupply: Refreshable<BigDecimal>,
     val price: Refreshable<BigDecimal>
 ) : DefiMarket(
-    id, "lending"
+    id, "lending", protocol
 ) {
 
     init {

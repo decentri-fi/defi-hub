@@ -14,7 +14,7 @@ import java.math.BigDecimal
 data class FarmingMarket(
     override val id: String,
     val network: Network,
-    val protocol: Protocol,
+    override val protocol: Protocol,
     val name: String,
     val stakedToken: FungibleToken,
     val rewardTokens: List<FungibleToken>,
@@ -29,7 +29,7 @@ data class FarmingMarket(
     val metadata: Map<String, Any> = emptyMap(),
     val internalMetadata: Map<String, Any> = emptyMap(),
     val expired: Boolean = false
-) : DefiMarket(id, "farming") {
+) : DefiMarket(id, "farming", protocol) {
 
     init {
         addRefetchableValue(marketSize)
