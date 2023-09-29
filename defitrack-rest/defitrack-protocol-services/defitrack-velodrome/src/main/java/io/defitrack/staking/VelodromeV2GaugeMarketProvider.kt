@@ -5,6 +5,7 @@ import io.defitrack.claimable.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.network.toVO
@@ -19,7 +20,6 @@ import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
-import org.springframework.stereotype.Service
 
 @Component
 @ConditionalOnProperty(value = ["velodromev2.enabled"], havingValue = "true", matchIfMissing = true)
@@ -29,7 +29,7 @@ class VelodromeV2GaugeMarketProvider(
 
     val voter = "0x41c914ee0c7e1a5edcd0295623e6dc557b5abf3c"
 
-    val voterContract = lazyAsync {
+    val deferredVoterContract = lazyAsync {
         VoterContract(
             getBlockchainGateway(),
             voter
@@ -37,30 +37,30 @@ class VelodromeV2GaugeMarketProvider(
     }
 
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
-        val contract = voterContract.await()
+        val voterContract = deferredVoterContract.await()
         poolingMarketProvider.getMarkets().forEach {
-            val gauge = contract.gauges(it.address)
+            val gauge = voterContract.gauges(it.address)
             throttled {
                 launch {
                     if (gauge != "0x0000000000000000000000000000000000000000") {
                         try {
-                            val contract = VelodromeV2GaugeContract(
+                            val gaugeContract = VelodromeV2GaugeContract(
                                 getBlockchainGateway(),
                                 gauge
                             )
 
-                            val stakedToken = getToken(contract.stakedToken.await())
-                            val rewardToken = getToken(contract.rewardToken.await())
+                            val stakedToken = getToken(gaugeContract.stakedToken.await())
+                            val rewardToken = getToken(gaugeContract.rewardToken.await())
 
                             val market = create(
                                 name = stakedToken.name + " Gauge V2",
                                 identifier = stakedToken.symbol + "-v1-${gauge}",
                                 farmType = ContractType.LIQUIDITY_MINING,
                                 rewardTokens = listOf(rewardToken.toFungibleToken()),
-                                marketSize = Refreshable.refreshable {
+                                marketSize = refreshable {
                                     getMarketSize(
                                         stakedToken.toFungibleToken(),
-                                        contract.address
+                                        gaugeContract.address
                                     )
                                 },
                                 stakedToken = stakedToken.toFungibleToken(),
@@ -69,23 +69,23 @@ class VelodromeV2GaugeMarketProvider(
                                 rewardsFinished = false,
                                 metadata = mapOf(
                                     "address" to gauge,
-                                    "contract" to contract
+                                    "contract" to gaugeContract
                                 ),
                                 claimableRewardFetcher = ClaimableRewardFetcher(
                                     listOf(
                                         Reward(
                                             token = rewardToken.toFungibleToken(),
-                                            contractAddress = contract.address,
+                                            contractAddress = gaugeContract.address,
                                             getRewardFunction = { user ->
-                                                contract.earnedFn(user)
+                                                gaugeContract.earnedFn(user)
                                             }
                                         )
                                     ),
                                     preparedTransaction = { user ->
                                         PreparedTransaction(
                                             network = getNetwork().toVO(),
-                                            function = contract.getRewardFn(user),
-                                            to = contract.address,
+                                            function = gaugeContract.getRewardFn(user),
+                                            to = gaugeContract.address,
                                             from = user
                                         )
                                     }

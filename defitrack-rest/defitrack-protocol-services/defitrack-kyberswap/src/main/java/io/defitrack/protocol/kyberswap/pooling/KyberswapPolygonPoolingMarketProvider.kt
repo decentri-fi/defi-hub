@@ -44,8 +44,7 @@ class KyberswapPolygonPoolingMarketProvider(
                         marketSize = refreshable(it.reserveUSD),
                         positionFetcher = defaultPositionFetcher(token.address),
                         totalSupply = refreshable(supply) {
-                            val token = getToken(it.id)
-                            token.totalSupply.asEth(token.decimals)
+                            getToken(it.id).totalDecimalSupply()
                         }
                     )
                 } catch (ex: Exception) {

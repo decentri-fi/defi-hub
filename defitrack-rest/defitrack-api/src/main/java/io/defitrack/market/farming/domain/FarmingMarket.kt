@@ -34,5 +34,4 @@ data class FarmingMarket(
     init {
         addRefetchableValue(marketSize)
     }
-
 }

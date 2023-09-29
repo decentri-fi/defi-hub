@@ -52,9 +52,8 @@ class PolygonSetPoolingMarketProvider(
                         },
                         positionFetcher = defaultPositionFetcher(it),
                         investmentPreparer = null,
-                        totalSupply = refreshable(token.totalSupply.asEth(token.decimals)) {
-                            val token = getToken(it)
-                            token.totalSupply.asEth(token.decimals)
+                        totalSupply = refreshable(token.totalDecimalSupply()) {
+                            getToken(it).totalDecimalSupply()
                         }
                     )
                 } catch (ex: Exception) {

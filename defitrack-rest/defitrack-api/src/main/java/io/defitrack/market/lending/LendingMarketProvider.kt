@@ -41,7 +41,7 @@ abstract class LendingMarketProvider : MarketProvider<LendingMarket>() {
             positionFetcher = positionFetcher,
             investmentPreparer = investmentPreparer,
             metadata = metadata,
-            price = price ?: calculatePrice(marketSize, totalSupply, marketToken?.decimals ?: token.decimals),
+            price = price ?: calculatePrice(marketSize, totalSupply),
             totalSupply = totalSupply,
             marketToken = marketToken,
             erc20Compatible = erc20Compatible
@@ -51,7 +51,6 @@ abstract class LendingMarketProvider : MarketProvider<LendingMarket>() {
     private suspend fun calculatePrice(
         marketSize: Refreshable<BigDecimal>?,
         totalSupply: Refreshable<BigDecimal>,
-        decimals: Int
     ): Refreshable<BigDecimal> {
         return Refreshable.refreshable {
             if (marketSize == null || marketSize.get() <= BigDecimal.ZERO) return@refreshable BigDecimal.ZERO
