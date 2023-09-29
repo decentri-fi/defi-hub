@@ -29,9 +29,6 @@ class ConvexEthereumRewardPoolMarketProvider(
                 identifier = it.address,
                 stakedToken = stakingToken.toFungibleToken(),
                 rewardTokens = listOf(rewardToken.toFungibleToken()),
-                vaultType = "cvx-vault",
-                marketSize = null,
-                apr = null,
                 balanceFetcher = defaultPositionFetcher(
                     it.address
                 ),

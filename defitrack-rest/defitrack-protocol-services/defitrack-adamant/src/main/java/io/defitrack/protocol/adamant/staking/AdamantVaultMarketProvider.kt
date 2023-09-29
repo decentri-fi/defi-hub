@@ -51,7 +51,6 @@ class AdamantVaultMarketProvider(
                             rewardTokens = listOf(
                                 rewardToken
                             ),
-                            vaultType = "adamant-generic-vault",
                             balanceFetcher = PositionFetcher(
                                 vault.address,
                                 { user -> balanceOfFunction(user) }

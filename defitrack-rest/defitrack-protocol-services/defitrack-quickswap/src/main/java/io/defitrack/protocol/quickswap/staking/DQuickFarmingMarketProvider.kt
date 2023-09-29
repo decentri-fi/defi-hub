@@ -38,7 +38,6 @@ class DQuickFarmingMarketProvider(
                 rewardTokens = listOf(
                     stakedToken
                 ),
-                vaultType = "quickswap-dquick",
                 balanceFetcher = PositionFetcher(
                     stakedToken.address,
                     { user -> ERC20Contract.balanceOfFunction(user) }

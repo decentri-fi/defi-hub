@@ -51,7 +51,6 @@ class QidaoFarmingMarketProvider(
             rewardTokens = listOf(
                 rewardToken.toFungibleToken()
             ),
-            vaultType = "qidao-farmv2",
             balanceFetcher = PositionFetcher(
                 address = chef.address,
                 function = { user -> chef.userInfoFunction(user, poolId) }

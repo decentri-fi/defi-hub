@@ -53,7 +53,6 @@ abstract class SushiMinichefV2FarmingMarketProvider(
                 rewardTokens = listOf(
                     rewardToken.toFungibleToken()
                 ),
-                vaultType = "sushi-minichefV2",
                 marketSize = Refreshable.refreshable {
                     getMarketSize(stakedtoken.toFungibleToken(), chef.address)
                 },

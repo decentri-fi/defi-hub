@@ -28,7 +28,6 @@ class GOHMMarketProvider(
                 identifier = "gohm",
                 stakedToken = ohm.toFungibleToken(),
                 rewardTokens = listOf(ohm.toFungibleToken()),
-                vaultType = "gohm",
                 balanceFetcher = PositionFetcher(
                     gohm.address,
                     { user ->

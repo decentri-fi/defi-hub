@@ -63,7 +63,6 @@ class QuickswapDualFarmingMarketProvider(
                             rewardTokenA.toFungibleToken(),
                             rewardTokenB.toFungibleToken()
                         ),
-                        vaultType = "quickswap-dual-reward-pool",
                         marketSize = refreshable {
                             getMarketSize(stakedToken.toFungibleToken(), pool.address)
                         },

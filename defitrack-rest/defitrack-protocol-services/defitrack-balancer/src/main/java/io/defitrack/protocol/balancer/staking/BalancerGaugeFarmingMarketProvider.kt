@@ -62,7 +62,6 @@ abstract class BalancerGaugeFarmingMarketProvider(
                                     ).map { reward ->
                                         reward.toFungibleToken()
                                     },
-                                    vaultType = "balancerGauge",
                                     balanceFetcher = PositionFetcher(
                                         gaugecontract.address,
                                         { user -> balanceOfFunction(user) }

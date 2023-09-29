@@ -60,7 +60,6 @@ class OldQuickswapFarmingMarketProvider(
                         name = "${stakedToken.name} Reward Pool (Old)",
                         stakedToken = stakedToken.toFungibleToken(),
                         rewardTokens = listOf(rewardToken.toFungibleToken()),
-                        vaultType = "quickswap-reward-rewardPool",
                         marketSize = refreshable {
                             getMarketSize(stakedToken, rewardPool)
                         },

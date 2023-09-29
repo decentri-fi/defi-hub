@@ -61,7 +61,6 @@ class IdexFarmingMarketProvider(
             rewardTokens = listOf(
                 rewardToken.toFungibleToken()
             ),
-            vaultType = "idex-farm",
             balanceFetcher = PositionFetcher(
                 chef.address,
                 { user -> chef.userInfoFunction(poolId, user) }

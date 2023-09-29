@@ -55,7 +55,6 @@ class BalancerPolygonZkEvmGaugeMarketProvider(
                 ).map { reward ->
                     reward.toFungibleToken()
                 },
-                vaultType = "balancerGauge",
                 balanceFetcher = PositionFetcher(
                     gaugecontract.address,
                     { user -> ERC20Contract.balanceOfFunction(user) }

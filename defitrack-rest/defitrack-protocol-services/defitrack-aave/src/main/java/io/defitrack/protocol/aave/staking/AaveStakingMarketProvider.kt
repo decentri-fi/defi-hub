@@ -42,7 +42,6 @@ class AaveStakingMarketProvider : FarmingMarketProvider() {
                 rewardTokens = listOf(
                     aaveToken.toFungibleToken()
                 ),
-                vaultType = "stAave",
                 marketSize = refreshable {
                     getMarketSize(
                         aaveToken.toFungibleToken(), stAave

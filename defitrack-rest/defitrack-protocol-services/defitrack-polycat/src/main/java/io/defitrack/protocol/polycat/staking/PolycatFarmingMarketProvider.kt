@@ -63,7 +63,6 @@ class PolycatFarmingMarketProvider(
                     )
                 },
             ),
-            vaultType = "polycat-masterchef",
             farmType = ContractType.LIQUIDITY_MINING
         )
     }

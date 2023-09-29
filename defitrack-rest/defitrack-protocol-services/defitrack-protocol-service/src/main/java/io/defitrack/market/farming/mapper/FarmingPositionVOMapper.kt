@@ -35,7 +35,6 @@ class FarmingPositionVOMapper(
                 dollarValue = stakedInDollars,
                 name = market.name,
                 apr = market.apr?.toDouble(),
-                vaultType = market.contractType,
                 stakedToken = market.stakedToken,
                 rewardTokens = market.rewardTokens,
                 stakedAmountDecimal = underlyingAmount.asEth(market.stakedToken.decimals),

@@ -5,6 +5,7 @@ import io.defitrack.claimable.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -65,8 +66,7 @@ class DeprecatedQuickswapFarmingMarketProvider(
                             name = "${stakedToken.name} Reward Pool (Deprecated)",
                             stakedToken = stakedToken.toFungibleToken(),
                             rewardTokens = listOf(rewardToken.toFungibleToken()),
-                            vaultType = "quickswap-reward-rewardPool",
-                            marketSize = Refreshable.refreshable {
+                            marketSize = refreshable {
                                 getMarketSize(stakedToken, rewardPool)
                             },
                             apr = (quickswapAPRService.getRewardPoolAPR(rewardPool.address) + quickswapAPRService.getLPAPR(

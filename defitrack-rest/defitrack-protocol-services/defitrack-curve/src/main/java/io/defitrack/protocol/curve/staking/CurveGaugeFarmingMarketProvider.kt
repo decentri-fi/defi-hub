@@ -56,7 +56,6 @@ abstract class CurveGaugeFarmingMarketProvider(
                             name = stakedToken.name + " Gauge",
                             stakedToken = stakedToken.toFungibleToken(),
                             rewardTokens = rewardTokens,
-                            vaultType = "curve-gauge",
                             marketSize = Refreshable.refreshable {
                                 marketSizeService.getMarketSize(
                                     stakedToken.toFungibleToken(), gauge, getNetwork()

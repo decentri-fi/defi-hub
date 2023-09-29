@@ -46,7 +46,6 @@ class WStethMarketProvider(
                 identifier = "wsteth",
                 stakedToken = eth,
                 rewardTokens = emptyList(),
-                vaultType = "wsteth",
                 farmType = ContractType.STAKING,
                 marketSize = Refreshable.refreshable {
                     calculateMarketSize()

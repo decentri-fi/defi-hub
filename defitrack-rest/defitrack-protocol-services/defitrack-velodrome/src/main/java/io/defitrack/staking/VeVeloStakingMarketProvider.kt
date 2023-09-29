@@ -22,7 +22,6 @@ class VeVeloStakingMarketProvider : FarmingMarketProvider() {
                 identifier = "veVELO",
                 stakedToken = veloToken.toFungibleToken(),
                 rewardTokens = listOf(getToken(veVelo).toFungibleToken()),
-                vaultType = "veVELO",
                 marketSize = refreshable {
                     getMarketSize(veloToken.toFungibleToken(), veVelo)
                 },

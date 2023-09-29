@@ -4,6 +4,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -26,8 +27,7 @@ class RibbonEthereumFarmingMarketProvider(
                 name = it.name,
                 stakedToken = stakedToken.toFungibleToken(),
                 rewardTokens = listOf(stakedToken.toFungibleToken()),
-                vaultType = "ribbon-theta-vault",
-                marketSize = Refreshable.refreshable { //todo: totalBalance is not fetched from the blockchain
+                marketSize = refreshable { //todo: totalBalance is not fetched from the blockchain
                     getPriceResource().calculatePrice(
                         PriceRequest(
                             it.underlyingAsset,

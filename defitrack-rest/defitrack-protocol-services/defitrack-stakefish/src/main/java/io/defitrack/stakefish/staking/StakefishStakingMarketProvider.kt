@@ -37,7 +37,6 @@ class StakefishStakingMarketProvider : FarmingMarketProvider() {
                     identifier = "stakefish-eth",
                     stakedToken = rewardToken,
                     rewardTokens = listOf(rewardToken),
-                    vaultType = "stakefish",
                     farmType = ContractType.STAKING,
                     claimableRewardFetcher = ClaimableRewardFetcher(
                         rewards = listOf(

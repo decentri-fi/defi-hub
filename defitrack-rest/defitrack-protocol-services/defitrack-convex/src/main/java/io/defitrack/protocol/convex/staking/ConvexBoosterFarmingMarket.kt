@@ -33,7 +33,6 @@ class ConvexBoosterFarmingMarket(
                 create(
                     identifier = contract.address + "-" + idx,
                     name = "Convex Crv Booster $idx",
-                    vaultType = "convex-crv-rewards",
                     stakedToken = stakedToken.toFungibleToken(),
                     rewardTokens = emptyList(),
                     farmType = ContractType.STAKING

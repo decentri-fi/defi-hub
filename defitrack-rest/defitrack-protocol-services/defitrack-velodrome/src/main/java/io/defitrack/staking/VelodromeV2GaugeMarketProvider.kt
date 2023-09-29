@@ -64,12 +64,10 @@ class VelodromeV2GaugeMarketProvider(
                                     )
                                 },
                                 stakedToken = stakedToken.toFungibleToken(),
-                                vaultType = "velodrome-gauge",
                                 balanceFetcher = defaultPositionFetcher(gauge),
                                 rewardsFinished = false,
                                 metadata = mapOf(
                                     "address" to gauge,
-                                    "contract" to gaugeContract
                                 ),
                                 claimableRewardFetcher = ClaimableRewardFetcher(
                                     listOf(

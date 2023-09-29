@@ -32,7 +32,6 @@ class ChainlinkStakingMarketProvider : FarmingMarketProvider(
                 identifier = "chainlink_staking",
                 stakedToken = chainlinkToken,
                 rewardTokens = listOf(chainlinkToken),
-                vaultType = "chainlink",
                 marketSize = refreshable {
                     getMarketSize(
                         chainlinkToken,

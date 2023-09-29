@@ -51,7 +51,6 @@ abstract class HopFarmingMarketProvider(
                 name = "${stakedToken.name} Staking Rewards",
                 stakedToken = stakedToken.toFungibleToken(),
                 rewardTokens = listOf(rewardToken.toFungibleToken()),
-                vaultType = "hop-staking-rewards",
                 marketSize = Refreshable.refreshable {
                     getMarketSize(stakedToken, contract)
                 },
@@ -60,9 +59,6 @@ abstract class HopFarmingMarketProvider(
                     function = { user -> balanceOfFunction(user) }
                 ),
                 farmType = ContractType.LIQUIDITY_MINING,
-                metadata = mapOf(
-                    "contract" to contract
-                ),
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
                         token = rewardToken.toFungibleToken(),

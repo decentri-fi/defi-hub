@@ -11,7 +11,6 @@ data class FarmingPositionVO(
     val protocol: ProtocolVO,
     val dollarValue: Double,
     val name: String,
-    val vaultType: String,
     val apr: Double?,
     val stakedToken: FungibleToken,
     val stakedAmountDecimal: BigDecimal,

@@ -71,7 +71,6 @@ class SushiswapEthereumMasterchefMarketProvider : FarmingMarketProvider() {
                 rewardTokens = listOf(
                     rewardToken.toFungibleToken()
                 ),
-                vaultType = "sushi-masterchef",
                 marketSize = refreshable {
                     getMarketSize(stakedtoken.toFungibleToken(), chef.address)
                 },

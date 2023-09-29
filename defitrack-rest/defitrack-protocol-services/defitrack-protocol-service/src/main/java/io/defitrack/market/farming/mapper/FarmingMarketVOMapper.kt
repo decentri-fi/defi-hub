@@ -23,12 +23,11 @@ class FarmingMarketVOMapper(
                 name = this.name,
                 stakedToken = this.stakedToken,
                 reward = this.rewardTokens,
-                vaultType = this.contractType,
                 marketSize = this.marketSize?.get(),
                 apr = this.apr,
                 prepareInvestmentSupported = this.investmentPreparer != null,
                 exitPositionSupported = this.exitPositionPreparer != null,
-                farmType = farmType,
+                yieldType = farmType,
                 expired = this.expired,
                 updatedAt = Date.from(updatedAt.get().toInstant(ZoneOffset.UTC))
             )

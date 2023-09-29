@@ -50,7 +50,6 @@ class MStableEthereumFarmingMarketProvider(
             rewardTokens = listOf(
                 rewardsToken.toFungibleToken()
             ),
-            vaultType = "mstable-boosted-savings-vault",
             balanceFetcher = PositionFetcher(
                 address = contract.address,
                 { user -> contract.rawBalanceOfFunction(user) }

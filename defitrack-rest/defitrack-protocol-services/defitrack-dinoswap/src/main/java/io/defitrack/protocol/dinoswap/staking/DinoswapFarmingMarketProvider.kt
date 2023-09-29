@@ -57,7 +57,6 @@ class DinoswapFarmingMarketProvider(
             rewardTokens = listOf(
                 rewardToken.toFungibleToken()
             ),
-            vaultType = "dinoswap-fossilfarm",
             balanceFetcher = PositionFetcher(
                 address = chef.address,
                 function = { user -> chef.userInfoFunction(user, poolId) }

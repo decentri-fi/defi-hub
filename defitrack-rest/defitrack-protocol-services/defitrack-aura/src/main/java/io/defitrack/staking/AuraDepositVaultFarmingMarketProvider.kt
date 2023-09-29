@@ -35,7 +35,6 @@ class AuraDepositVaultFarmingMarketProvider(
                         farmType = ContractType.VAULT,
                         stakedToken = asset.toFungibleToken(),
                         rewardTokens = listOf(getToken(crvrewards.rewardToken.await()).toFungibleToken()),
-                        vaultType = "aura-deposit",
                         marketSize = Refreshable.refreshable {
                             getMarketSize(asset.toFungibleToken(), crvrewards.rewardToken.await())
                         },

@@ -70,12 +70,10 @@ class AlienbaseFarmingMarketProvider : FarmingMarketProvider() {
                             "contract" to farmingContract.await(),
                             "poolId" to poolId
                         ),
-                        vaultType = "alienbase-reward",
                         farmType = ContractType.LIQUIDITY_MINING
                     )
                 )
             }
-
         }
     }
 

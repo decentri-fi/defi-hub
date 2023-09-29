@@ -41,7 +41,6 @@ abstract class StargateFarmingMarketProvider(
                 name = "Stargate ${stakedToken.name} Reward",
                 stakedToken = stakedToken.toFungibleToken(),
                 rewardTokens = listOf(rewardToken.toFungibleToken()),
-                vaultType = "stargate-lp-staking",
                 farmType = ContractType.LIQUIDITY_MINING,
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(

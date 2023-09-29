@@ -34,7 +34,6 @@ class TornadoCashStakingRewardsFarmProvider : FarmingMarketProvider() {
                     rewardToken.toFungibleToken()
                 ),
                 stakedToken = stakingToken.toFungibleToken(),
-                vaultType = "staking-rewards",
                 apr = calculateSingleRewardPool(stakingRewardsContract),
             )
         )

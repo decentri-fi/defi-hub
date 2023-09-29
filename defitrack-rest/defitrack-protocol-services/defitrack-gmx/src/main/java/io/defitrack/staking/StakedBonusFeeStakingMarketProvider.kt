@@ -35,7 +35,6 @@ class StakedBonusFeeStakingMarketProvider : FarmingMarketProvider() {
                 rewardTokens = listOf(
                     rewardToken.toFungibleToken()
                 ),
-                vaultType = "staked-gmx",
                 marketSize = Refreshable.refreshable { BigDecimal.ZERO },
                 farmType = ContractType.STAKING,
                 claimableRewardFetcher = ClaimableRewardFetcher(

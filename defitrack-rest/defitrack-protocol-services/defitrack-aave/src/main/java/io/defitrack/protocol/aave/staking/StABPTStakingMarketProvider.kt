@@ -44,7 +44,6 @@ class StABPTStakingMarketProvider(
                 rewardTokens = listOf(
                     aaveToken.toFungibleToken()
                 ),
-                vaultType = "stABPT",
                 marketSize = refreshable {
                     getMarketSize(
                         abptToken.toFungibleToken(), stABPT,

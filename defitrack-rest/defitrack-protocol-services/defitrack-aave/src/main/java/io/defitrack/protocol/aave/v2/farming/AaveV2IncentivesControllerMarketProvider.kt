@@ -24,7 +24,6 @@ class AaveV2IncentivesControllerMarketProvider : FarmingMarketProvider() {
                 identifier = "aave-v2-incentives-controller",
                 stakedToken = stkAaveToken.toFungibleToken(),
                 rewardTokens = listOf(stkAaveToken.toFungibleToken()),
-                vaultType = "aave-v2-incentives",
                 marketSize = Refreshable.refreshable {
                     getMarketSize(
                         stkAaveToken.toFungibleToken(),

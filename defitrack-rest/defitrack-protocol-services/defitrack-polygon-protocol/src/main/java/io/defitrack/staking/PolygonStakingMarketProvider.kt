@@ -32,7 +32,6 @@ class PolygonStakingMarketProvider : FarmingMarketProvider() {
                 stakedToken = staked.toFungibleToken(),
                 rewardTokens = listOf(staked.toFungibleToken()),
                 farmType = ContractType.STAKING,
-                vaultType = "polygon-staking",
                 balanceFetcher = PositionFetcher(
                     polygonStaking,
                     {

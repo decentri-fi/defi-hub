@@ -40,7 +40,6 @@ class AelinRewardMarketProvider(
                 identifier = "aelin-staking",
                 stakedToken = aelin.toFungibleToken(),
                 rewardTokens = listOf(rewardToken),
-                vaultType = "staking-rewards",
                 marketSize = refreshable {
                     getMarketSize(
                         aelin.toFungibleToken(),

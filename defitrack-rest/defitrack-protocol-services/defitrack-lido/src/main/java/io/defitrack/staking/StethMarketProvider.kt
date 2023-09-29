@@ -33,7 +33,6 @@ class StethMarketProvider(
                 identifier = "steth",
                 stakedToken = getToken("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2").toFungibleToken(),
                 rewardTokens = emptyList(),
-                vaultType = "steth",
                 farmType = ContractType.STAKING,
                 balanceFetcher = PositionFetcher(
                     address = steth.address,

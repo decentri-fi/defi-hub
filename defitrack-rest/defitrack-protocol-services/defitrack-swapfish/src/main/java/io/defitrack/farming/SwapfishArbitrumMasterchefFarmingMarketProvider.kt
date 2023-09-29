@@ -54,7 +54,6 @@ class SwapfishArbitrumMasterchefFarmingMarketProvider(
                 rewardTokens = listOf(
                     rewardToken.toFungibleToken()
                 ),
-                vaultType = "sushi-minichefV2",
                 marketSize = refreshable {
                     getMarketSize(stakedtoken.toFungibleToken(), chef.address)
                 },

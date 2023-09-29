@@ -60,7 +60,6 @@ class VelodromeV1GaugeMarketProvider(
                                     )
                                 },
                                 stakedToken = stakedToken.toFungibleToken(),
-                                vaultType = "velodrome-gauge",
                                 balanceFetcher = defaultPositionFetcher(gauge),
                                 rewardsFinished = true
                             )

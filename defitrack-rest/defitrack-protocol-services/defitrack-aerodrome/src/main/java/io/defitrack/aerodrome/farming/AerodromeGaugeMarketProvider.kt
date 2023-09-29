@@ -61,7 +61,6 @@ class AerodromeGaugeMarketProvider(
                                     )
                                 },
                                 stakedToken = stakedToken.toFungibleToken(),
-                                vaultType = "aerodrome-gauge",
                                 balanceFetcher = defaultPositionFetcher(gauge),
                                 rewardsFinished = false,
                                 metadata = mapOf(

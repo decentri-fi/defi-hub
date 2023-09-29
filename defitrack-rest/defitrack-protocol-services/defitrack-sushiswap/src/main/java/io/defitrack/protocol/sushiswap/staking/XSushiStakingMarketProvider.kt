@@ -36,7 +36,6 @@ class XSushiStakingMarketProvider(
                 identifier = "xsushi",
                 stakedToken = sushiToken.toFungibleToken(),
                 rewardTokens = listOf(sushiToken.toFungibleToken()),
-                vaultType = "xsushi",
                 marketSize = Refreshable.refreshable {
                     getMarketSize(
                         sushiToken.toFungibleToken(),
