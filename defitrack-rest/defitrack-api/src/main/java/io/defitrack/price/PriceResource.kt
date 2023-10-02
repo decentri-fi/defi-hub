@@ -4,6 +4,7 @@ import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
@@ -30,14 +31,19 @@ class PriceResource(
         return priceRequest?.let {
             try {
                 withContext(Dispatchers.IO) {
-                    client.post(priceResourceLocation) {
+                    val post = client.post(priceResourceLocation) {
                         this.header("Content-Type", "application/json")
                         setBody(priceRequest)
-                    }.body()
+                    }
+                    if (post.status.isSuccess()) {
+                        post.body()
+                    } else {
+                        logger.error("unable to fetch price for ${it.address} on network ${priceRequest.network} (status: ${post.status})")
+                        0.0
+                    }
                 }
             } catch (ex: Exception) {
                 logger.error("unable to fetch price for ${it.address} on network ${priceRequest.network}")
-                ex.printStackTrace()
                 0.0
             }
         } ?: 0.0
