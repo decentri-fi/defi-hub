@@ -1,6 +1,7 @@
 package io.defitrack.price
 
 import io.defitrack.common.network.Network
+import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -16,6 +17,9 @@ import java.math.BigDecimal
 class PriceRestController(
     private val priceCalculator: PriceCalculator
 ) {
+
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     @PostMapping
     suspend fun calculatePrice(@RequestBody priceRequest: PriceRequest): Double {
         return priceCalculator.calculatePrice(priceRequest)
@@ -32,14 +36,21 @@ class PriceRestController(
             "price" to BigDecimal.ZERO
         )
 
-        return mapOf(
-            "price" to priceCalculator.calculatePrice(
-                PriceRequest(
-                    address,
-                    network,
-                    BigDecimal.ONE
+        try {
+            return mapOf(
+                "price" to priceCalculator.calculatePrice(
+                    PriceRequest(
+                        address,
+                        network,
+                        BigDecimal.ONE
+                    )
                 )
             )
-        )
+        } catch (ex: Exception) {
+            logger.error("Error calculating price for $address on $networkName", ex)
+            return mapOf(
+                "price" to BigDecimal.ZERO
+            )
+        }
     }
 }

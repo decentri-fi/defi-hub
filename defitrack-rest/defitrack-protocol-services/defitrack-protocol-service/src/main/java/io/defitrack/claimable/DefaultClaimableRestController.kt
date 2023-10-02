@@ -29,7 +29,6 @@ class DefaultClaimableRestController(
     }
 
     @GetMapping("/claimables")
-
     fun allMarkets(
         @PathVariable("protocol") protocol: String,
     ): List<ClaimableMarketVO> {
