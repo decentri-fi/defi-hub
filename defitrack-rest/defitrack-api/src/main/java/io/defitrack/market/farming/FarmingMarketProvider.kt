@@ -1,5 +1,6 @@
 package io.defitrack.market.farming
 
+import ClaimableMarketProvider
 import io.defitrack.claimable.ClaimableMarket
 import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.common.utils.Refreshable

@@ -2,7 +2,7 @@ package io.defitrack.protocol.compound.rewards
 
 import io.defitrack.claimable.*
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
-import io.defitrack.market.farming.ClaimableMarketProvider
+import ClaimableMarketProvider
 import io.defitrack.network.toVO
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.compound.CompoundAddressesProvider

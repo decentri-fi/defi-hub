@@ -1,7 +1,7 @@
 package io.defitrack.claimable
 
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.market.farming.ClaimableMarketProvider
+import ClaimableMarketProvider
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -11,15 +11,13 @@ import java.math.BigInteger
 
 @Component
 class DefaultClaimableRewardProvider(
-    private val farmingMarketProviders: List<ClaimableMarketProvider>,
+    private val claimables: Claimables,
     private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
     suspend fun claimables(address: String): List<UserClaimable> = coroutineScope {
-        val fetchersByNetwork = farmingMarketProviders.flatMap {
-            it.getClaimables()
-        }.groupBy {
+        val fetchersByNetwork = claimables.getMarkets() .groupBy {
             it.network
         }
 

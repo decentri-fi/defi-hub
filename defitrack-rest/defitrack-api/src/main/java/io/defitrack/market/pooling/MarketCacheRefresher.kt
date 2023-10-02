@@ -1,5 +1,6 @@
 package io.defitrack.market.pooling
 
+import io.defitrack.claimable.Claimables
 import io.defitrack.market.MarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.LendingMarket
@@ -22,6 +23,7 @@ class MarketCacheRefresher(
     private val poolingMarketProviders: List<MarketProvider<PoolingMarket>>,
     private val lendingMarketProviders: List<MarketProvider<LendingMarket>>,
     private val farmingMarketProviders: List<MarketProvider<FarmingMarket>>,
+    private val claimables: Claimables,
     private val applicationContext: ApplicationContext
 ) : ApplicationRunner {
     val logger = LoggerFactory.getLogger(this::class.java)
@@ -46,6 +48,7 @@ class MarketCacheRefresher(
             farmingMarketProviders.forEach {
                 it.populateCaches()
             }
+            claimables.populate()
             logger.info("done with initial population of all caches.")
         }
         AvailabilityChangeEvent.publish(applicationContext, ReadinessState.ACCEPTING_TRAFFIC)
@@ -77,6 +80,7 @@ class MarketCacheRefresher(
                 it.refreshMarkets()
             }
         }.joinAll()
+        claimables.populate()
     }
 
     override fun run(args: ApplicationArguments?) {
