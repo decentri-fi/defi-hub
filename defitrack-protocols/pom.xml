@@ -45,6 +45,7 @@
         <module>sushiswap</module>
         <module>aave</module>
         <module>makerdao</module>
+        <module>moonwell</module>
         <module>maplefinance</module>
         <module>crv</module>
         <module>mStable</module>

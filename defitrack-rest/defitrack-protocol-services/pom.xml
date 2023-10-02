@@ -15,6 +15,7 @@
     <modules>
         <module>defitrack-aave</module>
         <module>defitrack-autoearn</module>
+        <module>defitrack-moonwell</module>
         <module>defitrack-alienbase</module>
         <module>defitrack-baseswap</module>
         <module>defitrack-aerodrome</module>

@@ -19,6 +19,14 @@ enum class Protocol(
         networks = listOf(Network.BASE),
         company = Company.BASESWAP
     ),
+    MOONWELL(
+        logo = "moonwell.png",
+        slug = "moonwell",
+        primitives = listOf(DefiPrimitive.LENDING),
+        website = "https://baseswap.fi",
+        networks = listOf(Network.BASE),
+        company = Company.MOONWELL
+    ),
     AUTOEARN(
         logo = "autoearn.png",
         slug = "autoearn",
@@ -287,7 +295,12 @@ enum class Protocol(
         logo = "compound.png",
         slug = "compound",
         website = "https://compound.finance",
-        primitives = listOf(DefiPrimitive.LENDING, DefiPrimitive.BORROWING, DefiPrimitive.FARMING, DefiPrimitive.CLAIMABLES),
+        primitives = listOf(
+            DefiPrimitive.LENDING,
+            DefiPrimitive.BORROWING,
+            DefiPrimitive.FARMING,
+            DefiPrimitive.CLAIMABLES
+        ),
         networks = listOf(Network.ETHEREUM),
         company = Company.COMPOUND
     ),
