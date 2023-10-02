@@ -14,7 +14,7 @@ import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
-class MasterChefBasedContract(
+open class MasterChefBasedContract(
     private val rewardTokenName: String,
     private val perSecondName: String,
     private val pendingName: String,

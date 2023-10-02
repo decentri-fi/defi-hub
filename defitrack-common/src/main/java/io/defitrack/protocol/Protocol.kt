@@ -19,6 +19,14 @@ enum class Protocol(
         networks = listOf(Network.BASE),
         company = Company.BASESWAP
     ),
+    AUTOEARN(
+        logo = "autoearn.png",
+        slug = "autoearn",
+        primitives = listOf(DefiPrimitive.FARMING),
+        networks = listOf(Network.BASE, Network.ARBITRUM),
+        website = "https://www.autoearn.finance/",
+        company = Company.AUTOEARN
+    ),
     ALIENBASE(
         logo = "alienbase.png",
         slug = "alienbase",

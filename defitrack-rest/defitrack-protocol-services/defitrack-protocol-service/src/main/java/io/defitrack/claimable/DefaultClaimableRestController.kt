@@ -1,6 +1,8 @@
 package io.defitrack.claimable
 
 import io.defitrack.claimable.mapper.ClaimableVOMapper
+import io.defitrack.network.toVO
+import io.defitrack.protocol.mapper.ProtocolVOMapper
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -16,12 +18,31 @@ import org.web3j.crypto.WalletUtils.isValidAddress
 @RequestMapping("/{protocol}")
 class DefaultClaimableRestController(
     private val userClaimableProviders: List<UserClaimableProvider>,
+    private val claimables: Claimables,
     private val defaultClaimableRewardProvider: DefaultClaimableRewardProvider,
-    private val claimableVOMapper: ClaimableVOMapper
+    private val claimableVOMapper: ClaimableVOMapper,
+    private val protocolVOMapper: ProtocolVOMapper,
 ) {
 
     companion object {
         val logger: Logger = LoggerFactory.getLogger(this::class.java)
+    }
+
+    @GetMapping("/claimables")
+
+    fun allMarkets(
+        @PathVariable("protocol") protocol: String,
+    ): List<ClaimableMarketVO> {
+        return claimables.getMarkets().filter {
+            it.protocol.slug == protocol
+        }.map {
+            ClaimableMarketVO(
+                it.id,
+                it.name,
+                it.network.toVO(),
+                protocolVOMapper.map(it.protocol)
+            )
+        }
     }
 
     @GetMapping(value = ["/{address}/claimables"])
@@ -30,7 +51,7 @@ class DefaultClaimableRestController(
         @PathVariable("address") address: String,
     ): List<UserClaimableVO> = coroutineScope {
 
-        if(!isValidAddress(address)) {
+        if (!isValidAddress(address)) {
             return@coroutineScope emptyList()
         }
 
