@@ -44,9 +44,9 @@ class AggregatedMarketStatisticsService(
             MarketStatisticVO(
                 total = marketsPerProtocol.flatMap {
                     it.second
-                }.count(),
+                }.sum(),
                 marketsPerProtocol = marketsPerProtocol.associate {
-                    it.first to it.second.count()
+                    it.first to it.second.sum()
                 }.filter {
                     it.value > 0
                 }
