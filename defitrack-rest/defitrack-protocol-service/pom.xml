@@ -3,19 +3,41 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>defitrack-unified-protocols</artifactId>
+    <artifactId>defitrack-protocol-service</artifactId>
+    <packaging>jar</packaging>
 
     <parent>
         <groupId>io.defitrack</groupId>
-        <artifactId>defitrack-protocol-services</artifactId>
+        <artifactId>defitrack-rest</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.defitrack</groupId>
+                <artifactId>defitrack-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.defitrack</groupId>
-            <artifactId>defitrack-protocol-service</artifactId>
-            <version>${project.version}</version>
+            <artifactId>defitrack-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>defitrack-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
             <groupId>io.defitrack</groupId>
@@ -206,4 +228,16 @@
             <artifactId>maplefinance</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
