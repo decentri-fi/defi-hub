@@ -1,6 +1,7 @@
 package io.defitrack.protocol.moonwell
 
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.evm.contract.ERC20Contract
@@ -10,22 +11,30 @@ import io.defitrack.market.lending.domain.Position
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.compound.CompoundAddressesProvider
-import io.defitrack.protocol.compound.v2.contract.CompoundComptrollerContract
+import io.defitrack.protocol.RewardDistributorContract
+import io.defitrack.protocol.UnitRollerContract
 import io.defitrack.protocol.compound.v2.contract.CompoundTokenContract
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.channelFlow
 import org.springframework.stereotype.Component
 import java.math.BigInteger
 
 @Component
 class MoonwellLendingMarketProvider : LendingMarketProvider() {
 
+    val deferredComptroller = lazyAsync {
+        getComptroller()
+    }
+
     override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
+        deferredComptroller.await().getMarkets().map { market ->
+            CompoundTokenContract(
+                getBlockchainGateway(),
+                market
+            )
+        }
         getTokenContracts().map {
             async {
                 throttled {
@@ -72,7 +81,10 @@ class MoonwellLendingMarketProvider : LendingMarketProvider() {
                         with(getToken(ctokenContract.address)) {
                             totalSupply.asEth(decimals)
                         }
-                    }
+                    },
+                    metadata = mapOf(
+                        "mToken" to ctokenContract.address,
+                    )
                 )
             }
         } catch (ex: Exception) {
@@ -90,8 +102,8 @@ class MoonwellLendingMarketProvider : LendingMarketProvider() {
         }
     }
 
-    private suspend fun getComptroller(): CompoundComptrollerContract {
-        return CompoundComptrollerContract(
+    private suspend fun getComptroller(): UnitRollerContract {
+        return UnitRollerContract(
             getBlockchainGateway(),
             "0xfbb21d0380bee3312b33c4353c8936a0f13ef26c"
         )

@@ -1,6 +1,5 @@
 package io.defitrack.protocol.contract
 
-import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
@@ -8,11 +7,7 @@ import io.defitrack.abi.TypeUtils.Companion.uint16
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
-import org.web3j.abi.TypeReference
-import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Function
-import org.web3j.abi.datatypes.generated.Uint16
-import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
 class QidaoFarmV2Contract(

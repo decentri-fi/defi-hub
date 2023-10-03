@@ -5,7 +5,6 @@ import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.contract.multicall.MultiCallElement
 import java.math.BigInteger
 
 class KyberswapElasticContract(

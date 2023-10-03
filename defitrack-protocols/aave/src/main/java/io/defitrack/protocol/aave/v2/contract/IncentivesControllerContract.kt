@@ -8,7 +8,6 @@ import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.DynamicArray
 import org.web3j.abi.datatypes.Function
-import java.math.BigInteger
 
 class IncentivesControllerContract(
     blockchainGateway: BlockchainGateway,

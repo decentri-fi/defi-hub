@@ -4,10 +4,8 @@ import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
-import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
-import io.defitrack.evm.contract.multicall.MultiCallResult
 import kotlinx.coroutines.Deferred
 import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
