@@ -5,10 +5,12 @@ import io.defitrack.claimable.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.network.toVO
+import io.defitrack.protocol.Company
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.contract.MasterChefBasedContract
@@ -18,9 +20,11 @@ import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
+import org.springframework.stereotype.Component
 
 
-//@Component
+@Component
+@ConditionalOnCompany(Company.SUSHISWAP)
 //TODO: why disabled?
 class SushiswapEthereumMasterchefMarketProvider : FarmingMarketProvider() {
 
@@ -38,7 +42,7 @@ class SushiswapEthereumMasterchefMarketProvider : FarmingMarketProvider() {
 
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
         val contract = deferredContract.await()
-        contract.poolInfos().mapIndexed { poolIndex, poolInfo ->
+        contract.poolInfos().forEachIndexed { poolIndex, poolInfo ->
             launch {
                 throttled {
                     toStakingMarketElement(poolInfo, contract, poolIndex)?.let {
@@ -92,12 +96,6 @@ class SushiswapEthereumMasterchefMarketProvider : FarmingMarketProvider() {
                         )
                     }
                 ),
-                apr = MasterchefBasedfStakingAprCalculator(
-                    getERC20Resource(),
-                    getPriceResource(),
-                    chef,
-                    poolId
-                ).calculateApr(),
                 balanceFetcher = PositionFetcher(
                     chef.address,
                     { user -> chef.userInfoFunction(poolId, user) }
