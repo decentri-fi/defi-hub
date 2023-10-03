@@ -13,58 +13,7 @@
     </parent>
 
     <modules>
-        <module>defitrack-aave</module>
-        <module>defitrack-autoearn</module>
-        <module>defitrack-moonwell</module>
-        <module>defitrack-alienbase</module>
-        <module>defitrack-baseswap</module>
-        <module>defitrack-aerodrome</module>
-        <module>defitrack-aura</module>
-        <module>defitrack-adamant</module>
-        <module>defitrack-aelin</module>
-        <module>defitrack-beethovenx</module>
-        <module>defitrack-apeswap</module>
-        <module>defitrack-balancer</module>
-        <module>defitrack-bancor</module>
-        <module>defitrack-beefy</module>
-        <module>defitrack-camelot</module>
-        <module>defitrack-compound</module>
-        <module>defitrack-cowswap</module>
-        <module>defitrack-convex</module>
-        <module>defitrack-curve</module>
-        <module>defitrack-dfyn</module>
-        <module>defitrack-dinoswap</module>
-        <module>defitrack-gmx</module>
-        <module>defitrack-stakefish</module>
-        <module>defitrack-iron-bank</module>
-        <module>defitrack-dodo</module>
-        <module>defitrack-kyberswap</module>
-        <module>defitrack-swapfish</module>
-        <module>defitrack-velodrome</module>
-        <module>defitrack-lido</module>
-        <module>defitrack-hop</module>
-        <module>defitrack-looksrare</module>
-        <module>defitrack-idex</module>
-        <module>defitrack-makerdao</module>
-        <module>defitrack-maplefinance</module>
-        <module>defitrack-mstable</module>
-        <module>defitrack-polycat</module>
-        <module>defitrack-polygon-protocol</module>
-        <module>defitrack-quickswap</module>
-        <module>defitrack-sushiswap</module>
-        <module>defitrack-ribbon</module>
-        <module>defitrack-stargate</module>
-        <module>defitrack-solidlizard</module>
-        <module>defitrack-uniswap</module>
-        <module>defitrack-set</module>
-        <module>defitrack-wepiggy</module>
-        <module>defitrack-olympusdao</module>
-        <module>defitrack-chainlink</module>
-        <module>defitrack-tokemak</module>
-        <module>defitrack-qidao</module>
-        <module>defitrack-pooltogether</module>
-        <module>defitrack-tornadocash</module>
-        <module>defitrack-blur</module>
+        <module>defitrack-unified-protocols</module>
         <module>defitrack-protocol-service</module>
     </modules>
 

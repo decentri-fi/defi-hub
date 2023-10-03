@@ -43,40 +43,6 @@ class CamelotService(
         )
     }
 
-    val cache = Cache.Builder<String, List<AlgebraPoolContract>>().expireAfterAccess(1.hours).build()
-
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 24) // 24 hours
-    fun init() = runBlocking {
-        logger.info("importing camelot markets")
-        val pools = fetchPools()
-        cache.put("all", pools)
-        logger.info("done importing ${pools.size} camelot markets")
-    }
-
-    suspend fun getPools(): List<AlgebraPoolContract> = coroutineScope {
-        cache.get("all") {
-            fetchPools()
-        }
-    }
-
-    private suspend fun fetchPools(): List<AlgebraPoolContract> = coroutineScope {
-        val sema = Semaphore(16)
-        getAllPositions().distinctBy {
-            listOf(it.token0, it.token1).sorted().joinToString("-")
-        }.map {
-            async {
-                sema.withPermit {
-                    algebraFactoryContract.await().getPoolByPair(it.token0, it.token1)
-                }
-            }
-        }.awaitAll().distinct().map {
-            AlgebraPoolContract(
-                blockchainGatewayProvider.getGateway(Network.ARBITRUM),
-                it
-            )
-        }
-    }
-
     suspend fun getPoolByPair(token0: String, token1: String) = algebraFactoryContract.await().getPoolByPair(token0, token1)
 
     suspend fun getAllPositions(): List<AlgebraPosition> {
