@@ -49,7 +49,7 @@ class ArpaStakingMarketProvider : FarmingMarketProvider() {
                     Reward(
                         arpa.toFungibleToken(),
                         arpaStakingAddress,
-                        contract::getStakeFn
+                        contract::getBaseReward
                     ),
                     preparedTransaction = { user ->
                         PreparedTransaction(
