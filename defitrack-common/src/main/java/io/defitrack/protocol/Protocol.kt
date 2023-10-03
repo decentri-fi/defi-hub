@@ -19,6 +19,14 @@ enum class Protocol(
         networks = listOf(Network.BASE),
         company = Company.BASESWAP
     ),
+    ARPA(
+        logo = "arpa.png",
+        slug = "arpa",
+        primitives = listOf(DefiPrimitive.FARMING),
+        website = "https://www.arpanetwork.io/",
+        networks = listOf(Network.BASE),
+        company = Company.ARPA
+    ),
     MOONWELL(
         logo = "moonwell.png",
         slug = "moonwell",
