@@ -1,11 +1,11 @@
-FROM openjdk:20 as builder
+FROM openjdk:21 as builder
 
 WORKDIR application
 ARG JAR_FILE=target/defitrack-*-SNAPSHOT.jar
 COPY ${JAR_FILE} application.jar
 RUN java -Djarmode=layertools -jar application.jar extract
 
-FROM openjdk:20
+FROM openjdk:21
 WORKDIR application
 COPY --from=builder application/dependencies/ ./
 COPY --from=builder application/spring-boot-loader/ ./
