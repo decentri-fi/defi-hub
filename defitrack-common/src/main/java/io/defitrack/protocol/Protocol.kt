@@ -19,6 +19,14 @@ enum class Protocol(
         networks = listOf(Network.BASE),
         company = Company.BASESWAP
     ),
+    OVIX(
+        logo = "ovix.png",
+        slug = "ovix",
+        primitives = listOf(DefiPrimitive.LENDING),
+        website = "https://www.0vix.com",
+        networks = listOf(Network.POLYGON_ZKEVM),
+        company = Company.OVIX
+    ),
     ARPA(
         logo = "arpa.png",
         slug = "arpa",

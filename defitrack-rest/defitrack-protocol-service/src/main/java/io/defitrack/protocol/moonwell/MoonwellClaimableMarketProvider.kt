@@ -24,8 +24,8 @@ class MoonwellClaimableMarketProvider(
     private val erC20Resource: DecentrifiERC20Resource
 ) : ClaimableMarketProvider {
 
-    private suspend fun unitRoller(): UnitRollerContract {
-        return UnitRollerContract(
+    private suspend fun unitRoller(): MoonwellUnitRollerContract {
+        return MoonwellUnitRollerContract(
             blockchainGatewayProvider.getGateway(Network.BASE),
             "0xfbb21d0380bee3312b33c4353c8936a0f13ef26c"
         )

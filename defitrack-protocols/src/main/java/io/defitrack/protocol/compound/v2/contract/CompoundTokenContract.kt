@@ -10,7 +10,7 @@ import kotlinx.coroutines.Deferred
 import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
 
-class CompoundTokenContract(
+open class CompoundTokenContract(
     ethereumContractAccessor: BlockchainGateway,
     address: String,
 ) : ERC20Contract(
@@ -30,16 +30,20 @@ class CompoundTokenContract(
     }
 
     val cash: Deferred<BigInteger> = constant("getCash", uint256())
-    private val underlyingAddress: Deferred<String> = constant("underlying", TypeUtils.address())
+    protected val underlyingAddress: Deferred<String> = constant("underlying", TypeUtils.address())
     val exchangeRate: Deferred<BigInteger> = constant("exchangeRateStored", uint256())
     val supplyRatePerBlock: Deferred<BigInteger> = constant("supplyRatePerBlock", uint256())
     val borrowRatePerBlock: Deferred<BigInteger> = constant("borrowRatePerBlock", uint256())
+
+    open fun fallbackUnderlying() : String {
+        return "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+    }
 
     suspend fun getUnderlyingAddress(): String {
         return try {
             underlyingAddress.await()
         } catch (ex: Exception) {
-            "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+            fallbackUnderlying()
         }
     }
 

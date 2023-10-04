@@ -1,7 +1,7 @@
-package io.defitrack.protocol.moonwell
+package io.defitrack.protocol.ovix
 
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.AsyncUtils.lazyAsync
+import io.defitrack.common.utils.AsyncUtils
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.conditional.ConditionalOnCompany
@@ -14,6 +14,7 @@ import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.compound.v2.contract.CompoundTokenContract
+import io.defitrack.protocol.moonwell.MoonwellUnitRollerContract
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -22,16 +23,16 @@ import org.springframework.stereotype.Component
 import java.math.BigInteger
 
 @Component
-@ConditionalOnCompany(Company.MOONWELL)
-class MoonwellLendingMarketProvider : LendingMarketProvider() {
+@ConditionalOnCompany(Company.OVIX)
+class OvixZkEVMLendingMarketProvider: LendingMarketProvider() {
 
-    val deferredComptroller = lazyAsync {
+    val deferredComptroller = AsyncUtils.lazyAsync {
         getComptroller()
     }
 
     override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
         deferredComptroller.await().getMarkets().map { market ->
-            CompoundTokenContract(
+            OvixUnitRollerContract(
                 getBlockchainGateway(),
                 market
             )
@@ -43,6 +44,19 @@ class MoonwellLendingMarketProvider : LendingMarketProvider() {
                 }
             }
         }.awaitAll().filterNotNull()
+    }
+
+    private suspend fun getTokenContracts(): List<CompoundTokenContract> {
+        return getComptroller().getMarkets().map { market ->
+            object: CompoundTokenContract(
+                getBlockchainGateway(),
+                market
+            ) {
+                override fun fallbackUnderlying(): String {
+                    return "0x4F9A0e7FD2Bf6067db6994CF12E4495Df938E6e9"
+                }
+            }
+        }
     }
 
     private suspend fun toLendingMarket(ctokenContract: CompoundTokenContract): LendingMarket? {
@@ -64,7 +78,7 @@ class MoonwellLendingMarketProvider : LendingMarketProvider() {
                             )
                         ).toBigDecimal()
                     },
-                    poolType = "moonwell-lendingpool",
+                    poolType = "ovix-lendingpool",
                     positionFetcher = PositionFetcher(
                         ctokenContract.address,
                         { user -> ERC20Contract.balanceOfFunction(user) },
@@ -84,7 +98,7 @@ class MoonwellLendingMarketProvider : LendingMarketProvider() {
                         }
                     },
                     metadata = mapOf(
-                        "mToken" to ctokenContract.address,
+                        "oToken" to ctokenContract.address,
                     )
                 )
             }
@@ -94,27 +108,18 @@ class MoonwellLendingMarketProvider : LendingMarketProvider() {
         }
     }
 
-    private suspend fun getTokenContracts(): List<CompoundTokenContract> {
-        return getComptroller().getMarkets().map { market ->
-            CompoundTokenContract(
-                getBlockchainGateway(),
-                market
-            )
-        }
-    }
-
     private suspend fun getComptroller(): MoonwellUnitRollerContract {
         return MoonwellUnitRollerContract(
             getBlockchainGateway(),
-            "0xfbb21d0380bee3312b33c4353c8936a0f13ef26c"
+            "0x6ea32f626e3a5c41547235ebbdf861526e11f482"
         )
     }
 
     override fun getProtocol(): Protocol {
-        return Protocol.MOONWELL
+        return Protocol.OVIX
     }
 
     override fun getNetwork(): Network {
-        return Network.BASE
+        return Network.POLYGON_ZKEVM
     }
 }

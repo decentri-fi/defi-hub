@@ -5,7 +5,7 @@ import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.contract.BlockchainGateway
 import org.web3j.abi.datatypes.Address
 
-class CompoundComptrollerContract(
+open class CompoundComptrollerContract(
     ethereumContractAccessor: BlockchainGateway, address: String
 ) : EvmContract(ethereumContractAccessor, address) {
 

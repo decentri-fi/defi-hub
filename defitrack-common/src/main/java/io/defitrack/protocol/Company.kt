@@ -24,6 +24,10 @@ enum class Company(
         prettyName = "Baseswap",
         slug = "baseswap"
     ),
+    OVIX(
+        prettyName = "0VIX",
+        slug = "ovix"
+    ),
     AERODROME(
         prettyName = "Aerodrome",
         slug = "aerodrome"
