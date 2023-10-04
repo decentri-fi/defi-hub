@@ -9,7 +9,7 @@ import io.defitrack.event.EventDecoder
 import io.defitrack.event.EventUtils.Companion.appliesTo
 import io.defitrack.network.toVO
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.contract.VelodromeV2GaugeContract
+import io.defitrack.protocol.velodrome.contract.VelodromeV2GaugeContract
 import org.springframework.stereotype.Component
 import org.web3j.protocol.core.methods.response.Log
 import java.math.BigInteger

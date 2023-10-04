@@ -3,7 +3,7 @@ package io.defitrack.protocol.sushiswap.staking
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.SushiArbitrumService
+import io.defitrack.protocol.sushiswap.SushiArbitrumService
 import org.springframework.stereotype.Component
 
 @Component

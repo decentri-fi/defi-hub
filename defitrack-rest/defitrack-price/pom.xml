@@ -18,39 +18,7 @@
         </dependency>
         <dependency>
             <groupId>io.defitrack</groupId>
-            <artifactId>polygon</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
-            <artifactId>arbitrum</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
-            <artifactId>polygon-zkevm</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
-            <artifactId>ethereum</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
-            <artifactId>balancer</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
-            <artifactId>stargate</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
-            <artifactId>quickswap</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
-            <artifactId>hop</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
-            <artifactId>set</artifactId>
+            <artifactId>defitrack-protocols</artifactId>
         </dependency>
         <dependency>
             <groupId>io.defitrack</groupId>

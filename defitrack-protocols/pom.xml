@@ -4,7 +4,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>defitrack-protocols</artifactId>
-    <packaging>pom</packaging>
 
     <parent>
         <groupId>io.defitrack</groupId>
@@ -12,61 +11,17 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <modules>
-        <module>protocol-dependencies</module>
-        <module>protocol</module>
-        <module>aelin</module>
-        <module>autoearn</module>
-        <module>alienbase</module>
-        <module>aerodrome</module>
-        <module>aura</module>
-        <module>baseswap</module>
-        <module>adamant</module>
-        <module>beethovenx</module>
-        <module>cowswap</module>
-        <module>bancor</module>
-        <module>dinoswap</module>
-        <module>gmx</module>
-        <module>hop</module>
-        <module>algebra</module>
-        <module>apeswap</module>
-        <module>dodo</module>
-        <module>stargate</module>
-        <module>convex</module>
-        <module>uniswap</module>
-        <module>dfyn</module>
-        <module>polycat</module>
-        <module>camelot</module>
-        <module>kyberswap</module>
-        <module>iron-bank</module>
-        <module>idex</module>
-        <module>swapfish</module>
-        <module>quickswap</module>
-        <module>sushiswap</module>
-        <module>aave</module>
-        <module>makerdao</module>
-        <module>moonwell</module>
-        <module>maplefinance</module>
-        <module>crv</module>
-        <module>mStable</module>
-        <module>ribbon</module>
-        <module>stakefish</module>
-        <module>yearn</module>
-        <module>compound</module>
-        <module>beefy</module>
-        <module>balancer</module>
-        <module>set</module>
-        <module>wepiggy</module>
-        <module>olympusdao</module>
-        <module>chainlink</module>
-        <module>tokemak</module>
-        <module>qidao</module>
-        <module>pooltogether</module>
-        <module>velodrome</module>
-        <module>lido</module>
-        <module>tornadocash</module>
-        <module>polygon-protocol</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>defitrack-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>evm</artifactId>
+        </dependency>
+    </dependencies>
 
     <dependencyManagement>
         <dependencies>

@@ -13,9 +13,8 @@ import io.defitrack.network.toVO
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.contract.MasterChefBasedContract
-import io.defitrack.protocol.contract.MasterChefPoolInfo
-import io.defitrack.protocol.sushiswap.apr.MasterchefBasedfStakingAprCalculator
+import io.defitrack.protocol.sushiswap.contract.MasterChefBasedContract
+import io.defitrack.protocol.sushiswap.contract.MasterChefPoolInfo
 import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
@@ -25,7 +24,6 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.SUSHISWAP)
-//TODO: why disabled?
 class SushiswapEthereumMasterchefMarketProvider : FarmingMarketProvider() {
 
     private val masterchefContractAddress = "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd"

@@ -9,8 +9,8 @@ import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.aave.SwapfishArbitrumService
-import io.defitrack.protocol.contract.MasterChefBasedContract
+import io.defitrack.protocol.sushiswap.contract.MasterChefBasedContract
+import io.defitrack.protocol.swapfish.SwapfishArbitrumService
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope

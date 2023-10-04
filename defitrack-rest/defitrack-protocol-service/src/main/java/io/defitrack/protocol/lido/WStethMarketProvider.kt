@@ -10,8 +10,6 @@ import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.adamant.StethContract
-import io.defitrack.protocol.adamant.WSTEthContract
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 

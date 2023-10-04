@@ -5,9 +5,9 @@ import io.defitrack.erc20.ERC20
 import io.defitrack.erc20.ERC20ContractReader
 import io.defitrack.erc20.ERC20ToTokenInformationMapper
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.protocol.HopService
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.contract.HopLpTokenContract
+import io.defitrack.protocol.hop.HopService
+import io.defitrack.protocol.hop.contract.HopLpTokenContract
 import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component

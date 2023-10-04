@@ -13,7 +13,6 @@ import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.set.EthereumSetProvider
 import io.defitrack.protocol.set.SetTokenContract
-import io.defitrack.token.TokenType
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 

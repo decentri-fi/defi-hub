@@ -6,9 +6,9 @@ import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.StargateService
-import io.defitrack.protocol.contract.StargatePool
-import io.defitrack.protocol.contract.StargatePoolFactory
+import io.defitrack.protocol.stargate.StargateService
+import io.defitrack.protocol.stargate.contract.StargatePool
+import io.defitrack.protocol.stargate.contract.StargatePoolFactory
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch

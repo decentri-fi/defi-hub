@@ -12,8 +12,6 @@ import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.adamant.LidoService
-import io.defitrack.protocol.adamant.StethContract
 import org.springframework.stereotype.Component
 
 @Component

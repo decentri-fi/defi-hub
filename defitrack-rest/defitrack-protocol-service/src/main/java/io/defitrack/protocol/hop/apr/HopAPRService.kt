@@ -5,7 +5,7 @@ import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.HopService
+import io.defitrack.protocol.hop.HopService
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 import java.math.BigDecimal

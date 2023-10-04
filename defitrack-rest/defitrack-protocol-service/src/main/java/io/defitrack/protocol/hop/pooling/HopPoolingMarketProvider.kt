@@ -6,12 +6,12 @@ import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
-import io.defitrack.protocol.HopService
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.contract.HopLpTokenContract
-import io.defitrack.protocol.contract.HopSwapContract
-import io.defitrack.protocol.domain.HopLpToken
+import io.defitrack.protocol.hop.HopService
 import io.defitrack.protocol.hop.apr.HopAPRService
+import io.defitrack.protocol.hop.contract.HopLpTokenContract
+import io.defitrack.protocol.hop.contract.HopSwapContract
+import io.defitrack.protocol.hop.domain.HopLpToken
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow

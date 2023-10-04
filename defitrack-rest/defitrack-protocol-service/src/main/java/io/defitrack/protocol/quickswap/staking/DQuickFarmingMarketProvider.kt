@@ -14,7 +14,6 @@ import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.contract.DQuickContract
 import io.defitrack.protocol.quickswap.staking.invest.DQuickStakingInvestmentPreparer
 import org.springframework.stereotype.Component
-import org.springframework.stereotype.Service
 
 @Component
 @ConditionalOnCompany(Company.QUICKSWAP)

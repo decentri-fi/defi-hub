@@ -5,8 +5,6 @@ import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.event.EventDecoder.Companion.extract
-import io.defitrack.event.EventDecoder.Companion.getIndexedParameter
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.contract.GetEventLogsCommand
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -16,7 +14,6 @@ import io.defitrack.protocol.Company
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerGaugeContract
-import io.defitrack.protocol.balancer.pooling.BalancerAZkEVMPoolingMarketProvider
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 import org.web3j.abi.datatypes.Event

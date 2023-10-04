@@ -19,7 +19,6 @@ import io.defitrack.protocol.quickswap.contract.QuickswapDualRewardPoolContract
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.util.*

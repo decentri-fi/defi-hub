@@ -12,8 +12,8 @@ import io.defitrack.network.toVO
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.contract.VelodromeV2GaugeContract
-import io.defitrack.protocol.contract.VoterContract
+import io.defitrack.protocol.velodrome.contract.VelodromeV2GaugeContract
+import io.defitrack.protocol.velodrome.contract.VoterContract
 import io.defitrack.protocol.velodrome.pooling.VelodromeV2OptimismPoolingMarketProvider
 import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.flow.Flow

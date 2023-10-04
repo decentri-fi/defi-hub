@@ -7,7 +7,6 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.ContractType
-import io.defitrack.protocol.PolygonStakingContract
 import io.defitrack.protocol.Protocol
 import org.springframework.stereotype.Component
 

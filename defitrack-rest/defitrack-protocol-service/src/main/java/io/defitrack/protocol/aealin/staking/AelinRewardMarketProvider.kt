@@ -13,7 +13,7 @@ import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.aelin.farming.StakingRewardsContract
+import io.defitrack.protocol.aelin.StakingRewardsContract
 import io.defitrack.transaction.PreparedTransaction
 import org.springframework.stereotype.Component
 import java.math.BigDecimal

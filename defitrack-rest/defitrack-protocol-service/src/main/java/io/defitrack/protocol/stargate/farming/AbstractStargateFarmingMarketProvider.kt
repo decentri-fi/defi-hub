@@ -8,8 +8,8 @@ import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.network.toVO
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.StargateService
-import io.defitrack.protocol.contract.LPStakingContract
+import io.defitrack.protocol.stargate.StargateService
+import io.defitrack.protocol.stargate.contract.LPStakingContract
 import io.defitrack.transaction.PreparedTransaction
 
 abstract class AbstractStargateFarmingMarketProvider(

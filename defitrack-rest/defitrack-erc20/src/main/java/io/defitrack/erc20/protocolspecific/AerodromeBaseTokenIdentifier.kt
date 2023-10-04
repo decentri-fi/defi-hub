@@ -6,7 +6,7 @@ import io.defitrack.erc20.ERC20
 import io.defitrack.erc20.LpContractReader
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.contract.PoolFactoryContract
+import io.defitrack.protocol.velodrome.contract.PoolFactoryContract
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 
@@ -30,5 +30,4 @@ class AerodromeBaseTokenIdentifier(
     override suspend fun isProtocolToken(token: ERC20): Boolean {
         return token.network == Network.BASE && poolFactoryContract.await().contains(token.address.lowercase())
     }
-
 }

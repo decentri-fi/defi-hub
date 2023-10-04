@@ -5,7 +5,6 @@ import io.defitrack.apr.StakedAsset
 import io.defitrack.apr.StakingAprCalculator
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.polycat.contract.PolycatMasterChefContract
-import io.defitrack.token.DecentrifiERC20Resource
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import java.math.BigDecimal

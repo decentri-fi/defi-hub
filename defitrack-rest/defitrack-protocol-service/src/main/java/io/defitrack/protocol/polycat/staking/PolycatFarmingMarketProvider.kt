@@ -14,9 +14,7 @@ import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.polycat.PolycatService
 import io.defitrack.protocol.polycat.contract.PolycatMasterChefContract
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
-import org.springframework.stereotype.Service
 import java.math.BigDecimal
 
 @Component

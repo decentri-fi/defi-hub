@@ -6,7 +6,7 @@ import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.market.farming.FarmingPositionProvider
 import io.defitrack.market.farming.domain.FarmingPosition
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.contract.VeVeloContract
+import io.defitrack.protocol.velodrome.contract.VeVeloContract
 import org.springframework.stereotype.Component
 import java.math.BigInteger
 

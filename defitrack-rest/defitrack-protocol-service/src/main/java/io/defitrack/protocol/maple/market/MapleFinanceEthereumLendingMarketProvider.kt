@@ -7,7 +7,7 @@ import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.maplefinance.MapleFinanceEthereumGraphProvider
+import io.defitrack.protocol.maple.MapleFinanceEthereumGraphProvider
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope

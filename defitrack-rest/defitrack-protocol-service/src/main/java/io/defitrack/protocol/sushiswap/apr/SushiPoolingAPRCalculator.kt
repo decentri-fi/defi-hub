@@ -1,7 +1,7 @@
 package io.defitrack.protocol.sushiswap.apr
 
 import io.defitrack.apr.PoolingAprCalculator
-import io.defitrack.protocol.SushiswapService
+import io.defitrack.protocol.sushiswap.SushiswapService
 import java.math.BigDecimal
 
 class SushiPoolingAPRCalculator(

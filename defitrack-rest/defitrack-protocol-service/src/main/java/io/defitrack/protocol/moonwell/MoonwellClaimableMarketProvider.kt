@@ -5,15 +5,12 @@ import io.defitrack.claimable.ClaimableMarket
 import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.claimable.Reward
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.AsyncUtils
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.network.toVO
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.RewardDistributorContract
-import io.defitrack.protocol.UnitRollerContract
 import io.defitrack.token.DecentrifiERC20Resource
 import io.defitrack.transaction.PreparedTransaction
 import org.springframework.stereotype.Component

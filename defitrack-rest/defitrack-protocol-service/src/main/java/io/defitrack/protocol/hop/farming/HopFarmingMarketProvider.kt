@@ -11,9 +11,9 @@ import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.ContractType
-import io.defitrack.protocol.HopService
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.contract.HopStakingRewardContract
+import io.defitrack.protocol.hop.HopService
+import io.defitrack.protocol.hop.contract.HopStakingRewardContract
 import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow

@@ -9,9 +9,9 @@ import io.defitrack.market.lending.domain.Position
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.compound.IronBankComptrollerContract
-import io.defitrack.protocol.compound.IronBankService
-import io.defitrack.protocol.compound.IronbankTokenContract
+import io.defitrack.protocol.ironbank.IronBankComptrollerContract
+import io.defitrack.protocol.ironbank.IronBankService
+import io.defitrack.protocol.ironbank.IronbankTokenContract
 import io.defitrack.protocol.ironbank.lending.invest.CompoundLendingInvestmentPreparer
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll

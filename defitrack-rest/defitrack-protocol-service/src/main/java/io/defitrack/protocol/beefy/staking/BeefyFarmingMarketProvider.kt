@@ -18,7 +18,6 @@ import io.defitrack.protocol.beefy.staking.invest.BeefyStakingInvestmentPreparer
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import java.math.BigDecimal

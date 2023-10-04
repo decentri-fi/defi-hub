@@ -4,7 +4,7 @@ import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.lending.LendingPositionProvider
 import io.defitrack.market.lending.domain.LendingPosition
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.contract.QidaoVaultContract
+import io.defitrack.protocol.qidao.contract.QidaoVaultContract
 
 //TODO: fix this vault
 @ConditionalOnCompany(Company.QIDAO)

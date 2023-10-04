@@ -14,56 +14,12 @@
     <dependencies>
         <dependency>
             <groupId>io.defitrack</groupId>
-            <artifactId>defitrack-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
             <artifactId>defitrack-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.defitrack</groupId>
-            <artifactId>ethereum</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
-            <artifactId>polygon</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
-            <artifactId>arbitrum</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
-            <artifactId>optimism</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
-            <artifactId>polygon-zkevm</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
-            <artifactId>hop</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
-            <artifactId>uniswap</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
-            <artifactId>velodrome</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
     </dependencies>
 </project>

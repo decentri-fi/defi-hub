@@ -4,8 +4,7 @@ import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
-import io.defitrack.protocol.DodoGraphProvider
-import io.defitrack.token.TokenType
+import io.defitrack.protocol.dodo.DodoGraphProvider
 import java.math.BigDecimal
 
 abstract class DodoPoolingMarketProvider(

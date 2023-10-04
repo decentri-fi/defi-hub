@@ -8,13 +8,11 @@ import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.mstable.MStableEthereumService
 import io.defitrack.protocol.mstable.contract.MStableEthereumBoostedSavingsVaultContract
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
-import org.springframework.stereotype.Service
 
 @Component
 @ConditionalOnCompany(Company.MSTABLE)

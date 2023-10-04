@@ -9,9 +9,9 @@ import io.defitrack.event.EventDecoder
 import io.defitrack.event.EventUtils.Companion.appliesTo
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.network.toVO
-import io.defitrack.protocol.HopPolygonService
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.contract.HopStakingRewardContract
+import io.defitrack.protocol.hop.HopPolygonService
+import io.defitrack.protocol.hop.contract.HopStakingRewardContract
 import org.springframework.stereotype.Component
 import org.web3j.abi.datatypes.Event
 import org.web3j.protocol.core.methods.response.Log

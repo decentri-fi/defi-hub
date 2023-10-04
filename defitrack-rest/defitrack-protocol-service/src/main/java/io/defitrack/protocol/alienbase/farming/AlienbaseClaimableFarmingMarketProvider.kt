@@ -5,9 +5,9 @@ import io.defitrack.claimable.UserClaimableProvider
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.evm.contract.multicall.MultiCallElement
-import io.defitrack.protocol.BasedDistributorV2Contract
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.alienbase.BasedDistributorV2Contract
 import org.springframework.stereotype.Component
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.generated.Uint256

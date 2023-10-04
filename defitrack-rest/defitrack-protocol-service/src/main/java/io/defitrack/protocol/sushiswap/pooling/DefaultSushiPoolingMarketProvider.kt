@@ -5,9 +5,8 @@ import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.SushiswapService
+import io.defitrack.protocol.sushiswap.SushiswapService
 import io.defitrack.protocol.sushiswap.apr.SushiPoolingAPRCalculator
-import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope

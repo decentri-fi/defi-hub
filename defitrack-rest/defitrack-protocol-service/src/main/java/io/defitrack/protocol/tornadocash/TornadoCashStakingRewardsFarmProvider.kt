@@ -8,7 +8,6 @@ import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.tornadocash.farming.StakingRewardsContract
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.BigInteger

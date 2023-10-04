@@ -6,10 +6,10 @@ import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
-import io.defitrack.protocol.ChainlinkStakingContract
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.chainlink.ChainlinkStakingContract
 import org.springframework.stereotype.Component
 
 @Component

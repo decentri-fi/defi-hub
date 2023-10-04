@@ -8,7 +8,6 @@ import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.crv.contract.CurveFactoryContract
 import io.defitrack.protocol.crv.contract.CurvePoolContract
-import io.defitrack.token.TokenType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import java.math.BigDecimal
