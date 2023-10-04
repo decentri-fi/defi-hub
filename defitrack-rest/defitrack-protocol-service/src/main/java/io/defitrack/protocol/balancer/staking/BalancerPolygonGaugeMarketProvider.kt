@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.BALANCER)
-@ConditionalOnProperty(value = ["polygo.enabled"], havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(value = ["polygon.enabled"], havingValue = "true", matchIfMissing = true)
 class BalancerPolygonGaugeMarketProvider(
     balancerPoolingMarketProvider: BalancerPolygonPoolingMarketProvider
 ) : BalancerGaugeFarmingMarketProvider(
