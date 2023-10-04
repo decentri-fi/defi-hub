@@ -3,6 +3,7 @@ package io.defitrack.price.decentrifi
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.lending.vo.LendingMarketVO
 import io.defitrack.network.NetworkVO
+import io.defitrack.price.external.ExternalPrice
 import io.defitrack.protocol.ProtocolVO
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
@@ -23,7 +24,7 @@ class DecentrifiLendingPriceRepository(
 
     val logger = LoggerFactory.getLogger(this::class.java)
 
-    val cache = Cache.Builder<String, BigDecimal>().build()
+    val cache = Cache.Builder<String, ExternalPrice>().build()
 
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 6)
     fun populatePoolPrices() = runBlocking {
@@ -40,7 +41,11 @@ class DecentrifiLendingPriceRepository(
                         if (price == null) {
                             logger.error("Price for market ${market.name} in ${market.protocol.name} is null")
                         } else {
-                            cache.put(toIndex(market.network, market.marketToken!!.address.lowercase()), price)
+                            cache.put(
+                                toIndex(market.network, market.marketToken!!.address.lowercase()), ExternalPrice(
+                                    market.marketToken!!.address, market.network.toNetwork(), price
+                                )
+                            )
                         }
                     }
             } catch (ex: Exception) {
@@ -74,6 +79,6 @@ class DecentrifiLendingPriceRepository(
     }
 
     suspend fun getPrice(token: TokenInformationVO): BigDecimal {
-        return cache.get(toIndex(token.network, token.address)) ?: BigDecimal.ZERO
+        return cache.get(toIndex(token.network, token.address))?.price ?: BigDecimal.ZERO
     }
 }

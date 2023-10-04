@@ -16,6 +16,12 @@ class DecentrifiUniswapPriceService(
                 && decentriUniswapV2UnderlyingPriceRepository.contains(token.address)
     }
 
+    override fun getAllPrices(): List<ExternalPrice> {
+        return decentriUniswapV2UnderlyingPriceRepository.prices.asMap().entries.map {
+            ExternalPrice(it.key.toString(), Network.ETHEREUM, it.value)
+        }
+    }
+
     override suspend fun getPrice(tokenInformationVO: TokenInformationVO): BigDecimal {
         return decentriUniswapV2UnderlyingPriceRepository.getPrice(tokenInformationVO.address) ?: BigDecimal.ZERO
     }

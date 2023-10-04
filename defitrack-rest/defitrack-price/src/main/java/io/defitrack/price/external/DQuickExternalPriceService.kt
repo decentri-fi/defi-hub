@@ -41,6 +41,18 @@ class DQuickExternalPriceService(
         }
     }
 
+    override fun getAllPrices(): List<ExternalPrice> {
+        return cache.get("dquick")?.let {
+            ExternalPrice(
+                dquickAddress,
+                Network.POLYGON,
+                it
+            )
+        }?.let {
+            listOf(it)
+        } ?: emptyList()
+    }
+
     suspend fun getQuickPrice(): BigDecimal {
         return beefyPricesService.getPrices()
             .getOrDefault("QUICK", BigDecimal.ZERO)

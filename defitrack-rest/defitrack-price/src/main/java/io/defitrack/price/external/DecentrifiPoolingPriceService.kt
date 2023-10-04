@@ -14,6 +14,12 @@ class DecentrifiPoolingPriceService(
         return decentrifiPoolingPriceRepository.contains(token)
     }
 
+    override fun getAllPrices(): List<ExternalPrice> {
+        return decentrifiPoolingPriceRepository.cache.asMap().entries.map {
+            it.value
+        }
+    }
+
     override suspend fun getPrice(token: TokenInformationVO): BigDecimal {
         return decentrifiPoolingPriceRepository.getPrice(token)
     }

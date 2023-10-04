@@ -10,4 +10,6 @@ interface ExternalPriceService {
     fun appliesTo(token: TokenInformationVO): Boolean {
         return getOracleName() == token.name.lowercase()
     }
+
+    fun getAllPrices(): List<ExternalPrice>
 }

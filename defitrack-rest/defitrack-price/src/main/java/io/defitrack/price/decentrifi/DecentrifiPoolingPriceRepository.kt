@@ -3,6 +3,7 @@ package io.defitrack.price.decentrifi
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.pooling.vo.PoolingMarketVO
 import io.defitrack.network.NetworkVO
+import io.defitrack.price.external.ExternalPrice
 import io.defitrack.protocol.ProtocolVO
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
@@ -23,7 +24,7 @@ class DecentrifiPoolingPriceRepository(
 
     val logger = LoggerFactory.getLogger(this::class.java)
 
-    val cache = Cache.Builder<String, BigDecimal>().build()
+    val cache = Cache.Builder<String, ExternalPrice>().build()
 
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 6)
     fun populatePoolPrices() = runBlocking {
@@ -36,7 +37,11 @@ class DecentrifiPoolingPriceRepository(
                     if (price == null) {
                         logger.error("Price for pool ${pool.address} in ${pool.protocol.name} is null")
                     } else {
-                        cache.put(toIndex(pool.network, pool.address), price)
+                        cache.put(
+                            toIndex(pool.network, pool.address), ExternalPrice(
+                                pool.address, pool.network.toNetwork(), price
+                            )
+                        )
                     }
                 }
             } catch (ex: Exception) {
@@ -48,7 +53,11 @@ class DecentrifiPoolingPriceRepository(
     }
 
     fun putInCache(network: NetworkVO, address: String, price: BigDecimal) =
-        cache.put(toIndex(network, address), price)
+        cache.put(
+            toIndex(network, address), ExternalPrice(
+                address, network.toNetwork(), price
+            )
+        )
 
     fun contains(token: TokenInformationVO): Boolean {
         return cache.get(toIndex(token.network, token.address)) != null
@@ -73,6 +82,6 @@ class DecentrifiPoolingPriceRepository(
     }
 
     suspend fun getPrice(token: TokenInformationVO): BigDecimal {
-        return cache.get(toIndex(token.network, token.address)) ?: BigDecimal.ZERO
+        return cache.get(toIndex(token.network, token.address))?.price ?: BigDecimal.ZERO
     }
 }

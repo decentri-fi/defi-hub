@@ -14,6 +14,10 @@ class DecentrifiLendingPriceService(
         return decentrifiLendingPriceRepository.contains(token)
     }
 
+    override fun getAllPrices(): List<ExternalPrice> {
+        return decentrifiLendingPriceRepository.cache.asMap().entries.map(Map.Entry<Any?, ExternalPrice>::value)
+    }
+
     override suspend fun getPrice(token: TokenInformationVO): BigDecimal {
         return decentrifiLendingPriceRepository.getPrice(token)
     }

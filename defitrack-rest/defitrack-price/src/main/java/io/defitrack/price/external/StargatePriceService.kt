@@ -6,10 +6,11 @@ import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.stargate.contract.StargatePool
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 
-@Service
+@Component
 class StargatePriceService(
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val priceResource: PriceResource
@@ -32,6 +33,10 @@ class StargatePriceService(
         return tokens.any {
             token.symbol == it
         }
+    }
+
+    override fun getAllPrices(): List<ExternalPrice> {
+        return emptyList()
     }
 
     override suspend fun getPrice(tokenInformationVO: TokenInformationVO): BigDecimal {
