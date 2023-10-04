@@ -46,7 +46,8 @@ class UniswapV3PoolContract(
         )
 
         return Slot0(
-            tick = retVal[1].value as BigInteger
+            tick = retVal[1].value as BigInteger,
+            sqrtPriceX96 = retVal[0].value as BigInteger
         )
     }
 
@@ -90,6 +91,7 @@ class UniswapV3PoolContract(
     )
 
     data class Slot0(
+        val sqrtPriceX96: BigInteger,
         val tick: BigInteger
     )
 }
