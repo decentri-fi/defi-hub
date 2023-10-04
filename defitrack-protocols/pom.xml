@@ -27,6 +27,10 @@
         </dependency>
         <dependency>
             <groupId>io.defitrack</groupId>
+            <artifactId>polygon</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
             <artifactId>optimism</artifactId>
         </dependency>
         <dependency>
@@ -36,6 +40,10 @@
         <dependency>
             <groupId>io.defitrack</groupId>
             <artifactId>base</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>polygon-zkevm</artifactId>
         </dependency>
     </dependencies>
 
