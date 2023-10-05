@@ -64,10 +64,10 @@ class MoonwellClaimableMarketProvider(
                             deferredRewardDistributor.await()
                                 .getOutstandingRewardsForUserFn(it.metadata["mToken"].toString(), user)
                         },
-                        extractAmountFromRewardFunction = {
-                            val results = it[0].value as List<RewardDistributorContract.Reward>
-                            results.firstOrNull {
-                                it.emissionToken.value as String != "0x0000000000000000000000000000000000000000"
+                        extractAmountFromRewardFunction = { results, _ ->
+                            val rewards = results[0].value as List<RewardDistributorContract.Reward>
+                            rewards.firstOrNull { r ->
+                                r.emissionToken.value as String != "0x0000000000000000000000000000000000000000"
                             }?.amount?.value ?: BigInteger.ZERO
                         }
                     ),

@@ -8,8 +8,8 @@ import java.math.BigInteger
 data class Reward(
     val token: FungibleToken,
     val contractAddress: String,
-    val getRewardFunction: suspend (user: String) -> org.web3j.abi.datatypes.Function,
-    val extractAmountFromRewardFunction: (List<Type<*>>) -> BigInteger = { result ->
+    val getRewardFunction: suspend (String) -> org.web3j.abi.datatypes.Function,
+    val extractAmountFromRewardFunction: suspend (List<Type<*>>, String) -> BigInteger = { result, user ->
         result[0].value as BigInteger
     },
 ) {

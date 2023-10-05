@@ -1,7 +1,6 @@
 package io.defitrack.claimable
 
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import ClaimableMarketProvider
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -16,7 +15,7 @@ class DefaultClaimableRewardProvider(
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
-    suspend fun claimables(address: String): List<UserClaimable> = coroutineScope {
+    suspend fun claimables(userAddress: String): List<UserClaimable> = coroutineScope {
         val fetchersByNetwork = claimables.getMarkets() .groupBy {
             it.network
         }
@@ -35,14 +34,14 @@ class DefaultClaimableRewardProvider(
                     }
 
                     blockchainGatewayProvider.getGateway(entry.key).readMultiCall(
-                        rewards.map { it.first.toMulticall(address) }
+                        rewards.map { it.first.toMulticall(userAddress) }
                     ).mapIndexed { index, retVal ->
 
                         if (retVal.success) {
 
 
                             val reward = rewards[index]
-                            val earned = reward.first.extractAmountFromRewardFunction(retVal.data)
+                            val earned = reward.first.extractAmountFromRewardFunction(retVal.data, userAddress)
 
                             if (earned > BigInteger.ONE) {
 
@@ -54,7 +53,7 @@ class DefaultClaimableRewardProvider(
                                     amount = earned,
                                     claimableToken = reward.first.token,
                                     claimTransaction = reward.second.claimableRewardFetcher.preparedTransaction.invoke(
-                                        address
+                                        userAddress
                                     ),
                                 )
                             } else {
