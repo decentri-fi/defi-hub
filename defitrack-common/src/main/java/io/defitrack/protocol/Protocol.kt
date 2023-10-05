@@ -19,6 +19,14 @@ enum class Protocol(
         networks = listOf(Network.BASE),
         company = Company.BASESWAP
     ),
+    RADIANT(
+        logo = "radiant.png",
+        slug = "radiant",
+        primitives = listOf(DefiPrimitive.LENDING),
+        website = "https://radiant.capital/",
+        networks = listOf(Network.ARBITRUM),
+        company = Company.RADIANT
+    ),
     OVIX(
         logo = "ovix.png",
         slug = "ovix",

@@ -17,6 +17,14 @@ open class CompoundTokenContract(
     ethereumContractAccessor, address
 ) {
 
+    fun scaledBalanceOfFn(address: String): Function {
+        return createFunction(
+            "scaledBalanceOf",
+            listOf(address.toAddress()),
+            listOf(uint256())
+        )
+    }
+
     fun mintFunction(amount: BigInteger): Function {
         return createFunction(
             "mint",

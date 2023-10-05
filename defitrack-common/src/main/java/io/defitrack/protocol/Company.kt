@@ -132,6 +132,10 @@ enum class Company(
         prettyName = "Aave",
         slug = "aave"
     ),
+    RADIANT(
+        prettyName = "Radiant",
+        slug = "radiant"
+    ),
     CURVE(
         prettyName = "Curve",
         slug = "curve"
