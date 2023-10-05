@@ -90,7 +90,7 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
                 logger.error("something went wrong trying to refresh the cache", ex)
             }
         }
-        logger.info("cache refresh took ${millis / 1000}s")
+        logger.debug("cache refresh took ${millis / 1000}s")
     }
 
     suspend fun populateCaches() {

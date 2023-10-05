@@ -29,6 +29,9 @@ class Claimables(private val claimableMarketProvider: List<ClaimableMarketProvid
                 cache.put(market.id, market)
             }
         }
-        logger.info("Claimables populated with ${cache.asMap().size} markets")
+
+        if (cache.asMap().isNotEmpty()) {
+            logger.info("Claimables populated with ${cache.asMap().size} markets")
+        }
     }
 }

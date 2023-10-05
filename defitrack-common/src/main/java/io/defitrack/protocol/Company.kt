@@ -48,6 +48,10 @@ enum class Company(
         prettyName = "GMX",
         slug = "gmx"
     ),
+    GAINS(
+        prettyName = "Gains",
+        slug = "gains"
+    ),
     CAMELOT(
         prettyName = "Camelot",
         slug = "camelot"

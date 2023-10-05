@@ -107,11 +107,19 @@ enum class Protocol(
         networks = listOf(Network.ETHEREUM, Network.ARBITRUM),
         company = Company.GMX
     ),
+    GAINS_NETWORK(
+        logo = "gain.png",
+        slug = "gains",
+        primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
+        website = "https://gains.trade",
+        networks = listOf(Network.ARBITRUM),
+        company = Company.GAINS
+    ),
     CAMELOT(
         logo = "camelot.png",
         slug = "camelot",
         primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING),
-        website = "https://camelot.exchange//",
+        website = "https://camelot.exchange/",
         networks = listOf(Network.ARBITRUM),
         company = Company.CAMELOT
     ),
