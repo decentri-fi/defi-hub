@@ -404,7 +404,7 @@ enum class Protocol(
         logo = "uniswap.png",
         slug = "uniswap_v3",
         website = "https://uniswap.org",
-        primitives = listOf(element = DefiPrimitive.POOLING),
+        primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.CLAIMABLES),
         networks = listOf(Network.ETHEREUM, Network.POLYGON),
         company = Company.UNISWAP
     ),
@@ -460,7 +460,7 @@ enum class Protocol(
         logo = "looksrare.png",
         slug = "looksrare",
         website = "https://looksrare.org",
-        primitives = listOf(DefiPrimitive.FARMING),
+        primitives = listOf(DefiPrimitive.FARMING, DefiPrimitive.CLAIMABLES),
         networks = emptyList(),
         company = Company.LOOKSRARE
     ),
