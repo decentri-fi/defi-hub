@@ -1,5 +1,6 @@
 package io.defitrack.claimables
 
+import arrow.fx.coroutines.parMap
 import io.defitrack.claimable.UserClaimableVO
 import io.defitrack.protocol.DefiPrimitive
 import io.defitrack.protocol.Protocol
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import org.web3j.crypto.WalletUtils.isValidAddress
 import java.util.concurrent.Executors
+import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.time.measureTimedValue
 
 @RestController
@@ -33,14 +35,11 @@ class ClaimableAggregateRestController(
         } else {
             val observation = Observation.start("requests.get.claimables.aggregate", observationRegistry)
             val result = measureTimedValue {
-                //todo: fetch protocols from api gw (cached), so we don't have to redeploy this service every time we add a new protocol
                 Protocol.entries.filter {
                     it.primitives.contains(DefiPrimitive.CLAIMABLES)
-                }.map {
-                    async {
-                        claimablesClient.getClaimables(address, protocolVOMapper.map(it))
-                    }
-                }.awaitAll().flatten()
+                }.parMap {
+                    claimablesClient.getClaimables(address, protocolVOMapper.map(it))
+                }.flatten()
             }
 
             logger.info("took ${result.duration.inWholeSeconds} seconds to aggregate ${result.value.size} claimables for $address")

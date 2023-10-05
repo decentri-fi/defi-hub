@@ -115,6 +115,14 @@ enum class Protocol(
         networks = listOf(Network.ARBITRUM),
         company = Company.GAINS
     ),
+    SWELL(
+        logo = "swell.png",
+        slug = "swell",
+        primitives = listOf(DefiPrimitive.FARMING),
+        website = "https://swellnetwork.io",
+        networks = listOf(Network.ETHEREUM),
+        company = Company.SWELL
+    ),
     CAMELOT(
         logo = "camelot.png",
         slug = "camelot",
