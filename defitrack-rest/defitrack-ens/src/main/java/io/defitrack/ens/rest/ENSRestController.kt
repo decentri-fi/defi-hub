@@ -3,38 +3,49 @@ package io.defitrack.ens.rest
 import com.newrelic.api.agent.Trace
 import io.defitrack.ens.domain.ENSResult
 import io.defitrack.ens.service.EnsNameService
+import io.micrometer.observation.Observation
+import io.micrometer.observation.ObservationRegistry
 import kotlinx.coroutines.runBlocking
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class ENSRestController(private val ensNameService: EnsNameService) {
+class ENSRestController(
+    private val ensNameService: EnsNameService,
+    private val observationRegistry: ObservationRegistry
+) {
 
     @GetMapping("/by-name/{ens}")
-    @Trace(metricName = "controller.ens.by-name", nameTransaction = true)
     fun getAddressInformation(@PathVariable("ens") ens: String): ENSResult = runBlocking {
-        val result = ensNameService.getEnsByName(ens)
+        val observation = Observation.start("ens_by_name", observationRegistry)
 
-        ENSResult(
-            ens, result, if (result.isNotBlank()) {
-                ensNameService.getExpires(ens).toLong()
-            } else 0
-        )
+        observation.openScope().use {
+            val result = ensNameService.getEnsByName(ens)
+
+            ENSResult(
+                ens, result, if (result.isNotBlank()) {
+                    ensNameService.getExpires(ens).toLong()
+                } else 0
+            )
+        }.also { observation.stop() }
     }
 
     @GetMapping("/by-address/{address}")
-    @Trace(metricName = "controller.ens.by-address")
     fun getMapping(@PathVariable("address") address: String): ENSResult = runBlocking {
-        val result = ensNameService.getEnsByAddress(address)
+        val observation = Observation.start("ens_by_address", observationRegistry)
 
-       ENSResult(
-            result, address, if (result.isNotBlank()) {
-                ensNameService.getExpires(result).toLong()
-            } else {
-                0
-            }
-        )
+        observation.openScope().use {
+            val result = ensNameService.getEnsByAddress(address)
+
+            ENSResult(
+                result, address, if (result.isNotBlank()) {
+                    ensNameService.getExpires(result).toLong()
+                } else {
+                    0
+                }
+            )
+        }.also { observation.stop() }
     }
 
     @GetMapping("/by-name/{name}/avatar")
