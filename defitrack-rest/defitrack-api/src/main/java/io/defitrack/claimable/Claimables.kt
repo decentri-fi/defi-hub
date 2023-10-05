@@ -1,6 +1,11 @@
 package io.defitrack.claimable
 
 import ClaimableMarketProvider
+import arrow.core.Either
+import arrow.core.Either.Companion.catch
+import arrow.core.Either.Right
+import arrow.core.getOrElse
+import arrow.core.right
 import io.github.reactivecircus.cache4k.Cache
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -14,20 +19,27 @@ class Claimables(private val claimableMarketProvider: List<ClaimableMarketProvid
     val cache = Cache.Builder<String, ClaimableMarket>().build()
 
     fun getMarkets(): List<ClaimableMarket> {
-        return try {
+        return catch {
             val hashmap: Map<in String, ClaimableMarket> = HashMap(cache.asMap())
             hashmap.values.toMutableList()
-        } catch (ex: Exception) {
-            logger.error("Unable to get markets from map", ex)
-            emptyList()
-        }
+        }.mapLeft {
+            logger.error("Unable to get claimables", it)
+        }.getOrElse { emptyList() }
     }
 
     suspend fun populate() {
-        claimableMarketProvider.forEach {
-            it.getClaimables().forEach { market ->
-                cache.put(market.id, market)
+        claimableMarketProvider.map {
+            catch {
+                it.getClaimables()
             }
+        }.map {
+            it.mapLeft { ex ->
+                logger.error("Unable to get claimables", ex)
+            }
+        }.mapNotNull {
+            it.getOrNull()
+        }.flatten().forEach { market ->
+            cache.put(market.id, market)
         }
 
         if (cache.asMap().isNotEmpty()) {
