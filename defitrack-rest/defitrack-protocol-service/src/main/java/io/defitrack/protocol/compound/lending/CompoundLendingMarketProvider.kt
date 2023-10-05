@@ -1,5 +1,6 @@
 package io.defitrack.protocol.compound.lending
 
+import arrow.fx.coroutines.parMap
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
@@ -31,13 +32,9 @@ class CompoundLendingMarketProvider(
 ) : LendingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
-        getTokenContracts().map {
-            async {
-                throttled {
-                    toLendingMarket(it)
-                }
-            }
-        }.awaitAll().filterNotNull()
+        getTokenContracts().parMap {
+            toLendingMarket(it)
+        }.filterNotNull()
     }
 
     override fun getProtocol(): Protocol {
@@ -98,7 +95,8 @@ class CompoundLendingMarketProvider(
     suspend fun getSupplyRate(compoundTokenContract: CompoundTokenContract): BigDecimal {
         val blocksPerDay = 6463
         val dailyRate =
-            (compoundTokenContract.supplyRatePerBlock.await().toBigDecimal().divide(BigDecimal.TEN.pow(18)) * BigDecimal(
+            (compoundTokenContract.supplyRatePerBlock.await().toBigDecimal()
+                .divide(BigDecimal.TEN.pow(18)) * BigDecimal(
                 blocksPerDay
             )) + BigDecimal.ONE
 

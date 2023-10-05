@@ -1,5 +1,6 @@
 package io.defitrack.protocol.balancer.pooling
 
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
@@ -11,29 +12,24 @@ import io.defitrack.protocol.balancer.contract.BalancerService
 import io.defitrack.protocol.balancer.contract.BalancerVaultContract
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.launch
 import java.math.BigDecimal
+import kotlin.coroutines.EmptyCoroutineContext
 
 abstract class BalancerPoolingMarketProvider(
     private val balancerService: BalancerService
 ) : PoolingMarketProvider() {
 
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
-        balancerService.getPools(getNetwork()).forEach { pool ->
-            launch {
-                throttled {
-                    createMarket(pool)?.let {
-                        send(it)
-                    }
-                }
-            }
+        balancerService.getPools(getNetwork()).parMapNotNull(EmptyCoroutineContext, 8) { pool ->
+            createMarket(pool)
+        }.forEach {
+            send(it)
         }
     }
 
     private suspend fun createMarket(
         pool: String,
     ): PoolingMarket? {
-
         try {
             val poolContract = BalancerPoolContract(
                 getBlockchainGateway(), pool
