@@ -11,7 +11,7 @@ import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Function
 
-class CompoundRewardContract(
+open class CompoundRewardContract(
     blockchainGateway: BlockchainGateway,
     address: String
 ) : EvmContract(
@@ -26,7 +26,7 @@ class CompoundRewardContract(
         )
     }
 
-    suspend fun getRewardConfig(comet: String) : RewardConfig {
+    open suspend fun getRewardConfig(comet: String): RewardConfig {
         return (read(
             "rewardConfig",
             inputs = listOf(comet.toAddress()),

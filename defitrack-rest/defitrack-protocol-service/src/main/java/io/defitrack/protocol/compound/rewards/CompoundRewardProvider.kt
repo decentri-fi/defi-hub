@@ -3,6 +3,8 @@ package io.defitrack.protocol.compound.rewards
 import io.defitrack.claimable.*
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import ClaimableMarketProvider
+import io.defitrack.abi.TypeUtils
+import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.network.toVO
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.compound.CompoundAddressesProvider
@@ -13,8 +15,26 @@ import io.defitrack.transaction.PreparedTransaction
 abstract class CompoundRewardProvider(
 ) : UserClaimableProvider(), ClaimableMarketProvider {
 
-    val deferredContract = lazyAsync {
-        CompoundRewardContract(getBlockchainGateway(), CompoundAddressesProvider.CONFIG[getNetwork()]!!.rewards)
+    private val deferredContract = lazyAsync {
+        getContract()
+    }
+
+    open fun getContract(): CompoundRewardContract {
+        return object: CompoundRewardContract(getBlockchainGateway(), CompoundAddressesProvider.CONFIG[getNetwork()]!!.rewards) {
+            override suspend fun getRewardConfig(comet: String): RewardConfig {
+                return (read(
+                    "rewardConfig",
+                    inputs = listOf(comet.toAddress()),
+                    outputs = listOf(
+                        TypeUtils.address(),
+                        TypeUtils.uint64(),
+                        TypeUtils.bool(),
+                    )
+                )[0].value as String).let {
+                    RewardConfig(it)
+                }
+            }
+        }
     }
 
     override suspend fun getClaimables(): List<ClaimableMarket> {
