@@ -1,5 +1,6 @@
 package io.defitrack.evm.contract
 
+import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.evm.contract.multicall.MultiCallResult
@@ -123,5 +124,19 @@ abstract class EvmContract(
             outputs = listOf(output)
         )[0].value as T
     }
+
+    fun Function.toContractCall(): ContractCall {
+        return ContractCall(
+            this,
+            blockchainGateway.network,
+            this@EvmContract.address
+        )
+    }
+
+    data class ContractCall(
+        val function: Function,
+        val network: Network,
+        val address: String
+    )
 }
 
