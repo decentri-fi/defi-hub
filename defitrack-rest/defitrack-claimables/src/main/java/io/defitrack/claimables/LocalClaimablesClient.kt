@@ -5,6 +5,7 @@ import io.defitrack.claimable.UserClaimableVO
 import io.defitrack.protocol.ProtocolVO
 import io.ktor.client.*
 import io.ktor.client.call.*
+import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
@@ -41,7 +42,11 @@ class LocalClaimablesClient(
         withContext(Dispatchers.IO) {
             try {
                 val response =
-                    httpClient.get("http://defitrack-${protocol.company.slug}.default.svc.cluster.local:8080/${protocol.slug}/claimables")
+                    httpClient.get("http://defitrack-${protocol.company.slug}.default.svc.cluster.local:8080/${protocol.slug}/claimables") {
+                        this.timeout {
+                            requestTimeoutMillis = 5000
+                        }
+                    }
                 if (response.status.isSuccess()) {
                     response.body()
                 } else {
