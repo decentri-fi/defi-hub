@@ -66,13 +66,6 @@ abstract class HopPoolingMarketProvider(
                 marketSize = refreshable(marketSize) {
                     getPrice(canonical.address, contract, swapContract).toBigDecimal()
                 },
-                apr = hopAPRService.getAPR(
-                    canonical.symbol,
-                    canonical.address,
-                    canonical.decimals,
-                    getNetwork(),
-                    marketSize
-                ),
                 positionFetcher = defaultPositionFetcher(hopLpToken.lpToken),
                 totalSupply = refreshable {
                     contract.totalSupply().asEth(contract.decimals())

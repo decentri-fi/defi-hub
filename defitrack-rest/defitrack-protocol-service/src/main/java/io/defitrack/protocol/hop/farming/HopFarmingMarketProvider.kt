@@ -1,5 +1,6 @@
 package io.defitrack.protocol.hop.farming
 
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.claimable.Reward
 import io.defitrack.common.utils.Refreshable
@@ -17,21 +18,19 @@ import io.defitrack.protocol.hop.contract.HopStakingRewardContract
 import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.RoundingMode
+import kotlin.coroutines.EmptyCoroutineContext
 
 abstract class HopFarmingMarketProvider(
     private val hopService: HopService,
 ) : FarmingMarketProvider() {
 
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
-        hopService.getStakingRewards(getNetwork()).forEach { stakingReward ->
-            launch {
-                throttled {
-                    toStakingMarket(stakingReward)?.let { send(it) }
-                }
-            }
+        hopService.getStakingRewardsFromJson(getNetwork()).parMapNotNull(EmptyCoroutineContext, 8) { stakingReward ->
+            toStakingMarket(stakingReward)
+        }.forEach {
+            send(it)
         }
     }
 

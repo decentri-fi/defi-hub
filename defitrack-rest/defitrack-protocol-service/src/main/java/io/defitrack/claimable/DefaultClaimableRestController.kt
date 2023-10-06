@@ -35,11 +35,15 @@ class DefaultClaimableRestController(
         return claimables.getMarkets().filter {
             it.protocol.slug == protocol
         }.map {
+            //TODO: mapper class
             ClaimableMarketVO(
                 it.id,
                 it.name,
                 it.network.toVO(),
-                protocolVOMapper.map(it.protocol)
+                protocolVOMapper.map(it.protocol),
+                rewards = it.claimableRewardFetcher.rewards.map {
+                    ClaimableMarketVO.Reward(it.token)
+                }
             )
         }
     }

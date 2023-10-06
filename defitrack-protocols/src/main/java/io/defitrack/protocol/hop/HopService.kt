@@ -19,18 +19,30 @@ import org.springframework.stereotype.Component
 class HopService(
     private val client: HttpClient,
     private val objectMapper: ObjectMapper,
-    private val abstractHopServices: List<AbstractHopService>,
-    private val graphGatewayProvider: TheGraphGatewayProvider
+    private val graphGatewayProvider: TheGraphGatewayProvider,
+    private val hopAddressesProvider: HopAddressesProvider
 ) {
 
     val addressesUrl = "https://raw.githubusercontent.com/defitrack/data/master/protocols/hop/addresses.json"
 
     val lpCache = Cache.Builder<Network, List<HopLpToken>>().build()
 
-    fun getStakingRewards(network: Network): List<String> {
-        return abstractHopServices.firstOrNull {
-            it.getNetwork() == network
-        }?.getStakingRewards() ?: emptyList()
+    suspend fun getStakingRewardsFromJson(network: Network): List<String> {
+        val response: String = withContext(Dispatchers.IO) { client.get(addressesUrl).bodyAsText() }
+        return JsonParser.parseString(response).asJsonObject["rewardsContracts"].asJsonObject.entrySet()
+            .map {
+                it.value.asJsonObject
+            }.map {
+                it.entrySet().filter {
+                    it.key == network.slug
+                }.map { it.value }
+            }.flatten().map {
+                it.asJsonArray
+            }.flatMap {
+                it.map {
+                    it.asString
+                }
+            }
     }
 
     suspend fun getDailyVolumes(tokenName: String, network: Network): List<DailyVolume> {
@@ -62,9 +74,7 @@ class HopService(
     }
 
     private fun getGraph(network: Network): String {
-        return abstractHopServices.firstOrNull {
-            it.getNetwork() == network
-        }?.getGraph() ?: throw IllegalArgumentException("$network not supported")
+        return hopAddressesProvider.config[network]?.graph ?: error("No graph for $network")
     }
 
     suspend fun getLps(network: Network): List<HopLpToken> {
