@@ -27,7 +27,15 @@ class BasedDistributorV2Contract(
     }
 
 
-    suspend fun rewardToken(): String {
+    suspend fun poolRewarders(poolId: Int): List<String> {
+        return (read(
+            "poolRewarders",
+            listOf(poolId.toBigInteger().toUint256()),
+            listOf(dynamicArray<Address>())
+        )[0].value as List<Address>).map { it.value as String }
+    }
+
+    suspend fun alb(): String {
         return readSingle("alb", TypeUtils.address())
     }
 

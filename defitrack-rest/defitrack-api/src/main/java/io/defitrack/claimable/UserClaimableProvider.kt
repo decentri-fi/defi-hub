@@ -7,7 +7,7 @@ import io.defitrack.protocol.ProtocolService
 import io.defitrack.token.ERC20Resource
 import org.springframework.beans.factory.annotation.Autowired
 
-@Deprecated("use ClaimableProvider instead")
+@Deprecated("use ClaimableMarketProvider instead")
 abstract class UserClaimableProvider : ProtocolService {
 
     @Autowired
