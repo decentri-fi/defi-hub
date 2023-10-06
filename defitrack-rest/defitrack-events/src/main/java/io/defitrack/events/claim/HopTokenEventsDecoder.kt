@@ -20,7 +20,7 @@ class HopTokenEventsDecoder : EventDecoder() {
 
     val claimEvent = org.web3j.abi.datatypes.Event("Claim", listOf(address(true), uint256()))
 
-    override fun appliesTo(log: Log, network: Network): Boolean {
+    override suspend fun appliesTo(log: Log, network: Network): Boolean {
         return log.address.lowercase() == "0xc5102fe9359fd9a28f877a67e36b0f050d81a3cc"
                 && log.topics.map { it.lowercase() }.contains(EventEncoder.encode(claimEvent))
     }

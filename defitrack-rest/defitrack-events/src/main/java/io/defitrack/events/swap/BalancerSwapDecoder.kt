@@ -29,7 +29,7 @@ class BalancerSwapDecoder(
         )
     )
 
-    override fun appliesTo(log: Log, network: Network): Boolean {
+    override suspend fun appliesTo(log: Log, network: Network): Boolean {
         return log.address.lowercase() == "0xba12222222228d8ba445958a75a0704d566bf2c8" &&
                 log.appliesTo(swapEvent)
     }

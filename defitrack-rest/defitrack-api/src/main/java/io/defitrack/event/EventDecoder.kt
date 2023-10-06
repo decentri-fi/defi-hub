@@ -48,7 +48,7 @@ abstract class EventDecoder {
     @Autowired
     lateinit var labelAddressesResource: LabelAddressesResource
 
-    abstract fun appliesTo(log: Log, network: Network): Boolean
+    abstract suspend fun appliesTo(log: Log, network: Network): Boolean
     abstract suspend fun extract(log: Log, network: Network): DefiEvent
 
     abstract fun eventTypes(): List<DefiEventType>

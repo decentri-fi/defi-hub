@@ -25,7 +25,7 @@ class FoxTokenClaimedDecoder : EventDecoder() {
         )
     )
 
-    override fun appliesTo(log: Log, network: Network): Boolean {
+    override suspend fun appliesTo(log: Log, network: Network): Boolean {
         return log.address == "0xb90381dae1a72528660278100c5aa44e1108cef7" && log.appliesTo(claimedEvent)
     }
 

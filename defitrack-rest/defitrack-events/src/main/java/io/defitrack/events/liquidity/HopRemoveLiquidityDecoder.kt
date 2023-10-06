@@ -35,7 +35,7 @@ class HopRemoveLiquidityDecoder(
     )
 
 
-    override fun appliesTo(log: Log, network: Network): Boolean {
+    override suspend fun appliesTo(log: Log, network: Network): Boolean {
         return log.appliesTo(removeLiquidityEvent)
     }
 

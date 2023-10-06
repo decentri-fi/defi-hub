@@ -18,7 +18,7 @@ class ENSTokenEventsDecoder : EventDecoder() {
 
     val claimEvent = org.web3j.abi.datatypes.Event("Claim", listOf(address(true), uint256()))
 
-    override fun appliesTo(log: Log, network: Network): Boolean {
+    override suspend fun appliesTo(log: Log, network: Network): Boolean {
         return log.address.lowercase() == "0xc18360217d8f7ab5e7c516566761ea12ce7f9d72"
                 && log.topics.map { it.lowercase() }.contains(EventEncoder.encode(claimEvent))
     }

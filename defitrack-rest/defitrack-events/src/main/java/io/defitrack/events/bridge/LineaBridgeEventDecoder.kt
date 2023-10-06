@@ -12,7 +12,7 @@ private const val LINEA_L1_MESSAGE_SERVICE = "0xd19d4b5d358258f05d7b411e21a1460d
 
 @Component
 class LineaBridgeEventDecoder : EventDecoder() {
-    override fun appliesTo(log: Log, network: Network): Boolean {
+    override suspend fun appliesTo(log: Log, network: Network): Boolean {
         return network == Network.ETHEREUM &&
                 log.address == LINEA_L1_MESSAGE_SERVICE
     }

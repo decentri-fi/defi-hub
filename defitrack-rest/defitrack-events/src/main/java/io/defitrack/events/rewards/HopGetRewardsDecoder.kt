@@ -3,12 +3,14 @@ package io.defitrack.events.rewards
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.event.DefiEvent
 import io.defitrack.event.DefiEventType
 import io.defitrack.event.EventDecoder
 import io.defitrack.event.EventUtils.Companion.appliesTo
 import io.defitrack.network.toVO
 import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.hop.HopService
 import org.springframework.stereotype.Component
 import org.web3j.protocol.core.methods.response.Log
 import java.math.BigInteger
@@ -16,12 +18,14 @@ import java.math.BigInteger
 
 @Component
 class HopGetRewardsDecoder(
-    hopPolygonService: HopPolygonService
+    hopService: HopService
 ) : EventDecoder() {
 
-    val pairMap = mapOf(
-        Network.POLYGON to hopPolygonService.getStakingRewards()
-    )
+    val pairMap = lazyAsync {
+        mapOf(
+            Network.POLYGON to hopService.getStakingRewardsFromJson(Network.POLYGON)
+        )
+    }
 
     val event = org.web3j.abi.datatypes.Event(
         "RewardPaid",
@@ -31,8 +35,9 @@ class HopGetRewardsDecoder(
         )
     )
 
-    override fun appliesTo(log: Log, network: Network): Boolean {
-        return log.appliesTo(event) && (pairMap[network]?.map {
+    override suspend fun appliesTo(log: Log, network: Network): Boolean {
+        val pairs = pairMap.await()
+        return log.appliesTo(event) && (pairs[network]?.map {
             it.lowercase()
         }?.contains(log.address.lowercase()) ?: false)
     }
