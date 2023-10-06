@@ -12,6 +12,10 @@ enum class Company(
         prettyName = "Arpa",
         slug = "arpa"
     ),
+    TRADER_JOE(
+        prettyName = "TraderJoe",
+        slug = "trader-joe"
+    ),
     MOONWELL(
         prettyName = "Moonwell",
         slug = "moonwell"

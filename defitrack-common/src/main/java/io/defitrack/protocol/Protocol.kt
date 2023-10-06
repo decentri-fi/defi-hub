@@ -19,6 +19,14 @@ enum class Protocol(
         networks = listOf(Network.BASE),
         company = Company.BASESWAP
     ),
+    TRADER_JOE(
+        logo = "traderjoe.png",
+        slug = "trader-joe",
+        primitives = listOf(DefiPrimitive.POOLING, DefiPrimitive.FARMING, DefiPrimitive.CLAIMABLES),
+        website = "https://traderjoexyz.com",
+        networks = listOf(Network.ARBITRUM),
+        company = Company.TRADER_JOE
+    ),
     RADIANT(
         logo = "radiant.png",
         slug = "radiant",
