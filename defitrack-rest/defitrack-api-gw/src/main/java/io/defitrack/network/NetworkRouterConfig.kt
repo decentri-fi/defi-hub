@@ -14,9 +14,13 @@ import org.springframework.web.reactive.function.server.ServerResponse
 class NetworkRouterConfig {
 
     @Bean
-    fun networkListRoute(networkHandler: NetworkHandler): RouterFunction<ServerResponse> {
-        return RouterFunctions
-            .route(GET("/networks"), networkHandler::getNetworks)
+    fun networkListRoute(builder: RouteLocatorBuilder): RouteLocator {
+        val routeBuilder = builder.routes()
+        routeBuilder.route("networks") {
+            it.path(true, "/networks")
+                .uri("http://defitrack-meta.default.svc.cluster.local:8080/networks")
+        }.build()
+        return routeBuilder.build()
     }
 
     @Bean
