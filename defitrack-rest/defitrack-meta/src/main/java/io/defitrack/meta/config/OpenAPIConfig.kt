@@ -1,4 +1,4 @@
-package io.defitrack.claimables.config
+package io.defitrack.meta.config
 
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.servers.Server
@@ -11,7 +11,7 @@ class OpenAPIConfig {
     @Bean
     fun openapi(): OpenAPI {
         return OpenAPI().servers(
-            listOf(Server().url("https://claimables.decentri.fi"))
+            listOf(Server().url("https://api.decentri.fi"))
         )
     }
 }
