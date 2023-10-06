@@ -14,6 +14,7 @@
 
     <modules>
         <module>defitrack-api</module>
+        <module>defitrack-swagger</module>
         <module>defitrack-claimables</module>
         <module>defitrack-api-gw</module>
         <module>defitrack-erc20</module>

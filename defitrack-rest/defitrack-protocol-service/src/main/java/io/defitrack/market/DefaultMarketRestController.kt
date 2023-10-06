@@ -3,6 +3,7 @@ package io.defitrack.market
 import io.defitrack.utils.PageUtils
 import io.micrometer.observation.Observation
 import io.micrometer.observation.ObservationRegistry
+import io.swagger.v3.oas.annotations.Operation
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.GetMapping
@@ -14,6 +15,7 @@ abstract class DefaultMarketRestController<T : DefiMarket>(
 ) {
 
     @GetMapping(value = ["/all-markets"])
+    @Operation(summary = "Get all markets for a specific protocol")
     fun allMarkets(
         @PathVariable("protocol") protocol: String,
     ): List<MarketVO> {
@@ -21,7 +23,7 @@ abstract class DefaultMarketRestController<T : DefiMarket>(
     }
 
     @GetMapping("/markets", params = ["paged"])
-    suspend fun pagedMarkets(
+    fun pagedMarkets(
         @PathVariable("protocol") protocol: String,
         pageable: Pageable
     ): Page<MarketVO> {

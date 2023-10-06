@@ -7,6 +7,14 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.mapper.ProtocolVOMapper
 import io.micrometer.observation.Observation
 import io.micrometer.observation.ObservationRegistry
+import io.swagger.v3.oas.annotations.Hidden
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.ArraySchema
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
+import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletResponse
 import kotlinx.coroutines.*
 import org.slf4j.LoggerFactory
@@ -20,6 +28,7 @@ import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.time.measureTimedValue
 
 @RestController
+@Tag(name = "Claimables")
 class ClaimableAggregateRestController(
     private val claimablesClient: ClaimablesClient,
     private val protocolVOMapper: ProtocolVOMapper,
@@ -29,6 +38,20 @@ class ClaimableAggregateRestController(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @GetMapping("/{address}")
+    @Operation(summary = "Get all claimables for a specific address")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Found Claimables",
+                content = [
+                    Content(
+                        mediaType = "application/json",
+                        array = (ArraySchema(schema = Schema(implementation = UserClaimableVO::class)))
+                    )
+                ]
+            )]
+    )
     suspend fun aggregate(@PathVariable("address") address: String): List<UserClaimableVO> = coroutineScope {
         if (!isValidAddress(address)) {
             emptyList()
@@ -51,6 +74,7 @@ class ClaimableAggregateRestController(
     val executor = Executors.newSingleThreadExecutor()
 
     @GetMapping("/{address}", params = ["sse"])
+    @Hidden
     fun getAggregateAsSSE(
         @PathVariable("address") address: String,
         httpServletResponse: HttpServletResponse

@@ -7,12 +7,14 @@ import io.defitrack.market.farming.vo.TransactionPreparationVO
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.lending.mapper.LendingMarketVOMapper
 import io.defitrack.market.lending.vo.LendingMarketVO
+import io.swagger.v3.oas.annotations.tags.Tag
 import kotlinx.coroutines.runBlocking
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/{protocol}/lending")
+@Tag(name = "Lending Markets")
 class DefaultLendingMarketsRestController(
     private val lendingMarketProviders: List<LendingMarketProvider>,
     private val lendingMarketVOMapper: LendingMarketVOMapper
