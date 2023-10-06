@@ -20,7 +20,7 @@ import java.math.BigDecimal
 
 @Component
 @ConditionalOnCompany(Company.GMX)
-class StakedBonusFeeStakingMarketProvider : FarmingMarketProvider() {
+class GMXStakedBonusFeeStakingMarketProvider : FarmingMarketProvider() {
 
     private val stakedGMX = "0xd2d1162512f927a7e282ef43a362659e4f2a728f"
     private val bonusGMX = "0x35247165119b69a40edd5304969560d0ef486921"
