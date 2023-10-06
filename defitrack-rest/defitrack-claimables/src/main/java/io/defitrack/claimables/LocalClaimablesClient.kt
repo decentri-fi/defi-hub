@@ -8,6 +8,7 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
@@ -17,12 +18,21 @@ class LocalClaimablesClient(
     private val httpClient: HttpClient
 ) : ClaimablesClient {
 
-    override suspend fun getClaimables(address: String, protocol: ProtocolVO): List<UserClaimableVO> = withContext(Dispatchers.IO) {
-        val response = httpClient.get("http://defitrack-${protocol.company.slug}.default.svc.cluster.local:8080/${protocol.slug}/$address/claimables")
-        if (response.status.isSuccess()) {
-            response.body()
-        } else {
-            emptyList()
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
+    override suspend fun getClaimables(address: String, protocol: ProtocolVO): List<UserClaimableVO> =
+        withContext(Dispatchers.IO) {
+            try {
+                val response =
+                    httpClient.get("http://defitrack-${protocol.company.slug}.default.svc.cluster.local:8080/${protocol.slug}/$address/claimables")
+                if (response.status.isSuccess()) {
+                    response.body()
+                } else {
+                    emptyList()
+                }
+            } catch (ex: Exception) {
+                logger.error("Error getting claimables for $address on ${protocol.company.slug}/${protocol.slug}", ex)
+                emptyList()
+            }
         }
-    }
 }
