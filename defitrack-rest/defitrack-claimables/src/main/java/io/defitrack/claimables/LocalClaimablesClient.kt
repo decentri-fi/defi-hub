@@ -1,5 +1,6 @@
 package io.defitrack.claimables
 
+import io.defitrack.claimable.ClaimableMarketVO
 import io.defitrack.claimable.UserClaimableVO
 import io.defitrack.protocol.ProtocolVO
 import io.ktor.client.*
@@ -32,6 +33,22 @@ class LocalClaimablesClient(
                 }
             } catch (ex: Exception) {
                 logger.error("Error getting claimables for $address on ${protocol.company.slug}/${protocol.slug}", ex)
+                emptyList()
+            }
+        }
+
+    override suspend fun getClaimableMarkets(protocol: ProtocolVO): List<ClaimableMarketVO> =
+        withContext(Dispatchers.IO) {
+            try {
+                val response =
+                    httpClient.get("http://defitrack-${protocol.company.slug}.default.svc.cluster.local:8080/${protocol.slug}/claimables")
+                if (response.status.isSuccess()) {
+                    response.body()
+                } else {
+                    emptyList()
+                }
+            } catch (ex: Exception) {
+                logger.error("Error getting claimables markets on ${protocol.company.slug}/${protocol.slug}", ex)
                 emptyList()
             }
         }

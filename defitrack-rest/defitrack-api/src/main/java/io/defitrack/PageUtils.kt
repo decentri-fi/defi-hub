@@ -1,4 +1,4 @@
-package io.defitrack.utils
+package io.defitrack
 
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl

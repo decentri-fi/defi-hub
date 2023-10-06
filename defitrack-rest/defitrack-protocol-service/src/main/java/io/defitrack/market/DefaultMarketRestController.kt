@@ -1,8 +1,6 @@
 package io.defitrack.market
 
-import io.defitrack.utils.PageUtils
-import io.micrometer.observation.Observation
-import io.micrometer.observation.ObservationRegistry
+import io.defitrack.PageUtils
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
