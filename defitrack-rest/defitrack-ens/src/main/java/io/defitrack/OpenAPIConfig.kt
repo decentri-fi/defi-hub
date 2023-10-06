@@ -12,13 +12,13 @@ class OpenAPIConfig {
     @Bean
     fun myOpenAPI(): OpenAPI {
         val prodServer = Server();
-        prodServer.setUrl("https://api.decentri.fi");
+        prodServer.setUrl("https://api.decentri.fi/ens");
         prodServer.setDescription("Server URL in Production environment");
 
         val info = Info()
-            .title("Tutorial Management API")
+            .title("ENS API")
             .version("1.0")
-            .description("This API exposes endpoints to manage tutorials.")
+            .description("This API exploses the defi api related to ENS.")
 
         return OpenAPI().info(info).servers(listOf(prodServer))
     }
