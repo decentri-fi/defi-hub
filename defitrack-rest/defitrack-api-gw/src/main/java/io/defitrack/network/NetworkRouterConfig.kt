@@ -27,7 +27,7 @@ class NetworkRouterConfig {
     fun networkRoutes(builder: RouteLocatorBuilder): RouteLocator {
         val routeBuilder = builder.routes()
 
-        Network.values().forEach { network ->
+        Network.entries.forEach { network ->
             routeBuilder.route(network.name) {
                 it.path(true, "/networks/${network.slug}/**")
                     .filters { filter ->
