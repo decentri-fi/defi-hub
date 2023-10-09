@@ -13,6 +13,24 @@ data class PreparedTransaction(
     val from: String? = null
 ) {
 
+    companion object {
+        fun selfExecutingTransaction(contractCallProvider: (String) -> EvmContract.ContractCall): (String) -> PreparedTransaction {
+            return { from ->
+                PreparedTransaction(
+                    contractCallProvider(from), from
+                )
+            }
+        }
+
+        fun selfExecutingTransaction(contractCallProvider: () -> EvmContract.ContractCall): (String) -> PreparedTransaction {
+            return { from ->
+                PreparedTransaction(
+                    contractCallProvider(), from
+                )
+            }
+        }
+    }
+
     constructor(contractCall: EvmContract.ContractCall, from: String?) :
             this(
                 network = contractCall.network.toVO(),

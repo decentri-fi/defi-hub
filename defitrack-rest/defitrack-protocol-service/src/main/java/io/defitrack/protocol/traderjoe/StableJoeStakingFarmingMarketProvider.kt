@@ -3,9 +3,11 @@ package io.defitrack.protocol.traderjoe
 import io.defitrack.claimable.ClaimableRewardFetcher
 import io.defitrack.claimable.Reward
 import io.defitrack.common.network.Network
+import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
+import io.defitrack.protocol.Company
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.transaction.PreparedTransaction
@@ -14,6 +16,7 @@ import kotlinx.coroutines.flow.channelFlow
 import org.springframework.stereotype.Component
 
 @Component
+@ConditionalOnCompany(Company.TRADER_JOE)
 class StableJoeStakingFarmingMarketProvider : FarmingMarketProvider() {
 
     val stableJoeStakingAddress = "0x43646a8e839b2f2766392c1bf8f60f6e587b6960"

@@ -19,6 +19,14 @@ enum class Protocol(
         networks = listOf(Network.BASE),
         company = Company.BASESWAP
     ),
+    THALES(
+        logo = "thales.png",
+        slug = "thales",
+        primitives = listOf(DefiPrimitive.FARMING, DefiPrimitive.CLAIMABLES),
+        website = "https://thalesmarket.io/",
+        networks = listOf(Network.OPTIMISM, Network.BASE, Network.ARBITRUM),
+        company = Company.THALES
+    ),
     TRADER_JOE(
         logo = "traderjoe.png",
         slug = "trader-joe",
