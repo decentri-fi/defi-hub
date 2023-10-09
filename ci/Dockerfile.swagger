@@ -1,4 +1,4 @@
-FROM openjdk:21 as builder
+FROM openjdk:20
 
 WORKDIR application
 ARG JAR_FILE=target/defitrack-*-SNAPSHOT.jar
