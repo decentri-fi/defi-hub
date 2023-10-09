@@ -17,11 +17,6 @@
             <artifactId>defitrack-common</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>webjars-locator</artifactId>
-            <version>0.45</version>
-        </dependency>
-        <dependency>
             <groupId>io.defitrack</groupId>
             <artifactId>defitrack-protocol-service</artifactId>
             <version>${project.version}</version>
@@ -34,7 +29,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.0.3</version>
+            <version>2.2.0</version>
         </dependency>
     </dependencies>
 </project>
