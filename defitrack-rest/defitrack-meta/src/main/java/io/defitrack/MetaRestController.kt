@@ -6,10 +6,12 @@ import io.defitrack.network.toVO
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.ProtocolVO
 import io.defitrack.protocol.mapper.ProtocolVOMapper
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
+@EnableDiscoveryClient
 class MetaRestController(
     private val protocolVOMapper: ProtocolVOMapper
 ) {
