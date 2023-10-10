@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class OpenAPIConfig {
-
     @Bean
     fun openapi(): OpenAPI {
         return OpenAPI().servers(

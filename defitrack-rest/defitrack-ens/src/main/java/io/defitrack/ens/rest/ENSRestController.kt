@@ -1,13 +1,11 @@
 package io.defitrack.ens.rest
 
-import com.newrelic.api.agent.Trace
 import io.defitrack.ens.domain.ENSResult
 import io.defitrack.ens.service.EnsNameService
 import io.micrometer.observation.Observation
 import io.micrometer.observation.ObservationRegistry
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
-import kotlinx.coroutines.runBlocking
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
@@ -24,10 +22,10 @@ class ENSRestController(
 
     @GetMapping("/by-name/{ens}")
     @Operation(summary = "Get ENS information by ens-name")
-    fun getAddressInformation(@PathVariable("ens") ens: String): ENSResult = runBlocking {
+    suspend fun getAddressInformation(@PathVariable("ens") ens: String): ENSResult {
         val observation = Observation.start("ens_by_name", observationRegistry)
 
-        observation.openScope().use {
+        return observation.openScope().use {
             val result = ensNameService.getEnsByName(ens)
 
             ENSResult(
@@ -40,10 +38,10 @@ class ENSRestController(
 
     @GetMapping("/by-address/{address}")
     @Operation(summary = "Get ENS information by address")
-    fun getMapping(@PathVariable("address") address: String): ENSResult = runBlocking {
+    suspend fun getMapping(@PathVariable("address") address: String): ENSResult {
         val observation = Observation.start("ens_by_address", observationRegistry)
 
-        observation.openScope().use {
+        return observation.openScope().use {
             val result = ensNameService.getEnsByAddress(address)
 
             ENSResult(
