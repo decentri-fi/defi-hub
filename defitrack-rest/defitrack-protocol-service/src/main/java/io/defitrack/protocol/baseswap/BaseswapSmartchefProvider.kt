@@ -13,7 +13,6 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.network.toVO
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.flow.Flow
@@ -55,7 +54,6 @@ class BaseswapSmartchefProvider : FarmingMarketProvider() {
             send(
                 create(
                     name = stakedToken.name + " earn pool",
-                    farmType = ContractType.LIQUIDITY_MINING,
                     rewardTokens = listOf(rewardToken.toFungibleToken()),
                     identifier = it,
                     stakedToken = stakedToken.toFungibleToken(),

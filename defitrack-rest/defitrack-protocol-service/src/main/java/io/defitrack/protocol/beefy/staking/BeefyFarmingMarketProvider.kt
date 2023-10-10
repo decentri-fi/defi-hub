@@ -9,7 +9,6 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.Position
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
@@ -79,7 +78,6 @@ abstract class BeefyFarmingMarketProvider(
                     }
                 ),
                 investmentPreparer = BeefyStakingInvestmentPreparer(contract, getERC20Resource()),
-                farmType = ContractType.YIELD_OPTIMIZING_AUTOCOMPOUNDER,
                 exitPositionPreparer = prepareExit {
                     PreparedExit(
                         contract.fullExitFunction(),

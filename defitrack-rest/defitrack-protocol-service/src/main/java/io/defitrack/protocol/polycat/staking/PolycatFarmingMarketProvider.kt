@@ -10,7 +10,6 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.polycat.PolycatService
 import io.defitrack.protocol.polycat.contract.PolycatMasterChefContract
@@ -65,7 +64,6 @@ class PolycatFarmingMarketProvider(
                     )
                 },
             ),
-            farmType = ContractType.LIQUIDITY_MINING
         )
     }
 

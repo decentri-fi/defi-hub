@@ -11,7 +11,6 @@ import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aelin.StakingRewardsContract
 import io.defitrack.transaction.PreparedTransaction
@@ -66,7 +65,6 @@ class AelinRewardMarketProvider(
                         )
                     }
                 ),
-                farmType = ContractType.STAKING
             )
         )
     }

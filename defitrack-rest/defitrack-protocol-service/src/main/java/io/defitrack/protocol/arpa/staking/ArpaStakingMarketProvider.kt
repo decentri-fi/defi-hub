@@ -9,7 +9,6 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.network.toVO
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.arpa.ArpaStakingContract
 import io.defitrack.transaction.PreparedTransaction
@@ -38,7 +37,6 @@ class ArpaStakingMarketProvider : FarmingMarketProvider() {
                 identifier = arpaStakingAddress,
                 stakedToken = arpa.toFungibleToken(),
                 rewardTokens = listOf(arpa.toFungibleToken()),
-                farmType = ContractType.STAKING,
                 balanceFetcher = PositionFetcher(
                     contract.address,
                     { user ->

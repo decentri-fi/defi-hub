@@ -10,7 +10,6 @@ import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.network.toVO
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aerodrome.pooling.AerodromePoolingMarketProvider
 import io.defitrack.protocol.velodrome.contract.VelodromeV2GaugeContract
@@ -55,7 +54,6 @@ class AerodromeGaugeMarketProvider(
                             val market = create(
                                 name = stakedToken.name + " Gauge V2",
                                 identifier = stakedToken.symbol + "-v1-${gauge}",
-                                farmType = ContractType.LIQUIDITY_MINING,
                                 rewardTokens = listOf(rewardToken.toFungibleToken()),
                                 marketSize = Refreshable.refreshable {
                                     getMarketSize(

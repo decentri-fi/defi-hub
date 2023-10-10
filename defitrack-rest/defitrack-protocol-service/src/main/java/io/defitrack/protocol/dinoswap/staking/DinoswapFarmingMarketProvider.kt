@@ -7,7 +7,6 @@ import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.dinoswap.DinoswapService
 import io.defitrack.protocol.dinoswap.contract.DinoswapFossilFarmsContract
@@ -71,7 +70,6 @@ class DinoswapFarmingMarketProvider(
                     getNetwork()
                 )
             },
-            farmType = ContractType.LIQUIDITY_MINING
         )
     }
 

@@ -6,7 +6,6 @@ import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.mstable.contract.MStableEthereumBoostedSavingsVaultContract
 import kotlinx.coroutines.async
@@ -56,7 +55,6 @@ class MStableEthereumFarmingMarketProvider(
                 address = contract.address,
                 { user -> contract.rawBalanceOfFunction(user) }
             ),
-            farmType = ContractType.VAULT
         )
     }
 

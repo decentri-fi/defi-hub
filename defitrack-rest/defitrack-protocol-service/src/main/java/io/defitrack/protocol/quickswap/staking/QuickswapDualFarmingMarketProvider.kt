@@ -10,7 +10,6 @@ import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
@@ -73,7 +72,6 @@ class QuickswapDualFarmingMarketProvider(
                             pool.address,
                             { user -> ERC20Contract.balanceOfFunction(user) }
                         ),
-                        farmType = ContractType.DUAL_REWARD_MINING,
                         rewardsFinished = ended
                     )
 

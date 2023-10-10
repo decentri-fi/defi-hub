@@ -9,7 +9,6 @@ import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.pika.PikaStakingContract
 import io.defitrack.transaction.PreparedTransaction
@@ -37,7 +36,6 @@ class PikaFarmingMarketProvider : FarmingMarketProvider() {
                 identifier = pikaStaking,
                 stakedToken = stakingToken.toFungibleToken(),
                 rewardTokens = rewardTokens.map(TokenInformationVO::toFungibleToken),
-                farmType = ContractType.STAKING,
                 balanceFetcher = defaultPositionFetcher(pikaStaking),
                 internalMetadata = mapOf(
                     "contract" to contract

@@ -11,7 +11,6 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.network.toVO
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.sushiswap.contract.MasterChefBasedContract
 import io.defitrack.protocol.sushiswap.contract.MasterChefPoolInfo
@@ -98,7 +97,6 @@ class SushiswapEthereumMasterchefMarketProvider : FarmingMarketProvider() {
                     chef.address,
                     { user -> chef.userInfoFunction(poolId, user) }
                 ),
-                farmType = ContractType.LIQUIDITY_MINING
             )
         } catch (ex: Exception) {
             logger.error("Error while fetching market for poolId $poolId", ex)

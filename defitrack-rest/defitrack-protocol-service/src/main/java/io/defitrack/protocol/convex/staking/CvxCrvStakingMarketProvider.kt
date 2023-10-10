@@ -6,7 +6,6 @@ import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.convex.contract.CvxCrvStakingWrapperContract
 import kotlinx.coroutines.flow.Flow
@@ -35,7 +34,6 @@ class CvxCrvStakingMarketProvider : FarmingMarketProvider() {
                 identifier = stakingWrapperAddress,
                 stakedToken = getToken(contract.cvxCrv.await()).toFungibleToken(),
                 rewardTokens = emptyList(),
-                farmType = ContractType.STAKING,
                 balanceFetcher = defaultPositionFetcher(address = stakingWrapperAddress),
             )
         )

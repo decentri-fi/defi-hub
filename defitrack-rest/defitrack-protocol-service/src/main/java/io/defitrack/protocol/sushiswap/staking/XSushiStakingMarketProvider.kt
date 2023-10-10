@@ -10,7 +10,6 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.Position
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.sushiswap.xsushi.XSushiContract
 import org.springframework.stereotype.Component
@@ -59,7 +58,6 @@ class XSushiStakingMarketProvider(
                         )
                     }
                 ),
-                farmType = ContractType.STAKING
             )
         )
     }

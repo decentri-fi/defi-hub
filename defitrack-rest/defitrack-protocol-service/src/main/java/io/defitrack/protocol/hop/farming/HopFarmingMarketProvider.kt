@@ -11,7 +11,6 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.hop.HopService
 import io.defitrack.protocol.hop.contract.HopStakingRewardContract
@@ -57,7 +56,6 @@ abstract class HopFarmingMarketProvider(
                     address = contract.address,
                     function = { user -> balanceOfFunction(user) }
                 ),
-                farmType = ContractType.LIQUIDITY_MINING,
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
                         token = rewardToken.toFungibleToken(),

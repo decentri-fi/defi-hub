@@ -8,7 +8,6 @@ import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.network.toVO
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.stakefish.StakefishFeeRecipientContract
 import io.defitrack.transaction.PreparedTransaction
@@ -40,7 +39,6 @@ class StakefishStakingMarketProvider : FarmingMarketProvider() {
                     identifier = "stakefish-eth",
                     stakedToken = rewardToken,
                     rewardTokens = listOf(rewardToken),
-                    farmType = ContractType.STAKING,
                     claimableRewardFetcher = ClaimableRewardFetcher(
                         rewards = listOf(
                             Reward(

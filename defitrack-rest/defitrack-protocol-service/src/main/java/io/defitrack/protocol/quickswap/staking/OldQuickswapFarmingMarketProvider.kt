@@ -13,7 +13,6 @@ import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
@@ -86,7 +85,6 @@ class OldQuickswapFarmingMarketProvider(
                         balanceFetcher = defaultPositionFetcher(
                             rewardPool.address
                         ),
-                        farmType = ContractType.LIQUIDITY_MINING,
                         rewardsFinished = true,
                         exitPositionPreparer = prepareExit {
                             PreparedExit(

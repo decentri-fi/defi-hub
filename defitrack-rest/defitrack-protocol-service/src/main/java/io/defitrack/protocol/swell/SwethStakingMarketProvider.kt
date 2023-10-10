@@ -10,7 +10,6 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.Position
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
@@ -38,7 +37,6 @@ class SwethStakingMarketProvider : FarmingMarketProvider() {
                 identifier = swethAddress,
                 stakedToken = ether.toFungibleToken(),
                 rewardTokens = listOf(ether.toFungibleToken()),
-                farmType = ContractType.STAKING,
                 balanceFetcher = PositionFetcher(
                     swethAddress,
                     ::balanceOfFunction

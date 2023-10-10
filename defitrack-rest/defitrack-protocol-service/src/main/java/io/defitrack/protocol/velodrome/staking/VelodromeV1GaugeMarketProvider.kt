@@ -7,7 +7,6 @@ import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.velodrome.contract.VelodromeV1GaugeContract
 import io.defitrack.protocol.velodrome.contract.VoterContract
@@ -52,7 +51,6 @@ class VelodromeV1GaugeMarketProvider(
                             val market = create(
                                 name = stakedToken.name + " Gauge",
                                 identifier = stakedToken.symbol + "-${gauge}",
-                                farmType = ContractType.LIQUIDITY_MINING,
                                 rewardTokens = contract.getRewardList().map { reward ->
                                     getToken(reward).toFungibleToken()
                                 },

@@ -6,7 +6,6 @@ import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.DecentrifiERC20Resource
 import kotlinx.coroutines.async
@@ -67,7 +66,6 @@ class IdexFarmingMarketProvider(
                 chef.address,
                 { user -> chef.userInfoFunction(poolId, user) }
             ),
-            farmType = ContractType.LIQUIDITY_MINING
         )
     }
 }

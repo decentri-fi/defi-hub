@@ -8,7 +8,6 @@ import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
@@ -47,7 +46,6 @@ class WStethMarketProvider(
                 identifier = "wsteth",
                 stakedToken = eth,
                 rewardTokens = emptyList(),
-                farmType = ContractType.STAKING,
                 marketSize = Refreshable.refreshable {
                     calculateMarketSize()
                 }

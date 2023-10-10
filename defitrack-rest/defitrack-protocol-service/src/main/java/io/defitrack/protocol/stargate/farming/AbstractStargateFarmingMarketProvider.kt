@@ -6,7 +6,6 @@ import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.network.toVO
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.stargate.StargateService
 import io.defitrack.protocol.stargate.contract.LPStakingContract
@@ -41,7 +40,6 @@ abstract class AbstractStargateFarmingMarketProvider(
                 name = "Stargate ${stakedToken.name} Reward",
                 stakedToken = stakedToken.toFungibleToken(),
                 rewardTokens = listOf(rewardToken.toFungibleToken()),
-                farmType = ContractType.LIQUIDITY_MINING,
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
                         token =  rewardToken.toFungibleToken(),

@@ -6,7 +6,6 @@ import io.defitrack.common.utils.Refreshable
 import io.defitrack.exit.ExitPositionPreparer
 import io.defitrack.market.DefiMarket
 import io.defitrack.market.lending.domain.PositionFetcher
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.FungibleToken
 import java.math.BigDecimal
@@ -20,7 +19,6 @@ data class FarmingMarket(
     val rewardTokens: List<FungibleToken>,
     val marketSize: Refreshable<BigDecimal>? = null,
     val apr: BigDecimal? = null,
-    val farmType: ContractType,
     val balanceFetcher: PositionFetcher? = null,
     val investmentPreparer: InvestmentPreparer? = null,
     val exitPositionPreparer: ExitPositionPreparer? = null,

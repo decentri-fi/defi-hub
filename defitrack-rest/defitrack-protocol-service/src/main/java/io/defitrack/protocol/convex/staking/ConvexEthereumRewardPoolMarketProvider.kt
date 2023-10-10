@@ -5,7 +5,6 @@ import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.convex.ConvexEthereumService
 import io.defitrack.protocol.convex.contract.CvxRewardPoolContract
@@ -35,7 +34,6 @@ class ConvexEthereumRewardPoolMarketProvider(
                 balanceFetcher = defaultPositionFetcher(
                     it.address
                 ),
-                farmType = ContractType.STAKING,
                 internalMetadata = mapOf("contract" to it)
             )
         }

@@ -9,7 +9,6 @@ import io.defitrack.market.MarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.domain.InvestmentPreparer
 import io.defitrack.market.lending.domain.PositionFetcher
-import io.defitrack.protocol.ContractType
 import io.defitrack.token.FungibleToken
 import java.math.BigDecimal
 
@@ -26,7 +25,6 @@ abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>(), Claimabl
         claimableRewardFetcher: ClaimableRewardFetcher? = null,
         investmentPreparer: InvestmentPreparer? = null,
         exitPositionPreparer: ExitPositionPreparer? = null,
-        farmType: ContractType,
         metadata: Map<String, Any> = emptyMap(),
         internalMetadata: Map<String, Any> = emptyMap(),
         rewardsFinished: Boolean = false
@@ -40,7 +38,6 @@ abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>(), Claimabl
             rewardTokens = rewardTokens,
             marketSize = marketSize,
             apr = apr,
-            farmType = farmType,
             balanceFetcher = balanceFetcher,
             investmentPreparer = investmentPreparer,
             claimableRewardFetcher = claimableRewardFetcher,

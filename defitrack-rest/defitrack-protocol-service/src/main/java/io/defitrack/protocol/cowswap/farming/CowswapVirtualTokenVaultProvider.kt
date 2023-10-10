@@ -6,7 +6,6 @@ import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import org.springframework.stereotype.Service
 
@@ -29,7 +28,6 @@ class CowswapVirtualTokenVaultProvider : FarmingMarketProvider() {
                         cowToken, vtokenAddress
                     )
                 },
-                farmType = ContractType.VOTE_ESCROW,
                 balanceFetcher = defaultPositionFetcher(vtokenAddress),
             )
         )

@@ -10,7 +10,6 @@ import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.market.pooling.PoolingMarketProvider
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.claiming.BalancerClaimPreparer
 import io.defitrack.protocol.balancer.contract.BalancerGaugeContract
@@ -70,7 +69,6 @@ abstract class BalancerGaugeFarmingMarketProvider(
                                         gaugecontract.address,
                                         { user -> balanceOfFunction(user) }
                                     ),
-                                    farmType = ContractType.STAKING,
                                     metadata = mapOf("address" to pool.address),
                                     internalMetadata = mapOf(
                                         "contract" to gauge,

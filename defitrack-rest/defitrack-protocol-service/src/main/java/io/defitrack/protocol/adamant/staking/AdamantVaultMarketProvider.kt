@@ -10,7 +10,6 @@ import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.adamant.AdamantService
 import io.defitrack.protocol.adamant.AdamantVaultContract
@@ -58,7 +57,6 @@ class AdamantVaultMarketProvider(
                                 vault.address,
                                 { user -> balanceOfFunction(user) }
                             ),
-                            farmType = ContractType.VAULT,
                             claimableRewardFetcher = ClaimableRewardFetcher(
                                 Reward(
                                     token = rewardToken,

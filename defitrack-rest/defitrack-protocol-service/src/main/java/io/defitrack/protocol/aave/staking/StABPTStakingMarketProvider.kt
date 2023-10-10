@@ -13,7 +13,6 @@ import io.defitrack.market.lending.domain.Position
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.network.toVO
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.transaction.PreparedTransaction
 import org.springframework.stereotype.Component
@@ -66,7 +65,6 @@ class StABPTStakingMarketProvider(
                         )
                     }
                 ),
-                farmType = ContractType.STAKING,
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
                         token = aaveToken.toFungibleToken(),

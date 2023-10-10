@@ -8,15 +8,12 @@ import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
-import io.defitrack.network.toVO
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import org.springframework.stereotype.Component
-import org.web3j.abi.datatypes.Function
 
 @ConditionalOnCompany(Company.LOOKSRARE)
 @Component
@@ -40,7 +37,6 @@ class LooksrareStakingMarketProvider : FarmingMarketProvider() {
                 identifier = contract.address,
                 stakedToken = staked.toFungibleToken(),
                 rewardTokens = listOf(reward.toFungibleToken()),
-                farmType = ContractType.STAKING,
                 balanceFetcher = PositionFetcher(
                     contract.address,
                     contract::calculateSharesValueInLooks

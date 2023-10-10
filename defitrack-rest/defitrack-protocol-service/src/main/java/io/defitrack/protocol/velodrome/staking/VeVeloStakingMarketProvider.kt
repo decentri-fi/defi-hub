@@ -6,7 +6,6 @@ import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import org.springframework.stereotype.Component
 
@@ -27,7 +26,6 @@ class VeVeloStakingMarketProvider : FarmingMarketProvider() {
                 marketSize = refreshable {
                     getMarketSize(veloToken.toFungibleToken(), veVelo)
                 },
-                farmType = ContractType.VOTE_ESCROW,
             )
         )
     }

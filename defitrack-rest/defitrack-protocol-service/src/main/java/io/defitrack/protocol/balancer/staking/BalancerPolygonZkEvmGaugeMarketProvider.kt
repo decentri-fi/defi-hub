@@ -14,7 +14,6 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.network.toVO
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerGaugeZkEvmContract
 import io.defitrack.transaction.PreparedTransaction
@@ -66,7 +65,6 @@ class BalancerPolygonZkEvmGaugeMarketProvider(
                         gaugecontract.address,
                         { user -> ERC20Contract.balanceOfFunction(user) }
                     ),
-                    farmType = ContractType.STAKING,
                     metadata = mapOf("address" to gaugeAddress),
                     exitPositionPreparer = prepareExit {
                         PreparedExit(

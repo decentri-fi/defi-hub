@@ -8,7 +8,6 @@ import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.network.toVO
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.crv.contract.CurveGaugeContract
 import io.defitrack.protocol.crv.contract.CurvePolygonGaugeControllerContract
@@ -61,7 +60,6 @@ abstract class CurveGaugeFarmingMarketProvider(
                                     stakedToken.toFungibleToken(), gauge, getNetwork()
                                 )
                             },
-                            farmType = ContractType.LIQUIDITY_MINING,
                             balanceFetcher = PositionFetcher(
                                 gauge,
                                 { user ->

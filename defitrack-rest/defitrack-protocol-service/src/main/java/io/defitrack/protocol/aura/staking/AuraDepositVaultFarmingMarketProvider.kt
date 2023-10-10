@@ -7,7 +7,6 @@ import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aura.AuraBoosterContract
 import io.defitrack.protocol.aura.CrvRewardsContract
@@ -37,7 +36,6 @@ class AuraDepositVaultFarmingMarketProvider(
                     create(
                         name = crvrewards.name(),
                         identifier = crvrewards.address,
-                        farmType = ContractType.VAULT,
                         stakedToken = asset.toFungibleToken(),
                         rewardTokens = listOf(getToken(crvrewards.rewardToken.await()).toFungibleToken()),
                         marketSize = Refreshable.refreshable {

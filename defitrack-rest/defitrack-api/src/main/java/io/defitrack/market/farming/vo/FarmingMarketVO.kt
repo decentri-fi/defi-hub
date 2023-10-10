@@ -2,7 +2,6 @@ package io.defitrack.market.farming.vo
 
 import io.defitrack.market.MarketVO
 import io.defitrack.network.NetworkVO
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.ProtocolVO
 import io.defitrack.token.FungibleToken
 import java.math.BigDecimal
@@ -19,7 +18,6 @@ class FarmingMarketVO(
     val apr: BigDecimal?,
     prepareInvestmentSupported: Boolean,
     exitPositionSupported: Boolean,
-    val yieldType: ContractType,
     val expired: Boolean,
     updatedAt: Date
 ) : MarketVO(

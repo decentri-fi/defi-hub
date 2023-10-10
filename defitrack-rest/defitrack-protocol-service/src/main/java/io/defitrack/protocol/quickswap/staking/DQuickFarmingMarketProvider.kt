@@ -8,7 +8,6 @@ import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.contract.DQuickContract
@@ -48,7 +47,6 @@ class DQuickFarmingMarketProvider(
                 investmentPreparer = DQuickStakingInvestmentPreparer(
                     getERC20Resource(), contract
                 ),
-                farmType = ContractType.YIELD_OPTIMIZING_AUTOCOMPOUNDER,
                 exitPositionPreparer = prepareExit {
                     PreparedExit(
                         contract.exitFunction(it.amount),

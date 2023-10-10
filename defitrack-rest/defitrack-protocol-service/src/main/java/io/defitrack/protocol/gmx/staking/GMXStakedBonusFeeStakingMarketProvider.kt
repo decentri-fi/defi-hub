@@ -9,7 +9,6 @@ import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.network.toVO
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.gmx.StakedGMXContract
 import io.defitrack.transaction.PreparedTransaction
@@ -39,7 +38,6 @@ class GMXStakedBonusFeeStakingMarketProvider : FarmingMarketProvider() {
                     rewardToken.toFungibleToken()
                 ),
                 marketSize = Refreshable.refreshable { BigDecimal.ZERO },
-                farmType = ContractType.STAKING,
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
                         token = rewardToken.toFungibleToken(),

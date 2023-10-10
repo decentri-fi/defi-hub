@@ -10,7 +10,6 @@ import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import org.springframework.stereotype.Component
 
@@ -34,7 +33,6 @@ class StethMarketProvider(
                 identifier = "steth",
                 stakedToken = getToken("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2").toFungibleToken(),
                 rewardTokens = emptyList(),
-                farmType = ContractType.STAKING,
                 balanceFetcher = PositionFetcher(
                     address = steth.address,
                     function = { user ->

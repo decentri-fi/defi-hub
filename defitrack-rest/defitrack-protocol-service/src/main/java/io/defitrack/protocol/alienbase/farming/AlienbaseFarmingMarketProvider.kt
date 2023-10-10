@@ -10,7 +10,6 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.network.toVO
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.alienbase.BasedDistributorV2Contract
 import io.defitrack.protocol.alienbase.ComplexRewarderPerSecV4Contract
@@ -122,7 +121,6 @@ class AlienbaseFarmingMarketProvider : FarmingMarketProvider() {
                             "contract" to farmingContract.await(),
                             "poolId" to poolId
                         ),
-                        farmType = ContractType.LIQUIDITY_MINING
                     )
                 )
             }
