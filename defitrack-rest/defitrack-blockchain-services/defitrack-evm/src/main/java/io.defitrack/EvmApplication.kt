@@ -4,8 +4,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class DefitrackOptimismApp
+class EvmApplication
 
 fun main(args: Array<String>) {
-    runApplication<DefitrackOptimismApp>(*args)
+    runApplication<EvmApplication>(*args)
 }

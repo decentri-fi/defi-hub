@@ -1,4 +1,4 @@
-package io.defitrack.contract
+package io.defitrack
 
 import okhttp3.OkHttpClient
 import org.springframework.beans.factory.annotation.Qualifier

@@ -1,14 +1,11 @@
-package io.defitrack.contract
+package io.defitrack
 
-import io.micrometer.core.annotation.Timed
-import io.micrometer.observation.annotation.Observed
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.methods.response.Log
-import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
 @RestController
@@ -17,10 +14,9 @@ class TransactionRestController(
     private val web3j: Web3j
 ) {
     @GetMapping("/{txId}")
-    @Observed(name = "requests.get.tx.by-id")
     fun getTransaction(@PathVariable("txId") txId: String): TransactionVO? {
         return web3j.ethGetTransactionByHash(txId).send().transaction.map {
-            val possibleSpam =  web3j.ethGetTransactionReceipt(txId).send().transactionReceipt.map {
+            val possibleSpam = web3j.ethGetTransactionReceipt(txId).send().transactionReceipt.map {
                 it.logs.size > 400
             }.orElse(false)
 
@@ -37,7 +33,6 @@ class TransactionRestController(
     }
 
     @GetMapping("/{txId}/logs")
-    @Observed(name = "requests.get.tx.by-id.logs")
     fun getLogs(@PathVariable("txId") txId: String): List<Log> {
         return web3j.ethGetTransactionReceipt(txId).send().transactionReceipt.map {
             it.logs

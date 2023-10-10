@@ -1,4 +1,4 @@
-package io.defitrack.contract
+package io.defitrack
 
 import java.math.BigInteger
 

@@ -105,6 +105,7 @@ class EvmGateway(
                             delay(1000L)
                             call(evmContractInteractionCommand)
                         }else {
+                            observation.event(Observation.Event.of("success"))
                             result
                         }
                     } catch (ex: ClientConnectionException) {
@@ -113,7 +114,7 @@ class EvmGateway(
                             delay(1000L)
                             return@with call(evmContractInteractionCommand)
 
-                        } else if (ex.message?.contains("Monthly capacity limit exceeded") == true) {
+                        } else if (ex.message?.contains("limit exceeded") == true) {
                             observation.event(Observation.Event.of("endpoint.capacity-exceeded", "thirdparty.monthly-capacity-limit-exceeded"))
                             fallbacks.shuffled().firstOrNull()?.let {
                                 call(evmContractInteractionCommand, it)

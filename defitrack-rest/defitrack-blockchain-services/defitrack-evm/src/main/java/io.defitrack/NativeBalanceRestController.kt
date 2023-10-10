@@ -1,4 +1,4 @@
-package io.defitrack.contract
+package io.defitrack
 
 import io.defitrack.evm.web3j.EvmGateway
 import org.springframework.web.bind.annotation.GetMapping

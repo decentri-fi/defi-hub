@@ -5,8 +5,6 @@
 
     <artifactId>defitrack-evm</artifactId>
 
-    <packaging>jar</packaging>
-
     <parent>
         <groupId>io.defitrack</groupId>
         <artifactId>defitrack-blockchain-services</artifactId>

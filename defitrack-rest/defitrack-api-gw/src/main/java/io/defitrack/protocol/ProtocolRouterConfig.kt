@@ -17,7 +17,7 @@ class ProtocolRouterConfig {
     fun companyRoutes(builder: RouteLocatorBuilder): RouteLocator {
         val routeBuilder = builder.routes()
 
-        Protocol.values().forEach { protocol ->
+        Protocol.entries.forEach { protocol ->
             routeBuilder.route(protocol.name) {
                 it.path(true, "/${protocol.slug}/**")
                     .filters { filter ->
@@ -32,10 +32,13 @@ class ProtocolRouterConfig {
         return routeBuilder.build()
     }
 
-
     @Bean
-    fun protocolsRoute(protocolHandler: ProtocolHandler): RouterFunction<ServerResponse> {
-        return RouterFunctions
-            .route(GET("/protocols"), protocolHandler::getProtocols)
+    fun protocolListRoute(builder: RouteLocatorBuilder): RouteLocator {
+        val routeBuilder = builder.routes()
+        routeBuilder.route("protocols") {
+            it.path(true, "/protocols")
+                .uri("http://defitrack-meta.default.svc.cluster.local:8080/protocols")
+        }.build()
+        return routeBuilder.build()
     }
 }
