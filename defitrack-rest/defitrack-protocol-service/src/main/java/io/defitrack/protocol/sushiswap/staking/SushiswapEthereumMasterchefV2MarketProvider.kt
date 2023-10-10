@@ -60,25 +60,46 @@ class SushiswapEthereumMasterchefV2MarketProvider : FarmingMarketProvider() {
     ): FarmingMarket? {
         return try {
             val stakedtoken = getToken(chef.lpToken(poolId))
+            val rewarder = chef.rewarder(poolId)
+            val rewarderContract = when (rewarder != "0x0000000000000000000000000000000000000000") {
+                true -> MasterchefV2Contract.Rewarder(getBlockchainGateway(), rewarder)
+                false -> null
+            }
+
             val rewardToken = getToken(chef.rewardToken.await())
+            val extraReward = when (rewarderContract != null) {
+                true -> getToken(rewarderContract.rewardToken.await())
+                false -> null
+            }
+
             create(
                 identifier = "${chef.address}-${poolId}",
                 name = stakedtoken.name + " Farm",
                 stakedToken = stakedtoken.toFungibleToken(),
                 rewardTokens = listOf(
-                    rewardToken.toFungibleToken()
-                ),
+                    rewardToken.toFungibleToken(),
+                    extraReward?.toFungibleToken()
+                ).filterNotNull(),
                 marketSize = Refreshable.refreshable {
                     getMarketSize(stakedtoken.toFungibleToken(), chef.address)
                 },
                 claimableRewardFetcher = ClaimableRewardFetcher(
-                    Reward(
-                        token = rewardToken.toFungibleToken(),
-                        contractAddress = chef.address,
-                        getRewardFunction = { user ->
-                            chef.pendingFunction(poolId, user)
+                    listOf(
+                        Reward(
+                            token = rewardToken.toFungibleToken(),
+                            contractAddress = chef.address,
+                            getRewardFunction = { user ->
+                                chef.pendingFunction(poolId, user)
+                            }
+                        ),
+                        rewarderContract?.let { rctr ->
+                            Reward(
+                                token = extraReward!!.toFungibleToken(),
+                                rctr.address,
+                                { user -> rctr.pendingTokenFn(poolId, user) }
+                            )
                         }
-                    ),
+                    ).filterNotNull(),
                     preparedTransaction = { user ->
                         PreparedTransaction(
                             network = getNetwork().toVO(),

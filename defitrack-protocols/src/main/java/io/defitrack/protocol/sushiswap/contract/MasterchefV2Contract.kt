@@ -20,6 +20,9 @@ class MasterchefV2Contract(
     blockchainGateway, address
 ) {
 
+    val poolLength = constant<BigInteger>("poolLength", uint256())
+
+
     fun harvestFunction(poolId: Int): Function {
         return createFunction(
             "withdraw",
@@ -28,6 +31,26 @@ class MasterchefV2Contract(
                 BigInteger.ZERO.toUint256()
             ),
         )
+    }
+
+    val rewarders = lazyAsync {
+        val functions = (0 until poolLength.await().toInt()).map { poolIndex ->
+            createFunction(
+                "rewarder",
+                inputs = listOf(poolIndex.toBigInteger().toUint256()),
+                outputs = listOf(
+                    address(),
+                )
+            )
+        }
+
+        readMultiCall(functions).map { retVal ->
+            retVal.data[0].value as String
+        }
+    }
+
+    suspend fun rewarder(poolIndex: Int): String {
+        return rewarders.await()[poolIndex]
     }
 
     fun pendingFunction(poolId: Int, user: String): Function {
@@ -43,12 +66,8 @@ class MasterchefV2Contract(
         )
     }
 
-    suspend fun poolLength(): Int {
-        return readSingle<BigInteger>("poolLength", uint256()).toInt()
-    }
-
     suspend fun poolInfos(): List<MasterChefV2PoolInfo> {
-        val functions = (0 until poolLength()).map { poolIndex ->
+        val functions = (0 until poolLength.await().toInt()).map { poolIndex ->
             createFunction(
                 "poolInfo",
                 inputs = listOf(poolIndex.toBigInteger().toUint256()),
@@ -77,18 +96,7 @@ class MasterchefV2Contract(
         )[0].value as String
     }
 
-    val rewardToken: Deferred<String> = lazyAsync {
-        readSingle("SUSHI", address())
-    }
-
-
-    val totalAllocPoint: Deferred<BigInteger> = lazyAsync {
-        readSingle("totalAllocPoint", uint256())
-    }
-
-    val perSecond: Deferred<BigInteger> = lazyAsync {
-        readSingle("sushiPerBlock", uint256())
-    }
+    val rewardToken: Deferred<String> = constant<String>("SUSHI", address())
 
     fun userInfoFunction(poolId: Int, user: String): Function {
         return createFunction(
@@ -102,5 +110,27 @@ class MasterchefV2Contract(
                 uint256()
             )
         )
+    }
+
+    class Rewarder(
+        blockchainGateway: BlockchainGateway, address: String
+    ) : EvmContract(
+        blockchainGateway, address
+    ) {
+
+        val rewardToken = constant<String>("rewardToken", address())
+
+        fun pendingTokenFn(poolIndex: Int, address: String): Function {
+            return createFunction(
+                "pendingToken",
+                inputs = listOf(
+                    poolIndex.toBigInteger().toUint256(),
+                    address.toAddress()
+                ),
+                outputs = listOf(
+                    uint256()
+                )
+            )
+        }
     }
 }

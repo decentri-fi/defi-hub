@@ -3,6 +3,8 @@ package io.defitrack.price
 import io.defitrack.common.network.Network
 import io.defitrack.price.external.ExternalPrice
 import io.defitrack.price.external.ExternalPriceService
+import io.micrometer.observation.Observation
+import io.micrometer.observation.ObservationRegistry
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -18,14 +20,20 @@ import java.math.BigDecimal
 @RequestMapping("/")
 class PriceRestController(
     private val priceCalculator: PriceCalculator,
-    private val externalPriceServices: List<ExternalPriceService>
+    private val externalPriceServices: List<ExternalPriceService>,
+    private val observationRegistry: ObservationRegistry
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @PostMapping
     suspend fun calculatePrice(@RequestBody priceRequest: PriceRequest): Double {
-        return priceCalculator.calculatePrice(priceRequest)
+        val observation = Observation.start("price-calculate", observationRegistry)
+        return observation.openScope().use {
+            priceCalculator.calculatePrice(priceRequest)
+        }.also {
+            observation.stop()
+        }
     }
 
     @GetMapping

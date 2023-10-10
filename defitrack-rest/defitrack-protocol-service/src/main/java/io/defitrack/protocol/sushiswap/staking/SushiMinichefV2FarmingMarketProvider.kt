@@ -9,7 +9,6 @@ import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.network.toVO
 import io.defitrack.protocol.ContractType
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.sushiswap.apr.MinichefStakingAprCalculator
 import io.defitrack.protocol.sushiswap.reward.MiniChefV2Contract
 import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.async
@@ -73,7 +72,6 @@ abstract class SushiMinichefV2FarmingMarketProvider(
                         )
                     }
                 ),
-                apr = MinichefStakingAprCalculator(getERC20Resource(), getPriceResource(), chef, poolId).calculateApr(),
                 balanceFetcher = PositionFetcher(
                     chef.address,
                     { user -> chef.userInfoFunction(poolId, user) }

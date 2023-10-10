@@ -40,7 +40,7 @@ class SushiswapEthereumMasterchefMarketProvider : FarmingMarketProvider() {
 
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
         val contract = deferredContract.await()
-        contract.poolInfos().forEachIndexed { poolIndex, poolInfo ->
+        contract.poolInfos.await().forEachIndexed { poolIndex, poolInfo ->
             launch {
                 throttled {
                     toStakingMarketElement(poolInfo, contract, poolIndex)?.let {

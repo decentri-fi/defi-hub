@@ -29,7 +29,7 @@ class AutoEarnVaultContract(
     }
 
     suspend fun poolInfos2(): List<PoolInfo> {
-        val multicalls = (0 until poolLength()).map { poolIndex ->
+        val multicalls = (0 until poolLength.await().toInt()).map { poolIndex ->
             MultiCallElement(
                 createFunction(
                     "poolInfo2",

@@ -30,7 +30,7 @@ class SwapfishArbitrumMasterchefFarmingMarketProvider(
                 getBlockchainGateway(),
                 masterChefAddr
             )
-            (0 until masterchef.poolLength()).map { poolId ->
+            (0 until masterchef.poolLength.await().toInt()).map { poolId ->
                 async {
                     toStakingMarketElement(masterchef, poolId)
                 }

@@ -45,14 +45,10 @@ open class MasterChefBasedContract(
         )
     }
 
-    suspend fun poolLength(): Int {
-        return (readSingle<BigInteger>(
-            "poolLength", uint256()
-        )).toInt()
-    }
+    val poolLength = constant<BigInteger>("poolLength", uint256())
 
-    suspend fun poolInfos(): List<MasterChefPoolInfo> {
-        val multicalls = (0 until poolLength()).map { poolIndex ->
+    val poolInfos: Deferred<List<MasterChefPoolInfo>> = lazyAsync {
+        val multicalls = (0 until poolLength.await().toInt()).map { poolIndex ->
             MultiCallElement(
                 createFunction(
                     "poolInfo",
@@ -64,14 +60,14 @@ open class MasterChefBasedContract(
                         uint256()
                     )
                 ),
-                this.address
+                address
             )
         }
 
-        val results = this.blockchainGateway.readMultiCall(
+        val results = blockchainGateway.readMultiCall(
             multicalls
         )
-        return results.map { retVal ->
+        results.map { retVal ->
             MasterChefPoolInfo(
                 retVal.data[0].value as String,
                 retVal.data[1].value as BigInteger,
@@ -81,19 +77,10 @@ open class MasterChefBasedContract(
         }
     }
 
-    suspend fun getLpTokenForPoolId(poolIndex: Int): MasterChefPoolInfo = poolInfos()[poolIndex]
+    suspend fun getLpTokenForPoolId(poolIndex: Int): MasterChefPoolInfo = poolInfos.await()[poolIndex]
 
     val rewardToken: Deferred<String> = lazyAsync {
         readSingle(rewardTokenName, address())
-    }
-
-
-    val totalAllocPoint: Deferred<BigInteger> = lazyAsync {
-        readSingle("totalAllocPoint", uint256())
-    }
-
-    val perSecond: Deferred<BigInteger> = lazyAsync {
-        readSingle(perSecondName, uint256())
     }
 
     fun userInfoFunction(poolId: Int, user: String): Function {

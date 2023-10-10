@@ -72,9 +72,6 @@ class MiniChefV2Contract(
         }
     }
 
-    suspend fun poolInfo(poolIndex: Int): MinichefPoolInfo {
-        return poolInfos()[poolIndex]
-    }
 
     suspend fun poolLength(): Int {
         return readSingle<BigInteger>("poolLength", uint256()).toInt()
