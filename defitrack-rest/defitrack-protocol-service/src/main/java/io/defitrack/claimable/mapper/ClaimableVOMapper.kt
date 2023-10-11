@@ -1,7 +1,7 @@
 package io.defitrack.claimable.mapper
 
-import io.defitrack.claimable.UserClaimable
-import io.defitrack.claimable.UserClaimableVO
+import io.defitrack.claimable.domain.UserClaimable
+import io.defitrack.claimable.vo.UserClaimableVO
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest

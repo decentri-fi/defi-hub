@@ -1,8 +1,6 @@
 package io.defitrack.market.farming
 
-import ClaimableMarketProvider
-import io.defitrack.claimable.ClaimableMarket
-import io.defitrack.claimable.ClaimableRewardFetcher
+import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.exit.ExitPositionPreparer
 import io.defitrack.market.MarketProvider
@@ -12,7 +10,7 @@ import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.token.FungibleToken
 import java.math.BigDecimal
 
-abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>(), ClaimableMarketProvider {
+abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>() {
 
     fun create(
         name: String,
@@ -46,19 +44,5 @@ abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>(), Claimabl
             expired = rewardsFinished,
             exitPositionPreparer = exitPositionPreparer
         )
-    }
-
-    override suspend fun getClaimables(): List<ClaimableMarket> {
-        return getMarkets().filter {
-            it.claimableRewardFetcher != null
-        }.map {
-            ClaimableMarket(
-                id = "rwrd_" + it.id,
-                name = it.name + " reward",
-                network = it.network,
-                protocol = it.protocol,
-                claimableRewardFetcher = it.claimableRewardFetcher!!,
-            )
-        }
     }
 }

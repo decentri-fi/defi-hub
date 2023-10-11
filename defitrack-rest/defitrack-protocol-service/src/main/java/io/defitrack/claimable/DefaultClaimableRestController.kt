@@ -1,6 +1,9 @@
 package io.defitrack.claimable
 
+import io.defitrack.claimable.domain.UserClaimable
 import io.defitrack.claimable.mapper.ClaimableVOMapper
+import io.defitrack.claimable.vo.ClaimableMarketVO
+import io.defitrack.claimable.vo.UserClaimableVO
 import io.defitrack.network.toVO
 import io.defitrack.protocol.mapper.ProtocolVOMapper
 import kotlinx.coroutines.async
@@ -18,8 +21,8 @@ import org.web3j.crypto.WalletUtils.isValidAddress
 @RequestMapping("/{protocol}")
 class DefaultClaimableRestController(
     private val userClaimableProviders: List<UserClaimableProvider>,
-    private val claimables: Claimables,
-    private val defaultClaimableRewardProvider: DefaultClaimableRewardProvider,
+    private val claimableMarketProviders: List<ClaimableMarketProvider>,
+    private val defaultUserClaimableProvider: DefaultUserClaimableProvider,
     private val claimableVOMapper: ClaimableVOMapper,
     private val protocolVOMapper: ProtocolVOMapper,
 ) {
@@ -32,7 +35,9 @@ class DefaultClaimableRestController(
     fun allMarkets(
         @PathVariable("protocol") protocol: String,
     ): List<ClaimableMarketVO> {
-        return claimables.getMarkets().filter {
+        return claimableMarketProviders.flatMap {
+            it.getMarkets()
+        }.filter {
             it.protocol.slug == protocol
         }.map {
             //TODO: mapper class
@@ -78,7 +83,7 @@ class DefaultClaimableRestController(
     }
 
     private suspend fun getFromDefaultProvider(user: String): List<UserClaimable> {
-        return defaultClaimableRewardProvider.claimables(user)
+        return defaultUserClaimableProvider.claimables(user)
     }
 
     private suspend fun getFromProviders(protocol: String, address: String) = userClaimableProviders

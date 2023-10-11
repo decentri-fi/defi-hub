@@ -1,7 +1,7 @@
 package io.defitrack.protocol.velodrome.staking
 
-import io.defitrack.claimable.ClaimableRewardFetcher
-import io.defitrack.claimable.Reward
+import io.defitrack.claimable.domain.ClaimableRewardFetcher
+import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable.Companion.refreshable

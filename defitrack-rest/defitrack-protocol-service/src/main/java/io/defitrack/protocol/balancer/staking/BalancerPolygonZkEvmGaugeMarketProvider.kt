@@ -1,8 +1,8 @@
 package io.defitrack.protocol.balancer.staking
 
 import io.defitrack.abi.TypeUtils.Companion.address
-import io.defitrack.claimable.ClaimableRewardFetcher
-import io.defitrack.claimable.Reward
+import io.defitrack.claimable.domain.ClaimableRewardFetcher
+import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.erc20.TokenInformationVO
@@ -12,11 +12,10 @@ import io.defitrack.evm.contract.GetEventLogsCommand
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
-import io.defitrack.network.toVO
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerGaugeZkEvmContract
-import io.defitrack.transaction.PreparedTransaction
+import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 import org.web3j.abi.datatypes.Event
@@ -80,14 +79,7 @@ class BalancerPolygonZkEvmGaugeMarketProvider(
                                 { user -> gaugecontract.getClaimableRewardFunction(user, it.address) }
                             )
                         },
-                        preparedTransaction = { user ->
-                            PreparedTransaction(
-                                getNetwork().toVO(),
-                                gaugecontract.getClaimRewardsFunction(),
-                                gaugecontract.address,
-                                user
-                            )
-                        }
+                        preparedTransaction = selfExecutingTransaction(gaugecontract::getClaimRewardsFunction)
                     )
                 )
             } catch (ex: Exception) {

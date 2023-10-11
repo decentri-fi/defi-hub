@@ -1,4 +1,4 @@
-package io.defitrack.claimable
+package io.defitrack.claimable.domain
 
 import io.defitrack.evm.contract.multicall.MultiCallElement
 import io.defitrack.token.FungibleToken
@@ -9,7 +9,7 @@ data class Reward(
     val token: FungibleToken,
     val contractAddress: String,
     val getRewardFunction: suspend (String) -> org.web3j.abi.datatypes.Function,
-    val extractAmountFromRewardFunction: suspend (List<Type<*>>, String) -> BigInteger = { result, user ->
+    val extractAmountFromRewardFunction: suspend (List<Type<*>>, String) -> BigInteger = { result, _ ->
         result[0].value as BigInteger
     },
 ) {

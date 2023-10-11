@@ -1,13 +1,13 @@
 package io.defitrack.claimable
 
+import io.defitrack.claimable.domain.UserClaimable
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.protocol.CompanyProvider
 import io.defitrack.protocol.ProtocolService
 import io.defitrack.token.ERC20Resource
 import org.springframework.beans.factory.annotation.Autowired
 
-@Deprecated("use ClaimableMarketProvider instead")
+@Deprecated("use io.defitrack.claimable.ClaimableMarketProvider instead")
 abstract class UserClaimableProvider : ProtocolService {
 
     @Autowired

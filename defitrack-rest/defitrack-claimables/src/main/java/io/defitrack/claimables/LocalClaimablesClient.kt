@@ -1,7 +1,7 @@
 package io.defitrack.claimables
 
-import io.defitrack.claimable.ClaimableMarketVO
-import io.defitrack.claimable.UserClaimableVO
+import io.defitrack.claimable.vo.ClaimableMarketVO
+import io.defitrack.claimable.vo.UserClaimableVO
 import io.defitrack.protocol.ProtocolVO
 import io.ktor.client.*
 import io.ktor.client.call.*

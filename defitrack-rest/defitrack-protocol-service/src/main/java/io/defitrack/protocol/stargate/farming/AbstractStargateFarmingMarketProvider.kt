@@ -1,7 +1,7 @@
 package io.defitrack.protocol.stargate.farming
 
-import io.defitrack.claimable.ClaimableRewardFetcher
-import io.defitrack.claimable.Reward
+import io.defitrack.claimable.domain.ClaimableRewardFetcher
+import io.defitrack.claimable.domain.Reward
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher

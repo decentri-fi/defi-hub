@@ -1,8 +1,5 @@
 package io.defitrack.protocol.pika.staking
 
-import io.defitrack.claimable.ClaimableMarket
-import io.defitrack.claimable.ClaimableRewardFetcher
-import io.defitrack.claimable.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.erc20.TokenInformationVO
@@ -11,9 +8,7 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.pika.PikaStakingContract
-import io.defitrack.transaction.PreparedTransaction
 import org.springframework.stereotype.Component
-import java.math.BigInteger
 
 @Component
 @ConditionalOnCompany(Company.PIKA)
@@ -42,47 +37,6 @@ class PikaFarmingMarketProvider : FarmingMarketProvider() {
                 )
             )
         )
-    }
-
-    override suspend fun getClaimables(): List<ClaimableMarket> {
-        return getMarkets().flatMap {
-            val contract = it.internalMetadata["contract"] as PikaStakingContract
-
-            contract.rewardPools().map { rewardPoolContract ->
-                val rewardToken = getToken(rewardPoolContract.getRewardToken())
-
-                ClaimableMarket(
-                    name = "${rewardToken.name} staking reward",
-                    network = getNetwork(),
-                    protocol = getProtocol(),
-                    id = "rwrd_" + rewardPoolContract.fetchAddress(),
-                    claimableRewardFetcher = ClaimableRewardFetcher(
-                        Reward(
-                            rewardToken.toFungibleToken(),
-                            rewardPoolContract.fetchAddress(),
-                            rewardPoolContract::getClaimableReward,
-                            extractAmountFromRewardFunction = { result, _ ->
-                                when (rewardPoolContract) {
-                                    is PikaStakingContract.PikaRewardPoolContract -> {
-                                        val precision = rewardPoolContract.getPrecision()
-                                        (result[0].value as BigInteger) / precision
-                                    }
-                                    else -> {
-                                        result[0].value as BigInteger
-                                    }
-                                }
-                            }
-                        )
-                    ) {
-                        PreparedTransaction(
-                            rewardPoolContract.claimRewardFn(it),
-                            it
-                        )
-                    }
-                )
-            }
-
-        }
     }
 
     override fun getProtocol(): Protocol {

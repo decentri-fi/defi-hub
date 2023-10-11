@@ -1,5 +1,6 @@
 package io.defitrack.claimable
 
+import io.defitrack.claimable.domain.UserClaimable
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -9,14 +10,14 @@ import org.springframework.stereotype.Component
 import java.math.BigInteger
 
 @Component
-class DefaultClaimableRewardProvider(
-    private val claimables: Claimables,
+class DefaultUserClaimableProvider(
+    private val claimableMarketProviders: List<ClaimableMarketProvider>,
     private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
     suspend fun claimables(userAddress: String): List<UserClaimable> = coroutineScope {
-        val fetchersByNetwork = claimables.getMarkets() .groupBy {
+        val fetchersByNetwork = claimableMarketProviders.flatMap { it.getMarkets() }.groupBy {
             it.network
         }
 

@@ -1,8 +1,7 @@
 package io.defitrack.protocol.balancer.staking
 
-import io.defitrack.claimable.ClaimableRewardFetcher
-import io.defitrack.claimable.PrepareClaimCommand
-import io.defitrack.claimable.Reward
+import io.defitrack.claimable.domain.ClaimableRewardFetcher
+import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
@@ -11,9 +10,9 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.balancer.claiming.BalancerClaimPreparer
 import io.defitrack.protocol.balancer.contract.BalancerGaugeContract
 import io.defitrack.protocol.balancer.contract.BalancerLiquidityGaugeFactoryContract
+import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
@@ -78,16 +77,12 @@ abstract class BalancerGaugeFarmingMarketProvider(
                                             Reward(
                                                 token = it,
                                                 contractAddress = gaugecontract.address,
-                                                getRewardFunction = {user ->
+                                                getRewardFunction = { user ->
                                                     gaugecontract.getClaimableRewardFunction(user, it.address)
                                                 }
                                             )
                                         },
-                                        preparedTransaction = { user ->
-                                            BalancerClaimPreparer(
-                                                gaugecontract, from = user
-                                            ).prepare(PrepareClaimCommand(user = user))
-                                        }
+                                        preparedTransaction = selfExecutingTransaction(gaugecontract::getClaimRewardsFunction)
                                     ),
                                     exitPositionPreparer = prepareExit {
                                         PreparedExit(

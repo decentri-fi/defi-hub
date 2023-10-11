@@ -4,6 +4,7 @@ import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.compound.CompoundAddressesProvider
 import io.defitrack.protocol.compound.v3.contract.CompoundRewardContract
@@ -12,10 +13,11 @@ import org.springframework.stereotype.Component
 @Component
 @ConditionalOnCompany(Company.COMPOUND)
 class CompoundEthereumRewardProvider(
-) : CompoundRewardProvider() {
+    blockchainGatewayProvider: BlockchainGatewayProvider
+) : CompoundRewardProvider(blockchainGatewayProvider, Network.ETHEREUM) {
 
     override fun getContract(): CompoundRewardContract {
-        return object: CompoundRewardContract(getBlockchainGateway(), CompoundAddressesProvider.CONFIG[getNetwork()]!!.rewards) {
+        return object: CompoundRewardContract(getBlockchainGateway(), CompoundAddressesProvider.CONFIG[network]!!.rewards) {
             override suspend fun getRewardConfig(comet: String): RewardConfig {
                 return (read(
                     "rewardConfig",
@@ -30,9 +32,5 @@ class CompoundEthereumRewardProvider(
                 }
             }
         }
-    }
-
-    override fun getNetwork(): Network {
-        return Network.ETHEREUM
     }
 }

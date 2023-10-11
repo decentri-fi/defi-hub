@@ -26,11 +26,11 @@ class AdamantVaultContract(
         )
     }
 
-    fun getClaimFunction(): Function {
+    fun getClaimFunction(): ContractCall {
         return createFunction(
             "claim",
             emptyList(),
             emptyList()
-        )
+        ).toContractCall()
     }
 }

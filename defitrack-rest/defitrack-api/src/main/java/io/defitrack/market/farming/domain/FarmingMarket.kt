@@ -1,6 +1,6 @@
 package io.defitrack.market.farming.domain
 
-import io.defitrack.claimable.ClaimableRewardFetcher
+import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.exit.ExitPositionPreparer

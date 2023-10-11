@@ -1,4 +1,4 @@
-package io.defitrack.claimable
+package io.defitrack.claimable.domain
 
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Protocol

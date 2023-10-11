@@ -1,6 +1,6 @@
 package io.defitrack.market.pooling
 
-import io.defitrack.claimable.Claimables
+import io.defitrack.claimable.ClaimableMarketProvider
 import io.defitrack.market.MarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.LendingMarket
@@ -23,7 +23,7 @@ class MarketCacheRefresher(
     private val poolingMarketProviders: List<MarketProvider<PoolingMarket>>,
     private val lendingMarketProviders: List<MarketProvider<LendingMarket>>,
     private val farmingMarketProviders: List<MarketProvider<FarmingMarket>>,
-    private val claimables: Claimables,
+    private val claimableMarketProviders: List<ClaimableMarketProvider>,
     private val applicationContext: ApplicationContext
 ) : ApplicationRunner {
     val logger = LoggerFactory.getLogger(this::class.java)
@@ -39,16 +39,10 @@ class MarketCacheRefresher(
                 return@runBlocking
             }
             logger.info("Initial population of all caches.")
-            poolingMarketProviders.map {
-                it.populateCaches()
-            }
-            lendingMarketProviders.forEach {
-                it.populateCaches()
-            }
-            farmingMarketProviders.forEach {
-                it.populateCaches()
-            }
-            claimables.populate()
+            poolingMarketProviders.forEach { it.populateCaches() }
+            lendingMarketProviders.forEach { it.populateCaches() }
+            farmingMarketProviders.forEach { it.populateCaches() }
+            claimableMarketProviders.forEach { it.populateCaches() }
             logger.info("done with initial population of all caches.")
         }
         AvailabilityChangeEvent.publish(applicationContext, ReadinessState.ACCEPTING_TRAFFIC)
@@ -80,7 +74,11 @@ class MarketCacheRefresher(
                 it.refreshMarkets()
             }
         }.joinAll()
-        claimables.populate()
+        claimableMarketProviders.map {
+            launch {
+                it.populateCaches()
+            }
+        }
     }
 
     override fun run(args: ApplicationArguments?) {

@@ -35,12 +35,12 @@ open class BalancerGaugeContract(
         )
     }
 
-    fun getClaimRewardsFunction(): Function {
+    fun getClaimRewardsFunction(): ContractCall {
         return createFunction(
             "claim_rewards",
             emptyList(),
             emptyList()
-        )
+        ).toContractCall()
     }
 
     suspend fun getBalances(user: String, rewardTokens: List<FungibleToken>): List<BalancerGaugeBalance> {

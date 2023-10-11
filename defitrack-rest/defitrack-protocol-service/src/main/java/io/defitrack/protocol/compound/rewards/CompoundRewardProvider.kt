@@ -1,10 +1,15 @@
 package io.defitrack.protocol.compound.rewards
 
-import io.defitrack.claimable.*
-import io.defitrack.common.utils.AsyncUtils.lazyAsync
-import ClaimableMarketProvider
 import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
+import io.defitrack.claimable.*
+import io.defitrack.claimable.domain.ClaimableMarket
+import io.defitrack.claimable.domain.ClaimableRewardFetcher
+import io.defitrack.claimable.domain.Reward
+import io.defitrack.common.network.Network
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
+import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.network.toVO
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.compound.CompoundAddressesProvider
@@ -13,14 +18,17 @@ import io.defitrack.protocol.compound.v3.contract.CompoundV3AssetContract
 import io.defitrack.transaction.PreparedTransaction
 
 abstract class CompoundRewardProvider(
-) : UserClaimableProvider(), ClaimableMarketProvider {
+    private val blockchainGatewayProvider: BlockchainGatewayProvider,
+    val network: Network
+) : ClaimableMarketProvider() {
 
     private val deferredContract = lazyAsync {
         getContract()
     }
 
     open fun getContract(): CompoundRewardContract {
-        return object: CompoundRewardContract(getBlockchainGateway(), CompoundAddressesProvider.CONFIG[getNetwork()]!!.rewards) {
+        return object :
+            CompoundRewardContract(blockchainGatewayProvider.getGateway(network), CompoundAddressesProvider.CONFIG[network]!!.rewards) {
             override suspend fun getRewardConfig(comet: String): RewardConfig {
                 return (read(
                     "rewardConfig",
@@ -37,20 +45,20 @@ abstract class CompoundRewardProvider(
         }
     }
 
-    override suspend fun getClaimables(): List<ClaimableMarket> {
-        val markets = CompoundAddressesProvider.CONFIG[getNetwork()]!!.v3Tokens
+    override suspend fun fetchClaimables(): List<ClaimableMarket> {
+        val markets = CompoundAddressesProvider.CONFIG[network]!!.v3Tokens
         return markets.map { comet ->
             val asset = CompoundV3AssetContract(getBlockchainGateway(), comet)
-            val basetoken = erC20Resource.getTokenInformation(getNetwork(), asset.baseToken())
+            val basetoken = erC20Resource.getTokenInformation(network, asset.baseToken())
             val rewardToken = erC20Resource.getTokenInformation(
-                getNetwork(),
+                network,
                 deferredContract.await().getRewardConfig(asset.address).token
             )
             ClaimableMarket(
                 id = "rwrd_${comet}",
                 name = "compound ${basetoken.name} rewards",
-                network = getNetwork(),
-                protocol = getProtocol(),
+                network = network,
+                protocol = Protocol.COMPOUND,
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
                         token = rewardToken.toFungibleToken(),
@@ -61,7 +69,7 @@ abstract class CompoundRewardProvider(
                     ),
                     preparedTransaction = { user ->
                         PreparedTransaction(
-                            getNetwork().toVO(),
+                            network.toVO(),
                             deferredContract.await().getRewardOwedFn(comet, user),
                             deferredContract.await().address,
                             user
@@ -72,11 +80,7 @@ abstract class CompoundRewardProvider(
         }
     }
 
-    override fun getProtocol(): Protocol {
-        return Protocol.COMPOUND
-    }
-
-    override suspend fun claimables(address: String): List<UserClaimable> {
-        return emptyList()
+    protected fun getBlockchainGateway(): BlockchainGateway {
+        return blockchainGatewayProvider.getGateway(network)
     }
 }

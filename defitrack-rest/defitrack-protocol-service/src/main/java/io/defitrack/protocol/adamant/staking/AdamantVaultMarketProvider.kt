@@ -1,7 +1,7 @@
 package io.defitrack.protocol.adamant.staking
 
-import io.defitrack.claimable.ClaimableRewardFetcher
-import io.defitrack.claimable.Reward
+import io.defitrack.claimable.domain.ClaimableRewardFetcher
+import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.conditional.ConditionalOnCompany
@@ -13,7 +13,7 @@ import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.adamant.AdamantService
 import io.defitrack.protocol.adamant.AdamantVaultContract
-import io.defitrack.protocol.adamant.claimable.AdamantVaultClaimPreparer
+import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -32,7 +32,6 @@ class AdamantVaultMarketProvider(
     val addy = lazyAsync {
         getToken("0xc3fdbadc7c795ef1d6ba111e06ff8f16a20ea539")
     }
-
 
     override suspend fun fetchMarkets(): List<FarmingMarket> =
         coroutineScope {
@@ -61,15 +60,9 @@ class AdamantVaultMarketProvider(
                                 Reward(
                                     token = rewardToken,
                                     contractAddress = vault.address,
-                                    getRewardFunction = { user ->
-                                        vault.getPendingRewardFunction(user)
-                                    }
+                                    getRewardFunction = vault::getPendingRewardFunction
                                 ),
-                                preparedTransaction = {
-                                    AdamantVaultClaimPreparer(
-                                        vault
-                                    ).prepare()
-                                }
+                                preparedTransaction = selfExecutingTransaction(vault::getClaimFunction)
                             )
                         )
                     } catch (ex: Exception) {

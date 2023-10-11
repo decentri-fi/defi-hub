@@ -1,7 +1,7 @@
 package io.defitrack.protocol.alienbase.farming
 
-import io.defitrack.claimable.ClaimableRewardFetcher
-import io.defitrack.claimable.Reward
+import io.defitrack.claimable.domain.ClaimableRewardFetcher
+import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.conditional.ConditionalOnCompany
@@ -76,7 +76,7 @@ class AlienbaseFarmingMarketProvider : FarmingMarketProvider() {
                                     rewardToken.toFungibleToken(),
                                     contract.address,
                                     { user -> contract.pendingFunction(poolId, user) },
-                                    { results, user ->
+                                    { results, _ ->
                                         val addresses = (results[0].value as List<Address>).map { it.value as String }
                                         val amounts = (results[3].value as List<Uint256>).map { it.value as BigInteger }
                                         addresses.mapIndexed { index, s ->

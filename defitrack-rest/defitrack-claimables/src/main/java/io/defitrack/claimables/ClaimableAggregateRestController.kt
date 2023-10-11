@@ -2,16 +2,14 @@ package io.defitrack.claimables
 
 import arrow.fx.coroutines.parMap
 import io.defitrack.PageUtils
-import io.defitrack.claimable.ClaimableMarketVO
-import io.defitrack.claimable.UserClaimableVO
+import io.defitrack.claimable.vo.ClaimableMarketVO
+import io.defitrack.claimable.vo.UserClaimableVO
 import io.defitrack.protocol.DefiPrimitive
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.mapper.ProtocolVOMapper
 import io.github.reactivecircus.cache4k.Cache
 import io.micrometer.observation.Observation.start
 import io.micrometer.observation.ObservationRegistry
-import io.netty.handler.codec.http.DefaultHttpResponse
-import io.netty.handler.codec.http.HttpResponse
 import io.swagger.v3.oas.annotations.Hidden
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.ArraySchema

@@ -1,4 +1,4 @@
-package io.defitrack.claimable
+package io.defitrack.claimable.vo
 
 import io.defitrack.network.NetworkVO
 import io.defitrack.protocol.ProtocolVO

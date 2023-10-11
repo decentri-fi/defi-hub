@@ -1,6 +1,6 @@
 package io.defitrack.protocol.uniswap.v3
 
-import io.defitrack.claimable.UserClaimable
+import io.defitrack.claimable.domain.UserClaimable
 import io.defitrack.claimable.UserClaimableProvider
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany

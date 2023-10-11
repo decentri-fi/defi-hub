@@ -1,10 +1,11 @@
-package io.defitrack.claimable
+package io.defitrack.claimable.domain
 
+import io.defitrack.claimable.domain.Reward
 import io.defitrack.transaction.PreparedTransaction
 
 class ClaimableRewardFetcher(
     val rewards: List<Reward>,
-    val preparedTransaction: suspend (user: String) -> PreparedTransaction,
+    val preparedTransaction: suspend (user: String) -> PreparedTransaction?,
 ) {
     constructor(
         reward: Reward,

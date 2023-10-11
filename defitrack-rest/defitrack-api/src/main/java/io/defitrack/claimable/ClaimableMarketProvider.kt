@@ -1,25 +1,26 @@
 package io.defitrack.claimable
 
-import ClaimableMarketProvider
 import arrow.core.Either
-import arrow.core.Either.Companion.catch
-import arrow.core.Either.Right
 import arrow.core.getOrElse
-import arrow.core.right
+import io.defitrack.claimable.domain.ClaimableMarket
+import io.defitrack.token.DecentrifiERC20Resource
 import io.github.reactivecircus.cache4k.Cache
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Component
+import org.springframework.beans.factory.annotation.Autowired
 
+abstract class ClaimableMarketProvider {
 
-@Component
-class Claimables(private val claimableMarketProvider: List<ClaimableMarketProvider>) {
+    @Autowired
+    protected lateinit var erC20Resource: DecentrifiERC20Resource
+
+    abstract suspend fun fetchClaimables(): List<ClaimableMarket>
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     val cache = Cache.Builder<String, ClaimableMarket>().build()
 
     fun getMarkets(): List<ClaimableMarket> {
-        return catch {
+        return Either.catch {
             val hashmap: Map<in String, ClaimableMarket> = HashMap(cache.asMap())
             hashmap.values.toMutableList()
         }.mapLeft {
@@ -27,21 +28,15 @@ class Claimables(private val claimableMarketProvider: List<ClaimableMarketProvid
         }.getOrElse { emptyList() }
     }
 
-    suspend fun populate() {
-        claimableMarketProvider.map {
-            catch {
-                it.getClaimables()
+    suspend fun populateCaches() {
+        Either.catch {
+            fetchClaimables()
+        }.mapLeft { ex ->
+            logger.error("Unable to get claimables", ex)
+        }.getOrElse { emptyList() }
+            .forEach { market ->
+                cache.put(market.id, market)
             }
-        }.map {
-            it.mapLeft { ex ->
-                logger.error("Unable to get claimables", ex)
-            }
-        }.mapNotNull {
-            it.getOrNull()
-        }.flatten().forEach { market ->
-            cache.put(market.id, market)
-        }
-
         if (cache.asMap().isNotEmpty()) {
             logger.info("Claimables populated with ${cache.asMap().size} markets")
         }

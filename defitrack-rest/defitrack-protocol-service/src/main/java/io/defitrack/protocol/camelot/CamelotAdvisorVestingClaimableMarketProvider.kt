@@ -1,9 +1,9 @@
 package io.defitrack.protocol.camelot
 
-import ClaimableMarketProvider
-import io.defitrack.claimable.ClaimableMarket
-import io.defitrack.claimable.ClaimableRewardFetcher
-import io.defitrack.claimable.Reward
+import io.defitrack.claimable.ClaimableMarketProvider
+import io.defitrack.claimable.domain.ClaimableRewardFetcher
+import io.defitrack.claimable.domain.ClaimableMarket
+import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
@@ -12,7 +12,6 @@ import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.network.toVO
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
-import io.defitrack.token.DecentrifiERC20Resource
 import io.defitrack.transaction.PreparedTransaction
 import org.springframework.stereotype.Component
 import java.math.BigInteger
@@ -21,8 +20,7 @@ import java.math.BigInteger
 @ConditionalOnCompany(Company.CAMELOT)
 class CamelotAdvisorVestingClaimableMarketProvider(
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
-    private val erC20Resource: DecentrifiERC20Resource
-) : ClaimableMarketProvider {
+) : ClaimableMarketProvider() {
 
     val deferredContract = lazyAsync {
         CamelotAdvisorVestingContract(
@@ -31,7 +29,7 @@ class CamelotAdvisorVestingClaimableMarketProvider(
         )
     }
 
-    override suspend fun getClaimables(): List<ClaimableMarket> {
+    override suspend fun fetchClaimables(): List<ClaimableMarket> {
         val contract = deferredContract.await()
         val xgrail = erC20Resource.getTokenInformation(Network.ARBITRUM, contract.xGrailToken.await())
 
