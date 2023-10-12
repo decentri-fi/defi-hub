@@ -19,14 +19,21 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletResponse
-import kotlinx.coroutines.*
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Pageable
+import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import org.web3j.crypto.WalletUtils.isValidAddress
+import org.web3j.protocol.core.Response
 import java.util.concurrent.Executors
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.measureTimedValue
@@ -77,23 +84,44 @@ class ClaimableAggregateRestController(
                 ]
             )]
     )
-    suspend fun aggregate(@PathVariable("address") address: String): List<UserClaimableVO> = coroutineScope {
-        if (!isValidAddress(address)) {
-            emptyList()
-        } else {
-            val observation = start("requests.get.claimables.aggregate", observationRegistry)
-            val result = measureTimedValue {
-                Protocol.entries.filter {
-                    it.primitives.contains(DefiPrimitive.CLAIMABLES)
-                }.parMap {
-                    claimablesClient.getClaimables(address, protocolVOMapper.map(it))
-                }.flatten()
-            }
+    suspend fun aggregate(
+        @PathVariable("address") address: String,
+        @RequestParam("include", required = false, defaultValue = "") includes: List<String> = emptyList(),
+        @RequestParam("exclude", required = false, defaultValue = "") excludes: List<String> = emptyList()
+    ): ResponseEntity<Any> {
+        if (includes.isNotEmpty() && excludes.isNotEmpty())
+            return ResponseEntity(
+                Response.Error(403, "Cannot include and exclude at the same time"),
+                BAD_REQUEST
+            )
 
-            logger.info("took ${result.duration.inWholeSeconds} seconds to aggregate ${result.value.size} claimables for $address")
-            observation.stop()
-            result.value
+        if (!isValidAddress(address))
+            return ResponseEntity(
+                Response.Error(403, "Invalid address"),
+                BAD_REQUEST
+            )
+
+        val observation = start("requests.get.claimables.aggregate", observationRegistry)
+        val result = measureTimedValue {
+            val protocols = Protocol.entries.filter {
+                it.primitives.contains(DefiPrimitive.CLAIMABLES)
+            }.filter {
+                if (includes.isNotEmpty()) {
+                    includes.contains(it.name) || includes.contains(it.slug)
+                } else true
+            }.filter {
+                if (excludes.isNotEmpty()) {
+                    !excludes.contains(it.name) && !excludes.contains(it.slug)
+                } else true
+            }
+            protocols.parMap {
+                claimablesClient.getClaimables(address, protocolVOMapper.map(it))
+            }.flatten()
         }
+
+        logger.info("took ${result.duration.inWholeSeconds} seconds to aggregate ${result.value.size} claimables for $address")
+        observation.stop()
+        return ResponseEntity.ok(result.value)
     }
 
     val executor = Executors.newSingleThreadExecutor()
