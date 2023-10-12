@@ -17,7 +17,7 @@ pipeline {
         stage('Package') {
              steps {
                  echo "-=- packaging project -=-"
-                 sh "./mvnw -T 1.5C install -DskipTests"
+                 sh "./mvnw -T 1.5C package -DskipTests"
              }
         }
     }
