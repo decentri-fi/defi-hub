@@ -1,7 +1,7 @@
 package io.defitrack.rest
 
-import io.defitrack.web3j.Web3JProxy
 import io.defitrack.evm.EvmContractInteractionCommand
+import io.defitrack.web3j.Web3JProxy
 import io.github.reactivecircus.cache4k.Cache
 import jakarta.annotation.PostConstruct
 import kotlinx.coroutines.*
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.web3j.protocol.core.methods.response.EthCall
 import java.util.*
+import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.Executors
 import kotlin.time.Duration.Companion.seconds
 
@@ -30,7 +31,9 @@ class EVMContractInteractionRestController(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     val outputs = Cache.Builder<String, EthCall>().expireAfterWrite(10.seconds).build()
-    val inputs = Cache.Builder<String, EvmContractInteractionCommand>().expireAfterWrite(10.seconds).build()
+    val inputQueue = ConcurrentLinkedQueue<CallToExecute>()
+
+    data class CallToExecute(val uuid: String, val evmContractInteractionCommand: EvmContractInteractionCommand)
 
     @PostMapping("/call")
     suspend fun call(@RequestBody evmContractInteractionCommand: EvmContractInteractionCommand): EthCall {
@@ -42,7 +45,7 @@ class EVMContractInteractionRestController(
         return coroutineScope {
             val asy = async {
                 val uuid = UUID.randomUUID().toString()
-                inputs.put(uuid, evmContractInteractionCommand)
+                inputQueue.add(CallToExecute(uuid, evmContractInteractionCommand))
                 collect(uuid).first()
             }
 
@@ -72,34 +75,27 @@ class EVMContractInteractionRestController(
         }
     }
 
-    suspend fun invalidateInput(uuid: String) {
-        mutex.withLock {
-            inputs.invalidate(uuid)
-        }
-    }
-
     @PostConstruct
     fun run() {
         Executors.newSingleThreadExecutor().submit {
             runBlocking {
                 while (true) {
+                    if (inputQueue.any()) {
+                        logger.info("inputqueue contains ${inputQueue.size} elements")
+                    }
                     try {
                         val requests = getInputs()
                         if (requests.size > 1) {
-                            val multicallResults = web3JProxy.call(requests.map { it.value })
+                            val multicallResults = web3JProxy.call(requests.map { it.evmContractInteractionCommand })
                             multicallResults.mapIndexed { index, ethCall ->
-                                val uuid = requests[index].key as String
+                                val uuid = requests[index].uuid
                                 outputs.put(uuid, ethCall)
-                                invalidateInput(uuid)
                             }
                         } else {
                             try {
                                 requests.forEach {
-                                    val uuid = it.key
-
-                                    val value = web3JProxy.call(it.value)
-                                    outputs.put(uuid as String, value)
-                                    invalidateInput(uuid)
+                                    val value = web3JProxy.call(it.evmContractInteractionCommand)
+                                    outputs.put(it.uuid, value)
                                 }
                             } catch (ex: Exception) {
                                 logger.error("unable to iterate requests", ex)
@@ -116,12 +112,11 @@ class EVMContractInteractionRestController(
         }
     }
 
-    private suspend fun getInputs(): List<MutableMap.MutableEntry<Any?, EvmContractInteractionCommand>> = mutex.withLock{
-        return try {
-            HashMap(inputs.asMap()).entries.toMutableList()
-        } catch (ex: Exception) {
-            logger.error("unable to fetch inputs", ex)
-            emptyList()
+    private suspend fun getInputs(): List<CallToExecute> {
+        return inputQueue.map {
+               it.also {
+                   inputQueue.remove(it)
+               }
         }
     }
 }
