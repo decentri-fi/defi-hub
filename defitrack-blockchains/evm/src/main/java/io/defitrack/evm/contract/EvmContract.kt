@@ -2,8 +2,8 @@ package io.defitrack.evm.contract
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils
-import io.defitrack.evm.contract.multicall.MultiCallElement
-import io.defitrack.evm.contract.multicall.MultiCallResult
+import io.defitrack.evm.multicall.MultiCallElement
+import io.defitrack.evm.multicall.MultiCallResult
 import kotlinx.coroutines.Deferred
 import org.slf4j.LoggerFactory
 import org.web3j.abi.TypeReference

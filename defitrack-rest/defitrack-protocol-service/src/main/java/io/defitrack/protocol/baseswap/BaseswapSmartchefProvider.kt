@@ -7,7 +7,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.event.EventDecoder.Companion.extract
-import io.defitrack.evm.contract.GetEventLogsCommand
+import io.defitrack.evm.GetEventLogsCommand
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher

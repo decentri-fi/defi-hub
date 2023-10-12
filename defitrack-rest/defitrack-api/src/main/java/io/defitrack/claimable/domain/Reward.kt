@@ -1,6 +1,6 @@
 package io.defitrack.claimable.domain
 
-import io.defitrack.evm.contract.multicall.MultiCallElement
+import io.defitrack.evm.multicall.MultiCallElement
 import io.defitrack.token.FungibleToken
 import org.web3j.abi.datatypes.Type
 import java.math.BigInteger

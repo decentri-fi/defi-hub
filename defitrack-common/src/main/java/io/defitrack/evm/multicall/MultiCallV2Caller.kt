@@ -1,4 +1,4 @@
-package io.defitrack.evm.contract.multicall
+package io.defitrack.evm.multicall
 
 import io.defitrack.abi.TypeUtils.Companion.dynamicArray
 import io.defitrack.abi.TypeUtils.Companion.toAddress

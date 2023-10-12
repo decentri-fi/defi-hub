@@ -3,7 +3,7 @@ package io.defitrack.protocol.compound.borrowing
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.evm.contract.multicall.MultiCallElement
+import io.defitrack.evm.multicall.MultiCallElement
 import io.defitrack.market.borrowing.BorrowService
 import io.defitrack.market.borrowing.domain.BorrowPosition
 import io.defitrack.protocol.Company

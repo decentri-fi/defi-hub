@@ -4,7 +4,7 @@ import io.defitrack.abi.TypeUtils.Companion.string
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
-import io.defitrack.evm.contract.multicall.MultiCallResult
+import io.defitrack.evm.multicall.MultiCallResult
 import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
 

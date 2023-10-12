@@ -5,7 +5,7 @@ import io.defitrack.claimable.UserClaimableProvider
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.evm.contract.multicall.MultiCallElement
+import io.defitrack.evm.multicall.MultiCallElement
 import io.defitrack.network.toVO
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol

@@ -1,7 +1,7 @@
 package io.defitrack.market.lending.domain
 
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.multicall.MultiCallElement
+import io.defitrack.evm.multicall.MultiCallElement
 import io.defitrack.exit.ExitPositionPreparer
 import io.defitrack.market.DefiMarket
 import io.defitrack.common.utils.Refreshable

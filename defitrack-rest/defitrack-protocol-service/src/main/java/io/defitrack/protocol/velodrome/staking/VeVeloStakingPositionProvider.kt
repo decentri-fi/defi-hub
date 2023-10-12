@@ -2,7 +2,7 @@ package io.defitrack.protocol.velodrome.staking
 
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.evm.contract.multicall.MultiCallElement
+import io.defitrack.evm.multicall.MultiCallElement
 import io.defitrack.market.farming.FarmingPositionProvider
 import io.defitrack.market.farming.domain.FarmingPosition
 import io.defitrack.protocol.Company

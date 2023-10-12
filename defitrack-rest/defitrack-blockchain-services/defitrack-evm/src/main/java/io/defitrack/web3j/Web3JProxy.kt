@@ -1,14 +1,14 @@
-package io.defitrack.evm.web3j
+package io.defitrack.web3j
 
-import io.defitrack.evm.contract.EvmContractInteractionCommand
-import io.defitrack.evm.contract.GetEventLogsCommand
+import io.defitrack.evm.EvmContractInteractionCommand
+import io.defitrack.evm.GetEventLogsCommand
+import io.defitrack.multicall.MulticallService
 import io.micrometer.observation.Observation
 import io.micrometer.observation.ObservationRegistry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.stereotype.Component
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.DefaultBlockParameterName
@@ -21,12 +21,16 @@ import org.web3j.protocol.exceptions.ClientConnectionException
 import java.math.BigInteger
 
 @Component
-@ConditionalOnBean(Web3j::class)
-class EvmGateway(
+class Web3JProxy(
     private val primaryWeb3j: Web3j,
     @Qualifier("fallbackWeb3js") private val fallbacks: List<Web3j>,
+    private val multicallService: MulticallService,
     private val observationRegistry: ObservationRegistry
 ) {
+
+    suspend fun call(calls: List<EvmContractInteractionCommand>): List<EthCall> {
+        return multicallService.call(calls) { call(it) }
+    }
 
     suspend fun getLogs(
         getEventLogsCommand: GetEventLogsCommand,

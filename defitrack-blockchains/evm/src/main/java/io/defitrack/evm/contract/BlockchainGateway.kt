@@ -10,9 +10,11 @@ import com.google.gson.JsonParser
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
-import io.defitrack.evm.contract.multicall.MultiCallCaller
-import io.defitrack.evm.contract.multicall.MultiCallElement
-import io.defitrack.evm.contract.multicall.MultiCallResult
+import io.defitrack.evm.EvmContractInteractionCommand
+import io.defitrack.evm.GetEventLogsCommand
+import io.defitrack.evm.multicall.MultiCallCaller
+import io.defitrack.evm.multicall.MultiCallElement
+import io.defitrack.evm.multicall.MultiCallResult
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*

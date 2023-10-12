@@ -1,4 +1,4 @@
-package io.defitrack
+package io.defitrack.vo
 
 import java.math.BigInteger
 

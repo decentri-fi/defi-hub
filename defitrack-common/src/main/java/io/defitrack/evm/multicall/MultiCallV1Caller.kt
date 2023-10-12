@@ -1,4 +1,4 @@
-package io.defitrack.evm.contract.multicall
+package io.defitrack.evm.multicall
 
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256

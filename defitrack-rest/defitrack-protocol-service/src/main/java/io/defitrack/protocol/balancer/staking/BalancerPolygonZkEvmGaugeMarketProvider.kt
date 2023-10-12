@@ -8,7 +8,7 @@ import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.event.EventDecoder.Companion.extract
 import io.defitrack.evm.contract.ERC20Contract
-import io.defitrack.evm.contract.GetEventLogsCommand
+import io.defitrack.evm.GetEventLogsCommand
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.PositionFetcher

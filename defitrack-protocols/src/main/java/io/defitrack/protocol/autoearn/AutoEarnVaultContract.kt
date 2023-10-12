@@ -4,7 +4,7 @@ import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.multicall.MultiCallElement
+import io.defitrack.evm.multicall.MultiCallElement
 import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
 import io.defitrack.protocol.sushiswap.contract.MasterChefBasedContract

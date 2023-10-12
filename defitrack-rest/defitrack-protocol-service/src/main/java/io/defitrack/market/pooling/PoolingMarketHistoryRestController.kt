@@ -5,8 +5,7 @@ import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.policy.plus
 import com.github.michaelbull.retry.retry
 import io.defitrack.event.DefiEvent
-import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.GetEventLogsCommand
+import io.defitrack.evm.GetEventLogsCommand
 import io.defitrack.market.pooling.history.PoolingHistoryProvider
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping

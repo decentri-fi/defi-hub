@@ -1,7 +1,7 @@
-package io.defitrack
+package io.defitrack.rest
 
-import io.defitrack.evm.contract.GetEventLogsCommand
-import io.defitrack.evm.web3j.EvmGateway
+import io.defitrack.web3j.Web3JProxy
+import io.defitrack.evm.GetEventLogsCommand
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -11,12 +11,12 @@ import org.web3j.protocol.core.methods.response.EthLog
 @RestController
 @RequestMapping("/events")
 class NativeEventRestController(
-    private val evmGateway: EvmGateway
+    private val web3JProxy: Web3JProxy
 ) {
 
     @PostMapping("/logs")
     suspend fun getEvents(@RequestBody getEventLogsCommand: GetEventLogsCommand): EthLog {
         require(getEventLogsCommand.addresses.isNotEmpty()) { "Address must not be empty" }
-        return evmGateway.getLogs(getEventLogsCommand)
+        return web3JProxy.getLogs(getEventLogsCommand)
     }
 }

@@ -6,14 +6,12 @@ import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.event.EventDecoder.Companion.extract
-import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.GetEventLogsCommand
+import io.defitrack.evm.GetEventLogsCommand
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.uniswap.v3.prefetch.UniswapV3Prefetcher
-import io.defitrack.token.TokenType
 import io.defitrack.uniswap.v3.UniswapV3PoolContract
 import io.defitrack.uniswap.v3.UniswapV3PoolFactoryContract
 import io.github.reactivecircus.cache4k.Cache

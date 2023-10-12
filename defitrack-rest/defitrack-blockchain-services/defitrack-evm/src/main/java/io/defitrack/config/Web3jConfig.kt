@@ -1,9 +1,8 @@
-package io.defitrack
+package io.defitrack.config
 
 import okhttp3.OkHttpClient
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
@@ -14,8 +13,7 @@ import java.net.ConnectException
 import java.util.concurrent.TimeUnit
 
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnMissingBean(value = [Web3j::class])
-class Web3JProvider(
+class Web3jConfig(
     @Value("\${io.defitrack.evm.endpoint.url}") private val endpoint: String,
     @Value("\${io.defitrack.evm.endpoint.fallback-urls:}") private val fallbackUrls: List<String>
 ) {
