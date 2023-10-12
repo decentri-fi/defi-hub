@@ -19,6 +19,14 @@ enum class Protocol(
         networks = listOf(Network.BASE),
         company = Company.BASESWAP
     ),
+    SONNE(
+        logo = "sonne.png",
+        slug = "sonne",
+        primitives = listOf(DefiPrimitive.FARMING, DefiPrimitive.CLAIMABLES),
+        website = "https://sonne.finance",
+        networks = listOf(Network.OPTIMISM),
+        company = Company.SONNE
+    ),
     PIKA(
         logo = "pika.png",
         slug = "pika",

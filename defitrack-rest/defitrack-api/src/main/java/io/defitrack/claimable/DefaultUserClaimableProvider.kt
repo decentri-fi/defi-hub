@@ -45,9 +45,8 @@ class DefaultUserClaimableProvider(
                             val earned = reward.first.extractAmountFromRewardFunction(retVal.data, userAddress)
 
                             if (earned > BigInteger.ONE) {
-
                                 UserClaimable(
-                                    id = "rwrd_${reward.second.id}",
+                                    id = reward.second.id,
                                     name = reward.second.name,
                                     protocol = reward.second.protocol,
                                     network = reward.second.network,
