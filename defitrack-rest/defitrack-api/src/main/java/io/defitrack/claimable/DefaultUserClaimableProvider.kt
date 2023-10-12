@@ -1,5 +1,7 @@
 package io.defitrack.claimable
 
+import arrow.core.*
+import arrow.core.Either.Companion.catch
 import io.defitrack.claimable.domain.UserClaimable
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import kotlinx.coroutines.async
@@ -8,6 +10,7 @@ import kotlinx.coroutines.coroutineScope
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.math.BigInteger
+import kotlin.collections.flatten
 
 @Component
 class DefaultUserClaimableProvider(
@@ -37,32 +40,35 @@ class DefaultUserClaimableProvider(
                     blockchainGatewayProvider.getGateway(entry.key).readMultiCall(
                         rewards.map { it.first.toMulticall(userAddress) }
                     ).mapIndexed { index, retVal ->
+                        catch {
+                            if (retVal.success) {
+                                val reward = rewards[index]
+                                val earned = reward.first.extractAmountFromRewardFunction(retVal.data, userAddress)
 
-                        if (retVal.success) {
-
-
-                            val reward = rewards[index]
-                            val earned = reward.first.extractAmountFromRewardFunction(retVal.data, userAddress)
-
-                            if (earned > BigInteger.ONE) {
-                                UserClaimable(
-                                    id = reward.second.id,
-                                    name = reward.second.name,
-                                    protocol = reward.second.protocol,
-                                    network = reward.second.network,
-                                    amount = earned,
-                                    claimableToken = reward.first.token,
-                                    claimTransaction = reward.second.claimableRewardFetcher.preparedTransaction.invoke(
-                                        userAddress
-                                    ),
-                                )
+                                if (earned > BigInteger.ONE) {
+                                    Some(
+                                        UserClaimable(
+                                            id = reward.second.id,
+                                            name = reward.second.name,
+                                            protocol = reward.second.protocol,
+                                            network = reward.second.network,
+                                            amount = earned,
+                                            claimableToken = reward.first.token,
+                                            claimTransaction = reward.second.claimableRewardFetcher.preparedTransaction.invoke(
+                                                userAddress
+                                            )
+                                        ),
+                                    )
+                                } else {
+                                    None
+                                }
                             } else {
-                                null
+                                None
                             }
-                        } else {
-                            null
                         }
-                    }.filterNotNull()
+                    }.map {
+                        it.getOrNone().flatten()
+                    }.mapNotNull(Option<UserClaimable>::getOrNull)
                 } catch (ex: Exception) {
                     logger.info("Unable to fetch claimables for ${entry.key}", ex)
                     emptyList()
