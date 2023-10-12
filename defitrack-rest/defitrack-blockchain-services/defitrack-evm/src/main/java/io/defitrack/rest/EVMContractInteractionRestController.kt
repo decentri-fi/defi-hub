@@ -7,8 +7,6 @@ import jakarta.annotation.PostConstruct
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -25,8 +23,6 @@ import kotlin.time.Duration.Companion.seconds
 class EVMContractInteractionRestController(
     private val web3JProxy: Web3JProxy,
 ) {
-
-    val mutex = Mutex()
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -70,9 +66,7 @@ class EVMContractInteractionRestController(
     }
 
     suspend fun invalidateOutput(uuid: String) {
-        mutex.withLock {
-            outputs.invalidate(uuid)
-        }
+        outputs.invalidate(uuid)
     }
 
     @PostConstruct
@@ -114,9 +108,9 @@ class EVMContractInteractionRestController(
 
     private suspend fun getInputs(): List<CallToExecute> {
         return inputQueue.map {
-               it.also {
-                   inputQueue.remove(it)
-               }
+            it.also {
+                inputQueue.remove(it)
+            }
         }
     }
 }
