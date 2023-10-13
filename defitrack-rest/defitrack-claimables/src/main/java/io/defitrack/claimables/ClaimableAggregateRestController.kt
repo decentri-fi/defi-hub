@@ -4,6 +4,7 @@ import arrow.fx.coroutines.parMap
 import io.defitrack.PageUtils
 import io.defitrack.claimable.vo.ClaimableMarketVO
 import io.defitrack.claimable.vo.UserClaimableVO
+import io.defitrack.exception.ExceptionResult
 import io.defitrack.protocol.DefiPrimitive
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.mapper.ProtocolVOMapper
@@ -12,6 +13,7 @@ import io.micrometer.observation.Observation.start
 import io.micrometer.observation.ObservationRegistry
 import io.swagger.v3.oas.annotations.Hidden
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -33,7 +35,6 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import org.web3j.crypto.WalletUtils.isValidAddress
-import org.web3j.protocol.core.Response
 import java.util.concurrent.Executors
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.measureTimedValue
@@ -70,7 +71,23 @@ class ClaimableAggregateRestController(
     }
 
     @GetMapping("/{address}")
-    @Operation(summary = "Get all claimables for a specific address")
+    @Operation(
+        summary = "Get all claimables for a specific address",
+        parameters = [
+            Parameter(
+                name = "include",
+                description = "What protocols to include. If empty, all protocols will be included. Both slug and name can be used. Ex: 'gmx' or 'GMX'",
+                required = false,
+                array = ArraySchema(schema = Schema(implementation = String::class))
+            ),
+            Parameter(
+                name = "exclude",
+                description = "What protocols to exclude. If empty, no protocols will be excluded. Both slug and name can be used. Ex: 'gmx' or 'GMX'",
+                required = false,
+                array = ArraySchema(schema = Schema(implementation = String::class))
+            )
+        ]
+    )
     @ApiResponses(
         value = [
             ApiResponse(
@@ -79,6 +96,17 @@ class ClaimableAggregateRestController(
                 content = [
                     Content(
                         mediaType = "application/json",
+                        array = (ArraySchema(schema = Schema(implementation = UserClaimableVO::class)))
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Validation exception",
+                content = [
+                    Content(
+                        mediaType = "application/json",
+                        schema = Schema(implementation = ExceptionResult::class),
                         array = (ArraySchema(schema = Schema(implementation = UserClaimableVO::class)))
                     )
                 ]
@@ -91,13 +119,13 @@ class ClaimableAggregateRestController(
     ): ResponseEntity<Any> {
         if (includes.isNotEmpty() && excludes.isNotEmpty())
             return ResponseEntity(
-                Response.Error(403, "Cannot include and exclude at the same time"),
+                ExceptionResult("Cannot include and exclude at the same time"),
                 BAD_REQUEST
             )
 
         if (!isValidAddress(address))
             return ResponseEntity(
-                Response.Error(403, "Invalid address"),
+                ExceptionResult("Invalid address"),
                 BAD_REQUEST
             )
 
