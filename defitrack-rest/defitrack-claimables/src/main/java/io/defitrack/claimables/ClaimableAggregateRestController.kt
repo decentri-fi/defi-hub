@@ -101,13 +101,12 @@ class ClaimableAggregateRestController(
                 ]
             ),
             ApiResponse(
+                description = "validation error",
                 responseCode = "403",
-                description = "Validation exception",
                 content = [
                     Content(
                         mediaType = "application/json",
                         schema = Schema(implementation = ExceptionResult::class),
-                        array = (ArraySchema(schema = Schema(implementation = UserClaimableVO::class)))
                     )
                 ]
             )]
