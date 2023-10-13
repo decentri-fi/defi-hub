@@ -1,124 +1,190 @@
 package io.defitrack.erc20.rest
 
-import io.defitrack.common.network.Network
-import io.defitrack.erc20.*
-import io.micrometer.observation.Observation
-import io.micrometer.observation.ObservationRegistry
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.withTimeout
-import org.slf4j.LoggerFactory
+import io.defitrack.erc20.TokenInformationVO
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.Parameters
+import io.swagger.v3.oas.annotations.media.ArraySchema
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RestController
-import org.web3j.crypto.WalletUtils
 import java.math.BigInteger
 
-@RestController
-class ERC20RestController(
-    private val erC20ContractReader: ERC20ContractReader,
-    private val erc20Service: ERC20Service,
-    private val observationRegistry: ObservationRegistry
-) {
-
-    val logger = LoggerFactory.getLogger(this::class.java)
-
+@Tag(
+    name = "ERC20 Tokens",
+    description = "ERC20 API, enabling us to easily fetch the information of various tokens."
+)
+interface ERC20RestController {
     @GetMapping("/{network}")
-    suspend fun getAllTokensForNetwork(
-        @PathVariable("network") networkName: String,
-    ): ResponseEntity<List<TokenInformationVO>> = coroutineScope {
-
-        val network = Network.fromString(networkName) ?: return@coroutineScope ResponseEntity.badRequest().build()
-
-        ResponseEntity.ok(
-            erc20Service.getAllTokensForNetwork(network).map {
-                it.toVO()
-            }
+    @Operation(
+        summary = "Get all tokens for a network",
+    )
+    @Parameters(
+        Parameter(
+            name = "network",
+            example = "base",
+            required = true
         )
-    }
+    )
+    @ApiResponses(
+        ApiResponse(
+            description = "all tokens for a network",
+            responseCode = "200",
+            content = [
+                Content(
+                    mediaType = "application/json",
+                    array = ArraySchema(
+                        schema = Schema(
+                            implementation = TokenInformationVO::class
+                        )
+                    )
+                )
+            ]
+        )
+    )
+    suspend fun getAllTokensForNetwork(networkName: String): ResponseEntity<List<TokenInformationVO>>
 
     @GetMapping("/{network}/wrapped")
-    fun getWrappedToken(@PathVariable("network") networkName: String): ResponseEntity<Map<String, String>> {
-        val network = Network.fromString(networkName) ?: return ResponseEntity.badRequest().build()
-
-        return ResponseEntity.ok(
-            mapOf(
-                "address" to ERC20Repository.NATIVE_WRAP_MAPPING[network]!!
+    @Operation(
+        summary = "Get the wrapped token represenation of the native token for a network",
+        parameters = [
+            Parameter(
+                name = "network",
+                description = "the network the token resides on",
+                example = "base"
             )
+        ]
+    )
+    @ApiResponses(
+        ApiResponse(
+            description = "all tokens for a network",
+            responseCode = "200",
+            content = [
+                Content(
+                    mediaType = "application/json",
+                    schema = Schema(
+                        implementation = WrappedToken::class
+                    )
+                )
+            ]
         )
-    }
+    )
+    fun getWrappedToken(networkName: String): ResponseEntity<WrappedToken>
 
     @GetMapping("/{network}/{address}/token")
-    suspend fun getTokenInformation(
-        @PathVariable("network") networkName: String,
-        @PathVariable("address") address: String
-    ): ResponseEntity<TokenInformationVO> = coroutineScope {
-        val network = Network.fromString(networkName) ?: return@coroutineScope ResponseEntity.badRequest().build()
-        val observation = Observation.start("erc20.get-token-information", observationRegistry)
-            .lowCardinalityKeyValue("network", networkName)
-        try {
-            ResponseEntity.ok(
-                erc20Service.getTokenInformation(
-                    address, network
-                ).toVO()
-            )
-        } catch (ex: Exception) {
-            logger.debug("Error while getting token information", ex)
-            ResponseEntity.notFound().build()
-        } finally {
-            observation.stop()
-        }
-    }
+    @Operation(
+        summary = "Get the token information for a specific token on a network",
+        parameters = [
+            Parameter(
+                name = "network",
+                description = "the network the token resides on",
+                example = "base"
+            ),
+            Parameter(
+                name = "address",
+                description = "the token we want to fetch the information for",
+                example = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"
+            ),
+        ]
+    )
+    @ApiResponses(
+        ApiResponse(
+            description = "The token information for a specific token on a network",
+            responseCode = "200",
+            content = [
+                Content(
+                    mediaType = "application/json",
+                    schema = Schema(
+                        implementation = TokenInformationVO::class
+                    )
+                )
+            ]
+        )
+    )
+    suspend fun getTokenInformation(networkName: String, address: String): ResponseEntity<TokenInformationVO>
 
     @GetMapping("/{network}/{address}/{userAddress}")
-    suspend fun getBalance(
-        @PathVariable("network") networkName: String,
-        @PathVariable("address") address: String,
-        @PathVariable("userAddress") userAddress: String
-    ): ResponseEntity<BigInteger> = coroutineScope {
-
-        val network = Network.fromString(networkName) ?: return@coroutineScope ResponseEntity.badRequest().build()
-
-        if (!WalletUtils.isValidAddress(address)) {
-            return@coroutineScope ResponseEntity.badRequest().build()
-        }
-        if (!WalletUtils.isValidAddress(userAddress)) {
-            return@coroutineScope ResponseEntity.badRequest().build()
-        }
-
-        return@coroutineScope try {
-            ResponseEntity.ok(erC20ContractReader.getBalance(network, address, userAddress))
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            ResponseEntity.ok(BigInteger.ZERO)
-        }
-    }
+    @Operation(
+        summary = "Get the balance of a specific token for a specific user",
+        parameters = [
+            Parameter(
+                name = "network",
+                description = "the network the token resides on",
+                example = "base"
+            ),
+            Parameter(
+                name = "address",
+                description = "the token we want to fetch the balance for",
+                example = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"
+            ),
+            Parameter(
+                name = "userAddress",
+                description = "the user we want to fetch the balance for",
+                example = "0xf18adf71266411FF39FfC268843c9A64b3292d86"
+            ),
+        ]
+    )
+    @ApiResponses(
+        ApiResponse(
+            description = "The balance of a specific token for a specific user",
+            responseCode = "200",
+            content = [
+                Content(
+                    mediaType = "application/json",
+                    schema = Schema(
+                        implementation = BigInteger::class
+                    )
+                )
+            ]
+        )
+    )
+    suspend fun getBalance(networkName: String, address: String, userAddress: String): ResponseEntity<BigInteger>
 
     @GetMapping("/{network}/allowance/{token}/{userAddress}/{spenderAddress}")
+    @Operation(
+        summary = "Get the allowance of a specific token for a specific user for a specific spender",
+        parameters = [
+            Parameter(
+                name = "network",
+                description = "the network the token resides on",
+                example = "base"
+            ),
+            Parameter(
+                name = "token",
+                description = "the token we want to fetch the allowance for"
+            ),
+            Parameter(
+                name = "userAddress",
+                description = "the user we want to fetch the allowance for"
+            ),
+            Parameter(
+                name = "spenderAddress",
+                description = "the spender we want to fetch the allowance for"
+            ),
+        ]
+    )
+    @ApiResponses(
+        ApiResponse(
+            description = "The allowance of a specific token for a specific user for a specific spender",
+            responseCode = "200",
+            content = [
+                Content(
+                    mediaType = "application/json",
+                    schema = Schema(
+                        implementation = BigInteger::class
+                    )
+                )
+            ]
+        )
+    )
     suspend fun getApproval(
-        @PathVariable("network") networkName: String,
-        @PathVariable("token") token: String,
-        @PathVariable("userAddress") userAddress: String,
-        @PathVariable("spenderAddress") spenderAddress: String,
-    ): ResponseEntity<BigInteger> = coroutineScope {
-
-        val network = Network.fromString(networkName) ?: return@coroutineScope ResponseEntity.badRequest().build()
-
-        if (!WalletUtils.isValidAddress(token)) {
-            return@coroutineScope ResponseEntity.badRequest().build()
-        }
-        if (!WalletUtils.isValidAddress(userAddress)) {
-            return@coroutineScope ResponseEntity.badRequest().build()
-        }
-        if (!WalletUtils.isValidAddress(spenderAddress)) {
-            return@coroutineScope ResponseEntity.badRequest().build()
-        }
-
-        return@coroutineScope try {
-            ResponseEntity.ok(erC20ContractReader.getAllowance(network, token, userAddress, spenderAddress))
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            ResponseEntity.ok(BigInteger.ZERO)
-        }
-    }
+        networkName: String,
+        token: String,
+        userAddress: String,
+        spenderAddress: String
+    ): ResponseEntity<BigInteger>
 }

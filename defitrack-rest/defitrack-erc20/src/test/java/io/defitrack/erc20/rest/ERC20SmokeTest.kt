@@ -9,10 +9,10 @@ import org.springframework.boot.test.context.SpringBootTest
 class ERC20SmokeTest {
 
     @Autowired
-    private lateinit var erC20RestController: ERC20RestController
+    private lateinit var erC20RestControllerImpl: ERC20RestControllerImpl
 
     @Test
     fun contextLoads() {
-        assertThat(erC20RestController).isNotNull
+        assertThat(erC20RestControllerImpl).isNotNull
     }
 }

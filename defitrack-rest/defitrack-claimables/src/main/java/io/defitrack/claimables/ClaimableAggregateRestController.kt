@@ -6,6 +6,7 @@ import io.defitrack.exception.ExceptionResult
 import io.swagger.v3.oas.annotations.Hidden
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.enums.ParameterStyle
 import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -74,6 +75,11 @@ interface ClaimableAggregateRestController {
     @Operation(
         summary = "Get all claimables for a specific address",
         parameters = [
+            Parameter(
+                name = "address",
+                description = "the account we want to find claimables for",
+                example = "0xf18adf71266411FF39FfC268843c9A64b3292d86"
+            ),
             Parameter(
                 name = "include",
                 description = "What protocols to include. If empty, all protocols will be included. Both slug and name can be used. Ex: 'gmx' or 'GMX'",
