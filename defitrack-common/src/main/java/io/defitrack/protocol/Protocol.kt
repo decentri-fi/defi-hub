@@ -545,6 +545,22 @@ enum class Protocol(
         primitives = listOf(CLAIMABLES, FARMING),
         networks = listOf(OPTIMISM),
         company = Company.KWENTA
+    ),
+    EXTRA_FINANCE(
+        logo = "extra-finance.png",
+        slug = "extra-finance",
+        website = "https://app.extrafi.io/",
+        primitives = listOf(CLAIMABLES, FARMING),
+        networks = listOf(OPTIMISM),
+        company = Company.EXTRA_FINANCE
+    ),
+    METAVAULT(
+        logo = "metavault.png",
+        slug = "metavault",
+        website = "https://metavault.trade",
+        primitives = listOf(CLAIMABLES, FARMING),
+        networks = listOf(Network.POLYGON),
+        company = Company.METAVAULT
     );
 
 

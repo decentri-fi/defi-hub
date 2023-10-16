@@ -251,7 +251,16 @@ enum class Company(
     KWENTA(
         prettyName = "Kwenta",
         slug = "kwenta"
+    ),
+    EXTRA_FINANCE(
+        prettyName = "ExtraFinance",
+        slug = "extra-finance"
+    ),
+    METAVAULT(
+        prettyName = "MetaVault",
+        slug = "metavault"
     );
+
 
     companion object {
         fun findByName(name: String) {
