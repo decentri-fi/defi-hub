@@ -24,34 +24,15 @@ class ProtocolRouterConfig(
         protocolDistributionConfig.getConfigs().forEach {node ->
             node.companies.forEach { company ->
                 routeBuilder.route("companies-" + company.slug) {
-                    it.path(true, "/companies/${company.slug}/**")
+                    it.path(true, "/${company.slug}/**")
                         .filters { filter ->
                             filter.rewritePath(
                                 "/${company.slug}/(?<segment>.*)",
                                 "/${company.slug}/\${segment}"
                             )
                         }
-                        .uri("http://defitrack-${node.name}.default.svc.cluster.local:8080/api")
+                        .uri("http://defitrack-group-${node.name}.default.svc.cluster.local:8080/api")
                 }
-            }
-        }
-        return routeBuilder.build()
-    }
-
-    @Bean
-    fun companyRoutes(builder: RouteLocatorBuilder): RouteLocator {
-        val routeBuilder = builder.routes()
-
-        Protocol.entries.forEach { protocol ->
-            routeBuilder.route(protocol.name) {
-                it.path(true, "/${protocol.slug}/**")
-                    .filters { filter ->
-                        filter.rewritePath(
-                            "/${protocol.slug}/(?<segment>.*)",
-                            "/${protocol.slug}/\${segment}"
-                        )
-                    }
-                    .uri("http://defitrack-${protocol.company.slug}.default.svc.cluster.local:8080/api")
             }
         }
         return routeBuilder.build()

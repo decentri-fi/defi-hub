@@ -1,10 +1,23 @@
 package io.defitrack
 
+import io.defitrack.protocol.distribution.ProtocolDistributionConfig
+import jakarta.annotation.PostConstruct
+import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class DefitrackApiGwApplication
+class DefitrackApiGwApplication(
+    private val protocolDistributionConfig: ProtocolDistributionConfig
+) {
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
+    @PostConstruct
+    fun init() {
+        logger.info("startup with distsributionconfig: ${protocolDistributionConfig.getConfigs()}")
+    }
+
+}
 
 fun main(args: Array<String>) {
     runApplication<DefitrackApiGwApplication>(*args)
