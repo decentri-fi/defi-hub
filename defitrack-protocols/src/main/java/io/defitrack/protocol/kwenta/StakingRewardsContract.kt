@@ -9,7 +9,7 @@ import io.defitrack.evm.contract.EvmContract
 import org.springframework.util.TypeUtils
 import org.web3j.abi.datatypes.Function
 
-class StakingRewardsV2Contract(
+class StakingRewardsContract(
     blockchainGateway: BlockchainGateway, address: String
 ) : EvmContract(blockchainGateway, address) {
 
@@ -22,9 +22,9 @@ class StakingRewardsV2Contract(
         )
     }
 
-    val kwenta = constant<String>("kwenta", address())
+    val kwenta = constant<String>("token", address())
 
     fun claimFn(): ContractCall {
-        return createFunction("compound").toContractCall()
+        return createFunction("getReward").toContractCall()
     }
 }

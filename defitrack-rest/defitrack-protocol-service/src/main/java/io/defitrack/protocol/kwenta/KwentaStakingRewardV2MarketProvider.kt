@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component
 
 @ConditionalOnCompany(Company.KWENTA)
 @Component
-class KwentaStakingMarketProvider : FarmingMarketProvider() {
+class KwentaStakingRewardV2MarketProvider : FarmingMarketProvider() {
 
     val address = "0x61294940ce7cd1bda10e349adc5b538b722ceb88"
 
