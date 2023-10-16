@@ -263,6 +263,10 @@ enum class Company(
     SANDBOX(
         prettyName = "Sandbox",
         slug = "sandbox"
+    ),
+    ETHOS(
+        prettyName = "Ethos",
+        slug = "ethos"
     );
 
 

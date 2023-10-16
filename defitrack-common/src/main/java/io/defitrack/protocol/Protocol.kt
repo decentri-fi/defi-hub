@@ -569,7 +569,16 @@ enum class Protocol(
         primitives = listOf(CLAIMABLES, FARMING),
         networks = listOf(Network.POLYGON),
         company = Company.SANDBOX
+    ),
+    ETHOS(
+        logo = "ethos.png",
+        slug = "ethos",
+        website = "https://ethos.finance",
+        primitives = listOf(CLAIMABLES, FARMING),
+        networks = listOf(OPTIMISM),
+        company = Company.ETHOS
     );
+
 
 
     val imageBasePath = "https://github.com/defitrack/data/raw/master/logo/protocol/"
