@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
 @Component
-@Profile("!kubernetes")
 class RemoteClaimablesClient(
     private val httpClient: HttpClient
 ) : ClaimablesClient {
