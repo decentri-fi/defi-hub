@@ -1,6 +1,6 @@
 package io.defitrack.protocol.dodo
 
-import io.defitrack.thegraph.TheGraphGatewayProvider
+import io.defitrack.protocol.thegraph.TheGraphGatewayProvider
 import org.springframework.stereotype.Component
 
 @Component

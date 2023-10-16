@@ -23,12 +23,12 @@ class MetaRestController(
     @GetMapping("/protocols")
     @Operation(summary = "Get all supported protocols")
     fun getProtocols(): List<ProtocolVO> {
-        return Protocol.entries.map(protocolVOMapper::map)
+        return Protocol.values().map(protocolVOMapper::map)
     }
 
     @GetMapping("/networks")
     @Operation(summary = "Get all supported network")
     fun getNetworks(): List<NetworkVO> {
-        return Network.entries.map(Network::toVO)
+        return Network.values().map(Network::toVO)
     }
 }

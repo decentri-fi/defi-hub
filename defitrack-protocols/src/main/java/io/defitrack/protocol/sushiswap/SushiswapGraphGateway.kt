@@ -3,8 +3,8 @@ package io.defitrack.protocol.sushiswap
 import io.defitrack.protocol.sushiswap.domain.PairDayData
 import io.defitrack.protocol.sushiswap.domain.SushiUser
 import io.defitrack.protocol.sushiswap.domain.SushiswapPair
-import io.defitrack.thegraph.GraphProvider
-import io.defitrack.thegraph.TheGraphGatewayProvider
+import io.defitrack.protocol.thegraph.GraphProvider
+import io.defitrack.protocol.thegraph.TheGraphGatewayProvider
 import java.util.*
 
 class SushiswapGraphGateway(

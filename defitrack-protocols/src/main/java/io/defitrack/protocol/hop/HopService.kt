@@ -6,7 +6,7 @@ import com.google.gson.JsonParser
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.hop.domain.DailyVolume
 import io.defitrack.protocol.hop.domain.HopLpToken
-import io.defitrack.thegraph.TheGraphGatewayProvider
+import io.defitrack.protocol.thegraph.TheGraphGatewayProvider
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.request.*

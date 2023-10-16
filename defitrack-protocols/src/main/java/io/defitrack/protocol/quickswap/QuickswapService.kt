@@ -3,8 +3,8 @@ package io.defitrack.protocol.quickswap
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.protocol.quickswap.domain.PairDayData
 import io.defitrack.protocol.quickswap.domain.QuickswapPair
-import io.defitrack.thegraph.GraphProvider
-import io.defitrack.thegraph.TheGraphGatewayProvider
+import io.defitrack.protocol.thegraph.GraphProvider
+import io.defitrack.protocol.thegraph.TheGraphGatewayProvider
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import org.springframework.stereotype.Component

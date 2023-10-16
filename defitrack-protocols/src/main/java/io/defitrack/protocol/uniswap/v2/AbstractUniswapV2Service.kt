@@ -1,8 +1,8 @@
 package io.defitrack.uniswap.v2
 
 import io.defitrack.common.network.Network
-import io.defitrack.thegraph.GraphProvider
-import io.defitrack.thegraph.TheGraphGatewayProvider
+import io.defitrack.protocol.thegraph.GraphProvider
+import io.defitrack.protocol.thegraph.TheGraphGatewayProvider
 import io.defitrack.uniswap.v2.domain.PairDayData
 import io.defitrack.uniswap.v2.domain.UniswapPair
 import io.github.reactivecircus.cache4k.Cache

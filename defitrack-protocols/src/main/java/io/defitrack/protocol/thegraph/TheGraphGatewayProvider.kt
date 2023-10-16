@@ -1,4 +1,4 @@
-package io.defitrack.thegraph
+package io.defitrack.protocol.thegraph
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.client.*

@@ -3,7 +3,7 @@ package io.defitrack.protocol.sushiswap
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.sushiswap.domain.PairDayData
 import io.defitrack.protocol.sushiswap.domain.SushiswapPair
-import io.defitrack.thegraph.TheGraphGatewayProvider
+import io.defitrack.protocol.thegraph.TheGraphGatewayProvider
 import io.github.reactivecircus.cache4k.Cache
 import org.springframework.stereotype.Component
 import kotlin.time.Duration.Companion.days

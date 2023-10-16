@@ -2,8 +2,8 @@ package io.defitrack.protocol.yearn
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.protocol.yearn.domain.YearnV2Vault
-import io.defitrack.thegraph.GraphProvider
-import io.defitrack.thegraph.TheGraphGatewayProvider
+import io.defitrack.protocol.thegraph.GraphProvider
+import io.defitrack.protocol.thegraph.TheGraphGatewayProvider
 import org.springframework.stereotype.Component
 
 @Component

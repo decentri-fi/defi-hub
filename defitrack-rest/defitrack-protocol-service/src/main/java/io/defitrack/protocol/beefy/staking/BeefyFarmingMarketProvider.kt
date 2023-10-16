@@ -111,7 +111,7 @@ abstract class BeefyFarmingMarketProvider(
 
     private suspend fun getAPY(beefyVault: BeefyVaultContract): BigDecimal {
         return try {
-            (beefyAPYService.getAPYS().getOrDefault(beefyVault.vaultId, null)) ?: BigDecimal.ZERO
+            (beefyAPYService.getAPYS().getOrDefault(beefyVault.vaultId, BigDecimal.ZERO))
         } catch (ex: Exception) {
             BigDecimal.ZERO
         }

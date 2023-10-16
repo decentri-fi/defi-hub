@@ -9,20 +9,23 @@
 
     <packaging>pom</packaging>
 
-    <name>Defitrack</name>
-    <description>Defitrack Core</description>
-
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.1.4</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
+
+    <name>Defitrack</name>
+    <description>Defitrack Core</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
         <micronaut.version>3.10.1</micronaut.version>
+        <junit-jupiter.version>5.9.3</junit-jupiter.version>
         <web3j.version>4.10.2</web3j.version>
         <commons-codec.version>1.16.0</commons-codec.version>
         <spring-cloud-dependencies.version>2022.0.4</spring-cloud-dependencies.version>
@@ -40,6 +43,8 @@
         <cache4k.version>0.11.0</cache4k.version>
         <gson.version>2.10.1</gson.version>
         <java.version>17</java.version>
+        <kotlin.compiler.languageVersion>1.9</kotlin.compiler.languageVersion>
+        <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
     </properties>
 
     <modules>
@@ -267,12 +272,11 @@
                 </executions>
                 <configuration>
                     <jvmTarget>17</jvmTarget>
+                    <languageVersion>1.9</languageVersion>
+                    <javaParameters>true</javaParameters>
                     <compilerPlugins>
                         <plugin>spring</plugin>
                     </compilerPlugins>
-                    <args>
-                        <arg>-Xjsr305=strict</arg>
-                    </args>
                 </configuration>
                 <dependencies>
                     <dependency>

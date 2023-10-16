@@ -1,7 +1,7 @@
 package io.defitrack.protocol.makerdao
 
-import io.defitrack.thegraph.GraphProvider
-import io.defitrack.thegraph.TheGraphGatewayProvider
+import io.defitrack.protocol.thegraph.GraphProvider
+import io.defitrack.protocol.thegraph.TheGraphGatewayProvider
 import org.springframework.stereotype.Service
 import io.defitrack.protocol.makerdao.domain.Market
 

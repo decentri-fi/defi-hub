@@ -2,8 +2,8 @@ package io.defitrack.protocol.kyberswap.graph
 
 import io.defitrack.protocol.kyberswap.graph.domain.PairDayData
 import io.defitrack.protocol.kyberswap.graph.domain.Pool
-import io.defitrack.thegraph.GraphProvider
-import io.defitrack.thegraph.TheGraphGatewayProvider
+import io.defitrack.protocol.thegraph.GraphProvider
+import io.defitrack.protocol.thegraph.TheGraphGatewayProvider
 import org.springframework.stereotype.Service
 
 @Service

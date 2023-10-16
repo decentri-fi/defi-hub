@@ -7,11 +7,16 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/")
 class ProtocolRestController(
-    private val companyProvider: CompanyProvider,
+    private val companyProvider: CompaniesProvider,
 ) {
 
     @GetMapping
-    fun getCompany(): Company {
-        return companyProvider.getCompany()
+    fun getCompany(): List<CompanyVO> {
+        return companyProvider.getCompanies().map {
+            CompanyVO(
+                name = it.prettyName,
+                slug = it.slug
+            )
+        }
     }
 }

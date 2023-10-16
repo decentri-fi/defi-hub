@@ -1,7 +1,7 @@
 package io.defitrack.uniswap.v2
 
 import io.defitrack.common.network.Network
-import io.defitrack.thegraph.TheGraphGatewayProvider
+import io.defitrack.protocol.thegraph.TheGraphGatewayProvider
 import org.springframework.stereotype.Component
 
 @Component

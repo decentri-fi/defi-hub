@@ -2,8 +2,8 @@ package io.defitrack.protocol.dfyn
 
 import io.defitrack.protocol.dfyn.domain.Pair
 import io.defitrack.protocol.dfyn.domain.PairDayData
-import io.defitrack.thegraph.GraphProvider
-import io.defitrack.thegraph.TheGraphGatewayProvider
+import io.defitrack.protocol.thegraph.GraphProvider
+import io.defitrack.protocol.thegraph.TheGraphGatewayProvider
 import io.github.reactivecircus.cache4k.Cache
 import org.springframework.stereotype.Component
 import kotlin.time.Duration.Companion.days

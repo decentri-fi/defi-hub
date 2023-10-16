@@ -1,7 +1,7 @@
 package io.defitrack
 
+import io.defitrack.protocol.CompaniesProvider
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.CompanyProvider
 import jakarta.annotation.PostConstruct
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -20,9 +20,9 @@ import org.springframework.scheduling.annotation.EnableScheduling
 @EnableScheduling
 @EnableAsync
 class UnifiedProtocolApp(
-    @Value("\${decentrifi.company}") private val company: String,
+    @Value("\${decentrifi.companies}") private val companies: List<String>,
     applicationContext: ApplicationContext
-){
+) {
 
     init {
         AvailabilityChangeEvent.publish(applicationContext, ReadinessState.REFUSING_TRAFFIC)
@@ -32,22 +32,24 @@ class UnifiedProtocolApp(
 
     @PostConstruct
     fun init() {
-        logger.info("Starting ${getCompany().name} protocol")
+        logger.info("Starting protocol application for companies: ${companies}")
     }
 
     @Bean
-    fun provideCompany(): CompanyProvider {
-        return object : CompanyProvider {
-            override fun getCompany(): Company {
-                return this@UnifiedProtocolApp.getCompany()
+    fun provideCompany(): CompaniesProvider {
+        return object : CompaniesProvider {
+            override fun getCompanies(): List<Company> {
+                return this@UnifiedProtocolApp.getCompanies()
             }
         }
     }
 
-    fun getCompany(): Company {
-        return Company.entries.firstOrNull {
-            it.slug.lowercase() == company.lowercase() || it.name.lowercase() == company.lowercase()
-        } ?: throw IllegalArgumentException("Company $company not found")
+    fun getCompanies(): List<Company> {
+        val provided = companies.map(String::lowercase)
+
+        return Company.entries.filter {
+            provided.contains(it.slug.lowercase()) || provided.contains(it.name.lowercase())
+        }
     }
 }
 

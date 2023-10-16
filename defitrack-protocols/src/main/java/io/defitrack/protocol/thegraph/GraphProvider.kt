@@ -1,4 +1,4 @@
-package io.defitrack.thegraph
+package io.defitrack.protocol.thegraph
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.google.gson.JsonElement
