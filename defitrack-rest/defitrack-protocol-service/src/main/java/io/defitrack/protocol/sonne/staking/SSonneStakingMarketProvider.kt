@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.SONNE)
-class SonneStakingMarketProvider : FarmingMarketProvider() {
+class SSonneStakingMarketProvider : FarmingMarketProvider() {
 
     val stakedSonne = "0xdc05d85069dc4aba65954008ff99f2d73ff12618"
 
@@ -28,7 +28,7 @@ class SonneStakingMarketProvider : FarmingMarketProvider() {
 
         return listOf(
             create(
-                name = "Staked Sonne",
+                name = "Staked Sonne (sSonne)",
                 identifier = stakedSonne,
                 stakedToken = stakedtoken.toFungibleToken(),
                 rewardTokens = rewardTokens.map(TokenInformationVO::toFungibleToken),
