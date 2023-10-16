@@ -14,7 +14,7 @@ enum class Company(
     ),
     PIKA(
         prettyName = "Pika",
-        slug ="pika"
+        slug = "pika"
     ),
     ARPA(
         prettyName = "Arpa",
@@ -247,5 +247,17 @@ enum class Company(
     MAPLEFINANCE(
         prettyName = "Maple Finance",
         slug = "maplefinance"
-    )
+    );
+
+    companion object {
+        fun findByName(name: String) {
+            entries.find {
+                it.name.lowercase() == name.lowercase() || it.slug.lowercase() == name.lowercase()
+            }
+        }
+    }
+
+    fun fetchProtocols(): List<Protocol> {
+        return Protocol.findByCompany(this)
+    }
 }

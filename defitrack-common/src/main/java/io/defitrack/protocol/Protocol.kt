@@ -541,4 +541,12 @@ enum class Protocol(
     val imageBasePath = "https://github.com/defitrack/data/raw/master/logo/protocol/"
 
     fun getImage(): String = imageBasePath + logo
+
+    companion object {
+        fun findByCompany(company: Company): List<Protocol> {
+            return entries.filter {
+                it.company == company
+            }
+        }
+    }
 }

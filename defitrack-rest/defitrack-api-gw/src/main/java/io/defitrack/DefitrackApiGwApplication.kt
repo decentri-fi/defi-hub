@@ -19,7 +19,6 @@ class DefitrackApiGwApplication(
             logger.info("${it.name}: ${it.companies.joinToString(",") { it.slug }}")
         }
     }
-
 }
 
 fun main(args: Array<String>) {
