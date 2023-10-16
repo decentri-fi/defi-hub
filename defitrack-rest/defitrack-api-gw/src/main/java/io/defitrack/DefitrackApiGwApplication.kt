@@ -14,7 +14,10 @@ class DefitrackApiGwApplication(
 
     @PostConstruct
     fun init() {
-        logger.info("startup with distsributionconfig: ${protocolDistributionConfig.getConfigs()}")
+        logger.info("startup with distsributionconfig")
+        protocolDistributionConfig.getConfigs().forEach {
+            logger.info("${it.name}: ${it.companies.joinToString(",") { it.slug }}")
+        }
     }
 
 }
