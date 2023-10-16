@@ -23,7 +23,6 @@ class EthosStakingProvider : SingleContractFarmingMarketProvider() {
                 "lqtyToken",
                 "lusdToken",
                 "getPendingLUSDGain",
-                ""
             ) {
                 override fun claimFn(user: String): ContractCall {
                     return createFunction(
