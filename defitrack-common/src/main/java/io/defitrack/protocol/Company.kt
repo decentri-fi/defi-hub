@@ -259,6 +259,10 @@ enum class Company(
     METAVAULT(
         prettyName = "MetaVault",
         slug = "metavault"
+    ),
+    SANDBOX(
+        prettyName = "Sandbox",
+        slug = "sandbox"
     );
 
 

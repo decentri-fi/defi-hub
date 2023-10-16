@@ -561,6 +561,14 @@ enum class Protocol(
         primitives = listOf(CLAIMABLES, FARMING),
         networks = listOf(Network.POLYGON),
         company = Company.METAVAULT
+    ),
+    SANDBOX(
+        logo = "sandbox.png",
+        slug = "sandbox",
+        website = "https://sandbox.game",
+        primitives = listOf(CLAIMABLES, FARMING),
+        networks = listOf(Network.POLYGON),
+        company = Company.SANDBOX
     );
 
 
