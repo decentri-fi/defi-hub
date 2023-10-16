@@ -5,6 +5,7 @@ import io.defitrack.claimable.mapper.ClaimableVOMapper
 import io.defitrack.claimable.vo.ClaimableMarketVO
 import io.defitrack.claimable.vo.UserClaimableVO
 import io.defitrack.network.toVO
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.mapper.ProtocolVOMapper
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -68,7 +69,7 @@ class DefaultClaimableRestController(
         }
 
         val fromDefaultProvider = async {
-            getFromDefaultProvider(address).map { toVO(it) }
+            getFromDefaultProvider(address, protocol).map { toVO(it) }
         }
 
 
@@ -82,8 +83,8 @@ class DefaultClaimableRestController(
         null
     }
 
-    private suspend fun getFromDefaultProvider(user: String): List<UserClaimable> {
-        return defaultUserClaimableProvider.claimables(user)
+    private suspend fun getFromDefaultProvider(user: String, protocol: String): List<UserClaimable> {
+        return defaultUserClaimableProvider.claimables(user, protocol)
     }
 
     private suspend fun getFromProviders(protocol: String, address: String) = userClaimableProviders

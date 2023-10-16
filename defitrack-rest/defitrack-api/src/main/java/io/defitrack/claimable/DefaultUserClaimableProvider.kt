@@ -4,6 +4,7 @@ import arrow.core.*
 import arrow.core.Either.Companion.catch
 import io.defitrack.claimable.domain.UserClaimable
 import io.defitrack.evm.contract.BlockchainGatewayProvider
+import io.defitrack.protocol.Protocol
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -19,10 +20,14 @@ class DefaultUserClaimableProvider(
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
-    suspend fun claimables(userAddress: String): List<UserClaimable> = coroutineScope {
-        val fetchersByNetwork = claimableMarketProviders.flatMap { it.getMarkets() }.groupBy {
-            it.network
-        }
+    suspend fun claimables(userAddress: String, protocol: String): List<UserClaimable> = coroutineScope {
+        val fetchersByNetwork = claimableMarketProviders.flatMap { it.getMarkets() }
+            .filter {
+                it.protocol.slug.lowercase() == protocol.lowercase() ||
+                        it.protocol.name.lowercase() == protocol.lowercase()
+            }.groupBy {
+                it.network
+            }
 
         if (fetchersByNetwork.isEmpty()) {
             return@coroutineScope emptyList()
