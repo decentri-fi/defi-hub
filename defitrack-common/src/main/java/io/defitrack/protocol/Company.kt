@@ -247,6 +247,10 @@ enum class Company(
     MAPLEFINANCE(
         prettyName = "Maple Finance",
         slug = "maplefinance"
+    ),
+    KWENTA(
+        prettyName = "Kwenta",
+        slug = "kwenta"
     );
 
     companion object {

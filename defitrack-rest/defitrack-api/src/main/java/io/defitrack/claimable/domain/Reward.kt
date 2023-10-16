@@ -1,5 +1,6 @@
 package io.defitrack.claimable.domain
 
+import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.multicall.MultiCallElement
 import io.defitrack.token.FungibleToken
 import org.web3j.abi.datatypes.Type
@@ -13,6 +14,7 @@ data class Reward(
         result[0].value as BigInteger
     },
 ) {
+
     suspend fun toMulticall(user: String): MultiCallElement {
         return MultiCallElement(
             getRewardFunction(user), contractAddress
