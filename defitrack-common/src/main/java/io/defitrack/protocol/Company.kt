@@ -267,16 +267,11 @@ enum class Company(
     ETHOS(
         prettyName = "Ethos",
         slug = "ethos"
+    ),
+    MUX(
+        prettyName = "Mux",
+        slug = "mux"
     );
-
-
-    companion object {
-        fun findByName(name: String) {
-            entries.find {
-                it.name.lowercase() == name.lowercase() || it.slug.lowercase() == name.lowercase()
-            }
-        }
-    }
 
     fun fetchProtocols(): List<Protocol> {
         return Protocol.findByCompany(this)
