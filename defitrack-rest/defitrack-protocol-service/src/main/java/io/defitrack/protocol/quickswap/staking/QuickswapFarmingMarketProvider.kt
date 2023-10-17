@@ -19,10 +19,11 @@ import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
+import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
 import java.util.*
 
-@Service
+@Component
 @ConditionalOnCompany(Company.QUICKSWAP)
 class QuickswapFarmingMarketProvider(
     private val quickswapService: QuickswapService,

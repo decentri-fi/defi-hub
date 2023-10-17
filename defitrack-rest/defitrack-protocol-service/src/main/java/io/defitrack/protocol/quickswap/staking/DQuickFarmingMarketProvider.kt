@@ -14,6 +14,8 @@ import io.defitrack.protocol.quickswap.contract.DQuickContract
 import io.defitrack.protocol.quickswap.staking.invest.DQuickStakingInvestmentPreparer
 import org.springframework.stereotype.Component
 
+private const val QUICK = "0x831753dd7087cac61ab5644b308642cc1c33dc13"
+
 @Component
 @ConditionalOnCompany(Company.QUICKSWAP)
 class DQuickFarmingMarketProvider(
@@ -30,7 +32,7 @@ class DQuickFarmingMarketProvider(
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         val contract = oldDQuick.await()
         val stakedToken = getToken(contract.address).toFungibleToken()
-        val quickToken = getToken("0x831753dd7087cac61ab5644b308642cc1c33dc13").toFungibleToken()
+        val quickToken = getToken(QUICK).toFungibleToken()
 
         return listOf(
             create(

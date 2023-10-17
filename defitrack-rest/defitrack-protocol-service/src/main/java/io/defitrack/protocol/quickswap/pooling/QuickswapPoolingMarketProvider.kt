@@ -1,5 +1,7 @@
 package io.defitrack.protocol.quickswap.pooling
 
+import arrow.fx.coroutines.parMap
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
@@ -15,6 +17,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
+import kotlin.coroutines.EmptyCoroutineContext
 
 @Component
 @ConditionalOnCompany(Company.QUICKSWAP)
@@ -24,19 +27,15 @@ class QuickswapPoolingMarketProvider(
 ) : PoolingMarketProvider() {
 
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
-        quickswapService.getPairs().forEach {
-            throttled {
-                launch {
-                    try {
-                        toPoolingMarket(it)?.let {
-                            send(it)
-                        }
-                    } catch (ex: Exception) {
-                        logger.error("Unable to import quickswap pair ${it.id}", ex)
-                        ex.printStackTrace()
-                    }
-                }
+        quickswapService.getPairs().parMapNotNull(EmptyCoroutineContext, 8) {
+            try {
+                toPoolingMarket(it)
+            } catch (ex: Exception) {
+                logger.error("Unable to import quickswap pair ${it.id}", ex)
+                null
             }
+        }.forEach {
+            send(it)
         }
     }
 

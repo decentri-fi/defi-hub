@@ -1,5 +1,7 @@
 package io.defitrack.protocol.quickswap.staking
 
+import arrow.fx.coroutines.parMap
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
@@ -27,13 +29,13 @@ import kotlinx.coroutines.sync.withPermit
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.RoundingMode
+import kotlin.coroutines.EmptyCoroutineContext
 
 @Component
 @ConditionalOnCompany(Company.QUICKSWAP)
 class DeprecatedQuickswapFarmingMarketProvider(
     private val quickswapService: QuickswapService,
     private val priceResource: PriceResource,
-    private val quickswapAPRService: QuickswapAPRService,
 ) : FarmingMarketProvider() {
 
     val rewardFactoryContract = lazyAsync {
@@ -49,56 +51,47 @@ class DeprecatedQuickswapFarmingMarketProvider(
             contract.stakingRewardsInfoByStakingToken(it)
         }
 
-        val semaphore = Semaphore(8)
-
         rewardPools.map {
             QuickswapRewardPoolContract(
                 getBlockchainGateway(),
                 it
             )
-        }.map { rewardPool ->
-            async {
-                try {
-                    semaphore.withPermit {
-                        val stakedToken = getToken(rewardPool.stakingTokenAddress())
-                        val rewardToken = getToken(rewardPool.rewardsTokenAddress())
-                        create(
-                            identifier = rewardPool.address,
-                            name = "${stakedToken.name} Reward Pool (Deprecated)",
-                            stakedToken = stakedToken.toFungibleToken(),
-                            rewardTokens = listOf(rewardToken.toFungibleToken()),
-                            marketSize = refreshable {
-                                getMarketSize(stakedToken, rewardPool)
+        }.parMapNotNull(EmptyCoroutineContext, 12) { rewardPool ->
+            try {
+                val stakedToken = getToken(rewardPool.stakingTokenAddress())
+                val rewardToken = getToken(rewardPool.rewardsTokenAddress())
+                create(
+                    identifier = rewardPool.address,
+                    name = "${stakedToken.name} Reward Pool (Deprecated)",
+                    stakedToken = stakedToken.toFungibleToken(),
+                    rewardTokens = listOf(rewardToken.toFungibleToken()),
+                    marketSize = refreshable {
+                        getMarketSize(stakedToken, rewardPool)
+                    },
+                    claimableRewardFetcher = ClaimableRewardFetcher(
+                        Reward(
+                            token = rewardToken.toFungibleToken(),
+                            contractAddress = rewardPool.address,
+                            getRewardFunction = { user ->
+                                rewardPool.earned(user)
                             },
-                            apr = (quickswapAPRService.getRewardPoolAPR(rewardPool.address) + quickswapAPRService.getLPAPR(
-                                stakedToken.address
-                            )),
-                            claimableRewardFetcher = ClaimableRewardFetcher(
-                                Reward(
-                                    token = rewardToken.toFungibleToken(),
-                                    contractAddress = rewardPool.address,
-                                    getRewardFunction = { user ->
-                                        rewardPool.earned(user)
-                                    },
-                                ),
-                                preparedTransaction = {
-                                    PreparedTransaction(
-                                        getNetwork().toVO(), rewardPool.getRewardFunction(), rewardPool.address
-                                    )
-                                }
-                            ),
-                            balanceFetcher = defaultPositionFetcher(
-                                rewardPool.address
-                            ),
-                            rewardsFinished = true
-                        )
-                    }
-                } catch (ex: Exception) {
-                    logger.error("Error while fetching reward pool: " + ex.message)
-                    null
-                }
+                        ),
+                        preparedTransaction = {
+                            PreparedTransaction(
+                                getNetwork().toVO(), rewardPool.getRewardFunction(), rewardPool.address
+                            )
+                        }
+                    ),
+                    balanceFetcher = defaultPositionFetcher(
+                        rewardPool.address
+                    ),
+                    rewardsFinished = true
+                )
+            } catch (ex: Exception) {
+                logger.error("Error while fetching reward pool: " + ex.message, ex)
+                null
             }
-        }.awaitAll().filterNotNull()
+        }
     }
 
     private suspend fun getMarketSize(

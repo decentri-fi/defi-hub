@@ -22,16 +22,16 @@ import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-@Service
+@Component
 @ConditionalOnCompany(Company.QUICKSWAP)
 class OldQuickswapFarmingMarketProvider(
     private val quickswapService: QuickswapService,
     private val priceResource: PriceResource,
-    private val quickswapAPRService: QuickswapAPRService,
 ) : FarmingMarketProvider() {
 
     val rewardFactoryContract = lazyAsync {
@@ -65,9 +65,6 @@ class OldQuickswapFarmingMarketProvider(
                         marketSize = refreshable {
                             getMarketSize(stakedToken, rewardPool)
                         },
-                        apr = (quickswapAPRService.getRewardPoolAPR(rewardPool.address) + quickswapAPRService.getLPAPR(
-                            stakedToken.address
-                        )),
                         claimableRewardFetcher = ClaimableRewardFetcher(
                             Reward(
                                 token = rewardToken.toFungibleToken(),

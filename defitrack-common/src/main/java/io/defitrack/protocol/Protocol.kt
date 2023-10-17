@@ -391,7 +391,7 @@ enum class Protocol(
         slug = "quickswap",
         website = "https://quickswap.exchange/",
         primitives = listOf(POOLING, FARMING, CLAIMABLES),
-        networks = listOf(Network.POLYGON),
+        networks = listOf(Network.POLYGON, Network.POLYGON_ZKEVM),
         company = Company.QUICKSWAP
     ),
     POLYCAT(
@@ -578,7 +578,6 @@ enum class Protocol(
         networks = listOf(OPTIMISM),
         company = Company.ETHOS
     );
-
 
 
     val imageBasePath = "https://github.com/defitrack/data/raw/master/logo/protocol/"

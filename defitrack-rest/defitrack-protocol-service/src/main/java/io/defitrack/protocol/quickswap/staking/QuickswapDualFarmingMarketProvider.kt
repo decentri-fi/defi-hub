@@ -1,5 +1,6 @@
 package io.defitrack.protocol.quickswap.staking
 
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
@@ -18,15 +19,16 @@ import io.defitrack.protocol.quickswap.contract.QuickswapDualRewardPoolContract
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
+import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.util.*
+import kotlin.coroutines.EmptyCoroutineContext
 
-@Service
+@Component
 @ConditionalOnCompany(Company.QUICKSWAP)
 class QuickswapDualFarmingMarketProvider(
     private val quickswapService: QuickswapService,
-    private val quickswapAPRService: QuickswapAPRService,
 ) : FarmingMarketProvider() {
 
     val dualStakingFactory = lazyAsync {
@@ -47,53 +49,42 @@ class QuickswapDualFarmingMarketProvider(
                 getBlockchainGateway(),
                 it
             )
-        }.forEach { pool ->
-            launch {
-                try {
-                    val stakedToken = getToken(pool.stakingTokenAddress())
-                    val rewardTokenA = getToken(pool.rewardsTokenAddressA())
-                    val rewardTokenB = getToken(pool.rewardsTokenAddressB())
+        }.parMapNotNull(EmptyCoroutineContext, 12) { pool ->
+            try {
+                val stakedToken = getToken(pool.stakingTokenAddress())
+                val rewardTokenA = getToken(pool.rewardsTokenAddressA())
+                val rewardTokenB = getToken(pool.rewardsTokenAddressB())
 
-                    val ended = Date(pool.periodFinish().toLong() * 1000).before(Date())
+                val ended = Date(pool.periodFinish().toLong() * 1000).before(Date())
 
-                    val market = create(
-                        identifier = pool.address,
-                        name = "${stakedToken.name} Dual Reward Pool",
-                        stakedToken = stakedToken.toFungibleToken(),
-                        rewardTokens = listOf(
-                            rewardTokenA.toFungibleToken(),
-                            rewardTokenB.toFungibleToken()
-                        ),
-                        marketSize = refreshable {
-                            getMarketSize(stakedToken.toFungibleToken(), pool.address)
-                        },
-                        apr = getApr(pool, stakedToken),
-                        balanceFetcher = PositionFetcher(
-                            pool.address,
-                            { user -> ERC20Contract.balanceOfFunction(user) }
-                        ),
-                        rewardsFinished = ended
-                    )
-
-                    send(market)
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
+                create(
+                    identifier = pool.address,
+                    name = "${stakedToken.name} Dual Reward Pool",
+                    stakedToken = stakedToken.toFungibleToken(),
+                    rewardTokens = listOf(
+                        rewardTokenA.toFungibleToken(),
+                        rewardTokenB.toFungibleToken()
+                    ),
+                    marketSize = refreshable {
+                        getMarketSize(stakedToken.toFungibleToken(), pool.address)
+                    },
+                    balanceFetcher = PositionFetcher(
+                        pool.address,
+                        { user -> ERC20Contract.balanceOfFunction(user) }
+                    ),
+                    rewardsFinished = ended
+                )
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                null
             }
+        }.forEach {
+            send(it)
         }
     }
 
     override fun getProtocol(): Protocol {
         return Protocol.QUICKSWAP
-    }
-
-    private suspend fun getApr(
-        pool: QuickswapDualRewardPoolContract,
-        stakedTokenInformation: TokenInformationVO
-    ): BigDecimal {
-        return (quickswapAPRService.getDualPoolAPR(pool.address) + quickswapAPRService.getLPAPR(
-            stakedTokenInformation.address
-        ))
     }
 
     override fun getNetwork(): Network {

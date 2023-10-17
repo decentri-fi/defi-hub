@@ -12,9 +12,10 @@ import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.contract.DQuickContract
 import io.defitrack.protocol.quickswap.staking.invest.DQuickStakingInvestmentPreparer
 import kotlinx.coroutines.runBlocking
+import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
 
-@Service
+@Component
 @ConditionalOnCompany(Company.QUICKSWAP)
 class OldDQuickFarmingMarketProvider(
     private val quickswapService: QuickswapService,
