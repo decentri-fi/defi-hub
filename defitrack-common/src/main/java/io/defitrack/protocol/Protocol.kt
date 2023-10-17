@@ -577,7 +577,16 @@ enum class Protocol(
         primitives = listOf(CLAIMABLES, FARMING),
         networks = listOf(OPTIMISM),
         company = Company.ETHOS
+    ),
+    MUX(
+        logo = "ethos.png",
+        slug = "ethos",
+        website = "https://mux.network",
+        primitives = listOf(CLAIMABLES, FARMING),
+        networks = listOf(ARBITRUM),
+        company = Company.MUX
     );
+
 
 
     val imageBasePath = "https://github.com/defitrack/data/raw/master/logo/protocol/"
