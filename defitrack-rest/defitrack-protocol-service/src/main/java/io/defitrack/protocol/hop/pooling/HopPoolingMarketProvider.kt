@@ -1,5 +1,7 @@
 package io.defitrack.protocol.hop.pooling
 
+import arrow.core.Either
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.evm.contract.BlockchainGateway
@@ -8,38 +10,36 @@ import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.hop.HopService
-import io.defitrack.protocol.hop.apr.HopAPRService
 import io.defitrack.protocol.hop.contract.HopLpTokenContract
 import io.defitrack.protocol.hop.contract.HopSwapContract
 import io.defitrack.protocol.hop.domain.HopLpToken
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.launch
 import java.math.BigDecimal
+import kotlin.coroutines.EmptyCoroutineContext
 
 abstract class HopPoolingMarketProvider(
     private val hopService: HopService,
-    private val hopAPRService: HopAPRService
 ) : PoolingMarketProvider() {
 
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
-        hopService.getLps(getNetwork()).forEach { hopLpToken ->
-            launch {
-                throttled {
-                    toPoolingMarketElement(getBlockchainGateway(), hopLpToken)?.let {
-                        send(it)
-                    }
-                }
-            }
+        hopService.getLps(getNetwork()).parMapNotNull(EmptyCoroutineContext, 12) { hopLpToken ->
+            toPoolingMarketElement(getBlockchainGateway(), hopLpToken)
+        }.mapNotNull {
+            it.mapLeft {
+                logger.error("Unable to get pooling market", it)
+            }.getOrNull()
+        }.forEach {
+            send(it)
         }
     }
 
     private suspend fun toPoolingMarketElement(
         gateway: BlockchainGateway,
         hopLpToken: HopLpToken
-    ): PoolingMarket? {
-        return try {
+    ): Either<Throwable, PoolingMarket> {
+        return Either.catch {
             val contract = HopLpTokenContract(
                 blockchainGateway = gateway,
                 hopLpToken.lpToken
@@ -71,9 +71,6 @@ abstract class HopPoolingMarketProvider(
                     contract.totalSupply().asEth(contract.decimals())
                 }
             )
-        } catch (ex: Exception) {
-            logger.error("unable to generate market for lptoken {}", hopLpToken, ex)
-            null
         }
     }
 

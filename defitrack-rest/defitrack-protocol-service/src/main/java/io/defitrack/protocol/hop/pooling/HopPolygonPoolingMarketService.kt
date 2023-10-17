@@ -4,17 +4,11 @@ import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.hop.HopService
-import io.defitrack.protocol.hop.apr.HopAPRService
 import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.HOP)
-class HopPolygonPoolingMarketService(
-    hopService: HopService,
-    hopAPRService: HopAPRService,
-) : HopPoolingMarketProvider(
-    hopService, hopAPRService
-) {
+class HopPolygonPoolingMarketService(hopService: HopService) : HopPoolingMarketProvider(hopService) {
 
     override fun getNetwork(): Network {
         return Network.POLYGON
