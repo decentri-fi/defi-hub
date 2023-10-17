@@ -1,5 +1,8 @@
 package io.defitrack.protocol.velodrome.pooling
 
+import arrow.core.Either
+import arrow.core.Either.Companion.catch
+import arrow.fx.coroutines.parMap
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
@@ -30,37 +33,33 @@ class VelodromeV1OptimismPoolingMarketProvider(
             contractAddress = velodromeOptimismService.getV1PoolFactory()
         )
 
-        pairFactoryContract.allPairs().forEach {
-            launch {
-                throttled {
-                    val poolingToken = getToken(it)
-                    val tokens = poolingToken.underlyingTokens.map { it.toFungibleToken() }
+        pairFactoryContract.allPairs().parMap {
+            createMarket(it)
+        }
+    }
 
-                    try {
-                        val breakdown = fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address)
-                        send(
-                            create(
-                                identifier = "v1-$it",
-                                marketSize = refreshable(breakdown.sumOf { it.reserveUSD } ) {
-                                    fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address).sumOf { it.reserveUSD }
-                                },
-                                positionFetcher = defaultPositionFetcher(poolingToken.address),
-                                address = it,
-                                name = poolingToken.name,
-                                breakdown = breakdown,
-                                symbol = poolingToken.symbol,
-                                tokens = poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
-                                totalSupply = refreshable(poolingToken.totalDecimalSupply()) {
-                                    getToken(it).totalDecimalSupply()
-                                },
-                                deprecated = true
-                            )
-                        )
-                    } catch (ex: Exception) {
-                        logger.error("Error while fetching pooling market $it", ex)
-                    }
-                }
-            }
+    private suspend fun createMarket(it: String): Either<Throwable, PoolingMarket> {
+        return catch {
+            val poolingToken = getToken(it)
+            val tokens = poolingToken.underlyingTokens.map { it.toFungibleToken() }
+
+            val breakdown = fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address)
+            create(
+                identifier = "v1-$it",
+                marketSize = refreshable(breakdown.sumOf { it.reserveUSD }) {
+                    fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address).sumOf { it.reserveUSD }
+                },
+                positionFetcher = defaultPositionFetcher(poolingToken.address),
+                address = it,
+                name = poolingToken.name,
+                breakdown = breakdown,
+                symbol = poolingToken.symbol,
+                tokens = poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
+                totalSupply = refreshable(poolingToken.totalDecimalSupply()) {
+                    getToken(it).totalDecimalSupply()
+                },
+                deprecated = true
+            )
         }
     }
 
