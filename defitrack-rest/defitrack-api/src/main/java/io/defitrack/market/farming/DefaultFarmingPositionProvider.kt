@@ -1,6 +1,7 @@
 package io.defitrack.market.farming
 
 import arrow.core.*
+import arrow.core.Either.Companion.catch
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.domain.FarmingPosition
 import kotlinx.coroutines.async
@@ -24,7 +25,6 @@ class DefaultFarmingPositionProvider(
 
     override suspend fun getStakings(protocol: String, address: String): List<FarmingPosition> = coroutineScope {
 
-
         farmingMarketProvider.filter {
             it.getProtocol().slug == protocol
         }.flatMap { provider ->
@@ -41,8 +41,7 @@ class DefaultFarmingPositionProvider(
                 async {
                     semaphore.withPermit {
                         val market = markets[index]
-                        Either.catch {
-
+                        catch {
                             val balance = market.balanceFetcher!!.extractBalance(retVal.data)
 
                             if (balance.underlyingAmount > BigInteger.ONE) {
