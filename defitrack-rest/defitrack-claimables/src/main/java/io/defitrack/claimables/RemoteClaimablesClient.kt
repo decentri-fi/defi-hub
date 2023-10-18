@@ -3,6 +3,7 @@ package io.defitrack.claimables
 import io.defitrack.claimable.vo.ClaimableMarketVO
 import io.defitrack.claimable.vo.UserClaimableVO
 import io.defitrack.protocol.ProtocolVO
+import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -12,6 +13,7 @@ import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
+import kotlin.time.Duration.Companion.hours
 
 @Component
 class RemoteClaimablesClient(
@@ -38,18 +40,22 @@ class RemoteClaimablesClient(
             }
         }
 
-    override suspend fun getClaimableMarkets(protocol: ProtocolVO): List<ClaimableMarketVO> =
-        withContext(Dispatchers.IO) {
-            try {
-                val response = httpClient.get("$baseUrl/${protocol.slug}/claimables")
-                if (response.status.isSuccess()) {
-                    response.body()
-                } else {
+    val cache = Cache.Builder<String, List<ClaimableMarketVO>>().expireAfterWrite(1.hours).build()
+    override suspend fun getClaimableMarkets(protocol: ProtocolVO): List<ClaimableMarketVO> {
+        return cache.get(protocol.slug) {
+            withContext(Dispatchers.IO) {
+                try {
+                    val response = httpClient.get("$baseUrl/${protocol.slug}/claimables")
+                    if (response.status.isSuccess()) {
+                        response.body()
+                    } else {
+                        emptyList()
+                    }
+                } catch (ex: Exception) {
+                    logger.error("Error getting claimables markets on ${protocol.company.slug}/${protocol.slug}", ex)
                     emptyList()
                 }
-            } catch (ex: Exception) {
-                logger.error("Error getting claimables markets on ${protocol.company.slug}/${protocol.slug}", ex)
-                emptyList()
             }
         }
+    }
 }

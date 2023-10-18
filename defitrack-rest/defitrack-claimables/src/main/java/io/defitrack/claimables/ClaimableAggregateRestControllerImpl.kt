@@ -37,7 +37,6 @@ class ClaimableAggregateRestControllerImpl(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    val cache = Cache.Builder<String, List<ClaimableMarketVO>>().expireAfterWrite(1.hours).build()
 
     override suspend fun getPagedMarkets(
         @RequestParam("include", required = false, defaultValue = "") includes: List<String>,
@@ -51,11 +50,9 @@ class ClaimableAggregateRestControllerImpl(
                 BAD_REQUEST
             )
 
-        val result = cache.get("all") {
-            filteredProtocols(includes, excludes).parMap {
-                claimablesClient.getClaimableMarkets(protocolVOMapper.map(it))
-            }.flatten()
-        }
+        val result = filteredProtocols(includes, excludes).parMap {
+            claimablesClient.getClaimableMarkets(protocolVOMapper.map(it))
+        }.flatten()
 
         return ResponseEntity.ok(
             PageUtils.createPageFromList(

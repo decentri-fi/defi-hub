@@ -27,20 +27,6 @@ interface ClaimableAggregateRestController {
     @GetMapping
     @Operation(
         summary = "Get all claimables markets",
-        parameters = [
-            Parameter(
-                name = "include",
-                description = "What protocols to include. If empty, all protocols will be included. Both slug and name can be used. Ex: 'gmx' or 'GMX'",
-                required = false,
-                array = ArraySchema(schema = Schema(implementation = String::class))
-            ),
-            Parameter(
-                name = "exclude",
-                description = "What protocols to exclude. If empty, no protocols will be excluded. Both slug and name can be used. Ex: 'gmx' or 'GMX'",
-                required = false,
-                array = ArraySchema(schema = Schema(implementation = String::class))
-            )
-        ]
     )
     @ApiResponses(
         value = [
