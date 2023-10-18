@@ -1,6 +1,9 @@
 package io.defitrack.protocol.quickswap.pooling
 
-import arrow.fx.coroutines.parMap
+import arrow.core.Either.Companion.catch
+import arrow.core.None
+import arrow.core.Option
+import arrow.core.some
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
@@ -15,7 +18,6 @@ import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
 import io.defitrack.protocol.quickswap.domain.QuickswapPair
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 import kotlin.coroutines.EmptyCoroutineContext
 
@@ -28,21 +30,25 @@ class QuickswapPoolingMarketProvider(
 
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
         quickswapService.getPairs().parMapNotNull(EmptyCoroutineContext, 8) {
-            try {
+            catch {
                 toPoolingMarket(it)
-            } catch (ex: Exception) {
-                logger.error("Unable to import quickswap pair ${it.id}", ex)
-                null
             }
         }.forEach {
-            send(it)
+            it.fold(
+                { e ->
+                    logger.error("Error while fetching Quickswap market", e)
+                },
+                { market ->
+                    market.getOrNull()?.let { send(it) }
+                }
+            )
         }
     }
 
-    private suspend fun toPoolingMarket(it: QuickswapPair): PoolingMarket? {
+    private suspend fun toPoolingMarket(it: QuickswapPair): Option<PoolingMarket> {
         val token0 = getToken(it.token0.id)
         val token1 = getToken(it.token1.id)
-        if (token0.symbol == "UNKWN" || token1.symbol == "UNKWN") return null
+        if (token0.symbol == "UNKWN" || token1.symbol == "UNKWN") return None
 
         val token = getToken(it.id)
 
@@ -61,7 +67,7 @@ class QuickswapPoolingMarketProvider(
             totalSupply = refreshable(token.totalSupply.asEth(token.decimals)) {
                 getToken(it.id).totalSupply.asEth(token.decimals)
             }
-        )
+        ).some()
     }
 
     override fun getProtocol(): Protocol {
