@@ -1,6 +1,7 @@
 package io.defitrack.protocol
 
 import io.defitrack.protocol.distribution.ProtocolDistributionConfig
+import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.cloud.gateway.route.RouteLocator
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder
@@ -21,7 +22,7 @@ class ProtocolRouterConfig(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Bean
-    fun company2Routes(builder: RouteLocatorBuilder): RouteLocator {
+    fun company2Routes(builder: RouteLocatorBuilder): RouteLocator = runBlocking {
         val routeBuilder = builder.routes()
 
         protocolDistributionConfig.getConfigs().forEach {node ->
@@ -45,7 +46,7 @@ class ProtocolRouterConfig(
                 }
             }
         }
-        return routeBuilder.build()
+        routeBuilder.build()
     }
 
     @Bean

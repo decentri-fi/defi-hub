@@ -1,31 +1,49 @@
 package io.defitrack.protocol.distribution
 
 import io.defitrack.protocol.Company
+import io.defitrack.protocol.CompanyVO
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Configuration
+import java.util.logging.Logger
 import kotlin.IllegalArgumentException
 
 @Configuration
-@ConfigurationProperties(prefix = "decentrifi.protocol")
 class ProtocolDistributionConfig(
-    private var configs: List<Node> = emptyList()
+    @Value("\${decentrifi.group-nodes}") val groupNodes: List<String>,
+    private val httpClient: HttpClient
 ) {
 
-    fun setConfigs(nodes: List<Node>) {
-        val includedCompanies = nodes.flatMap { it.companies }
-        val notIncludedCompanies = (Company.entries.filter {
-            !includedCompanies.contains(it)
-        })
+    val logger = LoggerFactory.getLogger(this::class.java)
 
-        if (notIncludedCompanies.isNotEmpty()) {
-            throw IllegalArgumentException(
-                """${notIncludedCompanies.joinToString(",")} are not included in distribution config"""
-            )
+    suspend fun getConfigs(): List<Node> {
+        return groupNodes.map {
+            Node(
+                name = it,
+                companies = getActivatedCompanies(it).map {
+                    Company.valueOf(it.name)
+                }.distinct()
+            ).also {
+                logger.info("Loaded ${it.companies.size} companies for node $it")
+            }
+        }.also { nodes ->
+            logger.info("Loaded ${nodes.size} nodes")
         }
-        this.configs = nodes
     }
 
-    fun getConfigs(): List<Node> {
-        return configs
+    suspend fun getActivatedCompanies(node: String): List<CompanyVO> = withContext(Dispatchers.IO) {
+        val response = httpClient.get("http://defitrack-group-$node.default.svc.cluster.local:8080/")
+        if (response.status.isSuccess()) {
+            response.body()
+        } else {
+            throw IllegalArgumentException("Unable to populate companies for node $node")
+        }
     }
 }

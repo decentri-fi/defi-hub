@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/")
-class ProtocolRestController(
+class ActivatedCompanyRestController(
     private val companyProvider: CompaniesProvider,
 ) {
 
