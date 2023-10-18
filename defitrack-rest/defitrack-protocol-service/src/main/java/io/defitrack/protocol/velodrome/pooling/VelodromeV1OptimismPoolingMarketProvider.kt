@@ -36,6 +36,11 @@ class VelodromeV1OptimismPoolingMarketProvider(
 
         pairFactoryContract.allPairs().parMap(EmptyCoroutineContext, 12) {
             createMarket(it)
+        }.forEach {
+            it.fold(
+                { throwable -> logger.error("Error creating market", throwable) },
+                { poolingMarket -> send(poolingMarket) }
+            )
         }
     }
 
