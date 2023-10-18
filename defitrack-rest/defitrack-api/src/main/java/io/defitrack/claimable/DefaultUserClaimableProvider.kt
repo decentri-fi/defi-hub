@@ -33,49 +33,51 @@ class DefaultUserClaimableProvider(
             return@coroutineScope emptyList()
         }
 
-        return@coroutineScope fetchersByNetwork.map { entry ->
+        return@coroutineScope fetchersByNetwork.map { marketsByNetwork ->
             async {
                 try {
-                    val rewards = entry.value.flatMap { claimable ->
+                    val rewards = marketsByNetwork.value.flatMap { claimable ->
                         claimable.claimableRewardFetcher.rewards.map {
                             it to claimable
                         }
                     }
 
-                    blockchainGatewayProvider.getGateway(entry.key).readMultiCall(
+                    blockchainGatewayProvider.getGateway(marketsByNetwork.key).readMultiCall(
                         rewards.map { it.first.toMulticall(userAddress) }
                     ).mapIndexed { index, retVal ->
-                        catch {
-                            if (retVal.success) {
-                                val reward = rewards[index]
-                                val earned = reward.first.extractAmountFromRewardFunction(retVal.data, userAddress)
+                        async {
+                            catch {
+                                if (retVal.success) {
+                                    val reward = rewards[index]
+                                    val earned = reward.first.extractAmountFromRewardFunction(retVal.data, userAddress)
 
-                                if (earned > BigInteger.ONE) {
-                                    Some(
-                                        UserClaimable(
-                                            id = reward.second.id,
-                                            name = reward.second.name,
-                                            protocol = reward.second.protocol,
-                                            network = reward.second.network,
-                                            amount = earned,
-                                            claimableToken = reward.first.token,
-                                            claimTransaction = reward.second.claimableRewardFetcher.preparedTransaction.invoke(
-                                                userAddress
-                                            )
-                                        ),
-                                    )
+                                    if (earned > BigInteger.ONE) {
+                                        Some(
+                                            UserClaimable(
+                                                id = reward.second.id,
+                                                name = reward.second.name,
+                                                protocol = reward.second.protocol,
+                                                network = reward.second.network,
+                                                amount = earned,
+                                                claimableToken = reward.first.token,
+                                                claimTransaction = reward.second.claimableRewardFetcher.preparedTransaction.invoke(
+                                                    userAddress
+                                                )
+                                            ),
+                                        )
+                                    } else {
+                                        None
+                                    }
                                 } else {
                                     None
                                 }
-                            } else {
-                                None
                             }
                         }
-                    }.map {
+                    }.awaitAll().map {
                         it.getOrNone().flatten()
                     }.mapNotNull(Option<UserClaimable>::getOrNull)
                 } catch (ex: Exception) {
-                    logger.info("Unable to fetch claimables for ${entry.key}", ex)
+                    logger.info("Unable to fetch claimables for ${marketsByNetwork.key}", ex)
                     emptyList()
                 }
             }
