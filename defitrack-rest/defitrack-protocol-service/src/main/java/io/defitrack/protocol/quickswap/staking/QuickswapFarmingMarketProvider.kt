@@ -12,7 +12,6 @@ import io.defitrack.network.toVO
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapService
-import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
 import io.defitrack.protocol.quickswap.contract.QuickswapRewardPoolContract
 import io.defitrack.protocol.quickswap.contract.RewardFactoryContract
 import io.defitrack.transaction.PreparedTransaction
@@ -20,14 +19,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
-import org.springframework.stereotype.Service
 import java.util.*
 
 @Component
 @ConditionalOnCompany(Company.QUICKSWAP)
 class QuickswapFarmingMarketProvider(
     private val quickswapService: QuickswapService,
-    private val quickswapAPRService: QuickswapAPRService,
 ) : FarmingMarketProvider() {
 
     val rewardFactoryContract = lazyAsync {
@@ -64,9 +61,6 @@ class QuickswapFarmingMarketProvider(
                         marketSize = refreshable {
                             getMarketSize(stakedToken.toFungibleToken(), rewardPool.address)
                         },
-                        apr = (quickswapAPRService.getRewardPoolAPR(rewardPool.address) + quickswapAPRService.getLPAPR(
-                            stakedToken.address
-                        )),
                         claimableRewardFetcher = ClaimableRewardFetcher(
                             Reward(
                                 token = rewardToken.toFungibleToken(),
