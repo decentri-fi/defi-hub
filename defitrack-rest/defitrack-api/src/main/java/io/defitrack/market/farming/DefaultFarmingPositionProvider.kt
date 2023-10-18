@@ -1,5 +1,6 @@
 package io.defitrack.market.farming
 
+import arrow.core.*
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.domain.FarmingPosition
 import kotlinx.coroutines.async
@@ -7,6 +8,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.math.BigInteger
 
@@ -15,9 +17,13 @@ class DefaultFarmingPositionProvider(
     val farmingMarketProvider: List<FarmingMarketProvider>,
     val gateway: BlockchainGatewayProvider
 ) : FarmingPositionProvider() {
+
+    val logger = LoggerFactory.getLogger(this::class.java)
+
+    val semaphore = Semaphore(16)
+
     override suspend fun getStakings(protocol: String, address: String): List<FarmingPosition> = coroutineScope {
 
-        val semaphore = Semaphore(16)
 
         farmingMarketProvider.filter {
             it.getProtocol().slug == protocol
@@ -32,23 +38,32 @@ class DefaultFarmingPositionProvider(
                     market.balanceFetcher!!.toMulticall(address)
                 }
             ).mapIndexed { index, retVal ->
-                semaphore.withPermit {
-                    async {
+                async {
+                    semaphore.withPermit {
                         val market = markets[index]
-                        val balance = market.balanceFetcher!!.extractBalance(retVal.data)
+                        Either.catch {
 
-                        if (balance.underlyingAmount > BigInteger.ONE) {
-                            FarmingPosition(
-                                market,
-                                balance.underlyingAmount,
-                                balance.tokenAmount
-                            )
-                        } else {
-                            null
+                            val balance = market.balanceFetcher!!.extractBalance(retVal.data)
+
+                            if (balance.underlyingAmount > BigInteger.ONE) {
+                                FarmingPosition(
+                                    market,
+                                    balance.underlyingAmount,
+                                    balance.tokenAmount
+                                ).some()
+                            } else {
+                                None
+                            }
+                        }.mapLeft {
+                            logger.error("Error fetching balance for ${market.name}", it)
+                        }.map {
+                            it.getOrNull()
                         }
                     }
                 }
-            }.awaitAll().filterNotNull()
+            }.awaitAll().mapNotNull {
+                it.getOrNull()
+            }
         }
     }
 }
