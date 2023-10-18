@@ -2,6 +2,7 @@ package io.defitrack.protocol.qidao.contract
 
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.bool
+import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
@@ -9,6 +10,7 @@ import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC721Contract
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
 
 class QidaoVaultContract(
@@ -50,42 +52,28 @@ class QidaoVaultContract(
         )[0].value as BigInteger
     }
 
-    suspend fun collateral(): String {
-        return read(
-            "collateral",
-            outputs = listOf(address())
-        )[0].value as String
-    }
+
+    val collateral = constant<String>("collateral", address())
 
     suspend fun getVaults(user: String): List<Int> {
         return readMultiCall(
-            existingVaults.await().map {
-                ownerOfFunction(it.toBigInteger())
+            (0 until balanceOf(user).toInt()).map {
+                tokenOfOwnerByIndex(user, it)
             }
-        ).mapIndexed { index, value ->
-            if ((value.data[0].value as String).lowercase() == user.lowercase()) {
-                return@mapIndexed index
-            } else {
-                return@mapIndexed null
-            }
-        }.filterNotNull()
+        ).filter {
+            it.success
+        }.map { (it.data[0].value as BigInteger) }
+            .map(BigInteger::toInt)
     }
 
-    private val existingVaults = lazyAsync {
-        (0 until vaultCount().toInt()).map {
-            async {
-                exists(it.toBigInteger())
-            }
-        }.awaitAll().mapIndexed { index, value ->
-            if (value) {
-                return@mapIndexed index
-            } else {
-                return@mapIndexed null
-            }
-        }.filterNotNull()
-    }
-
-    suspend fun populateVaultOwners() {
-        logger.info("populated ${existingVaults.await().count()} owners")
+    fun tokenOfOwnerByIndex(user: String, index: Int): Function {
+        return createFunction(
+            "tokenOfOwnerByIndex",
+            listOf(
+                user.toAddress(),
+                index.toBigInteger().toUint256()
+            ),
+            listOf(uint256())
+        )
     }
 }

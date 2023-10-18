@@ -1,5 +1,6 @@
 package io.defitrack.protocol.qidao.farming
 
+import arrow.fx.coroutines.parMap
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
@@ -14,19 +15,18 @@ import java.math.BigDecimal
 
 @Component
 @ConditionalOnCompany(Company.QIDAO)
-class QiDaoPolygonVaultProvider(
+class QiDaoPolygonVaultLendingMarketProvider(
     private val qidaoPolygonService: QidaoPolygonService,
 ) : LendingMarketProvider() {
     override suspend fun fetchMarkets(): List<LendingMarket> {
-        return qidaoPolygonService.provideVaults().map {
+        return qidaoPolygonService.provideVaults().parMap {
 
             val vault = QidaoVaultContract(
                 getBlockchainGateway(),
                 it
             )
-            vault.populateVaultOwners()
 
-            val collateral = getToken(vault.collateral())
+            val collateral = getToken(vault.collateral.await())
 
             create(
                 name = vault.name(),

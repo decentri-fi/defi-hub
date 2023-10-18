@@ -1,5 +1,6 @@
 package io.defitrack.protocol.qidao.farming
 
+import arrow.fx.coroutines.parMap
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
@@ -12,6 +13,7 @@ import io.defitrack.protocol.qidao.QidaoPolygonService
 import io.defitrack.protocol.qidao.contract.QidaoFarmV2Contract
 import io.defitrack.token.DecentrifiERC20Resource
 import org.springframework.stereotype.Component
+import kotlin.coroutines.EmptyCoroutineContext
 
 @Component
 @ConditionalOnCompany(Company.QIDAO)
@@ -21,15 +23,19 @@ class QidaoFarmingMarketProvider(
 ) : FarmingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
-        return qidaoPolygonService.farms().flatMap { farm ->
-            val contract = QidaoFarmV2Contract(
-                getBlockchainGateway(),
-                farm
-            )
+        return qidaoPolygonService.farms().parMap{ farm ->
+            importPoolsFromFarm(farm)
+        }.flatten()
+    }
 
-            (0 until contract.poolLength()).map { poolId ->
-                toStakingMarketElement(contract, poolId)
-            }
+    private suspend fun importPoolsFromFarm(farm: String): List<FarmingMarket> {
+        val contract = QidaoFarmV2Contract(
+            getBlockchainGateway(),
+            farm
+        )
+
+        return (0 until contract.poolLength()).parMap(EmptyCoroutineContext, 8) { poolId ->
+            toMarket(contract, poolId)
         }
     }
 
@@ -37,7 +43,7 @@ class QidaoFarmingMarketProvider(
         return Protocol.QIDAO
     }
 
-    private suspend fun toStakingMarketElement(
+    private suspend fun toMarket(
         chef: QidaoFarmV2Contract,
         poolId: Int
     ): FarmingMarket {

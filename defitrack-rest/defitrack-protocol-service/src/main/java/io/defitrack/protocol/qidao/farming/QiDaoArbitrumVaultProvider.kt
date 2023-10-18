@@ -1,5 +1,6 @@
 package io.defitrack.protocol.qidao.farming
 
+import arrow.fx.coroutines.parMap
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
@@ -18,15 +19,13 @@ class QiDaoArbitrumVaultProvider(
     private val qidaoArbitrumService: QidaoArbitrumService,
 ) : LendingMarketProvider() {
     override suspend fun fetchMarkets(): List<LendingMarket> {
-        return qidaoArbitrumService.provideVaults().map {
+        return qidaoArbitrumService.provideVaults().parMap {
 
             val vault = QidaoVaultContract(
                 getBlockchainGateway(),
                 it
             )
-            vault.populateVaultOwners()
-
-            val collateral = getToken(vault.collateral())
+            val collateral = getToken(vault.collateral.await())
 
             create(
                 name = vault.name(),
