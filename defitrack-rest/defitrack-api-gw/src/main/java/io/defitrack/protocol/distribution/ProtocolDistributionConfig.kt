@@ -27,8 +27,8 @@ class ProtocolDistributionConfig(
         return groupNodes.map {
             Node(
                 name = it,
-                companies = getActivatedCompanies(it).map {
-                    Company.findBySlug(it.name)
+                companies = getActivatedCompanies(it).map { company ->
+                    Company.findBySlug(company.slug)
                 }.distinct()
             ).also {
                 logger.info("Loaded ${it.companies.size} companies for node $it")
