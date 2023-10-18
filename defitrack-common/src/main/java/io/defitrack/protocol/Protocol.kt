@@ -579,8 +579,8 @@ enum class Protocol(
         company = Company.ETHOS
     ),
     MUX(
-        logo = "ethos.png",
-        slug = "ethos",
+        logo = "mux.png",
+        slug = "mux",
         website = "https://mux.network",
         primitives = listOf(CLAIMABLES, FARMING),
         networks = listOf(ARBITRUM),
