@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
+import kotlin.coroutines.EmptyCoroutineContext
 
 @Component
 @ConditionalOnCompany(Company.VELODROME)
@@ -33,7 +34,7 @@ class VelodromeV1OptimismPoolingMarketProvider(
             contractAddress = velodromeOptimismService.getV1PoolFactory()
         )
 
-        pairFactoryContract.allPairs().parMap {
+        pairFactoryContract.allPairs().parMap(EmptyCoroutineContext, 12) {
             createMarket(it)
         }
     }
