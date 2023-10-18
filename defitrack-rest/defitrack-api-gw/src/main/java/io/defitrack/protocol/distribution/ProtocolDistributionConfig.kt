@@ -28,7 +28,7 @@ class ProtocolDistributionConfig(
             Node(
                 name = it,
                 companies = getActivatedCompanies(it).map { company ->
-                    Company.findBySlug(company.slug)
+                    Company.findBySlug(company.slug) ?: throw IllegalArgumentException("Unknown company ${company.slug}")
                 }.distinct()
             ).also {
                 logger.info("Loaded ${it.companies.size} companies for node $it")

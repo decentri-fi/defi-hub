@@ -274,8 +274,8 @@ enum class Company(
     );
 
     companion object {
-        fun findBySlug(slug: String): Company {
-            return entries.first {
+        fun findBySlug(slug: String): Company? {
+            return entries.firstOrNull {
                 it.slug == slug
             }
         }
