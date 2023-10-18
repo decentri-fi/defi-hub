@@ -21,6 +21,7 @@ import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
 import io.defitrack.protocol.quickswap.contract.QuickswapRewardPoolContract
 import io.defitrack.protocol.quickswap.contract.RewardFactoryContract
 import io.defitrack.transaction.PreparedTransaction
+import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -47,9 +48,13 @@ class DeprecatedQuickswapFarmingMarketProvider(
 
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
         val contract = rewardFactoryContract.await()
-        val rewardPools = contract.getStakingTokens().map {
-            contract.stakingRewardsInfoByStakingToken(it)
-        }
+
+        val rewardPools = contract.readMultiCall(
+            contract.getStakingTokens().map {
+                contract.stakingRewardsInfoByStakingToken(it)
+            }
+        ).filter { it.success }
+            .map { it.data[0].value as String }
 
         rewardPools.map {
             QuickswapRewardPoolContract(
@@ -76,11 +81,7 @@ class DeprecatedQuickswapFarmingMarketProvider(
                                 rewardPool.earned(user)
                             },
                         ),
-                        preparedTransaction = {
-                            PreparedTransaction(
-                                getNetwork().toVO(), rewardPool.getRewardFunction(), rewardPool.address
-                            )
-                        }
+                        preparedTransaction = selfExecutingTransaction(rewardPool::getRewardFunction)
                     ),
                     balanceFetcher = defaultPositionFetcher(
                         rewardPool.address

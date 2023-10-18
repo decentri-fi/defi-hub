@@ -40,8 +40,8 @@ class QuickswapRewardPoolContract(
         return readSingle("rewardRate", address())
     }
 
-    fun getRewardFunction(): Function {
-        return createFunction("getReward")
+    fun getRewardFunction(): ContractCall {
+        return createFunction("getReward").toContractCall()
     }
 
     fun earned(address: String): Function {

@@ -17,6 +17,7 @@ import org.springframework.boot.availability.ReadinessState
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Configuration
 import org.springframework.scheduling.annotation.Scheduled
+import kotlin.time.measureTime
 
 @Configuration
 class MarketCacheRefresher(
@@ -39,11 +40,13 @@ class MarketCacheRefresher(
                 return@runBlocking
             }
             logger.info("Initial population of all caches.")
-            poolingMarketProviders.forEach { it.populateCaches() }
-            lendingMarketProviders.forEach { it.populateCaches() }
-            farmingMarketProviders.forEach { it.populateCaches() }
-            claimableMarketProviders.forEach { it.populateCaches() }
-            logger.info("done with initial population of all caches.")
+           val fullMeasurement = measureTime {
+               poolingMarketProviders.forEach { it.populateCaches() }
+               lendingMarketProviders.forEach { it.populateCaches() }
+               farmingMarketProviders.forEach { it.populateCaches() }
+               claimableMarketProviders.forEach { it.populateCaches() }
+           }
+            logger.info("done with initial population of all caches. (took ${fullMeasurement.inWholeSeconds} seconds)")
         }
         AvailabilityChangeEvent.publish(applicationContext, ReadinessState.ACCEPTING_TRAFFIC)
     }

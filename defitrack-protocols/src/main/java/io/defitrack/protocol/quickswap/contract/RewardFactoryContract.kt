@@ -6,6 +6,7 @@ import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
+import org.web3j.abi.datatypes.Function
 
 class RewardFactoryContract(
     blockchainGateway: BlockchainGateway, address: String
@@ -14,22 +15,23 @@ class RewardFactoryContract(
 ) {
 
     suspend fun getStakingTokens(): List<String> {
-        return (0 until 200).mapNotNull { index ->
-            val retVal = read(
-                method = "stakingTokens",
-                inputs = listOf(index.toBigInteger().toUint256()),
-                outputs = listOf(address())
-            )
-            return@mapNotNull if (retVal.isEmpty()) {
-                null
-            } else {
-                retVal[0].value as String
+        return readMultiCall(
+            (0 until 200).map { index ->
+                createFunction(
+                    method = "stakingTokens",
+                    inputs = listOf(index.toBigInteger().toUint256()),
+                    outputs = listOf(address())
+                )
             }
+        ).filter {
+            it.success
+        }.map {
+            it.data[0].value as String
         }
     }
 
-    suspend fun stakingRewardsInfoByStakingToken(stakingToken: String): String {
-        return read(
+    suspend fun stakingRewardsInfoByStakingToken(stakingToken: String): Function {
+        return createFunction(
             "stakingRewardsInfoByStakingToken",
             listOf(stakingToken.toAddress()),
             listOf(
@@ -37,7 +39,6 @@ class RewardFactoryContract(
                 uint256(),
                 uint256(),
             )
-        )[0].value as String
+        )
     }
-
 }
