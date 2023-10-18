@@ -28,7 +28,7 @@ class ProtocolDistributionConfig(
             Node(
                 name = it,
                 companies = getActivatedCompanies(it).map {
-                    Company.valueOf(it.name)
+                    Company.findBySlug(it.name)
                 }.distinct()
             ).also {
                 logger.info("Loaded ${it.companies.size} companies for node $it")

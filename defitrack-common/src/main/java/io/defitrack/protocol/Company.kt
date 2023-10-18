@@ -273,6 +273,14 @@ enum class Company(
         slug = "mux"
     );
 
+    companion object {
+        fun findBySlug(slug: String): Company {
+            return entries.first {
+                it.slug == slug
+            }
+        }
+    }
+
     fun fetchProtocols(): List<Protocol> {
         return Protocol.findByCompany(this)
     }
