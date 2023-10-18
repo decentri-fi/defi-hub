@@ -24,6 +24,9 @@ class DefaultLendingPositionRestController(
         @PathVariable("protocol") protocol: String,
         @PathVariable("userId") address: String
     ): List<LendingPositionVO>  {
+        if(!WalletUtils.isValidAddress(address)) {
+            return emptyList()
+        }
         return lendingPositionProvider.getLendings(address).map { lendingPositionVOMapper.map(it) }
     }
 
