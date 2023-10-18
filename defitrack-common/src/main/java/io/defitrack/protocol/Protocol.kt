@@ -56,7 +56,7 @@ enum class Protocol(
     RADIANT(
         logo = "radiant.png",
         slug = "radiant",
-        primitives = listOf(LENDING),
+        primitives = listOf(LENDING, FARMING, CLAIMABLES),
         website = "https://radiant.capital/",
         networks = listOf(ARBITRUM),
         company = Company.RADIANT
