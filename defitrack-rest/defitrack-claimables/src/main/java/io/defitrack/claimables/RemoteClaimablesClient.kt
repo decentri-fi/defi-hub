@@ -14,6 +14,9 @@ import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import kotlin.time.Duration.Companion.hours
+import kotlin.time.TimedValue
+import kotlin.time.measureTime
+import kotlin.time.measureTimedValue
 
 @Component
 class RemoteClaimablesClient(
@@ -27,17 +30,25 @@ class RemoteClaimablesClient(
 
     override suspend fun getClaimables(address: String, protocol: ProtocolVO): List<UserClaimableVO> =
         withContext(Dispatchers.IO) {
-            try {
-                val response = httpClient.get("$baseUrl/${protocol.slug}/$address/claimables")
-                if (response.status.isSuccess()) {
-                    response.body()
-                } else {
+            val timedValue: TimedValue<List<UserClaimableVO>> = measureTimedValue {
+                try {
+                    val response = httpClient.get("$baseUrl/${protocol.slug}/$address/claimables")
+                    if (response.status.isSuccess()) {
+                        response.body()
+                    } else {
+                        emptyList()
+                    }
+                } catch (ex: Exception) {
+                    logger.error(
+                        "Error getting claimables for $address on ${protocol.company.slug}/${protocol.slug}",
+                        ex
+                    )
                     emptyList()
                 }
-            } catch (ex: Exception) {
-                logger.error("Error getting claimables for $address on ${protocol.company.slug}/${protocol.slug}", ex)
-                emptyList()
             }
+
+            logger.info("took ${timedValue.duration} to get claimables for $address on ${protocol.slug}")
+            timedValue.value
         }
 
     val cache = Cache.Builder<String, List<ClaimableMarketVO>>().expireAfterWrite(1.hours).build()
