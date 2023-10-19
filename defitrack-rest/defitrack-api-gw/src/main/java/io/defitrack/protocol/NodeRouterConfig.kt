@@ -52,10 +52,10 @@ class NodeRouterConfig(
 
         fetchNodes().forEach { node ->
             routeBuilder.route("node-" + node.name) {
-                it.path(true, "/${node.name}/**")
+                it.path(true, "/nodes/${node.name}/**")
                     .filters { filter ->
                         filter.rewritePath(
-                            "/${node.name}/(?<segment>.*)",
+                            "/nodes/${node.name}/(?<segment>.*)",
                             "/\${segment}"
                         )
                     }
