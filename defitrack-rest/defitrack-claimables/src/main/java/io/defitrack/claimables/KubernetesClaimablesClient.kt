@@ -76,7 +76,9 @@ class KubernetesClaimablesClient(
                     }
                 }
 
-                logger.info("took ${timedValue.duration} to get claimables for $address on node ${node.name}")
+                if (timedValue.duration.inWholeSeconds > 3) {
+                    logger.info("took ${timedValue.duration} to get claimables for $address on node ${node.name}")
+                }
                 timedValue.value
             }.flatten().filter {
                 protocols.map(Protocol::slug).contains(it.protocol.slug)

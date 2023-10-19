@@ -2,15 +2,12 @@ package io.defitrack.claimables
 
 import arrow.fx.coroutines.parMap
 import io.defitrack.PageUtils
-import io.defitrack.claimable.vo.ClaimableMarketVO
 import io.defitrack.exception.ExceptionResult
 import io.defitrack.protocol.DefiPrimitive
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.mapper.ProtocolVOMapper
-import io.github.reactivecircus.cache4k.Cache
 import io.micrometer.observation.Observation.start
 import io.micrometer.observation.ObservationRegistry
-import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletResponse
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
@@ -25,8 +22,6 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import org.web3j.crypto.WalletUtils.isValidAddress
 import java.util.concurrent.Executors
-import kotlin.coroutines.EmptyCoroutineContext
-import kotlin.time.Duration.Companion.hours
 import kotlin.time.measureTimedValue
 
 @RestController
@@ -82,9 +77,12 @@ class ClaimableAggregateRestControllerImpl(
         val observation = start("requests.get.claimables.aggregate", observationRegistry)
         val result = measureTimedValue {
             claimablesClient.getClaimables(address, filteredProtocols(includes, excludes))
+        }.also {
+            if (it.duration.inWholeSeconds > 3) {
+                logger.info("took ${it.duration.inWholeSeconds} seconds to aggregate ${it.value.size} claimables for $address")
+            }
         }
 
-        logger.info("took ${result.duration.inWholeSeconds} seconds to aggregate ${result.value.size} claimables for $address")
         observation.stop()
         return ResponseEntity.ok(result.value)
     }
