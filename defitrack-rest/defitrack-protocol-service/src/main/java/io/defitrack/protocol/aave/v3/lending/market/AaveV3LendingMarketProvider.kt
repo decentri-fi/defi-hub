@@ -7,7 +7,7 @@ import io.defitrack.common.utils.Refreshable
 import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
-import io.defitrack.market.lending.domain.PositionFetcher
+import io.defitrack.market.position.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.v3.AaveV3DataProvider

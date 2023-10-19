@@ -8,7 +8,7 @@ import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
-import io.defitrack.market.lending.domain.PositionFetcher
+import io.defitrack.market.position.PositionFetcher
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.v2.contract.LendingPoolAddressProviderContract

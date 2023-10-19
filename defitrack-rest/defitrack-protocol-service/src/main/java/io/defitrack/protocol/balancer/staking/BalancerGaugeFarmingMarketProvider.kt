@@ -12,7 +12,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.market.lending.domain.PositionFetcher
+import io.defitrack.market.position.PositionFetcher
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol

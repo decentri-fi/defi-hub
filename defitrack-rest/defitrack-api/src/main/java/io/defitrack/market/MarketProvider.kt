@@ -9,8 +9,8 @@ import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.exit.ExitPositionCommand
 import io.defitrack.exit.ExitPositionPreparer
 import io.defitrack.market.event.MarketAddedEvent
-import io.defitrack.market.lending.domain.Position
-import io.defitrack.market.lending.domain.PositionFetcher
+import io.defitrack.market.position.Position
+import io.defitrack.market.position.PositionFetcher
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.CompaniesProvider
@@ -120,9 +120,11 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
             "markets.${it.type}.updated",
             MarketAddedEvent.create(it)
         )
-        meterregisty.counter("markets.${it.type}.added", listOf(
-            Tag.of("protocol", it.protocol.slug)
-        )).increment()
+        meterregisty.counter(
+            "markets.${it.type}.added", listOf(
+                Tag.of("protocol", it.protocol.slug)
+            )
+        ).increment()
     }
 
     private suspend fun populate() = try {
@@ -153,12 +155,10 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
     }
 
     fun defaultPositionFetcher(address: String): PositionFetcher {
-        return PositionFetcher(address, { user ->
-            ERC20Contract.balanceOfFunction(user)
-        }, { retVal ->
+        return PositionFetcher(address, ERC20Contract.Companion::balanceOfFunction) { retVal ->
             val result = retVal[0].value as BigInteger
             Position(result, result)
-        })
+        }
     }
 
     suspend fun getToken(address: String): TokenInformationVO {

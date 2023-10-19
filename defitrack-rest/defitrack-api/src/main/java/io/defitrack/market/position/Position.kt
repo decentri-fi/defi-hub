@@ -1,4 +1,4 @@
-package io.defitrack.market.lending.domain
+package io.defitrack.market.position
 
 import java.math.BigInteger
 

@@ -5,7 +5,7 @@ import io.defitrack.common.utils.Refreshable
 import io.defitrack.exit.ExitPositionCommand
 import io.defitrack.market.DefiMarket
 import io.defitrack.market.farming.domain.InvestmentPreparer
-import io.defitrack.market.lending.domain.PositionFetcher
+import io.defitrack.market.position.PositionFetcher
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.FungibleToken
 import org.web3j.abi.datatypes.Event

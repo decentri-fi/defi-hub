@@ -5,7 +5,7 @@ import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.market.lending.domain.PositionFetcher
+import io.defitrack.market.position.PositionFetcher
 import io.defitrack.network.toVO
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.sushiswap.reward.MiniChefV2Contract

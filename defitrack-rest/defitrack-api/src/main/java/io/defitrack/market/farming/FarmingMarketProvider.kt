@@ -6,7 +6,7 @@ import io.defitrack.exit.ExitPositionPreparer
 import io.defitrack.market.MarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.domain.InvestmentPreparer
-import io.defitrack.market.lending.domain.PositionFetcher
+import io.defitrack.market.position.PositionFetcher
 import io.defitrack.token.FungibleToken
 import java.math.BigDecimal
 
