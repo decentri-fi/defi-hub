@@ -63,27 +63,26 @@ open class BalancerGaugeContract(
     )
 
     suspend fun getRewardTokens(): List<String> {
-        return (0..3).mapNotNull {
-            try {
-                val rewardToken = getRewardToken(it)
-                if (rewardToken != "0x0000000000000000000000000000000000000000") {
-                    rewardToken
-                } else {
-                    null
-                }
-            } catch (ex: Exception) {
-                null
+        return readMultiCall(
+            (0 until 5).map {
+                getRewardToken(it)
             }
+        ).filter {
+            it.success
+        }.map {
+            it.data[0].value as String
+        }.filter {
+            it != "0x0000000000000000000000000000000000000000"
         }
     }
 
 
-    suspend fun getRewardToken(index: Int): String {
-        return read(
+    suspend fun getRewardToken(index: Int): Function {
+        return createFunction(
             "reward_tokens",
             listOf(index.toBigInteger().toUint256()),
             listOf(address())
-        )[0].value as String
+        )
     }
 
     suspend fun getStakedToken(): String {

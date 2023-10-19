@@ -103,6 +103,4 @@ abstract class BalancerPoolingMarketProvider(
     override fun getProtocol(): Protocol {
         return Protocol.BALANCER
     }
-
-
 }
