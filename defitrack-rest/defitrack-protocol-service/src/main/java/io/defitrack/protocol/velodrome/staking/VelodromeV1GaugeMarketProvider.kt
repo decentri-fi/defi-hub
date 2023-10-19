@@ -1,5 +1,6 @@
 package io.defitrack.protocol.velodrome.staking
 
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
+import kotlin.coroutines.EmptyCoroutineContext
 
 @Component
 @ConditionalOnCompany(Company.VELODROME)
@@ -34,44 +36,44 @@ class VelodromeV1GaugeMarketProvider(
     }
 
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
-        velodromeV1OptimismPoolingMarketProvider.getMarkets().forEach {
+        velodromeV1OptimismPoolingMarketProvider.getMarkets().parMapNotNull(EmptyCoroutineContext, 12) {
             val gauge = voterContract.await().gauges(it.address)
 
-            launch {
-                throttled {
-                    if (gauge != "0x0000000000000000000000000000000000000000") {
-                        try {
-                            val contract = VelodromeV1GaugeContract(
-                                getBlockchainGateway(),
-                                gauge
+            if (gauge != "0x0000000000000000000000000000000000000000") {
+                try {
+                    val contract = VelodromeV1GaugeContract(
+                        getBlockchainGateway(),
+                        gauge
+                    )
+
+                    val stakedToken = getToken(contract.stakedToken.await())
+
+                    create(
+                        name = stakedToken.name + " Gauge",
+                        identifier = stakedToken.symbol + "-${gauge}",
+                        rewardTokens = contract.getRewardList().map { reward ->
+                            getToken(reward).toFungibleToken()
+                        },
+                        marketSize = Refreshable.refreshable {
+                            getMarketSize(
+                                stakedToken.toFungibleToken(),
+                                contract.address
                             )
+                        },
+                        stakedToken = stakedToken.toFungibleToken(),
+                        positionFetcher = defaultPositionFetcher(gauge),
+                        rewardsFinished = true
+                    )
 
-                            val stakedToken = getToken(contract.stakedToken.await())
-
-                            val market = create(
-                                name = stakedToken.name + " Gauge",
-                                identifier = stakedToken.symbol + "-${gauge}",
-                                rewardTokens = contract.getRewardList().map { reward ->
-                                    getToken(reward).toFungibleToken()
-                                },
-                                marketSize = Refreshable.refreshable {
-                                    getMarketSize(
-                                        stakedToken.toFungibleToken(),
-                                        contract.address
-                                    )
-                                },
-                                stakedToken = stakedToken.toFungibleToken(),
-                                positionFetcher = defaultPositionFetcher(gauge),
-                                rewardsFinished = true
-                            )
-
-                            send(market)
-                        } catch (ex: Exception) {
-                            logger.error("Failed to fetch gauge market with pooling market {}", it.address, ex)
-                        }
-                    }
+                } catch (ex: Exception) {
+                    logger.error("Failed to fetch gauge market with pooling market {}", it.address, ex)
+                    null
                 }
+            } else {
+                null
             }
+        }.forEach {
+            send(it)
         }
     }
 

@@ -40,8 +40,8 @@ class VelodromeV2OptimismPoolingMarketProvider(
         pairFactoryContract.allPools().parMapNotNull(EmptyCoroutineContext, 12) {
             createMarket(it)
         }.mapNotNull {
-            it.mapLeft {
-                logger.error("Error creating market", it)
+            it.mapLeft { throwable ->
+                logger.error("Error creating market", throwable)
             }.getOrNull()
         }.forEach {
             send(it)

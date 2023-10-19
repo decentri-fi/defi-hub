@@ -22,10 +22,10 @@ class DefaultUserClaimableProvider(
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
-    suspend fun claimables(userAddress: String, protocol: String): List<UserClaimable> = coroutineScope {
+    suspend fun claimables(userAddress: String, protocol: String?): List<UserClaimable> = coroutineScope {
         val fetchersByNetwork = claimableMarketProviders.flatMap { it.getMarkets() }
             .filter {
-                it.protocol.slug.lowercase() == protocol.lowercase() ||
+                protocol == null || it.protocol.slug.lowercase() == protocol.lowercase() ||
                         it.protocol.name.lowercase() == protocol.lowercase()
             }.groupBy {
                 it.network
