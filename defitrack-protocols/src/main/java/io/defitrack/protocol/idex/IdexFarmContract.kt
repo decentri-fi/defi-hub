@@ -7,6 +7,7 @@ import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Function
+import java.math.BigInteger
 
 class IdexFarmContract(
     blockchainGateway: BlockchainGateway, address: String
@@ -28,7 +29,7 @@ class IdexFarmContract(
     }
 
 
-    suspend fun poolLength(): Int {
+    suspend fun poolLength(): BigInteger {
         return readSingle("poolLength", uint256())
     }
 

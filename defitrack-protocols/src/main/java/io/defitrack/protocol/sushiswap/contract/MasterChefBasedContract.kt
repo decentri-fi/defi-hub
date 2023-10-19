@@ -47,7 +47,7 @@ open class MasterChefBasedContract(
 
     val poolLength = constant<BigInteger>("poolLength", uint256())
 
-    val poolInfos: Deferred<List<MasterChefPoolInfo>> = lazyAsync {
+    val defaultPoolInfos: Deferred<List<MasterChefPoolInfo>> = lazyAsync {
         val multicalls = (0 until poolLength.await().toInt()).map { poolIndex ->
             MultiCallElement(
                 createFunction(
@@ -77,7 +77,7 @@ open class MasterChefBasedContract(
         }
     }
 
-    suspend fun getLpTokenForPoolId(poolIndex: Int): MasterChefPoolInfo = poolInfos.await()[poolIndex]
+    suspend fun getLpTokenForPoolId(poolIndex: Int): MasterChefPoolInfo = defaultPoolInfos.await()[poolIndex]
 
     val rewardToken: Deferred<String> = lazyAsync {
         readSingle(rewardTokenName, address())

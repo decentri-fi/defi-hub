@@ -1,5 +1,7 @@
 package io.defitrack.protocol.idex
 
+import arrow.core.Either
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -7,18 +9,13 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.position.PositionFetcher
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
-import io.defitrack.token.DecentrifiERC20Resource
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
+import kotlin.coroutines.EmptyCoroutineContext
 
 @Component
 @ConditionalOnCompany(Company.IDEX)
-class IdexFarmingMarketProvider(
-    private val tokenService: DecentrifiERC20Resource,
-    private val idexService: IdexService
-) : FarmingMarketProvider() {
+class IdexFarmingMarketProvider(private val idexService: IdexService) : FarmingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
         idexService.idexFarm().map {
@@ -27,17 +24,16 @@ class IdexFarmingMarketProvider(
                 it
             )
         }.flatMap { chef ->
-            (0 until chef.poolLength()).map { poolId ->
-                async {
-                    try {
-                        toStakingMarketElement(chef, poolId)
-                    } catch (ex: Exception) {
-                        logger.debug("something went wrong trying to import idex pool", ex)
-                        null
-                    }
+            (0 until chef.poolLength().toInt()).parMapNotNull(EmptyCoroutineContext, 12) { poolId ->
+                Either.catch {
+                    toStakingMarketElement(chef, poolId)
                 }
             }
-        }.awaitAll().filterNotNull()
+        }
+    }.mapNotNull {
+        it.mapLeft {
+            logger.error("Error fetching market", it)
+        }.getOrNull()
     }
 
     override fun getProtocol(): Protocol {
@@ -52,9 +48,8 @@ class IdexFarmingMarketProvider(
         chef: IdexFarmContract,
         poolId: Int
     ): FarmingMarket {
-        val stakedtoken =
-            tokenService.getTokenInformation(getNetwork(), chef.getLpTokenForPoolId(poolId))
-        val rewardToken = tokenService.getTokenInformation(getNetwork(), chef.rewardToken())
+        val stakedtoken = getToken(chef.getLpTokenForPoolId(poolId))
+        val rewardToken = getToken(chef.rewardToken())
         return create(
             identifier = "${chef.address}-${poolId}",
             name = stakedtoken.name + " Farm",

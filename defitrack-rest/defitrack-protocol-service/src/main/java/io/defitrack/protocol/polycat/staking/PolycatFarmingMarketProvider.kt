@@ -1,5 +1,6 @@
 package io.defitrack.protocol.polycat.staking
 
+import arrow.fx.coroutines.parMap
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable
@@ -15,6 +16,7 @@ import io.defitrack.protocol.polycat.PolycatService
 import io.defitrack.protocol.polycat.contract.PolycatMasterChefContract
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
+import kotlin.coroutines.EmptyCoroutineContext
 
 @Component
 @ConditionalOnCompany(Company.POLYCAT)
@@ -29,7 +31,7 @@ class PolycatFarmingMarketProvider(
                 it
             )
         }.flatMap { chef ->
-            (0 until chef.poolLength()).map { poolId ->
+            (0 until chef.poolLength.await().toInt()).parMap(EmptyCoroutineContext, 12) { poolId ->
                 toStakingMarketElement(chef, poolId)
             }
         }
@@ -44,7 +46,7 @@ class PolycatFarmingMarketProvider(
         poolId: Int
     ): FarmingMarket {
         val stakedtoken = getToken(chef.poolInfo(poolId).lpToken)
-        val rewardToken = getToken(chef.rewardToken())
+        val rewardToken = getToken(chef.rewardToken.await())
         return create(
             identifier = "${chef.address}-${poolId}",
             name = stakedtoken.name + " Farm",
@@ -52,7 +54,6 @@ class PolycatFarmingMarketProvider(
             rewardTokens = listOf(
                 rewardToken.toFungibleToken()
             ),
-            apr = PolygcatStakingAprCalculator(getERC20Resource(), getPriceResource(), chef, poolId).calculateApr(),
             marketSize = Refreshable.refreshable {
                 calculateMarketSize(stakedtoken, chef)
             },
