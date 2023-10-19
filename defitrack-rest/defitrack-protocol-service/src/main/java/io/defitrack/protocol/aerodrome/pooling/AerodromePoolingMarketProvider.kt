@@ -63,7 +63,7 @@ class AerodromePoolingMarketProvider(
                             )
                         )
                     } catch (ex: Exception) {
-                        logger.error("Error while fetching pooling market $it", ex)
+                        logger.error("Error while fetching pooling market $it: {}", ex.message)
                     }
                 }
             }
