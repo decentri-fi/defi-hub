@@ -17,7 +17,6 @@ class MakerTokenIdentifier(
     override suspend fun isProtocolToken(token: ERC20): Boolean {
         return token.network == Network.ETHEREUM && token.address.lowercase() == "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2"
     }
-
     override suspend fun getTokenInfo(token: ERC20): TokenInformation {
         return TokenInformation(
             logo = logoService.generateLogoUrl(token.network, token.address),

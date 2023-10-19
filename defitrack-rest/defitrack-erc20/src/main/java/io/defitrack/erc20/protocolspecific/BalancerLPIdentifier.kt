@@ -35,10 +35,9 @@ class BalancerLPIdentifier(
             token.address
         )
 
-
         val vault = BalancerVaultContract(
             gateway,
-            poolContract.getVault()
+            poolContract.vault.await()
         )
 
         val poolId = poolContract.getPoolId()

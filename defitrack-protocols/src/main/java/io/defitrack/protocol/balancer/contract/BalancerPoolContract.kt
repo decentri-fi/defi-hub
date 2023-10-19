@@ -3,6 +3,7 @@ package io.defitrack.protocol.balancer.contract
 import io.defitrack.abi.TypeUtils
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
+import kotlinx.coroutines.Deferred
 import org.apache.commons.codec.binary.Hex
 
 class BalancerPoolContract(
@@ -12,12 +13,10 @@ class BalancerPoolContract(
     blockchainGateway, address
 ) {
 
-    suspend fun getPoolId(): String {
-        val bytes: ByteArray = readSingle("getPoolId", TypeUtils.bytes32())
-        return Hex.encodeHexString(bytes)
-    }
+    val poolId: Deferred<ByteArray> = constant("getPoolId", TypeUtils.bytes32())
+    val vault: Deferred<String> = constant("getVault", TypeUtils.address())
 
-    suspend fun getVault(): String {
-        return readSingle("getVault", TypeUtils.address())
+    suspend fun getPoolId(): String {
+        return Hex.encodeHexString(poolId.await())
     }
 }

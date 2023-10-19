@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component
 import org.web3j.abi.EventEncoder
 import org.web3j.abi.FunctionReturnDecoder
 import java.math.BigInteger
+import kotlin.time.Duration.Companion.days
 
 @Component
 class BalancerService(private val blockchainGatewayProvider: BlockchainGatewayProvider) {
@@ -86,7 +87,7 @@ class BalancerService(private val blockchainGatewayProvider: BlockchainGatewayPr
         )
     )
 
-    val cache = Cache.Builder<Network, List<String>>().build()
+    val cache = Cache.Builder<Network, List<String>>().expireAfterWrite(1.days).build()
 
     suspend fun getPools(network: Network): List<String> {
         return cache.get(network) {

@@ -40,5 +40,4 @@ class BalancerVaultContract(
         val tokens: List<String>,
         val balances: List<BigInteger>
     )
-
 }

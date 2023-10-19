@@ -1,5 +1,8 @@
 package io.defitrack.protocol.balancer.pooling
 
+import arrow.core.None
+import arrow.core.Option
+import arrow.core.some
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable
@@ -23,20 +26,20 @@ abstract class BalancerPoolingMarketProvider(
         balancerService.getPools(getNetwork()).parMapNotNull(EmptyCoroutineContext, 8) { pool ->
             createMarket(pool)
         }.forEach {
-            send(it)
+            it.onSome { send(it) }
         }
     }
 
     private suspend fun createMarket(
         pool: String,
-    ): PoolingMarket? {
+    ): Option<PoolingMarket> {
         try {
             val poolContract = BalancerPoolContract(
                 getBlockchainGateway(), pool
             )
             val vault = BalancerVaultContract(
                 getBlockchainGateway(),
-                poolContract.getVault()
+                poolContract.vault.await()
             )
 
             val poolId = poolContract.getPoolId()
@@ -62,7 +65,6 @@ abstract class BalancerPoolingMarketProvider(
                 symbol = underlying.joinToString("/") {
                     it.first.symbol
                 },
-                apr = BigDecimal.ZERO,
                 metadata = mapOf(
                     "poolId" to poolId,
                 ),
@@ -92,11 +94,10 @@ abstract class BalancerPoolingMarketProvider(
                 totalSupply = Refreshable.refreshable {
                     getToken(pool).totalDecimalSupply()
                 }
-
-            )
+            ).some()
         } catch (e: Exception) {
             logger.error("Error creating market for pool $pool", e)
-            return null
+            return None
         }
     }
 
