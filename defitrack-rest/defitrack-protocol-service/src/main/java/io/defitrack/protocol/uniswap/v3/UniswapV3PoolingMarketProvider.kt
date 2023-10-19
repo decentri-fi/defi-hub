@@ -18,6 +18,8 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.uniswap.v3.prefetch.UniswapV3Prefetcher
 import io.defitrack.uniswap.v3.UniswapV3PoolContract
 import io.defitrack.uniswap.v3.UniswapV3PoolFactoryContract
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import org.web3j.abi.datatypes.Event
@@ -49,8 +51,10 @@ abstract class UniswapV3PoolingMarketProvider(
 
     val poolAddresses = lazyAsync {
         fromBlocks.mapIndexed { index, block ->
-            getLogsBetweenBlocks(block, fromBlocks.getOrNull(index + 1))
-        }.flatten()
+            async {
+                getLogsBetweenBlocks(block, fromBlocks.getOrNull(index + 1))
+            }
+        }.awaitAll().flatten()
     }
 
     val prefetches = lazyAsync {
@@ -85,7 +89,6 @@ abstract class UniswapV3PoolingMarketProvider(
             send(it)
         }
     }
-
 
     suspend fun getMarket(address: String): Either<Throwable, PoolingMarket> {
 

@@ -19,14 +19,14 @@ import kotlin.time.measureTime
 import kotlin.time.measureTimedValue
 
 @Component
-@Profile("!kubernetes")
-class RemoteClaimablesClient(
+@Profile("kubernetes")
+class LocalClaimablesClient(
     private val httpClient: HttpClient
 ) : ClaimablesClient {
 
     val baseUrl = "https://api.decentri.fi"
-    private val logger = LoggerFactory.getLogger(this::class.java)
 
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     override suspend fun getClaimables(address: String, protocol: ProtocolVO): List<UserClaimableVO> =
         withContext(Dispatchers.IO) {

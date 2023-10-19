@@ -73,10 +73,11 @@ class UniswapV3EthereumClaimableProvider(
                 position.token1,
                 position.fee
             )
-            val market = uniswapV3PoolingMarketProvider.getMarket(poolAddress)
 
-
-            val poolContract = market.internalMetadata["contract"] as UniswapV3PoolContract
+            val poolContract = UniswapV3PoolContract(
+                getBlockchainGateway(),
+                poolAddress
+            )
 
             val token0Async = async { uniswapV3PoolingMarketProvider.getToken(poolContract.token0.await()) }
             val token1Async = async { uniswapV3PoolingMarketProvider.getToken(poolContract.token1.await()) }
@@ -85,21 +86,25 @@ class UniswapV3EthereumClaimableProvider(
                 async { poolContract.ticks(position.tickUpper) }, async { poolContract.ticks(position.tickLower) }
             )
 
-            val owedTokens0 = calculateOwed(
-                poolContract.feeGrowthGlobal0X128.await(),
-                upperTicks.feeGrowthOutside0X128,
-                lowerTicks.feeGrowthOutside0X128,
-                position.feeGrowthInside0LastX128,
-                position.liquidity,
-            )
+            val owedTokens0 = async {
+                calculateOwed(
+                    poolContract.feeGrowthGlobal0X128.await(),
+                    upperTicks.feeGrowthOutside0X128,
+                    lowerTicks.feeGrowthOutside0X128,
+                    position.feeGrowthInside0LastX128,
+                    position.liquidity,
+                )
+            }
 
-            val owedToken1 = calculateOwed(
-                poolContract.feeGrowthGlobal1X128.await(),
-                upperTicks.feeGrowthOutside1X128,
-                lowerTicks.feeGrowthOutside1X128,
-                position.feeGrowthInside1LastX128,
-                position.liquidity,
-            )
+            val owedToken1 = async {
+                calculateOwed(
+                    poolContract.feeGrowthGlobal1X128.await(),
+                    upperTicks.feeGrowthOutside1X128,
+                    lowerTicks.feeGrowthOutside1X128,
+                    position.feeGrowthInside1LastX128,
+                    position.liquidity,
+                )
+            }
 
             val token1 = token1Async.await()
             val token0 = token0Async.await()
@@ -107,19 +112,19 @@ class UniswapV3EthereumClaimableProvider(
             listOf(
                 UserClaimable(
                     id = "$address-${token1.address}-${token1.address}",
-                    name = market.name + " Yield",
+                    name = "${token0.symbol}/${token1.symbol} yield",
                     protocol = getProtocol(),
                     network = getNetwork(),
                     claimableToken = token1.toFungibleToken(),
-                    amount = owedTokens0,
+                    amount = owedTokens0.await(),
                 ),
                 UserClaimable(
                     id = "$address-${token0.address}-${token1.address}",
-                    name = market.name + " Yield",
+                    name = "${token0.symbol}/${token1.symbol} yield",
                     protocol = getProtocol(),
                     network = getNetwork(),
                     claimableToken = token1.toFungibleToken(),
-                    amount = owedToken1
+                    amount = owedToken1.await()
                 )
             )
         } catch (ex: Exception) {
@@ -135,6 +140,4 @@ class UniswapV3EthereumClaimableProvider(
     override fun getNetwork(): Network {
         return Network.ETHEREUM
     }
-
-
 }

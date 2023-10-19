@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import org.web3j.crypto.WalletUtils.isValidAddress
 import java.util.concurrent.Executors
+import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.measureTimedValue
 
@@ -80,7 +81,7 @@ class ClaimableAggregateRestControllerImpl(
 
         val observation = start("requests.get.claimables.aggregate", observationRegistry)
         val result = measureTimedValue {
-            filteredProtocols(includes, excludes).parMap {
+            filteredProtocols(includes, excludes).parMap(EmptyCoroutineContext, 8) {
                 claimablesClient.getClaimables(address, protocolVOMapper.map(it))
             }.flatten()
         }
