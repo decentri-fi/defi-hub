@@ -1,5 +1,10 @@
 package io.defitrack.protocol.aerodrome.farming
 
+import arrow.core.Either
+import arrow.core.None
+import arrow.core.Option
+import arrow.core.some
+import arrow.fx.coroutines.parMap
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
@@ -8,17 +13,15 @@ import io.defitrack.common.utils.Refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.network.toVO
+import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aerodrome.pooling.AerodromePoolingMarketProvider
 import io.defitrack.protocol.velodrome.contract.VelodromeV2GaugeContract
 import io.defitrack.protocol.velodrome.contract.VoterContract
-import io.defitrack.transaction.PreparedTransaction
 import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 
 @Component
@@ -37,55 +40,61 @@ class AerodromeGaugeMarketProvider(
     }
 
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
-        poolingMarketProvider.getMarkets().forEach {
-            val gauge = voterContract.await().gauges(it.address)
-
-            launch {
-                throttled {
-                    if (gauge != "0x0000000000000000000000000000000000000000") {
-                        try {
-                            val contract = VelodromeV2GaugeContract(
-                                getBlockchainGateway(),
-                                gauge
-                            )
-
-                            val stakedToken = getToken(contract.stakedToken.await())
-                            val rewardToken = getToken(contract.rewardToken.await())
-
-                            val market = create(
-                                name = stakedToken.name + " Gauge V2",
-                                identifier = stakedToken.symbol + "-v1-${gauge}",
-                                rewardTokens = listOf(rewardToken.toFungibleToken()),
-                                marketSize = Refreshable.refreshable {
-                                    getMarketSize(
-                                        stakedToken.toFungibleToken(),
-                                        contract.address
-                                    )
-                                },
-                                stakedToken = stakedToken.toFungibleToken(),
-                                positionFetcher = defaultPositionFetcher(gauge),
-                                rewardsFinished = false,
-                                metadata = mapOf(
-                                    "address" to gauge,
-                                    "contract" to contract
-                                ),
-                                claimableRewardFetcher = ClaimableRewardFetcher(
-                                    Reward(
-                                        token = rewardToken.toFungibleToken(),
-                                        contractAddress = contract.address,
-                                        getRewardFunction = contract::earnedFn
-                                    ),
-                                    preparedTransaction = selfExecutingTransaction(contract::getRewardFn)
-                                )
-                            )
-
-                            send(market)
-                        } catch (ex: Exception) {
-                            logger.error("Failed to fetch gauge market with pooling market {}", it.address, ex)
-                        }
-                    }
-                }
+        poolingMarketProvider.getMarkets().parMap(concurrency = 12) { poolingMarket ->
+            Either.catch {
+                createGauge(poolingMarket)
             }
+        }.mapNotNull {
+            it.mapLeft { throwable ->
+                logger.error("Error creating gauge market: {}", throwable.message)
+            }.getOrNull()
+        }.forEach {
+            it.onSome {
+                send(it)
+            }
+        }
+    }
+
+    private suspend fun AerodromeGaugeMarketProvider.createGauge(it: PoolingMarket): Option<FarmingMarket> {
+        val gauge = voterContract.await().gauges(it.address)
+
+        return if (gauge != "0x0000000000000000000000000000000000000000") {
+            val contract = VelodromeV2GaugeContract(
+                getBlockchainGateway(),
+                gauge
+            )
+
+            val stakedToken = getToken(contract.stakedToken.await())
+            val rewardToken = getToken(contract.rewardToken.await())
+
+            create(
+                name = stakedToken.name + " Gauge V2",
+                identifier = stakedToken.symbol + "-v1-${gauge}",
+                rewardTokens = listOf(rewardToken.toFungibleToken()),
+                marketSize = Refreshable.refreshable {
+                    getMarketSize(
+                        stakedToken.toFungibleToken(),
+                        contract.address
+                    )
+                },
+                stakedToken = stakedToken.toFungibleToken(),
+                positionFetcher = defaultPositionFetcher(gauge),
+                rewardsFinished = false,
+                internalMetadata = mapOf(
+                    "address" to gauge,
+                    "contract" to contract
+                ),
+                claimableRewardFetcher = ClaimableRewardFetcher(
+                    Reward(
+                        token = rewardToken.toFungibleToken(),
+                        contractAddress = contract.address,
+                        getRewardFunction = contract::earnedFn
+                    ),
+                    preparedTransaction = selfExecutingTransaction(contract::getRewardFn)
+                )
+            ).some()
+        } else {
+            None
         }
     }
 
