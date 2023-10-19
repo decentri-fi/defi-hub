@@ -1,5 +1,6 @@
 package io.defitrack.protocol.distribution
 
+import io.defitrack.node.Node
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.CompanyVO
 import io.ktor.client.*
@@ -10,9 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Configuration
-import java.util.logging.Logger
 import kotlin.IllegalArgumentException
 
 @Configuration

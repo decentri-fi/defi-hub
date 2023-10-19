@@ -1,4 +1,4 @@
-package io.defitrack.protocol.distribution
+package io.defitrack.node
 
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.CompanyVO

@@ -81,9 +81,7 @@ class ClaimableAggregateRestControllerImpl(
 
         val observation = start("requests.get.claimables.aggregate", observationRegistry)
         val result = measureTimedValue {
-            filteredProtocols(includes, excludes).parMap(EmptyCoroutineContext, 8) {
-                claimablesClient.getClaimables(address, protocolVOMapper.map(it))
-            }.flatten()
+            claimablesClient.getClaimables(address, filteredProtocols(includes, excludes))
         }
 
         logger.info("took ${result.duration.inWholeSeconds} seconds to aggregate ${result.value.size} claimables for $address")
@@ -122,7 +120,7 @@ class ClaimableAggregateRestControllerImpl(
                         it.primitives.contains(DefiPrimitive.CLAIMABLES)
                     }.map {
                         launch {
-                            claimablesClient.getClaimables(address, protocolVOMapper.map(it)).forEach {
+                            claimablesClient.getClaimables(address, listOf(it)).forEach {
                                 emitter.send(it)
                             }
                         }

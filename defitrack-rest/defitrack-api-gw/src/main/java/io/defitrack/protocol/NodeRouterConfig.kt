@@ -1,6 +1,6 @@
 package io.defitrack.protocol
 
-import io.defitrack.protocol.distribution.Node
+import io.defitrack.node.Node
 import io.defitrack.protocol.distribution.ProtocolDistributionConfig
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.runBlocking
