@@ -1,5 +1,6 @@
 package io.defitrack.farming
 
+import arrow.fx.coroutines.parMap
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
@@ -14,6 +15,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
+import kotlin.coroutines.EmptyCoroutineContext
 
 @Component
 @ConditionalOnCompany(Company.SWAPFISH)
@@ -28,12 +30,10 @@ class SwapfishArbitrumMasterchefFarmingMarketProvider(
                 getBlockchainGateway(),
                 masterChefAddr
             )
-            (0 until masterchef.poolLength.await().toInt()).map { poolId ->
-                async {
-                    toStakingMarketElement(masterchef, poolId)
-                }
+            (0 until masterchef.poolLength.await().toInt()).parMap(concurrency = 12) { poolId ->
+                toStakingMarketElement(masterchef, poolId)
             }
-        }.awaitAll().filterNotNull()
+        }.filterNotNull()
     }
 
     override fun getProtocol(): Protocol {
