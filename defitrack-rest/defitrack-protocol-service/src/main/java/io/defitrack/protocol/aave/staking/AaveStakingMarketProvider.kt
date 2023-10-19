@@ -15,6 +15,7 @@ import io.defitrack.network.toVO
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.transaction.PreparedTransaction
+import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import org.springframework.stereotype.Component
 import java.math.BigInteger
 
@@ -70,13 +71,7 @@ class AaveStakingMarketProvider : FarmingMarketProvider() {
                             stAaveContract.getTotalRewardFunction(user)
                         }
                     ),
-                    preparedTransaction = { user ->
-                        PreparedTransaction(
-                            getNetwork().toVO(),
-                            stAaveContract.getClaimRewardsFunction(user),
-                            stAave
-                        )
-                    }
+                    preparedTransaction = selfExecutingTransaction(stAaveContract::getClaimRewardsFunction)
                 )
             )
         )

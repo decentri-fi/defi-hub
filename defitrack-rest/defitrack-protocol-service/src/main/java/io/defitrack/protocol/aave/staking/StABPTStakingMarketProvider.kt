@@ -11,10 +11,9 @@ import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.position.Position
 import io.defitrack.market.position.PositionFetcher
-import io.defitrack.network.toVO
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
-import io.defitrack.transaction.PreparedTransaction
+import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import org.springframework.stereotype.Component
 import java.math.BigInteger
 
@@ -69,17 +68,9 @@ class StABPTStakingMarketProvider(
                     Reward(
                         token = aaveToken.toFungibleToken(),
                         contractAddress = stABPT,
-                        getRewardFunction = { user ->
-                            stakingContract.getTotalRewardFunction(user)
-                        }
+                        getRewardFunction = stakingContract::getTotalRewardFunction
                     ),
-                    preparedTransaction = { user ->
-                        PreparedTransaction(
-                            getNetwork().toVO(),
-                            stakingContract.getClaimRewardsFunction(user),
-                            stABPT
-                        )
-                    }
+                    preparedTransaction = selfExecutingTransaction(stakingContract::getClaimRewardsFunction)
                 )
             )
         )
