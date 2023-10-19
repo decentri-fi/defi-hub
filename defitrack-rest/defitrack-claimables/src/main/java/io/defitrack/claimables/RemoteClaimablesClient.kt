@@ -2,6 +2,7 @@ package io.defitrack.claimables
 
 import io.defitrack.claimable.vo.ClaimableMarketVO
 import io.defitrack.claimable.vo.UserClaimableVO
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.ProtocolVO
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
@@ -15,7 +16,6 @@ import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.TimedValue
-import kotlin.time.measureTime
 import kotlin.time.measureTimedValue
 
 @Component
@@ -28,7 +28,7 @@ class RemoteClaimablesClient(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
 
-    override suspend fun getClaimables(address: String, protocols: List<ProtocolVO>): List<UserClaimableVO> =
+    override suspend fun getClaimables(address: String, protocols: List<Protocol>): List<UserClaimableVO> =
         withContext(Dispatchers.IO) {
             protocols.flatMap { protocol ->
                 val timedValue: TimedValue<List<UserClaimableVO>> = measureTimedValue {
