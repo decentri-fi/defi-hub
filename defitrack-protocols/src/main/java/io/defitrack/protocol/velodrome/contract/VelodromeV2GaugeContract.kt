@@ -18,11 +18,11 @@ class VelodromeV2GaugeContract(
 
     val rewardToken: Deferred<String>  = constant("rewardToken", address())
 
-    fun getRewardFn(address: String): Function {
+    fun getRewardFn(address: String): ContractCall {
         return createFunction(
             "getReward",
             listOf(address.toAddress())
-        )
+        ).toContractCall()
     }
 
     fun earnedFn(address: String) = createFunction("earned", listOf(address.toAddress()), listOf(uint256()))

@@ -15,6 +15,7 @@ import io.defitrack.protocol.aerodrome.pooling.AerodromePoolingMarketProvider
 import io.defitrack.protocol.velodrome.contract.VelodromeV2GaugeContract
 import io.defitrack.protocol.velodrome.contract.VoterContract
 import io.defitrack.transaction.PreparedTransaction
+import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
@@ -72,18 +73,9 @@ class AerodromeGaugeMarketProvider(
                                     Reward(
                                         token = rewardToken.toFungibleToken(),
                                         contractAddress = contract.address,
-                                        getRewardFunction = { user ->
-                                            contract.earnedFn(user)
-                                        }
+                                        getRewardFunction = contract::earnedFn
                                     ),
-                                    preparedTransaction = { user ->
-                                        PreparedTransaction(
-                                            network = getNetwork().toVO(),
-                                            function = contract.getRewardFn(user),
-                                            to = contract.address,
-                                            from = user
-                                        )
-                                    }
+                                    preparedTransaction = selfExecutingTransaction(contract::getRewardFn)
                                 )
                             )
 

@@ -1,5 +1,10 @@
 package io.defitrack.protocol.velodrome.staking
 
+import arrow.core.Either
+import arrow.core.None
+import arrow.core.Some
+import arrow.core.some
+import arrow.fx.coroutines.parMap
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
@@ -15,8 +20,10 @@ import io.defitrack.protocol.velodrome.contract.VelodromeV2GaugeContract
 import io.defitrack.protocol.velodrome.contract.VoterContract
 import io.defitrack.protocol.velodrome.pooling.VelodromeV2OptimismPoolingMarketProvider
 import io.defitrack.transaction.PreparedTransaction
+import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.forEach
 import kotlinx.coroutines.launch
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
@@ -39,64 +46,53 @@ class VelodromeV2GaugeMarketProvider(
 
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
         val voterContract = deferredVoterContract.await()
-        poolingMarketProvider.getMarkets().forEach {
-            val gauge = voterContract.gauges(it.address)
-            throttled {
-                launch {
-                    if (gauge != "0x0000000000000000000000000000000000000000") {
-                        try {
-                            val gaugeContract = VelodromeV2GaugeContract(
-                                getBlockchainGateway(),
-                                gauge
+        poolingMarketProvider.getMarkets().parMap(concurrency = 12) {
+            Either.catch {
+                val gauge = voterContract.gauges(it.address)
+                if (gauge != "0x0000000000000000000000000000000000000000") {
+                    val gaugeContract = VelodromeV2GaugeContract(
+                        getBlockchainGateway(),
+                        gauge
+                    )
+
+                    val stakedToken = getToken(gaugeContract.stakedToken.await())
+                    val rewardToken = getToken(gaugeContract.rewardToken.await())
+
+                    create(
+                        name = stakedToken.name + " Gauge V2",
+                        identifier = stakedToken.symbol + "-v1-${gauge}",
+                        rewardTokens = listOf(rewardToken.toFungibleToken()),
+                        marketSize = refreshable {
+                            getMarketSize(
+                                stakedToken.toFungibleToken(),
+                                gaugeContract.address
                             )
-
-                            val stakedToken = getToken(gaugeContract.stakedToken.await())
-                            val rewardToken = getToken(gaugeContract.rewardToken.await())
-
-                            val market = create(
-                                name = stakedToken.name + " Gauge V2",
-                                identifier = stakedToken.symbol + "-v1-${gauge}",
-                                rewardTokens = listOf(rewardToken.toFungibleToken()),
-                                marketSize = refreshable {
-                                    getMarketSize(
-                                        stakedToken.toFungibleToken(),
-                                        gaugeContract.address
-                                    )
-                                },
-                                stakedToken = stakedToken.toFungibleToken(),
-                                positionFetcher = defaultPositionFetcher(gauge),
-                                rewardsFinished = false,
-                                metadata = mapOf(
-                                    "address" to gauge,
-                                ),
-                                claimableRewardFetcher = ClaimableRewardFetcher(
-                                    listOf(
-                                        Reward(
-                                            token = rewardToken.toFungibleToken(),
-                                            contractAddress = gaugeContract.address,
-                                            getRewardFunction = { user ->
-                                                gaugeContract.earnedFn(user)
-                                            }
-                                        )
-                                    ),
-                                    preparedTransaction = { user ->
-                                        PreparedTransaction(
-                                            network = getNetwork().toVO(),
-                                            function = gaugeContract.getRewardFn(user),
-                                            to = gaugeContract.address,
-                                            from = user
-                                        )
-                                    }
-                                )
-                            )
-
-                            send(market)
-                        } catch (ex: Exception) {
-                            logger.error("Failed to fetch gauge market with pooling market {}", it.address, ex)
-                        }
-                    }
+                        },
+                        stakedToken = stakedToken.toFungibleToken(),
+                        positionFetcher = defaultPositionFetcher(gauge),
+                        rewardsFinished = false,
+                        metadata = mapOf(
+                            "address" to gauge,
+                        ),
+                        claimableRewardFetcher = ClaimableRewardFetcher(
+                            Reward(
+                                token = rewardToken.toFungibleToken(),
+                                contractAddress = gaugeContract.address,
+                                getRewardFunction = gaugeContract::earnedFn
+                            ),
+                            preparedTransaction = selfExecutingTransaction(gaugeContract::getRewardFn)
+                        )
+                    ).some()
+                } else {
+                    None
                 }
             }
+        }.mapNotNull {
+            it.mapLeft {
+                logger.error("Error while fetching gauge", it)
+            }.getOrNull()
+        }.forEach {
+            it.onSome { send(it) }
         }
     }
 

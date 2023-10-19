@@ -4,6 +4,7 @@ import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -25,7 +26,7 @@ class SushiswapEthereumMasterchefV2MarketProvider : FarmingMarketProvider() {
 
     private val masterchefV2ContractAddress = "0xef0881ec094552b2e128cf945ef17a6752b4ec5d"
 
-    val deferredContract = AsyncUtils.lazyAsync {
+    val deferredContract = lazyAsync {
         MasterchefV2Contract(
             getBlockchainGateway(),
             masterchefV2ContractAddress
@@ -114,7 +115,7 @@ class SushiswapEthereumMasterchefV2MarketProvider : FarmingMarketProvider() {
                 ),
             )
         } catch (ex: Exception) {
-            logger.error("Error while fetching market for poolId $poolId", ex)
+            logger.error("Error while fetching market for poolId $poolId")
             null
         }
     }
