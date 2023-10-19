@@ -1,5 +1,7 @@
 package io.defitrack.protocol.convex.staking
 
+import io.defitrack.claimable.domain.ClaimableRewardFetcher
+import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -8,6 +10,7 @@ import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.convex.ConvexEthereumService
 import io.defitrack.protocol.convex.contract.CvxRewardPoolContract
+import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import org.springframework.stereotype.Component
 
 @Component
@@ -23,18 +26,26 @@ class ConvexEthereumRewardPoolMarketProvider(
                 getBlockchainGateway(),
                 it,
             )
-        }.map {
-            val stakingToken = getToken(it.stakingToken())
-            val rewardToken = getToken(it.rewardToken())
+        }.map { poolContract ->
+            val stakingToken = getToken(poolContract.stakingToken())
+            val rewardToken = getToken(poolContract.rewardToken())
             create(
                 name = "Convex Reward Pool",
-                identifier = it.address,
+                identifier = poolContract.address,
                 stakedToken = stakingToken.toFungibleToken(),
                 rewardTokens = listOf(rewardToken.toFungibleToken()),
-                balanceFetcher = defaultPositionFetcher(
-                    it.address
+                positionFetcher = defaultPositionFetcher(
+                    poolContract.address
                 ),
-                internalMetadata = mapOf("contract" to it)
+                internalMetadata = mapOf("contract" to poolContract),
+                claimableRewardFetcher = ClaimableRewardFetcher(
+                    Reward(
+                        rewardToken.toFungibleToken(),
+                        poolContract.address,
+                        poolContract::earnedFunction
+                    ),
+                    selfExecutingTransaction(poolContract::getRewardFunction)
+                )
             )
         }
     }

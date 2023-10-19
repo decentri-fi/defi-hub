@@ -8,6 +8,4 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.COMPOUND)
-class CompoundPolygonRewardProvider(
-    blockchainGatewayProvider: BlockchainGatewayProvider
-) : CompoundRewardProvider(blockchainGatewayProvider, Network.POLYGON)
+class CompoundPolygonRewardProvider : CompoundRewardProvider(Network.POLYGON)

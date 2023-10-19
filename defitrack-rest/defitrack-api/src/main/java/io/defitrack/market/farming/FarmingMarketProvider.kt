@@ -19,7 +19,8 @@ abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>() {
         rewardTokens: List<FungibleToken>,
         marketSize: Refreshable<BigDecimal>? = null,
         apr: BigDecimal? = null,
-        balanceFetcher: PositionFetcher? = null,
+        positionFetcher: PositionFetcher? = null,
+        claimableRewardFetchers: List<ClaimableRewardFetcher> = emptyList(),
         claimableRewardFetcher: ClaimableRewardFetcher? = null,
         investmentPreparer: InvestmentPreparer? = null,
         exitPositionPreparer: ExitPositionPreparer? = null,
@@ -36,9 +37,15 @@ abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>() {
             rewardTokens = rewardTokens,
             marketSize = marketSize,
             apr = apr,
-            balanceFetcher = balanceFetcher,
+            balanceFetcher = positionFetcher,
             investmentPreparer = investmentPreparer,
-            claimableRewardFetcher = claimableRewardFetcher,
+            claimableRewardFetchers = claimableRewardFetchers.let {
+                if (claimableRewardFetcher != null) {
+                    it + claimableRewardFetcher
+                } else {
+                    it
+                }
+            },
             metadata = metadata,
             internalMetadata = internalMetadata,
             expired = rewardsFinished,

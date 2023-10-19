@@ -32,7 +32,7 @@ class PolygonStakingMarketProvider : FarmingMarketProvider() {
                 identifier = polygonStaking,
                 stakedToken = staked.toFungibleToken(),
                 rewardTokens = listOf(staked.toFungibleToken()),
-                balanceFetcher = PositionFetcher(
+                positionFetcher = PositionFetcher(
                     polygonStaking,
                     {
                         polygonStakingContract.totalStakedForFn(it)

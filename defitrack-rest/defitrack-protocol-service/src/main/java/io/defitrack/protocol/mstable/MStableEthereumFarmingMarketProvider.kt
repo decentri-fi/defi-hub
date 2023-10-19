@@ -51,7 +51,7 @@ class MStableEthereumFarmingMarketProvider(
             rewardTokens = listOf(
                 rewardsToken.toFungibleToken()
             ),
-            balanceFetcher = PositionFetcher(
+            positionFetcher = PositionFetcher(
                 address = contract.address,
                 { user -> contract.rawBalanceOfFunction(user) }
             ),

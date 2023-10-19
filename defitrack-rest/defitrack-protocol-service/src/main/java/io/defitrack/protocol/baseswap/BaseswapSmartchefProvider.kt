@@ -74,7 +74,7 @@ class BaseswapSmartchefProvider : FarmingMarketProvider() {
                             )
                         }
                     ),
-                    balanceFetcher = PositionFetcher(
+                    positionFetcher = PositionFetcher(
                         contract.address,
                         { user ->
                             contract.userInfo(user)

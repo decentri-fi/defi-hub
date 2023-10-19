@@ -45,7 +45,7 @@ class XSushiStakingMarketProvider(
                     )
                 },
                 apr = null,
-                balanceFetcher = PositionFetcher(
+                positionFetcher = PositionFetcher(
                     xsushi,
                     { user ->
                         balanceOfFunction(user)

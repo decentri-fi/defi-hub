@@ -56,7 +56,7 @@ class PolycatFarmingMarketProvider(
             marketSize = Refreshable.refreshable {
                 calculateMarketSize(stakedtoken, chef)
             },
-            balanceFetcher = PositionFetcher(
+            positionFetcher = PositionFetcher(
                 address = chef.address,
                 { user ->
                     chef.userInfoFunction(

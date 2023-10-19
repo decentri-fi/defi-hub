@@ -5,7 +5,6 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -13,15 +12,11 @@ import io.defitrack.market.lending.domain.PositionFetcher
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapService
-import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
 import io.defitrack.protocol.quickswap.contract.DualRewardFactoryContract
 import io.defitrack.protocol.quickswap.contract.QuickswapDualRewardPoolContract
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
-import org.springframework.stereotype.Service
-import java.math.BigDecimal
 import java.util.*
 import kotlin.coroutines.EmptyCoroutineContext
 
@@ -68,7 +63,7 @@ class QuickswapDualFarmingMarketProvider(
                     marketSize = refreshable {
                         getMarketSize(stakedToken.toFungibleToken(), pool.address)
                     },
-                    balanceFetcher = PositionFetcher(
+                    positionFetcher = PositionFetcher(
                         pool.address,
                         { user -> ERC20Contract.balanceOfFunction(user) }
                     ),

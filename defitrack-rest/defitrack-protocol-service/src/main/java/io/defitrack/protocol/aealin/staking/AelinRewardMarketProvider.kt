@@ -48,7 +48,7 @@ class AelinRewardMarketProvider(
                     )
                 },
                 apr = calculateSingleRewardPool(rewardPool.address),
-                balanceFetcher = defaultPositionFetcher(
+                positionFetcher = defaultPositionFetcher(
                     rewardPool.address
                 ),
                 claimableRewardFetcher = ClaimableRewardFetcher(

@@ -52,7 +52,7 @@ abstract class HopFarmingMarketProvider(
                 marketSize = Refreshable.refreshable {
                     getMarketSize(stakedToken, contract)
                 },
-                balanceFetcher = PositionFetcher(
+                positionFetcher = PositionFetcher(
                     address = contract.address,
                     function = { user -> balanceOfFunction(user) }
                 ),

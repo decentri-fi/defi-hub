@@ -32,7 +32,7 @@ class AaveV2IncentivesControllerMarketProvider : FarmingMarketProvider() {
                         incentivesController
                     )
                 },
-                balanceFetcher = PositionFetcher(
+                positionFetcher = PositionFetcher(
                     incentivesController, { user ->
                         IncentivesControllerContract(
                             getBlockchainGateway(),

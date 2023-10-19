@@ -42,7 +42,7 @@ class DQuickFarmingMarketProvider(
                 rewardTokens = listOf(
                     stakedToken
                 ),
-                balanceFetcher = PositionFetcher(
+                positionFetcher = PositionFetcher(
                     stakedToken.address,
                     { user -> ERC20Contract.balanceOfFunction(user) }
                 ),

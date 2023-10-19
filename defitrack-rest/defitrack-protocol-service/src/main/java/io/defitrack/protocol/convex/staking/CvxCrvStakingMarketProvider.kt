@@ -34,7 +34,7 @@ class CvxCrvStakingMarketProvider : FarmingMarketProvider() {
                 identifier = stakingWrapperAddress,
                 stakedToken = getToken(contract.cvxCrv.await()).toFungibleToken(),
                 rewardTokens = emptyList(),
-                balanceFetcher = defaultPositionFetcher(address = stakingWrapperAddress),
+                positionFetcher = defaultPositionFetcher(address = stakingWrapperAddress),
             )
         )
 

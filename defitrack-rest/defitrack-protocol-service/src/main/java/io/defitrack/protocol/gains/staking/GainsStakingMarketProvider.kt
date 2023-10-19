@@ -41,7 +41,7 @@ class GainsStakingMarketProvider : FarmingMarketProvider() {
                 identifier = stakingMarketAddress,
                 stakedToken = gns.toFungibleToken(),
                 rewardTokens = listOf(dai.toFungibleToken()),
-                balanceFetcher = PositionFetcher(
+                positionFetcher = PositionFetcher(
                     contract.address,
                     { user ->
                         contract.totalGnsStaked(user)

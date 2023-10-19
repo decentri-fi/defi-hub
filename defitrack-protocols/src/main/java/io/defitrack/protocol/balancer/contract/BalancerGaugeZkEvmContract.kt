@@ -13,6 +13,14 @@ class BalancerGaugeZkEvmContract(
     address: String
 ) : BalancerGaugeContract(blockchainGateway, address) {
 
+    fun integrateFraction(user: String): Function {
+        return createFunction(
+            "integrate_fraction",
+            listOf(user.toAddress()),
+            listOf(uint256())
+        )
+    }
+
     override fun getClaimableRewardFunction(address: String, token: String): Function {
         return Function(
             "claimable_reward",

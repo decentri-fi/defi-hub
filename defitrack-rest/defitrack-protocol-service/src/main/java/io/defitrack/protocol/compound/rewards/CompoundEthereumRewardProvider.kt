@@ -12,12 +12,11 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.COMPOUND)
-class CompoundEthereumRewardProvider(
-    blockchainGatewayProvider: BlockchainGatewayProvider
-) : CompoundRewardProvider(blockchainGatewayProvider, Network.ETHEREUM) {
+class CompoundEthereumRewardProvider : CompoundRewardProvider(Network.ETHEREUM) {
 
     override fun getContract(): CompoundRewardContract {
-        return object: CompoundRewardContract(getBlockchainGateway(), CompoundAddressesProvider.CONFIG[network]!!.rewards) {
+        return object :
+            CompoundRewardContract(getBlockchainGateway(), CompoundAddressesProvider.CONFIG[network]!!.rewards) {
             override suspend fun getRewardConfig(comet: String): RewardConfig {
                 return (read(
                     "rewardConfig",

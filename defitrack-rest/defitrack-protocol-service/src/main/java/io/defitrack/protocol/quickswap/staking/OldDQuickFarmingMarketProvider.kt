@@ -13,7 +13,6 @@ import io.defitrack.protocol.quickswap.contract.DQuickContract
 import io.defitrack.protocol.quickswap.staking.invest.DQuickStakingInvestmentPreparer
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
-import org.springframework.stereotype.Service
 
 @Component
 @ConditionalOnCompany(Company.QUICKSWAP)
@@ -42,7 +41,7 @@ class OldDQuickFarmingMarketProvider(
                 rewardTokens = listOf(
                     stakedToken
                 ),
-                balanceFetcher = PositionFetcher(
+                positionFetcher = PositionFetcher(
                     stakedToken.address,
                     { user -> ERC20Contract.balanceOfFunction(user) }
                 ),

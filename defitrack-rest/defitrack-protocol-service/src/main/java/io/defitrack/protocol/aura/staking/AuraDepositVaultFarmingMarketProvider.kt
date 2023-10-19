@@ -41,7 +41,7 @@ class AuraDepositVaultFarmingMarketProvider(
                         marketSize = Refreshable.refreshable {
                             getMarketSize(asset.toFungibleToken(), crvrewards.rewardToken.await())
                         },
-                        balanceFetcher = defaultPositionFetcher(crvrewards.address)
+                        positionFetcher = defaultPositionFetcher(crvrewards.address)
                     )
                 } catch (ex: Exception) {
                     logger.error("Error fetching market for ${it.crvRewards}", ex)

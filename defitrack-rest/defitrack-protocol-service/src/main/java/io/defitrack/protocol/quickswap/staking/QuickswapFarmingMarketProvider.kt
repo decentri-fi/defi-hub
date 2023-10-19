@@ -1,7 +1,6 @@
 package io.defitrack.protocol.quickswap.staking
 
 import arrow.core.Either
-import arrow.core.some
 import arrow.fx.coroutines.parMap
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
@@ -88,7 +87,7 @@ class QuickswapFarmingMarketProvider(
                     ),
                     preparedTransaction = selfExecutingTransaction(rewardPool::getRewardFunction)
                 ),
-                balanceFetcher = defaultPositionFetcher(rewardPool.address),
+                positionFetcher = defaultPositionFetcher(rewardPool.address),
                 rewardsFinished = ended
             )
         }

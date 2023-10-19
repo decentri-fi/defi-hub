@@ -37,7 +37,7 @@ class SwethStakingMarketProvider : FarmingMarketProvider() {
                 identifier = swethAddress,
                 stakedToken = ether.toFungibleToken(),
                 rewardTokens = listOf(ether.toFungibleToken()),
-                balanceFetcher = PositionFetcher(
+                positionFetcher = PositionFetcher(
                     swethAddress,
                     ::balanceOfFunction
                 ) { result ->

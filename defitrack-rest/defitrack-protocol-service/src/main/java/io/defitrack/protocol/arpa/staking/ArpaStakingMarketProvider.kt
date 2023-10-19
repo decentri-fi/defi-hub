@@ -37,7 +37,7 @@ class ArpaStakingMarketProvider : FarmingMarketProvider() {
                 identifier = arpaStakingAddress,
                 stakedToken = arpa.toFungibleToken(),
                 rewardTokens = listOf(arpa.toFungibleToken()),
-                balanceFetcher = PositionFetcher(
+                positionFetcher = PositionFetcher(
                     contract.address,
                     { user ->
                         contract.getStakeFn(user)

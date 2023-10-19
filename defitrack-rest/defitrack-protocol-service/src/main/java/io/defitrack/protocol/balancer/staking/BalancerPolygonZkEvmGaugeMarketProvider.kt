@@ -60,7 +60,7 @@ class BalancerPolygonZkEvmGaugeMarketProvider(
                     name = lp.name + " gauge",
                     stakedToken = getToken(gaugecontract.getStakedToken()).toFungibleToken(),
                     rewardTokens = rewards.map(TokenInformationVO::toFungibleToken),
-                    balanceFetcher = PositionFetcher(
+                    positionFetcher = PositionFetcher(
                         gaugecontract.address,
                         { user -> ERC20Contract.balanceOfFunction(user) }
                     ),

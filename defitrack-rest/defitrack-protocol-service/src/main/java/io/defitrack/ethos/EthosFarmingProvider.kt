@@ -12,7 +12,6 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.ethos.EthosStabilityPool
 import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import org.springframework.stereotype.Component
-import javax.swing.text.Position
 
 @Component
 @ConditionalOnCompany(Company.ETHOS)
@@ -35,7 +34,7 @@ class EthosFarmingProvider : FarmingMarketProvider() {
                 identifier = stabilityPoolAddress,
                 stakedToken = staked,
                 rewardTokens = listOf(reward),
-                balanceFetcher = PositionFetcher(
+                positionFetcher = PositionFetcher(
                     contract.address,
                     contract::depositsFn,
                 ),

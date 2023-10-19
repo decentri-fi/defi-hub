@@ -59,7 +59,7 @@ class QidaoFarmingMarketProvider(
             rewardTokens = listOf(
                 rewardToken.toFungibleToken()
             ),
-            balanceFetcher = PositionFetcher(
+            positionFetcher = PositionFetcher(
                 address = chef.address,
                 function = { user -> chef.userInfoFunction(user, poolId) }
             ),

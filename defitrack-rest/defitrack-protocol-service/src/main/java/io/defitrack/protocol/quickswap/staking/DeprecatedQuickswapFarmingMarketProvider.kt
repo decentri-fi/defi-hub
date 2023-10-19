@@ -1,6 +1,5 @@
 package io.defitrack.protocol.quickswap.staking
 
-import arrow.fx.coroutines.parMap
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
@@ -11,22 +10,15 @@ import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapService
-import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
 import io.defitrack.protocol.quickswap.contract.QuickswapRewardPoolContract
 import io.defitrack.protocol.quickswap.contract.RewardFactoryContract
-import io.defitrack.transaction.PreparedTransaction
 import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.sync.Semaphore
-import kotlinx.coroutines.sync.withPermit
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -83,7 +75,7 @@ class DeprecatedQuickswapFarmingMarketProvider(
                         ),
                         preparedTransaction = selfExecutingTransaction(rewardPool::getRewardFunction)
                     ),
-                    balanceFetcher = defaultPositionFetcher(
+                    positionFetcher = defaultPositionFetcher(
                         rewardPool.address
                     ),
                     rewardsFinished = true

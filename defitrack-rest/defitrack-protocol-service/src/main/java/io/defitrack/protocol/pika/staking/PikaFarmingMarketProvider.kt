@@ -1,5 +1,7 @@
 package io.defitrack.protocol.pika.staking
 
+import io.defitrack.claimable.domain.ClaimableRewardFetcher
+import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.erc20.TokenInformationVO
@@ -8,7 +10,9 @@ import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.pika.PikaStakingContract
+import io.defitrack.transaction.PreparedTransaction
 import org.springframework.stereotype.Component
+import java.math.BigInteger
 
 @Component
 @ConditionalOnCompany(Company.PIKA)
@@ -31,10 +35,33 @@ class PikaFarmingMarketProvider : FarmingMarketProvider() {
                 identifier = pikaStaking,
                 stakedToken = stakingToken.toFungibleToken(),
                 rewardTokens = rewardTokens.map(TokenInformationVO::toFungibleToken),
-                balanceFetcher = defaultPositionFetcher(pikaStaking),
+                positionFetcher = defaultPositionFetcher(pikaStaking),
                 internalMetadata = mapOf(
                     "contract" to contract
-                )
+                ),
+                claimableRewardFetchers = rewardTokens.mapIndexed { index, rewardToken ->
+                    val reward = rewardPools[index]
+                    ClaimableRewardFetcher(
+                        Reward(
+                            rewardToken.toFungibleToken(),
+                            reward.fetchAddress(),
+                            reward::getClaimableReward,
+                            extractAmountFromRewardFunction = { result, _ ->
+                                when (reward) {
+                                    is PikaStakingContract.PikaRewardPoolContract -> {
+                                        val precision = reward.getPrecision()
+                                        (result[0].value as BigInteger) / precision
+                                    }
+
+                                    else -> {
+                                        result[0].value as BigInteger
+                                    }
+                                }
+                            }
+                        ),
+                        PreparedTransaction.Companion.selfExecutingTransaction(reward::claimRewardFn)
+                    )
+                }
             )
         )
     }

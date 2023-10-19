@@ -35,7 +35,7 @@ class StableJoeStakingFarmingMarketProvider : FarmingMarketProvider() {
                 identifier = stableJoeStakingAddress,
                 stakedToken = stakedToken.toFungibleToken(),
                 rewardTokens = rewards.map { it.toFungibleToken() },
-                balanceFetcher = PositionFetcher(
+                positionFetcher = PositionFetcher(
                     contract.address,
                     { user -> contract.getUserInfofn(user, stakedToken.address) }
                 ),

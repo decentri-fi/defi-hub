@@ -40,7 +40,7 @@ class ChainlinkStakingMarketProvider : FarmingMarketProvider(
                         chainlinkStakingContract.address,
                     )
                 },
-                balanceFetcher = PositionFetcher(
+                positionFetcher = PositionFetcher(
                     chainlinkStakingContract.address,
                     { user -> chainlinkStakingContract.getStake(user) }
                 ),

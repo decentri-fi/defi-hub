@@ -18,7 +18,6 @@ import io.defitrack.protocol.compound.v3.contract.CompoundV3AssetContract
 import io.defitrack.transaction.PreparedTransaction
 
 abstract class CompoundRewardProvider(
-    private val blockchainGatewayProvider: BlockchainGatewayProvider,
     val network: Network
 ) : ClaimableMarketProvider() {
 
@@ -59,7 +58,7 @@ abstract class CompoundRewardProvider(
                 name = "compound ${basetoken.name} rewards",
                 network = network,
                 protocol = Protocol.COMPOUND,
-                claimableRewardFetcher = ClaimableRewardFetcher(
+                claimableRewardFetchers = listOf(ClaimableRewardFetcher(
                     Reward(
                         token = rewardToken.toFungibleToken(),
                         contractAddress = deferredContract.await().address,
@@ -75,7 +74,7 @@ abstract class CompoundRewardProvider(
                             user
                         )
                     }
-                )
+                ))
             )
         }
     }

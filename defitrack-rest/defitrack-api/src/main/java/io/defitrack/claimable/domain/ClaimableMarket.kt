@@ -8,5 +8,5 @@ class ClaimableMarket(
     val name: String,
     val network: Network,
     val protocol: Protocol,
-    val claimableRewardFetcher: ClaimableRewardFetcher,
+    val claimableRewardFetchers: List<ClaimableRewardFetcher>,
 )

@@ -38,7 +38,7 @@ class RibbonEthereumFarmingMarketProvider(
                         )
                     ).toBigDecimal()
                 },
-                balanceFetcher = PositionFetcher(
+                positionFetcher = PositionFetcher(
                     it.id,
                     { user -> ERC20Contract.balanceOfFunction(user) }
                 ),

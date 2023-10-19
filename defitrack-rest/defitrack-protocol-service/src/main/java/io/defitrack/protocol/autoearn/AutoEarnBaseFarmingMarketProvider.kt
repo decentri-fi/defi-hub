@@ -49,7 +49,7 @@ class AutoEarnBaseFarmingMarketProvider : FarmingMarketProvider() {
                                 identifier = "$vaultAddress-$index",
                                 stakedToken = underlying.toFungibleToken(),
                                 rewardTokens = listOf(reward.toFungibleToken()),
-                                balanceFetcher = PositionFetcher(
+                                positionFetcher = PositionFetcher(
                                     vaultAddress,
                                     { user -> vault.autoEarnUserInfoFunction(index, user) }
                                 ),

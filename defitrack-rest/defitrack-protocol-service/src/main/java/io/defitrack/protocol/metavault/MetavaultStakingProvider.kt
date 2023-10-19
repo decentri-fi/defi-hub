@@ -30,7 +30,7 @@ class MetavaultStakingProvider : FarmingMarketProvider() {
                 identifier = address,
                 stakedToken = mvx,
                 rewardTokens = listOf(rewardToken),
-                balanceFetcher = PositionFetcher(
+                positionFetcher = PositionFetcher(
                     contract.address,
                     contract::balanceOfFn
                 ),

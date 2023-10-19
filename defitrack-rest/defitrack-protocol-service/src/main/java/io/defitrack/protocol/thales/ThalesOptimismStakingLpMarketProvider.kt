@@ -38,7 +38,7 @@ class ThalesOptimismStakingLpMarketProvider : FarmingMarketProvider() {
                 rewardTokens = listOf(
                     rewardsToken.toFungibleToken(), secondRewardsToken.toFungibleToken()
                 ),
-                balanceFetcher = PositionFetcher(
+                positionFetcher = PositionFetcher(
                     stakingThales,
                     stakingThalesContract::stakedBalanceOfFn,
                 ),

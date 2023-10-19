@@ -64,7 +64,7 @@ abstract class BalancerGaugeFarmingMarketProvider(
                                     } + " Gauge",
                                     stakedToken = stakedToken.toFungibleToken(),
                                     rewardTokens = rewardTokens,
-                                    balanceFetcher = PositionFetcher(
+                                    positionFetcher = PositionFetcher(
                                         gaugecontract.address,
                                         { user -> balanceOfFunction(user) }
                                     ),

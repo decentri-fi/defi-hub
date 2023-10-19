@@ -30,7 +30,7 @@ class GOHMMarketProvider(
                 identifier = "gohm",
                 stakedToken = ohm.toFungibleToken(),
                 rewardTokens = listOf(ohm.toFungibleToken()),
-                balanceFetcher = PositionFetcher(
+                positionFetcher = PositionFetcher(
                     gohm.address,
                     { user ->
                         balanceOfFunction(user)

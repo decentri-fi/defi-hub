@@ -3,6 +3,7 @@ package io.defitrack.claimable
 import arrow.core.Either
 import arrow.core.getOrElse
 import io.defitrack.claimable.domain.ClaimableMarket
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.token.DecentrifiERC20Resource
 import io.github.reactivecircus.cache4k.Cache
 import org.slf4j.LoggerFactory
@@ -12,6 +13,9 @@ abstract class ClaimableMarketProvider {
 
     @Autowired
     protected lateinit var erC20Resource: DecentrifiERC20Resource
+
+    @Autowired
+    protected lateinit var blockchainGatewayProvider: BlockchainGatewayProvider
 
     abstract suspend fun fetchClaimables(): List<ClaimableMarket>
 

@@ -18,7 +18,6 @@ import java.math.BigInteger
 @Component
 @ConditionalOnCompany(Company.MOONWELL)
 class MoonwellClaimableMarketProvider(
-    private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val moonwellLendingMarketProvider: MoonwellLendingMarketProvider,
 ) : ClaimableMarketProvider() {
 
@@ -54,7 +53,7 @@ class MoonwellClaimableMarketProvider(
                 name = "${it.name} reward",
                 network = Network.BASE,
                 protocol = Protocol.MOONWELL,
-                claimableRewardFetcher = ClaimableRewardFetcher(
+                claimableRewardFetchers = listOf(ClaimableRewardFetcher(
                     Reward(
                         well.await().toFungibleToken(),
                         deferredRewardDistributor.await().address,
@@ -76,7 +75,7 @@ class MoonwellClaimableMarketProvider(
                             to = deferredComptroller.await().address
                         )
                     }
-                )
+                ))
             )
         }
     }

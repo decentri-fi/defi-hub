@@ -22,7 +22,7 @@ data class FarmingMarket(
     val balanceFetcher: PositionFetcher? = null,
     val investmentPreparer: InvestmentPreparer? = null,
     val exitPositionPreparer: ExitPositionPreparer? = null,
-    val claimableRewardFetcher: ClaimableRewardFetcher? = null,
+    val claimableRewardFetchers: List<ClaimableRewardFetcher> = emptyList(),
     val metadata: Map<String, Any> = emptyMap(),
     val internalMetadata: Map<String, Any> = emptyMap(),
     val expired: Boolean = false

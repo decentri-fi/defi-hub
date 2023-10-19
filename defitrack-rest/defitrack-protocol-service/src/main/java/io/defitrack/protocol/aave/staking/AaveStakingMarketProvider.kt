@@ -49,7 +49,7 @@ class AaveStakingMarketProvider : FarmingMarketProvider() {
                         aaveToken.toFungibleToken(), stAave
                     )
                 },
-                balanceFetcher = PositionFetcher(
+                positionFetcher = PositionFetcher(
                     stAave,
                     { user ->
                         balanceOfFunction(user)

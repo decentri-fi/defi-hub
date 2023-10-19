@@ -52,7 +52,7 @@ class StABPTStakingMarketProvider(
                     )
                 },
                 apr = null,
-                balanceFetcher = PositionFetcher(
+                positionFetcher = PositionFetcher(
                     stABPT,
                     { user ->
                         balanceOfFunction(user)

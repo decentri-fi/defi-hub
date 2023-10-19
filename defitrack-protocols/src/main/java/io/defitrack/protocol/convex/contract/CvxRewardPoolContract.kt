@@ -17,11 +17,11 @@ class CvxRewardPoolContract(
         return readSingle("rewardToken", address())
     }
 
-    fun getRewardFunction(user: String): Function {
+    fun getRewardFunction(): ContractCall {
         return createFunction(
             "getReward",
             listOf()
-        )
+        ).toContractCall()
     }
 
     fun earnedFunction(user: String): Function {

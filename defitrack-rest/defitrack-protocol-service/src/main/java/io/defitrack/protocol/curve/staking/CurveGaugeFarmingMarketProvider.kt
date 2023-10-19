@@ -60,7 +60,7 @@ abstract class CurveGaugeFarmingMarketProvider(
                                     stakedToken.toFungibleToken(), gauge, getNetwork()
                                 )
                             },
-                            balanceFetcher = PositionFetcher(
+                            positionFetcher = PositionFetcher(
                                 gauge,
                                 { user ->
                                     balanceOfFunction(user)

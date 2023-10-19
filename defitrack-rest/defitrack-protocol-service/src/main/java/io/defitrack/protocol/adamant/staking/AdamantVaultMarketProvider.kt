@@ -52,7 +52,7 @@ class AdamantVaultMarketProvider(
                             rewardTokens = listOf(
                                 rewardToken
                             ),
-                            balanceFetcher = PositionFetcher(
+                            positionFetcher = PositionFetcher(
                                 vault.address,
                                 { user -> balanceOfFunction(user) }
                             ),

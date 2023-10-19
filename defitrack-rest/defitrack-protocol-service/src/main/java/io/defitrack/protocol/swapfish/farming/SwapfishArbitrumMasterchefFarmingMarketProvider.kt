@@ -58,7 +58,7 @@ class SwapfishArbitrumMasterchefFarmingMarketProvider(
                 marketSize = refreshable {
                     getMarketSize(stakedtoken.toFungibleToken(), chef.address)
                 },
-                balanceFetcher = PositionFetcher(
+                positionFetcher = PositionFetcher(
                     chef.address,
                     { user -> chef.userInfoFunction(poolId, user) }
                 ),

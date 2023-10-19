@@ -71,7 +71,7 @@ abstract class SushiMinichefV2FarmingMarketProvider(
                         )
                     }
                 ),
-                balanceFetcher = PositionFetcher(
+                positionFetcher = PositionFetcher(
                     chef.address,
                     { user -> chef.userInfoFunction(poolId, user) }
                 ),

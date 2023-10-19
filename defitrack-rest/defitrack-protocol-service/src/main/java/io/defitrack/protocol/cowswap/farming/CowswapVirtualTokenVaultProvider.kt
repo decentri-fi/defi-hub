@@ -28,7 +28,7 @@ class CowswapVirtualTokenVaultProvider : FarmingMarketProvider() {
                         cowToken, vtokenAddress
                     )
                 },
-                balanceFetcher = defaultPositionFetcher(vtokenAddress),
+                positionFetcher = defaultPositionFetcher(vtokenAddress),
             )
         )
     }

@@ -2,9 +2,11 @@ package io.defitrack.claimable
 
 import arrow.core.*
 import arrow.core.Either.Companion.catch
+import io.defitrack.claimable.domain.ClaimableMarket
+import io.defitrack.claimable.domain.ClaimableRewardFetcher
+import io.defitrack.claimable.domain.Reward
 import io.defitrack.claimable.domain.UserClaimable
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.protocol.Protocol
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -33,34 +35,42 @@ class DefaultUserClaimableProvider(
             return@coroutineScope emptyList()
         }
 
+        data class RewardAndClaimable(
+            val reward: Reward,
+            val claimable: ClaimableMarket,
+            val claimableRewardFetcher: ClaimableRewardFetcher
+        )
+
         return@coroutineScope fetchersByNetwork.map { marketsByNetwork ->
             async {
                 try {
                     val rewards = marketsByNetwork.value.flatMap { claimable ->
-                        claimable.claimableRewardFetcher.rewards.map {
-                            it to claimable
+                        claimable.claimableRewardFetchers.flatMap { fetcher ->
+                            fetcher.rewards.map { reward ->
+                                RewardAndClaimable(reward, claimable, fetcher)
+                            }
                         }
                     }
 
                     blockchainGatewayProvider.getGateway(marketsByNetwork.key).readMultiCall(
-                        rewards.map { it.first.toMulticall(userAddress) }
+                        rewards.map { it.reward.toMulticall(userAddress) }
                     ).mapIndexed { index, retVal ->
                         async {
                             catch {
                                 if (retVal.success) {
                                     val reward = rewards[index]
-                                    val earned = reward.first.extractAmountFromRewardFunction(retVal.data, userAddress)
+                                    val earned = reward.reward.extractAmountFromRewardFunction(retVal.data, userAddress)
 
                                     if (earned > BigInteger.ONE) {
                                         Some(
                                             UserClaimable(
-                                                id = reward.second.id,
-                                                name = reward.second.name,
-                                                protocol = reward.second.protocol,
-                                                network = reward.second.network,
+                                                id = reward.claimable.id,
+                                                name = reward.claimable.name,
+                                                protocol = reward.claimable.protocol,
+                                                network = reward.claimable.network,
                                                 amount = earned,
-                                                claimableToken = reward.first.token,
-                                                claimTransaction = reward.second.claimableRewardFetcher.preparedTransaction.invoke(
+                                                claimableToken = reward.reward.token,
+                                                claimTransaction = reward.claimableRewardFetcher.preparedTransaction.invoke(
                                                     userAddress
                                                 )
                                             ),

@@ -62,7 +62,7 @@ class AlienbaseFarmingMarketProvider : FarmingMarketProvider() {
                         rewardTokens = listOf(
                             rewardToken.toFungibleToken()
                         ),
-                        balanceFetcher = PositionFetcher(
+                        positionFetcher = PositionFetcher(
                             address = farmingContractAddress,
                             { user ->
                                 contract.userInfoFunction(

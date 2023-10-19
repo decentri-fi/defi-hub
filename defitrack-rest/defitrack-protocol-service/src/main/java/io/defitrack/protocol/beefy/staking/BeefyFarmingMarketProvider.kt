@@ -64,7 +64,7 @@ abstract class BeefyFarmingMarketProvider(
                 marketSize = Refreshable.refreshable {
                     getMarketSize(want, contract)
                 },
-                balanceFetcher = PositionFetcher(
+                positionFetcher = PositionFetcher(
                     contract.address,
                     { user -> balanceOfFunction(user) },
                     extractBalance = { result ->

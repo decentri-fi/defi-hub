@@ -18,9 +18,7 @@ import java.math.BigInteger
 
 @Component
 @ConditionalOnCompany(Company.CAMELOT)
-class CamelotAdvisorVestingClaimableMarketProvider(
-    private val blockchainGatewayProvider: BlockchainGatewayProvider,
-) : ClaimableMarketProvider() {
+class CamelotAdvisorVestingClaimableMarketProvider : ClaimableMarketProvider() {
 
     val deferredContract = lazyAsync {
         CamelotAdvisorVestingContract(
@@ -39,7 +37,7 @@ class CamelotAdvisorVestingClaimableMarketProvider(
                 name = "Camelot Advisor Vesting",
                 network = Network.ARBITRUM,
                 protocol = Protocol.CAMELOT,
-                claimableRewardFetcher = ClaimableRewardFetcher(
+                claimableRewardFetchers = listOf(ClaimableRewardFetcher(
                     Reward(
                         xgrail.toFungibleToken(),
                         contract.address,
@@ -64,7 +62,7 @@ class CamelotAdvisorVestingClaimableMarketProvider(
                             to = contract.address,
                         )
                     }
-                )
+                ))
             )
         )
     }

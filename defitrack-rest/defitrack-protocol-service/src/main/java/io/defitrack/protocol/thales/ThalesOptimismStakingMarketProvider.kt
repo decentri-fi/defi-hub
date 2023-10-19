@@ -33,7 +33,7 @@ class ThalesOptimismStakingMarketProvider : FarmingMarketProvider() {
                 identifier = stakingThales,
                 stakedToken = stakedToken.toFungibleToken(),
                 rewardTokens = listOf(stakedToken.toFungibleToken()),
-                balanceFetcher = PositionFetcher(
+                positionFetcher = PositionFetcher(
                     stakingThales,
                     stakingThalesContract::stakedBalanceOfFn,
                 ),

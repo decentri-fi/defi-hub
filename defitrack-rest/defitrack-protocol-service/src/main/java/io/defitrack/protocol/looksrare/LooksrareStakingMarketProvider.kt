@@ -37,7 +37,7 @@ class LooksrareStakingMarketProvider : FarmingMarketProvider() {
                 identifier = contract.address,
                 stakedToken = staked.toFungibleToken(),
                 rewardTokens = listOf(reward.toFungibleToken()),
-                balanceFetcher = PositionFetcher(
+                positionFetcher = PositionFetcher(
                     contract.address,
                     contract::calculateSharesValueInLooks
                 ),

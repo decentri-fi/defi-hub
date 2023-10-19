@@ -57,7 +57,7 @@ abstract class AbstractStargateFarmingMarketProvider(
                         )
                     }
                 ),
-                balanceFetcher = PositionFetcher(
+                positionFetcher = PositionFetcher(
                     lpStakingContract.address,
                     { user: String -> lpStakingContract.userInfo(index, user) },
                 )
