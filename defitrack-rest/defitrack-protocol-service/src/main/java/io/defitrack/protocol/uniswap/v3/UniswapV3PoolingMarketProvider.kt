@@ -1,5 +1,9 @@
 package io.defitrack.protocol.uniswap.v3
 
+import arrow.core.Either
+import arrow.core.left
+import arrow.core.right
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.abi.TypeUtils
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
@@ -14,13 +18,12 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.uniswap.v3.prefetch.UniswapV3Prefetcher
 import io.defitrack.uniswap.v3.UniswapV3PoolContract
 import io.defitrack.uniswap.v3.UniswapV3PoolFactoryContract
-import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.launch
 import org.web3j.abi.datatypes.Event
 import java.math.BigDecimal
 import java.math.BigInteger
+import kotlin.coroutines.EmptyCoroutineContext
 
 abstract class UniswapV3PoolingMarketProvider(
     private val fromBlocks: List<String>,
@@ -70,29 +73,21 @@ abstract class UniswapV3PoolingMarketProvider(
         }
     }
 
-    override suspend fun produceMarkets(): Flow<PoolingMarket> {
-        return channelFlow {
-            poolAddresses.await().forEach {
-                launch {
-                    throttled {
-                        try {
-                            send(getMarket(it))
-                        } catch (marketZero: MarketTooLowException) {
-                            logger.debug("market size is too low for ${it}")
-                        } catch (ex: Exception) {
-                            logger.error("something went wrong trying to import uniswap market $it : {}", ex.message)
-                        }
-                    }
+    override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
+        poolAddresses.await().parMapNotNull(EmptyCoroutineContext, 12) {
+            getMarket(it).mapLeft { throwable ->
+                when (throwable) {
+                    is MarketTooLowException -> logger.debug("market too low for ${throwable.message}")
+                    else -> logger.error("error getting market for ${throwable.message}")
                 }
-            }
+            }.getOrNull()
+        }.forEach {
+            send(it)
         }
     }
 
 
-    val uniswapPoolCache = Cache.Builder<String, PoolingMarket>()
-        .build()
-
-    suspend fun getMarket(address: String): PoolingMarket = uniswapPoolCache.get(address) {
+    suspend fun getMarket(address: String): Either<Throwable, PoolingMarket> {
 
         val identifier = "v3-${address}"
 
@@ -116,7 +111,7 @@ abstract class UniswapV3PoolingMarketProvider(
             it.reserveUSD
         }
 
-        if (marketSize != BigDecimal.ZERO && marketSize > BigDecimal.valueOf(10000)) {
+        return if (marketSize != BigDecimal.ZERO && marketSize > BigDecimal.valueOf(10000)) {
             val totalSupply = prefetch?.totalSupply ?: pool.liquidity.await().asEth()
             create(
                 identifier = identifier,
@@ -135,10 +130,10 @@ abstract class UniswapV3PoolingMarketProvider(
                     pool.refreshLiquidity().asEth()
                 },
                 erc20Compatible = false,
-                internalMetadata = mapOf("contract" to pool)
-            )
+                internalMetadata = mapOf("contract" to pool),
+            ).right()
         } else {
-            throw MarketTooLowException("market size is zero for ${pool.address}")
+            MarketTooLowException("market size is zero for ${pool.address}").left()
         }
     }
 
