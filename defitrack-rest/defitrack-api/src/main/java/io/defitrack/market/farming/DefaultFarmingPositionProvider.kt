@@ -1,7 +1,8 @@
 package io.defitrack.market.farming
 
-import arrow.core.*
 import arrow.core.Either.Companion.catch
+import arrow.core.None
+import arrow.core.some
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.domain.FarmingPosition
 import kotlinx.coroutines.async
@@ -54,7 +55,7 @@ class DefaultFarmingPositionProvider(
                                 None
                             }
                         }.mapLeft {
-                            logger.error("Error fetching balance for ${market.name}", it)
+                            logger.error("Error fetching balance for ${market.name}: {}", it.message)
                         }.map {
                             it.getOrNull()
                         }

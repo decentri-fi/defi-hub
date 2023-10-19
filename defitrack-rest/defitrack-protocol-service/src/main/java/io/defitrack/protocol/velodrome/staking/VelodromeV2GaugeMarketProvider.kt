@@ -2,7 +2,6 @@ package io.defitrack.protocol.velodrome.staking
 
 import arrow.core.Either
 import arrow.core.None
-import arrow.core.Some
 import arrow.core.some
 import arrow.fx.coroutines.parMap
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
@@ -13,18 +12,14 @@ import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.network.toVO
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.velodrome.contract.VelodromeV2GaugeContract
 import io.defitrack.protocol.velodrome.contract.VoterContract
 import io.defitrack.protocol.velodrome.pooling.VelodromeV2OptimismPoolingMarketProvider
-import io.defitrack.transaction.PreparedTransaction
 import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.flow.forEach
-import kotlinx.coroutines.launch
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 
@@ -89,7 +84,7 @@ class VelodromeV2GaugeMarketProvider(
             }
         }.mapNotNull {
             it.mapLeft {
-                logger.error("Error while fetching gauge", it)
+                logger.error("Error while fetching gauge: {}", it.message)
             }.getOrNull()
         }.forEach {
             it.onSome { send(it) }

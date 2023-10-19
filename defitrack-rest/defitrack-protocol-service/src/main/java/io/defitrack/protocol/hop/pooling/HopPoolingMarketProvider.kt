@@ -28,7 +28,7 @@ abstract class HopPoolingMarketProvider(
             toPoolingMarketElement(getBlockchainGateway(), hopLpToken)
         }.mapNotNull {
             it.mapLeft {
-                logger.error("Unable to get pooling market", it)
+                logger.error("Unable to get pooling market: {}", it.message)
             }.getOrNull()
         }.forEach {
             send(it)

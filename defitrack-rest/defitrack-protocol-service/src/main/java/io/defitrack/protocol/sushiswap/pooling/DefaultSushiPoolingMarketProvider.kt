@@ -32,7 +32,7 @@ abstract class DefaultSushiPoolingMarketProvider(
                 }
         }.mapNotNull {
             it.mapLeft {
-                logger.error("Failed to create market", it)
+                logger.error("Failed to create market: {}", it.message)
             }.getOrNull()
         }
     }
