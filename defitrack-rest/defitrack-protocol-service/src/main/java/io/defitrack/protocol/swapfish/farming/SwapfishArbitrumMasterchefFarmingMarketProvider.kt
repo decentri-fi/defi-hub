@@ -24,7 +24,6 @@ class SwapfishArbitrumMasterchefFarmingMarketProvider(
         swapfishArbitrumService.provideMasterchefs().flatMap { masterChefAddr ->
             val masterchef = MasterChefBasedContract(
                 rewardTokenName = "cake",
-                perSecondName = "cakePerSecond",
                 pendingName = "pendingCake",
                 getBlockchainGateway(),
                 masterChefAddr

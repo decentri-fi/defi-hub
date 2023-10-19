@@ -5,15 +5,14 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.multicall.MultiCallElement
+import io.defitrack.protocol.sushiswap.contract.MasterChefBasedContract
 import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
-import io.defitrack.protocol.sushiswap.contract.MasterChefBasedContract
 
 class AutoEarnVaultContract(
     blockchainGateway: BlockchainGateway, address: String
 ) : MasterChefBasedContract(
     "sushi",
-    "sushiPerBlock",
     "pendingToken",
     blockchainGateway, address
 ) {

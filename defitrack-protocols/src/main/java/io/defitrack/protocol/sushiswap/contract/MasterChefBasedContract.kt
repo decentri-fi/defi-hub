@@ -14,7 +14,6 @@ import java.math.BigInteger
 
 open class MasterChefBasedContract(
     private val rewardTokenName: String,
-    private val perSecondName: String,
     private val pendingName: String,
     blockchainGateway: BlockchainGateway,
     address: String

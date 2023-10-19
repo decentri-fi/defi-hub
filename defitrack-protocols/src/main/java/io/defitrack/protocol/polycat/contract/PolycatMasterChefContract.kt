@@ -17,7 +17,6 @@ class PolycatMasterChefContract(
     address: String,
 ) : MasterChefBasedContract(
     "fish",
-    "fishPerBlock",
     "pendingFish",
     contractAccessor,
     address

@@ -30,7 +30,6 @@ class SushiswapEthereumMasterchefMarketProvider : FarmingMarketProvider() {
     val deferredContract = lazyAsync {
         MasterChefBasedContract(
             "sushi",
-            "sushiPerBlock",
             "pendingSushi",
             getBlockchainGateway(),
             masterchefContractAddress

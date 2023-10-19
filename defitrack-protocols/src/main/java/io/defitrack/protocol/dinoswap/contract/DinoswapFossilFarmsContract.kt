@@ -4,36 +4,42 @@ import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.protocol.sushiswap.contract.MasterChefBasedContract
+import kotlinx.coroutines.Deferred
 import org.web3j.abi.datatypes.Function
 
 class DinoswapFossilFarmsContract(
-    contractAccessor: BlockchainGateway,
+    blockchainGateway: BlockchainGateway,
     address: String,
-) : EvmContract(
-    contractAccessor, address
+) : MasterChefBasedContract(
+    "DINO",
+    "pendingDino",
+    blockchainGateway = blockchainGateway,
+    address
 ) {
 
-    suspend fun poolLength(): Int {
-        return readSingle("poolLength", uint256())
-    }
-
-    suspend fun rewardToken(): String {
-        return readSingle("dino", address())
-    }
-
-    suspend fun getLpTokenForPoolId(poolIndex: Int): String {
-        return read(
-            "poolInfo",
-            inputs = listOf(poolIndex.toBigInteger().toUint256()),
-            outputs = listOf(
-                address(),
-                uint256(),
-                uint256(),
-                uint256(),
+    val lpTokens: Deferred<List<String>> = lazyAsync {
+        readMultiCall((0 until poolLength.await().toInt()).map { poolIndex ->
+            createFunction(
+                "poolInfo",
+                listOf(poolIndex.toBigInteger().toUint256()),
+                listOf(
+                    address(),
+                    uint256(),
+                    uint256(),
+                    uint256(),
+                )
             )
-        )[0].value as String
+        }).map {
+            it.data[0].value as String
+        }
+    }
+
+
+    suspend fun lpTokenForPoolId(poolIndex: Int): String {
+        return lpTokens.await()[poolIndex]
     }
 
     fun userInfoFunction(address: String, poolIndex: Int): Function {
