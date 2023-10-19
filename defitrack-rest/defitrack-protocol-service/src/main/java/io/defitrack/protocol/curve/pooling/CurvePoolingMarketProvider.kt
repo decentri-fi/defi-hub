@@ -1,8 +1,11 @@
 package io.defitrack.protocol.curve.pooling
 
-import io.defitrack.common.utils.AsyncUtils
+import arrow.core.Either
+import arrow.core.Option
+import arrow.core.getOrElse
+import arrow.fx.coroutines.parMap
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -16,48 +19,51 @@ abstract class CurvePoolingMarketProvider(
     private val factoryAddress: String
 ) : PoolingMarketProvider() {
 
-    val factory = AsyncUtils.lazyAsync {
-        CurveFactoryContract(
+    override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
+        val contract = CurveFactoryContract(
             getBlockchainGateway(),
             factoryAddress
         )
+
+        val coinsPerPool = contract.getCoins()
+        coinsPerPool.entries.parMap(concurrency = 12) {
+            Either.catch {
+                createMarket(it)
+            }
+        }.mapNotNull {
+            it.mapLeft {
+                logger.error("Error creating market: {}", it.message)
+            }.getOrNull()
+        }.forEach {
+            send(it)
+        }
     }
 
-    override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
-        val contract = factory.await()
-        val coinsPerPool = contract.getCoins()
-        val balances = contract.getBalances()
-        coinsPerPool.forEach {
-            val pool = it.key
+    private suspend fun createMarket(it: Map.Entry<String, List<String>>): PoolingMarket {
+        val pool = it.key
 
-            val underlyingTokens = it.value.filter { it != "0x0000000000000000000000000000000000000000" }.map {
-                getToken(it)
-            }
-
-            val poolContract = CurvePoolContract(getBlockchainGateway(), pool)
-            val poolAsERC20 = getToken(pool)
-
-            val market = create(
-                name = poolAsERC20.name,
-                address = pool,
-                identifier = createId(pool),
-                symbol = poolAsERC20.symbol,
-                tokens = underlyingTokens
-                    .map { it.toFungibleToken() },
-                totalSupply = Refreshable.refreshable(poolAsERC20.totalSupply.asEth(poolAsERC20.decimals)) {
-                    getToken(pool).totalSupply.asEth(poolAsERC20.decimals)
-                },
-                price = Refreshable.refreshable {
-                    try {
-                        poolContract.virtualPrice.await().asEth(poolAsERC20.decimals)
-                    } catch (ex: Exception) {
-                        BigDecimal.ZERO
-                    }
-                }
-            )
-
-            send(market)
+        val underlyingTokens = it.value.filter { it != "0x0000000000000000000000000000000000000000" }.map {
+            getToken(it).toFungibleToken()
         }
+
+        val poolContract = CurvePoolContract(getBlockchainGateway(), pool)
+        val poolAsERC20 = getToken(pool)
+
+        return create(
+            name = poolAsERC20.name,
+            address = pool,
+            identifier = createId(pool),
+            symbol = poolAsERC20.symbol,
+            tokens = underlyingTokens,
+            totalSupply = refreshable(poolAsERC20.totalDecimalSupply()) {
+                getToken(pool).totalDecimalSupply()
+            },
+            price = refreshable {
+                Option.catch {
+                    poolContract.virtualPrice.await().asEth(poolAsERC20.decimals)
+                }.getOrElse { BigDecimal.ZERO }
+            }
+        )
     }
 
     override fun getProtocol(): Protocol {

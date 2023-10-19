@@ -1,5 +1,6 @@
 package io.defitrack.market
 
+import arrow.fx.coroutines.parMap
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.event.EventService
@@ -79,14 +80,11 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
     suspend fun refreshMarkets() = coroutineScope {
         val millis = measureTimeMillis {
             try {
-                getMarkets().map { market ->
-                    launch {
-                        throttled {
-                            market.refresh()
-                        }
-                    }
-                }.joinAll()
+                getMarkets().parMap(concurrency = 12) { market ->
+                    market.refresh()
+                }
             } catch (ex: Exception) {
+                ex.printStackTrace()
                 logger.error("something went wrong trying to refresh the cache", ex)
             }
         }

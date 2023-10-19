@@ -22,10 +22,10 @@ class CurveGaugeContract(
         )
     }
 
-    fun getClaimRewardsFunction(): Function {
+    fun getClaimRewardsFunction(): ContractCall {
         return createFunction(
             "claim_rewards"
-        )
+        ).toContractCall()
     }
 
     fun getClaimableRewardFunction(address: String, token: String): Function {
@@ -36,18 +36,16 @@ class CurveGaugeContract(
         )
     }
 
-    suspend fun rewardTokens(): List<String> {
-        return (0..3).mapNotNull {
-            try {
-                read(
-                    "reward_tokens",
-                    listOf(it.toBigInteger().toUint256()),
-                    listOf(address())
-                )[0].value as String
-            } catch (ex: Exception) {
-                null
-            }
-        }
-    }
 
+    suspend fun rewardTokens(): List<String> {
+        return readMultiCall((0..5).mapNotNull {
+            createFunction(
+                "reward_tokens",
+                listOf(it.toBigInteger().toUint256()),
+                listOf(address())
+            )
+        }).filter {
+            it.success
+        }.map { it.data[0].value as String }
+    }
 }

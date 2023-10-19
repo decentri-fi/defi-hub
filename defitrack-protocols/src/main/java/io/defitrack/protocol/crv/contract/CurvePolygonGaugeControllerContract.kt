@@ -17,14 +17,17 @@ class CurvePolygonGaugeControllerContract(
         return readSingle("get_gauge_count", uint256())
     }
 
-    //todo: multicall
     suspend fun getGaugeAddresses(): List<String> {
-        return (0 until getGaugeCount().toInt()).map {
-            read(
+        return readMultiCall((0 until getGaugeCount().toInt()).map {
+            createFunction(
                 "get_gauge",
                 listOf(it.toBigInteger().toUint256()),
                 listOf(address())
-            )[0].value as String
+            )
+        }).filter {
+            it.success
+        }.map {
+            it.data[0].value as String
         }
     }
 }
