@@ -61,7 +61,7 @@ class KubernetesClaimablesClient(
                 val timedValue: TimedValue<List<UserClaimableVO>> = measureTimedValue {
                     try {
                         val response =
-                            httpClient.get("http://defitrack-group-${node}.default.svc.cluster.local:8080/claimables/$address")
+                            httpClient.get("http://defitrack-group-${node.name}.default.svc.cluster.local:8080/claimables/$address")
                         if (response.status.isSuccess()) {
                             response.body()
                         } else {
