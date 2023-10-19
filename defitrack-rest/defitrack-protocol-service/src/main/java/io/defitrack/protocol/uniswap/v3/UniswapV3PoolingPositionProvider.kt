@@ -1,5 +1,6 @@
 package io.defitrack.protocol.uniswap.v3
 
+import arrow.core.getOrElse
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.market.pooling.PoolingPositionProvider
@@ -11,12 +12,15 @@ import io.defitrack.uniswap.v3.UniswapV3PoolContract
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import org.slf4j.LoggerFactory
 import java.math.BigDecimal
 import java.math.BigInteger
 
 abstract class UniswapV3PoolingPositionProvider(
     private val uniswapV3PoolingMarketProvider: UniswapV3PoolingMarketProvider,
 ) : PoolingPositionProvider() {
+
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     val LOG_PRICE = BigDecimal.valueOf(1.0001)
     val POW_96 = BigInteger.valueOf(2).pow(96)
@@ -42,10 +46,12 @@ abstract class UniswapV3PoolingPositionProvider(
                         position.fee
                     )
 
-                    val market = uniswapV3PoolingMarketProvider.getMarket(poolAddress)
+                    val poolContract = UniswapV3PoolContract(
+                        uniswapV3PoolingMarketProvider.getBlockchainGateway(),
+                        poolAddress
+                    )
 
-
-                    val poolContract = market.internalMetadata["contract"] as UniswapV3PoolContract
+                    val market = uniswapV3PoolingMarketProvider.marketFromCache(poolAddress)
 
                     val token0 = uniswapV3PoolingMarketProvider.getToken(poolContract.token0.await())
                     val token1 = uniswapV3PoolingMarketProvider.getToken(poolContract.token1.await())
@@ -97,7 +103,9 @@ abstract class UniswapV3PoolingPositionProvider(
 
                     PoolingPosition(
                         tokenAmount = BigInteger.ZERO,
-                        market,
+                        market.getOrElse {
+                            throw Exception("Market not found")
+                        },
                         object : PriceCalculator {
                             override fun calculate(): Double {
                                 return totalToken0Usd + totalToken1Usd
@@ -105,7 +113,9 @@ abstract class UniswapV3PoolingPositionProvider(
                         }
                     )
                 } catch (ex: Exception) {
-                    ex.printStackTrace()
+                    logger.info(
+                        "Unable to fetch claimables for ${uniswapV3PoolingMarketProvider.getNetwork()}", ex
+                    )
                     null
                 }
             }

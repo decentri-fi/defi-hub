@@ -1,6 +1,7 @@
 package io.defitrack.protocol.uniswap.v3
 
 import arrow.core.Either
+import arrow.core.Option
 import arrow.core.left
 import arrow.core.right
 import arrow.fx.coroutines.parMapNotNull
@@ -11,6 +12,7 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.event.EventDecoder.Companion.extract
 import io.defitrack.evm.GetEventLogsCommand
+import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
@@ -18,8 +20,10 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.uniswap.v3.prefetch.UniswapV3Prefetcher
 import io.defitrack.uniswap.v3.UniswapV3PoolContract
 import io.defitrack.uniswap.v3.UniswapV3PoolFactoryContract
+import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import org.web3j.abi.datatypes.Event
@@ -79,15 +83,23 @@ abstract class UniswapV3PoolingMarketProvider(
 
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
         poolAddresses.await().parMapNotNull(EmptyCoroutineContext, 12) {
-            getMarket(it).mapLeft { throwable ->
-                when (throwable) {
-                    is MarketTooLowException -> logger.debug("market too low for ${throwable.message}")
-                    else -> logger.error("error getting market for ${throwable.message}")
-                }
-            }.getOrNull()
+            marketFromCache(it)
         }.forEach {
-            send(it)
+            it.getOrNull()?.let {
+                send(it)
+            }
         }
+    }
+
+    val poolCache = Cache.Builder<String, Option<PoolingMarket>>().build()
+
+    suspend fun marketFromCache(poolAddress: String) = poolCache.get(poolAddress) {
+        getMarket(poolAddress).mapLeft { throwable ->
+            when (throwable) {
+                is MarketTooLowException -> logger.debug("market too low for ${throwable.message}")
+                else -> logger.error("error getting market for ${throwable.message}")
+            }
+        }.getOrNone()
     }
 
     suspend fun getMarket(address: String): Either<Throwable, PoolingMarket> {
