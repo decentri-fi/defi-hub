@@ -1,4 +1,4 @@
-package io.defitrack.protocol.camelot
+package io.defitrack.protocol.camelot.claiming
 
 import io.defitrack.claimable.ClaimableMarketProvider
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
@@ -8,10 +8,10 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.network.toVO
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.camelot.CamelotAdvisorVestingContract
 import io.defitrack.transaction.PreparedTransaction
 import org.springframework.stereotype.Component
 import java.math.BigInteger

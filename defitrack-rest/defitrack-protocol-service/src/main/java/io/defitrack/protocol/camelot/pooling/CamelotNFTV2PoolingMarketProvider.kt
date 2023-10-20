@@ -1,4 +1,4 @@
-package io.defitrack.protocol.camelot
+package io.defitrack.protocol.camelot.pooling
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
@@ -10,6 +10,7 @@ import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.algebra.AlgebraPoolContract
 import io.defitrack.protocol.algebra.AlgebraPosition
+import io.defitrack.protocol.camelot.CamelotService
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
