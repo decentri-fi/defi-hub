@@ -12,6 +12,10 @@ enum class Company(
         prettyName = "Sonne",
         slug = "sonne"
     ),
+    EQUALIZER(
+        prettyName = "Equalizer",
+        slug = "equalizer"
+    ),
     PIKA(
         prettyName = "Pika",
         slug = "pika"

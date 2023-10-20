@@ -21,6 +21,14 @@ enum class Protocol(
         networks = listOf(BASE),
         company = Company.BASESWAP
     ),
+    EQUALIZER(
+        logo = "equalizer.png",
+        slug = "equalizer",
+        primitives = listOf(POOLING, FARMING, CLAIMABLES),
+        website = "https://equalizer.exchange",
+        networks = listOf(BASE),
+        company = Company.EQUALIZER
+    ),
     SONNE(
         logo = "sonne.png",
         slug = "sonne",
@@ -586,7 +594,6 @@ enum class Protocol(
         networks = listOf(ARBITRUM),
         company = Company.MUX
     );
-
 
 
     val imageBasePath = "https://github.com/defitrack/data/raw/master/logo/protocol/"
