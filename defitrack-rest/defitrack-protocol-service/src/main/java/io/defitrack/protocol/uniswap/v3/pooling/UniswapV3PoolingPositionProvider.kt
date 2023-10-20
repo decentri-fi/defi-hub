@@ -1,4 +1,4 @@
-package io.defitrack.protocol.uniswap.v3
+package io.defitrack.protocol.uniswap.v3.pooling
 
 import arrow.core.getOrElse
 import io.defitrack.common.utils.AsyncUtils.lazyAsync

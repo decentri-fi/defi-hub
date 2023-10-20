@@ -1,4 +1,4 @@
-package io.defitrack.protocol.uniswap.v3
+package io.defitrack.protocol.uniswap.v3.pooling
 
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.protocol.Company

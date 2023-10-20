@@ -1,4 +1,4 @@
-package io.defitrack.protocol.uniswap.v3
+package io.defitrack.protocol.uniswap.v3.pooling
 
 import arrow.core.Either
 import arrow.core.Option
@@ -12,7 +12,6 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.event.EventDecoder.Companion.extract
 import io.defitrack.evm.GetEventLogsCommand
-import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
@@ -23,7 +22,6 @@ import io.defitrack.uniswap.v3.UniswapV3PoolFactoryContract
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import org.web3j.abi.datatypes.Event

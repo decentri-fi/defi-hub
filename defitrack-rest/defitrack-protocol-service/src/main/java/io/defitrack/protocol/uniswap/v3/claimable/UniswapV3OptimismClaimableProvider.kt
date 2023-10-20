@@ -1,4 +1,4 @@
-package io.defitrack.protocol.uniswap.v3
+package io.defitrack.protocol.uniswap.v3.claimable
 
 import io.defitrack.claimable.domain.UserClaimable
 import io.defitrack.claimable.UserClaimableProvider
@@ -6,6 +6,9 @@ import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.uniswap.v3.pooling.UniswapV3ArbitrumPoolingMarketProvider
+import io.defitrack.protocol.uniswap.v3.pooling.UniswapV3EthereumPoolingMarketProvider
+import io.defitrack.protocol.uniswap.v3.pooling.UniswapV3OptimismPoolingMarketProvider
 import io.defitrack.uniswap.v3.UniswapPosition
 import io.defitrack.uniswap.v3.UniswapPositionsV3Contract
 import io.defitrack.uniswap.v3.UniswapV3PoolContract
@@ -19,9 +22,9 @@ import java.math.BigInteger
 
 @Component
 @ConditionalOnCompany(Company.UNISWAP)
-@ConditionalOnProperty(value = ["ethereum.enabled", "uniswapv3.enabled"], havingValue = "true", matchIfMissing = true)
-class UniswapV3EthereumClaimableProvider(
-    private val uniswapV3PoolingMarketProvider: UniswapV3EthereumPoolingMarketProvider,
+@ConditionalOnProperty(value = ["optimism.enabled", "uniswapv3.enabled"], havingValue = "true", matchIfMissing = true)
+class UniswapV3OptimismClaimableProvider(
+    private val uniswapV3PoolingMarketProvider: UniswapV3OptimismPoolingMarketProvider,
 ) : UserClaimableProvider() {
 
     val logger = LoggerFactory.getLogger(this::class.java)
@@ -138,6 +141,6 @@ class UniswapV3EthereumClaimableProvider(
     }
 
     override fun getNetwork(): Network {
-        return Network.ETHEREUM
+        return Network.OPTIMISM
     }
 }
