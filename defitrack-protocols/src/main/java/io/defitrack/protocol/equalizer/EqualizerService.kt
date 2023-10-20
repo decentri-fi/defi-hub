@@ -20,4 +20,8 @@ class EqualizerService(
     val pools = lazyAsync {
         voter.await().pools()
     }
+
+    val gauges = lazyAsync {
+        voter.await().gauges(pools.await())
+    }
 }

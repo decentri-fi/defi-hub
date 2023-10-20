@@ -1,5 +1,8 @@
 package io.defitrack.protocol.equalizer
 
+import arrow.core.None
+import arrow.core.Option
+import arrow.core.Some
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
@@ -28,8 +31,8 @@ class EqualizerVoter(
         }.map { it.data[0].value as String }
     }
 
-    suspend fun gauges(pools: List<String>) {
-        readMultiCall(
+    suspend fun gauges(pools: List<String>): Map<String, Option<String>> {
+        return readMultiCall(
             pools.map {
                 createFunction(
                     "gauges",
@@ -37,10 +40,12 @@ class EqualizerVoter(
                     listOf(address())
                 )
             }
-        ).filter {
-            it.success
-        }.map {
-            it.data[0].value as String
-        }
+        ).mapIndexed { index, it ->
+            pools[index] to if (it.success) {
+                Some(it.data[0].value as String).map(String::lowercase)
+            } else {
+                None
+            }
+        }.toMap()
     }
 }
