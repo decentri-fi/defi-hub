@@ -10,13 +10,14 @@ import io.defitrack.network.toVO
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.sushiswap.reward.MiniChefV2Contract
 import io.defitrack.transaction.PreparedTransaction
+import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 
 abstract class SushiMinichefV2FarmingMarketProvider(
     val addresses: List<String>
-): FarmingMarketProvider() {
+) : FarmingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
         addresses.map {
@@ -47,33 +48,24 @@ abstract class SushiMinichefV2FarmingMarketProvider(
             create(
                 identifier = "${chef.address}-${poolId}",
                 name = stakedtoken.name + " Farm",
-                stakedToken = stakedtoken.toFungibleToken(),
+                stakedToken = stakedtoken,
                 rewardTokens = listOf(
                     rewardToken.toFungibleToken()
                 ),
                 marketSize = Refreshable.refreshable {
-                    getMarketSize(stakedtoken.toFungibleToken(), chef.address)
+                    getMarketSize(stakedtoken, chef.address)
                 },
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
-                        token = rewardToken.toFungibleToken(),
+                        token = rewardToken,
                         contractAddress = chef.address,
-                        getRewardFunction = { user ->
-                            chef.pendingSushiFunction(poolId, user)
-                        }
+                        getRewardFunction = chef.pendingSushiFunction(poolId)
                     ),
-                    preparedTransaction = { user ->
-                        PreparedTransaction(
-                            network = getNetwork().toVO(),
-                            chef.harvestFunction(poolId, user),
-                            to = chef.address,
-                            from = user
-                        )
-                    }
+                    preparedTransaction = selfExecutingTransaction(chef.harvestFunction(poolId))
                 ),
                 positionFetcher = PositionFetcher(
                     chef.address,
-                    { user -> chef.userInfoFunction(poolId, user) }
+                    chef.userInfoFunction(poolId)
                 ),
             )
         } catch (ex: Exception) {

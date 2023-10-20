@@ -21,27 +21,31 @@ open class MasterChefBasedContract(
     blockchainGateway, address
 ) {
 
-    fun harvestFunction(poolId: Int): Function {
-        return createFunction(
-            "withdraw",
-            listOf(
-                poolId.toBigInteger().toUint256(),
-                BigInteger.ZERO.toUint256()
-            ),
-        )
+    fun harvestFunction(poolId: Int): (String) -> ContractCall {
+        return { _: String ->
+            createFunction(
+                "withdraw",
+                listOf(
+                    poolId.toBigInteger().toUint256(),
+                    BigInteger.ZERO.toUint256()
+                ),
+            ).toContractCall()
+        }
     }
 
-    fun pendingFunction(poolId: Int, user: String): Function {
-        return createFunction(
-            pendingName,
-            listOf(
-                poolId.toBigInteger().toUint256(),
-                user.toAddress()
-            ),
-            listOf(
-                uint256()
+    fun pendingFunction(poolId: Int): (String) -> Function {
+        return { user: String ->
+            createFunction(
+                pendingName,
+                listOf(
+                    poolId.toBigInteger().toUint256(),
+                    user.toAddress()
+                ),
+                listOf(
+                    uint256()
+                )
             )
-        )
+        }
     }
 
     val poolLength = constant<BigInteger>("poolLength", uint256())
@@ -82,17 +86,19 @@ open class MasterChefBasedContract(
         readSingle(rewardTokenName, address())
     }
 
-    fun userInfoFunction(poolId: Int, user: String): Function {
-        return createFunction(
-            "userInfo",
-            listOf(
-                poolId.toBigInteger().toUint256(),
-                user.toAddress()
-            ),
-            listOf(
-                uint256(),
-                uint256()
+    fun userInfoFunction(poolId: Int): (String) -> Function {
+        return { user: String ->
+            createFunction(
+                "userInfo",
+                listOf(
+                    poolId.toBigInteger().toUint256(),
+                    user.toAddress()
+                ),
+                listOf(
+                    uint256(),
+                    uint256()
+                )
             )
-        )
+        }
     }
 }

@@ -12,6 +12,7 @@ import io.defitrack.network.toVO
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.transaction.PreparedTransaction
+import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
@@ -57,16 +58,11 @@ class AutoEarnBaseFarmingMarketProvider : FarmingMarketProvider() {
                                     Reward(
                                         reward.toFungibleToken(),
                                         vaultAddress,
-                                        { user -> vault.pendingFunction(index, user) }
+                                        vault.pendingFunction(index)
                                     ),
-                                    preparedTransaction = { user ->
-                                        PreparedTransaction(
-                                            network = getNetwork().toVO(),
-                                            vault.harvestFunction(index, user),
-                                            to = vaultAddress,
-                                            from = user
-                                        )
-                                    }
+                                    preparedTransaction = selfExecutingTransaction(
+                                        vault.getRewardFn(index)
+                                    )
                                 )
                             )
                         )

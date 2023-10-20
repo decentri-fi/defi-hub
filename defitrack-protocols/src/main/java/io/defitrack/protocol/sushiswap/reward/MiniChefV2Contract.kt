@@ -19,28 +19,32 @@ class MiniChefV2Contract(
     address: String
 ) : EvmContract(blockchainGateway, address) {
 
-    fun userInfoFunction(poolId: Int, user: String): Function {
-        return createFunction(
-            "userInfo",
-            listOf(
-                poolId.toBigInteger().toUint256(),
-                user.toAddress()
-            ),
-            listOf(
-                uint256(),
-                uint256()
+    fun userInfoFunction(poolId: Int): (String) -> Function {
+        return { user: String ->
+            createFunction(
+                "userInfo",
+                listOf(
+                    poolId.toBigInteger().toUint256(),
+                    user.toAddress()
+                ),
+                listOf(
+                    uint256(),
+                    uint256()
+                )
             )
-        )
+        }
     }
 
-    fun harvestFunction(pid: Int, to: String): Function {
-        return createFunction(
-            "harvest",
-            listOf(
-                pid.toBigInteger().toUint256(),
-                to.toAddress()
-            )
-        )
+    fun harvestFunction(pid: Int): (String) -> ContractCall {
+        return { user: String ->
+            createFunction(
+                "harvest",
+                listOf(
+                    pid.toBigInteger().toUint256(),
+                    user.toAddress()
+                )
+            ).toContractCall()
+        }
     }
 
 
@@ -100,23 +104,16 @@ class MiniChefV2Contract(
         readSingle("SUSHI", address())
     }
 
-    fun pendingSushiFunction(pid: Int, address: String): Function {
-        return createFunction(
-            "pendingSushi",
-            inputs = listOf(
-                pid.toBigInteger().toUint256(),
-                address.toAddress()
-            ),
-            outputs = listOf(uint256())
-        )
-    }
-
-
-    val  sushiPerSecond: Deferred<BigInteger> = lazyAsync {
-        readSingle("sushiPerSecond", uint256())
-    }
-
-    val totalAllocPoint: Deferred<BigInteger> = lazyAsync {
-        readSingle("totalAllocPoint", uint256())
+    fun pendingSushiFunction(pid: Int): (String) -> Function {
+        return { user: String ->
+            createFunction(
+                "pendingSushi",
+                inputs = listOf(
+                    pid.toBigInteger().toUint256(),
+                    user.toAddress()
+                ),
+                outputs = listOf(uint256())
+            )
+        }
     }
 }

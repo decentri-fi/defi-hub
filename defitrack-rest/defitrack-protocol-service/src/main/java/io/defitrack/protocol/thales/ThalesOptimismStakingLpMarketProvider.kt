@@ -34,10 +34,8 @@ class ThalesOptimismStakingLpMarketProvider : FarmingMarketProvider() {
             create(
                 name = "Thales LP Staking",
                 identifier = stakingThales,
-                stakedToken = stakedToken.toFungibleToken(),
-                rewardTokens = listOf(
-                    rewardsToken.toFungibleToken(), secondRewardsToken.toFungibleToken()
-                ),
+                stakedToken = stakedToken,
+                rewardTokens = listOf(rewardsToken, secondRewardsToken),
                 positionFetcher = PositionFetcher(
                     stakingThales,
                     stakingThalesContract::stakedBalanceOfFn,
@@ -45,7 +43,7 @@ class ThalesOptimismStakingLpMarketProvider : FarmingMarketProvider() {
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     listOf(
                         Reward(
-                            rewardsToken.toFungibleToken(),
+                            rewardsToken,
                             stakingThales,
                             stakingThalesContract::getRewardsAvailableFn,
                         ) { res, _ ->

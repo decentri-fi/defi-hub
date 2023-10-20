@@ -15,6 +15,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.sushiswap.contract.MasterChefBasedContract
 import io.defitrack.protocol.sushiswap.contract.MasterChefPoolInfo
 import io.defitrack.transaction.PreparedTransaction
+import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
@@ -69,32 +70,21 @@ class SushiswapEthereumMasterchefMarketProvider : FarmingMarketProvider() {
                 identifier = "${chef.address}-${poolId}",
                 name = stakedtoken.name + " Farm",
                 stakedToken = stakedtoken.toFungibleToken(),
-                rewardTokens = listOf(
-                    rewardToken.toFungibleToken()
-                ),
+                rewardTokens = listOf(rewardToken),
                 marketSize = refreshable {
-                    getMarketSize(stakedtoken.toFungibleToken(), chef.address)
+                    getMarketSize(stakedtoken, chef.address)
                 },
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
-                        token = rewardToken.toFungibleToken(),
+                        token = rewardToken,
                         contractAddress = chef.address,
-                        getRewardFunction = { user ->
-                            chef.pendingFunction(poolId, user)
-                        }
+                        getRewardFunction = chef.pendingFunction(poolId)
                     ),
-                    preparedTransaction = { user ->
-                        PreparedTransaction(
-                            network = getNetwork().toVO(),
-                            chef.harvestFunction(poolId),
-                            to = chef.address,
-                            from = user
-                        )
-                    }
+                    preparedTransaction = selfExecutingTransaction(chef.harvestFunction(poolId))
                 ),
                 positionFetcher = PositionFetcher(
                     chef.address,
-                    { user -> chef.userInfoFunction(poolId, user) }
+                    chef.userInfoFunction(poolId)
                 ),
             )
         } catch (ex: Exception) {

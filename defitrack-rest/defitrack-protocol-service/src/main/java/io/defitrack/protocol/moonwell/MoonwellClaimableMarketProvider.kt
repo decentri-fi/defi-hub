@@ -12,6 +12,7 @@ import io.defitrack.network.toVO
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.transaction.PreparedTransaction
+import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import org.springframework.stereotype.Component
 import java.math.BigInteger
 
@@ -21,20 +22,16 @@ class MoonwellClaimableMarketProvider(
     private val moonwellLendingMarketProvider: MoonwellLendingMarketProvider,
 ) : ClaimableMarketProvider() {
 
-    private suspend fun unitRoller(): MoonwellUnitRollerContract {
-        return MoonwellUnitRollerContract(
-            blockchainGatewayProvider.getGateway(Network.BASE),
-            "0xfbb21d0380bee3312b33c4353c8936a0f13ef26c"
-        )
-    }
-
     val well = lazyAsync {
         erC20Resource.getTokenInformation(Network.BASE, "0xFF8adeC2221f9f4D8dfbAFa6B9a297d17603493D")
     }
 
 
     val deferredComptroller = lazyAsync {
-        unitRoller()
+        MoonwellUnitRollerContract(
+            blockchainGatewayProvider.getGateway(Network.BASE),
+            "0xfbb21d0380bee3312b33c4353c8936a0f13ef26c"
+        )
     }
 
     val deferredRewardDistributor = lazyAsync {
@@ -55,7 +52,7 @@ class MoonwellClaimableMarketProvider(
                 protocol = Protocol.MOONWELL,
                 claimableRewardFetchers = listOf(ClaimableRewardFetcher(
                     Reward(
-                        well.await().toFungibleToken(),
+                        well.await(),
                         deferredRewardDistributor.await().address,
                         { user ->
                             deferredRewardDistributor.await()
@@ -68,13 +65,7 @@ class MoonwellClaimableMarketProvider(
                             }?.amount?.value ?: BigInteger.ZERO
                         }
                     ),
-                    preparedTransaction = { user ->
-                        PreparedTransaction(
-                            Network.BASE.toVO(),
-                            unitRoller().claimReward(user),
-                            to = deferredComptroller.await().address
-                        )
-                    }
+                    preparedTransaction = selfExecutingTransaction(deferredComptroller.await()::claimReward)
                 ))
             )
         }

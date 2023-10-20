@@ -59,7 +59,7 @@ class SwapfishArbitrumMasterchefFarmingMarketProvider(
                 },
                 positionFetcher = PositionFetcher(
                     chef.address,
-                    { user -> chef.userInfoFunction(poolId, user) }
+                    chef.userInfoFunction(poolId)
                 ),
             )
         } catch (ex: Exception) {

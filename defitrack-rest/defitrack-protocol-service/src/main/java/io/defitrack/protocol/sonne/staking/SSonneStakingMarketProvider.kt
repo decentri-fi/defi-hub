@@ -30,16 +30,14 @@ class SSonneStakingMarketProvider : FarmingMarketProvider() {
             create(
                 name = "Staked Sonne (sSonne)",
                 identifier = stakedSonne,
-                stakedToken = stakedtoken.toFungibleToken(),
-                rewardTokens = rewardTokens.map(TokenInformationVO::toFungibleToken),
+                stakedToken = stakedtoken,
+                rewardTokens = rewardTokens,
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     rewardTokens.map { token ->
                         Reward(
-                            token.toFungibleToken(),
+                            token,
                             contract.address,
-                            { user ->
-                                contract.getClaimableFn(token.address, user)
-                            }
+                            contract.getClaimableFor(token.address)
                         )
                     },
                     selfExecutingTransaction(contract::claimAllFn)

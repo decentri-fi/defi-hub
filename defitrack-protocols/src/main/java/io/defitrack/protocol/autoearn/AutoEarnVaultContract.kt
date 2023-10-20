@@ -17,14 +17,16 @@ class AutoEarnVaultContract(
     blockchainGateway, address
 ) {
 
-    fun harvestFunction(pid: Int, to: String): Function {
-        return createFunction(
-            "withdraw",
-            listOf(
-                pid.toBigInteger().toUint256(),
-                BigInteger.ZERO.toUint256(),
-            )
-        )
+    fun getRewardFn(pid: Int): (String) -> ContractCall {
+        return { _: String ->
+            createFunction(
+                "withdraw",
+                listOf(
+                    pid.toBigInteger().toUint256(),
+                    BigInteger.ZERO.toUint256(),
+                )
+            ).toContractCall()
+        }
     }
 
     suspend fun poolInfos2(): List<PoolInfo> {

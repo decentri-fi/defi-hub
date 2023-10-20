@@ -15,15 +15,17 @@ class StakedSonneContract(
 
     val sonne = constant<String>("sonne", TypeUtils.address())
 
-    fun getClaimableFn(token: String, account: String): Function {
-        return createFunction(
-            "getClaimable",
-            listOf(
-                token.toAddress(),
-                account.toAddress()
-            ),
-            listOf(TypeUtils.uint256())
-        )
+    fun getClaimableFor(token: String): (String) -> Function {
+        return { user: String ->
+            createFunction(
+                "getClaimable",
+                listOf(
+                    token.toAddress(),
+                    user.toAddress()
+                ),
+                listOf(TypeUtils.uint256())
+            )
+        }
     }
 
     fun claimAllFn(): ContractCall {

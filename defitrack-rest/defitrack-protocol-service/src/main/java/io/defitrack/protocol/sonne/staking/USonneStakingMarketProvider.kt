@@ -37,9 +37,7 @@ class USonneStakingMarketProvider : FarmingMarketProvider() {
                         Reward(
                             token.toFungibleToken(),
                             contract.address,
-                            { user ->
-                                contract.getClaimableFn(token.address, user)
-                            }
+                            contract.getClaimableFor(token.address)
                         )
                     },
                     selfExecutingTransaction(contract::claimAllFn)
