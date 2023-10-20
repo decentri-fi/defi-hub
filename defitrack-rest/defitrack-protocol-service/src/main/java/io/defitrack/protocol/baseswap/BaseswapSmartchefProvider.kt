@@ -1,5 +1,6 @@
 package io.defitrack.protocol.baseswap
 
+import arrow.fx.coroutines.parMap
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
@@ -15,6 +16,8 @@ import io.defitrack.network.toVO
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.transaction.PreparedTransaction
+import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
+import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import org.springframework.stereotype.Component
@@ -45,44 +48,40 @@ class BaseswapSmartchefProvider : FarmingMarketProvider() {
     }
 
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
-        getSmartchefAddresses().await().forEach {
-
-            val contract = SmartChefContract(getBlockchainGateway(), it)
-            val stakedToken = getToken(contract.stakedToken.await())
-            val rewardToken = getToken(contract.rewardToken.await())
-
-            send(
-                create(
-                    name = stakedToken.name + " earn pool",
-                    rewardTokens = listOf(rewardToken.toFungibleToken()),
-                    identifier = it,
-                    stakedToken = stakedToken.toFungibleToken(),
-                    claimableRewardFetcher = ClaimableRewardFetcher(
-                        Reward(
-                            rewardToken.toFungibleToken(),
-                            contract.address,
-                            { user ->
-                                contract.pendingReward(user)
-                            }
-                        ),
-                        preparedTransaction = { user ->
-                            PreparedTransaction(
-                                network = getNetwork().toVO(),
-                                function = contract.withdraw(),
-                                to = contract.address,
-                                from = user
-                            )
-                        }
-                    ),
-                    positionFetcher = PositionFetcher(
-                        contract.address,
-                        { user ->
-                            contract.userInfo(user)
-                        },
-                    ),
-                )
-            )
+        getSmartchefAddresses().await().parMap(concurrency = 8) {
+            createMarket(it)
+        }.forEach {
+            send(it)
         }
+    }
+
+    private suspend fun createMarket(
+        it: String,
+    ): FarmingMarket {
+        val contract = SmartChefContract(getBlockchainGateway(), it)
+        val stakedToken = getToken(contract.stakedToken.await())
+        val rewardToken = getToken(contract.rewardToken.await())
+
+        return create(
+            name = stakedToken.name + " earn pool",
+            rewardTokens = listOf(rewardToken.toFungibleToken()),
+            identifier = it,
+            stakedToken = stakedToken.toFungibleToken(),
+            claimableRewardFetcher = ClaimableRewardFetcher(
+                Reward(
+                    rewardToken.toFungibleToken(),
+                    contract.address,
+                    { user ->
+                        contract.pendingReward(user)
+                    }
+                ),
+                preparedTransaction = selfExecutingTransaction(contract::withdraw)
+            ),
+            positionFetcher = PositionFetcher(
+                contract.address,
+                contract::userInfo,
+            ),
+        )
     }
 
     override fun getProtocol(): Protocol {

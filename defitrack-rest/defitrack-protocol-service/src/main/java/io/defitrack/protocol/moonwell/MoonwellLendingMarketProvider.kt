@@ -1,5 +1,6 @@
 package io.defitrack.protocol.moonwell
 
+import arrow.fx.coroutines.parMap
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
@@ -25,24 +26,11 @@ import java.math.BigInteger
 @ConditionalOnCompany(Company.MOONWELL)
 class MoonwellLendingMarketProvider : LendingMarketProvider() {
 
-    val deferredComptroller = lazyAsync {
-        getComptroller()
-    }
 
     override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
-        deferredComptroller.await().getMarkets().map { market ->
-            CompoundTokenContract(
-                getBlockchainGateway(),
-                market
-            )
-        }
-        getTokenContracts().map {
-            async {
-                throttled {
-                    toLendingMarket(it)
-                }
-            }
-        }.awaitAll().filterNotNull()
+        getTokenContracts().parMap {
+            toLendingMarket(it)
+        }.filterNotNull()
     }
 
     private suspend fun toLendingMarket(ctokenContract: CompoundTokenContract): LendingMarket? {

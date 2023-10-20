@@ -26,12 +26,12 @@ class SmartChefContract(
         )
     }
 
-    fun withdraw(): Function {
+    fun withdraw(): ContractCall {
         return createFunction(
             "withdraw",
             listOf(BigInteger.ZERO.toUint256()),
             emptyList()
-        )
+        ).toContractCall()
     }
 
     fun pendingReward(address: String): Function {
