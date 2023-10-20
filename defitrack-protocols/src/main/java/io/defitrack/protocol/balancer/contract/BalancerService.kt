@@ -29,6 +29,18 @@ class BalancerService(private val blockchainGatewayProvider: BlockchainGatewayPr
             ),
             "0"
         ),
+        Network.POLYGON_ZKEVM to BalancerConfig(
+            listOf(
+                "0x4b7b369989e613ff2C65768B7Cf930cC927F901E",
+                "0x956CCab09898C0AF2aCa5e6C229c3aD4E93d9288",
+                "0x6B1Da720Be2D11d95177ccFc40A917c2688f396c",
+                "0x687b8C9b41E01Be8B591725fac5d5f52D0564d79",
+                "0xaf779e58dafb4307b998C7b3C9D3f788DFc80632",
+                "0x03F3Fb107e74F2EAC9358862E91ad3c692712054",
+                "0x44d33798dddCdAbc93Fe6a40C80588033Dc502d3",
+            ),
+            "0"
+        ),
         Network.OPTIMISM to BalancerConfig(
             listOf(
                 "0x7396f99B48e7436b152427bfA3DD6Aa8C7C6d05B",
@@ -36,7 +48,20 @@ class BalancerService(private val blockchainGatewayProvider: BlockchainGatewayPr
                 "0x7ADbdabaA80F654568421887c12F09E0C7BD9629",
                 "0x4C32a8a8fDa4E24139B51b456B42290f51d6A1c4",
                 "0x230a59F4d9ADc147480f03B0D3fFfeCd56c3289a",
-                "0x19DFEF0a828EEC0c85FbB335aa65437417390b85"
+                "0x19DFEF0a828EEC0c85FbB335aa65437417390b85",
+                "0x043A2daD730d585C44FB79D2614F295D2d625412"
+            ),
+            "0"
+        ),
+        Network.BASE to BalancerConfig(
+            listOf(
+                "0x687b8C9b41E01Be8B591725fac5d5f52D0564d79",
+                "0x8df317a729fcaA260306d7de28888932cb579b88",
+                "0x161f4014C27773840ccb4EC1957113e6DD028846",
+                "0x9Dd32684176638D977883448A4c914311c07bd62",
+                "0x9a62C91626d39D0216b3959112f9D4678E20134d",
+                "0x4C32a8a8fDa4E24139B51b456B42290f51d6A1c4",
+                "0x44d33798dddCdAbc93Fe6a40C80588033Dc502d3"
             ),
             "0"
         ),
@@ -81,7 +106,9 @@ class BalancerService(private val blockchainGatewayProvider: BlockchainGatewayPr
                 "0x897888115Ada5773E02aA29F775430BFB5F34c51",
                 "0x5F5222Ffa40F2AEd6380D022184D6ea67C776eE0",
                 "0x39A79EB449Fc05C92c39aA6f0e9BfaC03BE8dE5B",
-                "0x813EE7a840CE909E7Fea2117A44a90b8063bd4fd"
+                "0x813EE7a840CE909E7Fea2117A44a90b8063bd4fd",
+                "0xDB8d758BCb971e482B2C45f7F8a7740283A1bd3A",
+
             ),
             "12703126"
         )

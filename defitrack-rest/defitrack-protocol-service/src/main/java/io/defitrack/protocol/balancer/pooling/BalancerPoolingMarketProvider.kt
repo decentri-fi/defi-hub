@@ -6,6 +6,7 @@ import arrow.core.some
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
@@ -23,7 +24,7 @@ abstract class BalancerPoolingMarketProvider(
 ) : PoolingMarketProvider() {
 
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
-        balancerService.getPools(getNetwork()).parMapNotNull(EmptyCoroutineContext, 8) { pool ->
+        balancerService.getPools(getNetwork()).parMapNotNull(concurrency = 8) { pool ->
             createMarket(pool)
         }.forEach {
             it.onSome { send(it) }
@@ -68,7 +69,7 @@ abstract class BalancerPoolingMarketProvider(
                 metadata = mapOf(
                     "poolId" to poolId,
                 ),
-                marketSize = Refreshable.refreshable {
+                marketSize = refreshable {
                     val poolInfo = vault.getPoolTokens(poolId)
 
                     val tokens = poolInfo.tokens.mapIndexed { index, address ->
@@ -91,12 +92,12 @@ abstract class BalancerPoolingMarketProvider(
                     }.toBigDecimal()
                 },
                 positionFetcher = defaultPositionFetcher(pool),
-                totalSupply = Refreshable.refreshable {
+                totalSupply = refreshable {
                     getToken(pool).totalDecimalSupply()
                 }
             ).some()
         } catch (e: Exception) {
-            logger.error("Error creating market for pool $pool", e)
+            logger.error("Error creating market for pool $pool:  ex: {}", e.message)
             return None
         }
     }
