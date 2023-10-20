@@ -27,8 +27,8 @@ class MultiCallV2Caller(val address: String) : MultiCallCaller {
     ): List<MultiCallResult> = coroutineScope {
         if (elements.isEmpty()) {
             return@coroutineScope emptyList()
-        } else if (elements.size > 300) {
-            return@coroutineScope elements.chunked(300).map {
+        } else if (elements.size > 200) {
+            return@coroutineScope elements.chunked(200).map {
                 async {
                     semaphore.withPermit {
                         readMultiCall(it, executeCall)
