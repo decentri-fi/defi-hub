@@ -14,12 +14,12 @@ class GainsNetworkStakingContract(
     blockchainGateway, address
 ) {
 
-    fun harvestDai(): Function {
+    fun harvestDai(): ContractCall {
         return createFunction(
             "harvestDai",
             listOf(),
             listOf()
-        )
+        ).toContractCall()
     }
 
     fun pendingRewardsDai(address: String): Function {
