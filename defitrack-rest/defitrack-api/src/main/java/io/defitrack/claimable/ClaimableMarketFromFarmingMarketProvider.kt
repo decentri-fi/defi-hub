@@ -13,14 +13,14 @@ class ClaimableMarketFromFarmingMarketProvider(
         return farmingMarketProvider.flatMap {
             it.getMarkets()
         }.filter {
-            it.claimableRewardFetchers != null
+            it.claimableRewardFetchers.isNotEmpty()
         }.map {
             ClaimableMarket(
                 id = "rwrd_" + it.id,
                 name = it.name + " reward",
                 network = it.network,
                 protocol = it.protocol,
-                claimableRewardFetchers = it.claimableRewardFetchers!!,
+                claimableRewardFetchers = it.claimableRewardFetchers,
             )
         }
     }
