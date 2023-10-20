@@ -10,15 +10,23 @@ import java.math.BigInteger
 
 class TokenInformationVO(
     val network: NetworkVO,
-    val logo: String? = null,
-    val name: String,
-    val symbol: String,
-    val address: String,
-    val decimals: Int,
-    val type: TokenType,
-    val totalSupply: BigInteger = BigInteger.ZERO,
+    logo: String? = null,
+    name: String,
+    symbol: String,
+    address: String,
+    decimals: Int,
+    type: TokenType,
+    totalSupply: BigInteger = BigInteger.ZERO,
     val underlyingTokens: List<TokenInformationVO> = emptyList(),
     val protocol: ProtocolVO? = null
+) : FungibleToken(
+    address,
+    name,
+    decimals,
+    symbol,
+    logo,
+    type,
+    totalSupply
 ) {
 
     fun totalDecimalSupply(): BigDecimal {
