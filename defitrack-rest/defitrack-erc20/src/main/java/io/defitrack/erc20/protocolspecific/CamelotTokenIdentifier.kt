@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 class CamelotTokenIdentifier(
     lpContractReader: LpContractReader
 ) : DefaultLpIdentifier(
-    Protocol.APESWAP, TokenType.APE, lpContractReader,
+    Protocol.CAMELOT, TokenType.CAMELOT, lpContractReader,
 ) {
     override suspend fun isProtocolToken(token: ERC20): Boolean {
         return token.network == Network.ARBITRUM && token.symbol.startsWith("CMLT-LP")
