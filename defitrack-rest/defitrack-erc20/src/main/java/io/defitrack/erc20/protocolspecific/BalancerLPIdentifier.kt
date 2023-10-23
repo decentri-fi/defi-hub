@@ -41,13 +41,12 @@ class BalancerLPIdentifier(
 
         val poolId = poolContract.getPoolId()
 
-        val poolTokens = vault.getPoolTokens(poolId)
-        val underlying = poolTokens.tokens
+        val poolTokens = vault.getPoolTokens(poolId, token.address)
+        val underlying = poolTokens
             .filter {
-                it.lowercase() != token.address.lowercase()
-            }
-            .map { u ->
-                erc20Service.getTokenInformation(u, token.network)
+                it.token.lowercase() != token.address.lowercase()
+            }.map {
+                erc20Service.getTokenInformation(it.token, token.network)
             }
 
         return TokenInformation(
