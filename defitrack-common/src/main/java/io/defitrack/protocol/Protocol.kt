@@ -165,6 +165,14 @@ enum class Protocol(
         networks = listOf(ETHEREUM),
         company = Company.SWELL
     ),
+    LIQUITY(
+        logo = "liquidty.png",
+        slug = "liquity",
+        primitives = listOf(FARMING, LENDING, CLAIMABLES),
+        website = "https://liquity.org",
+        networks = listOf(ETHEREUM),
+        company = Company.LIQUITY
+    ),
     CAMELOT(
         logo = "camelot.png",
         slug = "camelot",
