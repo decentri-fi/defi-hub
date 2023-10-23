@@ -18,6 +18,7 @@ class BalancerService(private val blockchainGatewayProvider: BlockchainGatewayPr
     val configs = mapOf(
         Network.POLYGON to BalancerConfig(
             listOf(
+                "0x136fd06fa01ecf624c7f2b3cb15742c1339dc2c4",
                 "0xAB2372275809E15198A7968C7f324053867cdB0C",
                 "0x8e9aa87e45e92bad84d5f8dd1bff34fb92637de9",
                 "0x7bc6C0E73EDAa66eF3F6E2f27b0EE8661834c6C9",

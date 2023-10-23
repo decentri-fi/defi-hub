@@ -1,5 +1,6 @@
 package io.defitrack.protocol.balancer.contract
 
+import arrow.core.nonEmptyListOf
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
@@ -15,11 +16,20 @@ open class BalancerGaugeContract(
     address: String
 ) : ERC20Contract(blockchainGateway, address) {
 
+    val workingSupply = constant<BigInteger>("working_supply", uint256())
+
+    fun workingBalance(user: String): Function {
+        return createFunction(
+            "working_balances",
+            nonEmptyListOf(user.toAddress()),
+            nonEmptyListOf(uint256())
+        )
+    }
 
     fun exitPosition(amount: BigInteger): Function {
         return createFunction(
             "withdraw",
-            listOf(amount.toUint256()),
+            nonEmptyListOf(amount.toUint256()),
             listOf()
         )
     }

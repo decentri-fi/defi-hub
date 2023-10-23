@@ -13,6 +13,7 @@ class BalancerGaugeZkEvmContract(
     address: String
 ) : BalancerGaugeContract(blockchainGateway, address) {
 
+
     fun integrateFraction(user: String): Function {
         return createFunction(
             "integrate_fraction",

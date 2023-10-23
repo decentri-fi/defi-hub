@@ -41,7 +41,7 @@ abstract class BalancerGaugeFarmingMarketProvider(
 
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
         poolingMarketProvider.getMarkets()
-            .parMapNotNull(EmptyCoroutineContext, 12) { pool ->
+            .parMapNotNull(concurrency = 12) { pool ->
                 getMarket(pool).mapLeft {
                     logger.error("error getting market for ${pool.address}", it)
                 }.map {

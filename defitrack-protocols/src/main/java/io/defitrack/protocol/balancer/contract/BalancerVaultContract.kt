@@ -18,7 +18,7 @@ class BalancerVaultContract(
     blockchainGateway, address
 ) {
 
-    suspend fun getPoolTokens(poolId: String): PoolTokenResult {
+    suspend fun getPoolTokens(poolId: String, poolAddress: String): List<PoolTokenResult> {
         val bytes = Hex.decode(poolId.removePrefix("0x"))
         val result = read(
             method = "getPoolTokens",
@@ -33,11 +33,18 @@ class BalancerVaultContract(
         val tokens = (result[0].value as List<Address>).map { it.value as String }
         val balances = (result[1].value as List<Uint256>).map { it.value as BigInteger }
 
-        return PoolTokenResult(tokens, balances)
+        return tokens.mapIndexed { index, token ->
+            PoolTokenResult(
+                token,
+                balances[index]
+            )
+        }.filter {
+            it.token.lowercase() != poolAddress.lowercase()
+        }
     }
 
     data class PoolTokenResult(
-        val tokens: List<String>,
-        val balances: List<BigInteger>
+        val token: String,
+        val balance: BigInteger,
     )
 }

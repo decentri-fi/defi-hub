@@ -4,6 +4,7 @@ import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.event.EventDecoder.Companion.extract
@@ -11,6 +12,7 @@ import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.GetEventLogsCommand
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.market.position.Position
 import io.defitrack.market.position.PositionFetcher
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
@@ -60,10 +62,27 @@ class BalancerPolygonZkEvmGaugeMarketProvider(
                     name = lp.name + " gauge",
                     stakedToken = getToken(gaugecontract.getStakedToken()).toFungibleToken(),
                     rewardTokens = rewards.map(TokenInformationVO::toFungibleToken),
+
                     positionFetcher = PositionFetcher(
                         gaugecontract.address,
-                        { user -> ERC20Contract.balanceOfFunction(user) }
-                    ),
+                        gaugecontract::workingBalance
+                    ) {
+                        val bal = it[0].value as BigInteger
+                        if (bal > BigInteger.ZERO) {
+                            val ratiod =
+                                bal.toBigDecimal().dividePrecisely(gaugecontract.workingSupply.await().toBigDecimal())
+                            val normalized = lp.totalSupply.toBigDecimal().times(ratiod)
+                            Position(
+                                bal,
+                                normalized.toBigInteger()
+                            )
+                        } else {
+                            Position(
+                                BigInteger.ZERO,
+                                BigInteger.ZERO
+                            )
+                        }
+                    },
                     metadata = mapOf("address" to gaugeAddress),
                     exitPositionPreparer = prepareExit {
                         PreparedExit(
@@ -80,7 +99,7 @@ class BalancerPolygonZkEvmGaugeMarketProvider(
                             )
                         },
                         preparedTransaction = selfExecutingTransaction(gaugecontract::getClaimRewardsFunction)
-                    )
+                    ),
                 )
             } catch (ex: Exception) {
                 logger.error("Error fetching gauge", ex)

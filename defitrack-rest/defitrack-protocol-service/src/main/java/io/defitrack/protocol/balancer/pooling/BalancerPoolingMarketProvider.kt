@@ -5,7 +5,6 @@ import arrow.core.Option
 import arrow.core.some
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
@@ -17,7 +16,7 @@ import io.defitrack.protocol.balancer.contract.BalancerVaultContract
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import java.math.BigDecimal
-import kotlin.coroutines.EmptyCoroutineContext
+import java.math.BigInteger
 
 abstract class BalancerPoolingMarketProvider(
     private val balancerService: BalancerService
@@ -32,11 +31,11 @@ abstract class BalancerPoolingMarketProvider(
     }
 
     private suspend fun createMarket(
-        pool: String,
+        poolAddress: String,
     ): Option<PoolingMarket> {
         try {
             val poolContract = BalancerPoolContract(
-                getBlockchainGateway(), pool
+                getBlockchainGateway(), poolAddress
             )
             val vault = BalancerVaultContract(
                 getBlockchainGateway(),
@@ -45,16 +44,21 @@ abstract class BalancerPoolingMarketProvider(
 
             val poolId = poolContract.getPoolId()
 
-            val poolTokens = vault.getPoolTokens(poolId)
-            val underlying = poolTokens.tokens.mapIndexed { index, it ->
-                getToken(it) to poolTokens.balances[index]
-            }.filter {
-                it.first.address.lowercase() != pool.lowercase()
+            val poolTokens = vault.getPoolTokens(poolId, poolAddress)
+
+            if (poolTokens.all {
+                    it.balance == BigInteger.ZERO
+                }) {
+                return None
+            }
+
+            val underlying = poolTokens.map { it ->
+                getToken(it.token) to it.balance
             }
 
             return create(
                 identifier = poolId,
-                address = pool,
+                address = poolAddress,
                 name = "${
                     underlying.joinToString("/") {
                         it.first.symbol
@@ -70,36 +74,46 @@ abstract class BalancerPoolingMarketProvider(
                     "poolId" to poolId,
                 ),
                 marketSize = refreshable {
-                    val poolInfo = vault.getPoolTokens(poolId)
-
-                    val tokens = poolInfo.tokens.mapIndexed { index, address ->
-                        val token = getToken(address)
-                        val balance = poolInfo.balances[index]
-                        token to balance
-                    }.filter {
-                        it.first.address != pool
-                    }
-
-
-                    tokens.sumOf {
-                        getPriceResource().calculatePrice(
-                            PriceRequest(
-                                it.first.address,
-                                getNetwork(),
-                                it.second.asEth(it.first.decimals)
-                            )
+                    calculateMarketSize(vault, poolId, poolAddress).also {
+                        logger.debug(
+                            "Market size for pool {} ({}) is {}",
+                            poolAddress,
+                            underlying.joinToString("/") { it.first.symbol },
+                            it
                         )
-                    }.toBigDecimal()
+                    }
                 },
-                positionFetcher = defaultPositionFetcher(pool),
+                positionFetcher = defaultPositionFetcher(poolAddress),
                 totalSupply = refreshable {
-                    getToken(pool).totalDecimalSupply()
+                    getToken(poolAddress).totalDecimalSupply()
                 }
             ).some()
         } catch (e: Exception) {
-            logger.error("Error creating market for pool $pool:  ex: {}", e.message)
+            logger.error("Error creating market for pool $poolAddress:  ex: {}", e.message)
             return None
         }
+    }
+
+    private suspend fun BalancerPoolingMarketProvider.calculateMarketSize(
+        vault: BalancerVaultContract,
+        poolId: String,
+        poolAddress: String
+    ): BigDecimal {
+        val poolInfo = vault.getPoolTokens(poolId, poolAddress)
+
+        val tokens = poolInfo.map { it ->
+            getToken(it.token) to it.balance
+        }
+
+        return tokens.sumOf {
+            getPriceResource().calculatePrice(
+                PriceRequest(
+                    it.first.address,
+                    getNetwork(),
+                    it.second.asEth(it.first.decimals)
+                )
+            )
+        }.toBigDecimal()
     }
 
     override fun getProtocol(): Protocol {

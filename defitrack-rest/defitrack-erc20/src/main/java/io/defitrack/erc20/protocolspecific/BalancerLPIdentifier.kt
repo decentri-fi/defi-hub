@@ -21,7 +21,6 @@ class BalancerLPIdentifier(
     @Autowired
     private lateinit var erc20Service: ERC20Service
 
-
     override suspend fun isProtocolToken(token: ERC20): Boolean {
         return balancerService.getPools(token.network).any {
             it.lowercase() == token.address.lowercase()
