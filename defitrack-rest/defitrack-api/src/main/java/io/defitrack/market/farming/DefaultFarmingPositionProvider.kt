@@ -43,6 +43,12 @@ class DefaultFarmingPositionProvider(
                     semaphore.withPermit {
                         val market = markets[index]
                         catch {
+
+                            if (!retVal.success) {
+                                logger.info("Call to get position returned error ${market.name}")
+                                return@catch None
+                            }
+
                             val balance = market.balanceFetcher!!.extractBalance(retVal.data)
 
                             if (balance.underlyingAmount > BigInteger.ONE) {

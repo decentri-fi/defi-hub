@@ -334,7 +334,7 @@ enum class Protocol(
         logo = "polygon.png",
         slug = "polygon-protocol",
         website = "https://polygon.technology",
-        primitives = listOf(FARMING),
+        primitives = listOf(FARMING, CLAIMABLES),
         networks = listOf(ETHEREUM),
         company = Company.POLYGON
     ),
