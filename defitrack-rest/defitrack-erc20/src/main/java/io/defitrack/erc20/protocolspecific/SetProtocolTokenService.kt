@@ -42,8 +42,8 @@ class SetProtocolTokenService(
 
         return TokenInformation(
             network = token.network,
-            name = contract.name(),
-            symbol = contract.symbol(),
+            name = contract.readName(),
+            symbol = contract.readSymbol(),
             type = TokenType.SET,
             decimals = contract.decimals(),
             address = token.address,

@@ -36,8 +36,8 @@ class HopTokenService(
             val token1 = erC20ContractReader.getERC20(token.network, hopLpToken.hToken)
 
             TokenInformation(
-                name = saddleToken.name(),
-                symbol = saddleToken.symbol(),
+                name = saddleToken.readName(),
+                symbol = saddleToken.readSymbol(),
                 address = token.address,
                 decimals = saddleToken.decimals(),
                 totalSupply = Refreshable.refreshable {

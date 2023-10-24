@@ -3,10 +3,10 @@ package io.defitrack.erc20
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.ERC20Contract
+import io.defitrack.evm.multicall.MultiCallResult
 import io.github.reactivecircus.cache4k.Cache
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import java.math.BigInteger
 
 @Service
 class ERC20ContractReader(
@@ -27,32 +27,30 @@ class ERC20ContractReader(
                     correctAddress
                 )
             }.let {
-
-                try {
-                    val result = it.readData()
-                    ERC20(
-                        name = if (result[0].success) result[0].data.first().value as String else it.name(),
-                        symbol = if (result[1].success) result[1].data.first().value as String else it.symbol(),
-                        decimals = if (result[2].success) (result[2].data.first().value as BigInteger).toInt() else it.decimals(),
-                        network = network,
-                        address = correctAddress.lowercase(),
-                        totalSupply = if (result[3].success) result[3].data.first().value as BigInteger else it.totalSupply(),
-                    )
-                } catch (ex: Exception) {
-                    logger.debug("Unable to do it in a single call for token ${address} on network ${network.name}" ,ex)
-                    ERC20(
-                        name = it.name(),
-                        symbol = it.symbol(),
-                        decimals = it.decimals(),
-                        network = network,
-                        address = correctAddress.lowercase(),
-                        totalSupply = it.totalSupply()
-                    )
-                }
+                val result = it.readAsMulticall()
+                ERC20(
+                    name = getValue(result.name, it::readName),
+                    symbol = getValue(result.symbol, it::readSymbol),
+                    decimals = getValue(result.decimals, it::decimals),
+                    network = network,
+                    address = correctAddress.lowercase(),
+                    totalSupply = getValue(result.totalSupply, it::totalSupply),
+                )
             }
         } catch (ex: Exception) {
             logger.error("Unable to fetch erc20 info", ex)
             throw ex
+        }
+    }
+
+    private suspend inline fun <reified T> getValue(
+        result: MultiCallResult,
+        default: suspend () -> T
+    ): T {
+        return if (result.success) {
+            result.data.first().value as T
+        } else {
+            default()
         }
     }
 
@@ -65,5 +63,5 @@ class ERC20ContractReader(
         ERC20Contract(
             blockchainGatewayProvider.getGateway(network),
             address
-        ).allowance(userAddress, spenderAddress)
+        ).readAllowance(userAddress, spenderAddress)
 }

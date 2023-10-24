@@ -65,7 +65,7 @@ class OvixZkEVMLendingMarketProvider: LendingMarketProvider() {
                 val exchangeRate = ctokenContract.exchangeRate.await()
                 create(
                     identifier = ctokenContract.address,
-                    name = ctokenContract.name(),
+                    name = ctokenContract.readName(),
                     token = underlyingToken.toFungibleToken(),
                     marketSize = Refreshable.refreshable {
                         getPriceResource().calculatePrice(

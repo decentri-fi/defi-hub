@@ -55,7 +55,7 @@ class RadiantArbitrumLendingMarketProvider(
                             send(
                                 create(
                                     identifier = ctokenContract.address,
-                                    name = ctokenContract.name(),
+                                    name = ctokenContract.readName(),
                                     token = lendingToken.toFungibleToken(),
                                     poolType = "compound-lendingpool",
                                     positionFetcher = PositionFetcher(

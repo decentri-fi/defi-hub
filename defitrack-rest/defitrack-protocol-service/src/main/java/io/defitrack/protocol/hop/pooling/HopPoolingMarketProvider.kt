@@ -58,7 +58,7 @@ abstract class HopPoolingMarketProvider(
                 identifier = hopLpToken.canonicalToken,
                 address = hopLpToken.lpToken,
                 symbol = htoken.symbol + "-" + canonical.symbol,
-                name = contract.name(),
+                name = contract.readName(),
                 tokens = listOf(
                     htoken.toFungibleToken(),
                     canonical.toFungibleToken()

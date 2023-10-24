@@ -40,8 +40,8 @@ open class ERC20Contract(
         }
     }
 
-    suspend fun readData(): List<MultiCallResult> {
-        return readMultiCall(
+    suspend fun readAsMulticall(): ERC20MulticallResult {
+        val result = readMultiCall(
             listOf(
                 createFunction("name", outputs = listOf(string())),
                 createFunction("symbol", outputs = listOf(string())),
@@ -49,10 +49,24 @@ open class ERC20Contract(
                 createFunction("totalSupply", outputs = listOf(uint256())),
             )
         )
+
+        return ERC20MulticallResult(
+            name = result[0],
+            symbol = result[1],
+            decimals = result[2],
+            totalSupply = result[3],
+        )
     }
 
+    data class ERC20MulticallResult(
+        val name: MultiCallResult,
+        val symbol: MultiCallResult,
+        val decimals: MultiCallResult,
+        val totalSupply: MultiCallResult,
+    )
 
-    suspend fun allowance(owner: String, spender: String): BigInteger {
+
+    suspend fun readAllowance(owner: String, spender: String): BigInteger {
         return read(
             "allowance",
             listOf(owner.toAddress(), spender.toAddress()),
@@ -76,7 +90,7 @@ open class ERC20Contract(
     }
 
 
-    suspend fun name(): String {
+    suspend fun readName(): String {
         return try {
             readSingle("name", string())
         } catch (ex: Exception) {
@@ -85,7 +99,7 @@ open class ERC20Contract(
         }
     }
 
-    suspend fun symbol(): String {
+    suspend fun readSymbol(): String {
         return try {
             readSingle("symbol", string())
         } catch (ex: Exception) {

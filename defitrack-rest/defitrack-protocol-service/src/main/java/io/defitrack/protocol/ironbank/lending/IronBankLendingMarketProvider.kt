@@ -41,7 +41,7 @@ abstract class IronBankLendingMarketProvider(
                 val ctoken = getToken(ctokenContract.address)
                 create(
                     identifier = ctokenContract.address,
-                    name = ctokenContract.name(),
+                    name = ctokenContract.readName(),
                     rate = getSupplyRate(compoundTokenContract = ctokenContract),
                     token = underlyingToken.toFungibleToken(),
                     marketSize = refreshable {

@@ -34,7 +34,7 @@ class AuraDepositVaultFarmingMarketProvider(
                     val asset = getToken(crvrewards.asset())
 
                     create(
-                        name = crvrewards.name(),
+                        name = crvrewards.readName(),
                         identifier = crvrewards.address,
                         stakedToken = asset.toFungibleToken(),
                         rewardTokens = listOf(getToken(crvrewards.rewardToken.await()).toFungibleToken()),

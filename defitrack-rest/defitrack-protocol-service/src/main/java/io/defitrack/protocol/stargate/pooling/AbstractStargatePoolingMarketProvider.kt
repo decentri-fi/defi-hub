@@ -46,10 +46,10 @@ abstract class AbstractStargatePoolingMarketProvider(
 
                     send(
                         create(
-                            name = pool.name(),
+                            name = pool.readName(),
                             identifier = pool.address,
                             address = pool.address,
-                            symbol = pool.symbol(),
+                            symbol = pool.readSymbol(),
                             tokens = listOf(underlying.toFungibleToken()),
                             decimals = pool.decimals(),
                             totalSupply = Refreshable.refreshable {

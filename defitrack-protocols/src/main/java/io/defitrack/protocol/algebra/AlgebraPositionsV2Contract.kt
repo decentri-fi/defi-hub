@@ -18,18 +18,6 @@ class AlgebraPositionsV2Contract(
 ) : ERC20Contract(
     blockchainGateway, address
 ) {
-
-    suspend fun getUserPositions(owner: String): List<AlgebraPosition> {
-        val balance = balanceOf(owner).toInt()
-        return readMultiCall(
-            (0 until balance).map { tokenOfOwnerByIndex(owner, it) }.map {
-                getPositionFunction(it.toInt())
-            }
-        ).map {
-            algebraPosition(it.data)
-        }
-    }
-
     suspend fun tokenOfOwnerByIndex(owner: String, index: Int): BigInteger {
         return read(
             "tokenOfOwnerByIndex",

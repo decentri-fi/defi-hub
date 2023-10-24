@@ -46,7 +46,7 @@ class MStableEthereumFarmingMarketProvider(
         val rewardsToken = getToken(contract.rewardsToken())
         return create(
             identifier = contract.address,
-            name = contract.name(),
+            name = contract.readName(),
             stakedToken = stakingToken.toFungibleToken(),
             rewardTokens = listOf(
                 rewardsToken.toFungibleToken()

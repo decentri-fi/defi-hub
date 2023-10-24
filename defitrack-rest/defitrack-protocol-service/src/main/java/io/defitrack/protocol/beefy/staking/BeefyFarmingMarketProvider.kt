@@ -55,7 +55,7 @@ abstract class BeefyFarmingMarketProvider(
             val pricePerFullShare = contract.getPricePerFullShare()
             create(
                 identifier = contract.vaultId,
-                name = "${contract.symbol()} Beefy Vault",
+                name = "${contract.readSymbol()} Beefy Vault",
                 apr = getAPY(contract),
                 stakedToken = want.toFungibleToken(),
                 rewardTokens = listOf(

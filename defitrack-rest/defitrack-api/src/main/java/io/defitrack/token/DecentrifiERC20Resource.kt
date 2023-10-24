@@ -85,7 +85,7 @@ class DecentrifiERC20Resource(
         return with(blockchainGatewayProvider.getGateway(network)) {
             ERC20Contract(
                 this, token
-            ).allowance(owner, spender)
+            ).readAllowance(owner, spender)
         }
     }
 

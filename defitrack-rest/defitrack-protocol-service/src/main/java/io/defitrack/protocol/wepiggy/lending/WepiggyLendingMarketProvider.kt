@@ -45,7 +45,7 @@ class WepiggyLendingMarketProvider(
                 val exchangeRate = ctokenContract.exchangeRate
                 create(
                     identifier = ctokenContract.address,
-                    name = ctokenContract.name(),
+                    name = ctokenContract.readName(),
                     rate = getSupplyRate(compoundTokenContract = ctokenContract),
                     token = underlyingToken.toFungibleToken(),
                     marketSize = refreshable {

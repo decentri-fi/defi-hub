@@ -2,7 +2,6 @@ package io.defitrack.protocol.moonwell
 
 import arrow.fx.coroutines.parMap
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.conditional.ConditionalOnCompany
@@ -16,8 +15,6 @@ import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.compound.v2.contract.CompoundTokenContract
 import io.defitrack.token.TokenType
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 import java.math.BigInteger
@@ -39,7 +36,7 @@ class MoonwellLendingMarketProvider : LendingMarketProvider() {
                 val exchangeRate = ctokenContract.exchangeRate.await()
                 create(
                     identifier = ctokenContract.address,
-                    name = ctokenContract.name(),
+                    name = ctokenContract.readName(),
                     token = underlyingToken.toFungibleToken(),
                     marketSize = Refreshable.refreshable {
                         getPriceResource().calculatePrice(
