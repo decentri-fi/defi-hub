@@ -21,6 +21,14 @@ enum class Protocol(
         networks = listOf(BASE),
         company = Company.BASESWAP
     ),
+    SPARK(
+        logo = "spark.png",
+        slug = "spark",
+        primitives = listOf(LENDING),
+        website = "https://sparkprotocol.io",
+        networks = listOf(ETHEREUM),
+        company = Company.SPARK
+    ),
     EQUALIZER(
         logo = "equalizer.png",
         slug = "equalizer",
