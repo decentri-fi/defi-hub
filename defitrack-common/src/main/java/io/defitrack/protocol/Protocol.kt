@@ -166,12 +166,20 @@ enum class Protocol(
         company = Company.SWELL
     ),
     LIQUITY(
-        logo = "liquidty.png",
+        logo = "liquity.png",
         slug = "liquity",
         primitives = listOf(FARMING, LENDING, CLAIMABLES),
         website = "https://liquity.org",
         networks = listOf(ETHEREUM),
         company = Company.LIQUITY
+    ),
+    MYCELIUM(
+        logo = "mycelium.png",
+        slug = "mycelium",
+        primitives = listOf(FARMING, CLAIMABLES),
+        website = "https://mycelium.org",
+        networks = listOf(ARBITRUM),
+        company = Company.MYCELIUM
     ),
     CAMELOT(
         logo = "camelot.png",

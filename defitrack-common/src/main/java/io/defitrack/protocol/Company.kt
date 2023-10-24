@@ -12,6 +12,10 @@ enum class Company(
         prettyName = "Liquity",
         slug = "liquity"
     ),
+    MYCELIUM(
+        prettyName = "Mycelium",
+        slug = "mycelium"
+    ),
     SONNE(
         prettyName = "Sonne",
         slug = "sonne"
