@@ -1,5 +1,10 @@
 package io.defitrack.protocol.aave.v2.farming
 
+import arrow.core.nonEmptyListOf
+import io.defitrack.claimable.ClaimableMarketProvider
+import io.defitrack.claimable.domain.ClaimableMarket
+import io.defitrack.claimable.domain.ClaimableRewardFetcher
+import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.conditional.ConditionalOnCompany
@@ -9,46 +14,41 @@ import io.defitrack.market.position.PositionFetcher
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.v2.contract.IncentivesControllerContract
+import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.AAVE)
-class AaveV2IncentivesControllerMarketProvider : FarmingMarketProvider() {
+class AaveV2IncentivesControllerMarketProvider : ClaimableMarketProvider() {
 
     val stkAave = "0x4da27a545c0c5B758a6BA100e3a049001de870f5"
     val incentivesController = "0xd784927ff2f95ba542bfc824c8a8a98f3495f6b5"
 
-    override suspend fun fetchMarkets(): List<FarmingMarket> {
-        val stkAaveToken = getToken(stkAave)
-        return listOf(
-            create(
+    override suspend fun fetchClaimables(): List<ClaimableMarket> {
+        val stakedAave = erC20Resource.getTokenInformation(Network.ETHEREUM, stkAave)
+
+        val incentivesContract = IncentivesControllerContract(
+            blockchainGatewayProvider.getGateway(Network.ETHEREUM),
+            incentivesController
+        )
+
+        return nonEmptyListOf(
+            ClaimableMarket(
+                id = incentivesController,
                 name = "Aave v2 incentives controller",
-                identifier = "aave-v2-incentives-controller",
-                stakedToken = stkAaveToken.toFungibleToken(),
-                rewardTokens = listOf(stkAaveToken.toFungibleToken()),
-                marketSize = Refreshable.refreshable {
-                    getMarketSize(
-                        stkAaveToken.toFungibleToken(),
-                        incentivesController
+                network = Network.ETHEREUM,
+                protocol = Protocol.AAVE_V2,
+                claimableRewardFetchers = nonEmptyListOf(
+                    ClaimableRewardFetcher(
+                        Reward(
+                            stakedAave,
+                            incentivesController,
+                            incentivesContract::getUserUnclaimedRewardsFn
+                        ),
+                        preparedTransaction = selfExecutingTransaction(incentivesContract::claimRewardsFn)
                     )
-                },
-                positionFetcher = PositionFetcher(
-                    incentivesController, { user ->
-                        IncentivesControllerContract(
-                            getBlockchainGateway(),
-                            incentivesController
-                        ).getUserUnclaimedRewardsFn(user)
-                    }
-                ),
+                )
             )
         )
-    }
-
-    override fun getProtocol(): Protocol {
-        return Protocol.AAVE_V2
-    }
-
-    override fun getNetwork(): Network {
-        return Network.ETHEREUM
     }
 }

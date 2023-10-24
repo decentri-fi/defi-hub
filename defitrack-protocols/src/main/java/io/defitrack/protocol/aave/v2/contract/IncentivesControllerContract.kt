@@ -16,7 +16,7 @@ class IncentivesControllerContract(
     blockchainGateway, address
 ) {
 
-    fun claimRewardsFn(user: String): Function {
+    fun claimRewardsFn(user: String): ContractCall {
         return createFunction(
             "claimRewards",
             inputs = listOf(
@@ -24,7 +24,7 @@ class IncentivesControllerContract(
                 MAX_UINT256,
                 user.toAddress()
             )
-        )
+        ).toContractCall()
     }
 
     fun getUserUnclaimedRewardsFn(user: String): Function {
