@@ -1,6 +1,7 @@
 package io.defitrack.erc20.protocolspecific
 
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.erc20.ERC20
 import io.defitrack.erc20.ERC20Service
 import io.defitrack.evm.contract.BlockchainGatewayProvider
@@ -16,10 +17,7 @@ import org.springframework.stereotype.Component
 class BalancerLPIdentifier(
     private val balancerService: BalancerService,
     private val blockchainGatewayProvider: BlockchainGatewayProvider
-) : TokenIdentifier {
-
-    @Autowired
-    private lateinit var erc20Service: ERC20Service
+) : TokenIdentifier() {
 
     override suspend fun isProtocolToken(token: ERC20): Boolean {
         return balancerService.getPools(token.network).any {
@@ -58,7 +56,7 @@ class BalancerLPIdentifier(
             underlyingTokens = underlying,
             decimals = token.decimals,
             type = TokenType.BALANCER,
-            totalSupply = Refreshable.refreshable { token.totalSupply },
+            totalSupply = refreshable { token.totalSupply },
             symbol = underlying.joinToString("/") {
                 it.symbol
             },

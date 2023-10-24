@@ -19,7 +19,7 @@ class SetProtocolTokenService(
     polygonSetProvider: PolygonSetProvider,
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val erC20Resource: ERC20Resource
-) : TokenIdentifier {
+) : TokenIdentifier() {
 
     val providers = mapOf(
         Network.ETHEREUM to ethereumSetProvider,
@@ -60,7 +60,7 @@ class SetProtocolTokenService(
                     type = info.type,
                     decimals = info.decimals,
                     address = it.token,
-                    totalSupply = Refreshable.refreshable {
+                    totalSupply = Refreshable.refreshable(info.totalSupply) {
                         erC20Resource.getTokenInformation(token.network, it.token).totalSupply
                     },
                 )

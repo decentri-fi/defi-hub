@@ -1,6 +1,8 @@
 package io.defitrack.erc20.protocolspecific
 
+import arrow.core.nonEmptyListOf
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.erc20.ERC20
 import io.defitrack.erc20.ERC20ContractReader
 import io.defitrack.erc20.ERC20ToTokenInformationMapper
@@ -13,12 +15,11 @@ import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 
 @Component
-class HopTokenService(
+class HopTokenIdentifier(
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
+    private val erc20ContractReader: ERC20ContractReader,
     private val hopService: HopService,
-    private val erC20ContractReader: ERC20ContractReader,
-    private val erC20ToTokenInformationMapper: ERC20ToTokenInformationMapper
-) : TokenIdentifier {
+) : TokenIdentifier() {
 
     override suspend fun getTokenInfo(
         token: ERC20,
@@ -27,29 +28,20 @@ class HopTokenService(
             it.lpToken.lowercase() == token.address.lowercase()
         }!!.let { hopLpToken ->
 
-            val saddleToken = HopLpTokenContract(
-                blockchainGateway = blockchainGatewayProvider.getGateway(token.network),
-                token.address
-            )
+            val saddleToken = erc20ContractReader.getERC20(token.network, token.address)
 
-            val token0 = erC20ContractReader.getERC20(token.network, hopLpToken.canonicalToken)
-            val token1 = erC20ContractReader.getERC20(token.network, hopLpToken.hToken)
+            val token0 = erc20Service.getTokenInformation(hopLpToken.canonicalToken, token.network)
+            val token1 = erc20Service.getTokenInformation(hopLpToken.hToken, token.network)
 
             TokenInformation(
-                name = saddleToken.readName(),
-                symbol = saddleToken.readSymbol(),
-                address = token.address,
-                decimals = saddleToken.decimals(),
-                totalSupply = Refreshable.refreshable {
-                    saddleToken.totalSupply()
-                },
+                name = saddleToken.name,
+                symbol = saddleToken.symbol,
+                address = token.address.lowercase(),
+                decimals = saddleToken.decimals,
+                totalSupply = refreshable { saddleToken.totalSupply },
                 type = TokenType.HOP,
                 protocol = Protocol.HOP,
-                underlyingTokens = listOf(
-                    token0, token1,
-                ).map {
-                    erC20ToTokenInformationMapper.map(it, TokenType.HOP, Protocol.HOP)
-                },
+                underlyingTokens = nonEmptyListOf(token0, token1),
                 network = token.network
             )
         }
