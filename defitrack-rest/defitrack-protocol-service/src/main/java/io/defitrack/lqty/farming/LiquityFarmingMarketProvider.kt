@@ -1,4 +1,4 @@
-package io.defitrack.lqty
+package io.defitrack.lqty.farming
 
 import arrow.core.nonEmptyListOf
 import io.defitrack.claimable.domain.ClaimableRewardFetcher

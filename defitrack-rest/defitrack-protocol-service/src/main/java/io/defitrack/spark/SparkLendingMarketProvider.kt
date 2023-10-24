@@ -4,21 +4,20 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.position.PositionFetcher
-import io.defitrack.price.PriceRequest
+import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.aave.v3.contract.PoolContract
-import io.defitrack.protocol.aave.v3.contract.PoolDataProvider
-import io.defitrack.protocol.aave.v3.lending.invest.AaveV3LendingInvestmentPreparer
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 
 @Component
+@ConditionalOnCompany(Company.SPARK)
 class SparkLendingMarketProvider : LendingMarketProvider() {
 
     val pool = lazyAsync {
