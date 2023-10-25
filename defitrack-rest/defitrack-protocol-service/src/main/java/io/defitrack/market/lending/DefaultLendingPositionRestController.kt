@@ -23,31 +23,10 @@ class DefaultLendingPositionRestController(
     suspend fun getPoolingMarkets(
         @PathVariable("protocol") protocol: String,
         @PathVariable("userId") address: String
-    ): List<LendingPositionVO>  {
-        if(!WalletUtils.isValidAddress(address)) {
+    ): List<LendingPositionVO> {
+        if (!WalletUtils.isValidAddress(address)) {
             return emptyList()
         }
-        return lendingPositionProvider.getLendings(address).map { lendingPositionVOMapper.map(it) }
+        return lendingPositionProvider.getLendings(protocol, address).map { lendingPositionVOMapper.map(it) }
     }
-
-    @GetMapping(value = ["/{userId}/positions"], params = ["lendingElementId", "network"])
-    suspend fun getLendingById(
-        @PathVariable("userId") address: String,
-        @RequestParam("lendingElementId") lendingElementId: String,
-        @RequestParam("network") network: Network
-    ): LendingPositionVO? {
-        return if (WalletUtils.isValidAddress(address)) {
-            try {
-                lendingPositionProvider.getLending(address, lendingElementId)?.let {
-                    lendingPositionVOMapper.map(it)
-                }
-            } catch (ex: Exception) {
-                logger.error("Something went wrong trying to fetch the user farms: ${ex.message}")
-                null
-            }
-        } else {
-            null
-        }
-    }
-
 }

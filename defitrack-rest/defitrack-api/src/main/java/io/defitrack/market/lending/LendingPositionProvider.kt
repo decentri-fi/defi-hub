@@ -12,11 +12,5 @@ abstract class LendingPositionProvider {
 
     @Autowired
     lateinit var blockchainGatewayProvider: BlockchainGatewayProvider
-    abstract suspend fun getLendings(address: String): List<LendingPosition>
-
-    suspend fun getLending(address: String, marketId: String): LendingPosition? {
-        return getLendings(address).firstOrNull {
-            it.market.id == marketId
-        }
-    }
+    abstract suspend fun getLendings(protocol: String, address: String): List<LendingPosition>
 }

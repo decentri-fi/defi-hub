@@ -25,43 +25,47 @@ class DefaultLendingPositionProvider(
 
     val semaphore = Semaphore(16)
 
-    override suspend fun getLendings(address: String): List<LendingPosition> = coroutineScope {
-        lendingMarkets.flatMap { provider ->
-            val markets = provider.getMarkets().filter { it.positionFetcher != null }
-            if (markets.isEmpty()) {
-                return@flatMap emptyList()
+    override suspend fun getLendings(protocol: String, address: String): List<LendingPosition> = coroutineScope {
+        lendingMarkets
+            .filter {
+                it.getProtocol().slug == protocol || it.getProtocol().name == protocol
             }
-
-            gateway.getGateway(provider.getNetwork()).readMultiCall(
-                markets.map { market ->
-                    market.positionFetcher!!.toMulticall(address)
+            .flatMap { provider ->
+                val markets = provider.getMarkets().filter { it.positionFetcher != null }
+                if (markets.isEmpty()) {
+                    return@flatMap emptyList()
                 }
-            ).mapIndexed { index, retVal ->
-                async {
-                    semaphore.withPermit {
-                        val market = markets[index]
-                        Either.catch {
-                            val balance = market.positionFetcher!!.extractBalance(retVal.data)
 
-                            if (balance.underlyingAmount > BigInteger.ONE) {
-                                LendingPosition(
-                                    balance.underlyingAmount,
-                                    balance.tokenAmount,
-                                    market,
-                                ).some()
-                            } else {
-                                None
+                gateway.getGateway(provider.getNetwork()).readMultiCall(
+                    markets.map { market ->
+                        market.positionFetcher!!.toMulticall(address)
+                    }
+                ).mapIndexed { index, retVal ->
+                    async {
+                        semaphore.withPermit {
+                            val market = markets[index]
+                            Either.catch {
+                                val balance = market.positionFetcher!!.extractBalance(retVal.data)
+
+                                if (balance.underlyingAmount > BigInteger.ONE) {
+                                    LendingPosition(
+                                        balance.underlyingAmount,
+                                        balance.tokenAmount,
+                                        market,
+                                    ).some()
+                                } else {
+                                    None
+                                }
+                            }.mapLeft {
+                                logger.error("Error fetching balance for ${market.name}", it)
+                            }.map {
+                                it.getOrNull()
                             }
-                        }.mapLeft {
-                            logger.error("Error fetching balance for ${market.name}", it)
-                        }.map {
-                            it.getOrNull()
                         }
                     }
+                }.awaitAll().mapNotNull {
+                    it.getOrNull()
                 }
-            }.awaitAll().mapNotNull {
-                it.getOrNull()
             }
-        }
     }
 }
