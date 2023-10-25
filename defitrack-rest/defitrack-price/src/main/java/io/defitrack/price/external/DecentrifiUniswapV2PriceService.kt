@@ -7,18 +7,17 @@ import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
 @Component
-class DecentrifiUniswapPriceService(
+class DecentrifiUniswapV2PriceService(
     private val decentriUniswapV2UnderlyingPriceRepository: DecentriUniswapV2UnderlyingPriceRepository
 ) : ExternalPriceService {
 
     override fun appliesTo(token: TokenInformationVO): Boolean {
-        return token.network.toNetwork() == Network.ETHEREUM
-                && decentriUniswapV2UnderlyingPriceRepository.contains(token.address)
+        return decentriUniswapV2UnderlyingPriceRepository.contains(token.address)
     }
 
     override fun getAllPrices(): List<ExternalPrice> {
         return decentriUniswapV2UnderlyingPriceRepository.prices.asMap().entries.map {
-            ExternalPrice(it.key.toString(), Network.ETHEREUM, it.value)
+            ExternalPrice(it.key.toString(), Network.ETHEREUM, it.value, "uniswap-v2")
         }
     }
 

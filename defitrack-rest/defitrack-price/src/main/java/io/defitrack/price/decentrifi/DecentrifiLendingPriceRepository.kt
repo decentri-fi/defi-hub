@@ -43,7 +43,7 @@ class DecentrifiLendingPriceRepository(
                         } else {
                             cache.put(
                                 toIndex(market.network, market.marketToken!!.address.lowercase()), ExternalPrice(
-                                    market.marketToken!!.address, market.network.toNetwork(), price
+                                    market.marketToken!!.address, market.network.toNetwork(), price, "decentrifi-lending"
                                 )
                             )
                         }

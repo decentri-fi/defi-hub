@@ -46,7 +46,8 @@ class DQuickExternalPriceService(
             ExternalPrice(
                 dquickAddress,
                 Network.POLYGON,
-                it
+                it,
+                "dquick"
             )
         }?.let {
             listOf(it)

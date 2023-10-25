@@ -6,5 +6,6 @@ import java.math.BigDecimal
 data class ExternalPrice(
     val address: String,
     val network: Network,
-    val price: BigDecimal
+    val price: BigDecimal,
+    val source: String
 )

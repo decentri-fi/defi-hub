@@ -1,5 +1,6 @@
 package io.defitrack.price.decentrifi
 
+import arrow.fx.coroutines.parMap
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.pooling.vo.PoolingMarketVO
 import io.defitrack.network.NetworkVO
@@ -23,7 +24,6 @@ class DecentrifiPoolingPriceRepository(
 ) {
 
     val logger = LoggerFactory.getLogger(this::class.java)
-
     val cache = Cache.Builder<String, ExternalPrice>().build()
 
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 6)
@@ -31,18 +31,16 @@ class DecentrifiPoolingPriceRepository(
         val protocols = getProtocols()
         protocols.map { proto ->
             try {
-                val pools = getPools(proto)
-                pools.forEach { pool ->
-                    val price = pool.price
-                    if (price == null) {
-                        logger.error("Price for pool ${pool.address} in ${pool.protocol.name} is null")
-                    } else {
-                        cache.put(
-                            toIndex(pool.network, pool.address), ExternalPrice(
-                                pool.address, pool.network.toNetwork(), price
-                            )
-                        )
-                    }
+                getPools(proto).filter {
+                    it.price != null && it.price > BigDecimal.ZERO
+                }.parMap(concurrency = 12) { pool ->
+                    toIndex(pool.network, pool.address) to ExternalPrice(
+                        pool.address, pool.network.toNetwork(), pool.price, "decentrifi-pooling"
+                    )
+                }.forEach { pool ->
+                    cache.put(
+                        pool.first, pool.second
+                    )
                 }
             } catch (ex: Exception) {
                 logger.error("Unable to import price for proto ${proto.slug}", ex)
@@ -55,7 +53,7 @@ class DecentrifiPoolingPriceRepository(
     fun putInCache(network: NetworkVO, address: String, price: BigDecimal) =
         cache.put(
             toIndex(network, address), ExternalPrice(
-                address, network.toNetwork(), price
+                address, network.toNetwork(), price, "decentrifi-pooling"
             )
         )
 
