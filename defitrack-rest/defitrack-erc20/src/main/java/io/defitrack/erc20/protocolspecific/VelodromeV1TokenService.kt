@@ -9,23 +9,20 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.velodrome.VelodromeOptimismService
 import io.defitrack.token.TokenType
 import io.defitrack.uniswap.v2.PairFactoryContract
+import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
 
-@Service
+@Component
 class VelodromeV1TokenService(
     private val velodromeOptimismService: VelodromeOptimismService,
-    private val blockchainGatewayProvider: BlockchainGatewayProvider,
-    lpContractReader: LpContractReader
-) : DefaultLpIdentifier(
-    Protocol.VELODROME_V1, TokenType.VELODROME, lpContractReader
-) {
+) : DefaultLpIdentifier(Protocol.VELODROME_V1) {
 
     val optimismPools = lazyAsync {
-            val pairFactoryContract = PairFactoryContract(
-                blockchainGateway = blockchainGatewayProvider.getGateway(Network.OPTIMISM),
-                contractAddress = velodromeOptimismService.getV1PoolFactory()
-            )
-            pairFactoryContract.allPairs()
+        val pairFactoryContract = PairFactoryContract(
+            blockchainGateway = blockchainGatewayProvider.getGateway(Network.OPTIMISM),
+            contractAddress = velodromeOptimismService.getV1PoolFactory()
+        )
+        pairFactoryContract.allPairs()
     }
 
     override suspend fun isProtocolToken(token: ERC20): Boolean {

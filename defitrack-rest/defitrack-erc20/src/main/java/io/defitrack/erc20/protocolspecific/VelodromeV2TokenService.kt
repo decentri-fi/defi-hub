@@ -9,16 +9,13 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.velodrome.VelodromeOptimismService
 import io.defitrack.protocol.velodrome.contract.PoolFactoryContract
 import io.defitrack.token.TokenType
+import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
 
-@Service
+@Component
 class VelodromeV2TokenService(
-    private val velodromeOptimismService: VelodromeOptimismService,
-    private val blockchainGatewayProvider: BlockchainGatewayProvider,
-    lpContractReader: LpContractReader
-) : DefaultLpIdentifier(
-    Protocol.VELODROME_V2, TokenType.VELODROME, lpContractReader
-) {
+    private val velodromeOptimismService: VelodromeOptimismService
+) : DefaultLpIdentifier(Protocol.VELODROME_V2) {
 
     val optimismPools = lazyAsync {
         val pairFactoryContract = PoolFactoryContract(

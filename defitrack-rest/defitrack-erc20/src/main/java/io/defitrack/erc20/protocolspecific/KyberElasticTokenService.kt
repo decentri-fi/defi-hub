@@ -11,12 +11,7 @@ import io.defitrack.token.TokenType
 import org.springframework.stereotype.Service
 
 @Service
-class KyberElasticTokenService(
-    private val blockchainGatewayProvider: BlockchainGatewayProvider,
-    lpContractReader: LpContractReader
-) : DefaultLpIdentifier(
-    Protocol.KYBER_SWAP, TokenType.KYBER_ELASTIC, lpContractReader
-) {
+class KyberElasticTokenService : DefaultLpIdentifier(Protocol.KYBER_SWAP) {
 
     val kyberElasticOptimismPools = lazyAsync {
         KyberswapElasticContract(

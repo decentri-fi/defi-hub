@@ -12,12 +12,7 @@ import org.springframework.stereotype.Component
 import kotlin.time.Duration.Companion.days
 
 @Component
-class AerodromeBaseTokenIdentifier(
-    private val blockchainGatewayProvider: BlockchainGatewayProvider,
-    lpContractReader: LpContractReader
-) : DefaultLpIdentifier(
-    Protocol.AERODROME, TokenType.AERODROME, lpContractReader
-) {
+class AerodromeBaseTokenIdentifier : DefaultLpIdentifier(Protocol.AERODROME) {
 
     private val poolFactoryAddress: String = "0x420DD381b31aEf6683db6B902084cB0FFECe40Da"
 

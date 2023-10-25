@@ -7,11 +7,7 @@ import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 
 @Component
-class ApeswapTokenIdentifier(
-    lpContractReader: LpContractReader
-) : DefaultLpIdentifier(
-    Protocol.APESWAP, TokenType.APE, lpContractReader,
-) {
+class ApeswapTokenIdentifier : DefaultLpIdentifier(Protocol.APESWAP) {
     override suspend fun isProtocolToken(token: ERC20): Boolean {
         return token.symbol.startsWith("APE-LP")
     }

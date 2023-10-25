@@ -56,7 +56,7 @@ class BalancerLPIdentifier(
             address = token.address,
             underlyingTokens = underlying,
             decimals = token.decimals,
-            type = TokenType.BALANCER,
+            type = TokenType.CUSTOM_LP,
             totalSupply = token.totalSupply,
             symbol = underlying.joinToString("/") {
                 it.symbol

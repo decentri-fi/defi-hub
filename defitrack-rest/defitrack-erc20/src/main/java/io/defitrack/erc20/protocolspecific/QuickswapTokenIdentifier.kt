@@ -8,11 +8,7 @@ import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 
 @Component
-class QuickswapTokenIdentifier(
-    lpContractReader: LpContractReader
-) : DefaultLpIdentifier(
-    Protocol.QUICKSWAP, TokenType.QUICKSWAP, lpContractReader,
-) {
+class QuickswapTokenIdentifier : DefaultLpIdentifier(Protocol.QUICKSWAP) {
     override suspend fun isProtocolToken(token: ERC20): Boolean {
         return token.symbol == "UNI-V2" && token.network == Network.POLYGON
     }

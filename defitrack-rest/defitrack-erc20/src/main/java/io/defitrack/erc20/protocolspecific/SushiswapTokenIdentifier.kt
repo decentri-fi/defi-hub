@@ -7,11 +7,7 @@ import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 
 @Component
-class SushiswapTokenIdentifier(
-    lpContractReader: LpContractReader
-) : DefaultLpIdentifier(
-    Protocol.SUSHISWAP, TokenType.SUSHISWAP, lpContractReader,
-) {
+class SushiswapTokenIdentifier : DefaultLpIdentifier(Protocol.SUSHISWAP) {
     override suspend fun isProtocolToken(token: ERC20): Boolean {
         return token.symbol == "SLP" && token.name == "SushiSwap LP Token"
     }

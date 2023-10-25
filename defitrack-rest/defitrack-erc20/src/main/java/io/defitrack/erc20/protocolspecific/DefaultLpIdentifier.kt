@@ -1,20 +1,24 @@
 package io.defitrack.erc20.protocolspecific
 
-import io.defitrack.common.utils.Refreshable
 import io.defitrack.erc20.ERC20
 import io.defitrack.erc20.LpContractReader
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
+import org.springframework.beans.factory.annotation.Autowired
 
 abstract class DefaultLpIdentifier(
     private val protocol: Protocol,
-    private val tokenType: TokenType,
-    private val lpContractReader: LpContractReader
 ) : TokenIdentifier() {
 
+    @Autowired
+    protected lateinit var lpContractReader: LpContractReader
+    @Autowired
+    protected lateinit var blockchainGatewayProvider: BlockchainGatewayProvider
+
     override suspend fun getTokenInfo(token: ERC20): TokenInformation {
-        return fromLP(protocol, token, tokenType)
+        return fromLP(protocol, token, TokenType.STANDARD_LP)
     }
 
     suspend fun fromLP(protocol: Protocol, erc20: ERC20, tokenType: TokenType): TokenInformation {

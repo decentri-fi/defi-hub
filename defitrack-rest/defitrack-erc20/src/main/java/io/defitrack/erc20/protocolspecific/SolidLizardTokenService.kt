@@ -11,12 +11,7 @@ import io.defitrack.uniswap.v2.PairFactoryContract
 import org.springframework.stereotype.Service
 
 @Service
-class SolidLizardTokenService(
-    private val blockchainGatewayProvider: BlockchainGatewayProvider,
-    lpContractReader: LpContractReader
-) : DefaultLpIdentifier(
-    Protocol.SOLIDLIZARD, TokenType.SOLIDLIZARD, lpContractReader
-) {
+class SolidLizardTokenService : DefaultLpIdentifier(Protocol.SOLIDLIZARD) {
 
     val arbitrumPools = lazyAsync {
         val pairFactoryContract = PairFactoryContract(

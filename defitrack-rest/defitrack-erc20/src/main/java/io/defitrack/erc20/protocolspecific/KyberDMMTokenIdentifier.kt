@@ -7,11 +7,7 @@ import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 
 @Component
-class KyberDMMTokenIdentifier(
-    lpContractReader: LpContractReader
-) : DefaultLpIdentifier(
-    Protocol.KYBER_SWAP, TokenType.KYBER, lpContractReader,
-) {
+class KyberDMMTokenIdentifier : DefaultLpIdentifier(Protocol.KYBER_SWAP) {
     override suspend fun isProtocolToken(token: ERC20): Boolean {
         return token.symbol.startsWith("DMM-LP")
     }

@@ -15,11 +15,8 @@ import kotlin.time.Duration.Companion.days
 
 @Component
 class EqualizerLPIdentifier(
-    private val equalizerService: EqualizerService,
-    lpContractReader: LpContractReader,
-) : DefaultLpIdentifier(
-    Protocol.EQUALIZER, TokenType.EQUALIZER, lpContractReader
-) {
+    private val equalizerService: EqualizerService
+) : DefaultLpIdentifier(Protocol.EQUALIZER) {
 
     val cache = Cache.Builder<String, List<String>>().expireAfterWrite(1.days).build()
 

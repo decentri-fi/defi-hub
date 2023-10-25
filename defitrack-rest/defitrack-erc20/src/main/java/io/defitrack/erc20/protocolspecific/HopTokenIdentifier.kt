@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component
 
 @Component
 class HopTokenIdentifier(
-    private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val erc20ContractReader: ERC20ContractReader,
     private val hopService: HopService,
 ) : TokenIdentifier() {
@@ -42,7 +41,7 @@ class HopTokenIdentifier(
                 address = token.address.lowercase(),
                 decimals = saddle.decimals,
                 totalSupply = saddle.totalSupply,
-                type = TokenType.HOP,
+                type = TokenType.CUSTOM_LP,
                 protocol = Protocol.HOP,
                 underlyingTokens = nonEmptyListOf(token0, token1).map { it.getOrNull()!! },
                 network = token.network

@@ -6,6 +6,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.token.ERC20Resource
+import io.defitrack.token.TokenType
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -46,19 +47,17 @@ class PriceCalculator(
                 priceRequest.amount.times(tokenPrice)
             } else {
                 val tokenType = (priceRequest.type ?: token.type)
-                when {
-                    tokenType.standardLpToken -> {
+                when (tokenType) {
+                    TokenType.STANDARD_LP -> {
                         calculateLpHolding(priceRequest, token)
                     }
+
                     else -> {
                         BigDecimal.ZERO
                     }
                 }
             }
-
-            price.times(
-                BigDecimal.TEN.pow(18)
-            ).dividePrecisely(BigDecimal.TEN.pow(18)).toDouble()
+            price.toDouble()
         }
     }
 
