@@ -42,7 +42,7 @@ class ERC20ContractReader(
                 },
             )
         }.mapLeft {
-            logger.error("Error getting ERC20 contract for $address on $network", it)
+            logger.error("Error getting ERC20 contract for $address on ${network.slug}: ", it.message)
         }.getOrNone()
     }
 
