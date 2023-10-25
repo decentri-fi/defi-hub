@@ -27,7 +27,8 @@ class ProtocolDistributionConfig(
             Node(
                 name = it,
                 companies = getActivatedCompanies(it).map { company ->
-                    Company.findBySlug(company.slug) ?: throw IllegalArgumentException("Unknown company ${company.slug}")
+                    Company.findBySlug(company.slug)
+                        ?: throw IllegalArgumentException("Unknown company ${company.slug}")
                 }.distinct()
             ).also {
                 logger.info("Loaded ${it.companies.size} companies for node $it")
@@ -38,11 +39,17 @@ class ProtocolDistributionConfig(
     }
 
     suspend fun getActivatedCompanies(node: String): List<CompanyVO> = withContext(Dispatchers.IO) {
-        val response = httpClient.get("http://defitrack-group-$node.default.svc.cluster.local:8080/")
-        if (response.status.isSuccess()) {
-            response.body()
-        } else {
-            throw IllegalArgumentException("Unable to populate companies for node $node")
+        try {
+            val response = httpClient.get("http://defitrack-group-$node.default.svc.cluster.local:8080/")
+            if (response.status.isSuccess()) {
+                response.body()
+            } else {
+                logger.error("Unable to populate companies for node $node")
+                emptyList()
+            }
+        } catch (e: Exception) {
+            logger.error("Unable to populate companies for node $node", e)
+            emptyList()
         }
     }
 }
