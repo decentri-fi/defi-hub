@@ -57,7 +57,6 @@ class WepiggyLendingMarketProvider(
                                 ctokenContract.cash.await().add(ctokenContract.totalBorrows()).toBigDecimal().asEth(
                                     underlyingToken.decimals
                                 ),
-                                TokenType.SINGLE
                             )
                         ).toBigDecimal()
                     },

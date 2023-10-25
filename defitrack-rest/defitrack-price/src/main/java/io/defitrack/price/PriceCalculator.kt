@@ -48,7 +48,7 @@ class PriceCalculator(
             } else {
                 val tokenType = (priceRequest.type ?: token.type)
                 when (tokenType) {
-                    TokenType.STANDARD_LP -> {
+                    TokenType.STANDARD_LP.name -> {
                         calculateLpHolding(priceRequest, token)
                     }
 

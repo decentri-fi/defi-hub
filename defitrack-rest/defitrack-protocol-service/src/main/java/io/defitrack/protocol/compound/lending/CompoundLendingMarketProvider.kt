@@ -55,7 +55,7 @@ class CompoundLendingMarketProvider(
                                 getNetwork(),
                                 ctokenContract.cash.await().add(ctokenContract.totalBorrows()).toBigDecimal()
                                     .asEth(underlyingToken.decimals),
-                                TokenType.SINGLE
+                                TokenType.SINGLE.name
                             )
                         ).toBigDecimal()
                     },

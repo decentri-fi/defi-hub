@@ -24,7 +24,7 @@ import java.math.BigInteger
 
 @Component
 @ConditionalOnCompany(Company.OVIX)
-class OvixZkEVMLendingMarketProvider: LendingMarketProvider() {
+class OvixZkEVMLendingMarketProvider : LendingMarketProvider() {
 
     val deferredComptroller = AsyncUtils.lazyAsync {
         getComptroller()
@@ -48,7 +48,7 @@ class OvixZkEVMLendingMarketProvider: LendingMarketProvider() {
 
     private suspend fun getTokenContracts(): List<CompoundTokenContract> {
         return getComptroller().getMarkets().map { market ->
-            object: CompoundTokenContract(
+            object : CompoundTokenContract(
                 getBlockchainGateway(),
                 market
             ) {
@@ -74,7 +74,6 @@ class OvixZkEVMLendingMarketProvider: LendingMarketProvider() {
                                 getNetwork(),
                                 ctokenContract.cash.await().add(ctokenContract.totalBorrows()).toBigDecimal()
                                     .asEth(underlyingToken.decimals),
-                                TokenType.SINGLE
                             )
                         ).toBigDecimal()
                     },

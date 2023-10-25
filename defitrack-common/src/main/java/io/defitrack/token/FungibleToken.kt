@@ -8,6 +8,6 @@ open class FungibleToken(
     val decimals: Int,
     val symbol: String,
     val logo: String?,
-    val type: TokenType,
+    val type: String,
     val totalSupply: BigInteger
 )

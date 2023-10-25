@@ -43,7 +43,7 @@ abstract class StakingAprCalculator(
                 stakedAsset.address,
                 stakedAsset.network,
                 stakedAsset.amount,
-                stakedAsset.tokenType
+                stakedAsset.tokenType.name
             )
         )
     )
@@ -58,7 +58,7 @@ abstract class StakingAprCalculator(
                         reward.address,
                         reward.network,
                         amount,
-                        reward.tokenType
+                        reward.tokenType.name
                     )
                 )
             )

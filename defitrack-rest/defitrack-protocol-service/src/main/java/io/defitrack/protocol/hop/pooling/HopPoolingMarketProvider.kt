@@ -89,7 +89,6 @@ abstract class HopPoolingMarketProvider(
                 address = canonicalTokenAddress,
                 network = getNetwork(),
                 amount = tokenAmount.get(),
-                TokenType.SINGLE
             )
         )
     }

@@ -25,7 +25,7 @@ class TokenInformationVO(
     decimals,
     symbol,
     logo,
-    type,
+    type.name,
     totalSupply
 ) {
 

@@ -38,7 +38,7 @@ class DefaultFarmingMarketRestController(
             it.getMarkets()
         }.filter {
             val token = erC20Resource.getTokenInformation(it.network, it.stakedToken.address.lowercase())
-            if (token.type != TokenType.SINGLE) {
+            if (token.type != TokenType.SINGLE.name) {
                 it.stakedToken.address.lowercase() == tokenAddress.lowercase() || token.underlyingTokens.any { underlyingToken ->
                     underlyingToken.address.lowercase() == tokenAddress.lowercase()
                 }

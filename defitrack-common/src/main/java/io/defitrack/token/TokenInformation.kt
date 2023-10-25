@@ -25,7 +25,7 @@ data class TokenInformation(
             decimals,
             symbol,
             logo,
-            type,
+            type.name,
             totalSupply.get(),
         )
     }

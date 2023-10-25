@@ -49,19 +49,8 @@ class SetProtocolTokenService(
             address = token.address,
             protocol = Protocol.SET,
             totalSupply = contract.totalSupply(),
-            underlyingTokens = contract.getPositions().map {
-                val info = erC20Resource.getTokenInformation(token.network, it.token)
-                TokenInformation(
-                    network = token.network,
-                    name = info.name,
-                    symbol = info.symbol,
-                    type = info.type,
-                    decimals = info.decimals,
-                    address = it.token,
-                    totalSupply = Refreshable.refreshable(info.totalSupply) {
-                        erC20Resource.getTokenInformation(token.network, it.token).totalSupply
-                    },
-                )
+            underlyingTokens = contract.getPositions().mapNotNull {
+                erc20Service.getTokenInformation(token.address, token.network).getOrNull()
             }
         )
     }

@@ -23,7 +23,7 @@ class DefaultPoolingMarketRestController(
     private val poolingMarketVOMapper: PoolingMarketVOMapper
 ) : DefaultMarketRestController<PoolingMarket>(
     poolingMarketProviders, poolingMarketVOMapper
-){
+) {
     companion object {
         val logger: Logger = LoggerFactory.getLogger(this::class.java)
     }
@@ -102,7 +102,7 @@ class DefaultPoolingMarketRestController(
                 it.getMarkets()
             }.filter { poolingMarketElement ->
                 when {
-                    (token.type) != TokenType.SINGLE -> {
+                    (token.type) != TokenType.SINGLE.name -> {
                         poolingMarketElement.tokens.map { pt ->
                             pt.address.lowercase()
                         }.containsAll(

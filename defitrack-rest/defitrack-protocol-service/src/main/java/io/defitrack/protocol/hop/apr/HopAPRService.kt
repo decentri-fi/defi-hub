@@ -38,7 +38,7 @@ class HopAPRService(
                         address = tokenAddress,
                         network = network,
                         yearlyTokenFee,
-                        type = TokenType.SINGLE
+                        type = TokenType.SINGLE.name
                     )
                 )
 
