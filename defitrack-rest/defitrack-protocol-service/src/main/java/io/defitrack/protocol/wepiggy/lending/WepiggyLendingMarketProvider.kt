@@ -78,7 +78,7 @@ class WepiggyLendingMarketProvider(
                     marketToken = cToken.toFungibleToken(),
                     erc20Compatible = true,
                     totalSupply = ctokenContract.totalSupply().map {
-                        it.asEth(ctokenContract.decimals())
+                        it.asEth(ctokenContract.readDecimals())
                     }
                 )
             }

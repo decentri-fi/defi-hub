@@ -109,7 +109,7 @@ open class ERC20Contract(
         }
     }
 
-    suspend fun decimals(): BigInteger {
+    suspend fun readDecimals(): BigInteger {
         return try {
             readSingle("decimals", uint256())
         } catch (ex: Exception) {
@@ -124,6 +124,14 @@ open class ERC20Contract(
             } catch (ex: Exception) {
                 BigInteger.ZERO
             }
+        }
+    }
+
+    suspend fun readTotalSupply(): BigInteger {
+       return try {
+            readSingle("totalSupply", uint256())
+        } catch (ex: Exception) {
+            BigInteger.ZERO
         }
     }
 }

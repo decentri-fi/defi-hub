@@ -1,7 +1,6 @@
 package io.defitrack.protocol.stargate.pooling
 
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.Refreshable.Companion.map
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
@@ -57,7 +56,7 @@ abstract class AbstractStargatePoolingMarketProvider(
                             tokens = listOf(underlying.toFungibleToken()),
                             decimals = token.decimals,
                             totalSupply = pool.totalSupply().map {
-                                it.asEth(pool.decimals())
+                                it.asEth(pool.readDecimals())
                             },
                             marketSize = refreshable {
                                 getPriceResource().calculatePrice(

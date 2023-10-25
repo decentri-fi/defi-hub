@@ -69,7 +69,7 @@ abstract class HopPoolingMarketProvider(
                 },
                 positionFetcher = defaultPositionFetcher(hopLpToken.lpToken),
                 totalSupply = contract.totalSupply()
-                    .map { it.asEth(contract.decimals()) }
+                    .map { it.asEth(contract.readDecimals()) }
             )
         }
     }

@@ -3,7 +3,6 @@ package io.defitrack.protocol.blur.pooling
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.Refreshable.Companion.map
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
@@ -46,7 +45,7 @@ class BlurDepositPoolingMarketProvider : PoolingMarketProvider() {
                     symbol = "blurEth",
                     tokens = listOf(ether.toFungibleToken()),
                     totalSupply = contract.totalSupply().map {
-                        it.asEth(contract.decimals().toInt())
+                        it.asEth(contract.readDecimals().toInt())
                     },
                     positionFetcher = defaultPositionFetcher(blurEthDeposit),
                 )

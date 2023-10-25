@@ -3,6 +3,7 @@ package io.defitrack.erc20
 import arrow.core.Either.Companion.catch
 import arrow.core.Option
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.Refreshable
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.multicall.MultiCallResult
@@ -29,10 +30,16 @@ class ERC20ContractReader(
             ERC20(
                 name = getValue(result.name, contract::readName),
                 symbol = getValue(result.symbol, contract::readSymbol),
-                decimals = getValue<BigInteger>(result.decimals, contract::decimals).toInt(),
+                decimals = getValue<BigInteger>(result.decimals, contract::readDecimals).toInt(),
                 network = network,
                 address = correctAddress.lowercase(),
-                totalSupply = getValue(result.totalSupply, contract::totalSupply),
+                totalSupply = Refreshable.refreshable(
+                    getValue<BigInteger>(result.totalSupply) {
+                        contract.readTotalSupply()
+                    }
+                ) {
+                    contract.readTotalSupply()
+                },
             )
         }.mapLeft {
             logger.error("Error getting ERC20 contract for $address on $network", it)
