@@ -67,7 +67,7 @@ class AlgebraPositionsV2Contract(
 
     suspend fun getIndexes(): List<BigInteger> {
         return readMultiCall(
-            (0 until totalSupply().toInt()).map {
+            (0 until totalSupply().get().toInt()).map {
                 tokenByIndex(it)
             }
         ).map {

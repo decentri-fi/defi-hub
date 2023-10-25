@@ -29,7 +29,7 @@ class XSushiStakingMarketProvider(
         val sushiToken = getToken(sushi)
         val totalStakedSushi = getERC20Resource().getBalance(getNetwork(), sushi, xsushi)
 
-        val ratio = totalStakedSushi.toBigDecimal().dividePrecisely(xSushiContract.totalSupply().toBigDecimal())
+        val ratio = totalStakedSushi.toBigDecimal().dividePrecisely(xSushiContract.totalSupply().get().toBigDecimal())
 
 
         return listOf(

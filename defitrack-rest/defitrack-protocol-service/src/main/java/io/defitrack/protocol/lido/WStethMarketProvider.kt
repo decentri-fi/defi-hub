@@ -58,7 +58,7 @@ class WStethMarketProvider(
     }
 
     suspend fun calculateMarketSize(): BigDecimal {
-        val totalTokens = wstEthContract.totalSupply()
+        val totalTokens = wstEthContract.totalSupply().get()
         val wrappedStethTokens = wstEthContract.getStethByWstethFunction(totalTokens)
         val pooledEth = stEthContract.getPooledEthByShares(wrappedStethTokens)
         return getPriceResource().calculatePrice(

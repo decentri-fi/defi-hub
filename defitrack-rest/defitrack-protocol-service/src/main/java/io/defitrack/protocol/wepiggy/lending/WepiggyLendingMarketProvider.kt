@@ -2,6 +2,7 @@ package io.defitrack.protocol.wepiggy.lending
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.common.utils.Refreshable.Companion.map
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
@@ -76,8 +77,8 @@ class WepiggyLendingMarketProvider(
                     investmentPreparer = null,
                     marketToken = cToken.toFungibleToken(),
                     erc20Compatible = true,
-                    totalSupply = refreshable(ctokenContract.totalSupply().asEth(ctokenContract.decimals())) {
-                        getToken(ctokenContract.address).totalSupply.asEth(cToken.decimals)
+                    totalSupply = ctokenContract.totalSupply().map {
+                        it.asEth(ctokenContract.decimals())
                     }
                 )
             }

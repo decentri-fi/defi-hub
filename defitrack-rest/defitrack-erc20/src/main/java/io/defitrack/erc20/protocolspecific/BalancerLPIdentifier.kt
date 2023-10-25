@@ -1,16 +1,13 @@
 package io.defitrack.erc20.protocolspecific
 
-import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.erc20.ERC20
-import io.defitrack.erc20.ERC20Service
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.balancer.contract.BalancerPoolContract
 import io.defitrack.protocol.balancer.contract.BalancerService
 import io.defitrack.protocol.balancer.contract.BalancerVaultContract
 import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
@@ -45,6 +42,10 @@ class BalancerLPIdentifier(
                 it.token.lowercase() != token.address.lowercase()
             }.map {
                 erc20Service.getTokenInformation(it.token, token.network)
+            }.filter {
+                it.isSome()
+            }.map {
+                it.getOrNull()!!
             }
 
         return TokenInformation(
@@ -56,7 +57,7 @@ class BalancerLPIdentifier(
             underlyingTokens = underlying,
             decimals = token.decimals,
             type = TokenType.BALANCER,
-            totalSupply = refreshable { token.totalSupply },
+            totalSupply = token.totalSupply,
             symbol = underlying.joinToString("/") {
                 it.symbol
             },

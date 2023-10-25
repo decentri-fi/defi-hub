@@ -4,6 +4,8 @@ import io.defitrack.abi.TypeUtils.Companion.string
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
+import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.evm.multicall.MultiCallResult
 import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
@@ -116,11 +118,13 @@ open class ERC20Contract(
         }
     }
 
-    suspend fun totalSupply(): BigInteger {
-        return try {
-            readSingle("totalSupply", uint256())
-        } catch (ex: Exception) {
-            BigInteger.ZERO
+    suspend fun totalSupply(): Refreshable<BigInteger> {
+       return refreshable {
+            try {
+                readSingle("totalSupply", uint256())
+            } catch (ex: Exception) {
+                BigInteger.ZERO
+            }
         }
     }
 }

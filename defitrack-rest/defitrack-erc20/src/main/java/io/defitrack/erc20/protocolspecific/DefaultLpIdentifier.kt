@@ -3,11 +3,9 @@ package io.defitrack.erc20.protocolspecific
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.erc20.ERC20
 import io.defitrack.erc20.LpContractReader
-import io.defitrack.erc20.ERC20Service
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
-import org.springframework.beans.factory.annotation.Autowired
 
 abstract class DefaultLpIdentifier(
     private val protocol: Protocol,
@@ -25,17 +23,19 @@ abstract class DefaultLpIdentifier(
         val token0 = erc20Service.getTokenInformation(lp.token0.await(), erc20.network)
         val token1 = erc20Service.getTokenInformation(lp.token1.await(), erc20.network)
 
+        if (token0.isNone() || token1.isNone()) {
+            throw IllegalStateException("Token0 or Token1 is not an erc20 for ${erc20.address}")
+        }
+
         return TokenInformation(
-            name = "${token0.symbol}/${token1.symbol} LP",
-            symbol = "${token0.symbol}-${token1.symbol}",
+            name = "${token0.getOrNull()!!.symbol}/${token1.getOrNull()!!.symbol} LP",
+            symbol = "${token0.getOrNull()!!.symbol}-${token1.getOrNull()!!.symbol}",
             address = erc20.address,
             decimals = erc20.decimals,
-            totalSupply = Refreshable.refreshable(lp.totalSupply()) {
-                lp.totalSupply()
-            },
+            totalSupply = lp.totalSupply(),
             type = tokenType,
             protocol = protocol,
-            underlyingTokens = listOf(token0, token1),
+            underlyingTokens = listOf(token0.getOrNull()!!, token1.getOrNull()!!),
             network = erc20.network
         )
     }

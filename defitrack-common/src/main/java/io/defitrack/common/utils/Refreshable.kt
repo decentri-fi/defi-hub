@@ -11,6 +11,15 @@ class Refreshable<T> {
             val initial = fetcher()
             return Refreshable(initial, fetcher)
         }
+
+        suspend inline fun <T, R> Refreshable<T>.map(crossinline transform: suspend (T) -> R): Refreshable<R> {
+            return refreshable(
+                initialValue = transform(get()),
+                fetcher = fetcher?.let {
+                    { transform(it.invoke()) }
+                }
+            )
+        }
     }
 
     private var value: T

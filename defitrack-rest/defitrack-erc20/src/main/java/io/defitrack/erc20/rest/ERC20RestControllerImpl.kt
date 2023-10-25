@@ -1,10 +1,10 @@
 package io.defitrack.erc20.rest
 
+import arrow.core.getOrElse
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.*
 import io.micrometer.observation.Observation
 import io.micrometer.observation.ObservationRegistry
-import io.swagger.v3.oas.annotations.tags.Tag
 import kotlinx.coroutines.coroutineScope
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
@@ -27,9 +27,7 @@ class ERC20RestControllerImpl(
     override suspend fun getAllTokensForNetwork(
         @PathVariable("network") networkName: String,
     ): ResponseEntity<List<TokenInformationVO>> = coroutineScope {
-
         val network = Network.fromString(networkName) ?: return@coroutineScope ResponseEntity.badRequest().build()
-
         ResponseEntity.ok(
             erc20Service.getAllTokensForNetwork(network).map {
                 it.toVO()
@@ -57,11 +55,15 @@ class ERC20RestControllerImpl(
         val observation = Observation.start("erc20.get-token-information", observationRegistry)
             .lowCardinalityKeyValue("network", networkName)
         try {
-            ResponseEntity.ok(
-                erc20Service.getTokenInformation(
-                    address, network
-                ).toVO()
-            )
+            erc20Service.getTokenInformation(
+                address, network
+            ).map {
+                ResponseEntity.ok(
+                    it.toVO()
+                )
+            }.getOrElse {
+                ResponseEntity.notFound().build()
+            }
         } catch (ex: Exception) {
             logger.debug("Error while getting token information", ex)
             ResponseEntity.notFound().build()

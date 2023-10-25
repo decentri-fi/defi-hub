@@ -4,6 +4,8 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.Refreshable.Companion.map
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.market.pooling.PoolingMarketProvider
@@ -37,14 +39,14 @@ class BlurDepositPoolingMarketProvider : PoolingMarketProvider() {
                 create(
                     name = "BlurEth",
                     identifier = blurEthDeposit,
-                    marketSize = Refreshable.refreshable {
+                    marketSize = refreshable {
                         calculateMarketSize()
                     },
                     address = blurEthDeposit,
                     symbol = "blurEth",
                     tokens = listOf(ether.toFungibleToken()),
-                    totalSupply = Refreshable.refreshable {
-                        contract.totalSupply().asEth(contract.decimals())
+                    totalSupply = contract.totalSupply().map {
+                        it.asEth(contract.decimals())
                     },
                     positionFetcher = defaultPositionFetcher(blurEthDeposit),
                 )

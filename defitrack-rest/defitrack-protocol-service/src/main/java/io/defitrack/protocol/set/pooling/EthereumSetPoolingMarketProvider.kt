@@ -29,7 +29,7 @@ class EthereumSetPoolingMarketProvider(
                     getBlockchainGateway(), it
                 )
 
-                val supply = tokenContract.totalSupply().asEth(tokenContract.decimals())
+                val supply = tokenContract.totalSupply().get().asEth(tokenContract.decimals())
                 val token = getToken(it)
                 val positions = tokenContract.getPositions()
 
@@ -58,7 +58,7 @@ class EthereumSetPoolingMarketProvider(
                     apr = null,
                     marketSize = refreshable {
                         getPrice(positions).times(
-                            tokenContract.totalSupply().asEth(tokenContract.decimals())
+                            tokenContract.totalSupply().get().asEth(tokenContract.decimals())
                         )
                     },
                     positionFetcher = defaultPositionFetcher(it),

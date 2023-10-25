@@ -95,7 +95,7 @@ class DeprecatedQuickswapFarmingMarketProvider(
             PriceRequest(
                 address = stakedTokenInformation.address,
                 network = getNetwork(),
-                amount = pool.totalSupply().toBigDecimal().divide(
+                amount = pool.totalSupply().get().toBigDecimal().divide(
                     BigDecimal.TEN.pow(stakedTokenInformation.decimals), RoundingMode.HALF_UP
                 ),
                 type = stakedTokenInformation.type

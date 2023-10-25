@@ -1,8 +1,7 @@
 package io.defitrack.erc20
 
 import io.defitrack.common.network.Network
-import io.defitrack.token.TokenInformation
-import io.defitrack.token.TokenType
+import io.defitrack.common.utils.Refreshable
 import java.math.BigInteger
 
 class ERC20(
@@ -11,5 +10,5 @@ class ERC20(
     val decimals: Int,
     val network: Network,
     val address: String,
-    val totalSupply: BigInteger,
+    val totalSupply: Refreshable<BigInteger>,
 )

@@ -4,6 +4,7 @@ import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.Refreshable.Companion.map
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -86,9 +87,11 @@ abstract class HopFarmingMarketProvider(
             PriceRequest(
                 address = stakedTokenInformation.address,
                 network = getNetwork(),
-                amount = pool.totalSupply().toBigDecimal().divide(
-                    BigDecimal.TEN.pow(stakedTokenInformation.decimals), RoundingMode.HALF_UP
-                ),
+                amount = pool.totalSupply().map {
+                    it.toBigDecimal().divide(
+                        BigDecimal.TEN.pow(stakedTokenInformation.decimals), RoundingMode.HALF_UP
+                    )
+                }.get(),
                 type = stakedTokenInformation.type
             )
         )

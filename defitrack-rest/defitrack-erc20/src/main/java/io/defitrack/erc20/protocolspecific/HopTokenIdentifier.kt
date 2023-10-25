@@ -1,15 +1,12 @@
 package io.defitrack.erc20.protocolspecific
 
 import arrow.core.nonEmptyListOf
-import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.erc20.ERC20
 import io.defitrack.erc20.ERC20ContractReader
-import io.defitrack.erc20.ERC20ToTokenInformationMapper
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.hop.HopService
-import io.defitrack.protocol.hop.contract.HopLpTokenContract
 import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
@@ -33,15 +30,21 @@ class HopTokenIdentifier(
             val token0 = erc20Service.getTokenInformation(hopLpToken.canonicalToken, token.network)
             val token1 = erc20Service.getTokenInformation(hopLpToken.hToken, token.network)
 
+            if (saddleToken.isNone() || token0.isNone() || token1.isNone()) {
+                throw IllegalStateException("SaddleToken, Token0 or Token1 is not an erc20 for ${token.address}")
+            }
+
+            val saddle = saddleToken.getOrNull()!!
+
             TokenInformation(
-                name = saddleToken.name,
-                symbol = saddleToken.symbol,
+                name = saddle.name,
+                symbol = saddle.symbol,
                 address = token.address.lowercase(),
-                decimals = saddleToken.decimals,
-                totalSupply = refreshable { saddleToken.totalSupply },
+                decimals = saddle.decimals,
+                totalSupply = saddle.totalSupply,
                 type = TokenType.HOP,
                 protocol = Protocol.HOP,
-                underlyingTokens = nonEmptyListOf(token0, token1),
+                underlyingTokens = nonEmptyListOf(token0, token1).map { it.getOrNull()!! },
                 network = token.network
             )
         }

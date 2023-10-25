@@ -3,6 +3,7 @@ package io.defitrack.protocol.hop.pooling
 import arrow.core.Either
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.common.utils.Refreshable.Companion.map
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.pooling.PoolingMarketProvider
@@ -67,9 +68,8 @@ abstract class HopPoolingMarketProvider(
                     getPrice(canonical.address, contract, swapContract).toBigDecimal()
                 },
                 positionFetcher = defaultPositionFetcher(hopLpToken.lpToken),
-                totalSupply = refreshable {
-                    contract.totalSupply().asEth(contract.decimals())
-                }
+                totalSupply = contract.totalSupply()
+                    .map { it.asEth(contract.decimals()) }
             )
         }
     }
@@ -80,15 +80,15 @@ abstract class HopPoolingMarketProvider(
         swapContract: HopSwapContract
     ): Double {
 
-        val tokenAmount = contract.totalSupply().toBigDecimal().times(
-            swapContract.virtualPrice().toBigDecimal()
-        ).divide(BigDecimal.TEN.pow(36))
+        val tokenAmount = contract.totalSupply().map {
+            it.toBigDecimal().times(swapContract.virtualPrice().toBigDecimal()).divide(BigDecimal.TEN.pow(36))
+        }
 
         return getPriceResource().calculatePrice(
             PriceRequest(
                 address = canonicalTokenAddress,
                 network = getNetwork(),
-                amount = tokenAmount,
+                amount = tokenAmount.get(),
                 TokenType.SINGLE
             )
         )

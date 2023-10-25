@@ -1,14 +1,15 @@
 package io.defitrack.erc20.protocolspecific
 
+import arrow.core.getOrElse
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.erc20.ERC20
 import io.defitrack.erc20.ERC20ContractReader
 import io.defitrack.erc20.logo.LogoService
-import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
+import java.math.BigInteger
 
 @Component
 class MakerTokenIdentifier(
@@ -26,9 +27,7 @@ class MakerTokenIdentifier(
             symbol = "MKR",
             address = token.address,
             decimals = token.decimals,
-            totalSupply = Refreshable.refreshable(token.totalSupply) {
-                erC20ContractReader.getERC20(token.network, token.address).totalSupply
-            },
+            totalSupply = token.totalSupply,
             type = TokenType.SINGLE,
             network = token.network
         )
