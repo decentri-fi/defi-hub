@@ -109,17 +109,16 @@ open class ERC20Contract(
         }
     }
 
-    suspend fun decimals(): Int {
+    suspend fun decimals(): BigInteger {
         return try {
-            val d: BigInteger = readSingle("decimals", uint256())
-            return d.toInt()
+            readSingle("decimals", uint256())
         } catch (ex: Exception) {
-            18
+            BigInteger.valueOf(18)
         }
     }
 
     suspend fun totalSupply(): Refreshable<BigInteger> {
-       return refreshable {
+        return refreshable {
             try {
                 readSingle("totalSupply", uint256())
             } catch (ex: Exception) {

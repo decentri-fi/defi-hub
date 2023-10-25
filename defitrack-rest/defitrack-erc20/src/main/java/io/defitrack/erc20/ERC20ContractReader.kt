@@ -8,6 +8,7 @@ import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.multicall.MultiCallResult
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.math.BigInteger
 
 @Service
 class ERC20ContractReader(
@@ -28,7 +29,7 @@ class ERC20ContractReader(
             ERC20(
                 name = getValue(result.name, contract::readName),
                 symbol = getValue(result.symbol, contract::readSymbol),
-                decimals = getValue(result.decimals, contract::decimals),
+                decimals = getValue<BigInteger>(result.decimals, contract::decimals).toInt(),
                 network = network,
                 address = correctAddress.lowercase(),
                 totalSupply = getValue(result.totalSupply, contract::totalSupply),
