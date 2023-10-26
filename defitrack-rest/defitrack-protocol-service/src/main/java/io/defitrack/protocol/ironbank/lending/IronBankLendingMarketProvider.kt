@@ -1,5 +1,6 @@
 package io.defitrack.protocol.ironbank.lending
 
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.map
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
@@ -35,23 +36,24 @@ abstract class IronBankLendingMarketProvider(
         }.awaitAll().filterNotNull()
     }
 
-    private suspend fun toLendingMarket(ctokenContract: IronbankTokenContract): LendingMarket? {
-        return try {
-            val exchangeRate = ctokenContract.exchangeRate()
+    private suspend fun toLendingMarket(ctokenContract: IronbankTokenContract): LendingMarket? = coroutineScope {
+        try {
+            val exchangeRate = lazyAsync {
+                ctokenContract.exchangeRate()
+            }
             getToken(ctokenContract.underlyingAddress()).let { underlyingToken ->
                 val ctoken = getToken(ctokenContract.address)
                 create(
                     identifier = ctokenContract.address,
-                    name = ctokenContract.readName(),
-                    rate = getSupplyRate(compoundTokenContract = ctokenContract),
-                    token = underlyingToken.toFungibleToken(),
+                    name = ctoken.name,
+                    token = underlyingToken,
                     marketSize = refreshable {
                         getPriceResource().calculatePrice(
                             PriceRequest(
                                 underlyingToken.address,
                                 getNetwork(),
                                 ctokenContract.cash()
-                                    .add(ctokenContract.totalBorrows()).toBigDecimal()
+                                    .add(ctokenContract.totalBorrows())
                                     .asEth(underlyingToken.decimals)
                             )
                         ).toBigDecimal()
@@ -59,20 +61,23 @@ abstract class IronBankLendingMarketProvider(
                     poolType = "iron-bank-lendingpool",
                     positionFetcher = PositionFetcher(
                         ctokenContract.address,
-                        { user -> balanceOfFunction(user) },
-                        { retVal ->
-                            val tokenBalance = retVal[0].value as BigInteger
+                        ::balanceOfFunction
+                    ) { retVal ->
+                        val tokenBalance = retVal[0].value as BigInteger
+                        if (tokenBalance > BigInteger.ZERO) {
                             Position(
-                                tokenBalance.times(exchangeRate).asEth(18).toBigInteger(),
+                                tokenBalance.times(exchangeRate.await()).asEth(ctoken.decimals).toBigInteger(),
                                 tokenBalance
                             )
+                        } else {
+                            Position.ZERO
                         }
-                    ),
+                    },
                     investmentPreparer = CompoundLendingInvestmentPreparer(
                         ctokenContract,
                         getERC20Resource()
                     ),
-                    marketToken = ctoken.toFungibleToken(),
+                    marketToken = ctoken,
                     erc20Compatible = true,
                     totalSupply = ctokenContract.totalSupply().map {
                         it.asEth(ctoken.decimals)
@@ -83,17 +88,6 @@ abstract class IronBankLendingMarketProvider(
             logger.error("Unable to get info for iron bank contract ${ctokenContract.address}")
             null
         }
-    }
-
-    suspend fun getSupplyRate(compoundTokenContract: IronbankTokenContract): BigDecimal {
-        val blocksPerDay = 6463
-        val dailyRate =
-            (compoundTokenContract.supplyRatePerBlock().toBigDecimal().divide(BigDecimal.TEN.pow(18)) * BigDecimal(
-                blocksPerDay
-            )) + BigDecimal.ONE
-
-        return dailyRate.pow(365).minus(BigDecimal.ONE).times(BigDecimal.TEN.pow(4))
-            .divide(BigDecimal.TEN.pow(4), 4, RoundingMode.HALF_UP)
     }
 
     override fun getProtocol(): Protocol {

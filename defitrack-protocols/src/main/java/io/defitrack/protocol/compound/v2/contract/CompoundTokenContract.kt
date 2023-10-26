@@ -33,11 +33,8 @@ open class CompoundTokenContract(
         )
     }
 
-    suspend fun totalBorrows(): BigInteger {
-        return readSingle("totalBorrows", uint256())
-    }
-
     val cash: Deferred<BigInteger> = constant("getCash", uint256())
+    val totalBorrows: Deferred<BigInteger> = constant("totalBorrows", uint256())
     protected val underlyingAddress: Deferred<String> = constant("underlying", TypeUtils.address())
     val exchangeRate: Deferred<BigInteger> = constant("exchangeRateStored", uint256())
     val supplyRatePerBlock: Deferred<BigInteger> = constant("supplyRatePerBlock", uint256())

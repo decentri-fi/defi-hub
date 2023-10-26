@@ -4,6 +4,7 @@ import arrow.fx.coroutines.parMap
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.market.lending.LendingMarketProvider
@@ -33,17 +34,21 @@ class MoonwellLendingMarketProvider : LendingMarketProvider() {
     private suspend fun toLendingMarket(ctokenContract: CompoundTokenContract): LendingMarket? {
         return try {
             getToken(ctokenContract.getUnderlyingAddress()).let { underlyingToken ->
-                val exchangeRate = ctokenContract.exchangeRate.await()
+                val cToken = getToken(ctokenContract.address)
+
+                val exchangeRate = ctokenContract.exchangeRate
+
+
                 create(
                     identifier = ctokenContract.address,
-                    name = ctokenContract.readName(),
-                    token = underlyingToken.toFungibleToken(),
-                    marketSize = Refreshable.refreshable {
+                    name = cToken.name,
+                    token = underlyingToken,
+                    marketSize = refreshable {
                         getPriceResource().calculatePrice(
                             PriceRequest(
                                 underlyingToken.address,
                                 getNetwork(),
-                                ctokenContract.cash.await().add(ctokenContract.totalBorrows()).toBigDecimal()
+                                ctokenContract.cash.await().add(ctokenContract.totalBorrows.await())
                                     .asEth(underlyingToken.decimals),
                             )
                         ).toBigDecimal()
@@ -51,21 +56,20 @@ class MoonwellLendingMarketProvider : LendingMarketProvider() {
                     poolType = "moonwell-lendingpool",
                     positionFetcher = PositionFetcher(
                         ctokenContract.address,
-                        { user -> ERC20Contract.balanceOfFunction(user) },
-                        { retVal ->
-                            val tokenBalance = retVal[0].value as BigInteger
+                        ERC20Contract.Companion::balanceOfFunction
+                    ) { retVal ->
+                        val tokenBalance = retVal[0].value as BigInteger
+                        if (tokenBalance > BigInteger.ZERO) {
                             Position(
-                                tokenBalance.times(exchangeRate).asEth().toBigInteger(),
+                                tokenBalance.times(exchangeRate.await()).asEth().toBigInteger(),
                                 tokenBalance
                             )
-                        }
-                    ),
-                    marketToken = getToken(ctokenContract.address).toFungibleToken(),
+                        } else Position.ZERO
+                    },
+                    marketToken = cToken,
                     erc20Compatible = true,
-                    totalSupply = Refreshable.refreshable {
-                        with(getToken(ctokenContract.address)) {
-                            totalSupply.asEth(decimals)
-                        }
+                    totalSupply = refreshable(cToken.totalDecimalSupply()) {
+                        getToken(ctokenContract.address).totalDecimalSupply()
                     },
                     metadata = mapOf(
                         "mToken" to ctokenContract.address,

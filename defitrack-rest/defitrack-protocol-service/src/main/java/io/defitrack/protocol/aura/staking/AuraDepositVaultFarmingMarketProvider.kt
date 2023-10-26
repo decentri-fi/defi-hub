@@ -1,8 +1,11 @@
 package io.defitrack.protocol.aura.staking
 
+import arrow.core.nel
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -20,35 +23,32 @@ import org.springframework.stereotype.Component
 class AuraDepositVaultFarmingMarketProvider(
 ) : FarmingMarketProvider() {
 
-    val booster = lazyAsync {
-        AuraBoosterContract(
+    override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
+        val booster = AuraBoosterContract(
             getBlockchainGateway()
         )
-    }
+        booster.poolInfos().parMapNotNull(concurrency = 12) {
+            try {
+                val crvrewards = crvRewardsContract(it.crvRewards)
+                val asset = getToken(crvrewards.asset())
 
-    override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
-        booster.await().poolInfos().map {
-            async {
-                try {
-                    val crvrewards = crvRewardsContract(it.crvRewards)
-                    val asset = getToken(crvrewards.asset())
+                val crvRewardsToken = getToken(it.crvRewards)
 
-                    create(
-                        name = crvrewards.readName(),
-                        identifier = crvrewards.address,
-                        stakedToken = asset.toFungibleToken(),
-                        rewardTokens = listOf(getToken(crvrewards.rewardToken.await()).toFungibleToken()),
-                        marketSize = Refreshable.refreshable {
-                            getMarketSize(asset.toFungibleToken(), crvrewards.rewardToken.await())
-                        },
-                        positionFetcher = defaultPositionFetcher(crvrewards.address)
-                    )
-                } catch (ex: Exception) {
-                    logger.error("Error fetching market for ${it.crvRewards}", ex)
-                    null
-                }
+                create(
+                    name = crvRewardsToken.name,
+                    identifier = crvrewards.address,
+                    stakedToken = asset.toFungibleToken(),
+                    rewardTokens = getToken(crvrewards.rewardToken.await()).nel(),
+                    marketSize = refreshable {
+                        getMarketSize(asset.toFungibleToken(), crvrewards.rewardToken.await())
+                    },
+                    positionFetcher = defaultPositionFetcher(crvrewards.address)
+                )
+            } catch (ex: Exception) {
+                logger.error("Error fetching market for ${it.crvRewards}", ex)
+                null
             }
-        }.awaitAll().filterNotNull()
+        }
     }
 
     private suspend fun crvRewardsContract(crvRewards: String): CrvRewardsContract {

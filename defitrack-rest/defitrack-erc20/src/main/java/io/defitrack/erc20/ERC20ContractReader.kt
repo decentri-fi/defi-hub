@@ -26,7 +26,7 @@ class ERC20ContractReader(
                 blockchainGatewayProvider.getGateway(network),
                 correctAddress
             )
-            val result = contract.readAsMulticall()
+            val result = contract.fetchERC20Information()
             ERC20(
                 name = getValue(result.name, contract::readName),
                 symbol = getValue(result.symbol, contract::readSymbol),

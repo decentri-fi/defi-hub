@@ -1,5 +1,7 @@
 package io.defitrack.protocol.wepiggy.lending
 
+import arrow.fx.coroutines.parMap
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.map
@@ -32,11 +34,9 @@ class WepiggyLendingMarketProvider(
 ) : LendingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
-        getTokenContracts().map {
-            async {
-                toLendingMarket(it)
-            }
-        }.awaitAll().filterNotNull()
+        getTokenContracts().parMapNotNull(concurrency = 8) {
+            toLendingMarket(it)
+        }
     }
 
     private suspend fun toLendingMarket(ctokenContract: CompoundTokenContract): LendingMarket? {
@@ -46,57 +46,43 @@ class WepiggyLendingMarketProvider(
                 val exchangeRate = ctokenContract.exchangeRate
                 create(
                     identifier = ctokenContract.address,
-                    name = ctokenContract.readName(),
-                    rate = getSupplyRate(compoundTokenContract = ctokenContract),
-                    token = underlyingToken.toFungibleToken(),
+                    name = cToken.name,
+                    token = underlyingToken,
                     marketSize = refreshable {
                         getPriceResource().calculatePrice(
                             PriceRequest(
                                 underlyingToken.address,
                                 getNetwork(),
-                                ctokenContract.cash.await().add(ctokenContract.totalBorrows()).toBigDecimal().asEth(
-                                    underlyingToken.decimals
-                                ),
+                                ctokenContract.cash.await().add(ctokenContract.totalBorrows.await())
+                                    .asEth(
+                                        underlyingToken.decimals
+                                    ),
                             )
                         ).toBigDecimal()
                     },
                     poolType = "compound-lendingpool",
                     positionFetcher = PositionFetcher(
                         ctokenContract.address,
-                        { user -> balanceOfFunction(user) },
-                        { retVal ->
-                            val tokenBalance = retVal[0].value as BigInteger
-                            Position(
-                                tokenBalance.times(exchangeRate.await()).asEth().toBigInteger(),
-                                tokenBalance
-                            )
+                        ::balanceOfFunction
+                    ) { retVal ->
+                        val tokenBalance = retVal[0].value as BigInteger
+                        Position(
+                            tokenBalance.times(exchangeRate.await()).asEth().toBigInteger(),
+                            tokenBalance
+                        )
 
-                        }
-                    ),
-                    investmentPreparer = null,
-                    marketToken = cToken.toFungibleToken(),
+                    },
+                    marketToken = cToken,
                     erc20Compatible = true,
                     totalSupply = ctokenContract.totalSupply().map {
-                        it.asEth(ctokenContract.readDecimals())
+                        it.asEth(cToken.decimals)
                     }
                 )
             }
         } catch (ex: Exception) {
-            ex.printStackTrace()
+            logger.error("unable to get wepiggy lending market for address ${ctokenContract.address}")
             null
         }
-    }
-
-    suspend fun getSupplyRate(compoundTokenContract: CompoundTokenContract): BigDecimal {
-        val blocksPerDay = 6463
-        val dailyRate =
-            (compoundTokenContract.supplyRatePerBlock.await().toBigDecimal()
-                .divide(BigDecimal.TEN.pow(18)) * BigDecimal(
-                blocksPerDay
-            )) + BigDecimal.ONE
-
-        return dailyRate.pow(365).minus(BigDecimal.ONE).times(BigDecimal.TEN.pow(4))
-            .divide(BigDecimal.TEN.pow(4), 4, RoundingMode.HALF_UP)
     }
 
     override fun getProtocol(): Protocol {

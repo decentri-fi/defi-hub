@@ -43,26 +43,27 @@ class CompoundLendingMarketProvider(
         return try {
             getToken(ctokenContract.getUnderlyingAddress()).let { underlyingToken ->
                 val exchangeRate = ctokenContract.exchangeRate.await()
+                val cToken = getToken(ctokenContract.address)
+
                 create(
                     identifier = ctokenContract.address,
-                    name = ctokenContract.readName(),
+                    name = cToken.name,
                     rate = getSupplyRate(compoundTokenContract = ctokenContract),
-                    token = underlyingToken.toFungibleToken(),
+                    token = underlyingToken,
                     marketSize = refreshable {
                         getPriceResource().calculatePrice(
                             PriceRequest(
                                 underlyingToken.address,
                                 getNetwork(),
-                                ctokenContract.cash.await().add(ctokenContract.totalBorrows()).toBigDecimal()
+                                ctokenContract.cash.await().add(ctokenContract.totalBorrows.await())
                                     .asEth(underlyingToken.decimals),
-                                TokenType.SINGLE.name
                             )
                         ).toBigDecimal()
                     },
                     poolType = "compound-lendingpool",
                     positionFetcher = PositionFetcher(
                         ctokenContract.address,
-                        { user -> balanceOfFunction(user) },
+                        ::balanceOfFunction,
                         { retVal ->
                             val tokenBalance = retVal[0].value as BigInteger
                             Position(

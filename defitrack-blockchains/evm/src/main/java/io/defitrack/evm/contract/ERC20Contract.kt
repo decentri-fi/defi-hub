@@ -42,7 +42,7 @@ open class ERC20Contract(
         }
     }
 
-    suspend fun readAsMulticall(): ERC20MulticallResult {
+    suspend fun fetchERC20Information(): ERC20MulticallResult {
         val result = readMultiCall(
             listOf(
                 createFunction("name", outputs = listOf(string())),

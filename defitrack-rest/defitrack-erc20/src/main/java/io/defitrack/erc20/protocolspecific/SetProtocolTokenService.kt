@@ -1,14 +1,12 @@
 package io.defitrack.erc20.protocolspecific
 
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.Refreshable
 import io.defitrack.erc20.ERC20
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.set.EthereumSetProvider
 import io.defitrack.protocol.set.PolygonSetProvider
 import io.defitrack.protocol.set.SetTokenContract
-import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
@@ -18,7 +16,6 @@ class SetProtocolTokenService(
     ethereumSetProvider: EthereumSetProvider,
     polygonSetProvider: PolygonSetProvider,
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
-    private val erC20Resource: ERC20Resource
 ) : TokenIdentifier() {
 
     val providers = mapOf(
@@ -29,9 +26,7 @@ class SetProtocolTokenService(
     override suspend fun isProtocolToken(
         token: ERC20,
     ): Boolean {
-        return providers[token.network]?.let {
-            it.getSets().map { it.lowercase() }.contains(token.address.lowercase())
-        } ?: false
+        return providers[token.network]?.getSets()?.map(String::lowercase)?.contains(token.address.lowercase()) ?: false
     }
 
     override suspend fun getTokenInfo(token: ERC20): TokenInformation {

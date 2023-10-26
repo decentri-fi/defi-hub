@@ -42,8 +42,4 @@ class IronbankTokenContract(
     suspend fun exchangeRate(): BigInteger {
         return readSingle("exchangeRateStored", uint256())
     }
-
-    suspend fun supplyRatePerBlock(): BigInteger {
-        return readSingle("supplyRatePerBlock", uint256())
-    }
 }

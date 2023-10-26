@@ -3,8 +3,9 @@ package io.defitrack.protocol.ovix
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
+import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
@@ -15,7 +16,6 @@ import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.compound.v2.contract.CompoundTokenContract
 import io.defitrack.protocol.moonwell.MoonwellUnitRollerContract
-import io.defitrack.token.TokenType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -61,18 +61,22 @@ class OvixZkEVMLendingMarketProvider : LendingMarketProvider() {
 
     private suspend fun toLendingMarket(ctokenContract: CompoundTokenContract): LendingMarket? {
         return try {
-            getToken(ctokenContract.getUnderlyingAddress()).let { underlyingToken ->
+
+            val underlying = getToken(ctokenContract.getUnderlyingAddress())
+            val ctoken = getToken(ctokenContract.address)
+
+            underlying.let { underlyingToken ->
                 val exchangeRate = ctokenContract.exchangeRate.await()
                 create(
                     identifier = ctokenContract.address,
-                    name = ctokenContract.readName(),
-                    token = underlyingToken.toFungibleToken(),
-                    marketSize = Refreshable.refreshable {
+                    name = ctoken.name,
+                    token = underlyingToken,
+                    marketSize = refreshable {
                         getPriceResource().calculatePrice(
                             PriceRequest(
                                 underlyingToken.address,
                                 getNetwork(),
-                                ctokenContract.cash.await().add(ctokenContract.totalBorrows()).toBigDecimal()
+                                ctokenContract.cash.await().add(ctokenContract.totalBorrows.await())
                                     .asEth(underlyingToken.decimals),
                             )
                         ).toBigDecimal()
@@ -80,21 +84,18 @@ class OvixZkEVMLendingMarketProvider : LendingMarketProvider() {
                     poolType = "ovix-lendingpool",
                     positionFetcher = PositionFetcher(
                         ctokenContract.address,
-                        { user -> ERC20Contract.balanceOfFunction(user) },
-                        { retVal ->
-                            val tokenBalance = retVal[0].value as BigInteger
-                            Position(
-                                tokenBalance.times(exchangeRate).asEth().toBigInteger(),
-                                tokenBalance
-                            )
-                        }
-                    ),
-                    marketToken = getToken(ctokenContract.address).toFungibleToken(),
+                        ERC20Contract.Companion::balanceOfFunction
+                    ) { retVal ->
+                        val tokenBalance = retVal[0].value as BigInteger
+                        Position(
+                            tokenBalance.times(exchangeRate).asEth().toBigInteger(),
+                            tokenBalance
+                        )
+                    },
+                    marketToken = getToken(ctokenContract.address),
                     erc20Compatible = true,
-                    totalSupply = Refreshable.refreshable {
-                        with(getToken(ctokenContract.address)) {
-                            totalSupply.asEth(decimals)
-                        }
+                    totalSupply = refreshable(ctoken.totalDecimalSupply()) {
+                        with(getToken(ctokenContract.address), TokenInformationVO::totalDecimalSupply)
                     },
                     metadata = mapOf(
                         "oToken" to ctokenContract.address,

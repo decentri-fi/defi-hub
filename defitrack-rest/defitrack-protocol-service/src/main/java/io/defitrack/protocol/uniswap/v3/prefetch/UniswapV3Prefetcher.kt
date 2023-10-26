@@ -31,7 +31,7 @@ class UniswapV3Prefetcher(
             val prefetches = fetches.await().filter {
                 it.network.name == network.name
             }
-            logger.info("Prefetched ${prefetches.size} Uniswap V3 markets")
+            logger.info("Prefetched ${prefetches.size} Uniswap V3 markets for network $network")
             prefetches
         } catch (ex: Exception) {
             logger.info("Failed to prefetch Uniswap V3 markets", ex)

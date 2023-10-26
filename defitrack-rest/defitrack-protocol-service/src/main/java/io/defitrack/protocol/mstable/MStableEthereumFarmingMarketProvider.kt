@@ -1,5 +1,6 @@
 package io.defitrack.protocol.mstable
 
+import arrow.core.nel
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -44,16 +45,16 @@ class MStableEthereumFarmingMarketProvider(
     private suspend fun toStakingMarket(contract: MStableEthereumBoostedSavingsVaultContract): FarmingMarket {
         val stakingToken = getToken(contract.stakingToken())
         val rewardsToken = getToken(contract.rewardsToken())
+        val mstableSavingsVault = getToken(contract.address)
+
         return create(
             identifier = contract.address,
-            name = contract.readName(),
-            stakedToken = stakingToken.toFungibleToken(),
-            rewardTokens = listOf(
-                rewardsToken.toFungibleToken()
-            ),
+            name = mstableSavingsVault.name,
+            stakedToken = stakingToken,
+            rewardToken = rewardsToken,
             positionFetcher = PositionFetcher(
                 address = contract.address,
-                { user -> contract.rawBalanceOfFunction(user) }
+                contract::rawBalanceOfFunction
             ),
         )
     }

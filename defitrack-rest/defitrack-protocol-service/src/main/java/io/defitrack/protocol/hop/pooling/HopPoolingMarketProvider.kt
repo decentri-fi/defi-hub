@@ -1,6 +1,7 @@
 package io.defitrack.protocol.hop.pooling
 
 import arrow.core.Either
+import arrow.core.nonEmptyListOf
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.map
@@ -27,10 +28,9 @@ abstract class HopPoolingMarketProvider(
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
         hopService.getLps(getNetwork()).parMapNotNull(EmptyCoroutineContext, 12) { hopLpToken ->
             toPoolingMarketElement(getBlockchainGateway(), hopLpToken)
-        }.mapNotNull {
-            it.mapLeft {
-                logger.error("Unable to get pooling market: {}", it.message)
-            }.getOrNull()
+                .mapLeft {
+                    logger.error("Unable to get pooling market: {}", it.message)
+                }.getOrNull()
         }.forEach {
             send(it)
         }
@@ -46,6 +46,8 @@ abstract class HopPoolingMarketProvider(
                 hopLpToken.lpToken
             )
 
+            val lp = getToken(hopLpToken.lpToken)
+
             val swapContract = HopSwapContract(
                 blockchainGateway = gateway,
                 contract.swap()
@@ -59,17 +61,14 @@ abstract class HopPoolingMarketProvider(
                 identifier = hopLpToken.canonicalToken,
                 address = hopLpToken.lpToken,
                 symbol = htoken.symbol + "-" + canonical.symbol,
-                name = contract.readName(),
-                tokens = listOf(
-                    htoken.toFungibleToken(),
-                    canonical.toFungibleToken()
-                ),
+                name = lp.name,
+                tokens = nonEmptyListOf(htoken, canonical),
                 marketSize = refreshable(marketSize) {
                     getPrice(canonical.address, contract, swapContract).toBigDecimal()
                 },
                 positionFetcher = defaultPositionFetcher(hopLpToken.lpToken),
                 totalSupply = contract.totalSupply()
-                    .map { it.asEth(contract.readDecimals()) }
+                    .map { it.asEth(lp.decimals) }
             )
         }
     }

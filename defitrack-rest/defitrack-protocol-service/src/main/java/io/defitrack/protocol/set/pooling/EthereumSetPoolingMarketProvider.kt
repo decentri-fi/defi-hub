@@ -38,9 +38,7 @@ class EthereumSetPoolingMarketProvider(
                     address = it,
                     name = token.name,
                     symbol = token.symbol,
-                    tokens = positions.map {
-                        getToken(it.token).toFungibleToken()
-                    },
+                    tokens = positions.map { position -> getToken(position.token) },
                     breakdown = positions.map {
                         val underlying = getToken(it.token)
                         PoolingMarketTokenShare(
