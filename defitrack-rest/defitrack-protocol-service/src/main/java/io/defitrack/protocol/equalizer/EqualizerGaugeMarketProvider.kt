@@ -1,8 +1,6 @@
 package io.defitrack.protocol.equalizer
 
 import arrow.core.Either
-import arrow.core.None
-import arrow.core.Some
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network

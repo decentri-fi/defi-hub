@@ -42,8 +42,8 @@ abstract class CurvePoolingMarketProvider(
     private suspend fun createMarket(it: Map.Entry<String, List<String>>): PoolingMarket {
         val pool = it.key
 
-        val underlyingTokens = it.value.filter { it != "0x0000000000000000000000000000000000000000" }.map {
-            getToken(it).toFungibleToken()
+        val underlyingTokens = it.value.filter { it != "0x0000000000000000000000000000000000000000" }.parMap {
+            getToken(it)
         }
 
         val poolContract = CurvePoolContract(getBlockchainGateway(), pool)

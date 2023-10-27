@@ -23,7 +23,7 @@ class QuickswapDualRewardPoolContract(
     }
 
     suspend fun stakingTokenAddress(): String {
-        return readSingle("stakingToken", address());
+        return readSingle("stakingToken", address())
     }
 
     suspend fun rewardRateA(): BigInteger {

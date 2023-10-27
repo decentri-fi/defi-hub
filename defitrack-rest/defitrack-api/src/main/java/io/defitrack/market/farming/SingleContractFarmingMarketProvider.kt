@@ -1,5 +1,6 @@
 package io.defitrack.market.farming
 
+import arrow.core.nel
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
 import io.defitrack.evm.contract.FarmingContract
@@ -10,27 +11,23 @@ abstract class SingleContractFarmingMarketProvider : FarmingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         val config = single()
-        val stakedToken = getToken(config.contract.stakedToken.await()).toFungibleToken()
-        val rewardToken = getToken(config.contract.rewardToken.await()).toFungibleToken()
+        val stakedToken = getToken(config.contract.stakedToken.await())
+        val rewardToken = getToken(config.contract.rewardToken.await())
 
-        return listOf(
-            create(
-                name = config.name,
-                identifier = config.contract.address,
-                stakedToken = stakedToken,
-                rewardTokens = listOf(
-                    rewardToken
+        return create(
+            name = config.name,
+            identifier = config.contract.address,
+            stakedToken = stakedToken,
+            rewardToken = rewardToken,
+            claimableRewardFetcher = ClaimableRewardFetcher(
+                Reward(
+                    token = rewardToken,
+                    contractAddress = config.contract.address,
+                    getRewardFunction = config.contract::getRewardFn
                 ),
-                claimableRewardFetcher = ClaimableRewardFetcher(
-                    Reward(
-                        token = rewardToken,
-                        contractAddress = config.contract.address,
-                        getRewardFunction = config.contract::getRewardFn
-                    ),
-                    preparedTransaction = selfExecutingTransaction(config.contract::claimFn)
-                )
+                preparedTransaction = selfExecutingTransaction(config.contract::claimFn)
             )
-        )
+        ).nel()
     }
 
     abstract suspend fun single(): SingleFarmingConfig

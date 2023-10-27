@@ -31,15 +31,13 @@ class CompoundV3BaseLendingMarketProvider(
                 create(
                     identifier = "compoundv3-${lendingToken.symbol}",
                     name = "Compound V3 ${lendingToken.symbol}",
-                    token = lendingToken.toFungibleToken(),
+                    token = lendingToken,
                     poolType = "compoundv3",
-                    marketToken = cToken.toFungibleToken(),
+                    marketToken = cToken,
                     erc20Compatible = true,
                     positionFetcher = PositionFetcher(
                         address = cTokenAddress,
-                        function = { user ->
-                            assetContract.collateralBalanceOfFunction(user, lendingToken.address)
-                        },
+                        function = assetContract.collateralBalanceOfFunction(lendingToken.address),
                     ),
                     totalSupply = refreshable(cToken.totalSupply.asEth()) {
                         getToken(cTokenAddress).totalSupply.asEth()

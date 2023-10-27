@@ -1,5 +1,6 @@
 package io.defitrack.protocol.kwenta
 
+import arrow.core.nel
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
@@ -23,25 +24,23 @@ class KwentaStakingRewardMarketProvider : FarmingMarketProvider() {
             address
         )
 
-        val kwenta = getToken(contract.kwenta.await()).toFungibleToken()
+        val kwenta = getToken(contract.kwenta.await())
 
-        return listOf(
-            create(
-                name = "Kwenta Staking",
-                identifier = address,
-                stakedToken = kwenta,
-                rewardTokens = listOf(kwenta),
-                positionFetcher = defaultPositionFetcher(address),
-                claimableRewardFetcher = ClaimableRewardFetcher(
-                    reward = Reward(
-                        kwenta,
-                        address,
-                        contract::earnedfn
-                    ),
-                    selfExecutingTransaction(contract::claimFn)
-                )
+        return create(
+            name = "Kwenta Staking",
+            identifier = address,
+            stakedToken = kwenta,
+            rewardToken = kwenta,
+            positionFetcher = defaultPositionFetcher(address),
+            claimableRewardFetcher = ClaimableRewardFetcher(
+                reward = Reward(
+                    kwenta,
+                    address,
+                    contract::earnedfn
+                ),
+                selfExecutingTransaction(contract::claimFn)
             )
-        )
+        ).nel()
     }
 
     override fun getProtocol(): Protocol = Protocol.KWENTA

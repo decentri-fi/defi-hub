@@ -3,7 +3,6 @@ package io.defitrack.protocol.alienbase.pooling
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.erc20.TokenInformationVO
@@ -11,7 +10,6 @@ import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
-import io.defitrack.token.TokenType
 import io.defitrack.uniswap.v2.PairFactoryContract
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
@@ -20,8 +18,7 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.ALIENBASE)
-class AlienbasePoolingMarketProvider(
-) : PoolingMarketProvider() {
+class AlienbasePoolingMarketProvider : PoolingMarketProvider() {
 
     private val poolFactoryAddress: String = "0x3e84d913803b02a4a7f027165e8ca42c14c0fde7"
 

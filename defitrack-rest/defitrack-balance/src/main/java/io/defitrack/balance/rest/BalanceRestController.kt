@@ -9,8 +9,9 @@ import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.token.ERC20Resource
-import kotlinx.coroutines.*
-import org.apache.coyote.Response
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*

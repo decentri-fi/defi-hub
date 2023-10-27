@@ -1,5 +1,7 @@
 package io.defitrack.protocol.kyberswap.pooling
 
+import arrow.fx.coroutines.parMap
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
@@ -18,50 +20,46 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.KYBER_SWAP)
-class KyberElasticPoolingMarketProvider(
-
-) : PoolingMarketProvider() {
+class KyberElasticPoolingMarketProvider : PoolingMarketProvider() {
 
     val kyberswapElastic = lazyAsync {
-            KyberswapElasticContract(
-                getBlockchainGateway(),
-                "0xb85ebe2e4ea27526f817ff33fb55fb240057c03f"
-            )
+        KyberswapElasticContract(
+            getBlockchainGateway(),
+            "0xb85ebe2e4ea27526f817ff33fb55fb240057c03f"
+        )
     }
 
     override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
-        kyberswapElastic.await().allPairs().map { poolInfo ->
-            async {
-                val poolingToken = getToken(poolInfo.address)
-                val tokens = poolingToken.underlyingTokens.map {
-                    it.toFungibleToken()
-                }
-
-                try {
-                    val breakdown = fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address)
-                    create(
-                        identifier = poolInfo.address,
-                        marketSize = refreshable(breakdown.sumOf { it.reserveUSD }) {
-                            fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address).sumOf {
-                                it.reserveUSD
-                            }
-                        },
-                        address = poolInfo.address,
-                        name = poolingToken.name,
-                        breakdown = breakdown,
-                        symbol = poolingToken.symbol,
-                        tokens = poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
-                        totalSupply = refreshable(poolingToken.totalSupply.asEth(poolingToken.decimals)) {
-                            val token = getToken(poolInfo.address)
-                            token.totalSupply.asEth(token.decimals)
-                        },
-                    )
-                } catch (ex: Exception) {
-                    logger.error("Error while fetching pooling market ${poolInfo.address}", ex)
-                    null
-                }
+        kyberswapElastic.await().allPairs().parMapNotNull(concurrency = 12) { poolInfo ->
+            val poolingToken = getToken(poolInfo.address)
+            val tokens = poolingToken.underlyingTokens.map {
+                it.toFungibleToken()
             }
-        }.awaitAll().filterNotNull()
+
+            try {
+                val breakdown = fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address)
+                create(
+                    identifier = poolInfo.address,
+                    marketSize = refreshable(breakdown.sumOf { it.reserveUSD }) {
+                        fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address).sumOf {
+                            it.reserveUSD
+                        }
+                    },
+                    address = poolInfo.address,
+                    name = poolingToken.name,
+                    breakdown = breakdown,
+                    symbol = poolingToken.symbol,
+                    tokens = poolingToken.underlyingTokens,
+                    totalSupply = refreshable(poolingToken.totalDecimalSupply()) {
+                        val token = getToken(poolInfo.address)
+                        token.totalDecimalSupply()
+                    },
+                )
+            } catch (ex: Exception) {
+                logger.error("Error while fetching pooling market ${poolInfo.address}", ex)
+                null
+            }
+        }
     }
 
     override fun getProtocol(): Protocol {

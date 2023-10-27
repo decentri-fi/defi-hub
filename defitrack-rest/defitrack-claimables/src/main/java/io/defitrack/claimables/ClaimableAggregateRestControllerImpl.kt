@@ -124,7 +124,7 @@ class ClaimableAggregateRestControllerImpl(
                         }
                     }.joinAll()
                     emitter.complete()
-                    observation.stop();
+                    observation.stop()
                 }
             }
         }

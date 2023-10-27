@@ -18,8 +18,7 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.AERODROME)
-class AerodromePoolingMarketProvider(
-) : PoolingMarketProvider() {
+class AerodromePoolingMarketProvider : PoolingMarketProvider() {
 
     private val poolFactoryAddress: String = "0x420DD381b31aEf6683db6B902084cB0FFECe40Da"
 

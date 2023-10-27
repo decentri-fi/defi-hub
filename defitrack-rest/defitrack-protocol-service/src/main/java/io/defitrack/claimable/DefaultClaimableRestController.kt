@@ -47,8 +47,8 @@ class DefaultClaimableRestController(
                 it.network.toVO(),
                 protocolVOMapper.map(it.protocol),
                 rewards = it.claimableRewardFetchers.flatMap { fetcher ->
-                    fetcher.rewards.map { it ->
-                        ClaimableMarketVO.Reward(it.token)
+                    fetcher.rewards.map { reward ->
+                        ClaimableMarketVO.Reward(reward.token)
                     }
                 }
             )

@@ -18,9 +18,6 @@ class ConstructedEthCall(val success: Boolean, val data: String?) : EthCall() {
         return data ?: "0x"
     }
 
-    override fun getError(): Error? {
-        return super.getError()
-    }
 
     override fun getValue(): String {
         return data ?: "0x"

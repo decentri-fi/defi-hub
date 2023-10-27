@@ -15,7 +15,6 @@ import io.defitrack.protocol.hop.HopService
 import io.defitrack.protocol.hop.contract.HopLpTokenContract
 import io.defitrack.protocol.hop.contract.HopSwapContract
 import io.defitrack.protocol.hop.domain.HopLpToken
-import io.defitrack.token.TokenType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import java.math.BigDecimal

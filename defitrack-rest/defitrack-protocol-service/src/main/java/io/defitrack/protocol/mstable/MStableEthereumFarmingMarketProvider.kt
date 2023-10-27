@@ -1,6 +1,6 @@
 package io.defitrack.protocol.mstable
 
-import arrow.core.nel
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -9,8 +9,6 @@ import io.defitrack.market.position.PositionFetcher
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.mstable.contract.MStableEthereumBoostedSavingsVaultContract
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 
@@ -26,16 +24,14 @@ class MStableEthereumFarmingMarketProvider(
                 getBlockchainGateway(),
                 it
             )
-        }.map { contract ->
-            async {
-                try {
-                    toStakingMarket(contract)
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                    null
-                }
+        }.parMapNotNull(concurrency = 12) { contract ->
+            try {
+                toStakingMarket(contract)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                null
             }
-        }.awaitAll().filterNotNull()
+        }
     }
 
     override fun getProtocol(): Protocol {

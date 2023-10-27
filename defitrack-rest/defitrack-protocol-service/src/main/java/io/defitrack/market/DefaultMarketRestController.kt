@@ -29,9 +29,7 @@ abstract class DefaultMarketRestController<T : DefiMarket>(
             protocol = protocol
         )
 
-        return PageUtils.createPageFromList<T>(
-            allMarkets, pageable
-        ).map {
+        return PageUtils.createPageFromList(allMarkets, pageable).map {
             marketMapper.map(it)
         }
     }

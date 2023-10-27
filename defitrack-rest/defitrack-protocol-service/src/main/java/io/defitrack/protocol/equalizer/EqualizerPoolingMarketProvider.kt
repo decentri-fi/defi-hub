@@ -1,10 +1,8 @@
 package io.defitrack.protocol.equalizer
 
 import arrow.core.Either
-import arrow.fx.coroutines.parMap
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.pooling.PoolingMarketProvider
@@ -14,7 +12,6 @@ import io.defitrack.protocol.Protocol
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import org.springframework.stereotype.Component
-import kotlin.coroutines.EmptyCoroutineContext
 
 @ConditionalOnCompany(Company.EQUALIZER)
 @Component

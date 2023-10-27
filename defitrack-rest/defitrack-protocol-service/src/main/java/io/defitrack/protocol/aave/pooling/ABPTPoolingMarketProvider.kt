@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.AAVE)
-class ABPTPoolingMarketProvider() : PoolingMarketProvider(
+class ABPTPoolingMarketProvider : PoolingMarketProvider(
 ) {
 
     val abptAddress = "0x41a08648c3766f9f9d85598ff102a08f4ef84f84"

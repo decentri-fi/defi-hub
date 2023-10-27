@@ -14,8 +14,7 @@ import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
 //@Component
-class CamelotArbitrumPoolingMarketProvider(
-) : PoolingMarketProvider() {
+class CamelotArbitrumPoolingMarketProvider : PoolingMarketProvider() {
 
     val pools = lazyAsync {
         val pairFactoryContract = PairFactoryContract(

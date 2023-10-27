@@ -30,7 +30,7 @@ class RewardFactoryContract(
         }
     }
 
-    suspend fun stakingRewardsInfoByStakingToken(stakingToken: String): Function {
+    fun stakingRewardsInfoByStakingToken(stakingToken: String): Function {
         return createFunction(
             "stakingRewardsInfoByStakingToken",
             listOf(stakingToken.toAddress()),

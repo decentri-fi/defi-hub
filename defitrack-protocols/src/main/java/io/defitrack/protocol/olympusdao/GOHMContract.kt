@@ -18,12 +18,4 @@ class GOHMContract(
             outputs = listOf(uint256())
         )[0].value as BigInteger
     }
-
-    suspend fun balanceTo(to: BigInteger): BigInteger {
-        return read(
-            "balanceto",
-            inputs = listOf(to.toUint256()),
-            outputs = listOf(uint256())
-        )[0].value as BigInteger
-    }
 }

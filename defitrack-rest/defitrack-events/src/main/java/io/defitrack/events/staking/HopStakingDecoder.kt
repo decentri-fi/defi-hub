@@ -49,7 +49,7 @@ class HopStakingDecoder(
     override suspend fun extract(log: Log, network: Network): DefiEvent {
         val user = "user" to getLabeledAddress(
             stakedEvent.extract<String>(log, true, 0)
-        );
+        )
         val amount = "amount" to stakedEvent.extract<BigInteger>(log, false, 0)
 
         val contract = HopStakingRewardContract(

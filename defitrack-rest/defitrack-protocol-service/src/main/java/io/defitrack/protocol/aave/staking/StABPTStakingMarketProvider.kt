@@ -1,5 +1,6 @@
 package io.defitrack.protocol.aave.staking
 
+import arrow.core.nel
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
@@ -19,8 +20,7 @@ import java.math.BigInteger
 
 @Component
 @ConditionalOnCompany(Company.AAVE)
-class StABPTStakingMarketProvider(
-) : FarmingMarketProvider() {
+class StABPTStakingMarketProvider : FarmingMarketProvider() {
 
     private val stABPT = "0xa1116930326d21fb917d5a27f1e9943a9595fb47"
     private val aave = "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9"
@@ -37,43 +37,36 @@ class StABPTStakingMarketProvider(
         val totalStakedAbpt = getERC20Resource().getBalance(getNetwork(), abpt, stABPT)
         val ratio = totalStakedAbpt.toBigDecimal().dividePrecisely(stakingContract.totalSupply().get().toBigDecimal())
 
-        return listOf(
-            create(
-                name = "stABPT",
-                identifier = "stABPT",
-                stakedToken = abptToken.toFungibleToken(),
-                rewardTokens = listOf(
-                    aaveToken.toFungibleToken()
-                ),
-                marketSize = refreshable {
-                    getMarketSize(
-                        abptToken.toFungibleToken(), stABPT,
+        return create(
+            name = "stABPT",
+            identifier = "stABPT",
+            stakedToken = abptToken,
+            rewardToken = aaveToken,
+            marketSize = refreshable {
+                getMarketSize(abptToken, stABPT)
+            },
+            positionFetcher = PositionFetcher(
+                stABPT,
+                ::balanceOfFunction
+            ) { retVal ->
+                val userStAave = (retVal[0].value as BigInteger)
+
+                if (userStAave > BigInteger.ZERO) {
+                    Position(
+                        userStAave.toBigDecimal().times(ratio).toBigInteger(),
+                        userStAave
                     )
-                },
-                apr = null,
-                positionFetcher = PositionFetcher(
-                    stABPT,
-                    { user ->
-                        balanceOfFunction(user)
-                    },
-                    { retVal ->
-                        val userStAave = (retVal[0].value as BigInteger)
-                        Position(
-                            userStAave.toBigDecimal().times(ratio).toBigInteger(),
-                            userStAave
-                        )
-                    }
+                } else Position.ZERO
+            },
+            claimableRewardFetcher = ClaimableRewardFetcher(
+                Reward(
+                    token = aaveToken,
+                    contractAddress = stABPT,
+                    getRewardFunction = stakingContract::getTotalRewardFunction
                 ),
-                claimableRewardFetcher = ClaimableRewardFetcher(
-                    Reward(
-                        token = aaveToken.toFungibleToken(),
-                        contractAddress = stABPT,
-                        getRewardFunction = stakingContract::getTotalRewardFunction
-                    ),
-                    preparedTransaction = selfExecutingTransaction(stakingContract::getClaimRewardsFunction)
-                )
+                preparedTransaction = selfExecutingTransaction(stakingContract::getClaimRewardsFunction)
             )
-        )
+        ).nel()
     }
 
     override fun getProtocol(): Protocol {

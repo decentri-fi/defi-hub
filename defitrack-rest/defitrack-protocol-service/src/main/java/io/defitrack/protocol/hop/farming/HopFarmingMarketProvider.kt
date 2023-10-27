@@ -3,8 +3,9 @@ package io.defitrack.protocol.hop.farming
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
-import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.map
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -19,7 +20,6 @@ import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import java.math.BigDecimal
-import java.math.RoundingMode
 import kotlin.coroutines.EmptyCoroutineContext
 
 abstract class HopFarmingMarketProvider(
@@ -48,20 +48,20 @@ abstract class HopFarmingMarketProvider(
             return create(
                 identifier = contract.address,
                 name = "${stakedToken.name} Staking Rewards",
-                stakedToken = stakedToken.toFungibleToken(),
-                rewardTokens = listOf(rewardToken.toFungibleToken()),
-                marketSize = Refreshable.refreshable {
+                stakedToken = stakedToken,
+                rewardToken = rewardToken,
+                marketSize = refreshable {
                     getMarketSize(stakedToken, contract)
                 },
                 positionFetcher = PositionFetcher(
-                    address = contract.address,
-                    function = { user -> balanceOfFunction(user) }
+                    contract.address,
+                    ::balanceOfFunction
                 ),
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
-                        token = rewardToken.toFungibleToken(),
-                        contractAddress = contract.address,
-                        getRewardFunction = { user -> contract.earnedFn(user) },
+                        rewardToken.toFungibleToken(),
+                        contract.address,
+                        contract::earnedFn,
                     ),
                     preparedTransaction = { user ->
                         PreparedTransaction(
@@ -88,9 +88,7 @@ abstract class HopFarmingMarketProvider(
                 address = stakedTokenInformation.address,
                 network = getNetwork(),
                 amount = pool.totalSupply().map {
-                    it.toBigDecimal().divide(
-                        BigDecimal.TEN.pow(stakedTokenInformation.decimals), RoundingMode.HALF_UP
-                    )
+                    it.asEth(stakedTokenInformation.decimals)
                 }.get(),
                 type = stakedTokenInformation.type
             )

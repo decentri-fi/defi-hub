@@ -34,7 +34,7 @@ class CamelotNftStakingProvider : FarmingMarketProvider() {
             create(
                 name = token.name + " staking rewards",
                 identifier = poolAddress,
-                rewardTokens = listOf(grail),
+                rewardToken = grail,
                 stakedToken = staked,
             )
         }.forEach {

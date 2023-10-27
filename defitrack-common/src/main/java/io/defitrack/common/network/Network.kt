@@ -1,6 +1,6 @@
 package io.defitrack.common.network
 
-enum class Network(val logo: String, val chainId: Int, val slug: String, val hasMicroService: Boolean = true) {
+enum class Network(val logo: String, val chainId: Int, val slug: String) {
     ETHEREUM("ethereum.png", 1, "ethereum"),
     OPTIMISM("optimism.png", 10, "optimism"),
     ARBITRUM("arbitrum.png", 42161, "arbitrum"),
@@ -11,7 +11,7 @@ enum class Network(val logo: String, val chainId: Int, val slug: String, val has
 
     companion object {
         fun fromChainId(chainId: Int): Network? {
-            return values().firstOrNull {
+            return entries.firstOrNull {
                 it.chainId == chainId
             }
         }

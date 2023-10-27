@@ -1,6 +1,5 @@
 package io.defitrack.protocol.camelot.farming
 
-import arrow.core.nel
 import arrow.core.nonEmptyListOf
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
@@ -24,7 +23,7 @@ class CamelotXGrailFarmingMarketProvider : FarmingMarketProvider() {
                 name = "xGRAIL",
                 identifier = xGrail,
                 stakedToken = staked,
-                rewardTokens = nonEmptyListOf(staked),
+                rewardToken = staked,
                 positionFetcher = defaultPositionFetcher(xGrail)
             )
         )

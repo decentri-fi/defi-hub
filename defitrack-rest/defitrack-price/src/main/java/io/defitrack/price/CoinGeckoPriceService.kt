@@ -8,6 +8,7 @@ import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import jakarta.annotation.PostConstruct
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -16,8 +17,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.nio.charset.Charset
-import jakarta.annotation.PostConstruct
-import kotlin.time.Duration.Companion.days
 
 @Service
 class CoinGeckoPriceService(

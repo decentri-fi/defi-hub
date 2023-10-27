@@ -6,11 +6,7 @@ import io.defitrack.claimable.domain.ClaimableMarket
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.Refreshable
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.market.farming.FarmingMarketProvider
-import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.market.position.PositionFetcher
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.v2.contract.IncentivesControllerContract

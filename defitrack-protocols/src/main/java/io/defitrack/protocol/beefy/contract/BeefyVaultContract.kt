@@ -17,13 +17,6 @@ class BeefyVaultContract(
         solidityBasedContractAccessor, address
     ) {
 
-    fun exitFunction(amount: BigInteger): Function {
-        return createFunction(
-            method = "withdraw",
-            inputs = listOf(amount.toUint256())
-        )
-    }
-
     fun fullExitFunction(): Function {
         return createFunction(
             method = "withdrawAll",
@@ -38,9 +31,7 @@ class BeefyVaultContract(
         return createFunction("deposit", listOf(amount.toUint256()), emptyList())
     }
 
-    suspend fun getPricePerFullShare(): BigInteger {
-        return readSingle("getPricePerFullShare", uint256())
-    }
+    val pricePerFullShare = constant<BigInteger>("getPricePerFullShare", uint256())
 
     suspend fun want(): String {
         var read = read(

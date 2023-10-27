@@ -16,7 +16,7 @@ abstract class EventDecoder {
 
 
     @Autowired
-    private lateinit var blockchainGatewayProvider: BlockchainGatewayProvider;
+    private lateinit var blockchainGatewayProvider: BlockchainGatewayProvider
 
     companion object {
 

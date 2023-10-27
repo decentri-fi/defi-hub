@@ -1,6 +1,5 @@
 package io.defitrack.claimable.domain
 
-import io.defitrack.claimable.domain.Reward
 import io.defitrack.transaction.PreparedTransaction
 
 class ClaimableRewardFetcher(

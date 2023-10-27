@@ -35,13 +35,11 @@ class ArpaStakingMarketProvider : FarmingMarketProvider() {
             create(
                 name = "ARPA Staking",
                 identifier = arpaStakingAddress,
-                stakedToken = arpa.toFungibleToken(),
-                rewardTokens = listOf(arpa.toFungibleToken()),
+                stakedToken = arpa,
+                rewardToken = arpa,
                 positionFetcher = PositionFetcher(
                     contract.address,
-                    { user ->
-                        contract.getStakeFn(user)
-                    }
+                    contract::getStakeFn
                 ),
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(

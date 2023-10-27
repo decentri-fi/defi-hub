@@ -1,12 +1,12 @@
 package io.defitrack.protocol.balancer.staking
 
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.abi.TypeUtils
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.event.EventDecoder.Companion.extract
 import io.defitrack.evm.GetEventLogsCommand
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -16,8 +16,6 @@ import io.defitrack.market.position.PositionFetcher
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerGaugeZkEvmContract
-import io.defitrack.protocol.balancer.pooling.BalancerBasePoolingMarketProvider
-import io.defitrack.protocol.balancer.pooling.BalancerOptimismPoolingMarketProvider
 import io.defitrack.transaction.PreparedTransaction
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
@@ -27,7 +25,7 @@ import java.math.BigInteger
 @Component
 @ConditionalOnCompany(Company.BALANCER)
 @ConditionalOnProperty(value = ["base.enabled"], havingValue = "true", matchIfMissing = true)
-class BalancerBaseGaugeMarketProvider() : FarmingMarketProvider() {
+class BalancerBaseGaugeMarketProvider : FarmingMarketProvider() {
 
     val factory = "0xb1a4FE1C6d25a0DDAb47431A92A723dd71d9021f"
 
@@ -43,7 +41,7 @@ class BalancerBaseGaugeMarketProvider() : FarmingMarketProvider() {
                 fromBlock = BigInteger.valueOf(203653L)
             )
         )
-        return logs.mapNotNull {
+        return logs.parMapNotNull(concurrency = 12) {
             try {
                 val log = it.get()
                 val gaugeAddress: String = gaugeCreatedEvent.extract(log, true, 0)
@@ -60,9 +58,8 @@ class BalancerBaseGaugeMarketProvider() : FarmingMarketProvider() {
                 create(
                     identifier = gaugeAddress,
                     name = lp.name + " gauge",
-                    stakedToken = getToken(gaugecontract.getStakedToken()).toFungibleToken(),
-                    rewardTokens = rewards.map(TokenInformationVO::toFungibleToken),
-
+                    stakedToken = getToken(gaugecontract.getStakedToken()),
+                    rewardTokens = rewards,
                     positionFetcher = PositionFetcher(
                         gaugecontract.address,
                         gaugecontract::workingBalance
@@ -76,12 +73,7 @@ class BalancerBaseGaugeMarketProvider() : FarmingMarketProvider() {
                                 bal,
                                 normalized.toBigInteger()
                             )
-                        } else {
-                            Position(
-                                BigInteger.ZERO,
-                                BigInteger.ZERO
-                            )
-                        }
+                        } else Position.ZERO
                     },
                     metadata = mapOf("address" to gaugeAddress),
                     exitPositionPreparer = prepareExit {
@@ -93,9 +85,9 @@ class BalancerBaseGaugeMarketProvider() : FarmingMarketProvider() {
                     claimableRewardFetcher = ClaimableRewardFetcher(
                         rewards = rewards.map {
                             Reward(
-                                it.toFungibleToken(),
+                                it,
                                 gaugeAddress,
-                                { user -> gaugecontract.getClaimableRewardFunction(user, it.address) }
+                                gaugecontract.getClaimableRewardFunction(it.address)
                             )
                         },
                         preparedTransaction = PreparedTransaction.selfExecutingTransaction(gaugecontract::getClaimRewardsFunction)

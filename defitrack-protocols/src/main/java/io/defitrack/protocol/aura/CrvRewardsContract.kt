@@ -4,10 +4,6 @@ import io.defitrack.abi.TypeUtils
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 
 class CrvRewardsContract(
     blockchainGateway: BlockchainGateway, address: String

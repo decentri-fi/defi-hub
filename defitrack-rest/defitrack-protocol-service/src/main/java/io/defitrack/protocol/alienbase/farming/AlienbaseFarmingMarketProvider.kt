@@ -59,16 +59,10 @@ class AlienbaseFarmingMarketProvider : FarmingMarketProvider() {
                         identifier = "${farmingContractAddress}-${poolId}",
                         name = stakedtoken.name + " Farm",
                         stakedToken = stakedtoken.toFungibleToken(),
-                        rewardTokens = listOf(
-                            rewardToken.toFungibleToken()
-                        ),
+                        rewardToken = rewardToken.toFungibleToken(),
                         positionFetcher = PositionFetcher(
                             address = farmingContractAddress,
-                            { user ->
-                                contract.userInfoFunction(
-                                    user, poolId
-                                )
-                            },
+                            contract.userInfoFunction(poolId)
                         ),
                         claimableRewardFetcher = ClaimableRewardFetcher(
                             listOf(

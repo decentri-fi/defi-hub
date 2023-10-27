@@ -8,8 +8,7 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.SUSHISWAP)
-class SushiswapArbitrumFarmingMinichefMarketProvider(
-) : SushiMinichefV2FarmingMarketProvider(
+class SushiswapArbitrumFarmingMinichefMarketProvider : SushiMinichefV2FarmingMarketProvider(
     SushiArbitrumService.getMiniChefs()
 ) {
 

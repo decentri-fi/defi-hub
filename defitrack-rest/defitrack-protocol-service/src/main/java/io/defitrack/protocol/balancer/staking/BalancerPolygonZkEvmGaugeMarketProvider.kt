@@ -8,7 +8,6 @@ import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.event.EventDecoder.Companion.extract
-import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.GetEventLogsCommand
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -26,8 +25,7 @@ import java.math.BigInteger
 @Component
 @ConditionalOnCompany(Company.BALANCER)
 @ConditionalOnProperty(value = ["polygon-zkevm.enabled"], havingValue = "true", matchIfMissing = true)
-class BalancerPolygonZkEvmGaugeMarketProvider(
-) : FarmingMarketProvider() {
+class BalancerPolygonZkEvmGaugeMarketProvider : FarmingMarketProvider() {
 
     private val factory = "0x2498A2B0d6462d2260EAC50aE1C3e03F4829BA95"
 
@@ -95,7 +93,7 @@ class BalancerPolygonZkEvmGaugeMarketProvider(
                             Reward(
                                 it.toFungibleToken(),
                                 gaugeAddress,
-                                { user -> gaugecontract.getClaimableRewardFunction(user, it.address) }
+                                gaugecontract.getClaimableRewardFunction(it.address)
                             )
                         },
                         preparedTransaction = selfExecutingTransaction(gaugecontract::getClaimRewardsFunction)

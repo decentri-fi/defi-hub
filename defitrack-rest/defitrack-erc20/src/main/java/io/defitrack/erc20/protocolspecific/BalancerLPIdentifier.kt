@@ -1,6 +1,5 @@
 package io.defitrack.erc20.protocolspecific
 
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.erc20.ERC20
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.balancer.contract.BalancerPoolContract

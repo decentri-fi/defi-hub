@@ -35,7 +35,7 @@ abstract class DefiMarket(
             try {
                 it.refresh()
             } catch (ex: Exception) {
-                logger.error("Unable to refresh ${id}", ex)
+                logger.error("Unable to refresh $id", ex)
                 ex.printStackTrace()
             }
         }

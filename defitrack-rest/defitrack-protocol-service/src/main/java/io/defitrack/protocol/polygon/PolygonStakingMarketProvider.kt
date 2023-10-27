@@ -1,5 +1,6 @@
 package io.defitrack.protocol.polygon
 
+import arrow.core.nel
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -26,20 +27,16 @@ class PolygonStakingMarketProvider : FarmingMarketProvider() {
 
         val staked = getToken(polygonStakingContract.token())
 
-        return listOf(
-            create(
-                name = "Polygon Staking",
-                identifier = polygonStaking,
-                stakedToken = staked.toFungibleToken(),
-                rewardTokens = listOf(staked.toFungibleToken()),
-                positionFetcher = PositionFetcher(
-                    polygonStaking,
-                    {
-                        polygonStakingContract.totalStakedForFn(it)
-                    }
-                )
+        return create(
+            name = "Polygon Staking",
+            identifier = polygonStaking,
+            stakedToken = staked,
+            rewardToken = staked,
+            positionFetcher = PositionFetcher(
+                polygonStaking,
+                polygonStakingContract::totalStakedForFn
             )
-        )
+        ).nel()
     }
 
     override fun getProtocol(): Protocol {

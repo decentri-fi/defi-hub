@@ -3,7 +3,6 @@ package io.defitrack.protocol.moonwell
 import arrow.fx.coroutines.parMap
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.evm.contract.ERC20Contract
@@ -15,7 +14,6 @@ import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.compound.v2.contract.CompoundTokenContract
-import io.defitrack.token.TokenType
 import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 import java.math.BigInteger

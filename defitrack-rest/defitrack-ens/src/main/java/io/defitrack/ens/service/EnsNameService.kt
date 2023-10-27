@@ -1,8 +1,5 @@
 package io.defitrack.ens.service
 
-import io.defitrack.abi.TypeUtils.Companion.string
-import io.defitrack.abi.TypeUtils.Companion.toUint256
-import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.ens.contract.EnsRegistrarContract
@@ -12,9 +9,6 @@ import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.github.reactivecircus.cache4k.Cache
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import org.web3j.abi.datatypes.generated.Bytes32
-import org.web3j.crypto.Hash
-import org.web3j.ens.NameHash
 import org.web3j.utils.Numeric
 import java.math.BigInteger
 import kotlin.time.Duration.Companion.hours

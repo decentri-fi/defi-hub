@@ -28,12 +28,14 @@ class CurveGaugeContract(
         ).toContractCall()
     }
 
-    fun getClaimableRewardFunction(address: String, token: String): Function {
-        return createFunction(
-            "claimable_reward",
-            listOf(address.toAddress(), token.toAddress()),
-            listOf(uint256())
-        )
+    fun getClaimableRewardFunction(token: String): (String) -> Function {
+        return { user ->
+            createFunction(
+                "claimable_reward",
+                listOf(user.toAddress(), token.toAddress()),
+                listOf(uint256())
+            )
+        }
     }
 
 

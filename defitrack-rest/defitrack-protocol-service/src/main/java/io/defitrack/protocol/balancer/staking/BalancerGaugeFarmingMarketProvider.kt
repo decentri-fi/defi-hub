@@ -12,16 +12,15 @@ import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.market.position.PositionFetcher
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
+import io.defitrack.market.position.PositionFetcher
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerGaugeContract
 import io.defitrack.protocol.balancer.contract.BalancerLiquidityGaugeFactoryContract
 import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlin.coroutines.EmptyCoroutineContext
 
 abstract class BalancerGaugeFarmingMarketProvider(
     private val poolingMarketProvider: PoolingMarketProvider,
@@ -67,7 +66,7 @@ abstract class BalancerGaugeFarmingMarketProvider(
                 )
 
                 val rewardTokens = gaugecontract.getRewardTokens().map { reward ->
-                    getToken(reward).toFungibleToken()
+                    getToken(reward)
                 }
 
                 create(
@@ -75,11 +74,11 @@ abstract class BalancerGaugeFarmingMarketProvider(
                     name = stakedToken.underlyingTokens.joinToString("/") {
                         it.symbol
                     } + " Gauge",
-                    stakedToken = stakedToken.toFungibleToken(),
+                    stakedToken = stakedToken,
                     rewardTokens = rewardTokens,
                     positionFetcher = PositionFetcher(
                         gaugecontract.address,
-                        { user -> balanceOfFunction(user) }
+                        ::balanceOfFunction
                     ),
                     metadata = mapOf("address" to pool.address),
                     internalMetadata = mapOf(
@@ -90,9 +89,7 @@ abstract class BalancerGaugeFarmingMarketProvider(
                             Reward(
                                 token = it,
                                 contractAddress = gaugecontract.address,
-                                getRewardFunction = { user ->
-                                    gaugecontract.getClaimableRewardFunction(user, it.address)
-                                }
+                                getRewardFunction = gaugecontract.getClaimableRewardFunction(it.address)
                             )
                         },
                         preparedTransaction = selfExecutingTransaction(gaugecontract::getClaimRewardsFunction)

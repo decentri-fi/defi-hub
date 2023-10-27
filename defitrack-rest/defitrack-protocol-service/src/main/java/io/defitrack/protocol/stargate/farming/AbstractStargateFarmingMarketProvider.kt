@@ -10,6 +10,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.stargate.StargateService
 import io.defitrack.protocol.stargate.contract.LPStakingContract
 import io.defitrack.transaction.PreparedTransaction
+import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 
 abstract class AbstractStargateFarmingMarketProvider(
     private val stargateService: StargateService,
@@ -33,33 +34,23 @@ abstract class AbstractStargateFarmingMarketProvider(
 
         return lpStakingContract.poolInfos().mapIndexed { index, info ->
             val stakedToken = getToken(info.lpToken)
-            val rewardToken = stargate
 
             create(
                 identifier = "${lpStakingContract.address}-$index",
                 name = "Stargate ${stakedToken.name} Reward",
-                stakedToken = stakedToken.toFungibleToken(),
-                rewardTokens = listOf(rewardToken.toFungibleToken()),
+                stakedToken = stakedToken,
+                rewardToken = stargate,
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
-                        token =  rewardToken.toFungibleToken(),
+                        token = stargate.toFungibleToken(),
                         contractAddress = lpStakingContract.address,
-                        getRewardFunction = { user ->
-                            lpStakingContract.pendingFn(index, user)
-                        }
+                        getRewardFunction = lpStakingContract.pendingFn(index)
                     ),
-                    preparedTransaction = { user ->
-                        PreparedTransaction(
-                            getNetwork().toVO(),
-                            lpStakingContract.claimFn(index),
-                            lpStakingContract.address,
-                            user
-                        )
-                    }
+                    preparedTransaction = selfExecutingTransaction(lpStakingContract.claimFn(index))
                 ),
                 positionFetcher = PositionFetcher(
                     lpStakingContract.address,
-                    { user: String -> lpStakingContract.userInfo(index, user) },
+                    lpStakingContract.userInfo(index),
                 )
             )
         }

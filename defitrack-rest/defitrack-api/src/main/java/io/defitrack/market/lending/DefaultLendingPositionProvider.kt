@@ -12,7 +12,6 @@ import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import org.springframework.stereotype.Service
 import java.math.BigInteger
 
 @Component

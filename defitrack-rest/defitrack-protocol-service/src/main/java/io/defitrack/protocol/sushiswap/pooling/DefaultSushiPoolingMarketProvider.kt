@@ -2,18 +2,12 @@ package io.defitrack.protocol.sushiswap.pooling
 
 import arrow.core.Either
 import arrow.fx.coroutines.parMap
-import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.sushiswap.SushiswapService
 import io.defitrack.protocol.sushiswap.domain.SushiswapPair
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
-import net.bytebuddy.pool.TypePool.Empty
-import kotlin.coroutines.EmptyCoroutineContext
 
 abstract class DefaultSushiPoolingMarketProvider(
     private val sushiServices: List<SushiswapService>,

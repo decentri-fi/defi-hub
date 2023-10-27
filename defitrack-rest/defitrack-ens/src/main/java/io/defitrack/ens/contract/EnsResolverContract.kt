@@ -39,6 +39,6 @@ class EnsResolverContract(
         if (result == "0x0000000000000000000000000000000000000000") {
             return ""
         }
-        return result;
+        return result
     }
 }

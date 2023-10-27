@@ -60,20 +60,22 @@ class AutoEarnVaultContract(
         }
     }
 
-    fun autoEarnUserInfoFunction(poolId: Int, user: String): Function {
-        return createFunction(
-            "userInfo2",
-            listOf(
-                poolId.toBigInteger().toUint256(),
-                user.toAddress()
-            ),
-            listOf(
-                TypeUtils.uint256(),
-                TypeUtils.uint256(),
-                TypeUtils.uint256(),
-                TypeUtils.uint256(),
+    fun autoEarnUserInfoFunction(poolId: Int): (String) -> Function {
+        return { user ->
+            createFunction(
+                "userInfo2",
+                listOf(
+                    poolId.toBigInteger().toUint256(),
+                    user.toAddress()
+                ),
+                listOf(
+                    TypeUtils.uint256(),
+                    TypeUtils.uint256(),
+                    TypeUtils.uint256(),
+                    TypeUtils.uint256(),
+                )
             )
-        )
+        }
     }
 
     data class PoolInfo(

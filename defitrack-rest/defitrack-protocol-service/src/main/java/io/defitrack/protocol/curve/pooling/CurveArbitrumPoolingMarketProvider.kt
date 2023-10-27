@@ -9,8 +9,7 @@ import org.springframework.stereotype.Component
 @Component
 @ConditionalOnCompany(Company.CURVE)
 @ConditionalOnProperty(value = ["arbitrum.enabled"], havingValue = "true", matchIfMissing = true)
-class CurveArbitrumPoolingMarketProvider(
-) : CurvePoolingMarketProvider(
+class CurveArbitrumPoolingMarketProvider : CurvePoolingMarketProvider(
 "0xb17b674d9c5cb2e441f8e196a2f048a81355d031"
 ) {
     override fun getNetwork(): Network {

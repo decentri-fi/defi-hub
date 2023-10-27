@@ -1,17 +1,14 @@
 package io.defitrack.protocol.moonwell
 
 import io.defitrack.claimable.ClaimableMarketProvider
-import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.ClaimableMarket
+import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.network.toVO
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
-import io.defitrack.transaction.PreparedTransaction
 import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import org.springframework.stereotype.Component
 import java.math.BigInteger

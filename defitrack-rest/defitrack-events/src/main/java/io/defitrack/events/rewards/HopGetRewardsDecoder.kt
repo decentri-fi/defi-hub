@@ -43,7 +43,7 @@ class HopGetRewardsDecoder(
     }
 
     override suspend fun extract(log: Log, network: Network): DefiEvent {
-        val user = "user" to getLabeledAddress(event.extract<String>(log, true, 0));
+        val user = "user" to getLabeledAddress(event.extract<String>(log, true, 0))
         val amount = "amount" to event.extract<BigInteger>(log, false, 0)
         val token = "asset" to getToken("0xc5102fe9359fd9a28f877a67e36b0f050d81a3cc", network)
 

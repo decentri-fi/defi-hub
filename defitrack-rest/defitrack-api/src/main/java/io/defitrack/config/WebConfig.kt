@@ -17,8 +17,8 @@ class WebConfig {
                 registry.addMapping("/**")
                     .allowedOrigins("*")
                     .allowedHeaders("*")
-                    .allowedMethods("*");
+                    .allowedMethods("*")
             }
-        };
+        }
     }
 }

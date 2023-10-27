@@ -1,10 +1,8 @@
 package io.defitrack.erc20.protocolspecific
 
 import arrow.core.nonEmptyListOf
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.erc20.ERC20
 import io.defitrack.erc20.ERC20ContractReader
-import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.hop.HopService
 import io.defitrack.token.TokenInformation

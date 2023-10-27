@@ -1,5 +1,6 @@
 package io.defitrack.ethos
 
+import arrow.core.nel
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
@@ -28,26 +29,24 @@ class EthosFarmingProvider : FarmingMarketProvider() {
         val reward = getToken(oath).toFungibleToken()
         val staked = getToken(contract.ernToken.await()).toFungibleToken()
 
-        return listOf(
-            create(
-                name = "Ethos Farming",
-                identifier = stabilityPoolAddress,
-                stakedToken = staked,
-                rewardTokens = listOf(reward),
-                positionFetcher = PositionFetcher(
+        return create(
+            name = "Ethos Farming",
+            identifier = stabilityPoolAddress,
+            stakedToken = staked,
+            rewardToken = reward,
+            positionFetcher = PositionFetcher(
+                contract.address,
+                contract::depositsFn,
+            ),
+            claimableRewardFetcher = ClaimableRewardFetcher(
+                Reward(
+                    reward,
                     contract.address,
-                    contract::depositsFn,
+                    contract::claimableFn,
                 ),
-                claimableRewardFetcher = ClaimableRewardFetcher(
-                    Reward(
-                        reward,
-                        contract.address,
-                        contract::claimableFn,
-                    ),
-                    preparedTransaction = selfExecutingTransaction(contract::claimFn)
-                )
+                preparedTransaction = selfExecutingTransaction(contract::claimFn)
             )
-        )
+        ).nel()
     }
 
     override fun getProtocol(): Protocol {

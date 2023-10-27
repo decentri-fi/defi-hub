@@ -18,9 +18,7 @@ import io.defitrack.protocol.ironbank.lending.invest.CompoundLendingInvestmentPr
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import java.math.BigDecimal
 import java.math.BigInteger
-import java.math.RoundingMode
 
 abstract class IronBankLendingMarketProvider(
     private val ironBankService: IronBankService,

@@ -1,7 +1,9 @@
 package io.defitrack.erc20.protocolspecific
 
+import arrow.core.getOrElse
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.ERC20
+import io.defitrack.erc20.ERC20ContractReader
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.set.EthereumSetProvider
@@ -16,6 +18,7 @@ class SetProtocolTokenService(
     ethereumSetProvider: EthereumSetProvider,
     polygonSetProvider: PolygonSetProvider,
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
+    private val contractReader: ERC20ContractReader
 ) : TokenIdentifier() {
 
     val providers = mapOf(
@@ -35,10 +38,14 @@ class SetProtocolTokenService(
             token.address
         )
 
+        val asERC20 = contractReader.getERC20(token.network, token.address).getOrElse {
+            throw IllegalArgumentException("couldn't get erc20 token for ${token.address} on ${token.network.name}")
+        }
+
         return TokenInformation(
             network = token.network,
-            name = contract.readName(),
-            symbol = contract.readSymbol(),
+            name = asERC20.name,
+            symbol = asERC20.symbol,
             type = TokenType.CUSTOM_LP,
             decimals = contract.readDecimals().toInt(),
             address = token.address,

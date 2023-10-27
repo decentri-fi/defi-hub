@@ -2,11 +2,8 @@ package io.defitrack.erc20.protocolspecific
 
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.ERC20
-import io.defitrack.erc20.LpContractReader
-import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.velodrome.contract.PoolFactoryContract
-import io.defitrack.token.TokenType
 import io.github.reactivecircus.cache4k.Cache
 import org.springframework.stereotype.Component
 import kotlin.time.Duration.Companion.days

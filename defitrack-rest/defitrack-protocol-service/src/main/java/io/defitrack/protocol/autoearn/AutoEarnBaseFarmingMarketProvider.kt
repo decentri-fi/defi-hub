@@ -8,10 +8,8 @@ import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.position.PositionFetcher
-import io.defitrack.network.toVO
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
-import io.defitrack.transaction.PreparedTransaction
 import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
@@ -42,21 +40,21 @@ class AutoEarnBaseFarmingMarketProvider : FarmingMarketProvider() {
                     throttled {
 
                         val underlying = getToken(it.lpToken)
-                        val reward = getToken(vault.rewardToken.await())
+                        val rewardToken = getToken(vault.rewardToken.await())
 
                         send(
                             create(
                                 name = underlying.name,
                                 identifier = "$vaultAddress-$index",
-                                stakedToken = underlying.toFungibleToken(),
-                                rewardTokens = listOf(reward.toFungibleToken()),
+                                stakedToken = underlying,
+                                rewardToken = rewardToken,
                                 positionFetcher = PositionFetcher(
                                     vaultAddress,
-                                    { user -> vault.autoEarnUserInfoFunction(index, user) }
+                                    vault.autoEarnUserInfoFunction(index)
                                 ),
                                 claimableRewardFetcher = ClaimableRewardFetcher(
                                     Reward(
-                                        reward.toFungibleToken(),
+                                        rewardToken,
                                         vaultAddress,
                                         vault.pendingFunction(index)
                                     ),

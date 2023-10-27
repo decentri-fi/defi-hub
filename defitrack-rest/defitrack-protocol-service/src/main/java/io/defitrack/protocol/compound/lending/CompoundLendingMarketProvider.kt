@@ -17,7 +17,6 @@ import io.defitrack.protocol.compound.CompoundAddressesProvider
 import io.defitrack.protocol.compound.lending.invest.CompoundLendingInvestmentPreparer
 import io.defitrack.protocol.compound.v2.contract.CompoundComptrollerContract
 import io.defitrack.protocol.compound.v2.contract.CompoundTokenContract
-import io.defitrack.token.TokenType
 import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 import java.math.BigDecimal

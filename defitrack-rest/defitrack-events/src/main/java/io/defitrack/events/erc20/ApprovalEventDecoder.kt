@@ -9,7 +9,6 @@ import io.defitrack.event.EventDecoder
 import io.defitrack.event.EventUtils.Companion.appliesTo
 import io.defitrack.network.toVO
 import org.springframework.stereotype.Component
-import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.datatypes.Event
 import org.web3j.protocol.core.methods.response.Log
 import java.math.BigInteger
@@ -24,7 +23,7 @@ class ApprovalEventDecoder : EventDecoder() {
     }
 
     override suspend fun extract(log: Log, network: Network): DefiEvent {
-        val owner = "owner" to getLabeledAddress(event.extract<String>(log, true, 0));
+        val owner = "owner" to getLabeledAddress(event.extract<String>(log, true, 0))
 
         val spender = "spender" to getLabeledAddress(event.extract<String>(log, true, 1))
 

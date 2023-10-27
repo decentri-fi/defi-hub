@@ -22,15 +22,17 @@ class BalancerGaugeZkEvmContract(
         )
     }
 
-    override fun getClaimableRewardFunction(address: String, token: String): Function {
-        return Function(
-            "claimable_reward",
-            listOf(
-                address.toAddress(),
-                token.toAddress()
-            ),
-            listOf(uint256())
-        )
+    override fun getClaimableRewardFunction(token: String): (String) -> Function {
+        return { user: String ->
+            Function(
+                "claimable_reward",
+                listOf(
+                    address.toAddress(),
+                    token.toAddress()
+                ),
+                listOf(uint256())
+            )
+        }
     }
 
     val lpToken = constant<String>("lp_token", address())

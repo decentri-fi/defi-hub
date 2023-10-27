@@ -9,7 +9,7 @@ import org.web3j.crypto.WalletUtils
 import java.math.BigInteger
 
 @RestController
-@RequestMapping(*["/{protocol}/staking", "/{protocol}/farming"])
+@RequestMapping("/{protocol}/staking", "/{protocol}/farming")
 class DefaultFarmingPositionRestController(
     private val farmingPositionProviders: List<FarmingPositionProvider>,
     private val farmingPositionVOMapper: FarmingPositionVOMapper
@@ -19,8 +19,8 @@ class DefaultFarmingPositionRestController(
     suspend fun getPositions(
         @PathVariable("protocol") protocol: String,
         @PathVariable("userAddress") address: String
-    ): List<FarmingPositionVO>  {
-     return   if (WalletUtils.isValidAddress(address)) {
+    ): List<FarmingPositionVO> {
+        return if (WalletUtils.isValidAddress(address)) {
             val results = farmingPositionProviders
                 .flatMap {
                     try {
@@ -41,12 +41,12 @@ class DefaultFarmingPositionRestController(
     }
 
     @GetMapping(value = ["/{userAddress}/positions"], params = ["stakingElementId"])
-   suspend fun getStakingById(
+    suspend fun getStakingById(
         @PathVariable("protocol") protocol: String,
         @PathVariable("userAddress") address: String,
         @RequestParam("stakingElementId") stakingElementId: String,
-    ): FarmingPositionVO?  {
-      return  if (WalletUtils.isValidAddress(address)) {
+    ): FarmingPositionVO? {
+        return if (WalletUtils.isValidAddress(address)) {
             farmingPositionProviders.firstNotNullOfOrNull {
                 try {
                     it.getStaking(protocol, address, stakingElementId)

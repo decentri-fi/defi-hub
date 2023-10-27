@@ -22,7 +22,7 @@ class CowswapVirtualTokenVaultProvider : FarmingMarketProvider() {
                 name = "Cow Protocol Virtual Token",
                 identifier = "vCOW",
                 stakedToken = cowToken,
-                rewardTokens = emptyList(),
+                rewardToken = cowToken,
                 marketSize = Refreshable.refreshable {
                     getMarketSize(
                         cowToken, vtokenAddress

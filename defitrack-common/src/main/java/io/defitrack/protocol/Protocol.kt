@@ -423,7 +423,7 @@ enum class Protocol(
         slug = "quickswap",
         website = "https://quickswap.exchange/",
         primitives = listOf(POOLING, FARMING, CLAIMABLES),
-        networks = listOf(Network.POLYGON, Network.POLYGON_ZKEVM),
+        networks = listOf(Network.POLYGON, POLYGON_ZKEVM),
         company = Company.QUICKSWAP
     ),
     POLYCAT(
@@ -449,14 +449,6 @@ enum class Protocol(
         primitives = listOf(FARMING),
         networks = listOf(Network.POLYGON),
         company = Company.DINOSWAP
-    ),
-    ADAMANT(
-        logo = "adamant.png",
-        slug = "adamant",
-        website = "https://adamant.finance",
-        primitives = listOf(FARMING),
-        networks = listOf(Network.POLYGON),
-        company = Company.ADAMANT
     ),
     UNISWAP_V2(
         logo = "uniswap.png",

@@ -7,7 +7,6 @@ import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
-import io.defitrack.token.FungibleToken
 import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
 
@@ -34,15 +33,17 @@ open class BalancerGaugeContract(
         )
     }
 
-    open fun getClaimableRewardFunction(address: String, token: String): Function {
-        return createFunction(
-            "claimable_reward_write",
-            listOf(
-                address.toAddress(),
-                token.toAddress()
-            ),
-            listOf(uint256())
-        )
+    open fun getClaimableRewardFunction(token: String): (String) -> Function {
+        return { user: String ->
+            createFunction(
+                "claimable_reward_write",
+                listOf(
+                    user.toAddress(),
+                    token.toAddress()
+                ),
+                listOf(uint256())
+            )
+        }
     }
 
     fun getClaimRewardsFunction(): ContractCall {
@@ -52,25 +53,6 @@ open class BalancerGaugeContract(
             emptyList()
         ).toContractCall()
     }
-
-    suspend fun getBalances(user: String, rewardTokens: List<FungibleToken>): List<BalancerGaugeBalance> {
-        return readMultiCall(
-            rewardTokens.map { token ->
-                getClaimableRewardFunction(user, token.address)
-            }
-        ).mapIndexed { index, retVal ->
-            val token = rewardTokens[index]
-            BalancerGaugeBalance(
-                token = token,
-                retVal.data[0].value as BigInteger
-            )
-        }
-    }
-
-    class BalancerGaugeBalance(
-        val token: FungibleToken,
-        val balance: BigInteger
-    )
 
     suspend fun getRewardTokens(): List<String> {
         return readMultiCall(
@@ -87,7 +69,7 @@ open class BalancerGaugeContract(
     }
 
 
-    suspend fun getRewardToken(index: Int): Function {
+    fun getRewardToken(index: Int): Function {
         return createFunction(
             "reward_tokens",
             listOf(index.toBigInteger().toUint256()),

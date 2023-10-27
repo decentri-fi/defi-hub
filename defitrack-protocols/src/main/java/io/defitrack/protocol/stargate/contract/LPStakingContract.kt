@@ -22,14 +22,6 @@ class LPStakingContract(
         return readSingle(emissionTokenName, address())
     }
 
-    suspend fun lpBalances(index: Int): BigInteger {
-        return read(
-            "lpBalances",
-            inputs = listOf(index.toBigInteger().toUint256()),
-            outputs = listOf(uint256())
-        )[0].value as BigInteger
-    }
-
     suspend fun poolInfos(): List<PoolInfo> {
         val functions = (0 until poolLength()).map { poolIndex ->
             createFunction(
@@ -66,37 +58,43 @@ class LPStakingContract(
         return readSingle<BigInteger>("poolLength", uint256()).toInt()
     }
 
-    fun userInfo(poolId: Int, user: String): Function {
-        return createFunction(
-            "userInfo",
-            inputs = listOf(
-                poolId.toBigInteger().toUint256(),
-                user.toAddress()
-            ),
-            outputs = listOf(
-                uint256(),
-                uint256()
+    fun userInfo(poolId: Int): (String) -> Function {
+        return { user: String ->
+            createFunction(
+                "userInfo",
+                inputs = listOf(
+                    poolId.toBigInteger().toUint256(),
+                    user.toAddress()
+                ),
+                outputs = listOf(
+                    uint256(),
+                    uint256()
+                )
             )
-        )
+        }
     }
 
-    fun pendingFn(poolId: Int, user: String): Function {
-        return createFunction(
-            pendingFunctionName,
-            inputs = listOf(
-                poolId.toBigInteger().toUint256(),
-                user.toAddress()
-            ),
-            outputs = listOf(
-                uint256()
+    fun pendingFn(poolId: Int): (String) -> Function {
+        return { user ->
+            createFunction(
+                pendingFunctionName,
+                inputs = listOf(
+                    poolId.toBigInteger().toUint256(),
+                    user.toAddress()
+                ),
+                outputs = listOf(
+                    uint256()
+                )
             )
-        )
+        }
     }
 
-    fun claimFn(poolId: Int): Function {
-        return createFunction(
-            "deposit",
-            listOf(poolId.toBigInteger().toUint256(), BigInteger.ZERO.toUint256())
-        )
+    fun claimFn(poolId: Int): (String) -> ContractCall {
+        return { user: String ->
+            createFunction(
+                "deposit",
+                listOf(poolId.toBigInteger().toUint256(), BigInteger.ZERO.toUint256())
+            ).toContractCall()
+        }
     }
 }

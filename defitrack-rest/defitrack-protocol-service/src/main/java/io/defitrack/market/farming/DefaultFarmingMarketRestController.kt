@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping(*["/{protocol}/staking", "/{protocol}/farming"])
+@RequestMapping("/{protocol}/staking", "/{protocol}/farming")
 class DefaultFarmingMarketRestController(
     private val farmingMarketProviders: List<FarmingMarketProvider>,
     private val erC20Resource: DecentrifiERC20Resource,

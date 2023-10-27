@@ -1,5 +1,6 @@
 package io.defitrack.protocol.quickswap.staking
 
+import arrow.core.nel
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.conditional.ConditionalOnCompany
@@ -31,32 +32,28 @@ class DQuickFarmingMarketProvider(
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         val contract = oldDQuick.await()
-        val stakedToken = getToken(contract.address).toFungibleToken()
-        val quickToken = getToken(QUICK).toFungibleToken()
+        val stakedToken = getToken(contract.address)
+        val quickToken = getToken(QUICK)
 
-        return listOf(
-            create(
-                identifier = contract.address.lowercase(),
-                name = "Dragon's Lair",
-                stakedToken = quickToken,
-                rewardTokens = listOf(
-                    stakedToken
-                ),
-                positionFetcher = PositionFetcher(
-                    stakedToken.address,
-                    { user -> ERC20Contract.balanceOfFunction(user) }
-                ),
-                investmentPreparer = DQuickStakingInvestmentPreparer(
-                    getERC20Resource(), contract
-                ),
-                exitPositionPreparer = prepareExit {
-                    PreparedExit(
-                        contract.exitFunction(it.amount),
-                        contract.address,
-                    )
-                }
-            )
-        )
+        return create(
+            identifier = contract.address.lowercase(),
+            name = "Dragon's Lair",
+            stakedToken = quickToken,
+            rewardToken = stakedToken,
+            positionFetcher = PositionFetcher(
+                stakedToken.address,
+                ERC20Contract.Companion::balanceOfFunction
+            ),
+            investmentPreparer = DQuickStakingInvestmentPreparer(
+                getERC20Resource(), contract
+            ),
+            exitPositionPreparer = prepareExit {
+                PreparedExit(
+                    contract.exitFunction(it.amount),
+                    contract.address,
+                )
+            }
+        ).nel()
     }
 
     override fun getProtocol(): Protocol {

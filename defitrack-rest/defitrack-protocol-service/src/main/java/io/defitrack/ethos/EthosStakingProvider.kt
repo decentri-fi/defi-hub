@@ -7,7 +7,6 @@ import io.defitrack.evm.contract.FarmingContract
 import io.defitrack.market.farming.SingleContractFarmingMarketProvider
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
-import io.reactivex.Single
 import org.springframework.stereotype.Component
 import java.math.BigInteger
 

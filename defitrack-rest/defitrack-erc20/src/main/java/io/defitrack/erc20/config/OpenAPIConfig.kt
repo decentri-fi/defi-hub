@@ -11,9 +11,9 @@ class OpenAPIConfig {
 
     @Bean
     fun myOpenAPI(): OpenAPI {
-        val prodServer = Server();
-        prodServer.setUrl("https://api.decentri.fi/erc20");
-        prodServer.setDescription("Server URL in Production environment");
+        val prodServer = Server()
+        prodServer.setUrl("https://api.decentri.fi/erc20")
+        prodServer.setDescription("Server URL in Production environment")
 
         val info = Info()
             .title("ERC20 API")

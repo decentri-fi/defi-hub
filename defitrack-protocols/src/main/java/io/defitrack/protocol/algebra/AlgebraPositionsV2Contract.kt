@@ -2,7 +2,6 @@ package io.defitrack.protocol.algebra
 
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.int24
-import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint128
 import io.defitrack.abi.TypeUtils.Companion.uint256
@@ -18,14 +17,6 @@ class AlgebraPositionsV2Contract(
 ) : ERC20Contract(
     blockchainGateway, address
 ) {
-    suspend fun tokenOfOwnerByIndex(owner: String, index: Int): BigInteger {
-        return read(
-            "tokenOfOwnerByIndex",
-            listOf(owner.toAddress(), index.toBigInteger().toUint256()),
-            listOf(uint256())
-        )[0].value as BigInteger
-    }
-
     fun getPositionFunction(tokenId: Int): Function {
         return createFunction(
             method = "positions",

@@ -55,7 +55,7 @@ abstract class BalancerPoolingHistoryProvider(
                     PoolBalanceChangedEvent.getIndexedParameter<ByteArray>(
                         log, 0
                     )
-                );
+                )
 
                 val market = (allMarkets.find {
                     it.metadata["poolId"] == poolId

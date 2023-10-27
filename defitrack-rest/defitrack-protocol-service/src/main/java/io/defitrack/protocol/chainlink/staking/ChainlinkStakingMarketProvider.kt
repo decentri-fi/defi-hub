@@ -1,5 +1,6 @@
 package io.defitrack.protocol.chainlink.staking
 
+import arrow.core.nel
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
@@ -28,24 +29,22 @@ class ChainlinkStakingMarketProvider : FarmingMarketProvider(
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         val chainlinkToken = getToken(link).toFungibleToken()
-        return listOf(
-            create(
-                name = "Chainlink Staking",
-                identifier = "chainlink_staking",
-                stakedToken = chainlinkToken,
-                rewardTokens = listOf(chainlinkToken),
-                marketSize = refreshable {
-                    getMarketSize(
-                        chainlinkToken,
-                        chainlinkStakingContract.address,
-                    )
-                },
-                positionFetcher = PositionFetcher(
+        return create(
+            name = "Chainlink Staking",
+            identifier = "chainlink_staking",
+            stakedToken = chainlinkToken,
+            rewardToken = chainlinkToken,
+            marketSize = refreshable {
+                getMarketSize(
+                    chainlinkToken,
                     chainlinkStakingContract.address,
-                    { user -> chainlinkStakingContract.getStake(user) }
-                ),
-            )
-        )
+                )
+            },
+            positionFetcher = PositionFetcher(
+                chainlinkStakingContract.address,
+                chainlinkStakingContract::getStake
+            ),
+        ).nel()
     }
 
     override fun getProtocol(): Protocol {

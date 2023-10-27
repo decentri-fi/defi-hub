@@ -4,7 +4,6 @@ import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.market.pooling.vo.PoolingMarketTokenShareVO
 import io.defitrack.market.pooling.vo.PoolingMarketVO
-import io.defitrack.network.NetworkVO
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.call.*

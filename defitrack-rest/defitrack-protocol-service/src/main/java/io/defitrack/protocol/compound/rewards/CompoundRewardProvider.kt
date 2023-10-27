@@ -2,14 +2,13 @@ package io.defitrack.protocol.compound.rewards
 
 import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
-import io.defitrack.claimable.*
+import io.defitrack.claimable.ClaimableMarketProvider
 import io.defitrack.claimable.domain.ClaimableMarket
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.network.toVO
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.compound.CompoundAddressesProvider

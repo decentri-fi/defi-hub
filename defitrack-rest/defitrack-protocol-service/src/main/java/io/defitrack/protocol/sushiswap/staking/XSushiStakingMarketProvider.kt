@@ -3,6 +3,7 @@ package io.defitrack.protocol.sushiswap.staking
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -17,8 +18,7 @@ import java.math.BigInteger
 
 @Component
 @ConditionalOnCompany(Company.SUSHISWAP)
-class XSushiStakingMarketProvider(
-) : FarmingMarketProvider() {
+class XSushiStakingMarketProvider : FarmingMarketProvider() {
 
     private val xsushi = "0x8798249c2E607446EfB7Ad49eC89dD1865Ff4272"
     private val sushi = "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2"
@@ -36,28 +36,27 @@ class XSushiStakingMarketProvider(
             create(
                 name = "xsushi",
                 identifier = "xsushi",
-                stakedToken = sushiToken.toFungibleToken(),
-                rewardTokens = listOf(sushiToken.toFungibleToken()),
-                marketSize = Refreshable.refreshable {
+                stakedToken = sushiToken,
+                rewardToken = sushiToken,
+                marketSize = refreshable {
                     getMarketSize(
-                        sushiToken.toFungibleToken(),
+                        sushiToken,
                         xsushi,
                     )
                 },
-                apr = null,
                 positionFetcher = PositionFetcher(
                     xsushi,
-                    { user ->
-                        balanceOfFunction(user)
-                    },
-                    { retVal ->
-                        val userXSushi = (retVal[0].value as BigInteger)
+                    ::balanceOfFunction
+                ) { retVal ->
+                    val userXSushi = (retVal[0].value as BigInteger)
+
+                    if (userXSushi > BigInteger.ZERO) {
                         Position(
                             userXSushi.toBigDecimal().times(ratio).toBigInteger(),
                             userXSushi
                         )
-                    }
-                ),
+                    } else Position.ZERO
+                },
             )
         )
     }

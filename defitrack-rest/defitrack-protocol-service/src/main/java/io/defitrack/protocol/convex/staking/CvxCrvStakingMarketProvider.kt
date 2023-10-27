@@ -32,9 +32,9 @@ class CvxCrvStakingMarketProvider : FarmingMarketProvider() {
             create(
                 name = "Convex CRV Staking",
                 identifier = stakingWrapperAddress,
-                stakedToken = getToken(contract.cvxCrv.await()).toFungibleToken(),
+                stakedToken = getToken(contract.cvxCrv.await()),
                 rewardTokens = emptyList(),
-                positionFetcher = defaultPositionFetcher(address = stakingWrapperAddress),
+                positionFetcher = defaultPositionFetcher(stakingWrapperAddress),
             )
         )
 

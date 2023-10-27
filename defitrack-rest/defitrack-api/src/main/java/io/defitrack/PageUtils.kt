@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable
 
 object PageUtils {
     fun <T> createPageFromList(list: List<T>, pageable: Pageable): Page<T> {
-        requireNotNull(list) { "To create a Page, the list mustn't be null!" }
         val startOfPage = pageable.pageNumber * pageable.pageSize
         if (startOfPage > list.size) {
             return PageImpl(ArrayList(), pageable, 0)

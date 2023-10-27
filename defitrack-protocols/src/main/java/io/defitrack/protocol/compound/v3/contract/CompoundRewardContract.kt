@@ -22,7 +22,7 @@ open class CompoundRewardContract(
         return createFunction(
             "getRewardOwed",
             listOf(comet.toAddress(), user.toAddress()),
-            listOf(TypeUtils.address(), uint256())
+            listOf(address(), uint256())
         )
     }
 

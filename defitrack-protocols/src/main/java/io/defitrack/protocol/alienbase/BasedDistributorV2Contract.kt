@@ -89,16 +89,18 @@ class BasedDistributorV2Contract(
         )
     }
 
-    fun userInfoFunction(user: String, poolIndex: Int): Function {
-        return createFunction(
-            method = "userInfo",
-            inputs = listOf(poolIndex.toBigInteger().toUint256(), user.toAddress()),
-            outputs = listOf(
-                uint256(),
-                uint256(),
-                uint256(),
-                uint256(),
+    fun userInfoFunction(poolIndex: Int): (String) -> Function {
+        return { user ->
+            createFunction(
+                method = "userInfo",
+                inputs = listOf(poolIndex.toBigInteger().toUint256(), user.toAddress()),
+                outputs = listOf(
+                    uint256(),
+                    uint256(),
+                    uint256(),
+                    uint256(),
+                )
             )
-        )
+        }
     }
 }

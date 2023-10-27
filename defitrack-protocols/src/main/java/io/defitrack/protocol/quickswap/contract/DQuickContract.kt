@@ -24,14 +24,6 @@ class DQuickContract(
         )
     }
 
-    suspend fun quickBalance(address: String): BigInteger {
-        return read(
-            "QUICKBalance",
-            inputs = listOf(address.toAddress()),
-            outputs = listOf(uint256())
-        )[0].value as BigInteger
-    }
-
     fun enterFunction(amount: BigInteger): Function {
         return createFunction("enter", listOf(amount.toUint256()), emptyList())
     }

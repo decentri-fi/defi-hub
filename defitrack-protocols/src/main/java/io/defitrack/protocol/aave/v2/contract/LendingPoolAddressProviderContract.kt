@@ -1,6 +1,5 @@
 package io.defitrack.protocol.aave.v2.contract
 
-import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract

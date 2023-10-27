@@ -16,8 +16,7 @@ import java.math.BigInteger
 
 
 @Component
-class VelodromeGetRewardsDecoder(
-) : EventDecoder() {
+class VelodromeGetRewardsDecoder : EventDecoder() {
 
     val rewardPairEvent = org.web3j.abi.datatypes.Event(
         "ClaimRewards",

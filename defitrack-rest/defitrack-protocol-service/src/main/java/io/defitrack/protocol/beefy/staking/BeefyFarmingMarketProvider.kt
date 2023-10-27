@@ -1,7 +1,7 @@
 package io.defitrack.protocol.beefy.staking
 
-import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
-import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -52,29 +52,27 @@ abstract class BeefyFarmingMarketProvider(
                 beefyVault.id
             )
             val want = getToken(contract.want())
-            val pricePerFullShare = contract.getPricePerFullShare()
             create(
                 identifier = contract.vaultId,
-                name = "${contract.readSymbol()} Beefy Vault",
+                name = "${want.name} Beefy Vault",
                 apr = getAPY(contract),
-                stakedToken = want.toFungibleToken(),
-                rewardTokens = listOf(
-                    want.toFungibleToken()
-                ),
-                marketSize = Refreshable.refreshable {
+                stakedToken = want,
+                rewardToken = want,
+                marketSize = refreshable {
                     getMarketSize(want, contract)
                 },
                 positionFetcher = PositionFetcher(
                     contract.address,
-                    { user -> balanceOfFunction(user) },
+                    ::balanceOfFunction,
                     extractBalance = { result ->
                         val balance = result[0].value as BigInteger
-                        Position(
-                            (balance.times(pricePerFullShare)).dividePrecisely(
-                                BigDecimal.TEN.pow(18)
-                            ).toBigInteger(),
-                            balance,
-                        )
+
+                        if (balance > BigInteger.ZERO) {
+                            Position(
+                                (balance.times(contract.pricePerFullShare.await())).asEth().toBigInteger(),
+                                balance,
+                            )
+                        } else Position.ZERO
                     }
                 ),
                 investmentPreparer = BeefyStakingInvestmentPreparer(contract, getERC20Resource()),

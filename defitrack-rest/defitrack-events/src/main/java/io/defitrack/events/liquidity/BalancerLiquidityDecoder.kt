@@ -10,9 +10,7 @@ import io.defitrack.event.EventUtils.Companion.appliesTo
 import io.defitrack.network.toVO
 import io.defitrack.protocol.Protocol
 import org.springframework.stereotype.Component
-import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
-import org.web3j.abi.datatypes.DynamicArray
 import org.web3j.abi.datatypes.Event
 import org.web3j.abi.datatypes.generated.Int256
 import org.web3j.abi.datatypes.generated.Uint256

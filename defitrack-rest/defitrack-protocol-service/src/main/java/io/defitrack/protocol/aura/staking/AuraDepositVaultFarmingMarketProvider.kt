@@ -1,10 +1,7 @@
 package io.defitrack.protocol.aura.staking
 
-import arrow.core.nel
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.AsyncUtils.lazyAsync
-import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -13,15 +10,12 @@ import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aura.AuraBoosterContract
 import io.defitrack.protocol.aura.CrvRewardsContract
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.AURA)
-class AuraDepositVaultFarmingMarketProvider(
-) : FarmingMarketProvider() {
+class AuraDepositVaultFarmingMarketProvider : FarmingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
         val booster = AuraBoosterContract(
@@ -38,7 +32,7 @@ class AuraDepositVaultFarmingMarketProvider(
                     name = crvRewardsToken.name,
                     identifier = crvrewards.address,
                     stakedToken = asset.toFungibleToken(),
-                    rewardTokens = getToken(crvrewards.rewardToken.await()).nel(),
+                    rewardToken = getToken(crvrewards.rewardToken.await()),
                     marketSize = refreshable {
                         getMarketSize(asset.toFungibleToken(), crvrewards.rewardToken.await())
                     },

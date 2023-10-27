@@ -3,11 +3,9 @@ package io.defitrack.erc20
 import arrow.core.Either.Companion.catch
 import arrow.core.Option
 import arrow.core.flatten
-import arrow.core.getOrElse
 import arrow.core.some
 import arrow.fx.coroutines.parMap
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.erc20.logo.LogoService
 import io.defitrack.erc20.nativetoken.NativeTokenService
 import io.defitrack.erc20.protocolspecific.TokenIdentifier
@@ -20,7 +18,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
-import java.math.BigInteger
 import kotlin.time.measureTimedValue
 
 @Service

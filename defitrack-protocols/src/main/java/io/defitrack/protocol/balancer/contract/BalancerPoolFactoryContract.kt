@@ -1,6 +1,5 @@
 package io.defitrack.protocol.balancer.contract
 
-import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
