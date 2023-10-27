@@ -51,7 +51,9 @@ abstract class UniswapV3PoolingPositionProvider(
                         poolAddress
                     )
 
-                    val market = uniswapV3PoolingMarketProvider.marketFromCache(poolAddress)
+                    val market = uniswapV3PoolingMarketProvider.marketFromCache(poolAddress).getOrElse {
+                        throw Exception("Market ($poolAddress) not found")
+                    }
 
                     val token0 = uniswapV3PoolingMarketProvider.getToken(poolContract.token0.await())
                     val token1 = uniswapV3PoolingMarketProvider.getToken(poolContract.token1.await())
@@ -103,9 +105,7 @@ abstract class UniswapV3PoolingPositionProvider(
 
                     PoolingPosition(
                         tokenAmount = BigInteger.ZERO,
-                        market.getOrElse {
-                            throw Exception("Market not found")
-                        },
+                        market,
                         object : PriceCalculator {
                             override fun calculate(): Double {
                                 return totalToken0Usd + totalToken1Usd
@@ -114,7 +114,7 @@ abstract class UniswapV3PoolingPositionProvider(
                     )
                 } catch (ex: Exception) {
                     logger.info(
-                        "Unable to fetch claimables for ${uniswapV3PoolingMarketProvider.getNetwork()}", ex
+                        "Unable to fetch claimables for ${uniswapV3PoolingMarketProvider.getNetwork()}", ex.message
                     )
                     null
                 }

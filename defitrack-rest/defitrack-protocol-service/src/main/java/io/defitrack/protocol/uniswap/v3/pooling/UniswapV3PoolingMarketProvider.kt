@@ -91,7 +91,7 @@ abstract class UniswapV3PoolingMarketProvider(
 
     val poolCache = Cache.Builder<String, Option<PoolingMarket>>().build()
 
-    suspend fun marketFromCache(poolAddress: String) = poolCache.get(poolAddress) {
+    suspend fun marketFromCache(poolAddress: String) = poolCache.get(poolAddress.lowercase()) {
         getMarket(poolAddress).mapLeft { throwable ->
             when (throwable) {
                 is MarketTooLowException -> logger.debug("market too low for ${throwable.message}")
