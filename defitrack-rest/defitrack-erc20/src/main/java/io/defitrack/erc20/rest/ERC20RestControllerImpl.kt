@@ -3,6 +3,7 @@ package io.defitrack.erc20.rest
 import arrow.core.getOrElse
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.*
+import io.defitrack.token.TokenType
 import io.micrometer.observation.Observation
 import io.micrometer.observation.ObservationRegistry
 import kotlinx.coroutines.coroutineScope
@@ -31,6 +32,8 @@ class ERC20RestControllerImpl(
         ResponseEntity.ok(
             erc20Service.getAllTokensForNetwork(network).map {
                 it.toVO()
+            }.filter {
+                it.type == TokenType.SINGLE.name
             }
         )
     }
