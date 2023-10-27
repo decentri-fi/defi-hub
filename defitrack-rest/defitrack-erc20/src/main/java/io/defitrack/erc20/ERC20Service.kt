@@ -46,6 +46,8 @@ class ERC20Service(
             network == it.value.getOrNull()?.network
         }.mapNotNull {
             it.value.getOrNull()
+        }.distinctBy {
+            it.address.lowercase() + "-" + it.network.name
         }
     }
 
