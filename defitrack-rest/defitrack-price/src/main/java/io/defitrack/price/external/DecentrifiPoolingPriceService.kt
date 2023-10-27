@@ -25,7 +25,7 @@ class DecentrifiPoolingPriceService(
 
     override suspend fun getPrice(tokenInformationVO: TokenInformationVO): BigDecimal {
         return decentrifiPoolingPriceRepository.getPrice(tokenInformationVO).also {
-            logger.info("getting logging price on decentrifi pooling")
+            logger.info("getting price on decentrifi pooling for token ${tokenInformationVO.name} (${tokenInformationVO.symbol})")
         }
     }
 }

@@ -40,7 +40,7 @@ class PriceProvider(
             token.symbol.uppercase(),
             token.symbol.uppercase()
         )]?.also {
-            logger.info("getting price on beefy for ${token.name} ($it)")
+            logger.info("getting price on beefy for ${token.name} (${token.symbol}) on ${token.network.name}")
         }
     }
 }

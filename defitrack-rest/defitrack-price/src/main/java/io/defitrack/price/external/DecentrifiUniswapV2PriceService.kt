@@ -20,13 +20,13 @@ class DecentrifiUniswapV2PriceService(
 
     override fun getAllPrices(): List<ExternalPrice> {
         return decentriUniswapV2UnderlyingPriceRepository.prices.asMap().entries.map {
-            ExternalPrice(it.key.toString(), Network.ETHEREUM, it.value, "uniswap-v2").also {
-                logger.info("getting logging price on decentrifi uniswap v2")
-            }
+            ExternalPrice(it.key.toString(), Network.ETHEREUM, it.value, "uniswap-v2")
         }
     }
 
     override suspend fun getPrice(tokenInformationVO: TokenInformationVO): BigDecimal {
-        return decentriUniswapV2UnderlyingPriceRepository.getPrice(tokenInformationVO.address) ?: BigDecimal.ZERO
+        return decentriUniswapV2UnderlyingPriceRepository.getPrice(tokenInformationVO.address)?.also {
+            logger.info("getting logging price on decentrifi uniswapv2 for ${tokenInformationVO.name} (${tokenInformationVO.symbol}) on ${tokenInformationVO.network.name}")
+        } ?: BigDecimal.ZERO
     }
 }
