@@ -2,6 +2,7 @@ package io.defitrack.evm.contract
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.multicall.MultiCallElement
 import io.defitrack.evm.multicall.MultiCallResult
 import kotlinx.coroutines.Deferred
@@ -34,7 +35,7 @@ abstract class EvmContract(
         }
     }
 
-    val resolvedConstants: Deferred<Map<Function, MultiCallResult>> = AsyncUtils.lazyAsync {
+    var resolvedConstants: Deferred<Map<Function, MultiCallResult>> = lazyAsync {
         logger.debug("reading ${constantFunctions.size} constants from $address")
         readMultiCall(constantFunctions).mapIndexed { index, result ->
             constantFunctions[index] to result
@@ -69,7 +70,7 @@ abstract class EvmContract(
     inline fun <reified T : Any> constant(
         function: Function,
     ): Deferred<T> {
-        return AsyncUtils.lazyAsync {
+        return lazyAsync {
             val get = resolvedConstants.await().get(function)!!
             if (get.success) {
                 get.data[0].value as T
@@ -138,5 +139,12 @@ abstract class EvmContract(
         val network: Network,
         val address: String
     )
+
+    fun resolveConstants(resolved: Map<Function, MultiCallResult>) {
+
+        this.resolvedConstants = lazyAsync {
+            resolved
+        }
+    }
 }
 

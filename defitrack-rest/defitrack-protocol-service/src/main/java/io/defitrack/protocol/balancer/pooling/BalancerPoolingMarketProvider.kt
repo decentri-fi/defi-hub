@@ -4,6 +4,7 @@ import arrow.core.None
 import arrow.core.Option
 import arrow.core.some
 import arrow.fx.coroutines.parMapNotNull
+import io.defitrack.BulkConstantResolver
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.erc20.TokenInformationVO
@@ -14,32 +15,46 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerPoolContract
 import io.defitrack.protocol.balancer.contract.BalancerService
 import io.defitrack.protocol.balancer.contract.BalancerVaultContract
+import io.defitrack.protocol.spark.PoolContract
 import io.defitrack.token.FungibleToken
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
+import org.springframework.beans.factory.annotation.Autowired
 import java.math.BigDecimal
 import java.math.BigInteger
 
 abstract class BalancerPoolingMarketProvider(
-    private val balancerService: BalancerService
+    private val balancerService: BalancerService,
 ) : PoolingMarketProvider() {
 
+    @Autowired
+    private lateinit var bulkConstantResolver: BulkConstantResolver
+
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
-        balancerService.getPools(getNetwork()).parMapNotNull(concurrency = 8) { pool ->
-            createMarket(pool)
-        }.forEach {
-            it.onSome { send(it) }
-        }
+        val poolingContracts = balancerService.getPools(getNetwork())
+            .map {
+                BalancerPoolContract(
+                    getBlockchainGateway(), it
+                )
+            }
+
+        bulkConstantResolver.resolve(poolingContracts)
+
+        poolingContracts
+            .parMapNotNull(concurrency = 8) { pool ->
+                createMarket(pool)
+            }.forEach {
+                it.onSome { send(it) }
+            }
     }
 
+
     private suspend fun createMarket(
-        poolAddress: String,
+        poolContract: BalancerPoolContract,
     ): Option<PoolingMarket> {
         try {
-            val poolContract = BalancerPoolContract(
-                getBlockchainGateway(), poolAddress
-            )
 
+            val poolAddress = poolContract.address
             val pool = getToken(poolAddress)
 
             val vault = BalancerVaultContract(
@@ -78,7 +93,7 @@ abstract class BalancerPoolingMarketProvider(
                 }
             ).some()
         } catch (e: Exception) {
-            logger.error("Error creating market for pool $poolAddress:  ex: {}", e.message)
+            logger.error("Error creating market for pool ${poolContract.address}:  ex: {}", e.message)
             return None
         }
     }
