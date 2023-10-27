@@ -25,7 +25,7 @@ class DecentrifiUniswapV3PriceService(
     }
 
     override suspend fun getPrice(tokenInformationVO: TokenInformationVO): BigDecimal {
-        return repository.getPrice(tokenInformationVO).also {
+        return repository.getPrice(tokenInformationVO)?.also {
             logger.info("getting logging price on decentrifi uniswapv3")
         } ?: BigDecimal.ZERO
     }
