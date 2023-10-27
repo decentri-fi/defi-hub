@@ -15,6 +15,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerPoolContract
 import io.defitrack.protocol.balancer.contract.BalancerService
 import io.defitrack.protocol.balancer.contract.BalancerVaultContract
+import io.defitrack.protocol.balancer.pooling.history.BalancerPoolingHistoryProvider
 import io.defitrack.protocol.spark.PoolContract
 import io.defitrack.token.FungibleToken
 import kotlinx.coroutines.flow.Flow
@@ -29,6 +30,9 @@ abstract class BalancerPoolingMarketProvider(
 
     @Autowired
     private lateinit var bulkConstantResolver: BulkConstantResolver
+
+    @Autowired
+    private lateinit var balancerPoolingHistoryProvider: BalancerPoolingHistoryProvider
 
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
         val poolingContracts = balancerService.getPools(getNetwork())
@@ -90,7 +94,10 @@ abstract class BalancerPoolingMarketProvider(
                 positionFetcher = defaultPositionFetcher(poolAddress),
                 totalSupply = refreshable(pool.totalDecimalSupply()) {
                     getToken(poolAddress).totalDecimalSupply()
-                }
+                },
+                historicEventExtractor = balancerPoolingHistoryProvider.historicEventExtractor(
+                    poolId, getNetwork()
+                )
             ).some()
         } catch (e: Exception) {
             logger.error("Error creating market for pool ${poolContract.address}:  ex: {}", e.message)

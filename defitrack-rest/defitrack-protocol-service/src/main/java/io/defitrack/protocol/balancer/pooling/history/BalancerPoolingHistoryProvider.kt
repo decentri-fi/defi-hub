@@ -1,6 +1,7 @@
 package io.defitrack.protocol.balancer.pooling.history
 
 import io.defitrack.abi.TypeUtils
+import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.event.DefiEvent
 import io.defitrack.event.DefiEventType
 import io.defitrack.event.EventDecoder.Companion.getIndexedParameter
@@ -8,21 +9,27 @@ import io.defitrack.event.EventDecoder.Companion.getNonIndexedParameter
 import io.defitrack.market.pooling.history.HistoricEventExtractor
 import io.defitrack.market.pooling.history.PoolingHistoryProvider
 import io.defitrack.network.toVO
+import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.pooling.BalancerPoolingMarketProvider
+import io.defitrack.token.ERC20Resource
 import org.apache.commons.codec.binary.Hex
+import org.springframework.stereotype.Component
 import org.web3j.abi.TypeEncoder
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.DynamicArray
 import org.web3j.abi.datatypes.Event
+import org.web3j.abi.datatypes.generated.Bytes32
 import org.web3j.abi.datatypes.generated.Int256
 import org.web3j.abi.datatypes.generated.Uint256
+import org.web3j.protocol.Network
 import java.math.BigInteger
 
-abstract class BalancerPoolingHistoryProvider(
-    balancerPoolingMarketProvider: BalancerPoolingMarketProvider
-) : PoolingHistoryProvider(balancerPoolingMarketProvider) {
+@Component
+class BalancerPoolingHistoryProvider(
+    private val erC20Resource: ERC20Resource,
+) {
 
     val PoolBalanceChangedEvent = Event(
         "PoolBalanceChanged",
@@ -35,80 +42,56 @@ abstract class BalancerPoolingHistoryProvider(
         )
     )
 
-    override fun historicEventExtractor(): HistoricEventExtractor {
-        val allMarkets = ArrayList(
-            poolingMarketProvider.getMarkets()
-        )
-
+    fun historicEventExtractor(poolId: String, network: io.defitrack.common.network.Network): HistoricEventExtractor {
         return HistoricEventExtractor(
             addresses = {
                 listOf("0xba12222222228d8ba445958a75a0704d566bf2c8")
             },
             optionalTopics = { user ->
-                listOf(null, "0x${TypeEncoder.encode(Address(user))}")
+                listOf("0x$poolId", "0x${TypeEncoder.encode(Address(user))}")
             },
             topic = "0xe5ce249087ce04f05a957192435400fd97868dba0e6a4b4c049abf8af80dae78",
             toMarketEvent = { event ->
                 val log = event.get()
 
-                val poolId = Hex.encodeHexString(
-                    PoolBalanceChangedEvent.getIndexedParameter<ByteArray>(
-                        log, 0
+                val deltas = PoolBalanceChangedEvent.getNonIndexedParameter<List<Int256>>(
+                    log, 1
+                ).map {
+                    it.value as BigInteger
+                }
+
+                val tokens = PoolBalanceChangedEvent.getNonIndexedParameter<List<Address>>(
+                    log, 0
+                ).map {
+                    it.value as String
+                }
+
+                val type = if (deltas.none { it < BigInteger.ZERO }) {
+                    DefiEventType.ADD_LIQUIDITY
+                } else {
+                    DefiEventType.REMOVE_LIQUIDITY
+                }
+
+                DefiEvent(
+                    transactionId = log.transactionHash,
+                    type = type,
+                    protocol = Protocol.BALANCER,
+                    network = network.toVO(),
+                    metadata = mapOf(
+                        "assets" to tokens.mapIndexed { index, token ->
+                            if (deltas[index] == BigInteger.ZERO) {
+                                null
+                            } else {
+                                mapOf(
+                                    "token" to erC20Resource.getTokenInformation(network, token),
+                                    "amount" to deltas[index].abs().toString()
+                                )
+                            }
+                        }.filterNotNull()
                     )
                 )
 
-                val market = (allMarkets.find {
-                    it.metadata["poolId"] == poolId
-                })
-
-                if (market == null) {
-                    null
-                } else {
-                    val deltas = PoolBalanceChangedEvent.getNonIndexedParameter<List<Int256>>(
-                        log, 1
-                    ).map {
-                        it.value as BigInteger
-                    }
-
-                    val tokens = PoolBalanceChangedEvent.getNonIndexedParameter<List<Address>>(
-                        log, 0
-                    ).map {
-                        it.value as String
-                    }
-
-                    val type = if (deltas.none { it < BigInteger.ZERO }) {
-                        DefiEventType.ADD_LIQUIDITY
-                    } else {
-                        DefiEventType.REMOVE_LIQUIDITY
-                    }
-
-                    DefiEvent(
-                        transactionId = log.transactionHash,
-                        type = type,
-                        protocol = Protocol.BALANCER,
-                        network = getNetwork().toVO(),
-                        metadata = mapOf(
-                            "market" to mapOf(
-                                "id" to (allMarkets.find {
-                                    it.metadata["poolId"] == poolId
-                                }?.id ?: "unknown"),
-                                "type" to "pooling"
-                            ),
-                            "assets" to tokens.mapIndexed { index, token ->
-                                if (deltas[index] == BigInteger.ZERO) {
-                                    null
-                                } else {
-                                    mapOf(
-                                        "token" to erC20Resource.getTokenInformation(getNetwork(), token),
-                                        "amount" to deltas[index].abs().toString()
-                                    )
-                                }
-                            }.filterNotNull()
-                        )
-                    )
-                }
             }
         )
     }
-
 }

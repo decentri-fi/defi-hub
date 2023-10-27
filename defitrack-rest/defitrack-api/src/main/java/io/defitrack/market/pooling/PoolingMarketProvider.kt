@@ -7,6 +7,7 @@ import io.defitrack.market.MarketProvider
 import io.defitrack.market.farming.domain.InvestmentPreparer
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
+import io.defitrack.market.pooling.history.HistoricEventExtractor
 import io.defitrack.market.position.PositionFetcher
 import io.defitrack.token.FungibleToken
 import java.math.BigDecimal
@@ -31,6 +32,7 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
         metadata: Map<String, Any> = emptyMap(),
         internalMetadata: Map<String, Any> = emptyMap(),
         deprecated: Boolean = false,
+        historicEventExtractor: HistoricEventExtractor? = null,
     ): PoolingMarket {
         return PoolingMarket(
             id = createId(identifier),
@@ -51,7 +53,8 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
             price = price ?: calculatePrice(marketSize, totalSupply),
             metadata = metadata,
             internalMetadata = internalMetadata,
-            deprecated = deprecated
+            deprecated = deprecated,
+            historicEventExtractor = historicEventExtractor,
         )
     }
 
@@ -85,13 +88,13 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
         val firstShare = PoolingMarketTokenShare(
             token = token0,
             reserve = getBalance(token0.address, poolAddress),
-            reserveUSD = if(firstMarketShare == BigDecimal.ZERO) secondMarketShare else firstMarketShare
+            reserveUSD = if (firstMarketShare == BigDecimal.ZERO) secondMarketShare else firstMarketShare
         )
 
         val secondShare = PoolingMarketTokenShare(
             token = token1,
             reserve = getBalance(token1.address, poolAddress),
-            reserveUSD = if(secondMarketShare == BigDecimal.ZERO) firstMarketShare else secondMarketShare
+            reserveUSD = if (secondMarketShare == BigDecimal.ZERO) firstMarketShare else secondMarketShare
         )
         return listOf(
             firstShare, secondShare
