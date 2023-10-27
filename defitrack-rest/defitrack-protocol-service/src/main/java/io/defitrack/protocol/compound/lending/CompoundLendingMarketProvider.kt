@@ -62,15 +62,14 @@ class CompoundLendingMarketProvider(
                     poolType = "compound-lendingpool",
                     positionFetcher = PositionFetcher(
                         ctokenContract.address,
-                        ::balanceOfFunction,
-                        { retVal ->
-                            val tokenBalance = retVal[0].value as BigInteger
-                            Position(
-                                tokenBalance.times(exchangeRate).asEth().toBigInteger(),
-                                tokenBalance
-                            )
-                        }
-                    ),
+                        ::balanceOfFunction
+                    ) { retVal ->
+                        val tokenBalance = retVal[0].value as BigInteger
+                        Position(
+                            tokenBalance.times(exchangeRate).asEth().toBigInteger(),
+                            tokenBalance
+                        )
+                    },
                     investmentPreparer = CompoundLendingInvestmentPreparer(
                         ctokenContract,
                         getERC20Resource()

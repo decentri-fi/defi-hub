@@ -4,6 +4,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
+import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.position.PositionFetcher
@@ -36,7 +37,7 @@ class CompoundV3PolygonLendingMarketProvidero : LendingMarketProvider() {
                     erc20Compatible = true,
                     positionFetcher = PositionFetcher(
                         address = cTokenAddress,
-                        function = assetContract.collateralBalanceOfFunction(lendingToken.address)
+                        function = ::balanceOfFunction
                     ),
                     totalSupply = refreshable(cToken.totalSupply.asEth()) {
                         getToken(cTokenAddress).totalSupply.asEth()

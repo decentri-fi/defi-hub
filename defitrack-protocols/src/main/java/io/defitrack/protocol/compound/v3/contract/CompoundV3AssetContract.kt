@@ -21,19 +21,6 @@ class CompoundV3AssetContract(
     blockchainGateway, address
 ) {
 
-    fun collateralBalanceOfFunction( asset: String): (String) -> Function {
-        return { user: String ->
-            createFunction(
-                "collateralBalanceOf",
-                inputs = listOf(
-                    user.toAddress(),
-                    asset.toAddress()
-                ),
-                outputs = listOf(TypeUtils.uint256())
-            )
-        }
-    }
-
     suspend fun baseToken(): String {
         return read(
             "baseToken",

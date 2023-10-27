@@ -28,9 +28,7 @@ class DQuickExternalPriceService(
 
     val dquickAddress = quickswapService.getOldDQuickContractAddress()
 
-    val cache = Cache.Builder<String, BigDecimal>().expireAfterWrite(
-        1.hours
-    ).build()
+    val cache = Cache.Builder<String, BigDecimal>().expireAfterWrite(1.hours).build()
 
     override fun getOracleName(): String {
         return "dquick"

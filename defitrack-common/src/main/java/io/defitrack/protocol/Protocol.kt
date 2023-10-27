@@ -407,7 +407,7 @@ enum class Protocol(
             FARMING,
             CLAIMABLES
         ),
-        networks = listOf(ETHEREUM),
+        networks = listOf(ETHEREUM, ARBITRUM, BASE, Network.POLYGON),
         company = Company.COMPOUND
     ),
     BEEFY(
