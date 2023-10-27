@@ -53,7 +53,7 @@ class CoinGeckoPriceService(
         }
     }
 
-    suspend fun getPrice(address: String): BigDecimal? = withContext(Dispatchers.IO){
+    suspend fun getPrice(address: String): BigDecimal? = withContext(Dispatchers.IO) {
         try {
             if (address.isBlank()) {
                 BigDecimal.ZERO
@@ -63,7 +63,9 @@ class CoinGeckoPriceService(
                         httpClient.get("https://api.coingecko.com/api/v3/simple/price?ids=${token.id}&vs_currencies=usd")
                             .bodyAsText()
                     val jsonObject = JsonParser.parseString(response)
-                    jsonObject.asJsonObject[token.id].asJsonObject["usd"].asBigDecimal
+                    jsonObject.asJsonObject[token.id].asJsonObject["usd"].asBigDecimal.also {
+                        logger.info("had to get ${token.name} on coingecko")
+                    }
                 }
             }
         } catch (ex: Exception) {
