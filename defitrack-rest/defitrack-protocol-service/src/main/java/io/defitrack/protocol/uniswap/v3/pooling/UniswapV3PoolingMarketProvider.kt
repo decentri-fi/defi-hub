@@ -1,6 +1,7 @@
 package io.defitrack.protocol.uniswap.v3.pooling
 
 import arrow.core.Either
+import arrow.core.Either.Companion.catch
 import arrow.core.Option
 import arrow.core.left
 import arrow.core.right
@@ -101,52 +102,53 @@ abstract class UniswapV3PoolingMarketProvider(
     }
 
     suspend fun getMarket(address: String): Either<Throwable, PoolingMarket> {
+        return catch {
+            val identifier = "v3-${address}"
 
-        val identifier = "v3-${address}"
+            val prefetch = prefetches.await().find {
+                it.id == createId(identifier)
+            }
 
-        val prefetch = prefetches.await().find {
-            it.id == createId(identifier)
-        }
+            val pool = UniswapV3PoolContract(getBlockchainGateway(), address)
+            val token0 = prefetch?.tokens?.get(0) ?: getToken(pool.token0.await()).toFungibleToken()
+            val token1 = prefetch?.tokens?.get(1) ?: getToken(pool.token1.await()).toFungibleToken()
 
-        val pool = UniswapV3PoolContract(getBlockchainGateway(), address)
-        val token0 = prefetch?.tokens?.get(0) ?: getToken(pool.token0.await()).toFungibleToken()
-        val token1 = prefetch?.tokens?.get(1) ?: getToken(pool.token1.await()).toFungibleToken()
+            val breakdown = prefetch?.breakdown?.map {
+                PoolingMarketTokenShare(
+                    it.token,
+                    it.reserve,
+                    it.reserveUSD
+                )
+            } ?: fiftyFiftyBreakdown(token0, token1, address)
 
-        val breakdown = prefetch?.breakdown?.map {
-            PoolingMarketTokenShare(
-                it.token,
-                it.reserve,
+            val marketSize = breakdown.sumOf {
                 it.reserveUSD
-            )
-        } ?: fiftyFiftyBreakdown(token0, token1, address)
+            }
 
-        val marketSize = breakdown.sumOf {
-            it.reserveUSD
-        }
-
-        return if (marketSize != BigDecimal.ZERO && marketSize > BigDecimal.valueOf(10000)) {
-            val totalSupply = prefetch?.totalSupply ?: pool.liquidity.await().asEth()
-            create(
-                identifier = identifier,
-                name = "${token0.symbol}/${token1.symbol}",
-                address = pool.address,
-                symbol = "${token0.symbol}-${token1.symbol}",
-                breakdown = breakdown,
-                tokens = listOf(token0, token1),
-                marketSize = refreshable(marketSize) {
-                    fiftyFiftyBreakdown(token0, token1, pool.address).sumOf {
-                        it.reserveUSD
-                    }
-                },
-                positionFetcher = null,
-                totalSupply = refreshable(totalSupply) {
-                    pool.refreshLiquidity().asEth()
-                },
-                erc20Compatible = false,
-                internalMetadata = mapOf("contract" to pool),
-            ).right()
-        } else {
-            MarketTooLowException("market size is zero for ${pool.address}").left()
+            if (marketSize != BigDecimal.ZERO && marketSize > BigDecimal.valueOf(10000)) {
+                val totalSupply = prefetch?.totalSupply ?: pool.liquidity.await().asEth()
+                create(
+                    identifier = identifier,
+                    name = "${token0.symbol}/${token1.symbol}",
+                    address = pool.address,
+                    symbol = "${token0.symbol}-${token1.symbol}",
+                    breakdown = breakdown,
+                    tokens = listOf(token0, token1),
+                    marketSize = refreshable(marketSize) {
+                        fiftyFiftyBreakdown(token0, token1, pool.address).sumOf {
+                            it.reserveUSD
+                        }
+                    },
+                    positionFetcher = null,
+                    totalSupply = refreshable(totalSupply) {
+                        pool.refreshLiquidity().asEth()
+                    },
+                    erc20Compatible = false,
+                    internalMetadata = mapOf("contract" to pool),
+                )
+            } else {
+                throw MarketTooLowException("market size is zero for ${pool.address}")
+            }
         }
     }
 
