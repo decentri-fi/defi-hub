@@ -8,6 +8,7 @@ import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
+import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.uniswap.v2.pooling.prefetch.UniswapV2Prefetcher
@@ -44,11 +45,20 @@ class UniswapV2EthereumPoolingMarketProvider(
             launch {
                 throttled {
                     try {
-                        val breakdown = fiftyFiftyBreakdown(
+
+                        val breakdown = prefetch.breakdown?.map {
+                            PoolingMarketTokenShare(
+                                it.token,
+                                it.reserve,
+                                it.reserveUSD
+                            )
+                        } ?: fiftyFiftyBreakdown(
                             prefetch.tokens[0],
                             prefetch.tokens[1],
                             prefetch.address
                         )
+
+
                         val refreshableMarketSize = refreshable(
                             breakdown.sumOf { it.reserveUSD }
                         ){
