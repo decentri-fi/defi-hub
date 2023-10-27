@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import kotlin.time.Duration.Companion.hours
 
-@Service
+
 class BeefyPricesService(
     private val beefyAPIEndpoint: String = "https://api.beefy.finance",
     private val objectMapper: ObjectMapper,

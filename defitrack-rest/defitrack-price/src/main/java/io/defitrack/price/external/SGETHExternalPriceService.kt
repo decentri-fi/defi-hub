@@ -3,13 +3,20 @@ package io.defitrack.price.external
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.price.BeefyPricesService
+import io.defitrack.price.PriceProvider
+import io.defitrack.token.ERC20Resource
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 
 @Service
-class SGETHExternalPriceService(
-    private val beefyPricesService: BeefyPricesService
-) : ExternalPriceService {
+class SGETHExternalPriceService : ExternalPriceService {
+
+    @Autowired
+    private lateinit var priceprovider: PriceProvider
+
+    @Autowired
+    private lateinit var erC20Resource: ERC20Resource
 
     override fun appliesTo(token: TokenInformationVO): Boolean {
         return token.network.name == Network.ETHEREUM.name &&
@@ -21,7 +28,8 @@ class SGETHExternalPriceService(
     }
 
     override suspend fun getPrice(tokenInformationVO: TokenInformationVO): BigDecimal {
-        return beefyPricesService.getPrices()
-            .getOrDefault("ETH", BigDecimal.ZERO)
+        return priceprovider.getPrice(
+            erC20Resource.getTokenInformation(Network.ETHEREUM, "0x0")
+        )
     }
 }
