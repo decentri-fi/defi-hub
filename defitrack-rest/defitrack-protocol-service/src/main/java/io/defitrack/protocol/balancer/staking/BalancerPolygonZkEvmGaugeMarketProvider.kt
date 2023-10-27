@@ -71,8 +71,8 @@ class BalancerPolygonZkEvmGaugeMarketProvider : FarmingMarketProvider() {
                                 bal.toBigDecimal().dividePrecisely(gaugecontract.workingSupply.await().toBigDecimal())
                             val normalized = lp.totalSupply.toBigDecimal().times(ratiod)
                             Position(
-                                bal,
-                                normalized.toBigInteger()
+                                normalized.toBigInteger(),
+                                bal
                             )
                         } else {
                             Position(
@@ -101,6 +101,7 @@ class BalancerPolygonZkEvmGaugeMarketProvider : FarmingMarketProvider() {
                 )
             } catch (ex: Exception) {
                 logger.error("Error fetching gauge", ex)
+                logger.debug(ex.stackTraceToString())
                 null
             }
         }
