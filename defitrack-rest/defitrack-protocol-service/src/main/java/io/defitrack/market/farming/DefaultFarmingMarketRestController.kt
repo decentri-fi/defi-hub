@@ -83,8 +83,8 @@ class DefaultFarmingMarketRestController(
     @PostMapping(value = ["/markets/{id}/exit"])
     suspend fun prepareExit(
         @PathVariable("id") id: String, @RequestBody exitPositionCommand: ExitPositionCommand
-    ) {
-        getStakingMarketById(id)?.exitPositionPreparer?.prepare(exitPositionCommand)?.let { transactions ->
+    ): ResponseEntity<TransactionPreparationVO> {
+        return getStakingMarketById(id)?.exitPositionPreparer?.prepare(exitPositionCommand)?.let { transactions ->
             ResponseEntity.ok(
                 TransactionPreparationVO(
                     transactions
