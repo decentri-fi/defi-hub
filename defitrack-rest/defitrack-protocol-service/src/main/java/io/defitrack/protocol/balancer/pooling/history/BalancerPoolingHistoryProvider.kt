@@ -1,29 +1,21 @@
 package io.defitrack.protocol.balancer.pooling.history
 
 import io.defitrack.abi.TypeUtils
-import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.event.DefiEvent
 import io.defitrack.event.DefiEventType
-import io.defitrack.event.EventDecoder.Companion.getIndexedParameter
 import io.defitrack.event.EventDecoder.Companion.getNonIndexedParameter
 import io.defitrack.market.pooling.history.HistoricEventExtractor
-import io.defitrack.market.pooling.history.PoolingHistoryProvider
 import io.defitrack.network.toVO
-import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.balancer.pooling.BalancerPoolingMarketProvider
 import io.defitrack.token.ERC20Resource
-import org.apache.commons.codec.binary.Hex
 import org.springframework.stereotype.Component
 import org.web3j.abi.TypeEncoder
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.DynamicArray
 import org.web3j.abi.datatypes.Event
-import org.web3j.abi.datatypes.generated.Bytes32
 import org.web3j.abi.datatypes.generated.Int256
 import org.web3j.abi.datatypes.generated.Uint256
-import org.web3j.protocol.Network
 import java.math.BigInteger
 
 @Component

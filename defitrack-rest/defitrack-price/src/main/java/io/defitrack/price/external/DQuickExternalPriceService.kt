@@ -16,7 +16,7 @@ import java.math.BigDecimal
 import java.math.BigInteger
 import kotlin.time.Duration.Companion.hours
 
-@Component
+//@Component
 class DQuickExternalPriceService(
     quickswapService: QuickswapService,
     private val erc20resource: ERC20Resource,

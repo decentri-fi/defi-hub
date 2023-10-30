@@ -16,7 +16,7 @@ class PoolingMarketVOMapper(
     private val protocolVOMapper: ProtocolVOMapper
 ) : MarketVOMapper<PoolingMarket> {
 
-   override fun map(market: PoolingMarket): PoolingMarketVO {
+    override fun map(market: PoolingMarket): PoolingMarketVO {
         return with(market) {
             PoolingMarketVO(
                 name = name,
@@ -36,7 +36,8 @@ class PoolingMarketVOMapper(
                 totalSupply = totalSupply.get(),
                 metadata = metadata,
                 updatedAt = Date.from(updatedAt.get().toInstant(ZoneOffset.UTC)).time,
-                deprecated = deprecated
+                deprecated = deprecated,
+                historySupported = historicEventExtractor != null
             )
         }
     }

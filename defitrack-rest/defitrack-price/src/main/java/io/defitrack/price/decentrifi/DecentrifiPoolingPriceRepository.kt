@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
+import java.math.BigInteger
 
 @Component
 class DecentrifiPoolingPriceRepository(
@@ -32,10 +33,10 @@ class DecentrifiPoolingPriceRepository(
         protocols.map { proto ->
             try {
                 getPools(proto).filter {
-                    it.price != null && it.price > BigDecimal.ZERO
+                    it.price != null && ((it.price ?: BigDecimal.ZERO) > BigDecimal.ZERO)
                 }.parMap(concurrency = 12) { pool ->
                     toIndex(pool.network, pool.address) to ExternalPrice(
-                        pool.address, pool.network.toNetwork(), pool.price, "decentrifi-pooling"
+                        pool.address, pool.network.toNetwork(), pool.price ?: BigDecimal.ZERO, "decentrifi-pooling"
                     )
                 }.forEach { pool ->
                     cache.put(
