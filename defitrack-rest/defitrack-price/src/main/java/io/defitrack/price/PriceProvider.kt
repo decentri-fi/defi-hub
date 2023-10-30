@@ -11,7 +11,7 @@ import kotlin.time.Duration.Companion.hours
 @Component
 class PriceProvider(
     private val externalPriceServices: List<ExternalPriceService>,
-    private val beefyPriceService: BeefyPricesService
+    private val coingeckoSerivce: CoinGeckoPriceService
 ) {
 
     val logger = LoggerFactory.getLogger(this::class.java)
@@ -30,17 +30,14 @@ class PriceProvider(
             externalPriceServices.find {
                 it.appliesTo(token)
             }?.getPrice(token)
-                ?: fromBeefy(token)
+                ?: fromCoingecko(token)
                 ?: BigDecimal.ZERO
         }
     }
 
-    private suspend fun fromBeefy(token: TokenInformationVO): BigDecimal? {
-        return beefyPriceService.getPrices()[synonyms.getOrDefault(
-            token.symbol.uppercase(),
-            token.symbol.uppercase()
-        )]?.also {
-            logger.info("getting price on beefy for ${token.name} (${token.symbol}) on ${token.network.name}")
-        }
+    private suspend fun fromCoingecko(token: TokenInformationVO): BigDecimal? {
+        return coingeckoSerivce.getPrice(token.address)?.also {
+            logger.info("getting price on coingecko for ${token.name} (${token.symbol}) on ${token.network.name}")
+        } ?: BigDecimal.ZERO
     }
 }

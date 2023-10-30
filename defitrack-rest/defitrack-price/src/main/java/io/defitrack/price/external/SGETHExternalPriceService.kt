@@ -6,10 +6,11 @@ import io.defitrack.price.BeefyPricesService
 import io.defitrack.price.PriceProvider
 import io.defitrack.token.ERC20Resource
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 
-@Service
+//@Component
 class SGETHExternalPriceService : ExternalPriceService {
 
     @Autowired
