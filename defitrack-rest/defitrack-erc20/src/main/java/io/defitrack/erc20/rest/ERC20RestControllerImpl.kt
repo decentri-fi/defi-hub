@@ -80,18 +80,18 @@ class ERC20RestControllerImpl(
         @PathVariable("network") networkName: String,
         @PathVariable("address") address: String,
         @PathVariable("userAddress") userAddress: String
-    ): ResponseEntity<BigInteger> = coroutineScope {
+    ): ResponseEntity<BigInteger> {
 
-        val network = Network.fromString(networkName) ?: return@coroutineScope ResponseEntity.badRequest().build()
+        val network = Network.fromString(networkName) ?: return ResponseEntity.badRequest().build()
 
         if (!WalletUtils.isValidAddress(address)) {
-            return@coroutineScope ResponseEntity.badRequest().build()
+            return ResponseEntity.badRequest().build()
         }
         if (!WalletUtils.isValidAddress(userAddress)) {
-            return@coroutineScope ResponseEntity.badRequest().build()
+            return ResponseEntity.badRequest().build()
         }
 
-        return@coroutineScope try {
+        return try {
             ResponseEntity.ok(erC20ContractReader.getBalance(network, address, userAddress))
         } catch (ex: Exception) {
             ex.printStackTrace()
