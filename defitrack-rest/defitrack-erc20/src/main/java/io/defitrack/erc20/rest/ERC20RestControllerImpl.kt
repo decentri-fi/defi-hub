@@ -79,6 +79,45 @@ class ERC20RestControllerImpl(
         }
     }
 
+    @GetMapping("/{network}/{address}/{userAddress}", params = ["v2"])
+    override suspend fun getBalanceV2(
+        @PathVariable("network") networkName: String,
+        @PathVariable("address") address: String,
+        @PathVariable("userAddress") userAddress: String
+    ): ResponseEntity<Map<String, String>> {
+
+        val network = Network.fromString(networkName) ?: return ResponseEntity.badRequest().build()
+
+        if (!WalletUtils.isValidAddress(address)) {
+            return ResponseEntity.badRequest().build()
+        }
+        if (!WalletUtils.isValidAddress(userAddress)) {
+            return ResponseEntity.badRequest().build()
+        }
+
+        return try {
+            if (address == "0x0") {
+                ResponseEntity.ok(
+                    mapOf(
+                        "balance" to blockchainGatewayProvider.getGateway(network).getNativeBalance(userAddress)
+                            .times(BigDecimal.TEN.pow(18)).toBigInteger().toString()
+                    )
+                )
+            } else {
+                ResponseEntity.ok(
+                    mapOf(
+                        "balance" to erC20ContractReader.getBalance(network, address, userAddress).toString()
+                    )
+                )
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            ResponseEntity.ok(
+                mapOf("balance" to BigInteger.ZERO.toString())
+            )
+        }
+    }
+
     @GetMapping("/{network}/{address}/{userAddress}")
     override suspend fun getBalance(
         @PathVariable("network") networkName: String,

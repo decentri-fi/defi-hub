@@ -187,4 +187,11 @@ interface ERC20RestController {
         userAddress: String,
         spenderAddress: String
     ): ResponseEntity<BigInteger>
+
+    @GetMapping("/{network}/{address}/{userAddress}", params = ["v2"])
+    suspend fun getBalanceV2(
+        networkName: String,
+        address: String,
+        userAddress: String
+    ): ResponseEntity<Map<String, String>>
 }
