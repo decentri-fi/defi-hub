@@ -2,7 +2,9 @@ package io.defitrack.erc20.rest
 
 import arrow.core.getOrElse
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.erc20.*
+import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.token.TokenType
 import io.micrometer.observation.Observation
 import io.micrometer.observation.ObservationRegistry
@@ -13,13 +15,15 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
 import org.web3j.crypto.WalletUtils
+import java.math.BigDecimal
 import java.math.BigInteger
 
 @RestController
 class ERC20RestControllerImpl(
     private val erC20ContractReader: ERC20ContractReader,
     private val erc20Service: ERC20Service,
-    private val observationRegistry: ObservationRegistry
+    private val observationRegistry: ObservationRegistry,
+    private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) : ERC20RestController {
 
     val logger = LoggerFactory.getLogger(this::class.java)
@@ -92,7 +96,14 @@ class ERC20RestControllerImpl(
         }
 
         return try {
-            ResponseEntity.ok(erC20ContractReader.getBalance(network, address, userAddress))
+            if (address == "0x0") {
+                ResponseEntity.ok(
+                    blockchainGatewayProvider.getGateway(network).getNativeBalance(userAddress)
+                        .times(BigDecimal.TEN.pow(18)).toBigInteger()
+                )
+            } else {
+                ResponseEntity.ok(erC20ContractReader.getBalance(network, address, userAddress))
+            }
         } catch (ex: Exception) {
             ex.printStackTrace()
             ResponseEntity.ok(BigInteger.ZERO)
