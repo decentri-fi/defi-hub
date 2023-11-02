@@ -82,19 +82,19 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
         poolAddress: String
     ): List<PoolingMarketTokenShare> {
 
-        val firstMarketShare = getMarketSize(token0, poolAddress)
-        val secondMarketShare = getMarketSize(token1, poolAddress)
+        val firstMarketShare = marketSizeService.getMarketSize(token0, poolAddress, getNetwork())
+        val secondMarketShare = marketSizeService.getMarketSize(token1, poolAddress, getNetwork())
 
         val firstShare = PoolingMarketTokenShare(
             token = token0,
             reserve = getBalance(token0.address, poolAddress),
-            reserveUSD = if (firstMarketShare == BigDecimal.ZERO) secondMarketShare else firstMarketShare
+            reserveUSD = if (firstMarketShare.usdAmount == BigDecimal.ZERO) secondMarketShare.usdAmount else firstMarketShare.usdAmount
         )
 
         val secondShare = PoolingMarketTokenShare(
             token = token1,
             reserve = getBalance(token1.address, poolAddress),
-            reserveUSD = if (secondMarketShare == BigDecimal.ZERO) firstMarketShare else secondMarketShare
+            reserveUSD = if (secondMarketShare.usdAmount == BigDecimal.ZERO) firstMarketShare.usdAmount else secondMarketShare.usdAmount
         )
         return listOf(
             firstShare, secondShare

@@ -49,9 +49,7 @@ abstract class SushiMinichefV2FarmingMarketProvider(
                 identifier = "${chef.address}-${poolId}",
                 name = stakedtoken.name + " Farm",
                 stakedToken = stakedtoken,
-                rewardTokens = listOf(
-                    rewardToken.toFungibleToken()
-                ),
+                rewardToken = rewardToken,
                 marketSize = Refreshable.refreshable {
                     getMarketSize(stakedtoken, chef.address)
                 },

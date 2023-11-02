@@ -25,7 +25,6 @@ import kotlin.coroutines.EmptyCoroutineContext
 @ConditionalOnCompany(Company.QUICKSWAP)
 class QuickswapPoolingMarketProvider(
     private val quickswapService: QuickswapService,
-    private val quickswapAPRService: QuickswapAPRService,
 ) : PoolingMarketProvider() {
 
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
@@ -61,7 +60,7 @@ class QuickswapPoolingMarketProvider(
                 token0.toFungibleToken(),
                 token1.toFungibleToken(),
             ),
-            apr = quickswapAPRService.getLPAPR(it.id),
+            breakdown = fiftyFiftyBreakdown(token0, token1, token.address),
             marketSize = refreshable(it.reserveUSD),
             positionFetcher = defaultPositionFetcher(token.address),
             totalSupply = refreshable(token.totalDecimalSupply()) {

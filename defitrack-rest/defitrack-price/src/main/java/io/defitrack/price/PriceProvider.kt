@@ -16,13 +16,6 @@ class PriceProvider(
 
     val logger = LoggerFactory.getLogger(this::class.java)
 
-    val synonyms = mapOf(
-        "WETH" to "ETH",
-        "WMATIC" to "MATIC",
-        "miMATIC" to "MAI",
-        "WBTC" to "BTC"
-    )
-
     val priceCache = Cache.Builder<String, BigDecimal>().expireAfterWrite(1.hours).build()
 
     suspend fun getPrice(token: TokenInformationVO): BigDecimal {

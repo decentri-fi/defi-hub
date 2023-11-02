@@ -33,7 +33,9 @@ class CoinGeckoPriceService(
 
     @PostConstruct
     fun init() = runBlocking {
-        getCoingeckoTokens()
+        logger.info("initializing coingecko token cache")
+        val tokens = getCoingeckoTokens()
+        logger.info("coingecko token cache initialized with ${tokens.size} tokens")
     }
 
     suspend fun getCoingeckoTokens(): Set<CoingeckoToken> {
@@ -48,7 +50,7 @@ class CoinGeckoPriceService(
     suspend fun getTokenByAddress(address: String): CoingeckoToken? {
         return getCoingeckoTokens().firstOrNull { token ->
             token.platforms.entries.any {
-                it.value.lowercase() == address.lowercase()
+                it.value != null && (it.value.lowercase() == address.lowercase())
             }
         }
     }
@@ -69,7 +71,7 @@ class CoinGeckoPriceService(
                 }
             }
         } catch (ex: Exception) {
-            logger.debug("error trying to fetch price for $address")
+            logger.debug("error trying to fetch price for $address", ex)
             null
         }
     }

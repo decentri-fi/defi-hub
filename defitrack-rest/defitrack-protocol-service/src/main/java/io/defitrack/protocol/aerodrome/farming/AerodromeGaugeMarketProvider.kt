@@ -70,14 +70,14 @@ class AerodromeGaugeMarketProvider(
             create(
                 name = stakedToken.name + " Gauge V2",
                 identifier = stakedToken.symbol + "-v1-${gauge}",
-                rewardTokens = listOf(rewardToken.toFungibleToken()),
+                rewardToken = rewardToken,
                 marketSize = Refreshable.refreshable {
                     getMarketSize(
-                        stakedToken.toFungibleToken(),
+                        stakedToken,
                         contract.address
                     )
                 },
-                stakedToken = stakedToken.toFungibleToken(),
+                stakedToken = stakedToken,
                 positionFetcher = defaultPositionFetcher(gauge),
                 rewardsFinished = false,
                 internalMetadata = mapOf(
@@ -86,7 +86,7 @@ class AerodromeGaugeMarketProvider(
                 ),
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
-                        token = rewardToken.toFungibleToken(),
+                        token = rewardToken,
                         contractAddress = contract.address,
                         getRewardFunction = contract::earnedFn
                     ),

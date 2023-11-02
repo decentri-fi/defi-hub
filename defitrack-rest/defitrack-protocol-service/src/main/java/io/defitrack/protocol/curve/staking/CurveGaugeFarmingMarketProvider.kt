@@ -51,7 +51,7 @@ abstract class CurveGaugeFarmingMarketProvider(
                     marketSize = refreshable {
                         marketSizeService.getMarketSize(
                             stakedToken, gauge, getNetwork()
-                        )
+                        ).usdAmount
                     },
                     positionFetcher = PositionFetcher(
                         gauge,

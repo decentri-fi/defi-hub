@@ -34,7 +34,7 @@ class DinoswapFarmingMarketProvider(
                     toStakingMarketElement(chef, poolId)
                 }
             }
-        }.mapNotNull{
+        }.mapNotNull {
             it.mapLeft {
                 logger.error("Failed to fetch Dinoswap market", it)
             }.getOrNull()
@@ -68,7 +68,7 @@ class DinoswapFarmingMarketProvider(
                     stakedtoken.toFungibleToken(),
                     chef.address,
                     getNetwork()
-                )
+                ).usdAmount
             },
             rewardsFinished = true
         )

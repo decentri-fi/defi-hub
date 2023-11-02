@@ -168,11 +168,11 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
     }
 
     suspend fun getMarketSize(token: FungibleToken, location: String): BigDecimal {
-        return marketSizeService.getMarketSize(token, location, getNetwork())
+        return marketSizeService.getMarketSize(token, location, getNetwork()).usdAmount
     }
 
     suspend fun getMarketSize(tokens: List<FungibleToken>, location: String): BigDecimal {
-        return marketSizeService.getMarketSize(tokens, location, getNetwork())
+        return marketSizeService.getMarketSizeInUSD(tokens, location, getNetwork())
     }
 
     fun getERC20Resource(): ERC20Resource {

@@ -23,7 +23,7 @@ class QidaoFarmingMarketProvider(
 ) : FarmingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
-        return qidaoPolygonService.farms().parMap{ farm ->
+        return qidaoPolygonService.farms().parMap { farm ->
             importPoolsFromFarm(farm)
         }.flatten()
     }
@@ -68,7 +68,7 @@ class QidaoFarmingMarketProvider(
                     stakedtoken.toFungibleToken(),
                     chef.address,
                     getNetwork()
-                )
+                ).usdAmount
             },
         )
     }

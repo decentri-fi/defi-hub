@@ -6,6 +6,7 @@ import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.evm.contract.ERC20Contract
+import io.defitrack.evm.contract.ERC20Contract.Companion
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.position.PositionFetcher
@@ -55,17 +56,17 @@ class QuickswapDualFarmingMarketProvider(
                 create(
                     identifier = pool.address,
                     name = "${stakedToken.name} Dual Reward Pool",
-                    stakedToken = stakedToken.toFungibleToken(),
+                    stakedToken = stakedToken,
                     rewardTokens = listOf(
-                        rewardTokenA.toFungibleToken(),
-                        rewardTokenB.toFungibleToken()
+                        rewardTokenA,
+                        rewardTokenB
                     ),
                     marketSize = refreshable {
                         getMarketSize(stakedToken.toFungibleToken(), pool.address)
                     },
                     positionFetcher = PositionFetcher(
                         pool.address,
-                        { user -> ERC20Contract.balanceOfFunction(user) }
+                        Companion::balanceOfFunction
                     ),
                     rewardsFinished = ended
                 )
