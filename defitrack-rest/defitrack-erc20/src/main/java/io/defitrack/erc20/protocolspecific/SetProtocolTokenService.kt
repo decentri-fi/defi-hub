@@ -52,7 +52,7 @@ class SetProtocolTokenService(
             protocol = Protocol.SET,
             totalSupply = contract.totalSupply(),
             underlyingTokens = contract.getPositions().mapNotNull {
-                erc20Service.getTokenInformation(token.address, token.network).getOrNull()
+                erc20Service.getTokenInformation(it.token, token.network).getOrNull()
             }
         )
     }
