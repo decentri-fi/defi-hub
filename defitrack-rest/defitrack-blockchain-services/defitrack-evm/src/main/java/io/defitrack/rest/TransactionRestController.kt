@@ -1,6 +1,8 @@
 package io.defitrack.rest
 
 import io.defitrack.vo.TransactionVO
+import io.defitrack.web3j.Web3JProxy
+import kotlinx.coroutines.coroutineScope
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -12,12 +14,12 @@ import kotlin.jvm.optionals.getOrNull
 @RestController
 @RequestMapping("/tx")
 class TransactionRestController(
-    private val web3j: Web3j
+    private val web3JProxy: Web3JProxy
 ) {
     @GetMapping("/{txId}")
-    fun getTransaction(@PathVariable("txId") txId: String): TransactionVO? {
-        return web3j.ethGetTransactionByHash(txId).send().transaction.map {
-            val possibleSpam = web3j.ethGetTransactionReceipt(txId).send().transactionReceipt.map {
+    suspend fun getTransaction(@PathVariable("txId") txId: String): TransactionVO? {
+        return web3JProxy.getTransactionByHash(txId).transaction.getOrNull()?.let {
+            val possibleSpam = web3JProxy.getTransactionReceipt(txId).transactionReceipt.map {
                 it.logs.size > 400
             }.orElse(false)
 
@@ -26,16 +28,16 @@ class TransactionRestController(
                 blockNumber = it.blockNumber,
                 from = it.from,
                 to = it.to,
-                time = web3j.ethGetBlockByHash(it.blockHash, false).send().block.timestamp.longValueExact(),
+                time = web3JProxy.getBlockByHash(it.blockHash)!!.block.timestamp.longValueExact(),
                 value = it.value,
                 possibleSpam = possibleSpam
             )
-        }.getOrNull()
+        }
     }
 
     @GetMapping("/{txId}/logs")
-    fun getLogs(@PathVariable("txId") txId: String): List<Log> {
-        return web3j.ethGetTransactionReceipt(txId).send().transactionReceipt.map {
+    suspend fun getLogs(@PathVariable("txId") txId: String): List<Log> {
+        return web3JProxy.getTransactionReceipt(txId).transactionReceipt.map {
             it.logs
         }.orElse(emptyList())
     }
