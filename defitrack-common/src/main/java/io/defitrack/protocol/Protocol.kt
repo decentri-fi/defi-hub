@@ -13,10 +13,18 @@ enum class Protocol(
     val networks: List<Network>,
     val company: Company,
 ) {
+    KLIMA_DA(
+        logo = "klimadao.png",
+        slug = "klima-dao",
+        primitives = listOf(POOLING, FARMING, CLAIMABLES),
+        website = "https://www.klimadao.finance",
+        networks = listOf(Network.POLYGON),
+        company = Company.KLIMA_DAO
+    ),
     BASESWAP(
         logo = "baseswap.png",
         slug = "baseswap",
-        primitives = listOf(POOLING, FARMING),
+        primitives = listOf(POOLING, FARMING, CLAIMABLES),
         website = "https://baseswap.fi",
         networks = listOf(BASE),
         company = Company.BASESWAP
@@ -88,7 +96,7 @@ enum class Protocol(
     ARPA(
         logo = "arpa.png",
         slug = "arpa",
-        primitives = listOf(FARMING),
+        primitives = listOf(FARMING, CLAIMABLES),
         website = "https://www.arpanetwork.io/",
         networks = listOf(BASE),
         company = Company.ARPA
@@ -104,7 +112,7 @@ enum class Protocol(
     AUTOEARN(
         logo = "autoearn.png",
         slug = "autoearn",
-        primitives = listOf(FARMING),
+        primitives = listOf(FARMING, CLAIMABLES),
         networks = listOf(BASE, ARBITRUM),
         website = "https://www.autoearn.finance/",
         company = Company.AUTOEARN
@@ -160,7 +168,7 @@ enum class Protocol(
     GAINS_NETWORK(
         logo = "gain.png",
         slug = "gains",
-        primitives = listOf(POOLING, FARMING),
+        primitives = listOf(POOLING, FARMING, CLAIMABLES),
         website = "https://gains.trade",
         networks = listOf(ARBITRUM),
         company = Company.GAINS
@@ -168,7 +176,7 @@ enum class Protocol(
     SWELL(
         logo = "swell.png",
         slug = "swell",
-        primitives = listOf(FARMING),
+        primitives = listOf(FARMING, CLAIMABLES),
         website = "https://swellnetwork.io",
         networks = listOf(ETHEREUM),
         company = Company.SWELL
@@ -192,7 +200,7 @@ enum class Protocol(
     CAMELOT(
         logo = "camelot.png",
         slug = "camelot",
-        primitives = listOf(POOLING, FARMING),
+        primitives = listOf(POOLING, FARMING, CLAIMABLES),
         website = "https://camelot.exchange/",
         networks = listOf(ARBITRUM),
         company = Company.CAMELOT
@@ -213,7 +221,7 @@ enum class Protocol(
     SOLIDLIZARD(
         logo = "solidlizard.png",
         slug = "solidlizard",
-        primitives = listOf(POOLING, FARMING),
+        primitives = listOf(POOLING, FARMING, CLAIMABLES),
         website = "https://solidlizard.finance",
         networks = listOf(ARBITRUM),
         company = Company.SOLIDLIZARD
@@ -221,7 +229,7 @@ enum class Protocol(
     COWSWAP(
         logo = "cowswap.png",
         slug = "cowswap",
-        primitives = listOf(FARMING),
+        primitives = listOf(FARMING, CLAIMABLES),
         website = "https://cow.fi",
         networks = listOf(ETHEREUM),
         company = Company.COWSWAP
@@ -229,7 +237,7 @@ enum class Protocol(
     AURA(
         logo = "aura.jpeg",
         slug = "aura",
-        primitives = listOf(FARMING),
+        primitives = listOf(FARMING, CLAIMABLES),
         website = "https://aura.finance",
         networks = listOf(ETHEREUM),
         company = Company.AURA
@@ -237,7 +245,7 @@ enum class Protocol(
     LIDO(
         logo = "lido.png",
         slug = "lido",
-        primitives = listOf(FARMING),
+        primitives = listOf(FARMING, CLAIMABLES),
         website = "https://lido.fi/",
         networks = listOf(ETHEREUM),
         company = Company.LIDO
@@ -253,7 +261,7 @@ enum class Protocol(
     VELODROME_V1(
         logo = "velodrome.svg",
         slug = "velodrome_v1",
-        primitives = listOf(POOLING, FARMING),
+        primitives = listOf(POOLING, FARMING, CLAIMABLES),
         "https://app.velodrome.finance",
         networks = listOf(OPTIMISM),
         company = Company.VELODROME
@@ -261,7 +269,7 @@ enum class Protocol(
     SWAPFISH(
         logo = "swapfish.png",
         slug = "swapfish",
-        primitives = listOf(FARMING),
+        primitives = listOf(FARMING, CLAIMABLES),
         website = "https://swapfish.fi",
         networks = listOf(ARBITRUM),
         company = Company.SWAPFISH
@@ -278,7 +286,7 @@ enum class Protocol(
         logo = "qidao.png",
         slug = "qidao",
         website = "https://mai.finance",
-        primitives = listOf(FARMING),
+        primitives = listOf(FARMING, CLAIMABLES, LENDING),
         networks = listOf(Network.POLYGON),
         company = Company.QIDAO
     ),
@@ -286,7 +294,7 @@ enum class Protocol(
         logo = "chainlink.png",
         slug = "chainlink",
         website = "https://chain.link",
-        primitives = listOf(FARMING),
+        primitives = listOf(FARMING, CLAIMABLES),
         networks = listOf(ETHEREUM),
         company = Company.CHAINLINK
     ),
@@ -294,7 +302,7 @@ enum class Protocol(
         logo = "olympusdao.png",
         slug = "olympusdao",
         website = "https://www.olympusdao.finance",
-        primitives = listOf(FARMING),
+        primitives = listOf(FARMING, CLAIMABLES),
         networks = listOf(ETHEREUM),
         company = Company.OLYMPUSDAO
     ),
@@ -302,7 +310,7 @@ enum class Protocol(
         logo = "beethovenx.png",
         slug = "beethovenx",
         website = "https://beets.fi",
-        primitives = listOf(FARMING, POOLING),
+        primitives = listOf(FARMING, POOLING, CLAIMABLES),
         networks = listOf(OPTIMISM),
         company = Company.BEETHOVENX
     ),
@@ -393,7 +401,7 @@ enum class Protocol(
         logo = "mstable.png",
         slug = "mstable",
         website = "https://mstable.org",
-        primitives = listOf(LENDING),
+        primitives = listOf(LENDING, FARMING, CLAIMABLES),
         networks = listOf(Network.POLYGON, ETHEREUM),
         company = Company.MSTABLE
     ),
@@ -414,7 +422,7 @@ enum class Protocol(
         logo = "beefy.png",
         slug = "beefy",
         website = "https://beefy.com",
-        primitives = listOf(FARMING),
+        primitives = listOf(FARMING, CLAIMABLES),
         company = Company.BEEFY,
         networks = listOf(Network.POLYGON, ARBITRUM)
     ),
@@ -446,7 +454,7 @@ enum class Protocol(
         logo = "dinoswap.png",
         slug = "dinoswap",
         website = "https://dinoswap.exchange",
-        primitives = listOf(FARMING),
+        primitives = listOf(FARMING, CLAIMABLES),
         networks = listOf(Network.POLYGON),
         company = Company.DINOSWAP
     ),
