@@ -14,6 +14,6 @@ class NativeBalanceRestController(
 ) {
     @GetMapping("/{address}")
     suspend fun getNativeBalance(@PathVariable("address") address: String): BigInteger {
-        return web3JProxy.ethGetBalance(address)
+        return web3JProxy.ethGetBalance(address).balance
     }
 }

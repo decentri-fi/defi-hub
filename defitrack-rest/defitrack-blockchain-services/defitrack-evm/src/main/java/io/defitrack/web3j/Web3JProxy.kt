@@ -13,10 +13,13 @@ import org.springframework.stereotype.Component
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.core.DefaultBlockParameterNumber
+import org.web3j.protocol.core.Request
+import org.web3j.protocol.core.Response
 import org.web3j.protocol.core.methods.request.EthFilter
 import org.web3j.protocol.core.methods.request.Transaction
 import org.web3j.protocol.core.methods.response.EthBlock
 import org.web3j.protocol.core.methods.response.EthCall
+import org.web3j.protocol.core.methods.response.EthGetBalance
 import org.web3j.protocol.core.methods.response.EthGetTransactionReceipt
 import org.web3j.protocol.core.methods.response.EthLog
 import org.web3j.protocol.core.methods.response.EthTransaction
@@ -60,116 +63,82 @@ class Web3JProxy(
             }
             this
         }
-        val result = _web3j.ethGetLogs(ethFilter).send()
-        return if (result.hasError() && result.error.code == 429) {
-            delay(1000)
-            getLogs(getEventLogsCommand)
-        } else if (result.hasError()) {
-            anyFallback()?.let {
-                getLogs(getEventLogsCommand, it)
-            } ?: result
-        } else {
-            result
-        }
+        return runWithFallback({
+            _web3j.ethGetLogs(ethFilter)
+        })
     }
 
     suspend fun getBlockByHash(hash: String, _web3j: Web3j = primaryWeb3j): EthBlock? {
-        return try {
-            val send = _web3j.ethGetBlockByHash(hash, false).send()
-            if (send.hasError() && send.error.code == 429) {
-                delay(100)
-                getBlockByHash(hash)
-            } else if (send.hasError()) {
-                anyFallback()?.let {
-                    getBlockByHash(hash, fallbacks.shuffled().first())
-                }
-            } else {
-                send
+        return runWithFallback(
+            {
+                it.ethGetBlockByHash(hash, false)
             }
-        } catch (ex: Exception) {
-            getBlockByHash(hash, anyFallback(true)!!)
-        }
+        )
     }
 
     suspend fun ethGetBalance(
         address: String,
         _web3j: Web3j = primaryWeb3j
-    ): BigInteger = withContext(Dispatchers.IO) {
-        try {
-            val send = _web3j.ethGetBalance(address, DefaultBlockParameterName.PENDING).send()
-            if (send.hasError() && send.error.code == 429) {
-                delay(100)
-                ethGetBalance(address)
-            } else if (send.hasError()) {
-                anyFallback()?.let {
-                    ethGetBalance(address, fallbacks.shuffled().first())
-                } ?: send.balance
-            } else {
-                send.balance
+    ): EthGetBalance {
+        return runWithFallback(
+            {
+                it.ethGetBalance(address, DefaultBlockParameterName.PENDING)
             }
-        } catch (ex: Exception) {
-            anyFallback()?.let {
-                ethGetBalance(address, it)
-            } ?: throw ex
-        }
+        )
     }
 
     suspend fun getTransactionByHash(txId: String, _web3j: Web3j = primaryWeb3j): EthTransaction {
-        val observation = Observation.start("transaction-receipt", observationRegistry)
-        return observation.openScope().use {
-            try {
-                val result = _web3j.ethGetTransactionByHash(txId).send()
-                if (result.hasError() && result.error.code == 429) {
-                    observation.event(Observation.Event.of("429"))
-                    delay(100L)
-                    getTransactionByHash(txId)
-                } else {
-                    observation.event(Observation.Event.of("success"))
-                    result
-                }
-            } catch (ex: Exception) {
-                if (ex.message?.contains("429") == true) {
-                    observation.event(Observation.Event.of("endpoint.throttled", "thirdparty.endpoint.throttled"))
-                    delay(100L)
-                    return getTransactionByHash(txId, anyFallback(true)!!)
-
-                } else if (ex.message?.contains("limit exceeded") == true) {
-                    observation.event(
-                        Observation.Event.of(
-                            "endpoint.capacity-exceeded",
-                            "thirdparty.monthly-capacity-limit-exceeded"
-                        )
-                    )
-                    anyFallback()?.let {
-                        getTransactionByHash(txId, it)
-                    } ?: throw ex
-                } else {
-                    throw ex
-                }
+        return runWithFallback(
+            {
+                it.ethGetTransactionByHash(txId)
             }
-        }
+        )
     }
 
 
     suspend fun getTransactionReceipt(txId: String, _web3j: Web3j = primaryWeb3j): EthGetTransactionReceipt {
-        val observation = Observation.start("transaction-receipt", observationRegistry)
+        return runWithFallback({ it.ethGetTransactionReceipt(txId) })
+    }
+
+    suspend fun call(
+        evmContractInteractionCommand: EvmContractInteractionCommand,
+    ): EthCall {
+        return runWithFallback(
+            {
+                ethCall(evmContractInteractionCommand, it)
+            }, primaryWeb3j
+        )
+    }
+
+    suspend fun <T : Response<*>> runWithFallback(
+        requestProvider: (web3j: Web3j) -> Request<*, T>,
+        _web3j: Web3j = primaryWeb3j
+    ): T {
+        val request = requestProvider.invoke(_web3j)
+
+        val observation = Observation.start("web3j-" + request.method, observationRegistry)
         return observation.openScope().use {
             try {
-                val result = _web3j.ethGetTransactionReceipt(txId).send()
+                val result = request.send()
+
                 if (result.hasError() && result.error.code == 429) {
                     observation.event(Observation.Event.of("429"))
                     delay(100L)
-                    getTransactionReceipt(txId)
+                    runWithFallback(requestProvider, anyFallback(true)!!)
                 } else {
                     observation.event(Observation.Event.of("success"))
                     result
                 }
             } catch (ex: Exception) {
                 if (ex.message?.contains("429") == true) {
-                    observation.event(Observation.Event.of("endpoint.throttled", "thirdparty.endpoint.throttled"))
+                    observation.event(
+                        Observation.Event.of(
+                            "endpoint.throttled",
+                            "thirdparty.endpoint.throttled"
+                        )
+                    )
                     delay(100L)
-                    return getTransactionReceipt(txId, anyFallback(true)!!)
-
+                    return runWithFallback(requestProvider, anyFallback(true)!!)
                 } else if (ex.message?.contains("limit exceeded") == true) {
                     observation.event(
                         Observation.Event.of(
@@ -178,61 +147,10 @@ class Web3JProxy(
                         )
                     )
                     anyFallback()?.let {
-                        getTransactionReceipt(txId, it)
+                        runWithFallback(requestProvider, it)
                     } ?: throw ex
                 } else {
                     throw ex
-                }
-            }
-        }
-    }
-
-    suspend fun call(
-        evmContractInteractionCommand: EvmContractInteractionCommand,
-        _web3j: Web3j = primaryWeb3j
-    ): EthCall {
-        return withContext(Dispatchers.IO) {
-            with(evmContractInteractionCommand) {
-                val observation = Observation.start("contract-interaction", observationRegistry)
-                observation.openScope().use {
-                    try {
-                        val result = ethCall(evmContractInteractionCommand, _web3j)
-
-                        if (result.hasError() && result.error.code == 429) {
-                            observation.event(Observation.Event.of("429"))
-                            delay(100L)
-                            call(evmContractInteractionCommand)
-                        } else {
-                            observation.event(Observation.Event.of("success"))
-                            result
-                        }
-                    } catch (ex: ClientConnectionException) {
-                        if (ex.message?.contains("429") == true) {
-                            observation.event(
-                                Observation.Event.of(
-                                    "endpoint.throttled",
-                                    "thirdparty.endpoint.throttled"
-                                )
-                            )
-                            delay(100L)
-                            return@with call(evmContractInteractionCommand)
-
-                        } else if (ex.message?.contains("limit exceeded") == true) {
-                            observation.event(
-                                Observation.Event.of(
-                                    "endpoint.capacity-exceeded",
-                                    "thirdparty.monthly-capacity-limit-exceeded"
-                                )
-                            )
-                            anyFallback()?.let {
-                                call(evmContractInteractionCommand, it)
-                            } ?: throw ex
-                        } else {
-                            throw ex
-                        }
-                    }
-                }.also {
-                    observation.stop()
                 }
             }
         }
@@ -242,12 +160,15 @@ class Web3JProxy(
         return fallbacks.shuffled().firstOrNull() ?: if (includesDefault) primaryWeb3j else null
     }
 
-    private fun ethCall(evmContractInteractionCommand: EvmContractInteractionCommand, web3j: Web3j): EthCall =
+    private fun ethCall(
+        evmContractInteractionCommand: EvmContractInteractionCommand,
+        web3j: Web3j
+    ): Request<*, EthCall> =
         web3j.ethCall(
             Transaction.createEthCallTransaction(
                 evmContractInteractionCommand.from,
                 evmContractInteractionCommand.contract,
                 evmContractInteractionCommand.function
             ), DefaultBlockParameterName.PENDING
-        ).send()
+        )
 }
