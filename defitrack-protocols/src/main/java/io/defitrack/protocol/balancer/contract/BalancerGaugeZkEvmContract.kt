@@ -27,7 +27,7 @@ class BalancerGaugeZkEvmContract(
             Function(
                 "claimable_reward",
                 listOf(
-                    address.toAddress(),
+                    user.toAddress(),
                     token.toAddress()
                 ),
                 listOf(uint256())
