@@ -28,7 +28,7 @@ import java.util.concurrent.Executors
 import kotlin.time.measureTime
 
 @Component
-class DecentrifiUniswapV3UnderlyingPriceRepository(
+class DecentrifiPancakeswapV3UnderlyingPriceRepository(
     private val httpClient: HttpClient,
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val erC20Resource: DecentrifiERC20Resource,
@@ -49,10 +49,10 @@ class DecentrifiUniswapV3UnderlyingPriceRepository(
                         importUsdPairs(pools)
                         importEthPairs(pools)
                     } catch (e: Exception) {
-                        logger.error("Unable to fetch pools for UNISWAP_V3, result was ${e.message}")
+                        logger.error("Unable to fetch pools for Pancakeswap V3, result was ${e.message}")
                     }
                 }
-                logger.info("[took ${duration.inWholeSeconds} seconds] Uniswap V3 Underlying Price Repository populated with ${prices.asMap().entries.size} prices")
+                logger.info("[took ${duration.inWholeSeconds} seconds] pancakeswap V3 Underlying Price Repository populated with ${prices.asMap().entries.size} prices")
             }
         }
     }
@@ -115,7 +115,7 @@ class DecentrifiUniswapV3UnderlyingPriceRepository(
                         if (prices.get(index) == null) {
                             prices.put(
                                 index, ExternalPrice(
-                                    token1.address, pool.network.toNetwork(), price, "uniswap-v3"
+                                    token1.address, pool.network.toNetwork(), price, "pancakeswap-v3"
                                 )
                             )
                         }
@@ -125,7 +125,7 @@ class DecentrifiUniswapV3UnderlyingPriceRepository(
                         if (prices.get(index) == null) {
                             prices.put(
                                 index, ExternalPrice(
-                                    token0.address, pool.network.toNetwork(), normalized, "uniswap-v3"
+                                    token0.address, pool.network.toNetwork(), normalized, "pancakeswap-v3"
                                 )
                             )
                         }
@@ -224,10 +224,10 @@ class DecentrifiUniswapV3UnderlyingPriceRepository(
     }
 
     suspend fun getUniswapV3Pools(): List<PoolingMarketVO> = withContext(Dispatchers.IO) {
-        val result = httpClient.get("https://api.decentri.fi/uniswap_v3/pooling/all-markets")
+        val result = httpClient.get("https://api.decentri.fi/pancakeswap/pooling/all-markets")
         if (result.status.isSuccess()) result.body()
         else {
-            logger.error("Unable to fetch pools for UNISWAP_V3, result was ${result.body<String>()}")
+            logger.error("Unable to fetch pools for Pancakeswap V3, result was ${result.body<String>()}")
             emptyList()
         }
     }

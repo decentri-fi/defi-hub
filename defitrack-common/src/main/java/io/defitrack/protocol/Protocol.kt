@@ -21,6 +21,14 @@ enum class Protocol(
         networks = listOf(Network.POLYGON),
         company = Company.KLIMA_DAO
     ),
+    PANCAKESWAP(
+        logo = "pancakeswap.png",
+        slug = "pancakeswap",
+        primitives = listOf(POOLING, FARMING, CLAIMABLES),
+        website = "https://pancakeswap.finance",
+        networks = listOf(Network.POLYGON_ZKEVM),
+        company = Company.PANCAKESWAP
+    ),
     BASESWAP(
         logo = "baseswap.png",
         slug = "baseswap",

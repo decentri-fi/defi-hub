@@ -1,6 +1,5 @@
 package io.defitrack.price.external
 
-import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.price.decentrifi.DecentrifiUniswapV3UnderlyingPriceRepository
 import org.slf4j.LoggerFactory
@@ -8,7 +7,7 @@ import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
 @Component
-class DecentrifiUniswapV3PriceService(
+class DecentrifiPancakeswapV3PriceService(
     private val repository: DecentrifiUniswapV3UnderlyingPriceRepository
 ) : ExternalPriceService {
 
@@ -26,7 +25,7 @@ class DecentrifiUniswapV3PriceService(
 
     override suspend fun getPrice(tokenInformationVO: TokenInformationVO): BigDecimal {
         return repository.getPrice(tokenInformationVO)?.also {
-            logger.info("getting price on decentrifi uniswapv3 for ${tokenInformationVO.name} (${tokenInformationVO.symbol}) on ${tokenInformationVO.network.name}")
+            logger.info("getting logging price on decentrifi uniswapv3 for ${tokenInformationVO.name} (${tokenInformationVO.symbol}) on ${tokenInformationVO.network.name}")
         } ?: BigDecimal.ZERO
     }
 }

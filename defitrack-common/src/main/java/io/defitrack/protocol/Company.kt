@@ -4,6 +4,10 @@ enum class Company(
     val prettyName: String,
     val slug: String
 ) {
+    PANCAKESWAP(
+        prettyName = "PancakeSwap",
+        slug = "pancakeswap"
+    ),
     KLIMA_DAO(
         prettyName = "KlimaDAO",
         slug = "klima-dao"
