@@ -1,4 +1,4 @@
-package io.defitrack.uniswap.v3
+package io.defitrack.pancakeswap
 
 import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
@@ -6,18 +6,17 @@ import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
-import io.defitrack.pancakeswap.PancakeSwapPosition
 import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.Type
 import java.math.BigInteger
 
-class UniswapPositionsV3Contract(
+class PancakePositionsV3Contract(
     blockchainGateway: BlockchainGateway, address: String
 ) : EvmContract(
     blockchainGateway, address
 ) {
 
-    suspend fun getUserPositions(owner: String): List<UniswapPosition> {
+    suspend fun getUserPositions(owner: String): List<PancakeSwapPosition> {
         val balance = balanceOf(owner).toInt()
         val tokensOfOwner = getTokensOfOwner(balance, owner)
         return readMultiCall(
@@ -25,7 +24,7 @@ class UniswapPositionsV3Contract(
                 getPosition(it.toInt())
             }
         ).map {
-            uniswapPosition(it.data)
+            pancakePosition(it.data)
         }
     }
 
@@ -60,11 +59,10 @@ class UniswapPositionsV3Contract(
             method = "positions",
             inputs = listOf(tokenId.toBigInteger().toUint256()),
             outputs = listOf(
-                TypeUtils.uint96(),
+                TypeUtils.uint88(),
                 TypeUtils.address(),
                 TypeUtils.address(),
                 TypeUtils.address(),
-                TypeUtils.uint24(),
                 TypeUtils.int24(),
                 TypeUtils.int24(),
                 TypeUtils.uint128(),
@@ -76,7 +74,7 @@ class UniswapPositionsV3Contract(
         )
     }
 
-    private fun uniswapPosition(it: List<Type<*>>) = UniswapPosition(
+    private fun pancakePosition(it: List<Type<*>>) = PancakeSwapPosition(
         it[2].value as String,
         it[3].value as String,
         it[4].value as BigInteger,

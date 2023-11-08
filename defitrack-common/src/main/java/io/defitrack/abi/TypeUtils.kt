@@ -61,6 +61,10 @@ class TypeUtils {
             return TypeReference.create(Uint88::class.java, indexed)
         }
 
+        fun uint96(indexed: Boolean = false): TypeReference<Uint96> {
+            return TypeReference.create(Uint96::class.java, indexed)
+        }
+
         fun int24(indexed: Boolean = false): TypeReference<Int24> {
             return TypeReference.create(Int24::class.java, indexed)
         }
@@ -85,7 +89,7 @@ class TypeUtils {
             return TypeReference.create(Uint40::class.java)
         }
 
-        fun uint24(indexed: Boolean): TypeReference<Uint24> {
+        fun uint24(indexed: Boolean = false): TypeReference<Uint24> {
             return TypeReference.create(Uint24::class.java, indexed)
         }
 

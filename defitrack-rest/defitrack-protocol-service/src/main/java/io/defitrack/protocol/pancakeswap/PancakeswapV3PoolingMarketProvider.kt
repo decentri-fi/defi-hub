@@ -146,7 +146,6 @@ class PancakeswapV3PoolingMarketProvider(
                         it.reserveUSD
                     }
                 },
-                positionFetcher = null,
                 totalSupply = refreshable(totalSupply) {
                     pool.refreshLiquidity().asEth()
                 },

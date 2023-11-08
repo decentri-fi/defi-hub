@@ -13,11 +13,11 @@ class DecentrifiPancakeswapV3PriceService(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun appliesTo(token: TokenInformationVO): Boolean {
+    override suspend fun appliesTo(token: TokenInformationVO): Boolean {
         return repository.contains(token)
     }
 
-    override fun getAllPrices(): List<ExternalPrice> {
+    override suspend fun getAllPrices(): List<ExternalPrice> {
         return repository.prices.asMap().entries.map {
             it.value
         }

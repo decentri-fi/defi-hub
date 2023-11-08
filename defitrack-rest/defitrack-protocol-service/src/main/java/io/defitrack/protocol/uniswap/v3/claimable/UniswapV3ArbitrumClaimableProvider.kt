@@ -7,7 +7,6 @@ import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.uniswap.v3.pooling.UniswapV3ArbitrumPoolingMarketProvider
-import io.defitrack.protocol.uniswap.v3.pooling.UniswapV3EthereumPoolingMarketProvider
 import io.defitrack.uniswap.v3.UniswapPosition
 import io.defitrack.uniswap.v3.UniswapPositionsV3Contract
 import io.defitrack.uniswap.v3.UniswapV3PoolContract

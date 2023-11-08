@@ -1,5 +1,6 @@
 package io.defitrack.market.pooling
 
+import arrow.fx.coroutines.parMap
 import io.defitrack.market.pooling.mapper.PoolingPositionVOMapper
 import io.defitrack.market.pooling.vo.PoolingPositionVO
 import kotlinx.coroutines.async
@@ -22,20 +23,18 @@ class DefaultPoolingPositionRestController(
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     @GetMapping("/{userId}/positions")
-    fun getUserPoolings(
+    suspend fun getUserPoolings(
         @PathVariable("protocol") protocol: String,
         @PathVariable("userId") address: String
-    ): List<PoolingPositionVO> = runBlocking {
-        poolingPositionProviders.map {
-            async {
-                try {
-                    it.userPoolings(protocol, address)
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                    emptyList()
-                }
+    ): List<PoolingPositionVO> {
+        return poolingPositionProviders.parMap {
+            try {
+                it.userPoolings(protocol, address)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                emptyList()
             }
-        }.awaitAll().flatMap {
+        }.flatMap {
             it.map {
                 poolingPositionVOMapper.map(it)
             }

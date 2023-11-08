@@ -13,11 +13,11 @@ class DecentrifiLendingPriceService(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun appliesTo(token: TokenInformationVO): Boolean {
+    override suspend fun appliesTo(token: TokenInformationVO): Boolean {
         return decentrifiLendingPriceRepository.contains(token)
     }
 
-    override fun getAllPrices(): List<ExternalPrice> {
+    override suspend fun getAllPrices(): List<ExternalPrice> {
         return decentrifiLendingPriceRepository.cache.asMap().entries.map(Map.Entry<Any?, ExternalPrice>::value)
     }
 

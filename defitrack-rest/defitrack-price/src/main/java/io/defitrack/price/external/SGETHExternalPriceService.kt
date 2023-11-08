@@ -19,12 +19,12 @@ class SGETHExternalPriceService : ExternalPriceService {
     @Autowired
     private lateinit var erC20Resource: ERC20Resource
 
-    override fun appliesTo(token: TokenInformationVO): Boolean {
+    override suspend fun appliesTo(token: TokenInformationVO): Boolean {
         return token.network.name == Network.ETHEREUM.name &&
                 token.address.lowercase() == "0x72e2f4830b9e45d52f80ac08cb2bec0fef72ed9c"
     }
 
-    override fun getAllPrices(): List<ExternalPrice> {
+    override suspend fun getAllPrices(): List<ExternalPrice> {
         return emptyList()
     }
 

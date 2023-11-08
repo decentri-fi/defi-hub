@@ -45,7 +45,7 @@ class DQuickExternalPriceService(
         }
     }
 
-    override fun getAllPrices(): List<ExternalPrice> {
+    override suspend fun getAllPrices(): List<ExternalPrice> {
         return cache.get("dquick")?.let {
             ExternalPrice(
                 dquickAddress,

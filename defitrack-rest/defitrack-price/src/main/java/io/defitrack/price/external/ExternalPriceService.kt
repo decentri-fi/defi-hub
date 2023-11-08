@@ -7,9 +7,9 @@ interface ExternalPriceService {
     fun getOracleName(): String = "unknown oracle"
     suspend fun getPrice(tokenInformationVO: TokenInformationVO): BigDecimal
 
-    fun appliesTo(token: TokenInformationVO): Boolean {
+    suspend fun appliesTo(token: TokenInformationVO): Boolean {
         return getOracleName() == token.name.lowercase()
     }
 
-    fun getAllPrices(): List<ExternalPrice>
+    suspend fun getAllPrices(): List<ExternalPrice>
 }

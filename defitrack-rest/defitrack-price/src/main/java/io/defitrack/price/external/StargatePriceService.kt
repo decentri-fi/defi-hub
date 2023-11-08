@@ -29,13 +29,13 @@ class StargatePriceService(
         "S*LUSD"
     )
 
-    override fun appliesTo(token: TokenInformationVO): Boolean {
+    override suspend fun appliesTo(token: TokenInformationVO): Boolean {
         return tokens.any {
             token.symbol == it
         }
     }
 
-    override fun getAllPrices(): List<ExternalPrice> {
+    override suspend fun getAllPrices(): List<ExternalPrice> {
         return emptyList()
     }
 
