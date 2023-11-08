@@ -5,16 +5,20 @@ import arrow.core.Option
 import arrow.core.toOption
 import io.defitrack.vo.TransactionVO
 import io.defitrack.web3j.Web3JProxy
-import kotlinx.coroutines.coroutineScope
+import io.github.reactivecircus.cache4k.Cache
+import jakarta.annotation.PostConstruct
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
+import org.slf4j.LoggerFactory
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.methods.response.Log
+import java.util.concurrent.Executors
 import kotlin.jvm.optionals.getOrNull
 import kotlin.time.Duration.Companion.days
-import io.github.reactivecircus.cache4k.Cache
 
 
 @RestController
@@ -22,6 +26,8 @@ import io.github.reactivecircus.cache4k.Cache
 class TransactionRestController(
     private val web3JProxy: Web3JProxy
 ) {
+
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     val txCache = Cache.Builder<String, Option<TransactionVO>>().expireAfterWrite(3.days).build()
 
@@ -55,5 +61,11 @@ class TransactionRestController(
                 it.logs
             }.orElse(emptyList())
         }
+    }
+
+    @Scheduled(initialDelay = 1000 * 60 * 60 * 3) //every 3 hours
+    fun logCacheSizes() {
+        logger.info("transaction log cache contains {} entries", logCache.asMap().size)
+        logger.info("transaction cache contains {} entries", txCache.asMap().size)
     }
 }
