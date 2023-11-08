@@ -63,7 +63,7 @@ class TransactionRestController(
         }
     }
 
-    @Scheduled(initialDelay = 1000 * 60 * 60 * 3) //every 3 hours
+    @Scheduled(fixedRate = 1000 * 60 * 60 * 3) //every 3 hours
     fun logCacheSizes() {
         logger.info("transaction log cache contains {} entries", logCache.asMap().size)
         logger.info("transaction cache contains {} entries", txCache.asMap().size)
