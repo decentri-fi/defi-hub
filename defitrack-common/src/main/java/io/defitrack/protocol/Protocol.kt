@@ -13,7 +13,7 @@ enum class Protocol(
     val networks: List<Network>,
     val company: Company,
 ) {
-    KLIMA_DA(
+    KLIMA_DAO(
         logo = "klimadao.png",
         slug = "klima-dao",
         primitives = listOf(POOLING, FARMING, CLAIMABLES),
