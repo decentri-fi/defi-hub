@@ -1,4 +1,4 @@
-package io.defitrack.spark
+package io.defitrack.protocol.spark
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
