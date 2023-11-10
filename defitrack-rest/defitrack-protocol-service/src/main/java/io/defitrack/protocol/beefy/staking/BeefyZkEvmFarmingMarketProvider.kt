@@ -10,16 +10,17 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.BEEFY)
-class BeefyPolygonFarmingMarketProvider(
+class BeefyZkEvmFarmingMarketProvider(
     beefyAPYService: BeefyAPYService,
     beefyService: BeefyService,
     bulkConstantResolver: BulkConstantResolver,
 ) : BeefyFarmingMarketProvider(
     beefyAPYService,
-    beefyService.beefyPolygonVaults,
+    beefyService.beefyPolygonZkEvmVaults,
     bulkConstantResolver
 ) {
+
     override fun getNetwork(): Network {
-        return Network.POLYGON
+        return Network.POLYGON_ZKEVM
     }
 }

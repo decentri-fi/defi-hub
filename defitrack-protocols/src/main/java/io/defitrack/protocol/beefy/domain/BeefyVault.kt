@@ -6,4 +6,5 @@ class BeefyVault(
     val token: String,
     val earnContractAddress: String,
     val chain: String,
+    val status: String
 )

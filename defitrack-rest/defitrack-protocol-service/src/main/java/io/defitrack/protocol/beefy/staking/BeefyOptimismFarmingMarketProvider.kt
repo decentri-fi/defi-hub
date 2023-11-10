@@ -1,5 +1,6 @@
 package io.defitrack.protocol.beefy.staking
 
+import io.defitrack.BulkConstantResolver
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.protocol.Company
@@ -12,9 +13,11 @@ import org.springframework.stereotype.Component
 class BeefyOptimismFarmingMarketProvider(
     beefyAPYService: BeefyAPYService,
     beefyService: BeefyService,
+    bulkConstantResolver: BulkConstantResolver,
 ) : BeefyFarmingMarketProvider(
     beefyAPYService,
     beefyService.beefyOptimismVaults,
+    bulkConstantResolver
 ) {
 
     override fun getNetwork(): Network {

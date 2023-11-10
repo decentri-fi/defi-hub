@@ -1,5 +1,7 @@
 package io.defitrack.protocol.beefy.staking
 
+import arrow.fx.coroutines.parMapNotNull
+import io.defitrack.BulkConstantResolver
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.erc20.TokenInformationVO
@@ -14,11 +16,7 @@ import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
 import io.defitrack.protocol.beefy.domain.BeefyVault
 import io.defitrack.protocol.beefy.staking.invest.BeefyStakingInvestmentPreparer
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.sync.Semaphore
-import kotlinx.coroutines.sync.withPermit
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
@@ -26,6 +24,7 @@ import java.math.RoundingMode
 abstract class BeefyFarmingMarketProvider(
     private val beefyAPYService: BeefyAPYService,
     private val vaults: List<BeefyVault>,
+    private val constantResolver: BulkConstantResolver,
 ) : FarmingMarketProvider() {
 
 
@@ -33,31 +32,32 @@ abstract class BeefyFarmingMarketProvider(
         return Protocol.BEEFY
     }
 
-    override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
-        val semaphore = Semaphore(10)
-        vaults.map {
-            async {
-                semaphore.withPermit {
-                    toStakingMarketElement(it)
-                }
-            }
-        }.awaitAll().filterNotNull()
-    }
-
-    private suspend fun toStakingMarketElement(beefyVault: BeefyVault): FarmingMarket? {
-        return try {
-            val contract = BeefyVaultContract(
+    override suspend fun fetchMarkets(): List<FarmingMarket> {
+        val contracts = vaults.map { beefyVault ->
+            BeefyVaultContract(
                 getBlockchainGateway(),
                 beefyVault.earnContractAddress,
-                beefyVault.id
+                beefyVault
             )
+        }
+
+        constantResolver.resolve(contracts) //sideEffect
+
+        return contracts.parMapNotNull(concurrency = 12) {
+            toStakingMarketElement(it)
+        }
+    }
+
+    private suspend fun toStakingMarketElement(contract: BeefyVaultContract): FarmingMarket? {
+        return try {
             val want = getToken(contract.want())
             create(
-                identifier = contract.vaultId,
+                identifier = contract.beefyVault.id,
                 name = "${want.name} Beefy Vault",
                 apr = getAPY(contract),
                 stakedToken = want,
                 rewardToken = want,
+                rewardsFinished = contract.beefyVault.status == "eol",
                 marketSize = refreshable {
                     getMarketSize(want, contract)
                 },
@@ -87,7 +87,7 @@ abstract class BeefyFarmingMarketProvider(
                 )
             )
         } catch (ex: Exception) {
-            logger.error("Unable to get beefy farm ${beefyVault.id}")
+            logger.error("Unable to get beefy farm ${contract.beefyVault.id}: {}", ex.message)
             null
         }
     }
@@ -100,16 +100,16 @@ abstract class BeefyFarmingMarketProvider(
             PriceRequest(
                 want.address,
                 getNetwork(),
-                beefyVault.balance().toBigDecimal()
+                beefyVault.balance.await().toBigDecimal()
                     .divide(BigDecimal.TEN.pow(want.decimals), 18, RoundingMode.HALF_UP),
                 want.type
             )
         )
     )
 
-    private suspend fun getAPY(beefyVault: BeefyVaultContract): BigDecimal {
+    private suspend fun getAPY(contract: BeefyVaultContract): BigDecimal {
         return try {
-            (beefyAPYService.getAPYS().getOrDefault(beefyVault.vaultId, BigDecimal.ZERO))
+            (beefyAPYService.getAPYS().getOrDefault(contract.beefyVault.id, BigDecimal.ZERO))
         } catch (ex: Exception) {
             BigDecimal.ZERO
         }
