@@ -1,8 +1,10 @@
 package io.defitrack.price.decentrifi
 
 import arrow.fx.coroutines.parMap
+import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.erc20.TokenInformationVO
-import io.defitrack.market.pooling.vo.PoolingMarketVO
+import io.defitrack.market.farming.vo.FarmingMarketVO
 import io.defitrack.network.NetworkVO
 import io.defitrack.price.external.ExternalPrice
 import io.defitrack.protocol.ProtocolVO
@@ -17,10 +19,9 @@ import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
-import java.math.BigInteger
 
 @Component
-class DecentrifiPoolingPriceRepository(
+class DecentrifiFarmingPriceRepository(
     private val httpClient: HttpClient
 ) {
 
@@ -28,35 +29,37 @@ class DecentrifiPoolingPriceRepository(
     val cache = Cache.Builder<String, ExternalPrice>().build()
 
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 6)
-    fun populatePoolPrices() = runBlocking {
+    fun populateFarmPrices() = runBlocking {
         val protocols = getProtocols()
         protocols.map { proto ->
             try {
-                getPools(proto).filter {
-                    it.price != null && ((it.price ?: BigDecimal.ZERO) > BigDecimal.ZERO)
-                }.parMap(concurrency = 12) { pool ->
-                    toIndex(pool.network, pool.address) to ExternalPrice(
-                        pool.address, pool.network.toNetwork(), pool.price ?: BigDecimal.ZERO, "decentrifi-pooling"
-                    )
-                }.forEach { pool ->
-                    cache.put(
-                        pool.first, pool.second
-                    )
-                }
+                getFarms(proto)
+                    .filter {
+                        it.token != null && (it.marketSize ?: BigDecimal.ZERO) > BigDecimal.ONE
+                    }.parMap(concurrency = 12) { farm ->
+
+                        val pricePerToken = (farm.marketSize ?: BigDecimal.ZERO).dividePrecisely(
+                            farm.token!!.totalSupply.asEth(farm.token!!.decimals)
+                        )
+
+                        toIndex(farm.network, farm.token!!.address) to ExternalPrice(
+                            farm.token!!.address,
+                            farm.network.toNetwork(),
+                            pricePerToken,
+                            "decentrifi-farming"
+                        )
+                    }.forEach { farm ->
+                        cache.put(
+                            farm.first, farm.second
+                        )
+                    }
             } catch (ex: Exception) {
                 logger.error("Unable to import price for proto ${proto.slug}", ex)
             }
         }
 
-        logger.info("Decentrifi Pooling Price Repository populated with ${cache.asMap().entries.size} prices")
+        logger.info("Decentrifi Farming Price Repository populated with ${cache.asMap().entries.size} prices")
     }
-
-    fun putInCache(network: NetworkVO, address: String, price: BigDecimal) =
-        cache.put(
-            toIndex(network, address), ExternalPrice(
-                address, network.toNetwork(), price, "decentrifi-pooling"
-            )
-        )
 
     fun contains(token: TokenInformationVO): Boolean {
         return cache.get(toIndex(token.network, token.address)) != null
@@ -69,13 +72,13 @@ class DecentrifiPoolingPriceRepository(
         return httpClient.get("https://api.decentri.fi/protocols").body()
     }
 
-    suspend fun getPools(protocol: ProtocolVO): List<PoolingMarketVO> {
+    suspend fun getFarms(protocol: ProtocolVO): List<FarmingMarketVO> {
         val result =
-            httpClient.get("https://api.decentri.fi/${protocol.slug}/pooling/all-markets")
+            httpClient.get("https://api.decentri.fi/${protocol.slug}/farming/all-markets")
         return if (result.status.isSuccess())
             result.body()
         else {
-            logger.error("Unable to fetch pools for ${protocol.name} ${result.bodyAsText()}")
+            logger.error("Unable to fetch farms for ${protocol.name} ${result.bodyAsText()}")
             emptyList()
         }
     }
