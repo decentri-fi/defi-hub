@@ -8,6 +8,7 @@ import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.exit.ExitPositionCommand
 import io.defitrack.exit.ExitPositionPreparer
+import io.defitrack.exit.ExitPositionPreparer.Companion.defaultExitPositionProvider
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.position.PositionFetcher
@@ -42,18 +43,7 @@ class TcrRewardsProvider : FarmingMarketProvider() {
                 stakedToken = stakingToken,
                 rewardTokens = nonEmptyListOf(rewardToken),
                 positionFetcher = defaultPositionFetcher(contract.address),
-                exitPositionPreparer = object : ExitPositionPreparer() {
-                    override suspend fun getExitPositionCommand(exitPositionCommand: ExitPositionCommand): Deferred<PreparedTransaction> =
-                        coroutineScope {
-                            async {
-                                selfExecutingTransaction(contract::exitFn).invoke(exitPositionCommand.user)
-                            }
-                        }
-
-                    override fun getNetwork(): Network {
-                        return Network.ARBITRUM
-                    }
-                }
+                exitPositionPreparer = defaultExitPositionProvider(getNetwork(), contract::exitFn)
             )
         )
     }
