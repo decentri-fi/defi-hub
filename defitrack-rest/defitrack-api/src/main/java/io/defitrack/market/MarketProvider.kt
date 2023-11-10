@@ -69,6 +69,10 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
     @Autowired
     private lateinit var blockchainGatewayProvider: BlockchainGatewayProvider
 
+    open fun order(): Int {
+        return 1
+    }
+
     protected open suspend fun produceMarkets(): Flow<T> {
         return emptyFlow()
     }

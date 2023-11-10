@@ -2,6 +2,7 @@ package io.defitrack.protocol.beefy
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.defitrack.protocol.beefy.domain.BeefyLaunchPool
 import io.defitrack.protocol.beefy.domain.BeefyVault
 import io.ktor.client.*
 import io.ktor.client.request.*
@@ -11,24 +12,24 @@ import org.springframework.stereotype.Service
 import jakarta.annotation.PostConstruct
 
 @Service
-class BeefyService(
+class BeefyBoostService(
     private val objectMapper: ObjectMapper,
     private val client: HttpClient
 ) {
 
-    val beefyPolygonVaults: MutableList<BeefyVault> = mutableListOf()
-    val beefyArbitrumVaults: MutableList<BeefyVault> = mutableListOf()
-    val beefyOptimismVaults: MutableList<BeefyVault> = mutableListOf()
-    val beefyEthereumVaults: MutableList<BeefyVault> = mutableListOf()
-    val beefyPolygonZkEvmVaults: MutableList<BeefyVault> = mutableListOf()
-    val beefyBaseVaults: MutableList<BeefyVault> = mutableListOf()
+    val beefyPolygonVaults: MutableList<BeefyLaunchPool> = mutableListOf()
+    val beefyArbitrumVaults: MutableList<BeefyLaunchPool> = mutableListOf()
+    val beefyOptimismVaults: MutableList<BeefyLaunchPool> = mutableListOf()
+    val beefyEthereumVaults: MutableList<BeefyLaunchPool> = mutableListOf()
+    val beefyPolygonZkEvmVaults: MutableList<BeefyLaunchPool> = mutableListOf()
+    val beefyBaseVaults: MutableList<BeefyLaunchPool> = mutableListOf()
 
     @PostConstruct
     fun startup() {
         runBlocking {
             val vaultsAsList: String =
-                client.get("https://api.beefy.finance/vaults").bodyAsText()
-            val vaults = objectMapper.readValue(vaultsAsList, object : TypeReference<List<BeefyVault>>() {})
+                client.get("https://api.beefy.finance/boosts").bodyAsText()
+            val vaults = objectMapper.readValue(vaultsAsList, object : TypeReference<List<BeefyLaunchPool>>() {})
 
             beefyPolygonVaults.addAll(
                 vaults.filter {
