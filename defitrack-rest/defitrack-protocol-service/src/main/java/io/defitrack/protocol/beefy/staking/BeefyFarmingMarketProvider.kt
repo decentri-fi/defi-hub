@@ -51,12 +51,14 @@ abstract class BeefyFarmingMarketProvider(
     private suspend fun toStakingMarketElement(contract: BeefyVaultContract): FarmingMarket? {
         return try {
             val want = getToken(contract.want())
+            val token = getToken(contract.address)
             create(
                 identifier = contract.beefyVault.id,
                 name = "${want.name} Beefy Vault",
                 apr = getAPY(contract),
                 stakedToken = want,
                 rewardToken = want,
+                token = token,
                 rewardsFinished = contract.beefyVault.status == "eol",
                 marketSize = refreshable {
                     getMarketSize(want, contract)
@@ -114,5 +116,4 @@ abstract class BeefyFarmingMarketProvider(
             BigDecimal.ZERO
         }
     }
-
 }

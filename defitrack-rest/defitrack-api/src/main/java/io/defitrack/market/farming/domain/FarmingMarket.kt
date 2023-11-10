@@ -25,7 +25,8 @@ data class FarmingMarket(
     val claimableRewardFetchers: List<ClaimableRewardFetcher> = emptyList(),
     val metadata: Map<String, Any> = emptyMap(),
     val internalMetadata: Map<String, Any> = emptyMap(),
-    val expired: Boolean = false
+    val expired: Boolean = false,
+    val token: FungibleToken? = null
 ) : DefiMarket(id, "farming", protocol) {
 
     init {

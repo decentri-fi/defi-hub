@@ -8,8 +8,12 @@ import org.springframework.stereotype.Component
 @Component
 @ConditionalOnProperty(value = ["arbitrum.enabled"], havingValue = "true", matchIfMissing = true)
 class BeefyArbitrumBoostMarketProvider(
-    beefyBoostService: BeefyBoostService
-) : BeefyBoostMarketProvider(beefyBoostService.beefyArbitrumVaults) {
+    beefyBoostService: BeefyBoostService,
+    beefyArbitrumFarmingMarketProvider: BeefyArbitrumFarmingMarketProvider
+) : BeefyBoostMarketProvider(
+    beefyBoostService.beefyArbitrumVaults,
+    beefyArbitrumFarmingMarketProvider
+) {
 
     override fun getNetwork(): Network {
         return Network.ARBITRUM

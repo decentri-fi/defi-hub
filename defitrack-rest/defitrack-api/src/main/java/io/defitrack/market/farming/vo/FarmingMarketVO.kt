@@ -19,6 +19,7 @@ class FarmingMarketVO(
     prepareInvestmentSupported: Boolean,
     exitPositionSupported: Boolean,
     val expired: Boolean,
+    val token: FungibleToken? = null,
     updatedAt: Date
 ) : MarketVO(
     id,

@@ -8,8 +8,9 @@ import org.springframework.stereotype.Component
 @Component
 @ConditionalOnProperty(value = ["polygon.enabled"], havingValue = "true", matchIfMissing = true)
 class BeefyPolygonBoostMarketProvider(
-    beefyBoostService: BeefyBoostService
-) : BeefyBoostMarketProvider(beefyBoostService.beefyPolygonVaults) {
+    beefyBoostService: BeefyBoostService,
+    beefyPolygonFarmingMarketProvider: BeefyPolygonFarmingMarketProvider
+) : BeefyBoostMarketProvider(beefyBoostService.beefyPolygonVaults, beefyPolygonFarmingMarketProvider) {
 
     override fun getNetwork(): Network {
         return Network.POLYGON

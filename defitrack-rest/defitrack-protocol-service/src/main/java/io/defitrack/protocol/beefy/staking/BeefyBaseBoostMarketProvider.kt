@@ -8,8 +8,9 @@ import org.springframework.stereotype.Component
 @Component
 @ConditionalOnProperty(value = ["base.enabled"], havingValue = "true", matchIfMissing = true)
 class BeefyBaseBoostMarketProvider(
-    beefyBoostService: BeefyBoostService
-) : BeefyBoostMarketProvider(beefyBoostService.beefyBaseVaults) {
+    beefyBoostService: BeefyBoostService,
+    beefyBaseFarmingMarketProvider: BeefyBaseFarmingMarketProvider
+) : BeefyBoostMarketProvider(beefyBoostService.beefyBaseVaults, beefyBaseFarmingMarketProvider) {
 
     override fun getNetwork(): Network {
         return Network.BASE

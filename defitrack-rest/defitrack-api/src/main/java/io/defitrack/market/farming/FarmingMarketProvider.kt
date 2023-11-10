@@ -27,7 +27,8 @@ abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>() {
         exitPositionPreparer: ExitPositionPreparer? = null,
         metadata: Map<String, Any> = emptyMap(),
         internalMetadata: Map<String, Any> = emptyMap(),
-        rewardsFinished: Boolean = false
+        rewardsFinished: Boolean = false,
+        token: FungibleToken? = null,
     ): FarmingMarket {
         return FarmingMarket(
             id = "frm_${getNetwork().slug}-${getProtocol().slug}-${identifier}",
@@ -50,7 +51,8 @@ abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>() {
             metadata = metadata,
             internalMetadata = internalMetadata,
             expired = rewardsFinished,
-            exitPositionPreparer = exitPositionPreparer
+            exitPositionPreparer = exitPositionPreparer,
+            token = token,
         )
     }
 }

@@ -28,7 +28,8 @@ class FarmingMarketVOMapper(
                 prepareInvestmentSupported = this.investmentPreparer != null,
                 exitPositionSupported = this.exitPositionPreparer != null,
                 expired = this.expired,
-                updatedAt = Date.from(updatedAt.get().toInstant(ZoneOffset.UTC))
+                updatedAt = Date.from(updatedAt.get().toInstant(ZoneOffset.UTC)),
+                token = this.token
             )
         }
     }
