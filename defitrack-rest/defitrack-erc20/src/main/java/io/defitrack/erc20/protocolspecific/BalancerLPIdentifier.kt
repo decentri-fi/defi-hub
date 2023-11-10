@@ -2,6 +2,7 @@ package io.defitrack.erc20.protocolspecific
 
 import io.defitrack.erc20.ERC20
 import io.defitrack.evm.contract.BlockchainGatewayProvider
+import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerPoolContract
 import io.defitrack.protocol.balancer.contract.BalancerService
 import io.defitrack.protocol.balancer.contract.BalancerVaultContract
@@ -52,6 +53,7 @@ class BalancerLPIdentifier(
             name = underlying.joinToString("/") {
                 it.symbol
             },
+            protocol = Protocol.BALANCER,
             address = token.address,
             underlyingTokens = underlying,
             decimals = token.decimals,
