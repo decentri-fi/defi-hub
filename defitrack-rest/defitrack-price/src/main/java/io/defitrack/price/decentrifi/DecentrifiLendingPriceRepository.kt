@@ -28,6 +28,7 @@ class DecentrifiLendingPriceRepository(
 
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 6)
     fun populatePoolPrices() = runBlocking {
+        logger.info("fetching prices from decentrifi lending pools")
         val protocols = getProtocols()
         protocols.map { protocol ->
             try {

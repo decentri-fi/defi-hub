@@ -30,6 +30,7 @@ class DecentrifiFarmingPriceRepository(
 
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 6)
     fun populateFarmPrices() = runBlocking {
+        logger.info("fetching prices from decentrifi farms")
         val protocols = getProtocols()
         protocols.map { proto ->
             try {
