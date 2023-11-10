@@ -14,9 +14,9 @@ class BeefyLaunchPoolContract(
 
     val stakedToken = constant<String>("stakedToken", TypeUtils.address())
 
-    fun rewards(user: String): Function {
+    fun earned(user: String): Function {
         return createFunction(
-            "rewards",
+            "earned",
             user.toAddress().nel(),
             uint256().nel()
         )
