@@ -75,7 +75,7 @@ class DecentrifiUniswapV3UnderlyingPriceRepository(
         }
 
 
-        val ethPairs = pools.filter(containsEth).filter(containsEth).filter(containsNoStables)
+        val ethPairs = pools.filter(containsEth).filter(containsNoStables)
 
         ethPairs.parMap(concurrency = 12) { pool ->
             try {

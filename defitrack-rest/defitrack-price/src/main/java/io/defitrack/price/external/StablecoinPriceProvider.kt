@@ -44,12 +44,12 @@ class StablecoinPriceProvider(private val erC20Resource: ERC20Resource) : Extern
                 erC20Resource.getTokenInformation(Network.POLYGON_ZKEVM, "0xFf8544feD5379D9ffa8D47a74cE6b91e632AC44D"),
             ),
             Network.POLYGON to listOf(
-                erC20Resource.getTokenInformation(Network.POLYGON_ZKEVM, "0xc2132d05d31c914a87c6611c10748aeb04b58e8f"),
-                erC20Resource.getTokenInformation(Network.POLYGON_ZKEVM, "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359"),
-                erC20Resource.getTokenInformation(Network.POLYGON_ZKEVM, "0x2791bca1f2de4661ed88a30c99a7a9449aa84174"),
-                erC20Resource.getTokenInformation(Network.POLYGON_ZKEVM, "0xdab529f40e671a1d4bf91361c21bf9f0c9712ab7"),
-                erC20Resource.getTokenInformation(Network.POLYGON_ZKEVM, "0x8f3cf7ad23cd3cadbd9735aff958023239c6a063"),
-                erC20Resource.getTokenInformation(Network.POLYGON_ZKEVM, "0x2e1ad108ff1d8c782fcbbb89aad783ac49586756"),
+                erC20Resource.getTokenInformation(Network.POLYGON, "0xc2132d05d31c914a87c6611c10748aeb04b58e8f"),
+                erC20Resource.getTokenInformation(Network.POLYGON, "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359"),
+                erC20Resource.getTokenInformation(Network.POLYGON, "0x2791bca1f2de4661ed88a30c99a7a9449aa84174"),
+                erC20Resource.getTokenInformation(Network.POLYGON, "0xdab529f40e671a1d4bf91361c21bf9f0c9712ab7"),
+                erC20Resource.getTokenInformation(Network.POLYGON, "0x8f3cf7ad23cd3cadbd9735aff958023239c6a063"),
+                erC20Resource.getTokenInformation(Network.POLYGON, "0x2e1ad108ff1d8c782fcbbb89aad783ac49586756"),
             )
         )
     }
