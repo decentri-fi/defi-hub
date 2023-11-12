@@ -25,7 +25,8 @@ abstract class LendingMarketProvider : MarketProvider<LendingMarket>() {
         price: Refreshable<BigDecimal>? = null,
         marketToken: FungibleToken?,
         erc20Compatible: Boolean = false,
-        totalSupply: Refreshable<BigDecimal>
+        totalSupply: Refreshable<BigDecimal>,
+        deprecated: Boolean = false
     ): LendingMarket {
 
         return LendingMarket(
@@ -43,7 +44,8 @@ abstract class LendingMarketProvider : MarketProvider<LendingMarket>() {
             price = price ?: calculatePrice(marketSize, totalSupply),
             totalSupply = totalSupply,
             marketToken = marketToken,
-            erc20Compatible = erc20Compatible
+            erc20Compatible = erc20Compatible,
+            deprecated = deprecated
         )
     }
 

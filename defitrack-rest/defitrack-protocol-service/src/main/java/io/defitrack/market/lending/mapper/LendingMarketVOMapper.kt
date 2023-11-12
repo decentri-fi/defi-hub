@@ -31,7 +31,8 @@ class LendingMarketVOMapper(
                 erc20Compatible = this.erc20Compatible,
                 price = price.get(),
                 totalSupply = totalSupply.get(),
-                updatedAt = Date.from(updatedAt.get().toInstant(ZoneOffset.UTC)).time
+                updatedAt = Date.from(updatedAt.get().toInstant(ZoneOffset.UTC)).time,
+                deprecated = deprecated
             )
         }
     }

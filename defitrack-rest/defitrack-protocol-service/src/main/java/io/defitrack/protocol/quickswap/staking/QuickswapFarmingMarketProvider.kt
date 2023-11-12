@@ -88,7 +88,7 @@ class QuickswapFarmingMarketProvider(
                     preparedTransaction = selfExecutingTransaction(rewardPool::getRewardFunction)
                 ),
                 positionFetcher = defaultPositionFetcher(rewardPool.address),
-                rewardsFinished = ended
+                deprecated = ended
             )
         }
     }

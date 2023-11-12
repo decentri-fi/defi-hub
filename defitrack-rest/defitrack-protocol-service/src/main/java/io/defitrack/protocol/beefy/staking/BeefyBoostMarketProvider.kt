@@ -36,7 +36,7 @@ abstract class BeefyBoostMarketProvider(
                     identifier = it.id,
                     stakedToken = want,
                     rewardToken = reward,
-                    rewardsFinished = it.status == "eol",
+                    deprecated = it.status == "eol",
                     metadata = mapOf("type" to "boost"),
                     positionFetcher = defaultPositionFetcher(contract.address),
                     claimableRewardFetcher = ClaimableRewardFetcher(

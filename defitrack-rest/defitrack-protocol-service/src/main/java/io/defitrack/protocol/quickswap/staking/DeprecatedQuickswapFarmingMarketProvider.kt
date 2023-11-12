@@ -78,7 +78,7 @@ class DeprecatedQuickswapFarmingMarketProvider(
                     positionFetcher = defaultPositionFetcher(
                         rewardPool.address
                     ),
-                    rewardsFinished = true
+                    deprecated = true
                 )
             } catch (ex: Exception) {
                 logger.error("Error while fetching reward pool: " + ex.message, ex)

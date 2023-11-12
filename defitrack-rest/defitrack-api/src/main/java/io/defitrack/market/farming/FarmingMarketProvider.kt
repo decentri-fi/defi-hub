@@ -27,7 +27,7 @@ abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>() {
         exitPositionPreparer: ExitPositionPreparer? = null,
         metadata: Map<String, Any> = emptyMap(),
         internalMetadata: Map<String, Any> = emptyMap(),
-        rewardsFinished: Boolean = false,
+        deprecated: Boolean = false,
         token: FungibleToken? = null,
     ): FarmingMarket {
         return FarmingMarket(
@@ -50,7 +50,7 @@ abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>() {
             },
             metadata = metadata,
             internalMetadata = internalMetadata,
-            expired = rewardsFinished,
+            deprecated = deprecated,
             exitPositionPreparer = exitPositionPreparer,
             token = token,
         )

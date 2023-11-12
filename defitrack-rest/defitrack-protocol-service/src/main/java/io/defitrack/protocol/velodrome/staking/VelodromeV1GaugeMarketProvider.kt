@@ -14,7 +14,6 @@ import io.defitrack.protocol.velodrome.contract.VoterContract
 import io.defitrack.protocol.velodrome.pooling.VelodromeV1OptimismPoolingMarketProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.launch
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 import kotlin.coroutines.EmptyCoroutineContext
@@ -62,7 +61,7 @@ class VelodromeV1GaugeMarketProvider(
                         },
                         stakedToken = stakedToken.toFungibleToken(),
                         positionFetcher = defaultPositionFetcher(gauge),
-                        rewardsFinished = true
+                        deprecated = true
                     )
 
                 } catch (ex: Exception) {

@@ -42,7 +42,7 @@ class FarmingPositionVOMapper(
                 exitPositionSupported = market.exitPositionPreparer != null,
                 tokenAmount = tokenAmount.toString(10),
                 tokenAmountDecimal = tokenAmount.asEth(market.stakedToken.decimals),
-                expired = market.expired,
+                expired = market.deprecated,
                 market = farmingMarketVOMapper.map(market)
             )
         }

@@ -48,7 +48,7 @@ class OldDQuickFarmingMarketProvider(
                 investmentPreparer = DQuickStakingInvestmentPreparer(
                     getERC20Resource(), oldDQuick
                 ),
-                rewardsFinished = true,
+                deprecated = true,
                 exitPositionPreparer = prepareExit {
                     oldDQuick.exitFunction(it.amount)
                 }

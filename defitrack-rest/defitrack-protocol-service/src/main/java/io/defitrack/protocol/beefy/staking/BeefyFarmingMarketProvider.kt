@@ -16,7 +16,6 @@ import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
 import io.defitrack.protocol.beefy.domain.BeefyVault
 import io.defitrack.protocol.beefy.staking.invest.BeefyStakingInvestmentPreparer
-import kotlinx.coroutines.coroutineScope
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
@@ -59,7 +58,7 @@ abstract class BeefyFarmingMarketProvider(
                 stakedToken = want,
                 rewardToken = want,
                 token = token,
-                rewardsFinished = contract.beefyVault.status == "eol",
+                deprecated = contract.beefyVault.status == "eol",
                 marketSize = refreshable {
                     getMarketSize(want, contract)
                 },

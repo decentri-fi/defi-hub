@@ -18,9 +18,9 @@ class FarmingMarketVO(
     val apr: BigDecimal?,
     prepareInvestmentSupported: Boolean,
     exitPositionSupported: Boolean,
-    val expired: Boolean,
     val token: FungibleToken? = null,
-    updatedAt: Date
+    updatedAt: Date,
+    deprecated: Boolean,
 ) : MarketVO(
     id,
     network,
@@ -30,5 +30,6 @@ class FarmingMarketVO(
     exitPositionSupported,
     marketSize,
     "farming",
-    updatedAt.time
+    updatedAt.time,
+    deprecated
 )

@@ -78,7 +78,7 @@ class OldQuickswapFarmingMarketProvider(
                         positionFetcher = defaultPositionFetcher(
                             rewardPool.address
                         ),
-                        rewardsFinished = true,
+                        deprecated = true,
                         exitPositionPreparer = prepareExit {
                             rewardPool.exitFunction(it.amount)
                         }

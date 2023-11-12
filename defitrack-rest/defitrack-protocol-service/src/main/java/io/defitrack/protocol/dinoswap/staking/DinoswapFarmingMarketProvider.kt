@@ -70,7 +70,7 @@ class DinoswapFarmingMarketProvider(
                     getNetwork()
                 ).usdAmount
             },
-            rewardsFinished = true
+            deprecated = true
         )
     }
 

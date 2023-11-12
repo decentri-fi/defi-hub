@@ -21,7 +21,8 @@ class LendingMarketVO(
     val erc20Compatible: Boolean,
     val price: BigDecimal,
     val totalSupply: BigDecimal,
-    updatedAt: Long
+    updatedAt: Long,
+    deprecated: Boolean
 ) : MarketVO(
-    id, network, protocol, name, prepareInvestmentSupported, exitPositionSupported, marketSize, "lending", updatedAt
+    id, network, protocol, name, prepareInvestmentSupported, exitPositionSupported, marketSize, "lending", updatedAt, deprecated
 )

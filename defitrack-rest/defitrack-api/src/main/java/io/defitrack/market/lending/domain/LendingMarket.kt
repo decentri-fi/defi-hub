@@ -27,9 +27,10 @@ data class LendingMarket(
     val metadata: Map<String, Any> = emptyMap(),
     val erc20Compatible: Boolean = false,
     val totalSupply: Refreshable<BigDecimal>,
+    override val deprecated: Boolean,
     val price: Refreshable<BigDecimal>
 ) : DefiMarket(
-    id, "lending", protocol
+    id, "lending", protocol, deprecated
 ) {
 
     init {

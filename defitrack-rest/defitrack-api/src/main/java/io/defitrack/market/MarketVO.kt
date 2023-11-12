@@ -13,5 +13,6 @@ abstract class MarketVO(
     val exitPositionSupported: Boolean,
     val marketSize: BigDecimal?,
     val marketType: String,
-    val updatedAt: Long
+    val updatedAt: Long,
+    val deprecated: Boolean
 )

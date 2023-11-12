@@ -79,7 +79,7 @@ class AerodromeGaugeMarketProvider(
                 },
                 stakedToken = stakedToken,
                 positionFetcher = defaultPositionFetcher(gauge),
-                rewardsFinished = false,
+                deprecated = false,
                 internalMetadata = mapOf(
                     "address" to gauge,
                     "contract" to contract

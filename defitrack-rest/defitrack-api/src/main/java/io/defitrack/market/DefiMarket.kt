@@ -9,7 +9,8 @@ import java.time.LocalDateTime
 abstract class DefiMarket(
     open val id: String,
     val type: String,
-    open val protocol: Protocol
+    open val protocol: Protocol,
+    open val deprecated: Boolean
 ) {
 
     val logger = LoggerFactory.getLogger(this::class.java)
