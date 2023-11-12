@@ -77,10 +77,7 @@ class BalancerBaseGaugeMarketProvider : FarmingMarketProvider() {
                     },
                     metadata = mapOf("address" to gaugeAddress),
                     exitPositionPreparer = prepareExit {
-                        PreparedExit(
-                            function = gaugecontract.exitPosition(it.amount),
-                            to = gaugecontract.address,
-                        )
+                        gaugecontract.exitPosition(it.amount)
                     },
                     claimableRewardFetcher = ClaimableRewardFetcher(
                         rewards = rewards.map {

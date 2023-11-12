@@ -79,10 +79,7 @@ abstract class BeefyFarmingMarketProvider(
                 ),
                 investmentPreparer = BeefyStakingInvestmentPreparer(contract, getERC20Resource()),
                 exitPositionPreparer = prepareExit {
-                    PreparedExit(
-                        contract.fullExitFunction(),
-                        contract.address,
-                    )
+                    contract.fullExitFunction()
                 },
                 metadata = mapOf(
                     "vaultAddress" to contract.address,

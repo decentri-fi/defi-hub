@@ -25,12 +25,12 @@ open class BalancerGaugeContract(
         )
     }
 
-    fun exitPosition(amount: BigInteger): Function {
+    fun exitPosition(amount: BigInteger): ContractCall {
         return createFunction(
             "withdraw",
             nonEmptyListOf(amount.toUint256()),
             listOf()
-        )
+        ).toContractCall()
     }
 
     open fun getClaimableRewardFunction(token: String): (String) -> Function {

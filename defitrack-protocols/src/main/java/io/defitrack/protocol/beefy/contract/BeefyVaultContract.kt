@@ -20,10 +20,10 @@ class BeefyVaultContract(
         solidityBasedContractAccessor, address
     ) {
 
-    fun fullExitFunction(): Function {
+    fun fullExitFunction(): ContractCall {
         return createFunction(
             method = "withdrawAll",
-        )
+        ).toContractCall()
     }
 
     val balance: Deferred<BigInteger> = constant("balance", uint256())

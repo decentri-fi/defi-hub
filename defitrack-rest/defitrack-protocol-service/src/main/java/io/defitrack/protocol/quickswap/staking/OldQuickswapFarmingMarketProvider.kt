@@ -80,10 +80,7 @@ class OldQuickswapFarmingMarketProvider(
                         ),
                         rewardsFinished = true,
                         exitPositionPreparer = prepareExit {
-                            PreparedExit(
-                                rewardPool.exitFunction(it.amount),
-                                rewardPool.address,
-                            )
+                            rewardPool.exitFunction(it.amount)
                         }
                     )
                 } catch (ex: Exception) {

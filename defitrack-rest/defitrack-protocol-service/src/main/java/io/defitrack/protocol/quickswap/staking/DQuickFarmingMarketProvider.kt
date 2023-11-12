@@ -48,10 +48,7 @@ class DQuickFarmingMarketProvider(
                 getERC20Resource(), contract
             ),
             exitPositionPreparer = prepareExit {
-                PreparedExit(
-                    contract.exitFunction(it.amount),
-                    contract.address,
-                )
+                contract.exitFunction(it.amount)
             }
         ).nel()
     }

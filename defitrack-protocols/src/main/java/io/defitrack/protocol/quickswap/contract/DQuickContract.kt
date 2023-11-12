@@ -16,12 +16,12 @@ class DQuickContract(
 ) {
 
 
-    fun exitFunction(amount: BigInteger): Function {
+    fun exitFunction(amount: BigInteger): ContractCall {
         return createFunction(
             "leave",
             listOf(amount.toUint256()),
             listOf()
-        )
+        ).toContractCall()
     }
 
     fun enterFunction(amount: BigInteger): Function {

@@ -1,5 +1,6 @@
 package io.defitrack.protocol.quickswap.contract
 
+import arrow.core.nel
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
@@ -16,12 +17,11 @@ class QuickswapRewardPoolContract(
     solidityBasedContractAccessor, address
 ) {
 
-    fun exitFunction(amount: BigInteger): Function {
+    fun exitFunction(amount: BigInteger): ContractCall {
         return createFunction(
             "leave",
-            listOf(amount.toUint256()),
-            emptyList()
-        )
+            amount.toUint256().nel(),
+        ).toContractCall()
     }
 
     suspend fun periodFinish(): BigInteger {

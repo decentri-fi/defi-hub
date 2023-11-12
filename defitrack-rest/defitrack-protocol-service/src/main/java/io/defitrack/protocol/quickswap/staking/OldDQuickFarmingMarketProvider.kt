@@ -50,10 +50,7 @@ class OldDQuickFarmingMarketProvider(
                 ),
                 rewardsFinished = true,
                 exitPositionPreparer = prepareExit {
-                    PreparedExit(
-                        function = oldDQuick.exitFunction(it.amount),
-                        to = oldDQuick.address,
-                    )
+                    oldDQuick.exitFunction(it.amount)
                 }
             )
         )

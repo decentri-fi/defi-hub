@@ -7,6 +7,7 @@ import io.defitrack.event.EventService
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.ERC20Contract
+import io.defitrack.evm.contract.EvmContract
 import io.defitrack.exit.ExitPositionCommand
 import io.defitrack.exit.ExitPositionPreparer
 import io.defitrack.market.event.MarketAddedEvent
@@ -187,8 +188,7 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
         return priceResource
     }
 
-    fun prepareExit(preparedExit: (exitPositionCommand: ExitPositionCommand) -> PreparedExit): ExitPositionPreparer {
-        val network = getNetwork()
+    fun prepareExit(preparedExit: (exitPositionCommand: ExitPositionCommand) -> EvmContract.ContractCall): ExitPositionPreparer {
         return object : ExitPositionPreparer() {
             override suspend fun getExitPositionCommand(exitPositionCommand: ExitPositionCommand): Deferred<PreparedTransaction> {
                 return coroutineScope {
@@ -197,20 +197,14 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
                         PreparedTransaction(
                             network = getNetwork().toVO(),
                             function = prepared.function,
-                            to = prepared.to,
+                            to = prepared.address,
                             from = exitPositionCommand.user
                         )
                     }
                 }
             }
-
-            override fun getNetwork(): Network {
-                return network
-            }
         }
     }
-
-    data class PreparedExit(val function: Function, val to: String)
 
     suspend inline fun <T> throttled(action: () -> T): T {
         return semaphore.withPermit(action)

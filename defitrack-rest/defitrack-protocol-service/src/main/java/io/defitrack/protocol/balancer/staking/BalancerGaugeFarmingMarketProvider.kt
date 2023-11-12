@@ -95,10 +95,7 @@ abstract class BalancerGaugeFarmingMarketProvider(
                         preparedTransaction = selfExecutingTransaction(gaugecontract::getClaimRewardsFunction)
                     ),
                     exitPositionPreparer = prepareExit {
-                        PreparedExit(
-                            function = gaugecontract.exitPosition(it.amount),
-                            to = gaugecontract.address,
-                        )
+                        gaugecontract.exitPosition(it.amount)
                     }
                 ).some()
             }
