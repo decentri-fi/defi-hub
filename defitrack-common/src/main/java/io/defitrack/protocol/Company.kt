@@ -12,6 +12,10 @@ enum class Company(
         prettyName = "KlimaDAO",
         slug = "klima-dao"
     ),
+    PLUTUSDAO(
+        prettyName = "PlutusDAO",
+        slug = "plutusdao"
+    ),
     ALIENBASE(
         prettyName = "Alienbase",
         slug = "alienbase"

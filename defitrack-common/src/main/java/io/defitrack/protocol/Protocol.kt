@@ -13,6 +13,7 @@ enum class Protocol(
     val networks: List<Network>,
     val company: Company,
 ) {
+
     KLIMA_DAO(
         logo = "klimadao.png",
         slug = "klima-dao",
@@ -20,6 +21,14 @@ enum class Protocol(
         website = "https://www.klimadao.finance",
         networks = listOf(Network.POLYGON),
         company = Company.KLIMA_DAO
+    ),
+    PLUTUSDAO(
+        logo = "plutusdao.png",
+        slug = "plutusdao",
+        primitives = listOf(POOLING, FARMING, CLAIMABLES),
+        website = "https://plutusdao.io",
+        networks = listOf(Network.POLYGON),
+        company = Company.PLUTUSDAO
     ),
     PANCAKESWAP(
         logo = "pancakeswap.png",
