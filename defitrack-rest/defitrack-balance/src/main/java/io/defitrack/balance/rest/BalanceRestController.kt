@@ -1,5 +1,7 @@
 package io.defitrack.balance.rest
 
+import arrow.fx.coroutines.parMap
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.balance.service.BalanceService
 import io.defitrack.balance.service.dto.BalanceElement
 import io.defitrack.balance.service.dto.TokenBalance
@@ -29,37 +31,35 @@ class BalanceRestController(
 
     @Deprecated("use the network-specific call")
     @GetMapping("/{address}/native-balance")
-    suspend fun getBalance(@PathVariable("address") address: String): List<BalanceElement> = coroutineScope {
-        balanceServices.map {
-            async {
-                try {
-                    val balance = it.getNativeBalance(address)
+    suspend fun getBalance(@PathVariable("address") address: String): List<BalanceElement> {
+        return balanceServices.parMapNotNull {
+            try {
+                val balance = it.getNativeBalance(address)
 
-                    if (balance > BigDecimal.ZERO) {
-                        val price = priceResource.calculatePrice(
-                            PriceRequest(
-                                "0x0", it.getNetwork(), 1.0.toBigDecimal()
-                            )
+                if (balance > BigDecimal.ZERO) {
+                    val price = priceResource.calculatePrice(
+                        PriceRequest(
+                            "0x0", it.getNetwork(), 1.0.toBigDecimal()
                         )
-                        BalanceElement(
-                            amount = balance.toDouble(),
-                            network = it.getNetwork().toVO(),
-                            token = erC20Resource.getTokenInformation(
-                                it.getNetwork(), "0x0"
-                            ).toFungibleToken(),
-                            dollarValue = price.times(balance.toDouble()),
-                            price = price
-                        )
-                    } else {
-                        null
-                    }
-                } catch (ex: Exception) {
-                    log.error("Unable to fetch balance for ${it.getNetwork()}", ex)
+                    )
+                    BalanceElement(
+                        amount = balance.toDouble(),
+                        network = it.getNetwork().toVO(),
+                        token = erC20Resource.getTokenInformation(
+                            it.getNetwork(), "0x0"
+                        ).toFungibleToken(),
+                        dollarValue = price.times(balance.toDouble()),
+                        price = price
+                    )
+                } else {
                     null
                 }
-
+            } catch (ex: Exception) {
+                log.error("Unable to fetch balance for ${it.getNetwork()}", ex)
+                null
             }
-        }.awaitAll().filterNotNull()
+
+        }
     }
 
     @GetMapping(value = ["/{address}/native-balance"], params = ["network"])
@@ -93,18 +93,16 @@ class BalanceRestController(
 
     @GetMapping("/{address}/token-balances")
     suspend fun getTokenBalance(@PathVariable("address") address: String): List<BalanceElement> = coroutineScope {
-        balanceServices.map {
-            async {
-                try {
-                    it.getTokenBalances(address)
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                    emptyList()
-                }
+        balanceServices.parMap {
+            try {
+                it.getTokenBalances(address)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                emptyList()
             }
-        }.awaitAll().flatten()
+        }.flatten()
             .distinctBy {
-                it.token
+                it.token.address
             }
             .map { it.toBalanceElement() }
     }

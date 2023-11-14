@@ -35,16 +35,19 @@ class DecentrifiERC20Resource(
 
     val wrappedCache = Cache.Builder<Network, WrappedToken>().build()
 
-    override suspend fun getAllTokens(network: Network): List<TokenInformationVO> = withContext(Dispatchers.IO) {
-        tokensCache.get("tokens-${network}") {
-            val get = client.get("$erc20ResourceLocation/${network.name}")
-            if (!get.status.isSuccess()) {
-                emptyList()
-            } else {
-                get.body<List<TokenInformationVO>>()
+    override suspend fun getAllTokens(network: Network, verified: Boolean?): List<TokenInformationVO> =
+        withContext(Dispatchers.IO) {
+            tokensCache.get("tokens-${network}") {
+                val get = client.get("$erc20ResourceLocation/${network.name}") {
+                    parameter("verified", verified)
+                }
+                if (!get.status.isSuccess()) {
+                    emptyList()
+                } else {
+                    get.body<List<TokenInformationVO>>()
+                }
             }
         }
-    }
 
     override suspend fun getBalance(network: Network, tokenAddress: String, user: String): BigInteger =
         withContext(Dispatchers.IO) {

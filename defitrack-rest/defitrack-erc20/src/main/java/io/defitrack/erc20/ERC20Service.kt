@@ -103,7 +103,7 @@ class ERC20Service(
             it.copy(verified = verified)
         }
     }.mapLeft {
-        logger.error("Error getting token information for $address on $network", it)
+        logger.error("Error getting token information for $address on $network: {}", it.message)
     }.getOrNone().flatten()
 
     fun createIndex(address: String, network: Network): String {

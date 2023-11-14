@@ -5,7 +5,7 @@ import io.defitrack.erc20.TokenInformationVO
 import java.math.BigInteger
 
 interface ERC20Resource {
-    suspend fun getAllTokens(network: Network): List<TokenInformationVO>
+    suspend fun getAllTokens(network: Network, verified: Boolean?): List<TokenInformationVO>
     suspend fun getBalance(network: Network, tokenAddress: String, user: String): BigInteger
     suspend fun getTokenInformation(network: Network, address: String): TokenInformationVO
     suspend fun getWrappedToken(network: Network): WrappedToken
