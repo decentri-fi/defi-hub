@@ -76,7 +76,8 @@ class WepiggyLendingMarketProvider(
                     erc20Compatible = true,
                     totalSupply = ctokenContract.totalSupply().map {
                         it.asEth(cToken.decimals)
-                    }
+                    },
+                    deprecated = true
                 )
             }
         } catch (ex: Exception) {

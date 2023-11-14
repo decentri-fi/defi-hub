@@ -1,6 +1,7 @@
 package io.defitrack.claimable
 
 import arrow.core.Either
+import arrow.core.Either.Companion.catch
 import arrow.core.getOrElse
 import io.defitrack.claimable.domain.ClaimableMarket
 import io.defitrack.evm.contract.BlockchainGatewayProvider
@@ -24,7 +25,7 @@ abstract class ClaimableMarketProvider {
     val cache = Cache.Builder<String, ClaimableMarket>().build()
 
     fun getMarkets(): List<ClaimableMarket> {
-        return Either.catch {
+        return catch {
             val hashmap: Map<in String, ClaimableMarket> = HashMap(cache.asMap())
             hashmap.values.toMutableList()
         }.mapLeft {
@@ -33,7 +34,7 @@ abstract class ClaimableMarketProvider {
     }
 
     suspend fun populateCaches() {
-        Either.catch {
+        catch {
             fetchClaimables()
         }.mapLeft { ex ->
             logger.error("Unable to get claimables", ex)
