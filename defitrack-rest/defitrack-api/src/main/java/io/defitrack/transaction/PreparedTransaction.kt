@@ -3,7 +3,6 @@ package io.defitrack.transaction
 import io.defitrack.evm.contract.EvmContract
 import io.defitrack.network.NetworkVO
 import io.defitrack.network.toVO
-import net.minidev.json.annotate.JsonIgnore
 import org.web3j.abi.FunctionEncoder
 
 data class PreparedTransaction(
@@ -14,7 +13,7 @@ data class PreparedTransaction(
 ) {
 
     companion object {
-        fun selfExecutingTransaction(contractCallProvider: (String) -> EvmContract.ContractCall): (String) -> PreparedTransaction {
+        suspend fun selfExecutingTransaction(contractCallProvider: suspend (String) -> EvmContract.ContractCall): suspend (String) -> PreparedTransaction {
             return { from ->
                 PreparedTransaction(
                     contractCallProvider(from), from
@@ -22,7 +21,7 @@ data class PreparedTransaction(
             }
         }
 
-        fun selfExecutingTransaction(contractCallProvider: () -> EvmContract.ContractCall): (String) -> PreparedTransaction {
+        suspend fun selfExecutingTransaction(contractCallProvider: suspend () -> EvmContract.ContractCall): suspend (String) -> PreparedTransaction {
             return { from ->
                 PreparedTransaction(
                     contractCallProvider(), from

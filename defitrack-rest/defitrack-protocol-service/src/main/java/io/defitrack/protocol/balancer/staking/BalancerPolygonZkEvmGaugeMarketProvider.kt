@@ -16,6 +16,7 @@ import io.defitrack.market.position.PositionFetcher
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerGaugeZkEvmContract
+import io.defitrack.protocol.balancer.contract.L2BalancerPseudoMinterContract
 import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
@@ -29,6 +30,10 @@ class BalancerPolygonZkEvmGaugeMarketProvider : FarmingMarketProvider() {
 
     private val factory = "0x2498A2B0d6462d2260EAC50aE1C3e03F4829BA95"
 
+    private val balAddress = "0x120ef59b80774f02211563834d8e3b72cb1649d6"
+
+    val l2PseudoMinterAddress = "0x475D18169BE8a89357A9ee3Ab00ca386d20fA229"
+
     val gaugeCreatedEvent = Event(
         "GaugeCreated", listOf(address(true))
     )
@@ -41,6 +46,9 @@ class BalancerPolygonZkEvmGaugeMarketProvider : FarmingMarketProvider() {
                 fromBlock = BigInteger.valueOf(203653L)
             )
         )
+        val bal = getToken(balAddress)
+        val l2BalancerPseudoMinter = L2BalancerPseudoMinterContract(getBlockchainGateway(), l2PseudoMinterAddress)
+
         return logs.mapNotNull {
             try {
                 val log = it.get()
@@ -53,7 +61,8 @@ class BalancerPolygonZkEvmGaugeMarketProvider : FarmingMarketProvider() {
                 val lp = getToken(gaugecontract.lpToken.await())
                 val rewards = gaugecontract.rewardTokens().map { rewardToken ->
                     getToken(rewardToken)
-                }
+                } + bal
+
 
                 create(
                     identifier = gaugeAddress,
@@ -85,15 +94,40 @@ class BalancerPolygonZkEvmGaugeMarketProvider : FarmingMarketProvider() {
                     exitPositionPreparer = prepareExit {
                         gaugecontract.exitPosition(it.amount)
                     },
-                    claimableRewardFetcher = ClaimableRewardFetcher(
-                        rewards = rewards.map {
-                            Reward(
-                                it.toFungibleToken(),
+                    claimableRewardFetchers = listOf(
+                        ClaimableRewardFetcher(
+                            rewards = rewards.map {
+                                Reward(
+                                    it.toFungibleToken(),
+                                    gaugeAddress,
+                                    gaugecontract.getClaimableRewardFunction(it.address)
+                                )
+                            },
+                            preparedTransaction = selfExecutingTransaction(gaugecontract::getClaimRewardsFunction)
+                        )
+                        /*, ClaimableRewardFetcher(
+                            reward = Reward(
+                                bal,
                                 gaugeAddress,
-                                gaugecontract.getClaimableRewardFunction(it.address)
-                            )
-                        },
-                        preparedTransaction = selfExecutingTransaction(gaugecontract::getClaimRewardsFunction)
+                                getRewardFunction = gaugecontract::integrateFractionFn,
+                                extractAmountFromRewardFunction = { retVal, user ->
+                                    val balance = retVal[0].value as BigInteger
+                                    if (balance > BigInteger.ZERO) {
+                                        val minted = l2BalancerPseudoMinter.minted(user, gaugeAddress)
+                                        balance - minted
+                                    } else {
+                                        BigInteger.ZERO
+
+                                    }
+                                }
+                            ),
+                            preparedTransaction = selfExecutingTransaction { user ->
+                                val balance = gaugecontract.integrateFraction(user)
+                                val minted = l2BalancerPseudoMinter.minted(user, gaugeAddress)
+                                val amount = balance - minted
+                                l2BalancerPseudoMinter.mint(amount.abs(), user)
+                            }
+                        )*/
                     ),
                 )
             } catch (ex: Exception) {
