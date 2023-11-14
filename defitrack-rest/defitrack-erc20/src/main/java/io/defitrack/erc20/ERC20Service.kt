@@ -67,30 +67,44 @@ class ERC20Service(
                 val allTokens = erC20Repository.allTokens(network)
                 logger.info("found ${allTokens.size} tokens for network ${network.name}. Importing.")
                 allTokens.parMap(concurrency = 12) {
-                    getTokenInformation(it, network)
+                    fetchTokenInfo(network, it, true)
                 }.filter {
                     it.isSome()
+                }.forEach {
+                    tokenInformationCache.put(createIndex(it.getOrNull()!!.address, network), it)
                 }
             }
-            logger.info("refreshing token cache for $network took ${timedvalue.duration.inWholeSeconds}s (${timedvalue.value.size}) tokens)")
+            logger.info("refreshing token cache for $network took ${timedvalue.duration.inWholeSeconds}s (${tokenInformationCache.asMap().size}) tokens)")
         }
     }
 
 
-    suspend fun getTokenInformation(address: String, network: Network): Option<TokenInformation> {
+    suspend fun getTokenInformation(
+        address: String,
+        network: Network,
+        verified: Boolean = false
+    ): Option<TokenInformation> {
         if (address == "0x0" || address.lowercase() == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") {
             return nativeTokenService.getNativeToken(network).some()
         }
         return tokenInformationCache.get(createIndex(address, network)) {
-            catch {
-                erc20ContractReader.getERC20(network, address).map { token ->
-                    tokenIdentifiers.find { it.isProtocolToken(token) }?.getTokenInfo(token) ?: singleERC20(token)
-                }
-            }.mapLeft {
-                logger.error("Error getting token information for $address on $network", it)
-            }.getOrNone().flatten()
+            fetchTokenInfo(network, address)
         }
     }
+
+    private suspend fun fetchTokenInfo(
+        network: Network,
+        address: String,
+        verified: Boolean = false
+    ): Option<TokenInformation> = catch {
+        erc20ContractReader.getERC20(network, address).map { token ->
+            tokenIdentifiers.find { it.isProtocolToken(token) }?.getTokenInfo(token) ?: singleERC20(token)
+        }.map {
+            it.copy(verified = verified)
+        }
+    }.mapLeft {
+        logger.error("Error getting token information for $address on $network", it)
+    }.getOrNone().flatten()
 
     fun createIndex(address: String, network: Network): String {
         return "${address.lowercase()}-$network"
@@ -104,6 +118,7 @@ class ERC20Service(
         decimals = token.decimals,
         totalSupply = token.totalSupply,
         type = TokenType.SINGLE,
-        network = token.network
+        network = token.network,
+        verified = false
     )
 }

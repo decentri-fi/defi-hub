@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.web3j.crypto.WalletUtils
 import java.math.BigDecimal
@@ -31,14 +32,18 @@ class ERC20RestControllerImpl(
     @GetMapping("/{network}")
     override suspend fun getAllTokensForNetwork(
         @PathVariable("network") networkName: String,
-    ): ResponseEntity<List<TokenInformationVO>> = coroutineScope {
-        val network = Network.fromString(networkName) ?: return@coroutineScope ResponseEntity.badRequest().build()
-        ResponseEntity.ok(
-            erc20Service.getAllTokensForNetwork(network).map {
-                it.toVO()
-            }.filter {
-                it.type == TokenType.SINGLE.name
-            }
+        @RequestParam("verified") verified: Boolean?
+    ): ResponseEntity<List<TokenInformationVO>> {
+        val network = Network.fromString(networkName) ?: return ResponseEntity.badRequest().build()
+        return ResponseEntity.ok(
+            erc20Service.getAllTokensForNetwork(network)
+                .filter {
+                    verified == null || it.verified == verified
+                }.map {
+                    it.toVO()
+                }.filter {
+                    it.type == TokenType.SINGLE.name
+                }
         )
     }
 

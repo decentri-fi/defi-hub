@@ -28,6 +28,11 @@ interface ERC20RestController {
             name = "network",
             example = "base",
             required = true
+        ),
+        Parameter(
+            name = "verified",
+            example = "false",
+            required = false
         )
     )
     @ApiResponses(
@@ -46,7 +51,10 @@ interface ERC20RestController {
             ]
         )
     )
-    suspend fun getAllTokensForNetwork(networkName: String): ResponseEntity<List<TokenInformationVO>>
+    suspend fun getAllTokensForNetwork(
+        networkName: String,
+        verified: Boolean?
+    ): ResponseEntity<List<TokenInformationVO>>
 
     @GetMapping("/{network}/wrapped")
     @Operation(

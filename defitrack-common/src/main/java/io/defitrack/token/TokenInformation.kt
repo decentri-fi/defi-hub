@@ -16,7 +16,8 @@ data class TokenInformation(
     val type: TokenType,
     val totalSupply: Refreshable<BigInteger> = refreshable(BigInteger.ZERO),
     val underlyingTokens: List<TokenInformation> = emptyList(),
-    val protocol: Protocol? = null
+    val protocol: Protocol? = null,
+    val verified: Boolean = false,
 ) {
     fun toFungibleToken(): FungibleToken {
         return FungibleToken(
