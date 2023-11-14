@@ -37,6 +37,7 @@ import org.web3j.abi.datatypes.Function
 import java.math.BigDecimal
 import java.math.BigInteger
 import kotlin.system.measureTimeMillis
+import kotlin.time.measureTime
 
 abstract class MarketProvider<T : DefiMarket> : ProtocolService {
 
@@ -97,7 +98,7 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
     }
 
     suspend fun populateCaches() {
-        val millis = measureTimeMillis {
+        val time = measureTime {
             try {
                 val markets = populate()
                 markets.forEach {
@@ -107,13 +108,12 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
                 produceMarkets().collect {
                     putInCache(it)
                 }
-                logger.info("done adding ${cache.asMap().size} markets")
             } catch (ex: Exception) {
                 logger.error("something went wrong trying to populate the cache", ex)
             }
         }
 
-        logger.info("cache population took ${millis / 1000}s")
+        logger.info("added ${cache.asMap().size} in ${time.inWholeSeconds} seconds")
     }
 
     private fun putInCache(it: T) {
@@ -131,7 +131,7 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
     }
 
     private suspend fun populate() = try {
-        logger.info("Cache expired, fetching fresh elements")
+        logger.debug("Cache expired, fetching fresh elements")
         fetchMarkets()
     } catch (ex: Exception) {
         ex.printStackTrace()
