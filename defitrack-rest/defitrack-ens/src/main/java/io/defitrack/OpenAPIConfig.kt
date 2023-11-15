@@ -18,7 +18,7 @@ class OpenAPIConfig {
         val info = Info()
             .title("ENS API")
             .version("1.0")
-            .description("This API exploses the defi api related to ENS.")
+            .description("This API exposes the defi api related to ENS.")
 
         return OpenAPI().info(info).servers(listOf(prodServer))
     }

@@ -18,7 +18,7 @@ class OpenAPIConfig {
         val info = Info()
             .title("Balance API")
             .version("1.0")
-            .description("This API exploses the defi api related to balance and token balance operations.")
+            .description("This API exposes the defi api related to balance and token balance operations.")
 
         return OpenAPI().info(info).servers(listOf(prodServer))
     }
