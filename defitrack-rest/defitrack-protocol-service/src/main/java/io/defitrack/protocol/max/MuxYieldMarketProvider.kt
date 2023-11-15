@@ -17,7 +17,7 @@ import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 
 @Component
-@ConditionalOnCompany(Company.OVIX)
+@ConditionalOnCompany(Company.MUX)
 class MuxYieldMarketProvider : FarmingMarketProvider() {
 
     val deferredContract = lazyAsync {
