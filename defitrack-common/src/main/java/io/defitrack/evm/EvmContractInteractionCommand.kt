@@ -1,7 +1,10 @@
 package io.defitrack.evm
 
-data class EvmContractInteractionCommand (
+import java.math.BigInteger
+
+data class EvmContractInteractionCommand(
     val from: String?,
     val contract: String,
-    val function: String
+    val function: String,
+    val block: BigInteger?
 )

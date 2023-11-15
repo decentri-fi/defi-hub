@@ -5,9 +5,7 @@ import io.defitrack.evm.GetEventLogsCommand
 import io.defitrack.multicall.MulticallService
 import io.micrometer.observation.Observation
 import io.micrometer.observation.ObservationRegistry
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 import org.web3j.protocol.Web3j
@@ -17,14 +15,7 @@ import org.web3j.protocol.core.Request
 import org.web3j.protocol.core.Response
 import org.web3j.protocol.core.methods.request.EthFilter
 import org.web3j.protocol.core.methods.request.Transaction
-import org.web3j.protocol.core.methods.response.EthBlock
-import org.web3j.protocol.core.methods.response.EthCall
-import org.web3j.protocol.core.methods.response.EthGetBalance
-import org.web3j.protocol.core.methods.response.EthGetTransactionReceipt
-import org.web3j.protocol.core.methods.response.EthLog
-import org.web3j.protocol.core.methods.response.EthTransaction
-import org.web3j.protocol.exceptions.ClientConnectionException
-import java.math.BigInteger
+import org.web3j.protocol.core.methods.response.*
 
 @Component
 class Web3JProxy(
@@ -169,6 +160,8 @@ class Web3JProxy(
                 evmContractInteractionCommand.from,
                 evmContractInteractionCommand.contract,
                 evmContractInteractionCommand.function
-            ), DefaultBlockParameterName.PENDING
+            ), evmContractInteractionCommand.block?.let {
+                DefaultBlockParameterNumber(it)
+            } ?: DefaultBlockParameterName.PENDING
         )
 }
