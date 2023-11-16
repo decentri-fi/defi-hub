@@ -6,5 +6,5 @@ data class EvmContractInteractionCommand(
     val from: String?,
     val contract: String,
     val function: String,
-    val block: BigInteger?
+    val block: BigInteger? = null
 )

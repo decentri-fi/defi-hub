@@ -38,6 +38,9 @@ class EVMContractInteractionRestController(
 
     @PostMapping("/call/async")
     suspend fun async(@RequestBody evmContractInteractionCommand: EvmContractInteractionCommand): EthCall {
+        if (evmContractInteractionCommand.block !== null) {
+            throw IllegalArgumentException("Cannot use async feature with block parameter")
+        }
         return coroutineScope {
             val asy = async {
                 val uuid = UUID.randomUUID().toString()
