@@ -10,6 +10,7 @@ import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
+import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
 import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerPoolContract
@@ -79,6 +80,28 @@ abstract class BalancerPoolingMarketProvider(
                 getToken(it.token)
             }
 
+            val poolInfo = vault.getPoolTokens(poolId, poolAddress)
+
+            val tokens = poolInfo.map {
+                TokenWithBalance(
+                    getToken(it.token), it.balance
+                )
+            }
+
+            val breakdown = tokens.map {
+                PoolingMarketTokenShare(
+                    it.token,
+                    it.balance,
+                    getPriceResource().calculatePrice(
+                        PriceRequest(
+                            it.token.address,
+                            getNetwork(),
+                            it.balance.asEth(it.token.decimals)
+                        )
+                    ).toBigDecimal()
+                )
+            }
+
             return create(
                 identifier = poolId,
                 address = poolAddress,
@@ -88,12 +111,14 @@ abstract class BalancerPoolingMarketProvider(
                 tokens = underlyingTokens,
                 symbol = underlyingTokens.joinToString("/", transform = TokenInformationVO::symbol),
                 metadata = mapOf("poolId" to poolId),
+                breakdown = breakdown,
                 marketSize = refreshable {
-                    calculateMarketSize(vault, poolId, poolAddress)
+                    breakdown.sumOf { it.reserveUSD }
                 },
                 positionFetcher = defaultPositionFetcher(poolAddress),
-                totalSupply = refreshable(pool.totalDecimalSupply()) {
-                    getToken(poolAddress).totalDecimalSupply()
+                totalSupply = refreshable(poolContract.actualSupply.await().asEth(pool.decimals)) {
+                    //todo: refetch
+                    poolContract.actualSupply.await().asEth(pool.decimals)
                 },
                 historicEventExtractor = balancerPoolingHistoryProvider.historicEventExtractor(
                     poolId, getNetwork()
@@ -109,30 +134,6 @@ abstract class BalancerPoolingMarketProvider(
         val token: FungibleToken,
         val balance: BigInteger
     )
-
-    private suspend fun BalancerPoolingMarketProvider.calculateMarketSize(
-        vault: BalancerVaultContract,
-        poolId: String,
-        poolAddress: String
-    ): BigDecimal {
-        val poolInfo = vault.getPoolTokens(poolId, poolAddress)
-
-        val tokens = poolInfo.map {
-            TokenWithBalance(
-                getToken(it.token), it.balance
-            )
-        }
-
-        return tokens.sumOf { tokenWithBalance ->
-            getPriceResource().calculatePrice(
-                PriceRequest(
-                    tokenWithBalance.token.address,
-                    getNetwork(),
-                    tokenWithBalance.balance.asEth(tokenWithBalance.token.decimals)
-                )
-            )
-        }.toBigDecimal()
-    }
 
     override fun getProtocol(): Protocol {
         return Protocol.BALANCER

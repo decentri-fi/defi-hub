@@ -5,14 +5,12 @@ import io.defitrack.claimable.domain.Reward
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.position.PositionFetcher
-import io.defitrack.network.toVO
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.stargate.StargateService
 import io.defitrack.protocol.stargate.contract.LPStakingContract
-import io.defitrack.transaction.PreparedTransaction
 import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 
-abstract class AbstractStargateFarmingMarketProvider(
+abstract class AbstractStargateLPStakingMarketProvider(
     private val stargateService: StargateService,
     private val pendingFunctionName: String = "pendingStargate",
     private val emissionTokenName: String = "stargate"
@@ -37,7 +35,7 @@ abstract class AbstractStargateFarmingMarketProvider(
 
             create(
                 identifier = "${lpStakingContract.address}-$index",
-                name = "Stargate ${stakedToken.name} Reward",
+                name = "${stakedToken.name} LP Staking",
                 stakedToken = stakedToken,
                 rewardToken = stargate,
                 claimableRewardFetcher = ClaimableRewardFetcher(

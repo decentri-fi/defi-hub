@@ -1,6 +1,7 @@
 package io.defitrack.price
 
 import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.price.coingecko.CoinGeckoPriceService
 import io.defitrack.price.external.ExternalPriceService
 import io.github.reactivecircus.cache4k.Cache
 import org.slf4j.LoggerFactory

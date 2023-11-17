@@ -4,13 +4,15 @@ import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.stargate.StargateArbitrumService
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.STARGATE)
-class StargateArbitrumFarmingProvider(
+@ConditionalOnProperty(value = ["arbitrum.enabled"], havingValue = "true", matchIfMissing = true)
+class StargateArbitrumLPStakingTimeProvider(
     stargateService: StargateArbitrumService,
-) : AbstractStargateFarmingMarketProvider(
+) : AbstractStargateLPStakingTimeMarketProvider(
     stargateService
 ) {
 

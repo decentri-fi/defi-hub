@@ -1,9 +1,8 @@
-package io.defitrack.price
+package io.defitrack.price.coingecko
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.JsonParser
-import io.defitrack.price.coingecko.CoingeckoToken
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.request.*
@@ -14,6 +13,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.nio.charset.Charset
@@ -31,7 +31,7 @@ class CoinGeckoPriceService(
 
     val tokenCache = Cache.Builder<String, Set<CoingeckoToken>>().build()
 
-    @PostConstruct
+    @Scheduled(fixedDelay = 1000 * 60 * 60 * 4) // every 4 days
     fun init() = runBlocking {
         logger.info("initializing coingecko token cache")
         val tokens = getCoingeckoTokens()

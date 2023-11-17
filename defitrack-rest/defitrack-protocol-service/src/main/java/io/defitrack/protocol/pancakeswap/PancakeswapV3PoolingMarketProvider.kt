@@ -6,6 +6,7 @@ import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.abi.TypeUtils
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
@@ -51,19 +52,19 @@ class PancakeswapV3PoolingMarketProvider(
         )
     )
 
-    val prefetches = AsyncUtils.lazyAsync {
+    val prefetches = lazyAsync {
         pancakeswapV3Prefetcher.getPrefetches(getNetwork())
     }
 
 
     val poolFactoryAddress = "0x0bfbcf9fa4f9c56b0f40a671ad40e0805a091865"
-    val poolFactory = AsyncUtils.lazyAsync {
+    val poolFactory = lazyAsync {
         UniswapV3PoolFactoryContract(
             getBlockchainGateway(), poolFactoryAddress
         )
     }
 
-    val poolAddresses = AsyncUtils.lazyAsync {
+    val poolAddresses = lazyAsync {
         fromBlocks.mapIndexed { index, block ->
             async {
                 getLogsBetweenBlocks(block, fromBlocks.getOrNull(index + 1))
@@ -102,10 +103,7 @@ class PancakeswapV3PoolingMarketProvider(
 
     suspend fun marketFromCache(poolAddress: String) = poolCache.get(poolAddress.lowercase()) {
         getMarket(poolAddress).mapLeft { throwable ->
-            when (throwable) {
-                is UniswapV3PoolingMarketProvider.MarketTooLowException -> logger.debug("market too low for ${throwable.message}")
-                else -> logger.error("error getting market for ${throwable.message}")
-            }
+            logger.error("error getting market for ${throwable.message}")
         }.getOrNone()
     }
 
