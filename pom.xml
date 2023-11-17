@@ -275,6 +275,9 @@
                     <compilerPlugins>
                         <plugin>spring</plugin>
                     </compilerPlugins>
+                    <args>
+                        <arg>-Xcontext-receivers</arg>
+                    </args>
                 </configuration>
                 <dependencies>
                     <dependency>
