@@ -13,7 +13,14 @@ enum class Protocol(
     val networks: List<Network>,
     val company: Company,
 ) {
-
+    FRAX(
+        logo = "frax.png",
+        slug = "frax",
+        primitives = listOf(FARMING, CLAIMABLES),
+        website = "https://frax.finance",
+        networks = listOf(ETHEREUM),
+        company = Company.FRAX
+    ),
     KLIMA_DAO(
         logo = "klimadao.png",
         slug = "klima-dao",
