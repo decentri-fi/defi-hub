@@ -6,6 +6,7 @@ import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
 import org.web3j.abi.datatypes.Function
+import java.math.BigInteger
 
 class CvxRewardPoolContract(
     solidityBasedContractAccessor: BlockchainGateway,
@@ -13,9 +14,8 @@ class CvxRewardPoolContract(
 ) : ERC20Contract(solidityBasedContractAccessor, address) {
 
 
-    suspend fun rewardToken(): String {
-        return readSingle("rewardToken", address())
-    }
+    val rewardToken = constant<String>("rewardToken", address())
+    val stakingToken = constant<String>("stakingToken", address())
 
     fun getRewardFunction(): ContractCall {
         return createFunction(
@@ -30,9 +30,5 @@ class CvxRewardPoolContract(
             listOf(user.toAddress()),
             listOf(uint256())
         )
-    }
-
-    suspend fun stakingToken(): String {
-        return readSingle("stakingToken", address())
     }
 }

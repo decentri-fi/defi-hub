@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.CONVEX)
-class CvxCrvStakingMarketProvider : FarmingMarketProvider() {
+class StakedCvxCrvMarketProvider : FarmingMarketProvider() {
 
     val stakingWrapperAddress = "0xaa0c3f5f7dfd688c6e646f66cd2a6b66acdbe434"
 
@@ -28,16 +28,16 @@ class CvxCrvStakingMarketProvider : FarmingMarketProvider() {
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
         val contract = deferredStakingWrapper.await()
 
+        val cvxCrv = getToken(contract.cvxCrv.await())
         send(
             create(
-                name = "Convex CRV Staking",
+                name = "Staked CvxCrv",
                 identifier = stakingWrapperAddress,
-                stakedToken = getToken(contract.cvxCrv.await()),
+                stakedToken = cvxCrv,
                 rewardTokens = emptyList(),
                 positionFetcher = defaultPositionFetcher(stakingWrapperAddress),
             )
         )
-
     }
 
     override fun getProtocol(): Protocol {

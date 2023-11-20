@@ -16,19 +16,18 @@ import org.springframework.stereotype.Component
 @Component
 @ConditionalOnCompany(Company.CONVEX)
 class ConvexEthereumRewardPoolMarketProvider(
-    private val convexService: ConvexEthereumService,
+    private val convexService: ConvexEthereumService
 ) : FarmingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
-
         return convexService.providePools().map {
             CvxRewardPoolContract(
                 getBlockchainGateway(),
                 it,
             )
         }.map { poolContract ->
-            val stakingToken = getToken(poolContract.stakingToken())
-            val rewardToken = getToken(poolContract.rewardToken())
+            val stakingToken = getToken(poolContract.stakingToken.await())
+            val rewardToken = getToken(poolContract.rewardToken.await())
             create(
                 name = "Convex Reward Pool",
                 identifier = poolContract.address,

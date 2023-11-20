@@ -13,13 +13,19 @@ import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import org.springframework.stereotype.Component
 
+private const val WETH = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+
 @Component
 @ConditionalOnCompany(Company.LIDO)
 class StethMarketProvider(
     private val lidoService: LidoService,
     private val priceResource: PriceResource
 ) : FarmingMarketProvider() {
+
     override suspend fun fetchMarkets(): List<FarmingMarket> {
+
+        val eth = getToken(WETH).toFungibleToken()
+
         val steth = StethContract(
             getBlockchainGateway(),
             lidoService.steth()
@@ -31,13 +37,11 @@ class StethMarketProvider(
             create(
                 name = "Liquid Staked Ether 2.0",
                 identifier = "steth",
-                stakedToken = getToken("0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2").toFungibleToken(),
-                rewardTokens = emptyList(),
+                stakedToken = eth,
+                rewardToken = eth,
                 positionFetcher = PositionFetcher(
                     address = steth.address,
-                    function = { user ->
-                        steth.sharesOfFunction(user)
-                    },
+                    function = steth::sharesOfFunction,
                 ),
                 marketSize = Refreshable.refreshable {
                     priceResource.calculatePrice(
@@ -58,6 +62,5 @@ class StethMarketProvider(
 
     override fun getNetwork(): Network {
         return Network.ETHEREUM
-
     }
 }
