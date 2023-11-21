@@ -1,5 +1,6 @@
 package io.defitrack.protocol.frax
 
+import arrow.core.nel
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -17,14 +18,12 @@ class FraxStakedEthMarketProvider : FarmingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         val fraxEther = getToken(fraxEtherAddress)
-        return listOf(
-            create(
-                name = "Staked Frax Ether",
-                identifier = sfrxEthAddress,
-                stakedToken = fraxEther,
-                rewardToken = fraxEther
-            )
-        )
+        return create(
+            name = "Staked Frax Ether",
+            identifier = sfrxEthAddress,
+            stakedToken = fraxEther,
+            rewardToken = fraxEther
+        ).nel()
     }
 
     override fun getProtocol(): Protocol {
