@@ -10,6 +10,7 @@ import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import java.math.BigInteger
 
 class CompoundLendingInvestmentPreparer(
     private val iToken: IronbankTokenContract,
@@ -28,15 +29,7 @@ class CompoundLendingInvestmentPreparer(
         return iToken.blockchainGateway.network
     }
 
-    override suspend fun getInvestmentTransaction(prepareInvestmentCommand: PrepareInvestmentCommand): Deferred<PreparedTransaction?> =
-        coroutineScope {
-            async {
-                val requiredBalance = getInvestmentAmount(prepareInvestmentCommand)
-                PreparedTransaction(
-                    function = iToken.mintFunction(requiredBalance),
-                    to = getEntryContract(),
-                    network = iToken.blockchainGateway.network.toVO()
-                )
-            }
-        }
+    override suspend fun getInvestmentTransaction(user: String, amount: BigInteger): PreparedTransaction {
+        return PreparedTransaction(iToken.mintFunction(amount))
+    }
 }

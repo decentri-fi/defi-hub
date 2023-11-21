@@ -15,14 +15,14 @@ class StakedAaveContract(
     address
 ) {
 
-    fun getClaimRewardsFunction(user: String): ContractCall {
+    fun getClaimRewardsFunction(user: String): MutableFunction {
         return createFunction(
             "claimRewards",
             inputs = listOf(
                 user.toAddress(),
                 MAX_UINT256
             )
-        ).toContractCall()
+        ).toMutableFunction()
     }
 
     fun getTotalRewardFunction(user: String): Function {

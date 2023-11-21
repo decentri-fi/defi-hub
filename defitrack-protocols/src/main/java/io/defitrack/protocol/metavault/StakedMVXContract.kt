@@ -1,13 +1,10 @@
 package io.defitrack.protocol.metavault
 
-import io.defitrack.abi.TypeUtils.Companion
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.contract.FarmingContract
-import org.apache.commons.lang3.reflect.TypeUtils
 import org.web3j.abi.datatypes.Function
 
 class StakedMVXContract(
@@ -36,10 +33,10 @@ class StakedMVXContract(
         )
     }
 
-    fun claimFn(user: String): ContractCall {
+    fun claimFn(user: String): MutableFunction {
         return createFunction(
             "claim",
             listOf(user.toAddress()),
-        ).toContractCall()
+        ).toMutableFunction()
     }
 }

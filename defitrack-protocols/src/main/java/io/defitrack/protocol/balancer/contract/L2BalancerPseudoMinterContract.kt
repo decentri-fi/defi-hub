@@ -1,12 +1,10 @@
 package io.defitrack.protocol.balancer.contract
 
-import arrow.core.nel
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
-import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
 
 class L2BalancerPseudoMinterContract(
@@ -23,11 +21,11 @@ class L2BalancerPseudoMinterContract(
         )
     }
 
-    fun mint(amount: BigInteger, user: String): ContractCall {
+    fun mint(amount: BigInteger, user: String): MutableFunction {
         return createFunction(
             "mint",
             listOf(user.toAddress(), amount.toUint256()),
             listOf()
-        ).toContractCall()
+        ).toMutableFunction()
     }
 }

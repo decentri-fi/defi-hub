@@ -23,11 +23,11 @@ class EthosStakingProvider : SingleContractFarmingMarketProvider() {
                 "lusdToken",
                 "getPendingLUSDGain",
             ) {
-                override fun claimFn(user: String): ContractCall {
+                override fun claimFn(user: String): MutableFunction {
                     return createFunction(
                         "unstake",
                         listOf(BigInteger.ZERO.toUint256())
-                    ).toContractCall()
+                    ).toMutableFunction()
                 }
             }
         )

@@ -47,7 +47,7 @@ class PikaStakingContract(
 
     interface PikaRewards {
         fun getClaimableReward(user: String): Function
-        fun claimRewardFn(user: String): ContractCall
+        fun claimRewardFn(user: String): MutableFunction
 
         suspend fun getRewardToken(): String
 
@@ -66,12 +66,12 @@ class PikaStakingContract(
         }
 
 
-        override fun claimRewardFn(user: String): ContractCall {
+        override fun claimRewardFn(user: String): MutableFunction {
             return createFunction(
                 "claimReward",
                 listOf(user.toAddress()),
                 emptyList()
-            ).toContractCall()
+            ).toMutableFunction()
         }
 
         override suspend fun getRewardToken(): String {
@@ -97,12 +97,12 @@ class PikaStakingContract(
     ) : EvmContract(blockchainGateway, address), PikaRewards {
         val rewardToken = constant<String>("rewardToken", TypeUtils.address())
 
-        override fun claimRewardFn(user: String): ContractCall {
+        override fun claimRewardFn(user: String): MutableFunction {
             return createFunction(
                 "getReward",
                 emptyList(),
                 emptyList()
-            ).toContractCall()
+            ).toMutableFunction()
         }
 
         override suspend fun getRewardToken(): String {

@@ -29,10 +29,10 @@ class StakingThalesContract(
         )
     }
 
-    fun claimRewardFn(user: String): ContractCall {
+    fun claimRewardFn(user: String): MutableFunction {
         return createFunction(
             "claimReward",
             listOf()
-        ).toContractCall()
+        ).toMutableFunction()
     }
 }

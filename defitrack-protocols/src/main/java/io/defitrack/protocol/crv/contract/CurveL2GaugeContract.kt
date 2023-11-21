@@ -22,10 +22,10 @@ class CurveL2GaugeContract(
         )
     }
 
-    fun getClaimRewardsFunction(): ContractCall {
+    fun getClaimRewardsFunction(): MutableFunction {
         return createFunction(
             "claim_rewards"
-        ).toContractCall()
+        ).toMutableFunction()
     }
 
     fun getClaimableRewardFunction(token: String): (String) -> Function {

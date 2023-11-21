@@ -30,17 +30,17 @@ class MuxYieldContract(blockchainGateway: BlockchainGateway, address: String) : 
         )
     }
 
-    fun claimFromMlpUnwrap(user: String): ContractCall {
+    fun claimFromMlpUnwrap(user: String): MutableFunction {
         return createFunction(
             "claimFromMlpUnwrap",
             listOf(),
-        ).toContractCall()
+        ).toMutableFunction()
     }
 
-    fun claimFromVeUnwrap(user: String): ContractCall {
+    fun claimFromVeUnwrap(user: String): MutableFunction {
         return createFunction(
             "claimFromVeUnwrap",
             listOf(),
-        ).toContractCall()
+        ).toMutableFunction()
     }
 }

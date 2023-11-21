@@ -1,12 +1,10 @@
 package io.defitrack.protocol.kwenta
 
-import io.defitrack.abi.TypeUtils.Companion
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
-import org.springframework.util.TypeUtils
 import org.web3j.abi.datatypes.Function
 
 class StakingRewardsV2Contract(
@@ -24,7 +22,7 @@ class StakingRewardsV2Contract(
 
     val kwenta = constant<String>("kwenta", address())
 
-    fun claimFn(): ContractCall {
-        return createFunction("compound").toContractCall()
+    fun claimFn(): MutableFunction {
+        return createFunction("compound").toMutableFunction()
     }
 }

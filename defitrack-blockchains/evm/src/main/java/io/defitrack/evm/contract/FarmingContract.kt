@@ -27,9 +27,9 @@ open class FarmingContract(
         )
     }
 
-    open fun claimFn(user: String): ContractCall {
+    open fun claimFn(user: String): MutableFunction {
         return createFunction(
             claimFunctionName,
-        ).toContractCall()
+        ).toMutableFunction()
     }
 }

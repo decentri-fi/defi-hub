@@ -17,11 +17,11 @@ class QuickswapRewardPoolContract(
     solidityBasedContractAccessor, address
 ) {
 
-    fun exitFunction(amount: BigInteger): ContractCall {
+    fun exitFunction(amount: BigInteger): MutableFunction {
         return createFunction(
             "leave",
             amount.toUint256().nel(),
-        ).toContractCall()
+        ).toMutableFunction()
     }
 
     suspend fun periodFinish(): BigInteger {
@@ -40,8 +40,8 @@ class QuickswapRewardPoolContract(
         return readSingle("rewardRate", address())
     }
 
-    fun getRewardFunction(): ContractCall {
-        return createFunction("getReward").toContractCall()
+    fun getRewardFunction(): MutableFunction {
+        return createFunction("getReward").toMutableFunction()
     }
 
     fun earned(address: String): Function {

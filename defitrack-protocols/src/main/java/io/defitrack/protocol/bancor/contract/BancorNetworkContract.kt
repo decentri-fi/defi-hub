@@ -14,13 +14,13 @@ class BancorNetworkContract(
     blockchainGateway, address
 ) {
 
-    fun depositFunction(token: String, amount: BigInteger): Function {
+    fun depositFunction(token: String, amount: BigInteger): MutableFunction {
         return createFunction(
             "deposit",
             listOf(
                 token.toAddress(),
                 amount.toUint256()
             )
-        )
+        ).toMutableFunction()
     }
 }

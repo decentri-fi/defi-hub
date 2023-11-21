@@ -1,5 +1,7 @@
 package io.defitrack.market.farming.domain
 
+import arrow.fx.coroutines.parMapNotNull
+import arrow.fx.coroutines.parZip
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.exception.TransactionPreparationException
@@ -16,14 +18,17 @@ import java.math.BigInteger
 abstract class InvestmentPreparer(
     private val erC20Resource: ERC20Resource
 ) {
-    open suspend fun prepare(prepareInvestmentCommand: PrepareInvestmentCommand): List<PreparedTransaction> {
-        return listOf(
+    suspend fun prepare(prepareInvestmentCommand: PrepareInvestmentCommand): List<PreparedTransaction> {
+        return listOfNotNull(
             getAllowanceTransaction(prepareInvestmentCommand),
-            getInvestmentTransaction(prepareInvestmentCommand)
-        ).awaitAll().filterNotNull()
+            getInvestmentTransaction(
+                prepareInvestmentCommand.user,
+                getInvestmentAmount(prepareInvestmentCommand)
+            )
+        )
     }
 
-    abstract suspend fun getInvestmentTransaction(prepareInvestmentCommand: PrepareInvestmentCommand): Deferred<PreparedTransaction?>
+    abstract suspend fun getInvestmentTransaction(user: String, amount: BigInteger): PreparedTransaction
     abstract suspend fun getToken(): String
     abstract fun getEntryContract(): String
 
@@ -38,48 +43,43 @@ abstract class InvestmentPreparer(
         )
 
 
-    suspend fun getInvestmentAmount(
-        prepareInvestmentCommand: PrepareInvestmentCommand,
-    ) =
-        prepareInvestmentCommand.amount ?: erC20Resource.getBalance(
+    private suspend fun getInvestmentAmount(prepareInvestmentCommand: PrepareInvestmentCommand): BigInteger {
+        return prepareInvestmentCommand.amount ?: erC20Resource.getBalance(
+            getNetwork(),
+            getToken(),
+            prepareInvestmentCommand.user
+        )
+    }
+
+    suspend fun getAllowanceTransaction(prepareInvestmentCommand: PrepareInvestmentCommand): PreparedTransaction? {
+        val allowance = getAllowance(prepareInvestmentCommand)
+        val investmentAmount = getInvestmentAmount(prepareInvestmentCommand)
+        val balance = erC20Resource.getBalance(
             getNetwork(),
             getToken(),
             prepareInvestmentCommand.user
         )
 
-    suspend fun getAllowanceTransaction(prepareInvestmentCommand: PrepareInvestmentCommand): Deferred<PreparedTransaction?> {
-        return coroutineScope {
-            async {
-                val allowance = getAllowance(prepareInvestmentCommand)
-                val investmentAmount = getInvestmentAmount(prepareInvestmentCommand)
-                val balance = erC20Resource.getBalance(
-                    getNetwork(),
-                    getToken(),
-                    prepareInvestmentCommand.user
-                )
+
+        if (investmentAmount <= BigInteger.ZERO) {
+            throw TransactionPreparationException("${prepareInvestmentCommand.user} doesn't own any of the required assets")
+        }
+
+        if (balance < investmentAmount) {
+            throw TransactionPreparationException("${prepareInvestmentCommand.user} doesn't own enough of the required assets")
+        }
 
 
-                if (investmentAmount <= BigInteger.ZERO) {
-                    throw TransactionPreparationException("${prepareInvestmentCommand.user} doesn't own any of the required assets")
-                }
-
-                if (balance < investmentAmount) {
-                    throw TransactionPreparationException("${prepareInvestmentCommand.user} doesn't own enough of the required assets")
-                }
-
-
-                if (allowance < investmentAmount) {
-                    PreparedTransaction(
-                        function = ERC20Contract.fullApproveFunction(
-                            getEntryContract()
-                        ),
-                        to = getToken(),
-                        network = getNetwork().toVO()
-                    )
-                } else {
-                    null
-                }
-            }
+        return if (allowance < investmentAmount) {
+            PreparedTransaction(
+                function = ERC20Contract.fullApproveFunction(
+                    getEntryContract()
+                ),
+                to = getToken(),
+                network = getNetwork().toVO()
+            )
+        } else {
+            null
         }
     }
 }

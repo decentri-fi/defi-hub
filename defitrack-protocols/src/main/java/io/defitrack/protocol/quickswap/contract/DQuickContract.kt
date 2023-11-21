@@ -1,6 +1,6 @@
 package io.defitrack.protocol.quickswap.contract
 
-import io.defitrack.abi.TypeUtils.Companion.toAddress
+import arrow.core.nel
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
@@ -16,16 +16,16 @@ class DQuickContract(
 ) {
 
 
-    fun exitFunction(amount: BigInteger): ContractCall {
+    fun exitFunction(amount: BigInteger): MutableFunction {
         return createFunction(
             "leave",
             listOf(amount.toUint256()),
             listOf()
-        ).toContractCall()
+        ).toMutableFunction()
     }
 
-    fun enterFunction(amount: BigInteger): Function {
-        return createFunction("enter", listOf(amount.toUint256()), emptyList())
+    fun enterFunction(amount: BigInteger): MutableFunction {
+        return createFunction("enter", amount.toUint256().nel()).toMutableFunction()
     }
 
     suspend fun dquickForQuick(amount: BigInteger): BigInteger {

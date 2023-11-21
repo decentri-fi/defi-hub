@@ -6,7 +6,6 @@ import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
-import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
 
@@ -37,11 +36,11 @@ class StableJoeStakingContract(
         )
     }
 
-    fun harvest(): ContractCall {
+    fun harvest(): MutableFunction {
         return createFunction(
             "deposit",
             listOf(BigInteger.ZERO.toUint256())
-        ).toContractCall()
+        ).toMutableFunction()
     }
 
     suspend fun rewardTokens(): List<String> {

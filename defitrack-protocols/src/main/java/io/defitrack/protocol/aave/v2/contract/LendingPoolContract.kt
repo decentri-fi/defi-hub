@@ -12,7 +12,6 @@ import io.defitrack.abi.TypeUtils.Companion.uint8
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Address
-import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
 
 class LendingPoolContract(blockchainGateway: BlockchainGateway, address: String) :
@@ -53,7 +52,7 @@ class LendingPoolContract(blockchainGateway: BlockchainGateway, address: String)
         )
     }
 
-    fun depositFunction(asset: String, amount: BigInteger): Function {
+    fun depositFunction(asset: String, amount: BigInteger): MutableFunction {
         return createFunction(
             "deposit",
             listOf(
@@ -63,7 +62,7 @@ class LendingPoolContract(blockchainGateway: BlockchainGateway, address: String)
                 BigInteger.ZERO.toUint16()
             ),
             emptyList()
-        )
+        ).toMutableFunction()
     }
 
     data class ReserveData(

@@ -15,7 +15,7 @@ class PoolContract(
     address: String
 ) : EvmContract(blockchainGateway, address) {
 
-    fun getSupplyFunction(asset: String, amount: BigInteger, onBehalfOf: String): Function {
+    fun getSupplyFunction(asset: String, amount: BigInteger, onBehalfOf: String): MutableFunction {
         return createFunction(
             "supply",
             listOf(
@@ -24,7 +24,7 @@ class PoolContract(
                 onBehalfOf.toAddress(),
                 BigInteger.ZERO.toUint16()
             )
-        )
+        ).toMutableFunction()
     }
 
     suspend fun reservesList(): List<String> {

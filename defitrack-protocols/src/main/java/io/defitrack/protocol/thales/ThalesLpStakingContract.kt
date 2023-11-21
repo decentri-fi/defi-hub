@@ -31,10 +31,10 @@ class ThalesLpStakingContract(
         )
     }
 
-    fun claimRewardFn(user: String): ContractCall {
+    fun claimRewardFn(user: String): MutableFunction {
         return createFunction(
             "getReward",
             listOf()
-        ).toContractCall()
+        ).toMutableFunction()
     }
 }

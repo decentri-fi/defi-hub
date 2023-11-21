@@ -21,7 +21,7 @@ open class MasterChefBasedContract(
     blockchainGateway, address
 ) {
 
-    fun harvestFunction(poolId: Int): (String) -> ContractCall {
+    fun harvestFunction(poolId: Int): (String) -> MutableFunction {
         return { _: String ->
             createFunction(
                 "withdraw",
@@ -29,7 +29,7 @@ open class MasterChefBasedContract(
                     poolId.toBigInteger().toUint256(),
                     BigInteger.ZERO.toUint256()
                 ),
-            ).toContractCall()
+            ).toMutableFunction()
         }
     }
 

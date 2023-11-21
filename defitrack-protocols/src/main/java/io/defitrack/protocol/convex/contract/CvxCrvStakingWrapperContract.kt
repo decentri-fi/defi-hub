@@ -20,11 +20,11 @@ class CvxCrvStakingWrapperContract(
         readSingle("cvx", TypeUtils.address())
     }
 
-    fun getRewardFn(user: String): ContractCall {
+    fun getRewardFn(user: String): MutableFunction {
         return createFunction(
             "getReward",
             user.toAddress().nel(),
-        ).toContractCall()
+        ).toMutableFunction()
     }
 
     val cvxCrv: Deferred<String> = lazyAsync {

@@ -33,11 +33,11 @@ class EthosStabilityPool(
         )
     }
 
-    fun claimFn(user: String): ContractCall {
+    fun claimFn(user: String): MutableFunction {
         return createFunction(
             "withdrawFromSP",
             listOf(BigInteger.ZERO.toUint256())
-        ).toContractCall()
+        ).toMutableFunction()
     }
 
 }

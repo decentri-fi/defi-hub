@@ -11,6 +11,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import java.math.BigInteger
 
 class DQuickStakingInvestmentPreparer(
     erC20Resource: ERC20Resource,
@@ -18,13 +19,6 @@ class DQuickStakingInvestmentPreparer(
 ) : InvestmentPreparer(erC20Resource) {
 
     val quick = "0x831753dd7087cac61ab5644b308642cc1c33dc13"
-
-    override suspend fun prepare(prepareInvestmentCommand: PrepareInvestmentCommand): List<PreparedTransaction> {
-        return listOf(
-            getAllowanceTransaction(prepareInvestmentCommand),
-            getInvestmentTransaction(prepareInvestmentCommand)
-        ).awaitAll().filterNotNull()
-    }
 
     override suspend fun getToken(): String {
         return quick
@@ -38,15 +32,7 @@ class DQuickStakingInvestmentPreparer(
         return dQuickContract.blockchainGateway.network
     }
 
-    override suspend fun getInvestmentTransaction(prepareInvestmentCommand: PrepareInvestmentCommand): Deferred<PreparedTransaction?> =
-        coroutineScope {
-            async {
-                val requiredBalance = getInvestmentAmount(prepareInvestmentCommand)
-                PreparedTransaction(
-                    function = dQuickContract.enterFunction(requiredBalance),
-                    to = getEntryContract(),
-                    network = getNetwork().toVO()
-                )
-            }
-        }
+    override suspend fun getInvestmentTransaction(user: String, amount: BigInteger): PreparedTransaction {
+        return PreparedTransaction(dQuickContract.enterFunction(amount))
+    }
 }

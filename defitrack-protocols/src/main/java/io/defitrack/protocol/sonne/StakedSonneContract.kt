@@ -28,10 +28,10 @@ class StakedSonneContract(
         }
     }
 
-    fun claimAllFn(): ContractCall {
+    fun claimAllFn(): MutableFunction {
         return createFunction(
             "claimAll",
-        ).toContractCall()
+        ).toMutableFunction()
     }
 
     suspend fun tokens(): List<String> {

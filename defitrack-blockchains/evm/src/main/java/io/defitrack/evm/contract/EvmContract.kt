@@ -1,7 +1,6 @@
 package io.defitrack.evm.contract
 
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.AsyncUtils
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.multicall.MultiCallElement
 import io.defitrack.evm.multicall.MultiCallResult
@@ -126,15 +125,15 @@ abstract class EvmContract(
         )[0].value as T
     }
 
-    fun Function.toContractCall(): ContractCall {
-        return ContractCall(
+    fun Function.toMutableFunction(): MutableFunction {
+        return MutableFunction(
             this,
             blockchainGateway.network,
             this@EvmContract.address
         )
     }
 
-    data class ContractCall(
+    data class MutableFunction(
         val function: Function,
         val network: Network,
         val address: String

@@ -10,6 +10,7 @@ import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import java.math.BigInteger
 
 
 class AaveV3LendingInvestmentPreparer(
@@ -18,19 +19,9 @@ class AaveV3LendingInvestmentPreparer(
     erC20Resource: ERC20Resource
 ) : InvestmentPreparer(erC20Resource) {
 
-    override suspend fun getInvestmentTransaction(prepareInvestmentCommand: PrepareInvestmentCommand): Deferred<PreparedTransaction?> =
-        coroutineScope {
-            async {
-                val requiredBalance = getInvestmentAmount(prepareInvestmentCommand)
-                PreparedTransaction(
-                    function = poolContract.getSupplyFunction(
-                        underlying, requiredBalance, prepareInvestmentCommand.user
-                    ),
-                    to = getEntryContract(),
-                    network = getNetwork().toVO()
-                )
-            }
-        }
+    override suspend fun getInvestmentTransaction(user: String, amount: BigInteger): PreparedTransaction {
+        return PreparedTransaction(poolContract.getSupplyFunction(underlying, amount, user))
+    }
 
     override suspend fun getToken(): String {
         return underlying

@@ -89,12 +89,12 @@ class LPStakingContract(
         }
     }
 
-    fun claimFn(poolId: Int): (String) -> ContractCall {
+    fun claimFn(poolId: Int): (String) -> MutableFunction {
         return { user: String ->
             createFunction(
                 "deposit",
                 listOf(poolId.toBigInteger().toUint256(), BigInteger.ZERO.toUint256())
-            ).toContractCall()
+            ).toMutableFunction()
         }
     }
 }

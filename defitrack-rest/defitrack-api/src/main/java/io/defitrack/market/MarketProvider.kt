@@ -1,7 +1,6 @@
 package io.defitrack.market
 
 import arrow.fx.coroutines.parMap
-import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.event.EventService
 import io.defitrack.evm.contract.BlockchainGateway
@@ -33,7 +32,6 @@ import kotlinx.coroutines.sync.withPermit
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.web3j.abi.datatypes.Function
 import java.math.BigDecimal
 import java.math.BigInteger
 import kotlin.system.measureTimeMillis
@@ -188,7 +186,7 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
         return priceResource
     }
 
-    fun prepareExit(preparedExit: (exitPositionCommand: ExitPositionCommand) -> EvmContract.ContractCall): ExitPositionPreparer {
+    fun prepareExit(preparedExit: (exitPositionCommand: ExitPositionCommand) -> EvmContract.MutableFunction): ExitPositionPreparer {
         return object : ExitPositionPreparer() {
             override suspend fun getExitPositionCommand(exitPositionCommand: ExitPositionCommand): Deferred<PreparedTransaction> {
                 return coroutineScope {

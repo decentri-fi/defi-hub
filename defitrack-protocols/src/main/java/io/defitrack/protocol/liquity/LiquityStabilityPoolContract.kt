@@ -37,10 +37,10 @@ class LiquityStabilityPoolContract(
         )
     }
 
-    fun claim(): ContractCall {
+    fun claim(): MutableFunction {
         return createFunction(
             "withdrawFromSP",
             nonEmptyListOf(BigInteger.ZERO.toUint256())
-        ).toContractCall()
+        ).toMutableFunction()
     }
 }

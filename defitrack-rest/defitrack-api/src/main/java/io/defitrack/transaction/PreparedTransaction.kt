@@ -13,28 +13,28 @@ data class PreparedTransaction(
 ) {
 
     companion object {
-        suspend fun selfExecutingTransaction(contractCallProvider: suspend (String) -> EvmContract.ContractCall): suspend (String) -> PreparedTransaction {
+        suspend fun selfExecutingTransaction(mutableFunctionProvider: suspend (String) -> EvmContract.MutableFunction): suspend (String) -> PreparedTransaction {
             return { from ->
                 PreparedTransaction(
-                    contractCallProvider(from), from
+                    mutableFunctionProvider(from), from
                 )
             }
         }
 
-        suspend fun selfExecutingTransaction(contractCallProvider: suspend () -> EvmContract.ContractCall): suspend (String) -> PreparedTransaction {
+        suspend fun selfExecutingTransaction(mutableFunctionProvider: suspend () -> EvmContract.MutableFunction): suspend (String) -> PreparedTransaction {
             return { from ->
                 PreparedTransaction(
-                    contractCallProvider(), from
+                    mutableFunctionProvider(), from
                 )
             }
         }
     }
 
-    constructor(contractCall: EvmContract.ContractCall, from: String?) :
+    constructor(mutableFunction: EvmContract.MutableFunction, from: String? = null) :
             this(
-                network = contractCall.network.toVO(),
-                function = contractCall.function,
-                to = contractCall.address,
+                network = mutableFunction.network.toVO(),
+                function = mutableFunction.function,
+                to = mutableFunction.address,
                 from = from
             )
 

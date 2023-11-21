@@ -35,7 +35,7 @@ class MiniChefV2Contract(
         }
     }
 
-    fun harvestFunction(pid: Int): (String) -> ContractCall {
+    fun harvestFunction(pid: Int): (String) -> MutableFunction {
         return { user: String ->
             createFunction(
                 "harvest",
@@ -43,7 +43,7 @@ class MiniChefV2Contract(
                     pid.toBigInteger().toUint256(),
                     user.toAddress()
                 )
-            ).toContractCall()
+            ).toMutableFunction()
         }
     }
 

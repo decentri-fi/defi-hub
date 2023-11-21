@@ -22,9 +22,9 @@ class BeefyLaunchPoolContract(
         )
     }
 
-    fun getRewardfn(): ContractCall {
+    fun getRewardfn(): MutableFunction {
         return createFunction(
             "getReward"
-        ).toContractCall()
+        ).toMutableFunction()
     }
 }

@@ -54,13 +54,13 @@ class FeeSharingSystemContract(
         )
     }
 
-    fun harvest(user: String): ContractCall {
+    fun harvest(user: String): MutableFunction {
         return createFunction(
             "harvest",
             listOf(
             ),
             listOf(
             )
-        ).toContractCall()
+        ).toMutableFunction()
     }
 }

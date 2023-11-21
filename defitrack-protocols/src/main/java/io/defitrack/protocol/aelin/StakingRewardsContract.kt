@@ -27,7 +27,7 @@ class StakingRewardsContract(
         )
     }
 
-    fun getRewardFunction(): ContractCall {
-        return createFunction("getReward").toContractCall()
+    fun getRewardFunction(): MutableFunction {
+        return createFunction("getReward").toMutableFunction()
     }
 }

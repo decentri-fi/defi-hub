@@ -25,12 +25,12 @@ open class BalancerGaugeContract(
         )
     }
 
-    fun exitPosition(amount: BigInteger): ContractCall {
+    fun exitPosition(amount: BigInteger): MutableFunction {
         return createFunction(
             "withdraw",
             nonEmptyListOf(amount.toUint256()),
             listOf()
-        ).toContractCall()
+        ).toMutableFunction()
     }
 
     open fun getClaimableRewardFunction(token: String): (String) -> Function {
@@ -46,12 +46,12 @@ open class BalancerGaugeContract(
         }
     }
 
-    fun getClaimRewardsFunction(): ContractCall {
+    fun getClaimRewardsFunction(): MutableFunction {
         return createFunction(
             "claim_rewards",
             emptyList(),
             emptyList()
-        ).toContractCall()
+        ).toMutableFunction()
     }
 
     suspend fun getRewardTokens(): List<String> {

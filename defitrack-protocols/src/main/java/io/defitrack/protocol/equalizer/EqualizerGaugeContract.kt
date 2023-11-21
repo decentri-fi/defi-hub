@@ -30,12 +30,12 @@ class EqualizerGaugeContract(
         }
     }
 
-    fun getRewardFn(): ContractCall {
+    fun getRewardFn(): MutableFunction {
         return createFunction(
             "getReward",
             listOf(),
             listOf()
-        ).toContractCall()
+        ).toMutableFunction()
     }
 
     suspend fun getRewards(): List<String> {

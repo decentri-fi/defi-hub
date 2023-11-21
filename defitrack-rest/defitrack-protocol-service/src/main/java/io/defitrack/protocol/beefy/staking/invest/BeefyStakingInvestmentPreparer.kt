@@ -10,11 +10,11 @@ import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import java.math.BigInteger
 
 
 class BeefyStakingInvestmentPreparer(
-    private val beefyVault: BeefyVaultContract,
-    erC20Resource: ERC20Resource
+    private val beefyVault: BeefyVaultContract, erC20Resource: ERC20Resource
 ) : InvestmentPreparer(erC20Resource) {
 
     override suspend fun getToken(): String {
@@ -29,15 +29,7 @@ class BeefyStakingInvestmentPreparer(
         return beefyVault.blockchainGateway.network
     }
 
-    override suspend fun getInvestmentTransaction(prepareInvestmentCommand: PrepareInvestmentCommand): Deferred<PreparedTransaction?> =
-        coroutineScope {
-            async {
-                val requiredBalance = getInvestmentAmount(prepareInvestmentCommand)
-                PreparedTransaction(
-                    function = beefyVault.depositFunction(requiredBalance),
-                    to = getEntryContract(),
-                    network = beefyVault.blockchainGateway.network.toVO()
-                )
-            }
-        }
+    override suspend fun getInvestmentTransaction(user: String, amount: BigInteger): PreparedTransaction {
+        return PreparedTransaction(beefyVault.depositFunction(amount))
+    }
 }

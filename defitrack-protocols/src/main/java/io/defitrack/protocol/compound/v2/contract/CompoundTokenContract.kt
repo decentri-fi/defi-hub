@@ -25,12 +25,12 @@ open class CompoundTokenContract(
         )
     }
 
-    fun mintFunction(amount: BigInteger): Function {
+    fun mintFunction(amount: BigInteger): MutableFunction {
         return createFunction(
             "mint",
             listOf(amount.toUint256()),
             emptyList()
-        )
+        ).toMutableFunction()
     }
 
     val cash: Deferred<BigInteger> = constant("getCash", uint256())

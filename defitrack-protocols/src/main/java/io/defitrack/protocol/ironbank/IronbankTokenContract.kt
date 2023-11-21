@@ -15,12 +15,11 @@ class IronbankTokenContract(
     ethereumContractAccessor, address
 ) {
 
-    fun mintFunction(amount: BigInteger): Function {
+    fun mintFunction(amount: BigInteger): MutableFunction {
         return createFunction(
             "mint",
-            listOf(amount.toUint256()),
-            emptyList()
-        )
+            listOf(amount.toUint256())
+        ).toMutableFunction()
     }
 
     suspend fun cash(): BigInteger {

@@ -12,10 +12,10 @@ class RewardRouterContract(
     val feeQlpTracker = constant<String>("feeQlpTracker", TypeUtils.address())
     val qlp = constant<String>("qlp", TypeUtils.address())
 
-    fun claimFn(user: String): ContractCall {
+    fun claimFn(user: String): MutableFunction {
         return createFunction(
             "claim",
             listOf(user.toAddress()),
-        ).toContractCall()
+        ).toMutableFunction()
     }
 }

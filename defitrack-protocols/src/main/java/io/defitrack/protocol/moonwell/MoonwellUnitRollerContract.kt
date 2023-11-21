@@ -10,14 +10,14 @@ class MoonwellUnitRollerContract(
 ) : CompoundComptrollerContract(blockchainGateway, address) {
 
 
-    fun claimReward(user: String): ContractCall {
+    fun claimReward(user: String): MutableFunction {
         return createFunction(
             "claimReward",
             inputs = listOf(
                 user.toAddress()
             ),
             outputs = emptyList()
-        ).toContractCall()
+        ).toMutableFunction()
     }
 
     val rewardDistributor = constant<String>("rewardDistributor", TypeUtils.address())

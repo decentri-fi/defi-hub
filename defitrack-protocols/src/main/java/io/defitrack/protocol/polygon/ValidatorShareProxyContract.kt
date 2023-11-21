@@ -1,6 +1,5 @@
 package io.defitrack.protocol.polygon
 
-import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
@@ -13,10 +12,10 @@ class ValidatorShareProxyContract(
     blockchainGateway, address
 ) {
 
-    fun withdrawRewards(): ContractCall {
+    fun withdrawRewards(): MutableFunction {
         return createFunction(
             "withdrawRewards",
-        ).toContractCall()
+        ).toMutableFunction()
     }
 
     fun getLiquidRewards(user: String): Function {

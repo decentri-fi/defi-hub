@@ -17,7 +17,7 @@ class AutoEarnVaultContract(
     blockchainGateway, address
 ) {
 
-    fun getRewardFn(pid: Int): (String) -> ContractCall {
+    fun getRewardFn(pid: Int): (String) -> MutableFunction {
         return { _: String ->
             createFunction(
                 "withdraw",
@@ -25,7 +25,7 @@ class AutoEarnVaultContract(
                     pid.toBigInteger().toUint256(),
                     BigInteger.ZERO.toUint256(),
                 )
-            ).toContractCall()
+            ).toMutableFunction()
         }
     }
 
