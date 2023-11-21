@@ -425,7 +425,7 @@ enum class Protocol(
         logo = "curve.png",
         slug = "curve",
         website = "https://curve.fi",
-        primitives = listOf(POOLING, FARMING, CLAIMABLES),
+        primitives = listOf(POOLING, FARMING, CLAIMABLES, LENDING),
         networks = listOf(ETHEREUM),
         company = Company.CURVE
     ),

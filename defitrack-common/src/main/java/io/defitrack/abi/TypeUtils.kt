@@ -17,6 +17,9 @@ class TypeUtils {
         fun BigInteger.toUint256(): Uint256 {
             return Uint256(this)
         }
+        fun Int.toUint256(): Uint256 {
+            return Uint256(this.toBigInteger())
+        }
 
         fun BigInteger.toUint8(): Uint8 {
             return Uint8(this)
