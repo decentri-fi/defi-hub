@@ -13,7 +13,7 @@ class BulkConstantResolver(
     private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) {
 
-    suspend fun resolve(contracts: List<EvmContract>) {
+    suspend fun <T: EvmContract> resolve(contracts: List<T>): List<T> {
         val evmContracts = contracts.groupBy {
             it.blockchainGateway.network
         }
@@ -21,6 +21,8 @@ class BulkConstantResolver(
         evmContracts.forEach { (network, contracts) ->
             resolveForNetwork(contracts, network)
         }
+
+        return contracts
     }
 
     private suspend fun resolveForNetwork(contracts: List<EvmContract>, network: Network) {

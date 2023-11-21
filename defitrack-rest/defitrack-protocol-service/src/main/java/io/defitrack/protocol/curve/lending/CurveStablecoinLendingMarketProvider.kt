@@ -2,12 +2,14 @@ package io.defitrack.protocol.curve.lending
 
 import arrow.core.Either
 import arrow.fx.coroutines.parMapNotNull
+import io.defitrack.BulkConstantResolver
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
+import io.defitrack.market.position.Position
+import io.defitrack.market.position.PositionFetcher
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.crv.contract.stablecoin.CurveControllerFactoryContract
@@ -15,11 +17,15 @@ import io.defitrack.protocol.crv.contract.stablecoin.LendingControllerContract
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import org.springframework.stereotype.Component
+import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigDecimal
+import java.math.BigInteger
 
 @ConditionalOnCompany(Company.CURVE)
 @Component
-class CurveStablecoinLendingMarketProvider : LendingMarketProvider() {
+class CurveStablecoinLendingMarketProvider(
+    private val bulkConstantResolver: BulkConstantResolver
+) : LendingMarketProvider() {
 
     val factoryAddress = "0xC9332fdCB1C491Dcc683bAe86Fe3cb70360738BC"
 
@@ -29,7 +35,12 @@ class CurveStablecoinLendingMarketProvider : LendingMarketProvider() {
             factoryAddress
         )
 
-        factory.controllers().parMapNotNull { controller ->
+        bulkConstantResolver.resolve(
+            factory.controllers()
+                .map {
+                    LendingControllerContract(getBlockchainGateway(), it)
+                }
+        ).parMapNotNull { controller ->
             Either.catch {
                 createMarket(controller)
             }.fold(
@@ -44,8 +55,7 @@ class CurveStablecoinLendingMarketProvider : LendingMarketProvider() {
         }
     }
 
-    suspend fun createMarket(address: String): LendingMarket {
-        val controller = LendingControllerContract(getBlockchainGateway(), address)
+    suspend fun createMarket(controller: LendingControllerContract): LendingMarket {
         val collateral = getToken(controller.collateral.await())
 
         return create(
@@ -54,7 +64,21 @@ class CurveStablecoinLendingMarketProvider : LendingMarketProvider() {
             poolType = "crv",
             marketToken = null,
             token = collateral,
-            totalSupply = refreshable { BigDecimal.ZERO }
+            totalSupply = refreshable { BigDecimal.ZERO },
+            positionFetcher = PositionFetcher(
+                controller.address,
+                controller::userState
+            ) {
+                val bal = (it.first().value as List<Uint256>).first().value as BigInteger
+                if (bal > BigInteger.ZERO) {
+                    Position(
+                        bal,
+                        bal
+                    )
+                } else {
+                    Position.ZERO
+                }
+            }
         )
     }
 
