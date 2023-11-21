@@ -8,7 +8,7 @@ import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Function
 
-class CurvePolygonGaugeContract(
+class CurveL2GaugeContract(
     blockchainGateway: BlockchainGateway,
     address: String
 ) : EvmContract(

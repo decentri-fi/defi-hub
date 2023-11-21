@@ -2,8 +2,6 @@ package io.defitrack.protocol.curve.staking
 
 import arrow.core.Either
 import arrow.fx.coroutines.parMapNotNull
-import io.defitrack.claimable.domain.ClaimableRewardFetcher
-import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable
@@ -15,8 +13,7 @@ import io.defitrack.market.position.PositionFetcher
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.crv.contract.CurveEthereumGaugeControllerContract
-import io.defitrack.protocol.crv.contract.CurvePolygonGaugeContract
-import io.defitrack.transaction.PreparedTransaction
+import io.defitrack.protocol.crv.contract.CurveL2GaugeContract
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
 import java.math.BigInteger
@@ -72,7 +69,7 @@ class CurveEthereumGaugeMarketProvider : FarmingMarketProvider() {
     }
 
     private suspend fun CurveEthereumGaugeMarketProvider.normalGauge(gauge: String): FarmingMarket {
-        val contract = CurvePolygonGaugeContract(
+        val contract = CurveL2GaugeContract(
             getBlockchainGateway(),
             gauge
         )
