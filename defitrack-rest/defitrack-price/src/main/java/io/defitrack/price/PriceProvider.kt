@@ -21,9 +21,13 @@ class PriceProvider(
 
     suspend fun getPrice(token: TokenInformationVO): BigDecimal {
         return priceCache.get(token.address.lowercase() + "-" + token.network.name) {
-            externalPriceServices.find {
-                it.appliesTo(token)
-            }?.getPrice(token)
+            externalPriceServices
+                .sortedBy {
+                    it.order()
+                }.reversed()
+                .find {
+                    it.appliesTo(token)
+                }?.getPrice(token)
                 ?: fromCoingecko(token)
                 ?: BigDecimal.ZERO
         }

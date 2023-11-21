@@ -12,6 +12,8 @@ class DecentrifiUniswapV3PriceService(
     private val repository: DecentrifiUniswapV3UnderlyingPriceRepository
 ) : ExternalPriceService {
 
+    override fun order(): Int = 2
+
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override suspend fun appliesTo(token: TokenInformationVO): Boolean {

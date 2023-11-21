@@ -10,6 +10,10 @@ import java.math.BigDecimal
 @Component
 class StablecoinPriceProvider(private val erC20Resource: ERC20Resource) : ExternalPriceService {
 
+    override fun order(): Int {
+        return 3
+    }
+
     val stableCoins = AsyncUtils.lazyAsync {
         mapOf(
             Network.OPTIMISM to listOf(

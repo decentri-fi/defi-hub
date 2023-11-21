@@ -4,6 +4,9 @@ import io.defitrack.erc20.TokenInformationVO
 import java.math.BigDecimal
 
 interface ExternalPriceService {
+
+    fun order() = 0
+
     fun getOracleName(): String = "unknown oracle"
     suspend fun getPrice(tokenInformationVO: TokenInformationVO): BigDecimal
 
