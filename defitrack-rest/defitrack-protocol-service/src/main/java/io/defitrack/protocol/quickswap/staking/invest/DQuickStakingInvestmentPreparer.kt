@@ -20,7 +20,7 @@ class DQuickStakingInvestmentPreparer(
 
     val quick = "0x831753dd7087cac61ab5644b308642cc1c33dc13"
 
-    override suspend fun getToken(): String {
+    override suspend fun getWant(): String {
         return quick
     }
 

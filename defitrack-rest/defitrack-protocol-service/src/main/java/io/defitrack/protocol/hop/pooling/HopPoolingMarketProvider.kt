@@ -25,7 +25,7 @@ abstract class HopPoolingMarketProvider(
 ) : PoolingMarketProvider() {
 
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
-        hopService.getLps(getNetwork()).parMapNotNull(EmptyCoroutineContext, 12) { hopLpToken ->
+        hopService.getLps(getNetwork()).parMapNotNull(concurrency = 12) { hopLpToken ->
             toPoolingMarketElement(getBlockchainGateway(), hopLpToken)
                 .mapLeft {
                     logger.error("Unable to get pooling market: {}", it.message)

@@ -19,7 +19,7 @@ class QiDaoPolygonVaultLendingMarketProvider(
     private val qidaoPolygonService: QidaoPolygonService,
 ) : LendingMarketProvider() {
     override suspend fun fetchMarkets(): List<LendingMarket> {
-        return qidaoPolygonService.provideVaults().parMap {
+        return qidaoPolygonService.provideVaults().parMap(concurrency = 12) {
 
             val vault = QidaoVaultContract(
                 getBlockchainGateway(),
@@ -43,7 +43,6 @@ class QiDaoPolygonVaultLendingMarketProvider(
                     "address" to vault.address,
                     "vaultContract" to vault
                 ),
-                marketToken = null,
                 totalSupply = refreshable(BigDecimal.ZERO)
             )
         }

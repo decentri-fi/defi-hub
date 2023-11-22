@@ -1,5 +1,6 @@
 package io.defitrack.protocol.quickswap.staking
 
+import arrow.core.nel
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
@@ -31,39 +32,34 @@ class QuickZkEvmRewardRouterFarmingMarketProvider : FarmingMarketProvider() {
             getBlockchainGateway(), contract.feeQlpTracker.await()
         )
 
-        val rewardTokens = feeTrackerContract.getAllRewardTokens().map { getToken(it).toFungibleToken() }
+        val rewardTokens = feeTrackerContract.getAllRewardTokens().map { getToken(it) }
+        val stakedToken = getToken(contract.qlp.await())
 
-        val stakedToken = getToken(contract.qlp.await()).toFungibleToken()
+        return create(
+            name = "Fee QLP",
+            identifier = rewardRouter,
+            stakedToken = stakedToken,
+            rewardTokens = rewardTokens,
+            claimableRewardFetcher = ClaimableRewardFetcher(
+                rewardTokens.map { token ->
+                    Reward(
+                        token = token,
+                        contractAddress = feeTrackerContract.address,
+                        getRewardFunction = feeTrackerContract::claimableFn
+                    ) { result, _ ->
+                        val addresses = (result[0].value as List<Address>).map { it.value }
+                        val amounts = (result[1].value as List<Uint256>).map { it.value }
 
-        return listOf(
-            create(
-                name = "Fee QLP",
-                identifier = rewardRouter,
-                stakedToken = stakedToken,
-                rewardTokens = rewardTokens,
-                claimableRewardFetcher = ClaimableRewardFetcher(
-                    rewardTokens.map { token ->
-                        Reward(
-                            token = token,
-                            contractAddress = feeTrackerContract.address,
-                            getRewardFunction = { user ->
-                                feeTrackerContract.claimableFn(user)
-                            }
-                        ) { result, _ ->
-                            val addresses = (result[0].value as List<Address>).map { it.value }
-                            val amounts = (result[1].value as List<Uint256>).map { it.value }
+                        val claimables = addresses.mapIndexed { index, address ->
+                            address.lowercase() to amounts[index]
+                        }.toMap()
 
-                            val claimables = addresses.mapIndexed { index, address ->
-                                address.lowercase() to amounts[index]
-                            }.toMap()
-
-                            claimables.getOrDefault(token.address.lowercase(), BigInteger.ZERO)
-                        }
-                    },
-                    preparedTransaction = selfExecutingTransaction(contract::claimFn)
-                )
+                        claimables.getOrDefault(token.address.lowercase(), BigInteger.ZERO)
+                    }
+                },
+                preparedTransaction = selfExecutingTransaction(contract::claimFn)
             )
-        )
+        ).nel()
     }
 
     override fun getProtocol(): Protocol {

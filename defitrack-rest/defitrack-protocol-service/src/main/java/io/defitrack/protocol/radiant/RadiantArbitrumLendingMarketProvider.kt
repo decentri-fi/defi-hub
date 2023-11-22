@@ -1,5 +1,6 @@
 package io.defitrack.protocol.radiant
 
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
@@ -22,65 +23,55 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.RADIANT)
-class RadiantArbitrumLendingMarketProvider(
-    blockchainGatewayProvider: BlockchainGatewayProvider,
-) : LendingMarketProvider() {
+class RadiantArbitrumLendingMarketProvider : LendingMarketProvider() {
 
-    val lendingPoolAddressesProviderContract = lazyAsync {
-        LendingPoolAddressProviderContract(
-            blockchainGatewayProvider.getGateway(getNetwork()),
-            "0x091d52cace1edc5527c99cdcfa6937c1635330e4"
-        )
-    }
-
-    val lendingPoolContract = lazyAsync {
-        LendingPoolContract(
-            blockchainGatewayProvider.getGateway(getNetwork()),
-            lendingPoolAddressesProviderContract.await().lendingPoolAddress()
-        )
-    }
 
     override suspend fun produceMarkets(): Flow<LendingMarket> = channelFlow {
-        lendingPoolContract.await().getReservesList()
-            .forEach { market ->
-                launch {
-                    throttled {
-                        try {
-                            val reserve = lendingPoolContract.await().getReserveData(market)
-                            val ctokenContract = CompoundTokenContract(
-                                getBlockchainGateway(),
-                                reserve.aTokenAddress
-                            )
-                            val lendingToken = getToken(market)
-                            send(
-                                create(
-                                    identifier = ctokenContract.address,
-                                    name = ctokenContract.readName(),
-                                    token = lendingToken.toFungibleToken(),
-                                    poolType = "compound-lendingpool",
-                                    positionFetcher = PositionFetcher(
-                                        ctokenContract.address,
-                                        { user -> ctokenContract.scaledBalanceOfFn(user) },
-                                    ),
-                                    investmentPreparer = CompoundLendingInvestmentPreparer(
-                                        ctokenContract,
-                                        getERC20Resource()
-                                    ),
-                                    marketToken = getToken(ctokenContract.address).toFungibleToken(),
-                                    erc20Compatible = true,
-                                    totalSupply = refreshable {
-                                        with(getToken(ctokenContract.address)) {
-                                            totalSupply.asEth(decimals)
-                                        }
-                                    }
-                                )
-                            )
-                        } catch (ex: Exception) {
-                            logger.error("Unable to fetch lending market with address $market", ex)
-                        }
-                    }
+        val lendingPoolAddressesProviderContract = LendingPoolAddressProviderContract(
+            getBlockchainGateway(),
+            "0x091d52cace1edc5527c99cdcfa6937c1635330e4"
+        )
+        val contract = LendingPoolContract(
+            getBlockchainGateway(),
+            lendingPoolAddressesProviderContract.lendingPoolAddress()
+        )
+
+        contract.getReservesList()
+            .parMapNotNull(concurrency = 8) { market ->
+                createMarket(market, contract)
+            }.forEach {
+                send(it)
+            }
+    }
+
+    private suspend fun createMarket(market: String, contract: LendingPoolContract): LendingMarket {
+        val reserve = contract.getReserveData(market)
+        val ctokenContract = CompoundTokenContract(
+            getBlockchainGateway(),
+            reserve.aTokenAddress
+        )
+        val lendingToken = getToken(market)
+        return create(
+            identifier = ctokenContract.address,
+            name = ctokenContract.readName(),
+            token = lendingToken,
+            poolType = "compound-lendingpool",
+            positionFetcher = PositionFetcher(
+                ctokenContract.address,
+                ctokenContract::scaledBalanceOfFn,
+            ),
+            investmentPreparer = CompoundLendingInvestmentPreparer(
+                ctokenContract,
+                getERC20Resource()
+            ),
+            marketToken = getToken(ctokenContract.address).toFungibleToken(),
+            erc20Compatible = true,
+            totalSupply = refreshable {
+                with(getToken(ctokenContract.address)) {
+                    totalSupply.asEth(decimals)
                 }
             }
+        )
     }
 
     override fun getProtocol(): Protocol {

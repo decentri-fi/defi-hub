@@ -42,7 +42,6 @@ class QiDaoArbitrumVaultProvider(
                     "address" to vault.address,
                     "vaultContract" to vault
                 ),
-                marketToken = null,
                 totalSupply = refreshable(BigDecimal.ZERO)
             )
         }

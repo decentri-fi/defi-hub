@@ -1,5 +1,7 @@
 package io.defitrack.protocol.quickswap.staking
 
+import arrow.core.Either
+import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
@@ -27,16 +29,16 @@ class QuickswapDualFarmingMarketProvider(
 ) : FarmingMarketProvider() {
 
     val dualStakingFactory = lazyAsync {
-        DualRewardFactoryContract(
-            getBlockchainGateway(),
-            quickswapService.getDualRewardFactory(),
-        )
+
     }
 
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
-
-        val dualPools = dualStakingFactory.await().getStakingTokens().map {
-            dualStakingFactory.await().stakingRewardsInfoByStakingToken(it)
+        val contract = DualRewardFactoryContract(
+            getBlockchainGateway(),
+            quickswapService.getDualRewardFactory(),
+        )
+        val dualPools = contract.getStakingTokens().map {
+            contract.stakingRewardsInfoByStakingToken(it)
         }
 
         dualPools.map {
@@ -45,37 +47,40 @@ class QuickswapDualFarmingMarketProvider(
                 it
             )
         }.parMapNotNull(EmptyCoroutineContext, 12) { pool ->
-            try {
-                val stakedToken = getToken(pool.stakingTokenAddress())
-                val rewardTokenA = getToken(pool.rewardsTokenAddressA())
-                val rewardTokenB = getToken(pool.rewardsTokenAddressB())
-
-                val ended = Date(pool.periodFinish().toLong() * 1000).before(Date())
-
-                create(
-                    identifier = pool.address,
-                    name = "${stakedToken.name} Dual Reward Pool",
-                    stakedToken = stakedToken,
-                    rewardTokens = listOf(
-                        rewardTokenA,
-                        rewardTokenB
-                    ),
-                    marketSize = refreshable {
-                        getMarketSize(stakedToken.toFungibleToken(), pool.address)
-                    },
-                    positionFetcher = PositionFetcher(
-                        pool.address,
-                        Companion::balanceOfFunction
-                    ),
-                    deprecated = ended
-                )
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                null
-            }
+            catch {
+                createMarket(pool)
+            }.mapLeft {
+                logger.error("Error while fetching quickswap market", it)
+            }.getOrNull()
         }.forEach {
             send(it)
         }
+    }
+
+    private suspend fun createMarket(pool: QuickswapDualRewardPoolContract): FarmingMarket {
+        val stakedToken = getToken(pool.stakingTokenAddress())
+        val rewardTokenA = getToken(pool.rewardsTokenAddressA())
+        val rewardTokenB = getToken(pool.rewardsTokenAddressB())
+
+        val ended = Date(pool.periodFinish().toLong() * 1000).before(Date())
+
+        return create(
+            identifier = pool.address,
+            name = "${stakedToken.name} Dual Reward Pool",
+            stakedToken = stakedToken,
+            rewardTokens = listOf(
+                rewardTokenA,
+                rewardTokenB
+            ),
+            marketSize = refreshable {
+                getMarketSize(stakedToken.toFungibleToken(), pool.address)
+            },
+            positionFetcher = PositionFetcher(
+                pool.address,
+                Companion::balanceOfFunction
+            ),
+            deprecated = ended
+        )
     }
 
     override fun getProtocol(): Protocol {

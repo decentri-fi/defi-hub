@@ -1,7 +1,9 @@
 package io.defitrack.protocol.ovix
 
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
@@ -26,24 +28,16 @@ import java.math.BigInteger
 @ConditionalOnCompany(Company.OVIX)
 class OvixZkEVMLendingMarketProvider : LendingMarketProvider() {
 
-    val deferredComptroller = AsyncUtils.lazyAsync {
-        getComptroller()
-    }
-
-    override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
-        deferredComptroller.await().getMarkets().map { market ->
+    override suspend fun fetchMarkets(): List<LendingMarket> {
+        getComptroller().getMarkets().map { market ->
             OvixUnitRollerContract(
                 getBlockchainGateway(),
                 market
             )
         }
-        getTokenContracts().map {
-            async {
-                throttled {
-                    toLendingMarket(it)
-                }
-            }
-        }.awaitAll().filterNotNull()
+        return getTokenContracts().parMapNotNull(concurrency = 8) {
+            toLendingMarket(it)
+        }
     }
 
     private suspend fun getTokenContracts(): List<CompoundTokenContract> {

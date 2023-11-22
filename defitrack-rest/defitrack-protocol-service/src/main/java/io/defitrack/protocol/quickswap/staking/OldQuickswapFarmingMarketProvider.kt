@@ -40,55 +40,40 @@ class OldQuickswapFarmingMarketProvider(
 
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
         val contract = rewardFactoryContract.await()
-        val rewardPools = contract.readMultiCall(
-            contract.getStakingTokens().map {
-                contract.stakingRewardsInfoByStakingToken(it)
-            }
-        ).filter { it.success }
-            .map { it.data[0].value as String }
 
-        rewardPools.map {
+        contract.getRewardPools().map {
             QuickswapRewardPoolContract(
                 getBlockchainGateway(),
                 it
             )
         }.map { rewardPool ->
-            async {
-                try {
-                    val stakedToken = getToken(rewardPool.stakingTokenAddress())
-                    val rewardToken = getToken(rewardPool.rewardsTokenAddress())
-                    create(
-                        identifier = rewardPool.address,
-                        name = "${stakedToken.name} Reward Pool (Old)",
-                        stakedToken = stakedToken.toFungibleToken(),
-                        rewardTokens = listOf(rewardToken.toFungibleToken()),
-                        marketSize = refreshable {
-                            getMarketSize(stakedToken, rewardPool)
-                        },
-                        claimableRewardFetcher = ClaimableRewardFetcher(
-                            Reward(
-                                token = rewardToken.toFungibleToken(),
-                                rewardPool.address,
-                                { user ->
-                                    rewardPool.earned(user)
-                                },
-                            ),
-                            preparedTransaction = selfExecutingTransaction(rewardPool::getRewardFunction)
-                        ),
-                        positionFetcher = defaultPositionFetcher(
-                            rewardPool.address
-                        ),
-                        deprecated = true,
-                        exitPositionPreparer = prepareExit {
-                            rewardPool.exitFunction(it.amount)
-                        }
-                    )
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                    null
+            val stakedToken = getToken(rewardPool.stakingTokenAddress.await())
+            val rewardToken = getToken(rewardPool.rewardsTokenAddress.await())
+            create(
+                identifier = rewardPool.address,
+                name = "${stakedToken.name} Reward Pool (Old)",
+                stakedToken = stakedToken,
+                rewardToken = rewardToken,
+                marketSize = refreshable {
+                    getMarketSize(stakedToken, rewardPool)
+                },
+                claimableRewardFetcher = ClaimableRewardFetcher(
+                    Reward(
+                        token = rewardToken,
+                        rewardPool.address,
+                        rewardPool::earned,
+                    ),
+                    preparedTransaction = selfExecutingTransaction(rewardPool::getRewardFunction)
+                ),
+                positionFetcher = defaultPositionFetcher(
+                    rewardPool.address
+                ),
+                deprecated = true,
+                exitPositionPreparer = prepareExit {
+                    rewardPool.exitFunction(it.amount)
                 }
-            }
-        }.awaitAll().filterNotNull()
+            )
+        }
     }
 
     override fun getProtocol(): Protocol {

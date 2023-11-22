@@ -23,7 +23,7 @@ class AaveV2LendingInvestmentPreparer(
         return PreparedTransaction(lendingPoolContract.depositFunction(token, amount))
     }
 
-    override suspend fun getToken(): String {
+    override suspend fun getWant(): String {
         return token
     }
 

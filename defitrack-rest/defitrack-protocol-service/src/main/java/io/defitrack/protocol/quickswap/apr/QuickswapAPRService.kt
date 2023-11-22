@@ -90,7 +90,7 @@ class QuickswapAPRService(
         )
 
         val quickRewardsPerYear =
-            (contract.rewardRate().times(BigInteger.valueOf(BLOCKS_PER_YEAR))).toBigDecimal()
+            (contract.rewardRate.await().times(BigInteger.valueOf(BLOCKS_PER_YEAR))).toBigDecimal()
                 .divide(BigDecimal.TEN.pow(18))
         val usdRewardsPerYear = priceResource.calculatePrice(
             PriceRequest(
@@ -100,7 +100,7 @@ class QuickswapAPRService(
             )
         ).toBigDecimal()
 
-        val stakingTokenAddress = contract.stakingTokenAddress()
+        val stakingTokenAddress = contract.stakingTokenAddress.await()
         val reserveUsd = quickswapService.getPairs().find {
             it.id.lowercase() == stakingTokenAddress
         }?.reserveUSD ?: BigDecimal.ZERO

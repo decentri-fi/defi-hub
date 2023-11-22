@@ -51,15 +51,17 @@ class QidaoFarmV2Contract(
         )[0].value as String
     }
 
-    fun userInfoFunction(address: String, poolIndex: Int): Function {
-        return createFunction(
-            "userInfo",
-            inputs = listOf(poolIndex.toBigInteger().toUint256(), address.toAddress()),
-            outputs = listOf(
-                uint256(),
-                uint256(),
+    fun userInfoFunction(poolIndex: Int): (String) -> Function {
+        return { user ->
+            createFunction(
+                "userInfo",
+                inputs = listOf(poolIndex.toBigInteger().toUint256(), user.toAddress()),
+                outputs = listOf(
+                    uint256(),
+                    uint256(),
+                )
             )
-        )
+        }
     }
 
 }

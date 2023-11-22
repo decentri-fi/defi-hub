@@ -1,7 +1,5 @@
 package io.defitrack.market.farming.domain
 
-import arrow.fx.coroutines.parMapNotNull
-import arrow.fx.coroutines.parZip
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.exception.TransactionPreparationException
@@ -9,7 +7,6 @@ import io.defitrack.invest.PrepareInvestmentCommand
 import io.defitrack.network.toVO
 import io.defitrack.token.ERC20Resource
 import io.defitrack.transaction.PreparedTransaction
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -18,18 +15,21 @@ import java.math.BigInteger
 abstract class InvestmentPreparer(
     private val erC20Resource: ERC20Resource
 ) {
-    suspend fun prepare(prepareInvestmentCommand: PrepareInvestmentCommand): List<PreparedTransaction> {
-        return listOfNotNull(
-            getAllowanceTransaction(prepareInvestmentCommand),
-            getInvestmentTransaction(
-                prepareInvestmentCommand.user,
-                getInvestmentAmount(prepareInvestmentCommand)
-            )
-        )
-    }
+    suspend fun prepare(prepareInvestmentCommand: PrepareInvestmentCommand): List<PreparedTransaction> =
+        coroutineScope {
+            listOf(
+                async { getAllowanceTransaction(prepareInvestmentCommand) },
+                async {
+                    getInvestmentTransaction(
+                        prepareInvestmentCommand.user,
+                        getInvestmentAmount(prepareInvestmentCommand)
+                    )
+                }
+            ).awaitAll().filterNotNull()
+        }
 
     abstract suspend fun getInvestmentTransaction(user: String, amount: BigInteger): PreparedTransaction
-    abstract suspend fun getToken(): String
+    abstract suspend fun getWant(): String
     abstract fun getEntryContract(): String
 
     abstract fun getNetwork(): Network
@@ -37,7 +37,7 @@ abstract class InvestmentPreparer(
     suspend fun getAllowance(prepareInvestmentCommand: PrepareInvestmentCommand) =
         erC20Resource.getAllowance(
             getNetwork(),
-            getToken(),
+            getWant(),
             prepareInvestmentCommand.user,
             getEntryContract()
         )
@@ -46,7 +46,7 @@ abstract class InvestmentPreparer(
     private suspend fun getInvestmentAmount(prepareInvestmentCommand: PrepareInvestmentCommand): BigInteger {
         return prepareInvestmentCommand.amount ?: erC20Resource.getBalance(
             getNetwork(),
-            getToken(),
+            getWant(),
             prepareInvestmentCommand.user
         )
     }
@@ -56,7 +56,7 @@ abstract class InvestmentPreparer(
         val investmentAmount = getInvestmentAmount(prepareInvestmentCommand)
         val balance = erC20Resource.getBalance(
             getNetwork(),
-            getToken(),
+            getWant(),
             prepareInvestmentCommand.user
         )
 
@@ -72,10 +72,8 @@ abstract class InvestmentPreparer(
 
         return if (allowance < investmentAmount) {
             PreparedTransaction(
-                function = ERC20Contract.fullApproveFunction(
-                    getEntryContract()
-                ),
-                to = getToken(),
+                function = ERC20Contract.fullApproveFunction(getEntryContract()),
+                to = getWant(),
                 network = getNetwork().toVO()
             )
         } else {

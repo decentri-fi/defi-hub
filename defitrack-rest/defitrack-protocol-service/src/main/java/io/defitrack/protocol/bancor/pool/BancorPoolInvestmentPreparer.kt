@@ -22,7 +22,7 @@ class BancorPoolInvestmentPreparer(
         return PreparedTransaction(bancorNetworkContract.depositFunction(underlyingToken, amount))
     }
 
-    override suspend fun getToken(): String {
+    override suspend fun getWant(): String {
         return underlyingToken
     }
 

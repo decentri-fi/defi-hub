@@ -1,5 +1,6 @@
 package io.defitrack.protocol.blur.pooling
 
+import arrow.core.nel
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
@@ -32,25 +33,21 @@ class BlurDepositPoolingMarketProvider : PoolingMarketProvider() {
     override suspend fun fetchMarkets(): List<PoolingMarket> {
         val contract = blurEthDepositContract.await()
 
-        return coroutineScope {
-            val ether = getToken("0x0")
-            listOf(
-                create(
-                    name = "BlurEth",
-                    identifier = blurEthDeposit,
-                    marketSize = refreshable {
-                        calculateMarketSize()
-                    },
-                    address = blurEthDeposit,
-                    symbol = "blurEth",
-                    tokens = listOf(ether.toFungibleToken()),
-                    totalSupply = contract.totalSupply().map {
-                        it.asEth(contract.readDecimals().toInt())
-                    },
-                    positionFetcher = defaultPositionFetcher(blurEthDeposit),
-                )
-            )
-        }
+        val ether = getToken("0x0")
+        return create(
+            name = "BlurEth",
+            identifier = blurEthDeposit,
+            marketSize = refreshable {
+                calculateMarketSize()
+            },
+            address = blurEthDeposit,
+            symbol = "blurEth",
+            tokens = listOf(ether.toFungibleToken()),
+            totalSupply = contract.totalSupply().map {
+                it.asEth(contract.readDecimals().toInt())
+            },
+            positionFetcher = defaultPositionFetcher(blurEthDeposit),
+        ).nel()
     }
 
     override fun getProtocol(): Protocol {

@@ -1,5 +1,8 @@
 package io.defitrack.protocol.ironbank.lending
 
+import arrow.core.Either
+import arrow.core.Either.Companion.catch
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.map
@@ -24,67 +27,61 @@ abstract class IronBankLendingMarketProvider(
     private val ironBankService: IronBankService,
 ) : LendingMarketProvider() {
 
-    override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
-        getTokenContracts().map {
-            async {
-                throttled {
-                    toLendingMarket(it)
-                }
-            }
-        }.awaitAll().filterNotNull()
+    override suspend fun fetchMarkets(): List<LendingMarket> {
+        return getTokenContracts().parMapNotNull(concurrency = 8) { contract ->
+            catch {
+                toLendingMarket(contract)
+            }.mapLeft {
+                logger.error("Unable to get lending market {}: {}", contract.address, it.message)
+                null
+            }.getOrNull()
+        }
     }
 
-    private suspend fun toLendingMarket(ctokenContract: IronbankTokenContract): LendingMarket? = coroutineScope {
-        try {
-            val exchangeRate = lazyAsync {
-                ctokenContract.exchangeRate()
-            }
-            getToken(ctokenContract.underlyingAddress()).let { underlyingToken ->
-                val ctoken = getToken(ctokenContract.address)
-                create(
-                    identifier = ctokenContract.address,
-                    name = ctoken.name,
-                    token = underlyingToken,
-                    marketSize = refreshable {
-                        getPriceResource().calculatePrice(
-                            PriceRequest(
-                                underlyingToken.address,
-                                getNetwork(),
-                                ctokenContract.cash()
-                                    .add(ctokenContract.totalBorrows())
-                                    .asEth(underlyingToken.decimals)
-                            )
-                        ).toBigDecimal()
-                    },
-                    poolType = "iron-bank-lendingpool",
-                    positionFetcher = PositionFetcher(
-                        ctokenContract.address,
-                        ::balanceOfFunction
-                    ) { retVal ->
-                        val tokenBalance = retVal[0].value as BigInteger
-                        if (tokenBalance > BigInteger.ZERO) {
-                            Position(
-                                tokenBalance.times(exchangeRate.await()).asEth(ctoken.decimals).toBigInteger(),
-                                tokenBalance
-                            )
-                        } else {
-                            Position.ZERO
-                        }
-                    },
-                    investmentPreparer = CompoundLendingInvestmentPreparer(
-                        ctokenContract,
-                        getERC20Resource()
-                    ),
-                    marketToken = ctoken,
-                    erc20Compatible = true,
-                    totalSupply = ctokenContract.totalSupply().map {
-                        it.asEth(ctoken.decimals)
+    private suspend fun toLendingMarket(ctokenContract: IronbankTokenContract): LendingMarket {
+        return getToken(ctokenContract.underlyingAddress()).let { underlyingToken ->
+            val ctoken = getToken(ctokenContract.address)
+            create(
+                identifier = ctokenContract.address,
+                name = ctoken.name,
+                token = underlyingToken,
+                marketSize = refreshable {
+                    getPriceResource().calculatePrice(
+                        PriceRequest(
+                            underlyingToken.address,
+                            getNetwork(),
+                            ctokenContract.cash()
+                                .add(ctokenContract.totalBorrows())
+                                .asEth(underlyingToken.decimals)
+                        )
+                    ).toBigDecimal()
+                },
+                poolType = "iron-bank-lendingpool",
+                positionFetcher = PositionFetcher(
+                    ctokenContract.address,
+                    ::balanceOfFunction
+                ) { retVal ->
+                    val tokenBalance = retVal[0].value as BigInteger
+                    if (tokenBalance > BigInteger.ZERO) {
+                        Position(
+                            tokenBalance.times(ctokenContract.exchangeRate.await()).asEth(ctoken.decimals)
+                                .toBigInteger(),
+                            tokenBalance
+                        )
+                    } else {
+                        Position.ZERO
                     }
-                )
-            }
-        } catch (ex: Exception) {
-            logger.error("Unable to get info for iron bank contract ${ctokenContract.address}")
-            null
+                },
+                investmentPreparer = CompoundLendingInvestmentPreparer(
+                    ctokenContract,
+                    getERC20Resource()
+                ),
+                marketToken = ctoken,
+                erc20Compatible = true,
+                totalSupply = ctokenContract.totalSupply().map {
+                    it.asEth(ctoken.decimals)
+                }
+            )
         }
     }
 

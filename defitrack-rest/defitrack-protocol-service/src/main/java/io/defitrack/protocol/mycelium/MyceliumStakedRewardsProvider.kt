@@ -19,10 +19,11 @@ import org.springframework.stereotype.Component
 @Component
 @ConditionalOnCompany(Company.MYCELIUM)
 class MyceliumStakedRewardsProvider : FarmingMarketProvider() {
+    val myCeliumStakingContractAddress = "0xd98d8e458f7ad22dd3c1d7a8b35c74005eb52b0b"
 
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
         val contract = RewardRouter02Contract(
-            getBlockchainGateway(), "0xd98d8e458f7ad22dd3c1d7a8b35c74005eb52b0b"
+            getBlockchainGateway(), myCeliumStakingContractAddress
         )
 
         val mlp = getToken(contract.mlp.await())

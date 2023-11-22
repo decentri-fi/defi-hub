@@ -19,15 +19,12 @@ abstract class GainsStakingMarketProvider(
     private val stakingMarketAddress: String
 ) : FarmingMarketProvider() {
 
-    val deferredContract = lazyAsync {
-        GainsNetworkStakingContract(
+    override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
+        val contract = GainsNetworkStakingContract(
             getBlockchainGateway(),
             stakingMarketAddress
         )
-    }
 
-    override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
-        val contract = deferredContract.await()
         val gns = getToken(contract.gns.await())
         val dai = getToken(contract.dai.await())
 

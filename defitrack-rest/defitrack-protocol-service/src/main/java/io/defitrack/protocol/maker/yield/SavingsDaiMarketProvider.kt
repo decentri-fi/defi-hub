@@ -1,5 +1,6 @@
 package io.defitrack.protocol.maker.yield
 
+import arrow.core.nel
 import arrow.core.nonEmptyListOf
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
@@ -24,21 +25,20 @@ class SavingsDaiMarketProvider : FarmingMarketProvider() {
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         val dai = getToken(daiAddress)
         val contract = SDAiContract(getBlockchainGateway(), sdaiContractAddress)
-        return nonEmptyListOf(
-            create(
-                name = "sDAI",
-                identifier = sdaiContractAddress,
-                stakedToken = dai,
-                rewardTokens = nonEmptyListOf(dai),
-                positionFetcher = PositionFetcher(sdaiContractAddress, ERC20Contract::balanceOfFunction) {
-                    val shares = it[0].value as BigInteger
-                    Position(
-                        contract.convertToAssets(shares),
-                        shares
-                    )
-                }
-            )
-        )
+
+        return create(
+            name = "sDAI",
+            identifier = sdaiContractAddress,
+            stakedToken = dai,
+            rewardToken = dai,
+            positionFetcher = PositionFetcher(sdaiContractAddress, ERC20Contract::balanceOfFunction) {
+                val shares = it[0].value as BigInteger
+                Position(
+                    contract.convertToAssets(shares),
+                    shares
+                )
+            }
+        ).nel()
     }
 
     override fun getProtocol(): Protocol {

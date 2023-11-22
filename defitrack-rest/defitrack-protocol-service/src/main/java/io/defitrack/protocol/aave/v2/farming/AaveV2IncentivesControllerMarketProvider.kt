@@ -1,5 +1,6 @@
 package io.defitrack.protocol.aave.v2.farming
 
+import arrow.core.nel
 import arrow.core.nonEmptyListOf
 import io.defitrack.claimable.ClaimableMarketProvider
 import io.defitrack.claimable.domain.ClaimableMarket
@@ -28,23 +29,21 @@ class AaveV2IncentivesControllerMarketProvider : ClaimableMarketProvider() {
             incentivesController
         )
 
-        return nonEmptyListOf(
-            ClaimableMarket(
-                id = incentivesController,
-                name = "Aave v2 incentives controller",
-                network = Network.ETHEREUM,
-                protocol = Protocol.AAVE_V2,
-                claimableRewardFetchers = nonEmptyListOf(
-                    ClaimableRewardFetcher(
-                        Reward(
-                            stakedAave,
-                            incentivesController,
-                            incentivesContract::getUserUnclaimedRewardsFn
-                        ),
-                        preparedTransaction = selfExecutingTransaction(incentivesContract::claimRewardsFn)
-                    )
+        return ClaimableMarket(
+            id = incentivesController,
+            name = "Aave v2 incentives controller",
+            network = Network.ETHEREUM,
+            protocol = Protocol.AAVE_V2,
+            claimableRewardFetchers = nonEmptyListOf(
+                ClaimableRewardFetcher(
+                    Reward(
+                        stakedAave,
+                        incentivesController,
+                        incentivesContract::getUserUnclaimedRewardsFn
+                    ),
+                    preparedTransaction = selfExecutingTransaction(incentivesContract::claimRewardsFn)
                 )
             )
-        )
+        ).nel()
     }
 }

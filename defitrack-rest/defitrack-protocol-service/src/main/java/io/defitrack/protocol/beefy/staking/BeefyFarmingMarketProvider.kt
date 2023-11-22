@@ -1,5 +1,6 @@
 package io.defitrack.protocol.beefy.staking
 
+import arrow.core.Either
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.BulkConstantResolver
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
@@ -26,68 +27,72 @@ abstract class BeefyFarmingMarketProvider(
     private val constantResolver: BulkConstantResolver,
 ) : FarmingMarketProvider() {
 
-
     override fun getProtocol(): Protocol {
         return Protocol.BEEFY
     }
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
-        val contracts = vaults.map { beefyVault ->
-            BeefyVaultContract(
-                getBlockchainGateway(),
-                beefyVault.earnContractAddress,
-                beefyVault
+        val contracts = constantResolver.resolve(
+            vaults.map { beefyVault ->
+                BeefyVaultContract(
+                    getBlockchainGateway(),
+                    beefyVault.earnContractAddress,
+                    beefyVault
+                )
+            }
+        )
+
+        return contracts.parMapNotNull(concurrency = 12) { beefy ->
+            Either.catch {
+                toStakingMarketElement(beefy)
+            }.fold(
+                ifLeft = {
+                    logger.error("Failed to create market for ${beefy.beefyVault}", it)
+                    null
+                },
+                ifRight = {
+                    it
+                }
             )
-        }
-
-        constantResolver.resolve(contracts) //sideEffect
-
-        return contracts.parMapNotNull(concurrency = 12) {
-            toStakingMarketElement(it)
         }
     }
 
-    private suspend fun toStakingMarketElement(contract: BeefyVaultContract): FarmingMarket? {
-        return try {
-            val want = getToken(contract.want())
-            val token = getToken(contract.address)
-            create(
-                identifier = contract.beefyVault.id,
-                name = "${want.name} Beefy Vault",
-                apr = getAPY(contract),
-                stakedToken = want,
-                rewardToken = want,
-                token = token,
-                deprecated = contract.beefyVault.status == "eol",
-                marketSize = refreshable {
-                    getMarketSize(want, contract)
-                },
-                positionFetcher = PositionFetcher(
-                    contract.address,
-                    ::balanceOfFunction,
-                    extractBalance = { result ->
-                        val balance = result[0].value as BigInteger
+    private suspend fun toStakingMarketElement(contract: BeefyVaultContract): FarmingMarket {
+        val want = getToken(contract.want())
+        val token = getToken(contract.address)
+        return create(
+            identifier = contract.beefyVault.id,
+            name = "${want.name} Beefy Vault",
+            apr = getAPY(contract),
+            stakedToken = want,
+            rewardToken = want,
+            token = token,
+            deprecated = contract.beefyVault.status == "eol",
+            marketSize = refreshable {
+                getMarketSize(want, contract)
+            },
+            positionFetcher = PositionFetcher(
+                contract.address,
+                ::balanceOfFunction,
+                extractBalance = { result ->
+                    val balance = result[0].value as BigInteger
 
-                        if (balance > BigInteger.ZERO) {
-                            Position(
-                                (balance.times(contract.pricePerFullShare.await())).asEth().toBigInteger(),
-                                balance,
-                            )
-                        } else Position.ZERO
-                    }
-                ),
-                investmentPreparer = BeefyStakingInvestmentPreparer(contract, getERC20Resource()),
-                exitPositionPreparer = prepareExit {
-                    contract.fullExitFunction()
-                },
-                metadata = mapOf(
-                    "vaultAddress" to contract.address,
-                )
+                    if (balance > BigInteger.ZERO) {
+                        Position(
+                            (balance.times(contract.pricePerFullShare.await())).asEth().toBigInteger(),
+                            balance,
+                        )
+                    } else Position.ZERO
+                }
+            ),
+            investmentPreparer = BeefyStakingInvestmentPreparer(contract, getERC20Resource()),
+            exitPositionPreparer = prepareExit {
+                contract.fullExitFunction()
+            },
+            metadata = mapOf(
+                "vaultAddress" to contract.address,
             )
-        } catch (ex: Exception) {
-            logger.error("Unable to get beefy farm ${contract.beefyVault.id}: {}", ex.message)
-            null
-        }
+        )
     }
 
     private suspend fun getMarketSize(

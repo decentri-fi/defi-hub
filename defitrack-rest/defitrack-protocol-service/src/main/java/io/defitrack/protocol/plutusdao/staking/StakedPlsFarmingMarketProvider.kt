@@ -24,7 +24,6 @@ class StakedPlsFarmingMarketProvider : FarmingMarketProvider() {
     val plsAddress = "0x51318b7d00db7acc4026c88c3952b66278b6a67f"
     val esPlsAddress = "0xc636c1f678df0a834ad103196338cb7dd1d194ff"
 
-
     override suspend fun fetchMarkets(): List<FarmingMarket> {
 
         val pls = getToken(plsAddress)

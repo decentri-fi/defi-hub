@@ -24,9 +24,7 @@ class LiquityStakingMarketProvider : FarmingMarketProvider() {
         val stakedToken = getToken(lqtyAddress)
         val rewardToken = getToken(lusdAddress)
 
-        val stakingContract = LiquityStakingContract(
-            getBlockchainGateway(), stakingContractAddress
-        )
+        val stakingContract = LiquityStakingContract(getBlockchainGateway(), stakingContractAddress)
 
         return create(
             name = "LQTY Staking",

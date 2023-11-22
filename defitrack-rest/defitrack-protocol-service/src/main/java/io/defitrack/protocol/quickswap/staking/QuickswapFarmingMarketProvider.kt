@@ -2,6 +2,7 @@ package io.defitrack.protocol.quickswap.staking
 
 import arrow.core.Either
 import arrow.fx.coroutines.parMap
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
@@ -28,69 +29,55 @@ class QuickswapFarmingMarketProvider(
     private val quickswapService: QuickswapService,
 ) : FarmingMarketProvider() {
 
-    val rewardFactoryContract = lazyAsync {
-        RewardFactoryContract(
+    override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
+        val contract = RewardFactoryContract(
             getBlockchainGateway(),
             quickswapService.getRewardFactory(),
         )
-    }
 
-    override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
-        val contract = rewardFactoryContract.await()
 
-        val rewardPools = contract.readMultiCall(
-            contract.getStakingTokens().map {
-                contract.stakingRewardsInfoByStakingToken(it)
-            }
-        ).filter { it.success }
-            .map { it.data[0].value as String }
-
-        rewardPools.map {
+        contract.getRewardPools().map {
             QuickswapRewardPoolContract(
                 getBlockchainGateway(),
                 it
             )
-        }.parMap(EmptyCoroutineContext, 8) { rewardPool ->
-            createMarket(rewardPool)
+        }.parMapNotNull(EmptyCoroutineContext, 8) { rewardPool ->
+            Either.catch {
+                createMarket(rewardPool)
+            }.mapLeft {
+                logger.error("Error while fetching quickswap market", it)
+                null
+            }.getOrNull()
         }.forEach {
-            it.fold(
-                { throwable ->
-                    logger.error("Failed to create market", throwable)
-                },
-                { market ->
-                    send(market)
-                }
-            )
+            send(it)
         }
     }
 
-    private suspend fun QuickswapFarmingMarketProvider.createMarket(rewardPool: QuickswapRewardPoolContract): Either<Throwable, FarmingMarket> {
-        return Either.catch {
-            val stakedToken = getToken(rewardPool.stakingTokenAddress())
-            val rewardToken = getToken(rewardPool.rewardsTokenAddress())
+    private suspend fun QuickswapFarmingMarketProvider.createMarket(rewardPool: QuickswapRewardPoolContract): FarmingMarket {
+        val stakedToken = getToken(rewardPool.stakingTokenAddress.await())
+        val rewardToken = getToken(rewardPool.rewardsTokenAddress.await())
 
-            val ended = Date(rewardPool.periodFinish().toLong() * 1000).before(Date())
+        val ended = Date(rewardPool.periodFinish.await().toLong() * 1000).before(Date())
 
-            create(
-                identifier = rewardPool.address,
-                name = "${stakedToken.name} Reward Pool",
-                stakedToken = stakedToken.toFungibleToken(),
-                rewardTokens = listOf(rewardToken.toFungibleToken()),
-                marketSize = refreshable {
-                    getMarketSize(stakedToken.toFungibleToken(), rewardPool.address)
-                },
-                claimableRewardFetcher = ClaimableRewardFetcher(
-                    Reward(
-                        token = rewardToken.toFungibleToken(),
-                        contractAddress = rewardPool.address,
-                        getRewardFunction = rewardPool::earned,
-                    ),
-                    preparedTransaction = selfExecutingTransaction(rewardPool::getRewardFunction)
+        return create(
+            identifier = rewardPool.address,
+            name = "${stakedToken.name} Reward Pool",
+            stakedToken = stakedToken.toFungibleToken(),
+            rewardToken = rewardToken.toFungibleToken(),
+            marketSize = refreshable {
+                getMarketSize(stakedToken.toFungibleToken(), rewardPool.address)
+            },
+            claimableRewardFetcher = ClaimableRewardFetcher(
+                Reward(
+                    token = rewardToken.toFungibleToken(),
+                    contractAddress = rewardPool.address,
+                    getRewardFunction = rewardPool::earned,
                 ),
-                positionFetcher = defaultPositionFetcher(rewardPool.address),
-                deprecated = ended
-            )
-        }
+                preparedTransaction = selfExecutingTransaction(rewardPool::getRewardFunction)
+            ),
+            positionFetcher = defaultPositionFetcher(rewardPool.address),
+            deprecated = ended
+        )
     }
 
     override fun getProtocol(): Protocol {

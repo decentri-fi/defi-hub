@@ -14,16 +14,20 @@ class RewardFactoryContract(
     blockchainGateway, address
 ) {
 
+    suspend fun getRewardPools(): List<String> {
+        return readMultiCall(getStakingTokens().map {
+            stakingRewardsInfoByStakingToken(it)
+        }).filter { it.success }.map { it.data[0].value as String }
+    }
+
     suspend fun getStakingTokens(): List<String> {
-        return readMultiCall(
-            (0 until 200).map { index ->
-                createFunction(
-                    method = "stakingTokens",
-                    inputs = listOf(index.toBigInteger().toUint256()),
-                    outputs = listOf(address())
-                )
-            }
-        ).filter {
+        return readMultiCall((0 until 200).map { index ->
+            createFunction(
+                method = "stakingTokens",
+                inputs = listOf(index.toBigInteger().toUint256()),
+                outputs = listOf(address())
+            )
+        }).filter {
             it.success
         }.map {
             it.data[0].value as String
@@ -32,9 +36,7 @@ class RewardFactoryContract(
 
     fun stakingRewardsInfoByStakingToken(stakingToken: String): Function {
         return createFunction(
-            "stakingRewardsInfoByStakingToken",
-            listOf(stakingToken.toAddress()),
-            listOf(
+            "stakingRewardsInfoByStakingToken", listOf(stakingToken.toAddress()), listOf(
                 address(),
                 uint256(),
                 uint256(),

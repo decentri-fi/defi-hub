@@ -1,6 +1,8 @@
 package io.defitrack.protocol.baseswap
 
+import arrow.core.Either
 import arrow.fx.coroutines.parMap
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
@@ -45,8 +47,18 @@ class BaseswapSmartchefProvider : FarmingMarketProvider() {
     }
 
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
-        getSmartchefAddresses().await().parMap(concurrency = 8) {
-            createMarket(it)
+        getSmartchefAddresses().await().parMapNotNull(concurrency = 8) {
+            Either.catch {
+                createMarket(it)
+            }.fold(
+                ifLeft = {
+                    logger.error("Failed to create market for $it", it)
+                    null
+                },
+                ifRight = {
+                    it
+                }
+            )
         }.forEach {
             send(it)
         }
@@ -68,9 +80,7 @@ class BaseswapSmartchefProvider : FarmingMarketProvider() {
                 Reward(
                     rewardToken.toFungibleToken(),
                     contract.address,
-                    { user ->
-                        contract.pendingReward(user)
-                    }
+                    contract::pendingReward
                 ),
                 preparedTransaction = selfExecutingTransaction(contract::withdraw)
             ),

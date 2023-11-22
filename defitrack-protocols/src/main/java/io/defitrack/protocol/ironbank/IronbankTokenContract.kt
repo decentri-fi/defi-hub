@@ -38,7 +38,5 @@ class IronbankTokenContract(
         }
     }
 
-    suspend fun exchangeRate(): BigInteger {
-        return readSingle("exchangeRateStored", uint256())
-    }
+    val exchangeRate = constant<BigInteger>("exchangeRateStored", uint256())
 }

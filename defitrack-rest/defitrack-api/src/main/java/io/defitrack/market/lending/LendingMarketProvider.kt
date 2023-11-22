@@ -23,9 +23,9 @@ abstract class LendingMarketProvider : MarketProvider<LendingMarket>() {
         investmentPreparer: InvestmentPreparer? = null,
         metadata: Map<String, Any> = emptyMap(),
         price: Refreshable<BigDecimal>? = null,
-        marketToken: FungibleToken?,
+        marketToken: FungibleToken? = null,
         erc20Compatible: Boolean = false,
-        totalSupply: Refreshable<BigDecimal>,
+        totalSupply: Refreshable<BigDecimal> = Refreshable.refreshable(BigDecimal.ZERO),
         deprecated: Boolean = false
     ): LendingMarket {
 

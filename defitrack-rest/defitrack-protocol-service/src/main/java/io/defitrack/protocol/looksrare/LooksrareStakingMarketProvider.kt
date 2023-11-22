@@ -11,6 +11,7 @@ import io.defitrack.market.position.PositionFetcher
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.transaction.PreparedTransaction
+import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import org.springframework.stereotype.Component
@@ -19,15 +20,13 @@ import org.springframework.stereotype.Component
 @Component
 class LooksrareStakingMarketProvider : FarmingMarketProvider() {
 
-    val feeSharingSystemContract = lazyAsync {
-        FeeSharingSystemContract(
+
+    override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
+        val contract = FeeSharingSystemContract(
             getBlockchainGateway(),
             "0xbcd7254a1d759efa08ec7c3291b2e85c5dcc12ce"
         )
-    }
 
-    override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
-        val contract = feeSharingSystemContract.await()
         val staked = getToken(contract.looksRareToken.await())
         val reward = getToken(contract.rewardToken.await())
 
@@ -35,24 +34,19 @@ class LooksrareStakingMarketProvider : FarmingMarketProvider() {
             create(
                 name = "Looksrare Fee Sharing",
                 identifier = contract.address,
-                stakedToken = staked.toFungibleToken(),
-                rewardTokens = listOf(reward.toFungibleToken()),
+                stakedToken = staked,
+                rewardToken = reward,
                 positionFetcher = PositionFetcher(
                     contract.address,
                     contract::calculateSharesValueInLooks
                 ),
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
-                        reward.toFungibleToken(),
+                        reward,
                         contract.address,
                         contract::calculatePendingRewards
                     ),
-                    preparedTransaction = { user ->
-                        PreparedTransaction(
-                            contract.harvest(user),
-                            from = user
-                        )
-                    }
+                    preparedTransaction = selfExecutingTransaction(contract::harvest)
                 )
             )
         )

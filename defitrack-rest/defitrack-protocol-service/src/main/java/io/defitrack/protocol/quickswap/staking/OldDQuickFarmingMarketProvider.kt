@@ -20,22 +20,17 @@ class OldDQuickFarmingMarketProvider(
     private val quickswapService: QuickswapService,
 ) : FarmingMarketProvider() {
 
-    val oldDQuick by lazy {
-        runBlocking {
-            DQuickContract(
-                getBlockchainGateway(),
-                quickswapService.getOldDQuickContractAddress(),
-            )
-        }
-    }
-
     override suspend fun fetchMarkets(): List<FarmingMarket> {
-        val stakedToken = getToken(oldDQuick.address).toFungibleToken()
+        val contract = DQuickContract(
+            getBlockchainGateway(),
+            quickswapService.getOldDQuickContractAddress(),
+        )
+        val stakedToken = getToken(contract.address).toFungibleToken()
         val quickToken = getToken("0x831753dd7087cac61ab5644b308642cc1c33dc13").toFungibleToken()
 
         return listOf(
             create(
-                identifier = oldDQuick.address.lowercase(),
+                identifier = contract.address.lowercase(),
                 name = "Dragon's Lair (Old)",
                 stakedToken = quickToken,
                 rewardTokens = listOf(
@@ -46,11 +41,11 @@ class OldDQuickFarmingMarketProvider(
                     { user -> ERC20Contract.balanceOfFunction(user) }
                 ),
                 investmentPreparer = DQuickStakingInvestmentPreparer(
-                    getERC20Resource(), oldDQuick
+                    getERC20Resource(), contract
                 ),
                 deprecated = true,
                 exitPositionPreparer = prepareExit {
-                    oldDQuick.exitFunction(it.amount)
+                    contract.exitFunction(it.amount)
                 }
             )
         )

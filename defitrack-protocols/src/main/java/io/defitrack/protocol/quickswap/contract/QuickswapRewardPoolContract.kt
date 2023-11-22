@@ -24,30 +24,19 @@ class QuickswapRewardPoolContract(
         ).toMutableFunction()
     }
 
-    suspend fun periodFinish(): BigInteger {
-        return readSingle("periodFinish", uint256())
-    }
-
-    suspend fun stakingTokenAddress(): String {
-        return readSingle("stakingToken", address())
-    }
-
-    suspend fun rewardsTokenAddress(): String {
-        return readSingle("rewardsToken", address())
-    }
-
-    suspend fun rewardRate(): BigInteger {
-        return readSingle("rewardRate", address())
-    }
+    val periodFinish = constant<BigInteger>("periodFinish", uint256())
+    val stakingTokenAddress = constant<String>("stakingToken", address())
+    val rewardsTokenAddress = constant<String>("rewardsToken", address())
+    val rewardRate = constant<BigInteger>("rewardRate", address())
 
     fun getRewardFunction(): MutableFunction {
         return createFunction("getReward").toMutableFunction()
     }
 
-    fun earned(address: String): Function {
+    fun earned(user: String): Function {
         return createFunction(
             "earned",
-            listOf(address.toAddress()),
+            listOf(user.toAddress()),
             listOf(uint256())
         )
     }

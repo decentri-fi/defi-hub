@@ -35,8 +35,8 @@ class HopStakingRewardContract(
         )
     }
 
-    fun getRewardFn(): Function {
-        return createFunction("getReward")
+    fun getRewardFn(): MutableFunction {
+        return createFunction("getReward").toMutableFunction()
     }
 
     suspend fun stakingTokenAddress(): String {

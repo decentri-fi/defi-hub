@@ -31,23 +31,19 @@ class QuickswapPoolingMarketProvider(
         quickswapService.getPairs().parMapNotNull(EmptyCoroutineContext, 8) {
             catch {
                 toPoolingMarket(it)
-            }
+            }.mapLeft {
+                logger.error("Error while fetching Quickswap market", it)
+                null
+            }.getOrNull()
         }.forEach {
-            it.fold(
-                { e ->
-                    logger.error("Error while fetching Quickswap market", e)
-                },
-                { market ->
-                    market.getOrNull()?.let { send(it) }
-                }
-            )
+            send(it)
         }
     }
 
-    private suspend fun toPoolingMarket(it: QuickswapPair): Option<PoolingMarket> {
+    private suspend fun toPoolingMarket(it: QuickswapPair): PoolingMarket? {
         val token0 = getToken(it.token0.id)
         val token1 = getToken(it.token1.id)
-        if (token0.symbol == "UNKWN" || token1.symbol == "UNKWN") return None
+        if (token0.symbol == "UNKWN" || token1.symbol == "UNKWN") return null
 
         val token = getToken(it.id)
 
@@ -66,7 +62,7 @@ class QuickswapPoolingMarketProvider(
             totalSupply = refreshable(token.totalDecimalSupply()) {
                 getToken(it.id).totalSupply.asEth(token.decimals)
             }
-        ).some()
+        )
     }
 
     override fun getProtocol(): Protocol {

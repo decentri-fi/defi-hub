@@ -23,15 +23,12 @@ class DQuickFarmingMarketProvider(
     private val quickswapService: QuickswapService,
 ) : FarmingMarketProvider() {
 
-    val oldDQuick = lazyAsync {
-        DQuickContract(
+    override suspend fun fetchMarkets(): List<FarmingMarket> {
+        val contract =  DQuickContract(
             getBlockchainGateway(),
             quickswapService.getDQuickContract(),
         )
-    }
 
-    override suspend fun fetchMarkets(): List<FarmingMarket> {
-        val contract = oldDQuick.await()
         val stakedToken = getToken(contract.address)
         val quickToken = getToken(QUICK)
 

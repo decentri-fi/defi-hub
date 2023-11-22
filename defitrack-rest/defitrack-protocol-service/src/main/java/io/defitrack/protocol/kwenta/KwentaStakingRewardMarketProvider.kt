@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component
 class KwentaStakingRewardMarketProvider : FarmingMarketProvider() {
 
     val address = "0x6e56a5d49f775ba08041e28030bc7826b13489e0"
-
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         val contract = StakingRewardsContract(
             getBlockchainGateway(),

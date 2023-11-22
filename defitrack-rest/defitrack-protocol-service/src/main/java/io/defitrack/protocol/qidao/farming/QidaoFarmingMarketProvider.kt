@@ -1,6 +1,9 @@
 package io.defitrack.protocol.qidao.farming
 
+import arrow.core.Either
+import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMap
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
@@ -23,7 +26,7 @@ class QidaoFarmingMarketProvider(
 ) : FarmingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
-        return qidaoPolygonService.farms().parMap { farm ->
+        return qidaoPolygonService.farms().parMap(concurrency = 12) { farm ->
             importPoolsFromFarm(farm)
         }.flatten()
     }
@@ -34,34 +37,33 @@ class QidaoFarmingMarketProvider(
             farm
         )
 
-        return (0 until contract.poolLength()).parMap(EmptyCoroutineContext, 8) { poolId ->
-            toMarket(contract, poolId)
+        return (0 until contract.poolLength()).parMapNotNull(concurrency = 8) { poolId ->
+            catch {
+                toMarket(contract, poolId)
+            }.mapLeft {
+                logger.error("Error while fetching qidao market", it)
+                null
+            }.getOrNull()
         }
     }
 
-    override fun getProtocol(): Protocol {
-        return Protocol.QIDAO
-    }
+    override fun getProtocol(): Protocol = Protocol.QIDAO
 
     private suspend fun toMarket(
         chef: QidaoFarmV2Contract,
         poolId: Int
     ): FarmingMarket {
-        val stakedtoken =
-            tokenService.getTokenInformation(getNetwork(), chef.getLpTokenForPoolId(poolId))
+        val stakedtoken = tokenService.getTokenInformation(getNetwork(), chef.getLpTokenForPoolId(poolId))
         val rewardToken = tokenService.getTokenInformation(getNetwork(), chef.rewardToken())
-
 
         return create(
             identifier = "${chef.address}-${poolId}",
             name = stakedtoken.name + " Farm",
-            stakedToken = stakedtoken.toFungibleToken(),
-            rewardTokens = listOf(
-                rewardToken.toFungibleToken()
-            ),
+            stakedToken = stakedtoken,
+            rewardToken = rewardToken,
             positionFetcher = PositionFetcher(
                 address = chef.address,
-                function = { user -> chef.userInfoFunction(user, poolId) }
+                function = chef.userInfoFunction(poolId)
             ),
             marketSize = refreshable {
                 marketSizeService.getMarketSize(

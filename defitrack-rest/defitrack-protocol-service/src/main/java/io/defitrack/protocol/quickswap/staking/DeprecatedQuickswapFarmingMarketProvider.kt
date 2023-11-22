@@ -1,5 +1,7 @@
 package io.defitrack.protocol.quickswap.staking
 
+import arrow.core.Either
+import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
@@ -31,60 +33,49 @@ class DeprecatedQuickswapFarmingMarketProvider(
     private val priceResource: PriceResource,
 ) : FarmingMarketProvider() {
 
-    val rewardFactoryContract = lazyAsync {
-        RewardFactoryContract(
+    override suspend fun fetchMarkets(): List<FarmingMarket> {
+        val contract = RewardFactoryContract(
             getBlockchainGateway(),
             quickswapService.getDeprecatedRewardFactory(),
         )
-    }
 
-    override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
-        val contract = rewardFactoryContract.await()
-
-        val rewardPools = contract.readMultiCall(
-            contract.getStakingTokens().map {
-                contract.stakingRewardsInfoByStakingToken(it)
-            }
-        ).filter { it.success }
-            .map { it.data[0].value as String }
-
-        rewardPools.map {
+        return contract.getRewardPools().map {
             QuickswapRewardPoolContract(
                 getBlockchainGateway(),
                 it
             )
         }.parMapNotNull(EmptyCoroutineContext, 12) { rewardPool ->
-            try {
-                val stakedToken = getToken(rewardPool.stakingTokenAddress())
-                val rewardToken = getToken(rewardPool.rewardsTokenAddress())
-                create(
-                    identifier = rewardPool.address,
-                    name = "${stakedToken.name} Reward Pool (Deprecated)",
-                    stakedToken = stakedToken.toFungibleToken(),
-                    rewardTokens = listOf(rewardToken.toFungibleToken()),
-                    marketSize = refreshable {
-                        getMarketSize(stakedToken, rewardPool)
-                    },
-                    claimableRewardFetcher = ClaimableRewardFetcher(
-                        Reward(
-                            token = rewardToken.toFungibleToken(),
-                            contractAddress = rewardPool.address,
-                            getRewardFunction = { user ->
-                                rewardPool.earned(user)
-                            },
-                        ),
-                        preparedTransaction = selfExecutingTransaction(rewardPool::getRewardFunction)
-                    ),
-                    positionFetcher = defaultPositionFetcher(
-                        rewardPool.address
-                    ),
-                    deprecated = true
-                )
-            } catch (ex: Exception) {
-                logger.error("Error while fetching reward pool: " + ex.message, ex)
+            catch {
+                createMarket(rewardPool)
+            }.mapLeft {
+                logger.error("Error while fetching quickswap market", it)
                 null
-            }
+            }.getOrNull()
         }
+    }
+
+    private suspend fun createMarket(rewardPool: QuickswapRewardPoolContract): FarmingMarket {
+        val stakedToken = getToken(rewardPool.stakingTokenAddress.await())
+        val rewardToken = getToken(rewardPool.rewardsTokenAddress.await())
+        return create(
+            identifier = rewardPool.address,
+            name = "${stakedToken.name} Reward Pool (Deprecated)",
+            stakedToken = stakedToken,
+            rewardToken = rewardToken,
+            marketSize = refreshable {
+                getMarketSize(stakedToken, rewardPool)
+            },
+            claimableRewardFetcher = ClaimableRewardFetcher(
+                Reward(
+                    token = rewardToken,
+                    contractAddress = rewardPool.address,
+                    getRewardFunction = rewardPool::earned,
+                ),
+                preparedTransaction = selfExecutingTransaction(rewardPool::getRewardFunction)
+            ),
+            positionFetcher = defaultPositionFetcher(rewardPool.address),
+            deprecated = true
+        )
     }
 
     private suspend fun getMarketSize(

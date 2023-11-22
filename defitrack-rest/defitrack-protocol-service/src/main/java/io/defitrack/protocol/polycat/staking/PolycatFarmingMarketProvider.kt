@@ -1,6 +1,9 @@
 package io.defitrack.protocol.polycat.staking
 
+import arrow.core.Either
+import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMap
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable
@@ -31,8 +34,13 @@ class PolycatFarmingMarketProvider(
                 it
             )
         }.flatMap { chef ->
-            (0 until chef.poolLength.await().toInt()).parMap(EmptyCoroutineContext, 12) { poolId ->
-                toStakingMarketElement(chef, poolId)
+            (0 until chef.poolLength.await().toInt()).parMapNotNull(EmptyCoroutineContext, 12) { poolId ->
+                catch {
+                    toStakingMarketElement(chef, poolId)
+                }.mapLeft { error ->
+                    logger.error("Error while fetching polycat market", error)
+                    null
+                }.getOrNull()
             }
         }
     }

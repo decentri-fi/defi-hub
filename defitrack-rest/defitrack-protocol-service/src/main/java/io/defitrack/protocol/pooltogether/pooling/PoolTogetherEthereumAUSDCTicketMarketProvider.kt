@@ -1,5 +1,6 @@
 package io.defitrack.protocol.pooltogether.pooling
 
+import arrow.core.nel
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
@@ -21,27 +22,22 @@ class PoolTogetherEthereumAUSDCTicketMarketProvider : PoolingMarketProvider() {
     override suspend fun fetchMarkets(): List<PoolingMarket> {
         val token = getToken(usdcTicketAddress)
 
-        return listOf(
-            create(
-                identifier = "aUSDC-ticket",
-                address = usdcTicketAddress,
-                name = "PoolTogether aUSDC Ticket",
-                symbol = "PTaUSDC",
-                tokens = listOf(
-                    token.toFungibleToken()
-                ),
-                apr = null,
-                marketSize = refreshable {
-                    getPriceResource().calculatePrice(
-                        PriceRequest(usdcAddress, getNetwork(), token.totalDecimalSupply())
-                    ).toBigDecimal()
-                },
-                positionFetcher = defaultPositionFetcher(token.address),
-                totalSupply = refreshable(token.totalDecimalSupply()) {
-                    getToken(usdcTicketAddress).totalDecimalSupply()
-                }
-            )
-        )
+        return create(
+            identifier = "aUSDC-ticket",
+            address = usdcTicketAddress,
+            name = "PoolTogether aUSDC Ticket",
+            symbol = "PTaUSDC",
+            tokens = listOf(token),
+            marketSize = refreshable {
+                getPriceResource().calculatePrice(
+                    PriceRequest(usdcAddress, getNetwork(), token.totalDecimalSupply())
+                ).toBigDecimal()
+            },
+            positionFetcher = defaultPositionFetcher(token.address),
+            totalSupply = refreshable(token.totalDecimalSupply()) {
+                getToken(usdcTicketAddress).totalDecimalSupply()
+            }
+        ).nel()
     }
 
     override fun getProtocol(): Protocol {

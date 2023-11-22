@@ -45,20 +45,18 @@ class PikaFarmingMarketProvider : FarmingMarketProvider() {
                         Reward(
                             rewardToken.toFungibleToken(),
                             reward.fetchAddress(),
-                            reward::getClaimableReward,
-                            extractAmountFromRewardFunction = { result, _ ->
-                                when (reward) {
-                                    is PikaStakingContract.PikaRewardPoolContract -> {
-                                        val precision = reward.getPrecision()
-                                        (result[0].value as BigInteger) / precision
-                                    }
-
-                                    else -> {
-                                        result[0].value as BigInteger
-                                    }
+                            reward::getClaimableReward
+                        ) { result, _ ->
+                            when (reward) {
+                                is PikaStakingContract.PikaRewardPoolContract -> {
+                                    val precision = reward.getPrecision()
+                                    (result[0].value as BigInteger) / precision
+                                }
+                                else -> {
+                                    result[0].value as BigInteger
                                 }
                             }
-                        ),
+                        },
                         PreparedTransaction.Companion.selfExecutingTransaction(reward::claimRewardFn)
                     )
                 }

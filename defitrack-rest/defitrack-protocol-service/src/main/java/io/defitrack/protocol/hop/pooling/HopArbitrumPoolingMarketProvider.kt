@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component
 class HopArbitrumPoolingMarketProvider(
     hopService: HopService,
 ) : HopPoolingMarketProvider(hopService) {
-
     override fun getNetwork(): Network {
         return Network.ARBITRUM
     }

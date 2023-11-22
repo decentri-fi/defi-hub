@@ -16,16 +16,13 @@ class PolygonStakingMarketProvider : FarmingMarketProvider() {
 
     val polygonStaking = "0x5e3ef299fddf15eaa0432e6e66473ace8c13d908"
 
-    val polygonStakingContract by lazy {
-        PolygonStakingContract(
+    override suspend fun fetchMarkets(): List<FarmingMarket> {
+        val contract = PolygonStakingContract(
             getBlockchainGateway(),
             polygonStaking
         )
-    }
 
-    override suspend fun fetchMarkets(): List<FarmingMarket> {
-
-        val staked = getToken(polygonStakingContract.token())
+        val staked = getToken(contract.token())
 
         return create(
             name = "Polygon Staking",
@@ -34,7 +31,7 @@ class PolygonStakingMarketProvider : FarmingMarketProvider() {
             rewardToken = staked,
             positionFetcher = PositionFetcher(
                 polygonStaking,
-                polygonStakingContract::totalStakedForFn
+                contract::totalStakedForFn
             )
         ).nel()
     }
