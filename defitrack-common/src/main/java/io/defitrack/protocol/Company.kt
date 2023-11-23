@@ -4,6 +4,10 @@ enum class Company(
     val prettyName: String,
     val slug: String
 ) {
+    ONDO(
+        prettyName = "Ondo Finance",
+        slug = "ondo"
+    ),
     PRISMA(
         prettyName = "Prisma",
         slug = "prisma"

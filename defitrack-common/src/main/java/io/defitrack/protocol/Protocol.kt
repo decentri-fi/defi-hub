@@ -13,6 +13,14 @@ enum class Protocol(
     val networks: List<Network>,
     val company: Company,
 ) {
+    ONDO(
+        logo = "ondo.png",
+        slug = "ondo",
+        primitives = listOf(POOLING, FARMING),
+        website = "https://prismafinance.com/",
+        networks = listOf(ETHEREUM),
+        company = Company.PRISMA
+    ),
     PRISMA(
        logo = "prisma.png",
          slug = "prisma",
