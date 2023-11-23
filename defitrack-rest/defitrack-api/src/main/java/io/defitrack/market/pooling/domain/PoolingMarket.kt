@@ -14,7 +14,7 @@ import java.math.BigDecimal
 
 data class PoolingMarket(
     override val id: String,
-    val network: Network,
+    override val network: Network,
     override val protocol: Protocol,
     val address: String,
     val name: String,
@@ -35,7 +35,7 @@ data class PoolingMarket(
     val enterMarketEvent: Event? = null,
     override val deprecated: Boolean,
     val historicEventExtractor: HistoricEventExtractor? = null,
-) : DefiMarket(id, "pooling", protocol, deprecated) {
+) : DefiMarket(id, "pooling", protocol, network, deprecated) {
     init {
         addRefetchableValue(totalSupply)
         addRefetchableValue(marketSize)

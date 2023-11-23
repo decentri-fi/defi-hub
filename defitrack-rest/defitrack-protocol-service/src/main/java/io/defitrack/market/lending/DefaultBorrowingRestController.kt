@@ -1,7 +1,7 @@
 package io.defitrack.market.lending
 
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.market.borrowing.BorrowService
+import io.defitrack.market.borrowing.BorrowPositionProvider
 import io.defitrack.market.borrowing.domain.BorrowPosition
 import io.defitrack.market.borrowing.vo.BorrowPositionVO
 import io.defitrack.network.toVO
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/{protocol}/borrowing")
 class DefaultBorrowingRestController(
-    private val borrowingServices: List<BorrowService>,
+    private val borrowingServices: List<BorrowPositionProvider>,
     private val priceResource: PriceResource,
     private val protocolVOMapper: ProtocolVOMapper
 ) {
@@ -38,7 +38,7 @@ class DefaultBorrowingRestController(
             }
             .flatMap {
                 try {
-                    it.getBorrows(address)
+                    it.getPositions(address)
                 } catch (ex: Exception) {
                     logger.error("Something went wrong trying to fetch the user lendings: ${ex.message}")
                     emptyList()
@@ -49,21 +49,21 @@ class DefaultBorrowingRestController(
     suspend fun BorrowPosition.toVO(): BorrowPositionVO {
         return with(this) {
             BorrowPositionVO(
-                network = network.toVO(),
+                network = market.network.toVO(),
                 dollarValue = priceResource.calculatePrice(
                     PriceRequest(
-                        token.address,
-                        this.network,
-                        this.amount.asEth(token.decimals),
-                        token.type
+                        market.token.address,
+                        market.network,
+                        underlyingAmount.asEth(market.token.decimals),
                     )
                 ),
-                protocol = protocolVOMapper.map(protocol),
-                rate = rate,
-                name = name,
-                amount = amount.asEth(token.decimals).toDouble(),
-                id = id,
-                token = token
+                protocol = protocolVOMapper.map(market.protocol),
+                rate = market.rate,
+                name = market.name,
+                amount = tokenAmount.asEth(market.token.decimals).toDouble(),
+                underlyingAmount = underlyingAmount.asEth(market.token.decimals).toDouble(),
+                id = market.id,
+                token = market.token
             )
         }
     }

@@ -13,7 +13,7 @@ import java.math.BigDecimal
 
 data class LendingMarket(
     override val id: String,
-    val network: Network,
+    override val network: Network,
     override val protocol: Protocol,
     val name: String,
     val marketToken: FungibleToken?,
@@ -30,7 +30,7 @@ data class LendingMarket(
     override val deprecated: Boolean,
     val price: Refreshable<BigDecimal>
 ) : DefiMarket(
-    id, "lending", protocol, deprecated
+    id, "lending", protocol, network, deprecated
 ) {
 
     init {

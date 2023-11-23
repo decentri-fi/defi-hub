@@ -12,7 +12,7 @@ import java.math.BigDecimal
 
 data class FarmingMarket(
     override val id: String,
-    val network: Network,
+    override val network: Network,
     override val protocol: Protocol,
     val name: String,
     val stakedToken: FungibleToken,
@@ -27,9 +27,4 @@ data class FarmingMarket(
     val internalMetadata: Map<String, Any> = emptyMap(),
     override val deprecated: Boolean = false,
     val token: FungibleToken? = null
-) : DefiMarket(id, "farming", protocol, deprecated) {
-
-    init {
-        addRefetchableValue(marketSize)
-    }
-}
+) : DefiMarket(id, "farming", protocol, network, deprecated)

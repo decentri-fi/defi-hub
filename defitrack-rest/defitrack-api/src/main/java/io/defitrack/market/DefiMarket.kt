@@ -1,5 +1,6 @@
 package io.defitrack.market
 
+import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.protocol.Protocol
@@ -10,6 +11,7 @@ abstract class DefiMarket(
     open val id: String,
     val type: String,
     open val protocol: Protocol,
+    open val network: Network,
     open val deprecated: Boolean
 ) {
 
@@ -20,6 +22,14 @@ abstract class DefiMarket(
     }
 
     val refreshables = mutableListOf<Refreshable<*>>()
+
+    init {
+        this::class.java.fields.forEach {
+            if (it.type == Refreshable::class.java) {
+                addRefetchableValue(it.get(this) as Refreshable<*>)
+            }
+        }
+    }
 
     init {
         addRefetchableValue(updatedAt)
