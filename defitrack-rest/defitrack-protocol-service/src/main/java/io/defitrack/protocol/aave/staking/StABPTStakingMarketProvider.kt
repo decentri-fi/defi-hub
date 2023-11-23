@@ -34,7 +34,7 @@ class StABPTStakingMarketProvider : FarmingMarketProvider() {
             stABPT
         )
 
-        val totalStakedAbpt = getERC20Resource().getBalance(getNetwork(), abpt, stABPT)
+        val totalStakedAbpt = getBalance(abpt, stABPT)
         val ratio = totalStakedAbpt.toBigDecimal().dividePrecisely(stakingContract.totalSupply().get().toBigDecimal())
 
         return create(

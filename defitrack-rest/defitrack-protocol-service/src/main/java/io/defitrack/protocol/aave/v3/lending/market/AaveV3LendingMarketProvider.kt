@@ -1,7 +1,9 @@
 package io.defitrack.protocol.aave.v3.lending.market
 
+import arrow.core.Either
+import arrow.core.Either.Companion.catch
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.market.lending.LendingMarketProvider
@@ -13,78 +15,78 @@ import io.defitrack.protocol.aave.v3.AaveV3DataProvider
 import io.defitrack.protocol.aave.v3.contract.PoolContract
 import io.defitrack.protocol.aave.v3.contract.PoolDataProvider
 import io.defitrack.protocol.aave.v3.lending.invest.AaveV3LendingInvestmentPreparer
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 
 abstract class AaveV3LendingMarketProvider(
     private val network: Network,
-    dataProvider: AaveV3DataProvider,
+    private val dataProvider: AaveV3DataProvider,
 ) : LendingMarketProvider() {
 
-    val pool = lazyAsync {
-        PoolContract(
-            getBlockchainGateway(),
-            dataProvider.poolAddress()
-        )
-    }
 
-    val poolDataProvider = lazyAsync {
-        PoolDataProvider(
+    override suspend fun fetchMarkets(): List<LendingMarket> {
+
+        val poolDataProvider = PoolDataProvider(
             getBlockchainGateway(),
             dataProvider.poolDataProvider()
         )
+
+        val poolContract = PoolContract(
+            getBlockchainGateway(),
+            dataProvider.poolAddress()
+        )
+
+
+        return poolContract
+            .reservesList()
+            .parMapNotNull(concurrency = 8) {
+                catch {
+                    createMarket(poolDataProvider, it, poolContract)
+                }.mapLeft {
+                    logger.error("Error while fetching aave v3 market $it", it)
+                }.getOrNull()
+            }
     }
 
-    override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
-        pool.await().reservesList().map {
-            async {
-                throttled {
-                    try {
+    private suspend fun createMarket(
+        poolDataProvider: PoolDataProvider,
+        it: String,
+        poolContract: PoolContract
+    ): LendingMarket {
+        val reserveData = poolDataProvider.getReserveData(it)
+        val reserveTokenAddresses = poolDataProvider.getReserveTokensAddresses(it)
+        val aToken = getToken(reserveTokenAddresses.aTokenAddress)
+        val underlying = getToken(it)
+        val totalSupply = poolDataProvider.getATokenTotalSupply(it)
 
-                        val contract = poolDataProvider.await()
-                        val reserveData = contract.getReserveData(it)
-                        val reserveTokenAddresses = contract.getReserveTokensAddresses(it)
-                        val aToken = getToken(reserveTokenAddresses.aTokenAddress)
-                        val underlying = getToken(it)
-                        val totalSupply = contract.getATokenTotalSupply(it)
-
-                        create(
-                            identifier = aToken.address,
-                            name = "aave v3 " + aToken.name,
-                            token = underlying.toFungibleToken(),
-                            poolType = "aave-v3",
-                            rate = reserveData.liquidityRate.asEth(27),
-                            investmentPreparer = AaveV3LendingInvestmentPreparer(
-                                underlying.address,
-                                pool.await(),
-                                getERC20Resource()
-                            ),
-                            marketSize = Refreshable.refreshable {
-                                getPriceResource().calculatePrice(
-                                    PriceRequest(
-                                        underlying.address,
-                                        getNetwork(),
-                                        totalSupply.asEth(aToken.decimals),
-                                        underlying.type
-                                    )
-                                ).toBigDecimal()
-                            },
-                            positionFetcher = PositionFetcher(
-                                aToken.asERC20Contract(getBlockchainGateway())::balanceOfFunction
-                            ),
-                            marketToken = aToken.toFungibleToken(),
-                            totalSupply = Refreshable.refreshable(aToken.totalSupply.asEth(aToken.decimals)) {
-                                getToken(aToken.address).totalSupply.asEth(aToken.decimals)
-                            }
-                        )
-                    } catch (ex: Exception) {
-                        logger.error("Unable to fetch V3 Lending market with address $it", ex)
-                        null
-                    }
-                }
+        return create(
+            identifier = aToken.address,
+            name = "aave v3 " + aToken.name,
+            token = underlying,
+            poolType = "aave-v3",
+            rate = reserveData.liquidityRate.asEth(27),
+            investmentPreparer = AaveV3LendingInvestmentPreparer(
+                underlying.address,
+                poolContract,
+                getERC20Resource()
+            ),
+            marketSize = Refreshable.refreshable {
+                getPriceResource().calculatePrice(
+                    PriceRequest(
+                        underlying.address,
+                        getNetwork(),
+                        totalSupply.asEth(aToken.decimals),
+                        underlying.type
+                    )
+                ).toBigDecimal()
+            },
+            positionFetcher = PositionFetcher(
+                aToken.asERC20Contract(getBlockchainGateway())::balanceOfFunction
+            ),
+            marketToken = aToken,
+            totalSupply = Refreshable.refreshable(aToken.totalSupply.asEth(aToken.decimals)) {
+                getToken(aToken.address).totalSupply.asEth(aToken.decimals)
             }
-        }.awaitAll().filterNotNull()
+        )
     }
 
     override fun getProtocol() = Protocol.AAVE_V3
