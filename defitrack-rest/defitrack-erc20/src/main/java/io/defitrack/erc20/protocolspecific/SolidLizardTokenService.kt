@@ -1,19 +1,16 @@
 package io.defitrack.erc20.protocolspecific
 
+import io.defitrack.LazyValue
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.erc20.ERC20
-import io.defitrack.erc20.LpContractReader
-import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
-import io.defitrack.token.TokenType
 import io.defitrack.uniswap.v2.PairFactoryContract
 import org.springframework.stereotype.Service
 
 @Service
 class SolidLizardTokenService : DefaultLpIdentifier(Protocol.SOLIDLIZARD) {
 
-    val arbitrumPools = lazyAsync {
+    val arbitrumPools = LazyValue {
         val pairFactoryContract = PairFactoryContract(
             blockchainGateway = blockchainGatewayProvider.getGateway(Network.ARBITRUM),
             contractAddress = "0x734d84631f00dc0d3fcd18b04b6cf42bfd407074"
@@ -23,7 +20,7 @@ class SolidLizardTokenService : DefaultLpIdentifier(Protocol.SOLIDLIZARD) {
 
     override suspend fun isProtocolToken(token: ERC20): Boolean {
         return when (token.network) {
-            Network.ARBITRUM -> arbitrumPools.await().contains(token.address)
+            Network.ARBITRUM -> arbitrumPools.get().contains(token.address)
             else -> false
         }
     }
