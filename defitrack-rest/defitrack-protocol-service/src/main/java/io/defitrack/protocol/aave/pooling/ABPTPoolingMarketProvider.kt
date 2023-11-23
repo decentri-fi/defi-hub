@@ -20,7 +20,6 @@ class ABPTPoolingMarketProvider : PoolingMarketProvider(
     val wethAddress = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
     val bPool = "0xC697051d1C6296C24aE3bceF39acA743861D9A81"
 
-
     override suspend fun fetchMarkets(): List<PoolingMarket> {
         val aave = getToken(aaveAddress)
         val weth = getToken(wethAddress)

@@ -24,7 +24,7 @@ class DefaultLendingPositionProvider(
 
     val semaphore = Semaphore(16)
 
-    override suspend fun getLendings(protocol: String, address: String): List<LendingPosition> = coroutineScope {
+    override suspend fun getPositions(protocol: String, address: String): List<LendingPosition> = coroutineScope {
         lendingMarkets
             .filter {
                 it.getProtocol().slug == protocol || it.getProtocol().name == protocol

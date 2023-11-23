@@ -23,6 +23,6 @@ class DefaultLendingPositionRestController(
         if (!WalletUtils.isValidAddress(address)) {
             return emptyList()
         }
-        return lendingPositionProvider.getLendings(protocol, address).map { lendingPositionVOMapper.map(it) }
+        return lendingPositionProvider.getPositions(protocol, address).map { lendingPositionVOMapper.map(it) }
     }
 }
