@@ -1,8 +1,12 @@
 package io.defitrack.common.utils
 
+import org.slf4j.LoggerFactory
+
 class Refreshable<T> {
 
     companion object {
+
+        private val logger = LoggerFactory.getLogger(this::class.java)
         fun <T> refreshable(initialValue: T, fetcher: (suspend () -> T)? = null): Refreshable<T> {
             return Refreshable(initialValue, fetcher)
         }
@@ -43,6 +47,8 @@ class Refreshable<T> {
     suspend fun refresh() {
         fetcher?.let { fetcher ->
             this.value = fetcher()
+        }?.also {
+            logger.debug("Refreshed {} to {}", this::class.simpleName, value)
         }
     }
 }

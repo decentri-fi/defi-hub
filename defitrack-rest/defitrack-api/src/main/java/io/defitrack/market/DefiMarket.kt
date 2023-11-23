@@ -6,6 +6,7 @@ import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.protocol.Protocol
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
+import kotlin.reflect.full.declaredMemberProperties
 
 abstract class DefiMarket(
     open val id: String,
@@ -24,11 +25,16 @@ abstract class DefiMarket(
     val refreshables = mutableListOf<Refreshable<*>>()
 
     init {
-        this::class.java.fields.forEach {
-            if (it.type == Refreshable::class.java) {
-                addRefetchableValue(it.get(this) as Refreshable<*>)
+        this::class.declaredMemberProperties
+            .filter {
+                it.returnType.classifier == Refreshable::class
             }
-        }
+            .forEach {
+                val call = it.getter.call(this)
+                if (call != null) {
+                    addRefetchableValue(call as Refreshable<*>)
+                }
+            }
     }
 
     init {

@@ -13,6 +13,14 @@ enum class Protocol(
     val networks: List<Network>,
     val company: Company,
 ) {
+    ROCKETPOOl(
+        logo = "rocketpool.png",
+        slug = "rocketpool",
+        primitives = listOf(FARMING),
+        website = "https://rocketpool.net",
+        networks = listOf(ETHEREUM),
+        company = Company.ROCKETPOOL
+    ),
     SYNTHETIX(
         logo = "synthetix.png",
         slug = "synthetix",
