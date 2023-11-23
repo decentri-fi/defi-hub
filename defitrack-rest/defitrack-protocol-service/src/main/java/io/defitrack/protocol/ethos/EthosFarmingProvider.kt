@@ -1,4 +1,4 @@
-package io.defitrack.ethos
+package io.defitrack.protocol.ethos
 
 import arrow.core.nel
 import io.defitrack.claimable.domain.ClaimableRewardFetcher

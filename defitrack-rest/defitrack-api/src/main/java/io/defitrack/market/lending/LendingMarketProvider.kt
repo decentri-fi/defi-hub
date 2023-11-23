@@ -26,7 +26,8 @@ abstract class LendingMarketProvider : MarketProvider<LendingMarket>() {
         marketToken: FungibleToken? = null,
         erc20Compatible: Boolean = false,
         totalSupply: Refreshable<BigDecimal> = Refreshable.refreshable(BigDecimal.ZERO),
-        deprecated: Boolean = false
+        deprecated: Boolean = false,
+        internalMetaData: Map<String, Any> = emptyMap(),
     ): LendingMarket {
 
         return LendingMarket(
@@ -45,7 +46,8 @@ abstract class LendingMarketProvider : MarketProvider<LendingMarket>() {
             totalSupply = totalSupply,
             marketToken = marketToken,
             erc20Compatible = erc20Compatible,
-            deprecated = deprecated
+            deprecated = deprecated,
+            internalMetaData = internalMetaData
         )
     }
 

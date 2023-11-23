@@ -1,6 +1,7 @@
-package io.defitrack.lqty.lending
+package io.defitrack.protocol.lqty.lending
 
 import arrow.core.nel
+import io.defitrack.BulkConstantResolver
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
@@ -15,7 +16,8 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.LIQUITY)
-class LiquityLendingMarketProvider : LendingMarketProvider() {
+class LiquityLendingMarketProvider(
+) : LendingMarketProvider() {
 
     val troveManagerAddress = "0xa39739ef8b0231dbfa0dcda07d7e29faabcf4bb2"
 
@@ -35,7 +37,7 @@ class LiquityLendingMarketProvider : LendingMarketProvider() {
             },
             positionFetcher = PositionFetcher(
                 troveManager::getTroveColl,
-            )
+            ),
         ).nel()
     }
 

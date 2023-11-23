@@ -1,4 +1,4 @@
-package io.defitrack.ethos
+package io.defitrack.protocol.ethos
 
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.common.network.Network

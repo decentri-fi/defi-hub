@@ -44,6 +44,8 @@ class MultiCallV2Caller(val address: String) : MultiCallCaller {
             )
         }
 
+        logger.debug("calling multicall with ${encodedFunctions.size} functions")
+
         val aggregateFunction = Function(
             "tryAggregate",
             listOf(

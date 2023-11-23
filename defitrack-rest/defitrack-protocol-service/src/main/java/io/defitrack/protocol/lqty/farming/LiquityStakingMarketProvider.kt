@@ -1,4 +1,4 @@
-package io.defitrack.lqty.farming
+package io.defitrack.protocol.lqty.farming
 
 import arrow.core.nel
 import io.defitrack.common.network.Network
