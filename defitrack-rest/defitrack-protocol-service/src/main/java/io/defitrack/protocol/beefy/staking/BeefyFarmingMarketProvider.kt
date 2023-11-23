@@ -6,7 +6,6 @@ import io.defitrack.BulkConstantResolver
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.erc20.TokenInformationVO
-import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.position.Position
@@ -72,8 +71,7 @@ abstract class BeefyFarmingMarketProvider(
                 getMarketSize(want, contract)
             },
             positionFetcher = PositionFetcher(
-                contract.address,
-                ::balanceOfFunction,
+                contract::balanceOfFunction,
                 extractBalance = { result ->
                     val balance = result[0].value as BigInteger
 

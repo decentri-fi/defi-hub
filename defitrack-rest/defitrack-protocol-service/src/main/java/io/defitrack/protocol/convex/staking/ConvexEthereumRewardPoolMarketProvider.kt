@@ -40,7 +40,6 @@ class ConvexEthereumRewardPoolMarketProvider(
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
                         rewardToken.toFungibleToken(),
-                        poolContract.address,
                         poolContract::earnedFunction
                     ),
                     selfExecutingTransaction(poolContract::getRewardFunction)

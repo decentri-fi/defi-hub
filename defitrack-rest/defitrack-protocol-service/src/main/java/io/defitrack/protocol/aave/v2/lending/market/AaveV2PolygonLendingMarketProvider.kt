@@ -8,7 +8,7 @@ import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
+import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.position.PositionFetcher
@@ -58,6 +58,7 @@ class AaveV2PolygonLendingMarketProvider(
                 async {
                     try {
                         val aToken = getToken(it.aToken.id)
+
                         val token = getToken(it.underlyingAsset)
                         create(
                             identifier = it.id,
@@ -72,10 +73,7 @@ class AaveV2PolygonLendingMarketProvider(
                                 getERC20Resource()
                             ),
                             positionFetcher = PositionFetcher(
-                                aToken.address,
-                                { user ->
-                                    balanceOfFunction(user)
-                                }
+                                aToken.asERC20Contract(getBlockchainGateway())::balanceOfFunction
                             ),
                             marketToken = aToken.toFungibleToken(),
                             totalSupply = refreshable(aToken.totalSupply.asEth(aToken.decimals)) {

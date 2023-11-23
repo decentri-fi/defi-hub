@@ -37,7 +37,6 @@ class SNXLendingMarketProvider : LendingMarketProvider() {
             },
             poolType = "synthetix",
             positionFetcher = PositionFetcher(
-                snxContract.address,
                 snxContract::collateralFn
             )
         ).nel()

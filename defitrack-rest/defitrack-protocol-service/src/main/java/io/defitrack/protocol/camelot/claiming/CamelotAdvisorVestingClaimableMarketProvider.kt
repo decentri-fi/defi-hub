@@ -13,6 +13,7 @@ import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.camelot.CamelotAdvisorVestingContract
 import io.defitrack.transaction.PreparedTransaction
+import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import org.springframework.stereotype.Component
 import java.math.BigInteger
 
@@ -40,10 +41,7 @@ class CamelotAdvisorVestingClaimableMarketProvider : ClaimableMarketProvider() {
                 claimableRewardFetchers = listOf(ClaimableRewardFetcher(
                     Reward(
                         xgrail.toFungibleToken(),
-                        contract.address,
-                        getRewardFunction = { user ->
-                            contract.releasableFunction()
-                        },
+                        getRewardFunction = contract.releasableFunction(),
                         extractAmountFromRewardFunction = { results, user ->
                             if (results[0].value as BigInteger > BigInteger.ZERO) {
                                 val share = contract.beneficiariesShares(user)
@@ -55,13 +53,7 @@ class CamelotAdvisorVestingClaimableMarketProvider : ClaimableMarketProvider() {
                             }
                         }
                     ),
-                    preparedTransaction = { user ->
-                        PreparedTransaction(
-                            network = Network.ARBITRUM.toVO(),
-                            function = contract.releasableFunction(),
-                            to = contract.address,
-                        )
-                    }
+                    preparedTransaction = selfExecutingTransaction(contract.releasableFunction())
                 ))
             )
         )

@@ -76,8 +76,7 @@ class QuickswapDualFarmingMarketProvider(
                 getMarketSize(stakedToken.toFungibleToken(), pool.address)
             },
             positionFetcher = PositionFetcher(
-                pool.address,
-                Companion::balanceOfFunction
+                stakedToken.asERC20Contract(getBlockchainGateway())::balanceOfFunction
             ),
             deprecated = ended
         )

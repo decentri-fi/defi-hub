@@ -7,6 +7,7 @@ import io.defitrack.abi.TypeUtils.Companion.uint16
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.protocol.sushiswap.contract.MasterChefBasedContract
 import kotlinx.coroutines.Deferred
 import org.web3j.abi.datatypes.Function
@@ -53,7 +54,7 @@ class PolycatMasterChefContract(
         return poolInfos.await()[poolId]
     }
 
-    fun userInfoFunction(user: String, poolIndex: Int): Function {
+    fun userInfoFunction(user: String, poolIndex: Int): ContractCall {
         return createFunction(
             "userInfo",
             inputs = listOf(poolIndex.toBigInteger().toUint256(), user.toAddress()),

@@ -5,6 +5,7 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import io.defitrack.pancakeswap.PancakeSwapPosition
 import org.web3j.abi.datatypes.Function
@@ -39,7 +40,7 @@ class UniswapPositionsV3Contract(
         }
     }
 
-    fun tokenOfOwnerByIndex(owner: String, index: Int): Function {
+    fun tokenOfOwnerByIndex(owner: String, index: Int): ContractCall {
         return createFunction(
             "tokenOfOwnerByIndex",
             listOf(owner.toAddress(), index.toBigInteger().toUint256()),
@@ -55,7 +56,7 @@ class UniswapPositionsV3Contract(
         )[0].value as BigInteger
     }
 
-    fun getPosition(tokenId: Int): Function {
+    fun getPosition(tokenId: Int): ContractCall {
         return createFunction(
             method = "positions",
             inputs = listOf(tokenId.toBigInteger().toUint256()),

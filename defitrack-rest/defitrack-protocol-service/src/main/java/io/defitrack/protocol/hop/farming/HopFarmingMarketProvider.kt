@@ -7,7 +7,6 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.map
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.erc20.TokenInformationVO
-import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.position.PositionFetcher
@@ -54,14 +53,10 @@ abstract class HopFarmingMarketProvider(
             marketSize = refreshable {
                 getMarketSize(stakedToken, contract)
             },
-            positionFetcher = PositionFetcher(
-                contract.address,
-                ::balanceOfFunction
-            ),
+            positionFetcher = PositionFetcher(contract::balanceOfFunction),
             claimableRewardFetcher = ClaimableRewardFetcher(
                 Reward(
                     rewardToken.toFungibleToken(),
-                    contract.address,
                     contract::earnedFn,
                 ),
                 preparedTransaction = selfExecutingTransaction(contract::getRewardFn)

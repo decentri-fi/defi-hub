@@ -4,6 +4,7 @@ import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Function
 
@@ -15,7 +16,7 @@ class StakedSonneContract(
 
     val sonne = constant<String>("sonne", TypeUtils.address())
 
-    fun getClaimableFor(token: String): (String) -> Function {
+    fun getClaimableFor(token: String): (String) -> ContractCall {
         return { user: String ->
             createFunction(
                 "getClaimable",
@@ -28,10 +29,10 @@ class StakedSonneContract(
         }
     }
 
-    fun claimAllFn(): MutableFunction {
+    fun claimAllFn(): ContractCall {
         return createFunction(
             "claimAll",
-        ).toMutableFunction()
+        )
     }
 
     suspend fun tokens(): List<String> {

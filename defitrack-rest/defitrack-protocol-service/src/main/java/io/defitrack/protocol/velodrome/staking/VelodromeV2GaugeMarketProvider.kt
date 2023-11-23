@@ -72,7 +72,6 @@ class VelodromeV2GaugeMarketProvider(
                         claimableRewardFetcher = ClaimableRewardFetcher(
                             Reward(
                                 token = rewardToken.toFungibleToken(),
-                                contractAddress = gaugeContract.address,
                                 getRewardFunction = gaugeContract::earnedFn
                             ),
                             preparedTransaction = selfExecutingTransaction(gaugeContract::getRewardFn)

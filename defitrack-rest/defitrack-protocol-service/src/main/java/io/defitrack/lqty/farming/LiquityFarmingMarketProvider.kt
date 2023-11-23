@@ -37,17 +37,15 @@ class LiquityFarmingMarketProvider : FarmingMarketProvider() {
                 identifier = address,
                 stakedToken = lusd,
                 rewardTokens = nonEmptyListOf(liquity, eth),
-                positionFetcher = PositionFetcher(address, contract::deposits),
+                positionFetcher = PositionFetcher(contract::deposits),
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     listOf(
                         Reward(
                             liquity,
-                            address,
                             contract::lqtyGain
                         ),
                         Reward(
                             eth,
-                            address,
                             contract::ethGain
                         )
                     ),

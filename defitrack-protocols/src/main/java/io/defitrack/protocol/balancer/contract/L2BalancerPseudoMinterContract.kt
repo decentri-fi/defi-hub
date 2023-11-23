@@ -4,6 +4,7 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import java.math.BigInteger
 
@@ -21,11 +22,11 @@ class L2BalancerPseudoMinterContract(
         )
     }
 
-    fun mint(amount: BigInteger, user: String): MutableFunction {
+    fun mint(amount: BigInteger, user: String): ContractCall {
         return createFunction(
             "mint",
             listOf(user.toAddress(), amount.toUint256()),
             listOf()
-        ).toMutableFunction()
+        )
     }
 }

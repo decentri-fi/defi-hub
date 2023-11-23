@@ -7,7 +7,6 @@ import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.map
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
-import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.position.Position
@@ -58,8 +57,7 @@ abstract class IronBankLendingMarketProvider(
                 },
                 poolType = "iron-bank-lendingpool",
                 positionFetcher = PositionFetcher(
-                    ctokenContract.address,
-                    ::balanceOfFunction
+                    ctokenContract::balanceOfFunction
                 ) { retVal ->
                     val tokenBalance = retVal[0].value as BigInteger
                     if (tokenBalance > BigInteger.ZERO) {

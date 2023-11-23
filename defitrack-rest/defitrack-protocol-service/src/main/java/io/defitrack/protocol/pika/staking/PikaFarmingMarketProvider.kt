@@ -11,6 +11,7 @@ import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.pika.PikaStakingContract
 import io.defitrack.transaction.PreparedTransaction
+import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import org.springframework.stereotype.Component
 import java.math.BigInteger
 
@@ -33,8 +34,8 @@ class PikaFarmingMarketProvider : FarmingMarketProvider() {
             create(
                 name = "Pika Staking",
                 identifier = pikaStaking,
-                stakedToken = stakingToken.toFungibleToken(),
-                rewardTokens = rewardTokens.map(TokenInformationVO::toFungibleToken),
+                stakedToken = stakingToken,
+                rewardTokens = rewardTokens,
                 positionFetcher = defaultPositionFetcher(pikaStaking),
                 internalMetadata = mapOf(
                     "contract" to contract
@@ -43,8 +44,7 @@ class PikaFarmingMarketProvider : FarmingMarketProvider() {
                     val reward = rewardPools[index]
                     ClaimableRewardFetcher(
                         Reward(
-                            rewardToken.toFungibleToken(),
-                            reward.fetchAddress(),
+                            rewardToken,
                             reward::getClaimableReward
                         ) { result, _ ->
                             when (reward) {
@@ -52,12 +52,13 @@ class PikaFarmingMarketProvider : FarmingMarketProvider() {
                                     val precision = reward.getPrecision()
                                     (result[0].value as BigInteger) / precision
                                 }
+
                                 else -> {
                                     result[0].value as BigInteger
                                 }
                             }
                         },
-                        PreparedTransaction.Companion.selfExecutingTransaction(reward::claimRewardFn)
+                        selfExecutingTransaction(reward::claimRewardFn)
                     )
                 }
             )

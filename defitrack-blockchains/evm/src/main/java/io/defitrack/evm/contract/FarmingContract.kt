@@ -19,7 +19,7 @@ open class FarmingContract(
     val stakedToken = constant<String>(stakedTokenName, TypeUtils.address())
     val rewardToken = constant<String>(rewardTokenName, TypeUtils.address())
 
-    open fun getRewardFn(user: String): Function {
+    open fun getRewardFn(user: String): ContractCall {
         return createFunction(
             rewardFunctionName,
             listOf(user.toAddress()),
@@ -27,9 +27,9 @@ open class FarmingContract(
         )
     }
 
-    open fun claimFn(user: String): MutableFunction {
+    open fun claimFn(user: String): ContractCall {
         return createFunction(
             claimFunctionName,
-        ).toMutableFunction()
+        )
     }
 }

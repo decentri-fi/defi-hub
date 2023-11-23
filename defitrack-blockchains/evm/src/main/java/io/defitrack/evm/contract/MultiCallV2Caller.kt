@@ -1,4 +1,4 @@
-package io.defitrack.evm.multicall
+package io.defitrack.evm.contract
 
 import io.defitrack.abi.TypeUtils.Companion.dynamicArray
 import io.defitrack.abi.TypeUtils.Companion.toAddress
@@ -22,7 +22,7 @@ class MultiCallV2Caller(val address: String) : MultiCallCaller {
     val semaphore = Semaphore(10)
 
     override suspend fun readMultiCall(
-        elements: List<MultiCallElement>,
+        elements: List<ContractCall>,
         executeCall: suspend (address: String, function: Function) -> List<Type<*>>
     ): List<MultiCallResult> = coroutineScope {
         if (elements.isEmpty()) {

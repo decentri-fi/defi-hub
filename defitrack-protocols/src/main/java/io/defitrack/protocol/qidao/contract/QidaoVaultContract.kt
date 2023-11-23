@@ -7,6 +7,7 @@ import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC721Contract
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -66,7 +67,7 @@ class QidaoVaultContract(
             .map(BigInteger::toInt)
     }
 
-    fun tokenOfOwnerByIndex(user: String, index: Int): Function {
+    fun tokenOfOwnerByIndex(user: String, index: Int): ContractCall {
         return createFunction(
             "tokenOfOwnerByIndex",
             listOf(

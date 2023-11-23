@@ -46,7 +46,6 @@ class EqualizerGaugeMarketProvider(
                         rewards.map {
                             Reward(
                                 it,
-                                gaugeContract.address,
                                 gaugeContract.earnedFnFor(it.address),
                             )
                         },

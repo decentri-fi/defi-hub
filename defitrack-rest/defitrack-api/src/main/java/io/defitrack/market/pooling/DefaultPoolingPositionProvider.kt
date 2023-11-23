@@ -35,30 +35,30 @@ class DefaultPoolingPositionProvider(
 
                 gateway.getGateway(provider.getNetwork()).readMultiCall(
                     markets.map { market ->
-                        market.positionFetcher!!.toMulticall(address)
+                        market.positionFetcher!!.functionCreator(address)
                     }
                 ).mapIndexed { index, retVal ->
-                   async {
-                       semaphore.withPermit {
-                           val market = markets[index]
-                           catch {
-                               val position = market.positionFetcher!!.extractBalance(retVal.data)
+                    async {
+                        semaphore.withPermit {
+                            val market = markets[index]
+                            catch {
+                                val position = market.positionFetcher!!.extractBalance(retVal.data)
 
-                               if (position.underlyingAmount > BigInteger.ONE) {
-                                   PoolingPosition(
-                                       position.tokenAmount,
-                                       market
-                                   ).some()
-                               } else {
-                                   None
-                               }
-                           }.mapLeft {
-                               logger.error("Error fetching balance for ${market.name}", it)
-                           }.map {
-                               it.getOrNull()
-                           }
-                       }
-                   }
+                                if (position.underlyingAmount > BigInteger.ONE) {
+                                    PoolingPosition(
+                                        position.tokenAmount,
+                                        market
+                                    ).some()
+                                } else {
+                                    None
+                                }
+                            }.mapLeft {
+                                logger.error("Error fetching balance for ${market.name}", it)
+                            }.map {
+                                it.getOrNull()
+                            }
+                        }
+                    }
                 }
             }
     }.awaitAll().mapNotNull {

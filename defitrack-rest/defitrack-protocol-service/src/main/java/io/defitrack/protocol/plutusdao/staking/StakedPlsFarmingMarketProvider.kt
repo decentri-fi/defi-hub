@@ -38,13 +38,11 @@ class StakedPlsFarmingMarketProvider : FarmingMarketProvider() {
             stakedToken = pls,
             rewardToken = esPls,
             positionFetcher = PositionFetcher(
-                contract.address,
                 contract::stakedAmounts
             ),
             claimableRewardFetcher = ClaimableRewardFetcher(
                 reward = Reward(
                     esPls,
-                    contract.address,
                     contract::claimable
                 ),
                 preparedTransaction = selfExecutingTransaction(router::claimEsPls)

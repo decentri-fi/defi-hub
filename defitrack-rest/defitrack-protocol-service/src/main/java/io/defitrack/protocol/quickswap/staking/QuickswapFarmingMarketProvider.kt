@@ -70,7 +70,6 @@ class QuickswapFarmingMarketProvider(
             claimableRewardFetcher = ClaimableRewardFetcher(
                 Reward(
                     token = rewardToken.toFungibleToken(),
-                    contractAddress = rewardPool.address,
                     getRewardFunction = rewardPool::earned,
                 ),
                 preparedTransaction = selfExecutingTransaction(rewardPool::getRewardFunction)

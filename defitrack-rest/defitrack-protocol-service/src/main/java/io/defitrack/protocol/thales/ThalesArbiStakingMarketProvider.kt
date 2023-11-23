@@ -34,13 +34,11 @@ class ThalesArbiStakingMarketProvider : FarmingMarketProvider() {
                 stakedToken = stakedToken.toFungibleToken(),
                 rewardTokens = listOf(stakedToken.toFungibleToken()),
                 positionFetcher = PositionFetcher(
-                    stakingThales,
                     stakingThalesContract::stakedBalanceOfFn,
                 ),
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
                         stakedToken.toFungibleToken(),
-                        stakingThales,
                         stakingThalesContract::getRewardsAvailableFn,
                     ),
                     selfExecutingTransaction(stakingThalesContract::claimRewardFn)

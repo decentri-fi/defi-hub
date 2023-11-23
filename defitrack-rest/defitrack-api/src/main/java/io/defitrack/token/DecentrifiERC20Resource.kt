@@ -5,8 +5,8 @@ import com.github.michaelbull.retry.retry
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.evm.contract.BlockchainGatewayProvider
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
-import io.defitrack.evm.multicall.MultiCallElement
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -99,9 +99,11 @@ class DecentrifiERC20Resource(
         network: Network,
     ): List<BigInteger> {
         with(blockchainGatewayProvider.getGateway(network)) {
-            return readMultiCall(tokens.map {
-                MultiCallElement(
-                    ERC20Contract.balanceOfFunction(address), it
+            return readMultiCall(tokens.map { token ->
+                ContractCall(
+                    ERC20Contract.balanceOf(address),
+                    network,
+                    token
                 )
             }).map {
                 try {

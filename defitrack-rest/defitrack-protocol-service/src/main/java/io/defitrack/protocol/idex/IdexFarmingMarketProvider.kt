@@ -57,10 +57,7 @@ class IdexFarmingMarketProvider(private val idexService: IdexService) : FarmingM
             rewardTokens = listOf(
                 rewardToken.toFungibleToken()
             ),
-            positionFetcher = PositionFetcher(
-                chef.address,
-                { user -> chef.userInfoFunction(poolId, user) }
-            ),
+            positionFetcher = PositionFetcher(chef.userInfoFunction(poolId)),
         )
     }
 }

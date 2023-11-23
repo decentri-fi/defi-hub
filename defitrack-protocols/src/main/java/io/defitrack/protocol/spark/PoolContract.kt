@@ -12,6 +12,7 @@ import io.defitrack.abi.TypeUtils.Companion.uint16
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.abi.TypeUtils.Companion.uint40
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Function
@@ -22,7 +23,7 @@ class PoolContract(
     address: String
 ) : EvmContract(blockchainGateway, address) {
 
-    fun getSupplyFunction(asset: String, amount: BigInteger, onBehalfOf: String): Function {
+    fun getSupplyFunction(asset: String, amount: BigInteger, onBehalfOf: String): ContractCall {
         return createFunction(
             "supply",
             listOf(

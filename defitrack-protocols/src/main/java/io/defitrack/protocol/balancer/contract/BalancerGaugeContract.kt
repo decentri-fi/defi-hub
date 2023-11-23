@@ -6,6 +6,7 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
 import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
@@ -17,7 +18,7 @@ open class BalancerGaugeContract(
 
     val workingSupply = constant<BigInteger>("working_supply", uint256())
 
-    fun workingBalance(user: String): Function {
+    fun workingBalance(user: String): ContractCall {
         return createFunction(
             "working_balances",
             nonEmptyListOf(user.toAddress()),
@@ -25,15 +26,15 @@ open class BalancerGaugeContract(
         )
     }
 
-    fun exitPosition(amount: BigInteger): MutableFunction {
+    fun exitPosition(amount: BigInteger): ContractCall {
         return createFunction(
             "withdraw",
             nonEmptyListOf(amount.toUint256()),
             listOf()
-        ).toMutableFunction()
+        )
     }
 
-    open fun getClaimableRewardFunction(token: String): (String) -> Function {
+    open fun getClaimableRewardFunction(token: String): (String) -> ContractCall {
         return { user: String ->
             createFunction(
                 "claimable_reward_write",
@@ -46,12 +47,12 @@ open class BalancerGaugeContract(
         }
     }
 
-    fun getClaimRewardsFunction(): MutableFunction {
+    fun getClaimRewardsFunction(): ContractCall {
         return createFunction(
             "claim_rewards",
             emptyList(),
             emptyList()
-        ).toMutableFunction()
+        )
     }
 
     suspend fun getRewardTokens(): List<String> {
@@ -69,7 +70,7 @@ open class BalancerGaugeContract(
     }
 
 
-    fun getRewardToken(index: Int): Function {
+    fun getRewardToken(index: Int): ContractCall {
         return createFunction(
             "reward_tokens",
             listOf(index.toBigInteger().toUint256()),

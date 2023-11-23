@@ -2,7 +2,7 @@ package io.defitrack.optimism.config
 
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.multicall.MultiCallV2Caller
+import io.defitrack.evm.contract.MultiCallV2Caller
 import io.ktor.client.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean

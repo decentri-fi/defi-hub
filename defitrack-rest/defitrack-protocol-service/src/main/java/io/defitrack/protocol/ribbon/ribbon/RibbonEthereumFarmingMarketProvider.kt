@@ -39,8 +39,7 @@ class RibbonEthereumFarmingMarketProvider(
                     ).toBigDecimal()
                 },
                 positionFetcher = PositionFetcher(
-                    it.id,
-                    { user -> ERC20Contract.balanceOfFunction(user) }
+                    ERC20Contract(getBlockchainGateway(), it.id)::balanceOfFunction
                 ),
             )
         }

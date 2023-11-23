@@ -49,7 +49,6 @@ class MStableEthereumFarmingMarketProvider(
             stakedToken = stakingToken,
             rewardToken = rewardsToken,
             positionFetcher = PositionFetcher(
-                address = contract.address,
                 contract::rawBalanceOfFunction
             ),
         )

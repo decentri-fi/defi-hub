@@ -42,8 +42,7 @@ class MyceliumStakedRewardsProvider : FarmingMarketProvider() {
                 stakedToken = mlp,
                 rewardTokens = mlpRewards.map { it.token },
                 positionFetcher = PositionFetcher(
-                    stakedMlpTracker.address,
-                    ERC20Contract::balanceOfFunction
+                    stakedMlpTracker::balanceOfFunction,
                 ),
                 claimableRewardFetchers = nonEmptyListOf(
                     ClaimableRewardFetcher(
@@ -62,7 +61,6 @@ class MyceliumStakedRewardsProvider : FarmingMarketProvider() {
 
         return Reward(
             rewardToken,
-            rewardTracker.address,
             rewardTracker::claimable
         )
     }
@@ -73,7 +71,6 @@ class MyceliumStakedRewardsProvider : FarmingMarketProvider() {
 
         return Reward(
             rewardToken,
-            rewardTracker.address,
             rewardTracker::claimable
         )
     }

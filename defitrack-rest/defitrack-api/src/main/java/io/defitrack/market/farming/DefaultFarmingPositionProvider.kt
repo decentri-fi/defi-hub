@@ -36,7 +36,7 @@ class DefaultFarmingPositionProvider(
 
             gateway.getGateway(provider.getNetwork()).readMultiCall(
                 markets.map { market ->
-                    market.balanceFetcher!!.toMulticall(address)
+                    market.balanceFetcher!!.functionCreator(address)
                 }
             ).mapIndexed { index, retVal ->
                 async {

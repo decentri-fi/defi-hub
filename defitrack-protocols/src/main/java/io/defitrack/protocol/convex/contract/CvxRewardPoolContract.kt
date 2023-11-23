@@ -4,6 +4,7 @@ import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
 import org.web3j.abi.datatypes.Function
 
@@ -16,14 +17,11 @@ class CvxRewardPoolContract(
     val rewardToken = constant<String>("rewardToken", address())
     val stakingToken = constant<String>("stakingToken", address())
 
-    fun getRewardFunction(): MutableFunction {
-        return createFunction(
-            "getReward",
-            listOf()
-        ).toMutableFunction()
+    fun getRewardFunction(): ContractCall {
+        return createFunction("getReward")
     }
 
-    fun earnedFunction(user: String): Function {
+    fun earnedFunction(user: String): ContractCall {
         return createFunction(
             "earned",
             listOf(user.toAddress()),

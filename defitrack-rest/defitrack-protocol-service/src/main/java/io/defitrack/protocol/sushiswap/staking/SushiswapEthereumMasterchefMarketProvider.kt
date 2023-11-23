@@ -75,13 +75,11 @@ class SushiswapEthereumMasterchefMarketProvider : FarmingMarketProvider() {
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
                         token = rewardToken,
-                        contractAddress = chef.address,
                         getRewardFunction = chef.pendingFunction(poolId)
                     ),
                     preparedTransaction = selfExecutingTransaction(chef.harvestFunction(poolId))
                 ),
                 positionFetcher = PositionFetcher(
-                    chef.address,
                     chef.userInfoFunction(poolId)
                 ),
             )

@@ -15,6 +15,7 @@ import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.sushiswap.contract.MasterchefV2Contract
 import io.defitrack.transaction.PreparedTransaction
+import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
@@ -87,7 +88,6 @@ class SushiswapEthereumMasterchefV2MarketProvider : FarmingMarketProvider() {
                     listOf(
                         Reward(
                             token = rewardToken.toFungibleToken(),
-                            contractAddress = chef.address,
                             getRewardFunction = { user ->
                                 chef.pendingFunction(poolId, user)
                             }
@@ -95,22 +95,13 @@ class SushiswapEthereumMasterchefV2MarketProvider : FarmingMarketProvider() {
                         rewarderContract?.let { rctr ->
                             Reward(
                                 token = extraReward!!.toFungibleToken(),
-                                rctr.address,
                                 { user -> rctr.pendingTokenFn(poolId, user) }
                             )
                         }
                     ).filterNotNull(),
-                    preparedTransaction = { user ->
-                        PreparedTransaction(
-                            network = getNetwork().toVO(),
-                            chef.harvestFunction(poolId),
-                            to = chef.address,
-                            from = user
-                        )
-                    }
+                    preparedTransaction = selfExecutingTransaction(chef.harvestFunction(poolId))
                 ),
                 positionFetcher = PositionFetcher(
-                    chef.address,
                     { user -> chef.userInfoFunction(poolId, user) }
                 ),
             )

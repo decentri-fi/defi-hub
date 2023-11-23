@@ -5,6 +5,7 @@ import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
 import kotlinx.coroutines.Deferred
 
@@ -16,15 +17,11 @@ class CvxCrvStakingWrapperContract(
         readSingle("crv", TypeUtils.address())
     }
 
-    val cvx: Deferred<String> = lazyAsync {
-        readSingle("cvx", TypeUtils.address())
-    }
-
-    fun getRewardFn(user: String): MutableFunction {
+    fun getRewardFn(user: String): ContractCall {
         return createFunction(
             "getReward",
             user.toAddress().nel(),
-        ).toMutableFunction()
+        )
     }
 
     val cvxCrv: Deferred<String> = lazyAsync {

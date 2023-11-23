@@ -56,13 +56,11 @@ abstract class SushiMinichefV2FarmingMarketProvider(
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
                         token = rewardToken,
-                        contractAddress = chef.address,
                         getRewardFunction = chef.pendingSushiFunction(poolId)
                     ),
                     preparedTransaction = selfExecutingTransaction(chef.harvestFunction(poolId))
                 ),
                 positionFetcher = PositionFetcher(
-                    chef.address,
                     chef.userInfoFunction(poolId)
                 ),
             )

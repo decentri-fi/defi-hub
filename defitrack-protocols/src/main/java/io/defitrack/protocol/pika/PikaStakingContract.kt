@@ -4,6 +4,7 @@ import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Function
@@ -46,8 +47,8 @@ class PikaStakingContract(
     }
 
     interface PikaRewards {
-        fun getClaimableReward(user: String): Function
-        fun claimRewardFn(user: String): MutableFunction
+        fun getClaimableReward(user: String): ContractCall
+        fun claimRewardFn(user: String): ContractCall
 
         suspend fun getRewardToken(): String
 
@@ -66,12 +67,12 @@ class PikaStakingContract(
         }
 
 
-        override fun claimRewardFn(user: String): MutableFunction {
+        override fun claimRewardFn(user: String): ContractCall {
             return createFunction(
                 "claimReward",
                 listOf(user.toAddress()),
                 emptyList()
-            ).toMutableFunction()
+            )
         }
 
         override suspend fun getRewardToken(): String {
@@ -82,7 +83,7 @@ class PikaStakingContract(
             return address
         }
 
-        override fun getClaimableReward(user: String): Function {
+        override fun getClaimableReward(user: String): ContractCall {
             return createFunction(
                 "getClaimableReward",
                 listOf(user.toAddress()),
@@ -97,19 +98,19 @@ class PikaStakingContract(
     ) : EvmContract(blockchainGateway, address), PikaRewards {
         val rewardToken = constant<String>("rewardToken", TypeUtils.address())
 
-        override fun claimRewardFn(user: String): MutableFunction {
+        override fun claimRewardFn(user: String): ContractCall {
             return createFunction(
                 "getReward",
                 emptyList(),
                 emptyList()
-            ).toMutableFunction()
+            )
         }
 
         override suspend fun getRewardToken(): String {
             return rewardToken.await()
         }
 
-        override fun getClaimableReward(user: String): Function {
+        override fun getClaimableReward(user: String): ContractCall {
             return createFunction(
                 "rewards",
                 listOf(user.toAddress()),

@@ -33,15 +33,13 @@ abstract class GainsStakingMarketProvider(
                 name = "Gains Staking",
                 identifier = stakingMarketAddress,
                 stakedToken = gns,
-                rewardTokens = listOf(dai),
+                rewardToken = dai,
                 positionFetcher = PositionFetcher(
-                    contract.address,
                     contract::totalGnsStaked
                 ),
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
-                        dai.toFungibleToken(),
-                        contract.address,
+                        dai,
                         contract::pendingRewardsDai
                     ),
                     preparedTransaction = selfExecutingTransaction(contract::harvestDai)

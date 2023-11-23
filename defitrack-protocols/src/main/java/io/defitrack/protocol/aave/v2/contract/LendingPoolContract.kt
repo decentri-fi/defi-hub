@@ -10,6 +10,7 @@ import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.abi.TypeUtils.Companion.uint40
 import io.defitrack.abi.TypeUtils.Companion.uint8
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Address
 import java.math.BigInteger
@@ -26,8 +27,8 @@ class LendingPoolContract(blockchainGateway: BlockchainGateway, address: String)
         )[0].value as List<Address>).map { it.value as String }
     }
 
-    suspend fun getReserveData(address: String) : ReserveData{
-        val results =  read(
+    suspend fun getReserveData(address: String): ReserveData {
+        val results = read(
             "getReserveData",
             listOf(address.toAddress()),
             listOf(
@@ -52,7 +53,7 @@ class LendingPoolContract(blockchainGateway: BlockchainGateway, address: String)
         )
     }
 
-    fun depositFunction(asset: String, amount: BigInteger): MutableFunction {
+    fun depositFunction(asset: String, amount: BigInteger): ContractCall {
         return createFunction(
             "deposit",
             listOf(
@@ -62,7 +63,7 @@ class LendingPoolContract(blockchainGateway: BlockchainGateway, address: String)
                 BigInteger.ZERO.toUint16()
             ),
             emptyList()
-        ).toMutableFunction()
+        )
     }
 
     data class ReserveData(

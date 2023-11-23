@@ -3,10 +3,7 @@ package io.defitrack.market
 import arrow.fx.coroutines.parMap
 import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.event.EventService
-import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.evm.contract.ERC20Contract
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.*
 import io.defitrack.exit.ExitPositionCommand
 import io.defitrack.exit.ExitPositionPreparer
 import io.defitrack.market.event.MarketAddedEvent
@@ -156,7 +153,15 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
     }
 
     fun defaultPositionFetcher(address: String): PositionFetcher {
-        return PositionFetcher(address, ERC20Contract.Companion::balanceOfFunction) { retVal ->
+        return PositionFetcher(
+            { user ->
+                ContractCall(
+                    ERC20Contract.balanceOf(user),
+                    getNetwork(),
+                    address,
+                )
+            }
+        ) { retVal ->
             val result = retVal[0].value as BigInteger
             Position(result, result)
         }
@@ -186,7 +191,7 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
         return priceResource
     }
 
-    fun prepareExit(preparedExit: (exitPositionCommand: ExitPositionCommand) -> EvmContract.MutableFunction): ExitPositionPreparer {
+    fun prepareExit(preparedExit: (exitPositionCommand: ExitPositionCommand) -> ContractCall): ExitPositionPreparer {
         return object : ExitPositionPreparer() {
             override suspend fun getExitPositionCommand(exitPositionCommand: ExitPositionCommand): Deferred<PreparedTransaction> {
                 return coroutineScope {

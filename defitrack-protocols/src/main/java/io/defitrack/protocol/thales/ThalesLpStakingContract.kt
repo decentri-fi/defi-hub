@@ -4,6 +4,7 @@ package io.defitrack.protocol.thales
 import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Function
 
@@ -15,7 +16,7 @@ class ThalesLpStakingContract(
     val rewardsToken = constant<String>("rewardsToken", TypeUtils.address())
     val secondRewardsToken = constant<String>("secondRewardsToken", TypeUtils.address())
 
-    fun stakedBalanceOfFn(user: String): Function {
+    fun stakedBalanceOfFn(user: String): ContractCall {
         return createFunction(
             "stakedBalanceOf",
             listOf(user.toAddress()),
@@ -23,7 +24,7 @@ class ThalesLpStakingContract(
         )
     }
 
-    fun getRewardsAvailableFn(user: String): Function {
+    fun getRewardsAvailableFn(user: String): ContractCall {
         return createFunction(
             "earned",
             listOf(user.toAddress()),
@@ -31,10 +32,10 @@ class ThalesLpStakingContract(
         )
     }
 
-    fun claimRewardFn(user: String): MutableFunction {
+    fun claimRewardFn(): ContractCall {
         return createFunction(
             "getReward",
             listOf()
-        ).toMutableFunction()
+        )
     }
 }

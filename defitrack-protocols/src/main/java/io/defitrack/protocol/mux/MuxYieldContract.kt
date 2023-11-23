@@ -4,6 +4,7 @@ import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Function
 
@@ -14,7 +15,7 @@ class MuxYieldContract(blockchainGateway: BlockchainGateway, address: String) : 
     val mux = constant<String>("mux", TypeUtils.address())
     val mcb = constant<String>("mcb", TypeUtils.address())
 
-    fun claimableVestedTokenFromMlp(user: String): Function {
+    fun claimableVestedTokenFromMlp(user: String): ContractCall {
         return createFunction(
             "claimableVestedTokenFromMlp",
             listOf(user.toAddress()),
@@ -22,7 +23,7 @@ class MuxYieldContract(blockchainGateway: BlockchainGateway, address: String) : 
         )
     }
 
-    fun claimableVestedTokenFromMux(user: String): Function {
+    fun claimableVestedTokenFromMux(user: String): ContractCall {
         return createFunction(
             "claimableVestedTokenFromVe",
             listOf(user.toAddress()),
@@ -30,17 +31,14 @@ class MuxYieldContract(blockchainGateway: BlockchainGateway, address: String) : 
         )
     }
 
-    fun claimFromMlpUnwrap(user: String): MutableFunction {
+    fun claimFromMlpUnwrap(): ContractCall {
         return createFunction(
             "claimFromMlpUnwrap",
             listOf(),
-        ).toMutableFunction()
+        )
     }
 
-    fun claimFromVeUnwrap(user: String): MutableFunction {
-        return createFunction(
-            "claimFromVeUnwrap",
-            listOf(),
-        ).toMutableFunction()
+    fun claimFromVeUnwrap(): ContractCall {
+        return createFunction("claimFromVeUnwrap")
     }
 }

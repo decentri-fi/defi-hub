@@ -5,7 +5,6 @@ import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.position.PositionFetcher
@@ -45,8 +44,7 @@ class SparkLendingMarketProvider : LendingMarketProvider() {
                                 token = underlying.toFungibleToken(),
                                 poolType = "spark",
                                 positionFetcher = PositionFetcher(
-                                    aToken.address,
-                                    { user -> balanceOfFunction(user) },
+                                    aToken.asERC20Contract(getBlockchainGateway())::balanceOfFunction
                                 ),
                                 marketToken = aToken.toFungibleToken(),
                                 totalSupply = Refreshable.refreshable(aToken.totalSupply.asEth(aToken.decimals)) {

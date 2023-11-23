@@ -38,7 +38,6 @@ class AaveV2IncentivesControllerMarketProvider : ClaimableMarketProvider() {
                 ClaimableRewardFetcher(
                     Reward(
                         stakedAave,
-                        incentivesController,
                         incentivesContract::getUserUnclaimedRewardsFn
                     ),
                     preparedTransaction = selfExecutingTransaction(incentivesContract::claimRewardsFn)

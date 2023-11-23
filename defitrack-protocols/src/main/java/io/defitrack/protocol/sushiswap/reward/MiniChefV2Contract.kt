@@ -8,10 +8,9 @@ import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.abi.TypeUtils.Companion.uint64
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.multicall.MultiCallElement
 import kotlinx.coroutines.Deferred
-import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
 
 class MiniChefV2Contract(
@@ -19,7 +18,7 @@ class MiniChefV2Contract(
     address: String
 ) : EvmContract(blockchainGateway, address) {
 
-    fun userInfoFunction(poolId: Int): (String) -> Function {
+    fun userInfoFunction(poolId: Int): (String) -> ContractCall {
         return { user: String ->
             createFunction(
                 "userInfo",
@@ -35,7 +34,7 @@ class MiniChefV2Contract(
         }
     }
 
-    fun harvestFunction(pid: Int): (String) -> MutableFunction {
+    fun harvestFunction(pid: Int): (String) -> ContractCall {
         return { user: String ->
             createFunction(
                 "harvest",
@@ -43,24 +42,21 @@ class MiniChefV2Contract(
                     pid.toBigInteger().toUint256(),
                     user.toAddress()
                 )
-            ).toMutableFunction()
+            )
         }
     }
 
 
     suspend fun poolInfos(): List<MinichefPoolInfo> {
         val multicalls = (0 until poolLength()).map { poolIndex ->
-            MultiCallElement(
-                createFunction(
-                    "poolInfo",
-                    inputs = listOf(poolIndex.toBigInteger().toUint256()),
-                    outputs = listOf(
-                        uint128(),
-                        uint64(),
-                        uint64(),
-                    )
-                ),
-                this.address
+            createFunction(
+                "poolInfo",
+                inputs = listOf(poolIndex.toBigInteger().toUint256()),
+                outputs = listOf(
+                    uint128(),
+                    uint64(),
+                    uint64(),
+                )
             )
         }
 
@@ -83,13 +79,10 @@ class MiniChefV2Contract(
 
     val lps: Deferred<List<String>> = lazyAsync {
         val multicalls = (0 until poolLength()).map { poolIndex ->
-            MultiCallElement(
-                createFunction(
-                    "lpToken",
-                    inputs = listOf(poolIndex.toBigInteger().toUint256()),
-                    outputs = listOf(address())
-                ),
-                address
+            createFunction(
+                "lpToken",
+                inputs = listOf(poolIndex.toBigInteger().toUint256()),
+                outputs = listOf(address())
             )
         }
         val results = blockchainGateway.readMultiCall(multicalls)
@@ -104,7 +97,7 @@ class MiniChefV2Contract(
         readSingle("SUSHI", address())
     }
 
-    fun pendingSushiFunction(pid: Int): (String) -> Function {
+    fun pendingSushiFunction(pid: Int): (String) -> ContractCall {
         return { user: String ->
             createFunction(
                 "pendingSushi",

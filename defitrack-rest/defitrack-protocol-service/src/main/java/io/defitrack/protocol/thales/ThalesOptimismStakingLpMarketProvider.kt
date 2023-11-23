@@ -37,21 +37,18 @@ class ThalesOptimismStakingLpMarketProvider : FarmingMarketProvider() {
                 stakedToken = stakedToken,
                 rewardTokens = listOf(rewardsToken, secondRewardsToken),
                 positionFetcher = PositionFetcher(
-                    stakingThales,
                     stakingThalesContract::stakedBalanceOfFn,
                 ),
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     listOf(
                         Reward(
                             rewardsToken,
-                            stakingThales,
                             stakingThalesContract::getRewardsAvailableFn,
                         ) { res, _ ->
                             res[0].value as BigInteger
                         },
                         Reward(
-                            secondRewardsToken.toFungibleToken(),
-                            stakingThales,
+                            secondRewardsToken,
                             stakingThalesContract::getRewardsAvailableFn
                         ) { res, _ ->
                             res[1].value as BigInteger

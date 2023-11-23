@@ -1,25 +1,23 @@
 package io.defitrack.market.position
 
-import io.defitrack.evm.multicall.MultiCallElement
+import io.defitrack.evm.contract.ContractCall
 import org.web3j.abi.datatypes.Type
 import java.math.BigInteger
 
 class PositionFetcher(
-    val address: String,
-    val function: (user: String) -> org.web3j.abi.datatypes.Function,
-    val extractBalance: suspend (List<Type<*>>) -> Position = { result ->
-        try {
-            val result = result[0].value as BigInteger
-            Position(result, result)
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            Position.ZERO
-        }
-    }
+    val functionCreator: (user: String) -> ContractCall,
+    val extractBalance: suspend (List<Type<*>>) -> Position = defaultExtraction()
 ) {
-    fun toMulticall(user: String): MultiCallElement {
-        return MultiCallElement(
-            function(user), address
-        )
+
+    companion object {
+        fun defaultExtraction(): suspend (List<Type<*>>) -> Position = { result ->
+            try {
+                val result = result[0].value as BigInteger
+                Position(result, result)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                Position.ZERO
+            }
+        }
     }
 }

@@ -4,6 +4,7 @@ import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
 import org.web3j.abi.datatypes.Function
 
@@ -13,7 +14,7 @@ class MStableEthereumBoostedSavingsVaultContract(
 ) : ERC20Contract(ethereumContractAccessor, address) {
 
 
-    fun rawBalanceOfFunction(address: String): Function {
+    fun rawBalanceOfFunction(address: String): ContractCall {
         return createFunction(
             "rawBalanceOf",
             inputs = listOf(address.toAddress()),

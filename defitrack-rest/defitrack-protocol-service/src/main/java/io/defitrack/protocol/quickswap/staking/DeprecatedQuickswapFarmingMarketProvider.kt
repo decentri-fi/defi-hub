@@ -68,7 +68,6 @@ class DeprecatedQuickswapFarmingMarketProvider(
             claimableRewardFetcher = ClaimableRewardFetcher(
                 Reward(
                     token = rewardToken,
-                    contractAddress = rewardPool.address,
                     getRewardFunction = rewardPool::earned,
                 ),
                 preparedTransaction = selfExecutingTransaction(rewardPool::getRewardFunction)

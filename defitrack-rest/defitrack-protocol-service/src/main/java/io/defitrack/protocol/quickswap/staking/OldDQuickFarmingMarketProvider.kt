@@ -25,7 +25,7 @@ class OldDQuickFarmingMarketProvider(
             getBlockchainGateway(),
             quickswapService.getOldDQuickContractAddress(),
         )
-        val stakedToken = getToken(contract.address).toFungibleToken()
+        val stakedToken = getToken(contract.address)
         val quickToken = getToken("0x831753dd7087cac61ab5644b308642cc1c33dc13").toFungibleToken()
 
         return listOf(
@@ -37,8 +37,7 @@ class OldDQuickFarmingMarketProvider(
                     stakedToken
                 ),
                 positionFetcher = PositionFetcher(
-                    stakedToken.address,
-                    { user -> ERC20Contract.balanceOfFunction(user) }
+                    stakedToken.asERC20Contract(getBlockchainGateway())::balanceOfFunction
                 ),
                 investmentPreparer = DQuickStakingInvestmentPreparer(
                     getERC20Resource(), contract

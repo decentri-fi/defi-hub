@@ -12,9 +12,6 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.evm.EvmContractInteractionCommand
 import io.defitrack.evm.GetEventLogsCommand
-import io.defitrack.evm.multicall.MultiCallCaller
-import io.defitrack.evm.multicall.MultiCallElement
-import io.defitrack.evm.multicall.MultiCallResult
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -56,7 +53,7 @@ class BlockchainGateway(
     }
 
     suspend fun readMultiCall(
-        elements: List<MultiCallElement>,
+        elements: List<ContractCall>,
     ): List<MultiCallResult> {
         return multicallCaller.readMultiCall(elements) { address, function ->
             executeCall(address, function)
@@ -146,7 +143,6 @@ class BlockchainGateway(
 
 
     companion object {
-
         fun createFunction(
             method: String,
             inputs: List<Type<*>> = kotlin.collections.emptyList(),

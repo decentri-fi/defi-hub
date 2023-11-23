@@ -24,7 +24,7 @@ class DQuickFarmingMarketProvider(
 ) : FarmingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
-        val contract =  DQuickContract(
+        val contract = DQuickContract(
             getBlockchainGateway(),
             quickswapService.getDQuickContract(),
         )
@@ -37,10 +37,7 @@ class DQuickFarmingMarketProvider(
             name = "Dragon's Lair",
             stakedToken = quickToken,
             rewardToken = stakedToken,
-            positionFetcher = PositionFetcher(
-                stakedToken.address,
-                ERC20Contract.Companion::balanceOfFunction
-            ),
+            positionFetcher = PositionFetcher(contract::balanceOfFunction),
             investmentPreparer = DQuickStakingInvestmentPreparer(
                 getERC20Resource(), contract
             ),

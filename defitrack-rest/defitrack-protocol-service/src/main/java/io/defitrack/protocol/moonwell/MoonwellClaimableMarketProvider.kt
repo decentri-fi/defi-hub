@@ -1,5 +1,6 @@
 package io.defitrack.protocol.moonwell
 
+import arrow.fx.coroutines.parMap
 import io.defitrack.claimable.ClaimableMarketProvider
 import io.defitrack.claimable.domain.ClaimableMarket
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
@@ -40,8 +41,8 @@ class MoonwellClaimableMarketProvider(
 
     override suspend fun fetchClaimables(): List<ClaimableMarket> {
         val markets = moonwellLendingMarketProvider.getMarkets()
-        return markets.map {
-
+        val contract = deferredRewardDistributor.await()
+        return markets.parMap(concurrency = 8) {
             ClaimableMarket(
                 id = "rwrd_${it.id}",
                 name = "${it.name} reward",
@@ -50,11 +51,7 @@ class MoonwellClaimableMarketProvider(
                 claimableRewardFetchers = listOf(ClaimableRewardFetcher(
                     Reward(
                         well.await(),
-                        deferredRewardDistributor.await().address,
-                        { user ->
-                            deferredRewardDistributor.await()
-                                .getOutstandingRewardsForUserFn(it.metadata["mToken"].toString(), user)
-                        },
+                        contract.getOutstandingRewardsForUserFn(it.metadata["mToken"].toString()),
                         extractAmountFromRewardFunction = { results, _ ->
                             val rewards = results[0].value as List<RewardDistributorContract.Reward>
                             rewards.firstOrNull { r ->

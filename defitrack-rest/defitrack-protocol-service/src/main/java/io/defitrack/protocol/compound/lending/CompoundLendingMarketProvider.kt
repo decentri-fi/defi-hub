@@ -5,7 +5,6 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.position.Position
@@ -60,10 +59,7 @@ class CompoundLendingMarketProvider(
                         ).toBigDecimal()
                     },
                     poolType = "compound-lendingpool",
-                    positionFetcher = PositionFetcher(
-                        ctokenContract.address,
-                        ::balanceOfFunction
-                    ) { retVal ->
+                    positionFetcher = PositionFetcher(ctokenContract::balanceOfFunction) { retVal ->
                         val tokenBalance = retVal[0].value as BigInteger
                         Position(
                             tokenBalance.times(exchangeRate).asEth().toBigInteger(),

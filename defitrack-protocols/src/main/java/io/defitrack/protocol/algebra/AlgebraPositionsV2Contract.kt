@@ -7,6 +7,7 @@ import io.defitrack.abi.TypeUtils.Companion.uint128
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.abi.TypeUtils.Companion.uint88
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
 import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.Type
@@ -17,7 +18,7 @@ class AlgebraPositionsV2Contract(
 ) : ERC20Contract(
     blockchainGateway, address
 ) {
-    fun getPositionFunction(tokenId: Int): Function {
+    fun getPositionFunction(tokenId: Int): ContractCall {
         return createFunction(
             method = "positions",
             inputs = listOf(tokenId.toBigInteger().toUint256()),
@@ -66,7 +67,7 @@ class AlgebraPositionsV2Contract(
         }
     }
 
-    fun tokenByIndex(index: Int): Function {
+    fun tokenByIndex(index: Int): ContractCall {
         return createFunction(
             "tokenByIndex",
             inputs = listOf(index.toBigInteger().toUint256()),

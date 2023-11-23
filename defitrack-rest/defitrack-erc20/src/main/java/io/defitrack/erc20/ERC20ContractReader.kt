@@ -6,7 +6,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.ERC20Contract
-import io.defitrack.evm.multicall.MultiCallResult
+import io.defitrack.evm.contract.MultiCallResult
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.math.BigInteger

@@ -37,7 +37,7 @@ class DefaultLendingPositionProvider(
 
                 gateway.getGateway(provider.getNetwork()).readMultiCall(
                     markets.map { market ->
-                        market.positionFetcher!!.toMulticall(address)
+                        market.positionFetcher!!.functionCreator(address)
                     }
                 ).mapIndexed { index, retVal ->
                     async {

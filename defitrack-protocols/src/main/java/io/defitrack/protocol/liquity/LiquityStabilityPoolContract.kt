@@ -5,6 +5,7 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
@@ -13,7 +14,7 @@ class LiquityStabilityPoolContract(
     blockchainGateway: BlockchainGateway, address: String
 ) : EvmContract(blockchainGateway, address) {
 
-    fun deposits(user: String): Function {
+    fun deposits(user: String): ContractCall {
         return createFunction(
             "getCompoundedLUSDDeposit",
             nonEmptyListOf(user.toAddress()),
@@ -21,7 +22,7 @@ class LiquityStabilityPoolContract(
         )
     }
 
-    fun lqtyGain(user: String): Function {
+    fun lqtyGain(user: String): ContractCall {
         return createFunction(
             "getDepositorLQTYGain",
             nonEmptyListOf(user.toAddress()),
@@ -29,7 +30,7 @@ class LiquityStabilityPoolContract(
         )
     }
 
-    fun ethGain(user: String): Function {
+    fun ethGain(user: String): ContractCall {
         return createFunction(
             "getDepositorETHGain",
             nonEmptyListOf(user.toAddress()),
@@ -37,10 +38,10 @@ class LiquityStabilityPoolContract(
         )
     }
 
-    fun claim(): MutableFunction {
+    fun claim(): ContractCall {
         return createFunction(
             "withdrawFromSP",
             nonEmptyListOf(BigInteger.ZERO.toUint256())
-        ).toMutableFunction()
+        )
     }
 }

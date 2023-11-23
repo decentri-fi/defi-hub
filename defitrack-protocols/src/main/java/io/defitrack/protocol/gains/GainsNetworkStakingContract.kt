@@ -5,8 +5,8 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint128
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
-import org.web3j.abi.datatypes.Function
 
 class GainsNetworkStakingContract(
     blockchainGateway: BlockchainGateway, address: String
@@ -14,15 +14,15 @@ class GainsNetworkStakingContract(
     blockchainGateway, address
 ) {
 
-    fun harvestDai(): MutableFunction {
+    fun harvestDai(): ContractCall {
         return createFunction(
             "harvestDai",
             listOf(),
             listOf()
-        ).toMutableFunction()
+        )
     }
 
-    fun pendingRewardsDai(address: String): Function {
+    fun pendingRewardsDai(address: String): ContractCall {
         return createFunction(
             "pendingRewardDai",
             listOf(address.toAddress()),
@@ -33,10 +33,10 @@ class GainsNetworkStakingContract(
     val gns = constant<String>("gns", address())
     val dai = constant<String>("dai", address())
 
-    fun totalGnsStaked(address: String): Function {
+    fun totalGnsStaked(user: String): ContractCall {
         return createFunction(
             "totalGnsStaked",
-            listOf(address.toAddress()),
+            listOf(user.toAddress()),
             listOf(uint256())
         )
     }

@@ -87,7 +87,6 @@ class AerodromeGaugeMarketProvider(
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
                         token = rewardToken,
-                        contractAddress = contract.address,
                         getRewardFunction = contract::earnedFn
                     ),
                     preparedTransaction = selfExecutingTransaction(contract::getRewardFn)

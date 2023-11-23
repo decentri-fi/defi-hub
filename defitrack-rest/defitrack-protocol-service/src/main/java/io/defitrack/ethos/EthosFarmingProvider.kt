@@ -34,14 +34,10 @@ class EthosFarmingProvider : FarmingMarketProvider() {
             identifier = stabilityPoolAddress,
             stakedToken = staked,
             rewardToken = reward,
-            positionFetcher = PositionFetcher(
-                contract.address,
-                contract::depositsFn,
-            ),
+            positionFetcher = PositionFetcher(contract::depositsFn),
             claimableRewardFetcher = ClaimableRewardFetcher(
                 Reward(
                     reward,
-                    contract.address,
                     contract::claimableFn,
                 ),
                 preparedTransaction = selfExecutingTransaction(contract::claimFn)

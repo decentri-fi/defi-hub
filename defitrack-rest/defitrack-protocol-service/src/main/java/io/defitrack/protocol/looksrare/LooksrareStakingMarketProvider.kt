@@ -37,13 +37,11 @@ class LooksrareStakingMarketProvider : FarmingMarketProvider() {
                 stakedToken = staked,
                 rewardToken = reward,
                 positionFetcher = PositionFetcher(
-                    contract.address,
                     contract::calculateSharesValueInLooks
                 ),
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
                         reward,
-                        contract.address,
                         contract::calculatePendingRewards
                     ),
                     preparedTransaction = selfExecutingTransaction(contract::harvest)

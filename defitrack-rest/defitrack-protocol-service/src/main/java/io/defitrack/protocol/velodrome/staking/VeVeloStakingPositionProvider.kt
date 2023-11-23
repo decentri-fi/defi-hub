@@ -2,7 +2,6 @@ package io.defitrack.protocol.velodrome.staking
 
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.evm.multicall.MultiCallElement
 import io.defitrack.market.farming.FarmingPositionProvider
 import io.defitrack.market.farming.domain.FarmingPosition
 import io.defitrack.protocol.Company
@@ -27,9 +26,7 @@ class VeVeloStakingPositionProvider(
         val contract = deferredVeVeloContract.await()
         val tokensIds = contract.getTokenIdsForOwner(address)
         val results = veVeloStakingMarketProvider.getBlockchainGateway().readMultiCall(
-            tokensIds.map { contract.lockedFn(it) }.map {
-                MultiCallElement(it, veVeloStakingMarketProvider.veVelo)
-            }
+            tokensIds.map { contract.lockedFn(it) }
         )
 
         return results.map {

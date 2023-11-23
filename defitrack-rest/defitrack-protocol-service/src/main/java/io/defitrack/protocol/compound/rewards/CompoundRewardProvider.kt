@@ -15,6 +15,7 @@ import io.defitrack.protocol.compound.CompoundAddressesProvider
 import io.defitrack.protocol.compound.v3.contract.CompoundRewardContract
 import io.defitrack.protocol.compound.v3.contract.CompoundV3AssetContract
 import io.defitrack.transaction.PreparedTransaction
+import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 
 abstract class CompoundRewardProvider(
     val network: Network
@@ -26,7 +27,10 @@ abstract class CompoundRewardProvider(
 
     open fun getContract(): CompoundRewardContract {
         return object :
-            CompoundRewardContract(blockchainGatewayProvider.getGateway(network), CompoundAddressesProvider.CONFIG[network]!!.rewards) {
+            CompoundRewardContract(
+                blockchainGatewayProvider.getGateway(network),
+                CompoundAddressesProvider.CONFIG[network]!!.rewards
+            ) {
             override suspend fun getRewardConfig(comet: String): RewardConfig {
                 return (read(
                     "rewardConfig",
@@ -60,20 +64,10 @@ abstract class CompoundRewardProvider(
                 claimableRewardFetchers = listOf(ClaimableRewardFetcher(
                     Reward(
                         token = rewardToken.toFungibleToken(),
-                        contractAddress = deferredContract.await().address,
-                        getRewardFunction = { user ->
-                            deferredContract.await().getRewardOwedFn(comet, user)
-                        }
+                        getRewardFunction = deferredContract.await().getRewardOwedFn(comet)
                     ),
-                    preparedTransaction = { user ->
-                        PreparedTransaction(
-                            network.toVO(),
-                            deferredContract.await().getRewardOwedFn(comet, user),
-                            deferredContract.await().address,
-                            user
-                        )
-                    }
-                ))
+                    preparedTransaction = selfExecutingTransaction(deferredContract.await().claimFn(comet)))
+                )
             )
         }
     }

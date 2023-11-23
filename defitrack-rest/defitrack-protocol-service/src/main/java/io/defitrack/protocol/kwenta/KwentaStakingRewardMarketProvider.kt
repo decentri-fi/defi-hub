@@ -34,7 +34,6 @@ class KwentaStakingRewardMarketProvider : FarmingMarketProvider() {
             claimableRewardFetcher = ClaimableRewardFetcher(
                 reward = Reward(
                     kwenta,
-                    address,
                     contract::earnedfn
                 ),
                 selfExecutingTransaction(contract::claimFn)

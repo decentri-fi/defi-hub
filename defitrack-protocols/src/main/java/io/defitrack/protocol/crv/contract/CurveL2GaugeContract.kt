@@ -5,15 +5,16 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
+import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Function
 
 class CurveL2GaugeContract(
     blockchainGateway: BlockchainGateway,
     address: String
-) : EvmContract(
+) : ERC20Contract(
     blockchainGateway, address
-
 ) {
 
     suspend fun lpToken(): String {
@@ -22,13 +23,11 @@ class CurveL2GaugeContract(
         )
     }
 
-    fun getClaimRewardsFunction(): MutableFunction {
-        return createFunction(
-            "claim_rewards"
-        ).toMutableFunction()
+    fun getClaimRewardsFunction(): ContractCall {
+        return createFunction("claim_rewards")
     }
 
-    fun getClaimableRewardFunction(token: String): (String) -> Function {
+    fun getClaimableRewardFunction(token: String): (String) -> ContractCall {
         return { user ->
             createFunction(
                 "claimable_reward",

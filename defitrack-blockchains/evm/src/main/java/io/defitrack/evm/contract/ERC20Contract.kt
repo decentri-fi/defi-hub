@@ -1,12 +1,13 @@
 package io.defitrack.evm.contract
 
+import arrow.core.nonEmptyListOf
 import io.defitrack.abi.TypeUtils.Companion.string
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
-import io.defitrack.evm.multicall.MultiCallResult
+import io.defitrack.evm.contract.BlockchainGateway.Companion.createFunction
 import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
 
@@ -16,35 +17,49 @@ open class ERC20Contract(
 ) :
     EvmContract(blockchainGateway, address) {
 
-    companion object {
-        fun approveFunction(spender: String, amount: BigInteger): Function {
-            return createFunction(
-                "approve",
-                listOf(spender.toAddress(), amount.toUint256()),
-                listOf()
-            )
-        }
-
-        fun fullApproveFunction(
-            spender: String
-        ): Function {
-            return approveFunction(spender, BlockchainGateway.MAX_UINT256.value)
-        }
-
-        fun balanceOfFunction(address: String): Function {
-            return createFunction(
-                "balanceOf",
-                inputs = listOf(address.toAddress()),
-                outputs = listOf(
-                    uint256()
+        companion object {
+            fun balanceOf(address: String): Function {
+                return createFunction(
+                    "balanceOf",
+                    inputs = listOf(address.toAddress()),
+                    outputs = listOf(uint256())
                 )
-            )
+            }
+
+            fun fullApprove(
+                spender: String
+            ): Function {
+                return approve(spender, BlockchainGateway.MAX_UINT256.value)
+            }
+
+            private fun approve(spender: String, amount: BigInteger): Function {
+                return createFunction(
+                    "approve",
+                    listOf(spender.toAddress(), amount.toUint256()),
+                    listOf()
+                )
+            }
         }
+
+    fun approveFunction(spender: String, amount: BigInteger): ContractCall {
+        return createFunction(
+            "approve",
+            listOf(spender.toAddress(), amount.toUint256()),
+            listOf()
+        )
+    }
+
+    fun balanceOfFunction(address: String): ContractCall {
+        return createFunction(
+            "balanceOf",
+            inputs = listOf(address.toAddress()),
+            outputs = listOf(uint256())
+        )
     }
 
     suspend fun fetchERC20Information(): ERC20MulticallResult {
         val result = readMultiCall(
-            listOf(
+            nonEmptyListOf(
                 createFunction("name", outputs = listOf(string())),
                 createFunction("symbol", outputs = listOf(string())),
                 createFunction("decimals", outputs = listOf(uint256())),
@@ -128,7 +143,7 @@ open class ERC20Contract(
     }
 
     suspend fun readTotalSupply(): BigInteger {
-       return try {
+        return try {
             readSingle("totalSupply", uint256())
         } catch (ex: Exception) {
             BigInteger.ZERO

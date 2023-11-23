@@ -1,6 +1,8 @@
 package io.defitrack.erc20
 
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.network.NetworkVO
 import io.defitrack.protocol.ProtocolVO
 import io.defitrack.token.FungibleToken
@@ -43,5 +45,9 @@ class TokenInformationVO(
             type,
             totalSupply
         )
+    }
+
+    fun asERC20Contract(blockchainGateway: BlockchainGateway): ERC20Contract {
+        return ERC20Contract(blockchainGateway, address)
     }
 }

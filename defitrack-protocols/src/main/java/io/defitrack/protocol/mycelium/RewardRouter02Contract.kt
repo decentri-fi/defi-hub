@@ -2,6 +2,7 @@ package io.defitrack.protocol.mycelium
 
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 
 class RewardRouter02Contract(
@@ -17,11 +18,11 @@ class RewardRouter02Contract(
     val esMyc = constant<String>("esMyc", address())
     val bnMyc = constant<String>("bnMyc", address())
 
-    fun claim(): MutableFunction {
+    fun claim(): ContractCall {
         return createFunction(
             "claim",
             emptyList(),
             emptyList()
-        ).toMutableFunction()
+        )
     }
 }

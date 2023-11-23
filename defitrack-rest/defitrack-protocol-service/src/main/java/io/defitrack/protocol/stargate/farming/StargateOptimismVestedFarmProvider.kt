@@ -36,10 +36,7 @@ class StargateOptimismVestedFarmProvider : FarmingMarketProvider() {
             stakedToken = stg,
             rewardToken = stg,
             marketSize = Refreshable.refreshable { getMarketSize(stg, veSTGAddress) },
-            positionFetcher = PositionFetcher(
-                veSTGAddress,
-                contract::lockedFn,
-            )
+            positionFetcher = PositionFetcher(contract::lockedFn)
         ).nel()
     }
 

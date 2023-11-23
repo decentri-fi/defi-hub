@@ -1,6 +1,5 @@
 package io.defitrack.protocol.qidao.farming
 
-import arrow.core.Either
 import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMap
 import arrow.fx.coroutines.parMapNotNull
@@ -16,7 +15,6 @@ import io.defitrack.protocol.qidao.QidaoPolygonService
 import io.defitrack.protocol.qidao.contract.QidaoFarmV2Contract
 import io.defitrack.token.DecentrifiERC20Resource
 import org.springframework.stereotype.Component
-import kotlin.coroutines.EmptyCoroutineContext
 
 @Component
 @ConditionalOnCompany(Company.QIDAO)
@@ -62,8 +60,7 @@ class QidaoFarmingMarketProvider(
             stakedToken = stakedtoken,
             rewardToken = rewardToken,
             positionFetcher = PositionFetcher(
-                address = chef.address,
-                function = chef.userInfoFunction(poolId)
+                functionCreator = chef.userInfoFunction(poolId)
             ),
             marketSize = refreshable {
                 marketSizeService.getMarketSize(

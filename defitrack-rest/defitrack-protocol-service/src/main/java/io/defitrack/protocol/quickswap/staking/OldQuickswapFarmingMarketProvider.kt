@@ -60,7 +60,6 @@ class OldQuickswapFarmingMarketProvider(
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
                         token = rewardToken,
-                        rewardPool.address,
                         rewardPool::earned,
                     ),
                     preparedTransaction = selfExecutingTransaction(rewardPool::getRewardFunction)

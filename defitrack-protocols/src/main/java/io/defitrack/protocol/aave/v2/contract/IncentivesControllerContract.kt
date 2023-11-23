@@ -4,6 +4,7 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGateway.Companion.MAX_UINT256
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.DynamicArray
@@ -16,7 +17,7 @@ class IncentivesControllerContract(
     blockchainGateway, address
 ) {
 
-    fun claimRewardsFn(user: String): MutableFunction {
+    fun claimRewardsFn(user: String): ContractCall {
         return createFunction(
             "claimRewards",
             inputs = listOf(
@@ -24,10 +25,10 @@ class IncentivesControllerContract(
                 MAX_UINT256,
                 user.toAddress()
             )
-        ).toMutableFunction()
+        )
     }
 
-    fun getUserUnclaimedRewardsFn(user: String): Function {
+    fun getUserUnclaimedRewardsFn(user: String): ContractCall {
         return createFunction(
             "getUserUnclaimedRewards",
             listOf(user.toAddress()), listOf(uint256())

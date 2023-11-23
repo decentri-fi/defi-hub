@@ -3,6 +3,7 @@ package io.defitrack.protocol.tornadocash
 import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
@@ -26,7 +27,7 @@ class StakingRewardsContract(
         return readSingle("stakingToken", TypeUtils.address())
     }
 
-    fun earned(address: String): Function {
+    fun earned(address: String): ContractCall {
         return createFunction(
             "earned",
             listOf(address.toAddress()),

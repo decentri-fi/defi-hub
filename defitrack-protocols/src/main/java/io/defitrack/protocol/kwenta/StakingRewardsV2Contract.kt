@@ -4,6 +4,7 @@ import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Function
 
@@ -12,7 +13,7 @@ class StakingRewardsV2Contract(
 ) : EvmContract(blockchainGateway, address) {
 
 
-    fun earnedfn(user: String): Function {
+    fun earnedfn(user: String): ContractCall {
         return createFunction(
             "earned",
             listOf(user.toAddress()),
@@ -22,7 +23,7 @@ class StakingRewardsV2Contract(
 
     val kwenta = constant<String>("kwenta", address())
 
-    fun claimFn(): MutableFunction {
-        return createFunction("compound").toMutableFunction()
+    fun claimFn(): ContractCall {
+        return createFunction("compound")
     }
 }

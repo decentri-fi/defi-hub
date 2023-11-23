@@ -6,8 +6,8 @@ import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.multicall.MultiCallElement
 import kotlinx.coroutines.Deferred
 import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
@@ -21,7 +21,7 @@ open class MasterChefBasedContract(
     blockchainGateway, address
 ) {
 
-    fun harvestFunction(poolId: Int): (String) -> MutableFunction {
+    fun harvestFunction(poolId: Int): (String) -> ContractCall {
         return { _: String ->
             createFunction(
                 "withdraw",
@@ -29,11 +29,11 @@ open class MasterChefBasedContract(
                     poolId.toBigInteger().toUint256(),
                     BigInteger.ZERO.toUint256()
                 ),
-            ).toMutableFunction()
+            )
         }
     }
 
-    fun pendingFunction(poolId: Int): (String) -> Function {
+    fun pendingFunction(poolId: Int): (String) -> ContractCall {
         return { user: String ->
             createFunction(
                 pendingName,
@@ -52,18 +52,15 @@ open class MasterChefBasedContract(
 
     val defaultPoolInfos: Deferred<List<MasterChefPoolInfo>> = lazyAsync {
         val multicalls = (0 until poolLength.await().toInt()).map { poolIndex ->
-            MultiCallElement(
-                createFunction(
-                    "poolInfo",
-                    inputs = listOf(poolIndex.toBigInteger().toUint256()),
-                    outputs = listOf(
-                        address(),
-                        uint256(),
-                        uint256(),
-                        uint256()
-                    )
-                ),
-                address
+            createFunction(
+                "poolInfo",
+                inputs = listOf(poolIndex.toBigInteger().toUint256()),
+                outputs = listOf(
+                    address(),
+                    uint256(),
+                    uint256(),
+                    uint256()
+                )
             )
         }
 
@@ -86,7 +83,7 @@ open class MasterChefBasedContract(
         readSingle(rewardTokenName, address())
     }
 
-    fun userInfoFunction(poolId: Int): (String) -> Function {
+    fun userInfoFunction(poolId: Int): (String) -> ContractCall {
         return { user: String ->
             createFunction(
                 "userInfo",

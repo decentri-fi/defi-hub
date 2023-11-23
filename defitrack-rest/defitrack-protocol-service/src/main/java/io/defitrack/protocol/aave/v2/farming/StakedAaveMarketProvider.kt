@@ -34,7 +34,6 @@ class StakedAaveMarketProvider : FarmingMarketProvider() {
             claimableRewardFetcher = ClaimableRewardFetcher(
                 Reward(
                     aave,
-                    stakedAaveAddress,
                     stakedAave::getTotalRewardFunction
                 ),
                 preparedTransaction = selfExecutingTransaction(stakedAave::getClaimRewardsFunction)

@@ -53,7 +53,7 @@ class DefaultUserClaimableProvider(
                     }
 
                     blockchainGatewayProvider.getGateway(marketsByNetwork.key).readMultiCall(
-                        rewards.map { it.reward.toMulticall(userAddress) }
+                        rewards.map { it.reward.getRewardFunction(userAddress) }
                     ).mapIndexed { index, retVal ->
                         async {
                             catch {

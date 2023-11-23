@@ -1,3 +1,3 @@
-package io.defitrack.evm.multicall
+package io.defitrack.evm.contract
 
 class MulticallFailedException: RuntimeException()

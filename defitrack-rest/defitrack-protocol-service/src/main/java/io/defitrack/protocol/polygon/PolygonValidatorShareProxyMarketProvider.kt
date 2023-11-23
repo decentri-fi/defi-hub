@@ -57,13 +57,11 @@ class PolygonValidatorShareProxyMarketProvider : FarmingMarketProvider() {
             stakedToken = matic,
             rewardTokens = listOf(matic),
             positionFetcher = PositionFetcher(
-                share,
                 shareContract::getTotalStake
             ),
             claimableRewardFetcher = ClaimableRewardFetcher(
                 Reward(
                     matic,
-                    share,
                     shareContract::getLiquidRewards
                 ),
                 preparedTransaction = selfExecutingTransaction(shareContract::withdrawRewards)

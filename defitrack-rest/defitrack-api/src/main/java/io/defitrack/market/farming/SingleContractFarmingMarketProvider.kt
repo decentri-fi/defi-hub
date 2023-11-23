@@ -22,7 +22,6 @@ abstract class SingleContractFarmingMarketProvider : FarmingMarketProvider() {
             claimableRewardFetcher = ClaimableRewardFetcher(
                 Reward(
                     token = rewardToken,
-                    contractAddress = config.contract.address,
                     getRewardFunction = config.contract::getRewardFn
                 ),
                 preparedTransaction = selfExecutingTransaction(config.contract::claimFn)

@@ -2,10 +2,8 @@ package io.defitrack.protocol.sushiswap.staking
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
-import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.position.Position
@@ -45,8 +43,7 @@ class XSushiStakingMarketProvider : FarmingMarketProvider() {
                     )
                 },
                 positionFetcher = PositionFetcher(
-                    xsushi,
-                    ::balanceOfFunction
+                    xSushiContract::balanceOfFunction
                 ) { retVal ->
                     val userXSushi = (retVal[0].value as BigInteger)
 

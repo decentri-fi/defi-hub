@@ -4,8 +4,8 @@ import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
-import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
 
 class IronbankTokenContract(
@@ -15,11 +15,10 @@ class IronbankTokenContract(
     ethereumContractAccessor, address
 ) {
 
-    fun mintFunction(amount: BigInteger): MutableFunction {
+    fun mintFunction(amount: BigInteger): ContractCall {
         return createFunction(
-            "mint",
-            listOf(amount.toUint256())
-        ).toMutableFunction()
+            "mint", listOf(amount.toUint256())
+        )
     }
 
     suspend fun cash(): BigInteger {

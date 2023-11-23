@@ -4,6 +4,7 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
@@ -12,7 +13,7 @@ class StakefishFeeRecipientContract(
     blockchainGateway: BlockchainGateway, address: String
 ) : EvmContract(blockchainGateway, address) {
 
-    fun claimFunction(user: String): Function {
+    fun claimFunction(user: String): ContractCall {
         return createFunction(
             "collectReward", listOf(
                 user.toAddress(), BigInteger.ZERO.toUint256()
@@ -20,7 +21,7 @@ class StakefishFeeRecipientContract(
         )
     }
 
-    fun getUserStateFunction(user: String): Function {
+    fun getUserStateFunction(user: String): ContractCall {
         return createFunction(
             "getUserState",
             listOf(user.toAddress()),
@@ -28,7 +29,7 @@ class StakefishFeeRecipientContract(
         )
     }
 
-    fun getPendingRewardFunction(user: String): Function {
+    fun getPendingRewardFunction(user: String): ContractCall {
         return createFunction(
             "pendingReward",
             listOf(user.toAddress()),

@@ -66,7 +66,6 @@ class CurveStablecoinLendingMarketProvider(
             token = collateral,
             totalSupply = refreshable { BigDecimal.ZERO },
             positionFetcher = PositionFetcher(
-                controller.address,
                 controller::userState
             ) {
                 val bal = (it.first().value as List<Uint256>).first().value as BigInteger

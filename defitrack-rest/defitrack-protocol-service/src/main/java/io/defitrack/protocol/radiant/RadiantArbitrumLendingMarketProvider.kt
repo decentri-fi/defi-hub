@@ -57,7 +57,6 @@ class RadiantArbitrumLendingMarketProvider : LendingMarketProvider() {
             token = lendingToken,
             poolType = "compound-lendingpool",
             positionFetcher = PositionFetcher(
-                ctokenContract.address,
                 ctokenContract::scaledBalanceOfFn,
             ),
             investmentPreparer = CompoundLendingInvestmentPreparer(

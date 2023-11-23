@@ -5,6 +5,7 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
@@ -58,7 +59,7 @@ class LPStakingContract(
         return readSingle<BigInteger>("poolLength", uint256()).toInt()
     }
 
-    fun userInfo(poolId: Int): (String) -> Function {
+    fun userInfo(poolId: Int): (String) -> ContractCall {
         return { user: String ->
             createFunction(
                 "userInfo",
@@ -74,7 +75,7 @@ class LPStakingContract(
         }
     }
 
-    fun pendingFn(poolId: Int): (String) -> Function {
+    fun pendingFn(poolId: Int): (String) -> ContractCall {
         return { user ->
             createFunction(
                 pendingFunctionName,
@@ -89,12 +90,12 @@ class LPStakingContract(
         }
     }
 
-    fun claimFn(poolId: Int): (String) -> MutableFunction {
+    fun claimFn(poolId: Int): (String) -> ContractCall {
         return { user: String ->
             createFunction(
                 "deposit",
                 listOf(poolId.toBigInteger().toUint256(), BigInteger.ZERO.toUint256())
-            ).toMutableFunction()
+            )
         }
     }
 }

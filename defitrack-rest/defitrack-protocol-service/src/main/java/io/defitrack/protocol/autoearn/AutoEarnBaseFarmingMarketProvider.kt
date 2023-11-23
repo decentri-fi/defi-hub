@@ -49,13 +49,11 @@ class AutoEarnBaseFarmingMarketProvider : FarmingMarketProvider() {
                                 stakedToken = underlying,
                                 rewardToken = rewardToken,
                                 positionFetcher = PositionFetcher(
-                                    vaultAddress,
                                     vault.autoEarnUserInfoFunction(index)
                                 ),
                                 claimableRewardFetcher = ClaimableRewardFetcher(
                                     Reward(
                                         rewardToken,
-                                        vaultAddress,
                                         vault.pendingFunction(index)
                                     ),
                                     preparedTransaction = selfExecutingTransaction(

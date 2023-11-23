@@ -3,6 +3,7 @@ package io.defitrack.ethos
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.FarmingContract
 import io.defitrack.market.farming.SingleContractFarmingMarketProvider
 import io.defitrack.protocol.Company
@@ -23,11 +24,11 @@ class EthosStakingProvider : SingleContractFarmingMarketProvider() {
                 "lusdToken",
                 "getPendingLUSDGain",
             ) {
-                override fun claimFn(user: String): MutableFunction {
+                override fun claimFn(user: String): ContractCall {
                     return createFunction(
                         "unstake",
                         listOf(BigInteger.ZERO.toUint256())
-                    ).toMutableFunction()
+                    )
                 }
             }
         )

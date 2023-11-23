@@ -2,6 +2,7 @@ package io.defitrack.protocol.moonwell
 
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.*
@@ -14,19 +15,21 @@ class RewardDistributorContract(
     blockchainGateway, address
 ) {
 
-    fun getOutstandingRewardsForUserFn(mToken: String, address: String): Function {
-        return createFunction(
-            "getOutstandingRewardsForUser",
-            inputs = listOf(
-                mToken.toAddress(),
-                address.toAddress()
-            ),
-            outputs = listOf(
-                object : TypeReference<DynamicArray<Reward>>() {
+    fun getOutstandingRewardsForUserFn(mToken: String): (String) -> ContractCall {
+        return { user ->
+            createFunction(
+                "getOutstandingRewardsForUser",
+                inputs = listOf(
+                    mToken.toAddress(),
+                    user.toAddress()
+                ),
+                outputs = listOf(
+                    object : TypeReference<DynamicArray<Reward>>() {
 
-                }
+                    }
+                )
             )
-        )
+        }
     }
 
     data class Reward(

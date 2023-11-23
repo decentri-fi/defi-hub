@@ -40,8 +40,7 @@ class StethMarketProvider(
                 stakedToken = eth,
                 rewardToken = eth,
                 positionFetcher = PositionFetcher(
-                    address = steth.address,
-                    function = steth::sharesOfFunction,
+                    functionCreator = steth::sharesOfFunction,
                 ),
                 marketSize = Refreshable.refreshable {
                     priceResource.calculatePrice(

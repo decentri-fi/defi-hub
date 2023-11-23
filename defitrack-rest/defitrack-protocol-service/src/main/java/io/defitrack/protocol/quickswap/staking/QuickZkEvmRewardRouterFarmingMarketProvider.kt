@@ -44,7 +44,6 @@ class QuickZkEvmRewardRouterFarmingMarketProvider : FarmingMarketProvider() {
                 rewardTokens.map { token ->
                     Reward(
                         token = token,
-                        contractAddress = feeTrackerContract.address,
                         getRewardFunction = feeTrackerContract::claimableFn
                     ) { result, _ ->
                         val addresses = (result[0].value as List<Address>).map { it.value }

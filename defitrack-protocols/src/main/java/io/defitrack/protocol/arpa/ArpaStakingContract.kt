@@ -4,6 +4,7 @@ import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Function
 
@@ -12,7 +13,7 @@ class ArpaStakingContract(blockchainGateway: BlockchainGateway, address: String)
 
     val arpaToken = constant<String>("getArpaToken", TypeUtils.address())
 
-    fun claimReward(): Function {
+    fun claimReward(): ContractCall {
         return createFunction(
             "claimReward",
             emptyList(),
@@ -20,7 +21,7 @@ class ArpaStakingContract(blockchainGateway: BlockchainGateway, address: String)
         )
     }
 
-    fun getStakeFn(staker: String): Function {
+    fun getStakeFn(staker: String): ContractCall {
         return createFunction(
             "getStake",
             listOf(staker.toAddress()),
@@ -30,7 +31,7 @@ class ArpaStakingContract(blockchainGateway: BlockchainGateway, address: String)
         )
     }
 
-    fun getBaseReward(staker: String): Function {
+    fun getBaseReward(staker: String): ContractCall {
         return createFunction(
             "getBaseReward",
             listOf(staker.toAddress()),

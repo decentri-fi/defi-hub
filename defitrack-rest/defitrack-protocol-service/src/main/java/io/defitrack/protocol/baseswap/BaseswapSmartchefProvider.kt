@@ -79,13 +79,11 @@ class BaseswapSmartchefProvider : FarmingMarketProvider() {
             claimableRewardFetcher = ClaimableRewardFetcher(
                 Reward(
                     rewardToken.toFungibleToken(),
-                    contract.address,
                     contract::pendingReward
                 ),
                 preparedTransaction = selfExecutingTransaction(contract::withdraw)
             ),
             positionFetcher = PositionFetcher(
-                contract.address,
                 contract::userInfo,
             ),
         )

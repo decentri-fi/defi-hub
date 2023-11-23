@@ -77,8 +77,7 @@ class OvixZkEVMLendingMarketProvider : LendingMarketProvider() {
                     },
                     poolType = "ovix-lendingpool",
                     positionFetcher = PositionFetcher(
-                        ctokenContract.address,
-                        ERC20Contract.Companion::balanceOfFunction
+                        ctokenContract::balanceOfFunction
                     ) { retVal ->
                         val tokenBalance = retVal[0].value as BigInteger
                         Position(

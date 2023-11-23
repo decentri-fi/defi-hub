@@ -4,6 +4,7 @@ import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.DynamicArray
@@ -15,12 +16,12 @@ class RadiantMultiFeeDistributor(
 
     val stakingToken = constant<String>("stakingToken", TypeUtils.address())
 
-    fun getRewardFn(tokens: List<String>): MutableFunction {
+    fun getRewardFn(tokens: List<String>): ContractCall {
         return createFunction(
             "getReward",
             tokens.map { it.toAddress() },
             emptyList()
-        ).toMutableFunction()
+        )
     }
 
     suspend fun rewardTokens(): List<String> {
@@ -40,7 +41,7 @@ class RadiantMultiFeeDistributor(
             }
     }
 
-    fun getClaimableRewardFn(user: String): Function {
+    fun getClaimableRewardFn(user: String): ContractCall {
         return createFunction(
             "claimableRewards",
             listOf(user.toAddress()),

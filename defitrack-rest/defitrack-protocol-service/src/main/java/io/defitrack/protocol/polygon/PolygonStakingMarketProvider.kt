@@ -30,7 +30,6 @@ class PolygonStakingMarketProvider : FarmingMarketProvider() {
             stakedToken = staked,
             rewardToken = staked,
             positionFetcher = PositionFetcher(
-                polygonStaking,
                 contract::totalStakedForFn
             )
         ).nel()

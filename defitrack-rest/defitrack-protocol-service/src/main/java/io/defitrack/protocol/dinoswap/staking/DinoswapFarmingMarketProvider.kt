@@ -60,8 +60,7 @@ class DinoswapFarmingMarketProvider(
                 rewardToken.toFungibleToken()
             ),
             positionFetcher = PositionFetcher(
-                address = chef.address,
-                function = { user -> chef.userInfoFunction(user, poolId) }
+                functionCreator = chef.dinoUserInfoFn(poolId)
             ),
             marketSize = refreshable {
                 marketSizeService.getMarketSize(

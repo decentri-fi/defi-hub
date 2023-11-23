@@ -1,5 +1,6 @@
 package io.defitrack.transaction
 
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import io.defitrack.network.NetworkVO
 import io.defitrack.network.toVO
@@ -13,28 +14,28 @@ data class PreparedTransaction(
 ) {
 
     companion object {
-        suspend fun selfExecutingTransaction(mutableFunctionProvider: suspend (String) -> EvmContract.MutableFunction): suspend (String) -> PreparedTransaction {
+        suspend fun selfExecutingTransaction(contractCallProvider: suspend (String) -> ContractCall): suspend (String) -> PreparedTransaction {
             return { from ->
                 PreparedTransaction(
-                    mutableFunctionProvider(from), from
+                    contractCallProvider(from), from
                 )
             }
         }
 
-        suspend fun selfExecutingTransaction(mutableFunctionProvider: suspend () -> EvmContract.MutableFunction): suspend (String) -> PreparedTransaction {
+        suspend fun selfExecutingTransaction(contractCallProvider: suspend () -> ContractCall): suspend (String) -> PreparedTransaction {
             return { from ->
                 PreparedTransaction(
-                    mutableFunctionProvider(), from
+                    contractCallProvider(), from
                 )
             }
         }
     }
 
-    constructor(mutableFunction: EvmContract.MutableFunction, from: String? = null) :
+    constructor(contractCall: ContractCall, from: String? = null) :
             this(
-                network = mutableFunction.network.toVO(),
-                function = mutableFunction.function,
-                to = mutableFunction.address,
+                network = contractCall.network.toVO(),
+                function = contractCall.function,
+                to = contractCall.address,
                 from = from
             )
 

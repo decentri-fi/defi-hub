@@ -38,7 +38,6 @@ class RadiantMultiFeeDistributorFarmingMarketProvider : FarmingMarketProvider() 
                      rewards = rewardTokens.map { token ->
                          Reward(
                              token.toFungibleToken(),
-                             contract.address,
                              contract::getClaimableRewardFn
                          ) { result, user ->
                              val value = (result[0] as DynamicArray<RadiantMultiFeeReward>).value as List<RadiantMultiFeeReward>

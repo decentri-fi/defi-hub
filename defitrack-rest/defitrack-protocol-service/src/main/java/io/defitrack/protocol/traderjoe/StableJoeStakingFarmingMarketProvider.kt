@@ -36,14 +36,12 @@ class StableJoeStakingFarmingMarketProvider : FarmingMarketProvider() {
                 stakedToken = stakedToken.toFungibleToken(),
                 rewardTokens = rewards.map { it.toFungibleToken() },
                 positionFetcher = PositionFetcher(
-                    contract.address,
                     { user -> contract.getUserInfofn(user, stakedToken.address) }
                 ),
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     rewards.map {
                         Reward(
                             it.toFungibleToken(),
-                            contract.address,
                             { user -> contract.getUserInfofn(user, it.address) },
                         )
                     },

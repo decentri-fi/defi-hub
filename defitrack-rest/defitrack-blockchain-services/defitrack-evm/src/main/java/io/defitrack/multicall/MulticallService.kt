@@ -5,7 +5,7 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toBool
 import io.defitrack.domain.ConstructedEthCall
 import io.defitrack.evm.EvmContractInteractionCommand
-import io.defitrack.evm.multicall.MultiCallV2Caller
+import io.defitrack.evm.contract.MultiCallV2Caller
 import org.apache.commons.codec.binary.Hex
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value

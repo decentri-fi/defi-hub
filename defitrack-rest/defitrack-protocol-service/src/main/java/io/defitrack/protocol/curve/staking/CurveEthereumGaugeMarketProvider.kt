@@ -87,8 +87,7 @@ class CurveEthereumGaugeMarketProvider : FarmingMarketProvider() {
                 ).usdAmount
             },
             positionFetcher = PositionFetcher(
-                gauge,
-                ERC20Contract.Companion::balanceOfFunction
+                contract::balanceOfFunction
             ),
         )
     }

@@ -71,7 +71,6 @@ class BalancerPolygonZkEvmGaugeMarketProvider : FarmingMarketProvider() {
                     rewardTokens = rewards.map(TokenInformationVO::toFungibleToken),
 
                     positionFetcher = PositionFetcher(
-                        gaugecontract.address,
                         gaugecontract::workingBalance
                     ) {
                         val bal = it[0].value as BigInteger
@@ -99,7 +98,6 @@ class BalancerPolygonZkEvmGaugeMarketProvider : FarmingMarketProvider() {
                             rewards = rewards.map {
                                 Reward(
                                     it.toFungibleToken(),
-                                    gaugeAddress,
                                     gaugecontract.getClaimableRewardFunction(it.address)
                                 )
                             },

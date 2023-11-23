@@ -8,6 +8,7 @@ import io.defitrack.abi.TypeUtils.Companion.toBool
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.abi.TypeUtils.Companion.uint64
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Function
 
@@ -18,12 +19,14 @@ open class CompoundRewardContract(
     blockchainGateway, address
 ) {
 
-    fun getRewardOwedFn(comet: String, user: String): Function {
-        return createFunction(
-            "getRewardOwed",
-            listOf(comet.toAddress(), user.toAddress()),
-            listOf(address(), uint256())
-        )
+    fun getRewardOwedFn(comet: String): (String) -> ContractCall {
+        return { user ->
+            createFunction(
+                "getRewardOwed",
+                listOf(comet.toAddress(), user.toAddress()),
+                listOf(address(), uint256())
+            )
+        }
     }
 
     open suspend fun getRewardConfig(comet: String): RewardConfig {
@@ -43,10 +46,12 @@ open class CompoundRewardContract(
 
     data class RewardConfig(val token: String)
 
-    fun claimFn(comet: String, user: String): Function {
-        return createFunction(
-            method = "claim",
-            inputs = listOf(comet.toAddress(), user.toAddress(), true.toBool()),
-        )
+    fun claimFn(comet: String): (String) -> ContractCall {
+        return { user ->
+            createFunction(
+                method = "claim",
+                inputs = listOf(comet.toAddress(), user.toAddress(), true.toBool()),
+            )
+        }
     }
 }

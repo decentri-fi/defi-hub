@@ -5,6 +5,7 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Function
 
@@ -34,7 +35,7 @@ class RewardFactoryContract(
         }
     }
 
-    fun stakingRewardsInfoByStakingToken(stakingToken: String): Function {
+    fun stakingRewardsInfoByStakingToken(stakingToken: String): ContractCall {
         return createFunction(
             "stakingRewardsInfoByStakingToken", listOf(stakingToken.toAddress()), listOf(
                 address(),

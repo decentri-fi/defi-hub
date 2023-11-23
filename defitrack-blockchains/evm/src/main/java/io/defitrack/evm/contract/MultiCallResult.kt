@@ -1,4 +1,4 @@
-package io.defitrack.evm.multicall
+package io.defitrack.evm.contract
 
 import org.web3j.abi.datatypes.Type
 

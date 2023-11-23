@@ -3,6 +3,7 @@ package io.defitrack.protocol.quickswap.contract
 import io.defitrack.abi.TypeUtils.Companion.dynamicArray
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Function
@@ -24,7 +25,7 @@ class FeeQlpTrackerContract(
         }
     }
 
-    fun claimableFn(user: String): Function {
+    fun claimableFn(user: String): ContractCall {
         return createFunction(
             "claimableAll",
             listOf(user.toAddress()),

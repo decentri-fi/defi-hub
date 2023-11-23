@@ -8,6 +8,7 @@ import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.abi.TypeUtils.Companion.uint64
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import kotlinx.coroutines.Deferred
 import org.web3j.abi.datatypes.Function
@@ -23,14 +24,16 @@ class MasterchefV2Contract(
     val poolLength = constant<BigInteger>("poolLength", uint256())
 
 
-    fun harvestFunction(poolId: Int): Function {
-        return createFunction(
-            "withdraw",
-            listOf(
-                poolId.toBigInteger().toUint256(),
-                BigInteger.ZERO.toUint256()
-            ),
-        )
+    fun harvestFunction(poolId: Int): (String) -> ContractCall {
+        return {
+            createFunction(
+                "withdraw",
+                listOf(
+                    poolId.toBigInteger().toUint256(),
+                    BigInteger.ZERO.toUint256()
+                ),
+            )
+        }
     }
 
     val rewarders = lazyAsync {
@@ -53,7 +56,7 @@ class MasterchefV2Contract(
         return rewarders.await()[poolIndex]
     }
 
-    fun pendingFunction(poolId: Int, user: String): Function {
+    fun pendingFunction(poolId: Int, user: String): ContractCall {
         return createFunction(
             "pendingSushi",
             listOf(
@@ -98,7 +101,7 @@ class MasterchefV2Contract(
 
     val rewardToken: Deferred<String> = constant<String>("SUSHI", address())
 
-    fun userInfoFunction(poolId: Int, user: String): Function {
+    fun userInfoFunction(poolId: Int, user: String): ContractCall {
         return createFunction(
             "userInfo",
             listOf(
@@ -120,7 +123,7 @@ class MasterchefV2Contract(
 
         val rewardToken = constant<String>("rewardToken", address())
 
-        fun pendingTokenFn(poolIndex: Int, address: String): Function {
+        fun pendingTokenFn(poolIndex: Int, address: String): ContractCall {
             return createFunction(
                 "pendingToken",
                 inputs = listOf(

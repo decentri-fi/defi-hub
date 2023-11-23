@@ -5,6 +5,7 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
 import kotlinx.coroutines.Deferred
 import org.web3j.abi.datatypes.Function
@@ -17,7 +18,7 @@ open class CompoundTokenContract(
     ethereumContractAccessor, address
 ) {
 
-    fun scaledBalanceOfFn(address: String): Function {
+    fun scaledBalanceOfFn(address: String): ContractCall {
         return createFunction(
             "scaledBalanceOf",
             listOf(address.toAddress()),
@@ -25,12 +26,10 @@ open class CompoundTokenContract(
         )
     }
 
-    fun mintFunction(amount: BigInteger): MutableFunction {
+    fun mintFunction(amount: BigInteger): ContractCall {
         return createFunction(
-            "mint",
-            listOf(amount.toUint256()),
-            emptyList()
-        ).toMutableFunction()
+            "mint", listOf(amount.toUint256())
+        )
     }
 
     val cash: Deferred<BigInteger> = constant("getCash", uint256())
@@ -40,7 +39,7 @@ open class CompoundTokenContract(
     val supplyRatePerBlock: Deferred<BigInteger> = constant("supplyRatePerBlock", uint256())
     val borrowRatePerBlock: Deferred<BigInteger> = constant("borrowRatePerBlock", uint256())
 
-    open fun fallbackUnderlying() : String {
+    open fun fallbackUnderlying(): String {
         return "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
     }
 
@@ -52,7 +51,7 @@ open class CompoundTokenContract(
         }
     }
 
-    fun borrowBalanceStoredFunction(address: String): Function {
+    fun borrowBalanceStoredFunction(address: String): ContractCall {
         return createFunction(
             "borrowBalanceStored",
             inputs = listOf(address.toAddress()),

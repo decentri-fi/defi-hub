@@ -2,9 +2,9 @@ package io.defitrack
 
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.multicall.MultiCallElement
-import io.defitrack.evm.multicall.MultiCallResult
+import io.defitrack.evm.contract.MultiCallResult
 import org.springframework.stereotype.Component
 import org.web3j.abi.datatypes.Function
 
@@ -13,7 +13,7 @@ class BulkConstantResolver(
     private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) {
 
-    suspend fun <T: EvmContract> resolve(contracts: List<T>): List<T> {
+    suspend fun <T : EvmContract> resolve(contracts: List<T>): List<T> {
         val evmContracts = contracts.groupBy {
             it.blockchainGateway.network
         }
@@ -35,10 +35,7 @@ class BulkConstantResolver(
 
         val multicallResults = gateway.readMultiCall(
             functionByContracts.map {
-                MultiCallElement(
-                    it.first,
-                    it.second.address
-                )
+                it.first
             }
         )
 
@@ -61,7 +58,7 @@ class BulkConstantResolver(
     }
 
     data class ConstantResult(
-        val function: Function,
+        val function: ContractCall,
         val result: MultiCallResult,
         val contract: EvmContract
     )

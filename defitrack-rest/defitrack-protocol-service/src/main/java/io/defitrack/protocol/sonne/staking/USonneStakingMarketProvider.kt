@@ -36,7 +36,6 @@ class USonneStakingMarketProvider : FarmingMarketProvider() {
                     rewardTokens.map { token ->
                         Reward(
                             token.toFungibleToken(),
-                            contract.address,
                             contract.getClaimableFor(token.address)
                         )
                     },

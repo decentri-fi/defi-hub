@@ -32,7 +32,6 @@ class LiquityStakingMarketProvider : FarmingMarketProvider() {
             stakedToken = stakedToken,
             rewardToken = rewardToken,
             positionFetcher = PositionFetcher(
-                stakingContract.address,
                 stakingContract::stakes,
             ),
         ).nel()

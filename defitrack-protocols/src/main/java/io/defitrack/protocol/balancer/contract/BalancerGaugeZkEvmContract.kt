@@ -5,6 +5,7 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
 
@@ -14,7 +15,7 @@ class BalancerGaugeZkEvmContract(
 ) : BalancerGaugeContract(blockchainGateway, address) {
 
 
-    fun integrateFractionFn(user: String): Function {
+    fun integrateFractionFn(user: String): ContractCall {
         return createFunction(
             "integrate_fraction",
             listOf(user.toAddress()),
@@ -30,9 +31,9 @@ class BalancerGaugeZkEvmContract(
         )
     }
 
-    override fun getClaimableRewardFunction(token: String): (String) -> Function {
+    override fun getClaimableRewardFunction(token: String): (String) -> ContractCall {
         return { user: String ->
-            Function(
+            createFunction(
                 "claimable_reward",
                 listOf(
                     user.toAddress(),

@@ -61,7 +61,6 @@ class BalancerBaseGaugeMarketProvider : FarmingMarketProvider() {
                     stakedToken = getToken(gaugecontract.getStakedToken()),
                     rewardTokens = rewards,
                     positionFetcher = PositionFetcher(
-                        gaugecontract.address,
                         gaugecontract::workingBalance
                     ) {
                         val bal = it[0].value as BigInteger
@@ -80,11 +79,10 @@ class BalancerBaseGaugeMarketProvider : FarmingMarketProvider() {
                         gaugecontract.exitPosition(it.amount)
                     },
                     claimableRewardFetcher = ClaimableRewardFetcher(
-                        rewards = rewards.map {
+                        rewards = rewards.map { token ->
                             Reward(
-                                it,
-                                gaugeAddress,
-                                gaugecontract.getClaimableRewardFunction(it.address)
+                                token,
+                                gaugecontract.getClaimableRewardFunction(token.address)
                             )
                         },
                         preparedTransaction = PreparedTransaction.selfExecutingTransaction(gaugecontract::getClaimRewardsFunction)

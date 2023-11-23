@@ -3,6 +3,7 @@ package io.defitrack.protocol.polygon
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Function
 
@@ -12,13 +13,13 @@ class ValidatorShareProxyContract(
     blockchainGateway, address
 ) {
 
-    fun withdrawRewards(): MutableFunction {
+    fun withdrawRewards(): ContractCall {
         return createFunction(
             "withdrawRewards",
-        ).toMutableFunction()
+        )
     }
 
-    fun getLiquidRewards(user: String): Function {
+    fun getLiquidRewards(user: String): ContractCall {
         return createFunction(
             "getLiquidRewards",
             inputs = listOf(user.toAddress()),
@@ -26,7 +27,7 @@ class ValidatorShareProxyContract(
         )
     }
 
-    fun getTotalStake(user: String): Function {
+    fun getTotalStake(user: String): ContractCall {
         return createFunction(
             "getTotalStake",
             inputs = listOf(user.toAddress()),

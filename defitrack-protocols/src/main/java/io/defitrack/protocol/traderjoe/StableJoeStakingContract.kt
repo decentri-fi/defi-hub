@@ -5,6 +5,7 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
@@ -14,9 +15,9 @@ class StableJoeStakingContract(
 ) : EvmContract(blockchainGateway, address) {
 
     val joe = constant<String>("joe", TypeUtils.address())
-    val rewardTokensLength = constant<BigInteger>("rewardTokensLength", TypeUtils.uint256())
+    val rewardTokensLength = constant<BigInteger>("rewardTokensLength", uint256())
 
-    fun getUserInfofn(user: String, reward: String): Function {
+    fun getUserInfofn(user: String, reward: String): ContractCall {
         return createFunction(
             "getuserInfo",
             listOf(user.toAddress(), reward.toAddress()),
@@ -26,7 +27,7 @@ class StableJoeStakingContract(
         )
     }
 
-    fun pendingRewardFn(user: String, reward: String): Function {
+    fun pendingRewardFn(user: String, reward: String): ContractCall {
         return createFunction(
             "pendingReward",
             listOf(user.toAddress(), reward.toAddress()),
@@ -36,11 +37,11 @@ class StableJoeStakingContract(
         )
     }
 
-    fun harvest(): MutableFunction {
+    fun harvest(): ContractCall {
         return createFunction(
             "deposit",
             listOf(BigInteger.ZERO.toUint256())
-        ).toMutableFunction()
+        )
     }
 
     suspend fun rewardTokens(): List<String> {

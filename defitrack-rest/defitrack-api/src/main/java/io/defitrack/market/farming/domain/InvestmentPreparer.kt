@@ -72,7 +72,7 @@ abstract class InvestmentPreparer(
 
         return if (allowance < investmentAmount) {
             PreparedTransaction(
-                function = ERC20Contract.fullApproveFunction(getEntryContract()),
+                function = ERC20Contract.fullApprove(getEntryContract()),
                 to = getWant(),
                 network = getNetwork().toVO()
             )

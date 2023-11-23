@@ -66,7 +66,6 @@ class PolycatFarmingMarketProvider(
                 calculateMarketSize(stakedtoken, chef)
             },
             positionFetcher = PositionFetcher(
-                address = chef.address,
                 { user ->
                     chef.userInfoFunction(
                         user, poolId

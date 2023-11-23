@@ -8,13 +8,12 @@ import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.evm.multicall.MultiCallElement
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.sushiswap.contract.MasterChefBasedContract
-import io.defitrack.protocol.sushiswap.contract.MasterChefPoolInfo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
@@ -33,7 +32,7 @@ class PancakeV3FarmingMarketProvider : FarmingMarketProvider() {
         getBlockchainGateway(),
         masterchefContractAddress
     ) {
-        fun pendingCake(tokenId: Long): Function {
+        fun pendingCake(tokenId: Long): ContractCall {
             return createFunction(
                 "pendingCake",
                 tokenId.toBigInteger().toUint256().nel(),
@@ -43,28 +42,25 @@ class PancakeV3FarmingMarketProvider : FarmingMarketProvider() {
 
         suspend fun customPoolInfos(): List<PancakePoolInfo> {
             val multicalls = (0 until poolLength.await().toInt()).map { poolIndex ->
-                MultiCallElement(
-                    createFunction(
-                        "poolInfo",
-                        inputs = listOf(poolIndex.toBigInteger().toUint256()),
-                        outputs = listOf(
-                            uint256(),
-                            TypeUtils.address(),
-                            TypeUtils.address(),
-                            TypeUtils.address(),
-                            uint24(),
-                            uint256(),
-                            uint256(),
-                        )
-                    ),
-                    address
+                createFunction(
+                    "poolInfo",
+                    inputs = listOf(poolIndex.toBigInteger().toUint256()),
+                    outputs = listOf(
+                        uint256(),
+                        TypeUtils.address(),
+                        TypeUtils.address(),
+                        TypeUtils.address(),
+                        uint24(),
+                        uint256(),
+                        uint256(),
+                    )
                 )
             }
 
             val results = blockchainGateway.readMultiCall(
                 multicalls
             )
-           return results.map { retVal ->
+            return results.map { retVal ->
                 PancakePoolInfo(
                     retVal.data[1].value as String,
                     retVal.data[2].value as String,
@@ -76,6 +72,8 @@ class PancakeV3FarmingMarketProvider : FarmingMarketProvider() {
     }
 
 
+
+    //todo: arrowkt
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
         val contract = getContract()
 

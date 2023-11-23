@@ -14,6 +14,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.alienbase.BasedDistributorV2Contract
 import io.defitrack.protocol.alienbase.ComplexRewarderPerSecV4Contract
 import io.defitrack.transaction.PreparedTransaction
+import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import org.springframework.stereotype.Component
@@ -61,14 +62,12 @@ class AlienbaseFarmingMarketProvider : FarmingMarketProvider() {
                         stakedToken = stakedtoken.toFungibleToken(),
                         rewardToken = rewardToken.toFungibleToken(),
                         positionFetcher = PositionFetcher(
-                            address = farmingContractAddress,
                             contract.userInfoFunction(poolId)
                         ),
                         claimableRewardFetcher = ClaimableRewardFetcher(
                             listOf(
                                 Reward(
                                     rewardToken.toFungibleToken(),
-                                    contract.address,
                                     { user -> contract.pendingFunction(poolId, user) },
                                     { results, _ ->
                                         val addresses = (results[0].value as List<Address>).map { it.value as String }
@@ -85,7 +84,6 @@ class AlienbaseFarmingMarketProvider : FarmingMarketProvider() {
                             ) + extraRewards.map { extraReward ->
                                 Reward(
                                     extraReward.toFungibleToken(),
-                                    contract.address,
                                     { user -> contract.pendingFunction(poolId, user) },
                                     { results, user ->
                                         val addresses = (results[0].value as List<Address>).map { it.value as String }
@@ -102,14 +100,7 @@ class AlienbaseFarmingMarketProvider : FarmingMarketProvider() {
                                     }
                                 )
                             },
-                            preparedTransaction = { user ->
-                                PreparedTransaction(
-                                    getNetwork().toVO(),
-                                    contract.claimFunction(poolId),
-                                    farmingContractAddress,
-                                    user
-                                )
-                            }
+                            preparedTransaction = selfExecutingTransaction(contract.claimFunction(poolId))
                         ),
                         internalMetadata = mapOf(
                             "contract" to farmingContract.await(),

@@ -11,6 +11,7 @@ import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.stakefish.StakefishFeeRecipientContract
 import io.defitrack.transaction.PreparedTransaction
+import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import org.springframework.stereotype.Component
@@ -43,19 +44,10 @@ class StakefishStakingMarketProvider : FarmingMarketProvider() {
                         rewards = listOf(
                             Reward(
                                 token = rewardToken,
-                                contractAddress = stakefishFeeRecipient,
-                                getRewardFunction = { user ->
-                                    stakefishStakingContract.getPendingRewardFunction(user)
-                                },
+                                getRewardFunction = stakefishStakingContract::getPendingRewardFunction,
                             )
                         ),
-                        preparedTransaction = { user ->
-                            PreparedTransaction(
-                                network = getNetwork().toVO(),
-                                function = stakefishStakingContract.claimFunction(user),
-                                to = stakefishFeeRecipient,
-                            )
-                        }
+                        preparedTransaction = selfExecutingTransaction(stakefishStakingContract::claimFunction)
                     )
                 )
             )

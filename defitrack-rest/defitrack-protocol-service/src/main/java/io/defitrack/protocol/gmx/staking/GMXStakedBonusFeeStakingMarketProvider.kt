@@ -16,6 +16,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.gmx.StakedGMXContract
 import io.defitrack.token.ERC20Resource
 import io.defitrack.transaction.PreparedTransaction
+import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import org.springframework.stereotype.Component
@@ -80,23 +81,13 @@ class GMXStakedBonusFeeStakingMarketProvider : FarmingMarketProvider() {
                 stakedToken = getToken(gmx),
                 rewardToken = rewardToken.toFungibleToken(),
                 marketSize = refreshable { BigDecimal.ZERO },
-                positionFetcher = PositionFetcher(
-                    address = stakedAndBonusGMX,
-                    ERC20Contract.Companion::balanceOfFunction
-                ),
+                positionFetcher = PositionFetcher(contract::balanceOfFunction),
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
                         token = rewardToken.toFungibleToken(),
-                        contractAddress = stakedBonusandFeeGMX,
                         getRewardFunction = contract::claimableFn,
                     ),
-                    preparedTransaction = { user ->
-                        PreparedTransaction(
-                            getNetwork().toVO(),
-                            contract.claimFn(user),
-                            contract.address
-                        )
-                    }
+                    preparedTransaction = selfExecutingTransaction(contract::claimFn)
                 )
             )
         )

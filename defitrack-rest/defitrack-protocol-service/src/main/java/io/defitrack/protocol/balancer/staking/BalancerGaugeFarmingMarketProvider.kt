@@ -9,7 +9,6 @@ import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.pooling.PoolingMarketProvider
@@ -77,8 +76,7 @@ abstract class BalancerGaugeFarmingMarketProvider(
                     stakedToken = stakedToken,
                     rewardTokens = rewardTokens,
                     positionFetcher = PositionFetcher(
-                        gaugecontract.address,
-                        ::balanceOfFunction
+                        gaugecontract::balanceOfFunction
                     ),
                     metadata = mapOf("address" to pool.address),
                     internalMetadata = mapOf(
@@ -88,7 +86,6 @@ abstract class BalancerGaugeFarmingMarketProvider(
                         rewards = rewardTokens.map {
                             Reward(
                                 token = it,
-                                contractAddress = gaugecontract.address,
                                 getRewardFunction = gaugecontract.getClaimableRewardFunction(it.address)
                             )
                         },

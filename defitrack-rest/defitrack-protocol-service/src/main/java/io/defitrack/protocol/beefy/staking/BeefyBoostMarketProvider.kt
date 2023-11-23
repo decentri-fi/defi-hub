@@ -42,7 +42,6 @@ abstract class BeefyBoostMarketProvider(
                     claimableRewardFetcher = ClaimableRewardFetcher(
                         Reward(
                             reward,
-                            contract.address,
                             contract::earned
                         ),
                         preparedTransaction = selfExecutingTransaction(contract::getRewardfn)

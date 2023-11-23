@@ -4,6 +4,7 @@ import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
 import org.web3j.abi.datatypes.Function
 
@@ -23,7 +24,7 @@ class HopStakingRewardContract(
         )
     }
 
-    fun earnedFn(address: String): Function {
+    fun earnedFn(address: String): ContractCall {
         return createFunction(
             "earned",
             inputs = listOf(
@@ -35,8 +36,8 @@ class HopStakingRewardContract(
         )
     }
 
-    fun getRewardFn(): MutableFunction {
-        return createFunction("getReward").toMutableFunction()
+    fun getRewardFn(): ContractCall {
+        return createFunction("getReward")
     }
 
     suspend fun stakingTokenAddress(): String {

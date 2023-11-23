@@ -7,6 +7,7 @@ import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint16
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Function
@@ -69,14 +70,16 @@ class BasedDistributorV2Contract(
         }
     }
 
-    fun claimFunction(poolid: Int): Function {
-        return createFunction(
-            method = "deposit",
-            inputs = listOf(poolid.toBigInteger().toUint256(), BigInteger.ZERO.toUint256()),
-        )
+    fun claimFunction(poolid: Int): (String) -> ContractCall {
+        return {
+            createFunction(
+                method = "deposit",
+                inputs = listOf(poolid.toBigInteger().toUint256(), BigInteger.ZERO.toUint256()),
+            )
+        }
     }
 
-    fun pendingFunction(poolId: Int, user: String): Function {
+    fun pendingFunction(poolId: Int, user: String): ContractCall {
         return createFunction(
             method = "pendingTokens",
             inputs = listOf(poolId.toBigInteger().toUint256(), user.toAddress()),
@@ -89,7 +92,7 @@ class BasedDistributorV2Contract(
         )
     }
 
-    fun userInfoFunction(poolIndex: Int): (String) -> Function {
+    fun userInfoFunction(poolIndex: Int): (String) -> ContractCall {
         return { user ->
             createFunction(
                 method = "userInfo",

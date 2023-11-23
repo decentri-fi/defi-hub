@@ -31,7 +31,7 @@ class SavingsDaiMarketProvider : FarmingMarketProvider() {
             identifier = sdaiContractAddress,
             stakedToken = dai,
             rewardToken = dai,
-            positionFetcher = PositionFetcher(sdaiContractAddress, ERC20Contract::balanceOfFunction) {
+            positionFetcher = PositionFetcher(contract::balanceOfFunction) {
                 val shares = it[0].value as BigInteger
                 Position(
                     contract.convertToAssets(shares),

@@ -7,7 +7,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
+import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOf
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.position.Position
@@ -46,8 +46,7 @@ class StABPTStakingMarketProvider : FarmingMarketProvider() {
                 getMarketSize(abptToken, stABPT)
             },
             positionFetcher = PositionFetcher(
-                stABPT,
-                ::balanceOfFunction
+                stakingContract::balanceOfFunction,
             ) { retVal ->
                 val userStAave = (retVal[0].value as BigInteger)
 
@@ -61,7 +60,6 @@ class StABPTStakingMarketProvider : FarmingMarketProvider() {
             claimableRewardFetcher = ClaimableRewardFetcher(
                 Reward(
                     token = aaveToken,
-                    contractAddress = stABPT,
                     getRewardFunction = stakingContract::getTotalRewardFunction
                 ),
                 preparedTransaction = selfExecutingTransaction(stakingContract::getClaimRewardsFunction)

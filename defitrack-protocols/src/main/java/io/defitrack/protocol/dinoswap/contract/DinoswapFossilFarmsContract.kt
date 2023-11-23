@@ -6,6 +6,7 @@ import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.protocol.sushiswap.contract.MasterChefBasedContract
 import kotlinx.coroutines.Deferred
 import org.web3j.abi.datatypes.Function
@@ -42,14 +43,16 @@ class DinoswapFossilFarmsContract(
         return lpTokens.await()[poolIndex]
     }
 
-    fun userInfoFunction(address: String, poolIndex: Int): Function {
-        return createFunction(
-            "userInfo",
-            inputs = listOf(poolIndex.toBigInteger().toUint256(), address.toAddress()),
-            outputs = listOf(
-                uint256(),
-                uint256(),
+    fun dinoUserInfoFn(poolIndex: Int): (String) -> ContractCall {
+        return { user ->
+            createFunction(
+                "userInfo",
+                inputs = listOf(poolIndex.toBigInteger().toUint256(), user.toAddress()),
+                outputs = listOf(
+                    uint256(),
+                    uint256(),
+                )
             )
-        )
+        }
     }
 }

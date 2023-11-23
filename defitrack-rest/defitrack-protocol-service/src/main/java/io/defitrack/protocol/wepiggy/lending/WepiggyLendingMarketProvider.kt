@@ -7,7 +7,6 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.map
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.position.Position
@@ -62,15 +61,17 @@ class WepiggyLendingMarketProvider(
                     },
                     poolType = "compound-lendingpool",
                     positionFetcher = PositionFetcher(
-                        ctokenContract.address,
-                        ::balanceOfFunction
+                        ctokenContract::balanceOfFunction
                     ) { retVal ->
                         val tokenBalance = retVal[0].value as BigInteger
-                        Position(
-                            tokenBalance.times(exchangeRate.await()).asEth().toBigInteger(),
-                            tokenBalance
-                        )
-
+                        if (tokenBalance > BigInteger.ZERO) {
+                            Position(
+                                tokenBalance.times(exchangeRate.await()).asEth().toBigInteger(),
+                                tokenBalance
+                            )
+                        } else {
+                            Position.ZERO
+                        }
                     },
                     marketToken = cToken,
                     erc20Compatible = true,

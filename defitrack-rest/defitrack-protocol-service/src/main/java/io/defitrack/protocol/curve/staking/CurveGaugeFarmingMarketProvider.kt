@@ -55,15 +55,13 @@ abstract class CurveGaugeFarmingMarketProvider(
                         ).usdAmount
                     },
                     positionFetcher = PositionFetcher(
-                        gauge,
-                        ERC20Contract.Companion::balanceOfFunction
+                        contract::balanceOfFunction
                     ),
                     claimableRewardFetcher = rewardTokens.takeIf { it.isNotEmpty() }?.let { rewards ->
                         ClaimableRewardFetcher(
                             rewards.map { reward ->
                                 Reward(
                                     token = reward,
-                                    contractAddress = contract.address,
                                     getRewardFunction = contract.getClaimableRewardFunction(
                                         reward.address
                                     )

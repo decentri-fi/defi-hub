@@ -34,7 +34,6 @@ class LiquityLendingMarketProvider : LendingMarketProvider() {
                 troveManager.totalCollateralSnapshot.await().asEth()
             },
             positionFetcher = PositionFetcher(
-                troveManagerAddress,
                 troveManager::getTroveColl,
             )
         ).nel()

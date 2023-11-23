@@ -12,6 +12,7 @@ import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.arpa.ArpaStakingContract
 import io.defitrack.transaction.PreparedTransaction
+import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import org.springframework.stereotype.Component
@@ -38,23 +39,14 @@ class ArpaStakingMarketProvider : FarmingMarketProvider() {
                 stakedToken = arpa,
                 rewardToken = arpa,
                 positionFetcher = PositionFetcher(
-                    contract.address,
                     contract::getStakeFn
                 ),
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
                         arpa.toFungibleToken(),
-                        arpaStakingAddress,
                         contract::getBaseReward
                     ),
-                    preparedTransaction = { user ->
-                        PreparedTransaction(
-                            getNetwork().toVO(),
-                            contract.claimReward(),
-                            contract.address,
-                            user
-                        )
-                    }
+                    preparedTransaction = selfExecutingTransaction(contract::claimReward)
                 )
             )
         )

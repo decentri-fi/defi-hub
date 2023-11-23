@@ -4,6 +4,7 @@ import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.protocol.beefy.domain.BeefyVault
 import kotlinx.coroutines.Deferred
@@ -18,16 +19,16 @@ class BeefyVaultContract(
         solidityBasedContractAccessor, address
     ) {
 
-    fun fullExitFunction(): MutableFunction {
+    fun fullExitFunction(): ContractCall {
         return createFunction(
             method = "withdrawAll",
-        ).toMutableFunction()
+        )
     }
 
     val balance: Deferred<BigInteger> = constant("balance", uint256())
 
-    fun depositFunction(amount: BigInteger): MutableFunction {
-        return createFunction("deposit", listOf(amount.toUint256())).toMutableFunction()
+    fun depositFunction(amount: BigInteger): ContractCall {
+        return createFunction("deposit", listOf(amount.toUint256()))
     }
 
     val pricePerFullShare = constant<BigInteger>("getPricePerFullShare", uint256())

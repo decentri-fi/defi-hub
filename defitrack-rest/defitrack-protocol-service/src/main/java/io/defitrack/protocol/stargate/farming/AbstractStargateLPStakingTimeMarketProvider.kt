@@ -41,13 +41,11 @@ abstract class AbstractStargateLPStakingTimeMarketProvider(
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
                         token = stargate.toFungibleToken(),
-                        contractAddress = lpStakingContract.address,
                         getRewardFunction = lpStakingContract.pendingFn(index)
                     ),
                     preparedTransaction = selfExecutingTransaction(lpStakingContract.claimFn(index))
                 ),
                 positionFetcher = PositionFetcher(
-                    lpStakingContract.address,
                     lpStakingContract.userInfo(index),
                 )
             )

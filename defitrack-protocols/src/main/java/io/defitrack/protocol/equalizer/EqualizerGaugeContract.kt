@@ -5,6 +5,7 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
@@ -16,7 +17,7 @@ class EqualizerGaugeContract(
     val stake = constant<String>("stake", TypeUtils.address())
     val rewardsListLength = constant<BigInteger>("rewardsListLength", uint256())
 
-    fun earnedFn(rewardsToken: String, user: String): Function {
+    fun earnedFn(rewardsToken: String, user: String): ContractCall {
         return createFunction(
             "earned",
             listOf(rewardsToken.toAddress(), user.toAddress()),
@@ -24,18 +25,18 @@ class EqualizerGaugeContract(
         )
     }
 
-    fun earnedFnFor(rewardsToken: String): (String) -> Function {
-        return  {user: String ->
+    fun earnedFnFor(rewardsToken: String): (String) -> ContractCall {
+        return { user: String ->
             earnedFn(rewardsToken, user)
         }
     }
 
-    fun getRewardFn(): MutableFunction {
+    fun getRewardFn(): ContractCall {
         return createFunction(
             "getReward",
             listOf(),
             listOf()
-        ).toMutableFunction()
+        )
     }
 
     suspend fun getRewards(): List<String> {

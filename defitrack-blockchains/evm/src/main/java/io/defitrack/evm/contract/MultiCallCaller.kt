@@ -1,4 +1,4 @@
-package io.defitrack.evm.multicall
+package io.defitrack.evm.contract
 
 import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.Type
@@ -6,7 +6,7 @@ import org.web3j.abi.datatypes.Type
 interface MultiCallCaller {
 
     suspend fun readMultiCall(
-        elements: List<MultiCallElement>,
+        elements: List<ContractCall>,
         executeCall: suspend (address: String, function: Function) -> List<Type<*>>
     ): List<MultiCallResult>
 }

@@ -6,6 +6,7 @@ import io.defitrack.abi.TypeUtils.Companion.dynamicArray
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.DynamicArray
@@ -21,7 +22,7 @@ class LendingControllerContract(
 
     val collateral = constant<String>("collateral_token", address())
 
-    fun debtFn(user: String): Function {
+    fun debtFn(user: String): ContractCall {
         return createFunction(
             "debt",
             user.toAddress().nel(),
@@ -29,7 +30,7 @@ class LendingControllerContract(
         )
     }
 
-    fun userState(user: String): Function {
+    fun userState(user: String): ContractCall {
         return createFunction(
             "user_state",
             user.toAddress().nel(),

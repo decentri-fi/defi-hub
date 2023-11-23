@@ -4,7 +4,6 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.position.Position
@@ -38,8 +37,7 @@ class SwethStakingMarketProvider : FarmingMarketProvider() {
                 stakedToken = ether.toFungibleToken(),
                 rewardTokens = listOf(ether.toFungibleToken()),
                 positionFetcher = PositionFetcher(
-                    swethAddress,
-                    ::balanceOfFunction
+                    contract::balanceOfFunction
                 ) { result ->
                     val bal = result[0].value as BigInteger
                     if (bal > BigInteger.ZERO) {

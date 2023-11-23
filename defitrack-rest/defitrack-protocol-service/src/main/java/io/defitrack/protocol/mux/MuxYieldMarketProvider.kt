@@ -44,7 +44,6 @@ class MuxYieldMarketProvider : FarmingMarketProvider() {
             claimableRewardFetcher = ClaimableRewardFetcher(
                 Reward(
                     rewardToken,
-                    contract.address,
                     contract::claimableVestedTokenFromMlp
                 ),
                 preparedTransaction = selfExecutingTransaction(contract::claimFromMlpUnwrap)
@@ -63,7 +62,6 @@ class MuxYieldMarketProvider : FarmingMarketProvider() {
             claimableRewardFetcher = ClaimableRewardFetcher(
                 Reward(
                     rewardToken,
-                    contract.address,
                     contract::claimableVestedTokenFromMux
                 ),
                 preparedTransaction = selfExecutingTransaction(contract::claimFromVeUnwrap)

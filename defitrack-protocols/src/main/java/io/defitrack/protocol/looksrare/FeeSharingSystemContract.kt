@@ -1,9 +1,11 @@
 package io.defitrack.protocol.looksrare
 
 import io.defitrack.abi.TypeUtils
+import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Function
 
@@ -13,10 +15,10 @@ class FeeSharingSystemContract(
     blockchainGateway, address
 ) {
 
-    val looksRareToken = constant<String>("looksRareToken", TypeUtils.address())
-    val rewardToken = constant<String>("rewardToken", TypeUtils.address())
+    val looksRareToken = constant<String>("looksRareToken", address())
+    val rewardToken = constant<String>("rewardToken", address())
 
-    fun userInfoFn(user: String): Function {
+    fun userInfoFn(user: String): ContractCall {
         return createFunction(
             "userInfo",
             listOf(
@@ -30,7 +32,7 @@ class FeeSharingSystemContract(
         )
     }
 
-    fun calculateSharesValueInLooks(user: String): Function {
+    fun calculateSharesValueInLooks(user: String): ContractCall {
         return createFunction(
             "calculateSharesValueInLOOKS",
             listOf(
@@ -42,7 +44,7 @@ class FeeSharingSystemContract(
         )
     }
 
-    fun calculatePendingRewards(user: String): Function {
+    fun calculatePendingRewards(user: String): ContractCall {
         return createFunction(
             "calculatePendingRewards",
             listOf(
@@ -54,7 +56,7 @@ class FeeSharingSystemContract(
         )
     }
 
-    fun harvest(): MutableFunction {
-        return createFunction("harvest").toMutableFunction()
+    fun harvest(): ContractCall {
+        return createFunction("harvest")
     }
 }

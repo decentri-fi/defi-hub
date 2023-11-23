@@ -1,9 +1,6 @@
 package io.defitrack.evm.contract
 
-import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
-import io.defitrack.evm.multicall.MultiCallElement
-import io.defitrack.evm.multicall.MultiCallResult
 import kotlinx.coroutines.Deferred
 import org.slf4j.LoggerFactory
 import org.web3j.abi.TypeReference
@@ -17,33 +14,31 @@ abstract class EvmContract(
 
     val logger = LoggerFactory.getLogger(this::class.java)
 
-    companion object {
-        fun createFunction(
-            method: String,
-            inputs: List<Type<*>> = emptyList(),
-            outputs: List<TypeReference<out Type<*>>>? = emptyList()
-        ): Function {
-            return BlockchainGateway.createFunction(method, inputs, outputs)
-        }
-
-        fun createFunction(
-            method: String,
-            output: TypeReference<out Type<*>>
-        ): Function {
-            return BlockchainGateway.createFunction(method, emptyList(), listOf(output))
-        }
+    fun createFunction(
+        method: String,
+        output: TypeReference<out Type<*>>
+    ): ContractCall {
+        return BlockchainGateway.createFunction(method, emptyList(), listOf(output)).toContractCall()
     }
 
-    var resolvedConstants: Deferred<Map<Function, MultiCallResult>> = lazyAsync {
+    fun createFunction(
+        method: String,
+        inputs: List<Type<*>> = emptyList(),
+        outputs: List<TypeReference<out Type<*>>>? = emptyList()
+    ): ContractCall {
+        return BlockchainGateway.createFunction(method, inputs, outputs).toContractCall()
+    }
+
+    var resolvedConstants: Deferred<Map<ContractCall, MultiCallResult>> = lazyAsync {
         logger.debug("reading ${constantFunctions.size} constants from $address")
         readMultiCall(constantFunctions).mapIndexed { index, result ->
             constantFunctions[index] to result
         }.toMap()
     }
 
-    val constantFunctions = mutableListOf<Function>()
+    val constantFunctions = mutableListOf<ContractCall>()
 
-    fun addConstant(function: Function): Function {
+    fun addConstant(function: ContractCall): ContractCall {
         constantFunctions.add(function)
         return function
     }
@@ -67,29 +62,20 @@ abstract class EvmContract(
     }
 
     inline fun <reified T : Any> constant(
-        function: Function,
+        function: ContractCall,
     ): Deferred<T> {
         return lazyAsync {
             val get = resolvedConstants.await().get(function)!!
             if (get.success) {
                 get.data[0].value as T
             } else {
-                throw RuntimeException("Unable to read constant ${function.name} on $address")
+                throw RuntimeException("Unable to read constant ${function.function.name} on $address")
             }
         }
     }
 
-    suspend fun readMultiCall(
-        functions: List<Function>
-    ): List<MultiCallResult> {
-        return blockchainGateway.readMultiCall(
-            functions.map {
-                MultiCallElement(
-                    it,
-                    address
-                )
-            }
-        )
+    suspend fun readMultiCall(functions: List<ContractCall>): List<MultiCallResult> {
+        return blockchainGateway.readMultiCall(functions)
     }
 
     suspend fun read(
@@ -125,22 +111,16 @@ abstract class EvmContract(
         )[0].value as T
     }
 
-    fun Function.toMutableFunction(): MutableFunction {
-        return MutableFunction(
+    fun Function.toContractCall(): ContractCall {
+        return ContractCall(
             this,
             blockchainGateway.network,
             this@EvmContract.address
         )
     }
 
-    data class MutableFunction(
-        val function: Function,
-        val network: Network,
-        val address: String
-    )
 
-    fun resolveConstants(resolved: Map<Function, MultiCallResult>) {
-
+    fun resolveConstants(resolved: Map<ContractCall, MultiCallResult>) {
         this.resolvedConstants = lazyAsync {
             resolved
         }

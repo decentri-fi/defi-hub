@@ -2,7 +2,6 @@ package io.defitrack.protocol.olympusdao.farming
 
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.evm.contract.ERC20Contract.Companion.balanceOfFunction
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.position.Position
@@ -31,19 +30,18 @@ class GOHMMarketProvider(
                 stakedToken = ohm.toFungibleToken(),
                 rewardTokens = listOf(ohm.toFungibleToken()),
                 positionFetcher = PositionFetcher(
-                    gohm.address,
-                    { user ->
-                        balanceOfFunction(user)
-                    },
-                    { retVal ->
-                        val gohmAmount = retVal[0].value as BigInteger
+                    gohm::balanceOfFunction
+                )
+                { retVal ->
+                    val gohmAmount = retVal[0].value as BigInteger
+                    if (gohmAmount > BigInteger.ZERO) {
                         Position(
                             underlyingAmount = gohm.balanceFrom(gohmAmount),
                             tokenAmount = gohmAmount,
                         )
-                    }
-                ),
-            )
+                    } else Position.ZERO
+                }
+            ),
         )
     }
 

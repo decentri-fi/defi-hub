@@ -6,6 +6,7 @@ import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint16
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
@@ -25,7 +26,7 @@ class QidaoFarmV2Contract(
         )[0].value as BigInteger).toInt()
     }
 
-    fun getPending(user: String): Function {
+    fun getPending(user: String): ContractCall {
         return createFunction(
             "pending",
             inputs = listOf(user.toAddress()),
@@ -51,7 +52,7 @@ class QidaoFarmV2Contract(
         )[0].value as String
     }
 
-    fun userInfoFunction(poolIndex: Int): (String) -> Function {
+    fun userInfoFunction(poolIndex: Int): (String) -> ContractCall {
         return { user ->
             createFunction(
                 "userInfo",
