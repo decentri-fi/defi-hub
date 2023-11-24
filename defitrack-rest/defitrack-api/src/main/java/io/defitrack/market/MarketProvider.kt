@@ -46,6 +46,9 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
     private lateinit var erC20Resource: ERC20Resource
 
     @Autowired
+    private lateinit var bulkConstantResolver: BulkConstantResolver
+
+    @Autowired
     private lateinit var observationRegistry: ObservationRegistry
 
     @Autowired
@@ -65,6 +68,10 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
 
     @Autowired
     private lateinit var blockchainGatewayProvider: BlockchainGatewayProvider
+
+    suspend fun <T : EvmContract> resolve(contracts: List<T>): List<T> {
+        return bulkConstantResolver.resolve(contracts)
+    }
 
     open fun order(): Int {
         return 1

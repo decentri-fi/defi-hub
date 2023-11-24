@@ -5,10 +5,8 @@ import arrow.core.Option
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.abi.TypeUtils
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.AsyncUtils
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.event.EventDecoder.Companion.extract
@@ -18,7 +16,6 @@ import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.uniswap.v3.pooling.UniswapV3PoolingMarketProvider
 import io.defitrack.uniswap.v3.UniswapV3PoolContract
 import io.defitrack.uniswap.v3.UniswapV3PoolFactoryContract
 import io.github.reactivecircus.cache4k.Cache
@@ -28,7 +25,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import org.springframework.stereotype.Component
 import org.web3j.abi.datatypes.Event
-import java.math.BigDecimal
 import java.math.BigInteger
 import kotlin.coroutines.EmptyCoroutineContext
 

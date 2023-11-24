@@ -1,4 +1,4 @@
-package io.defitrack
+package io.defitrack.evm.contract
 
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider

@@ -20,45 +20,46 @@ class RadiantMultiFeeDistributorFarmingMarketProvider : FarmingMarketProvider() 
     val address = "0xc2054a8c33bfce28de8af4af548c48915c455c13"
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
-         val contract = RadiantMultiFeeDistributor(
-             getBlockchainGateway(),
-             address
-         )
+        val contract = RadiantMultiFeeDistributor(
+            getBlockchainGateway(),
+            address
+        )
 
-         val stakingToken = getToken(contract.stakingToken.await()).toFungibleToken()
-         val rewardTokens = contract.rewardTokens().map { getToken(it) }
+        val stakingToken = getToken(contract.stakingToken.await()).toFungibleToken()
+        val rewardTokens = contract.rewardTokens().map { getToken(it) }
 
-         return listOf(
-             create(
-                 name = "Radiant Staking",
-                 identifier = address,
-                 stakedToken = stakingToken,
-                 rewardTokens = rewardTokens.map { it.toFungibleToken() },
-                 claimableRewardFetcher = ClaimableRewardFetcher(
-                     rewards = rewardTokens.map { token ->
-                         Reward(
-                             token.toFungibleToken(),
-                             contract::getClaimableRewardFn
-                         ) { result, user ->
-                             val value = (result[0] as DynamicArray<RadiantMultiFeeReward>).value as List<RadiantMultiFeeReward>
-                             value.mapNotNull {reward ->
+        return listOf(
+            create(
+                name = "Radiant Staking",
+                identifier = address,
+                stakedToken = stakingToken,
+                rewardTokens = rewardTokens.map { it.toFungibleToken() },
+                claimableRewardFetcher = ClaimableRewardFetcher(
+                    rewards = rewardTokens.map { token ->
+                        Reward(
+                            token.toFungibleToken(),
+                            contract::getClaimableRewardFn
+                        ) { result, _ ->
+                            val value =
+                                (result[0] as DynamicArray<RadiantMultiFeeReward>).value as List<RadiantMultiFeeReward>
+                            value.mapNotNull { reward ->
 
-                                 if (reward.amount.value > BigInteger.ZERO) {
-                                     reward
-                                 } else null
-                             }.find {
-                                 it.rewardAddress.value.lowercase() == token.address.lowercase()
-                             }?.amount?.value ?: BigInteger.ZERO
-                         }
-                     },
-                     preparedTransaction = selfExecutingTransaction { _ ->
-                         contract.getRewardFn(
-                             rewardTokens.map { it.address }
-                         )
-                     }
-                 )
-             )
-         )
+                                if (reward.amount.value > BigInteger.ZERO) {
+                                    reward
+                                } else null
+                            }.find {
+                                it.rewardAddress.value.lowercase() == token.address.lowercase()
+                            }?.amount?.value ?: BigInteger.ZERO
+                        }
+                    },
+                    preparedTransaction = selfExecutingTransaction { _ ->
+                        contract.getRewardFn(
+                            rewardTokens.map { it.address }
+                        )
+                    }
+                )
+            )
+        )
 
     }
 

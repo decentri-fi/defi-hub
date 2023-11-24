@@ -1,10 +1,8 @@
 package io.defitrack.protocol.prisma
 
 import arrow.fx.coroutines.parMapNotNull
-import io.defitrack.BulkConstantResolver
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.lending.LendingMarketProvider
@@ -16,9 +14,7 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.PRISMA)
-class PrismaLendingMarketProvider(
-    private val bulkConstantResolver: BulkConstantResolver
-) : LendingMarketProvider() {
+class PrismaLendingMarketProvider : LendingMarketProvider() {
 
     val troveManagers = listOf(
         "0xbf6883a03fd2fcfa1b9fc588ad6193b3c3178f8f",
@@ -32,7 +28,7 @@ class PrismaLendingMarketProvider(
             .map {
                 TroveManagerContract(getBlockchainGateway(), it)
             }
-        return bulkConstantResolver.resolve(contracts).parMapNotNull { troveManager ->
+        return resolve(contracts).parMapNotNull { troveManager ->
 
             val collateral = getToken(troveManager.collateralToken.await())
 

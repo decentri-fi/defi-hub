@@ -16,7 +16,6 @@ import io.defitrack.market.position.PositionFetcher
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerGaugeZkEvmContract
-import io.defitrack.protocol.balancer.contract.L2BalancerPseudoMinterContract
 import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
@@ -47,7 +46,7 @@ class BalancerPolygonZkEvmGaugeMarketProvider : FarmingMarketProvider() {
             )
         )
         val bal = getToken(balAddress)
-        val l2BalancerPseudoMinter = L2BalancerPseudoMinterContract(getBlockchainGateway(), l2PseudoMinterAddress)
+        //val l2BalancerPseudoMinter = L2BalancerPseudoMinterContract(getBlockchainGateway(), l2PseudoMinterAddress)
 
         return logs.mapNotNull {
             try {
@@ -73,14 +72,14 @@ class BalancerPolygonZkEvmGaugeMarketProvider : FarmingMarketProvider() {
                     positionFetcher = PositionFetcher(
                         gaugecontract::workingBalance
                     ) {
-                        val bal = it[0].value as BigInteger
-                        if (bal > BigInteger.ZERO) {
+                        val balance = it[0].value as BigInteger
+                        if (balance > BigInteger.ZERO) {
                             val ratiod =
-                                bal.toBigDecimal().dividePrecisely(gaugecontract.workingSupply.await().toBigDecimal())
+                                balance.toBigDecimal().dividePrecisely(gaugecontract.workingSupply.await().toBigDecimal())
                             val normalized = lp.totalSupply.toBigDecimal().times(ratiod)
                             Position(
                                 normalized.toBigInteger(),
-                                bal
+                                balance
                             )
                         } else {
                             Position(

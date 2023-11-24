@@ -1,11 +1,16 @@
 package io.defitrack.evm.contract
 
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
+import io.defitrack.evm.GetEventLogsCommand
 import kotlinx.coroutines.Deferred
 import org.slf4j.LoggerFactory
+import org.web3j.abi.EventEncoder
 import org.web3j.abi.TypeReference
+import org.web3j.abi.datatypes.Event
 import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.Type
+import org.web3j.protocol.core.methods.response.EthLog
+import java.math.BigInteger
 
 abstract class EvmContract(
     val blockchainGateway: BlockchainGateway,
@@ -13,6 +18,17 @@ abstract class EvmContract(
 ) {
 
     val logger = LoggerFactory.getLogger(this::class.java)
+
+    suspend fun getLogs(event: Event, fromBlock: String, toBlock: String?): List<EthLog.LogObject> {
+        return blockchainGateway.getEventsAsEthLog(
+            GetEventLogsCommand(
+                addresses = listOf(this.address),
+                topic = EventEncoder.encode(event),
+                fromBlock = BigInteger(fromBlock, 10),
+                toBlock = toBlock?.let { BigInteger(toBlock, 10) }
+            )
+        )
+    }
 
     fun createFunction(
         method: String,

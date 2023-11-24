@@ -2,7 +2,6 @@ package io.defitrack.protocol.beefy.staking
 
 import arrow.core.Either
 import arrow.fx.coroutines.parMapNotNull
-import io.defitrack.BulkConstantResolver
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.erc20.TokenInformationVO
@@ -23,7 +22,6 @@ import java.math.RoundingMode
 abstract class BeefyFarmingMarketProvider(
     private val beefyAPYService: BeefyAPYService,
     private val vaults: List<BeefyVault>,
-    private val constantResolver: BulkConstantResolver,
 ) : FarmingMarketProvider() {
 
     override fun getProtocol(): Protocol {
@@ -31,7 +29,7 @@ abstract class BeefyFarmingMarketProvider(
     }
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
-        val contracts = constantResolver.resolve(
+        val contracts = resolve(
             vaults.map { beefyVault ->
                 BeefyVaultContract(
                     getBlockchainGateway(),

@@ -4,10 +4,10 @@ import arrow.core.None
 import arrow.core.Option
 import arrow.core.some
 import arrow.fx.coroutines.parMapNotNull
-import io.defitrack.BulkConstantResolver
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.evm.contract.BulkConstantResolver
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
@@ -17,12 +17,10 @@ import io.defitrack.protocol.balancer.contract.BalancerPoolContract
 import io.defitrack.protocol.balancer.contract.BalancerService
 import io.defitrack.protocol.balancer.contract.BalancerVaultContract
 import io.defitrack.protocol.balancer.pooling.history.BalancerPoolingHistoryProvider
-import io.defitrack.protocol.spark.PoolContract
 import io.defitrack.token.FungibleToken
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import org.springframework.beans.factory.annotation.Autowired
-import java.math.BigDecimal
 import java.math.BigInteger
 
 abstract class BalancerPoolingMarketProvider(
@@ -30,20 +28,17 @@ abstract class BalancerPoolingMarketProvider(
 ) : PoolingMarketProvider() {
 
     @Autowired
-    private lateinit var bulkConstantResolver: BulkConstantResolver
-
-    @Autowired
     private lateinit var balancerPoolingHistoryProvider: BalancerPoolingHistoryProvider
 
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
-        val poolingContracts = balancerService.getPools(getNetwork())
-            .map {
-                BalancerPoolContract(
-                    getBlockchainGateway(), it
-                )
-            }
-
-        bulkConstantResolver.resolve(poolingContracts)
+        val poolingContracts = resolve(
+            balancerService.getPools(getNetwork())
+                .map {
+                    BalancerPoolContract(
+                        getBlockchainGateway(), it
+                    )
+                }
+        )
 
         poolingContracts
             .parMapNotNull(concurrency = 8) { pool ->

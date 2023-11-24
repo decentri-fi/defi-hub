@@ -1,7 +1,6 @@
 package io.defitrack.protocol.lqty.lending
 
 import arrow.core.nel
-import io.defitrack.BulkConstantResolver
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.refreshable

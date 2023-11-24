@@ -2,7 +2,6 @@ package io.defitrack.protocol.curve.lending
 
 import arrow.core.Either
 import arrow.fx.coroutines.parMapNotNull
-import io.defitrack.BulkConstantResolver
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
@@ -23,9 +22,7 @@ import java.math.BigInteger
 
 @ConditionalOnCompany(Company.CURVE)
 @Component
-class CurveStablecoinLendingMarketProvider(
-    private val bulkConstantResolver: BulkConstantResolver
-) : LendingMarketProvider() {
+class CurveStablecoinLendingMarketProvider : LendingMarketProvider() {
 
     val factoryAddress = "0xC9332fdCB1C491Dcc683bAe86Fe3cb70360738BC"
 
@@ -35,7 +32,7 @@ class CurveStablecoinLendingMarketProvider(
             factoryAddress
         )
 
-        bulkConstantResolver.resolve(
+        resolve(
             factory.controllers()
                 .map {
                     LendingControllerContract(getBlockchainGateway(), it)
