@@ -38,6 +38,8 @@ class BancorPoolCollectionContract(
         val results = this.readMultiCall(
             functions
         )
-        return results.map { it.data[0].value as String }
+        return results
+            .filter { it.success }
+            .map { it.data[0].value as String }
     }
 }

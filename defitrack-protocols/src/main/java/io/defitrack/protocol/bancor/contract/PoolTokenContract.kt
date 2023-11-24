@@ -11,7 +11,5 @@ class PoolTokenContract(
     gateway, address
 ) {
 
-    suspend fun reserveToken(): String {
-        return readSingle("reserveToken", TypeUtils.address())
-    }
+    val reserveToken = constant<String>("reserveToken", TypeUtils.address())
 }

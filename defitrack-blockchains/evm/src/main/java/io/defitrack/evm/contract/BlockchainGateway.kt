@@ -104,6 +104,7 @@ class BlockchainGateway(
         inputs: List<Type<*>>,
         outputs: List<TypeReference<out Type<*>>>? = null
     ): List<Type<*>> {
+        logger.debug("reading $function from $address")
         return executeCall(address, createFunction(function, inputs, outputs))
     }
 
