@@ -115,7 +115,7 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
             }
         }
 
-        logger.info("added ${cache.asMap().size} in ${time.inWholeSeconds} seconds")
+        logger.info("added ${cache.asMap().size} markets in ${time.inWholeSeconds} seconds")
     }
 
     private fun putInCache(it: T) {

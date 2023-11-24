@@ -34,7 +34,7 @@ class ConvexBoosterFarmingMarket(
                 val stakedToken = getToken(poolInfos[idx].lpToken)
                 create(
                     identifier = contract.address + "-" + idx,
-                    name = "Convex Crv Booster $idx",
+                    name = "Convex ${stakedToken.name} Booster",
                     stakedToken = stakedToken,
                     rewardTokens = emptyList(),
                 )
