@@ -1,7 +1,9 @@
 package io.defitrack.protocol.camelot.farming
 
 import arrow.core.Either
+import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMap
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -25,8 +27,8 @@ class CamelotNftStakingProvider : FarmingMarketProvider() {
         val grail = getToken(grailAddress)
         val factory = PoolFactoryContract(getBlockchainGateway(), nftPoolFactoryAddress)
 
-        factory.getStakingPools().parMap(concurrency = 12) { poolAddress ->
-            Either.catch {
+        factory.getStakingPools().parMapNotNull(concurrency = 12) { poolAddress ->
+            catch {
                 val poolContract = NftPoolContract(getBlockchainGateway(), poolAddress)
 
                 val token = getToken(poolAddress)
@@ -38,16 +40,11 @@ class CamelotNftStakingProvider : FarmingMarketProvider() {
                     rewardToken = grail,
                     stakedToken = staked,
                 )
-            }
+            }.mapLeft {
+                logger.error("Error while fetching Camelot NFT staking market: {}", it.message)
+            }.getOrNull()
         }.forEach {
-            it.fold(
-                { error ->
-                    logger.error("Error while fetching Camelot NFT staking market", error)
-                },
-                { market ->
-                    send(market)
-                }
-            )
+            send(it)
         }
     }
 
