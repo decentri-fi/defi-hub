@@ -88,7 +88,7 @@ class SushiswapEthereumMasterchefV2MarketProvider : FarmingMarketProvider() {
                         ),
                         rewarderContract?.let { rctr ->
                             Reward(
-                                token = extraReward!!.toFungibleToken(),
+                                token = extraReward!!,
                                 { user -> rctr.pendingTokenFn(poolId, user) }
                             )
                         }
