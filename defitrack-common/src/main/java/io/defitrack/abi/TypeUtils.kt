@@ -104,6 +104,10 @@ class TypeUtils {
             return TypeReference.create(Uint128::class.java)
         }
 
+        fun uint112(): TypeReference<Uint112> {
+            return TypeReference.create(Uint112::class.java)
+        }
+
         fun int128(): TypeReference<Int128> {
             return TypeReference.create(Int128::class.java)
         }
