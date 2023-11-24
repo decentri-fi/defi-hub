@@ -1,5 +1,6 @@
 package io.defitrack.protocol.sushiswap.staking
 
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
@@ -27,23 +28,16 @@ class SushiswapEthereumMasterchefV2MarketProvider : FarmingMarketProvider() {
 
     private val masterchefV2ContractAddress = "0xef0881ec094552b2e128cf945ef17a6752b4ec5d"
 
-    val deferredContract = lazyAsync {
-        MasterchefV2Contract(
+    override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
+        val contract = MasterchefV2Contract(
             getBlockchainGateway(),
             masterchefV2ContractAddress
         )
-    }
 
-    override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
-        val contract = deferredContract.await()
-        contract.poolInfos().forEachIndexed { poolIndex, poolInfo ->
-            launch {
-                throttled {
-                    toStakingMarketElement(contract, poolIndex)?.let {
-                        send(it)
-                    }
-                }
-            }
+        (0 until contract.poolInfos().size).parMapNotNull { index ->
+            toStakingMarketElement(contract, index)
+        }.forEach {
+            send(it)
         }
     }
 
