@@ -2,7 +2,6 @@ package io.defitrack.protocol.blast
 
 import arrow.core.nel
 import io.defitrack.abi.TypeUtils.Companion.toAddress
-import io.defitrack.abi.TypeUtils.Companion.uint24
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
@@ -29,5 +28,4 @@ class BlastDepositContract(
             uint256().nel()
         )
     }
-
 }
