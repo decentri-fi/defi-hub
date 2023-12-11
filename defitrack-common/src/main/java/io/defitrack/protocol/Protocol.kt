@@ -13,6 +13,14 @@ enum class Protocol(
     val networks: List<Network>,
     val company: Company,
 ) {
+    BLAST(
+        logo = "blast.png",
+        slug = "blast",
+        primitives = listOf(POOLING),
+        website = "https://blast.io",
+        networks = listOf(ETHEREUM),
+        company = Company.BLAST
+    ),
     ONDO(
         logo = "ondo.png",
         slug = "ondo",
