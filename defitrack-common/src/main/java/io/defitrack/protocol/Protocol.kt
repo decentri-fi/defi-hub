@@ -13,11 +13,19 @@ enum class Protocol(
     val networks: List<Network>,
     val company: Company,
 ) {
+    LYRA(
+        logo = "lyra.png",
+        slug = "lyra",
+        primitives = listOf(POOLING, FARMING, CLAIMABLES),
+        website = "https://lyra.finance",
+        networks = listOf(ETHEREUM, OPTIMISM, ARBITRUM),
+        company = Company.LYRA
+    ),
     VESTA(
         logo = "vesta.png",
         slug = "vesta",
         primitives = listOf(POOLING, FARMING, CLAIMABLES, LENDING),
-        website = "https://vesta.fi",
+        website = "https://vestafinance.xyz",
         networks = listOf(ARBITRUM),
         company = Company.VESTA
     ),

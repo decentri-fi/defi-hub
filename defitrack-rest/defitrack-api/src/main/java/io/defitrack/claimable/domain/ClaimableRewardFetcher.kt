@@ -8,7 +8,7 @@ class ClaimableRewardFetcher(
 ) {
     constructor(
         reward: Reward,
-        preparedTransaction: suspend (user: String) -> PreparedTransaction
+        preparedTransaction: suspend (user: String) -> PreparedTransaction?
     ) : this(
         listOf(reward),
         preparedTransaction,
