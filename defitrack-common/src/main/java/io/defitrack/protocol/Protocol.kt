@@ -13,6 +13,14 @@ enum class Protocol(
     val networks: List<Network>,
     val company: Company,
 ) {
+    VESTA(
+        logo = "vesta.png",
+        slug = "vesta",
+        primitives = listOf(POOLING, FARMING, CLAIMABLES, LENDING),
+        website = "https://vesta.fi",
+        networks = listOf(ARBITRUM),
+        company = Company.VESTA
+    ),
     BLAST(
         logo = "blast.png",
         slug = "blast",
