@@ -32,7 +32,7 @@ class StakefishStakingMarketProvider : FarmingMarketProvider() {
     override suspend fun produceMarkets(): Flow<FarmingMarket> {
         return channelFlow {
 
-            val rewardToken = getToken("0x0").toFungibleToken()
+            val rewardToken = getToken("0x0")
 
             send(
                 create(

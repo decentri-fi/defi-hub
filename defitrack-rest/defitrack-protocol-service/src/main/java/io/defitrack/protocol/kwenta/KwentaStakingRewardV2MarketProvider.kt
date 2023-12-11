@@ -23,7 +23,7 @@ class KwentaStakingRewardV2MarketProvider : FarmingMarketProvider() {
             address
         )
 
-        val kwenta = getToken(contract.kwenta.await()).toFungibleToken()
+        val kwenta = getToken(contract.kwenta.await())
 
         return listOf(
             create(

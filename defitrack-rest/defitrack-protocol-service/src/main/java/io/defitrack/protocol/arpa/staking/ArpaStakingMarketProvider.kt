@@ -24,7 +24,6 @@ class ArpaStakingMarketProvider : FarmingMarketProvider() {
     val arpaStakingAddress = "0xEe710f79aA85099e200be4d40Cdf1Bfb2B467a01"
 
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
-
         val contract = ArpaStakingContract(
             getBlockchainGateway(),
             arpaStakingAddress
@@ -43,7 +42,7 @@ class ArpaStakingMarketProvider : FarmingMarketProvider() {
                 ),
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
-                        arpa.toFungibleToken(),
+                        arpa,
                         contract::getBaseReward
                     ),
                     preparedTransaction = selfExecutingTransaction(contract::claimReward)

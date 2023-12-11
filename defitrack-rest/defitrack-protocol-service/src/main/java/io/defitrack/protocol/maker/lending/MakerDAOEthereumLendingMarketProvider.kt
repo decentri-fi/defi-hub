@@ -41,7 +41,7 @@ class MakerDAOEthereumLendingMarketProvider(private val makerDAOEthereumGraphPro
             name = it.name,
             rate = it.rates.firstOrNull()?.rate?.toBigDecimal(),
             poolType = "makerdao-lending",
-            token = token.toFungibleToken(),
+            token = token,
             marketToken = null,
             totalSupply = Refreshable.refreshable(BigDecimal.ZERO)
         )

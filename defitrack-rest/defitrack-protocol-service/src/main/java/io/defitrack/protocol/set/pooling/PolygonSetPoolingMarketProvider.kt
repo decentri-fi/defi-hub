@@ -44,7 +44,7 @@ class PolygonSetPoolingMarketProvider(
                         name = token.name,
                         symbol = token.symbol,
                         tokens = positions.map {
-                            getToken(it.token).toFungibleToken()
+                            getToken(it.token)
                         },
                         apr = null,
                         marketSize = refreshable {

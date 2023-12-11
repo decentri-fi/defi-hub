@@ -47,7 +47,7 @@ class BalanceRestController(
                         network = it.getNetwork().toVO(),
                         token = erC20Resource.getTokenInformation(
                             it.getNetwork(), "0x0"
-                        ).toFungibleToken(),
+                        ),
                         dollarValue = price.times(balance.toDouble()),
                         price = price
                     )
@@ -86,7 +86,7 @@ class BalanceRestController(
             BalanceElement(
                 amount = balance.toDouble(), network = network.toVO(), token = erC20Resource.getTokenInformation(
                     network, "0x0"
-                ).toFungibleToken(), dollarValue = price.times(balance.toDouble()), price = price
+                ), dollarValue = price.times(balance.toDouble()), price = price
             )
         )
     }

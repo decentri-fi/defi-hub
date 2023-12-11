@@ -50,12 +50,12 @@ class SwapfishArbitrumMasterchefFarmingMarketProvider(
             create(
                 identifier = "${chef.address}-${poolId}",
                 name = stakedtoken.name + " Farm",
-                stakedToken = stakedtoken.toFungibleToken(),
+                stakedToken = stakedtoken,
                 rewardTokens = listOf(
-                    rewardToken.toFungibleToken()
+                    rewardToken
                 ),
                 marketSize = refreshable {
-                    getMarketSize(stakedtoken.toFungibleToken(), chef.address)
+                    getMarketSize(stakedtoken, chef.address)
                 },
                 positionFetcher = PositionFetcher(
                     chef.userInfoFunction(poolId)

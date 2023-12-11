@@ -116,7 +116,7 @@ class UniswapV3EthereumClaimableProvider(
                     name = "${token0.symbol}/${token1.symbol} yield",
                     protocol = getProtocol(),
                     network = getNetwork(),
-                    claimableToken = token1.toFungibleToken(),
+                    claimableToken = token1,
                     amount = owedTokens0.await(),
                 ),
                 UserClaimable(
@@ -124,7 +124,7 @@ class UniswapV3EthereumClaimableProvider(
                     name = "${token0.symbol}/${token1.symbol} yield",
                     protocol = getProtocol(),
                     network = getNetwork(),
-                    claimableToken = token1.toFungibleToken(),
+                    claimableToken = token1,
                     amount = owedToken1.await()
                 )
             )

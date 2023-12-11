@@ -79,12 +79,12 @@ class GMXStakedBonusFeeStakingMarketProvider : FarmingMarketProvider() {
                 name = "Staked GMX",
                 identifier = "staked-gmx-$stakedBonusandFeeGMX",
                 stakedToken = getToken(gmx),
-                rewardToken = rewardToken.toFungibleToken(),
+                rewardToken = rewardToken,
                 marketSize = refreshable { BigDecimal.ZERO },
                 positionFetcher = PositionFetcher(contract::balanceOfFunction),
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
-                        token = rewardToken.toFungibleToken(),
+                        token = rewardToken,
                         getRewardFunction = contract::claimableFn,
                     ),
                     preparedTransaction = selfExecutingTransaction(contract::claimFn)

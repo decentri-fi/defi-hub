@@ -1,10 +1,9 @@
 package io.defitrack.erc20
 
 import io.defitrack.network.toVO
-import io.defitrack.token.TokenInformation
 
-fun TokenInformation.toVO(): TokenInformationVO {
-    return TokenInformationVO(
+fun TokenInformation.toVO(): FungibleToken {
+    return FungibleToken(
         network = network.toVO(),
         logo = logo,
         name = name,

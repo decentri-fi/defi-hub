@@ -73,7 +73,7 @@ class QuickswapDualFarmingMarketProvider(
                 rewardTokenB
             ),
             marketSize = refreshable {
-                getMarketSize(stakedToken.toFungibleToken(), pool.address)
+                getMarketSize(stakedToken, pool.address)
             },
             positionFetcher = PositionFetcher(
                 stakedToken.asERC20Contract(getBlockchainGateway())::balanceOfFunction

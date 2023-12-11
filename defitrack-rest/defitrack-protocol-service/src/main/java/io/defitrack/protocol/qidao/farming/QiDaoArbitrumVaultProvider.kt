@@ -33,7 +33,7 @@ class QiDaoArbitrumVaultProvider(
                 token = getToken(collateral.address),
                 marketSize = refreshable {
                     getMarketSize(
-                        collateral.toFungibleToken(),
+                        collateral,
                         vault.address,
                     )
                 },

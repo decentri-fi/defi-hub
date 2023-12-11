@@ -62,14 +62,14 @@ class QuickswapFarmingMarketProvider(
         return create(
             identifier = rewardPool.address,
             name = "${stakedToken.name} Reward Pool",
-            stakedToken = stakedToken.toFungibleToken(),
-            rewardToken = rewardToken.toFungibleToken(),
+            stakedToken = stakedToken,
+            rewardToken = rewardToken,
             marketSize = refreshable {
-                getMarketSize(stakedToken.toFungibleToken(), rewardPool.address)
+                getMarketSize(stakedToken, rewardPool.address)
             },
             claimableRewardFetcher = ClaimableRewardFetcher(
                 Reward(
-                    token = rewardToken.toFungibleToken(),
+                    token = rewardToken,
                     getRewardFunction = rewardPool::earned,
                 ),
                 preparedTransaction = selfExecutingTransaction(rewardPool::getRewardFunction)

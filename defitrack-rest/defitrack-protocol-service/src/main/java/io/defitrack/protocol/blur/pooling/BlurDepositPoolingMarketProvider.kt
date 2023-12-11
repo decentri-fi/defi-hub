@@ -42,7 +42,7 @@ class BlurDepositPoolingMarketProvider : PoolingMarketProvider() {
             },
             address = blurEthDeposit,
             symbol = "blurEth",
-            tokens = listOf(ether.toFungibleToken()),
+            tokens = listOf(ether),
             totalSupply = contract.totalSupply().map {
                 it.asEth(contract.readDecimals().toInt())
             },

@@ -6,10 +6,8 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.erc20.ERC20
-import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.erc20.FungibleToken
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.position.PositionFetcher
@@ -64,7 +62,7 @@ class AaveV2MainnetLendingMarketProvider(
                             val token = getToken(it.underlyingAsset)
                             val market = create(
                                 identifier = it.id,
-                                token = token.toFungibleToken(),
+                                token = token,
                                 name = "aave v2 " + it.name,
                                 poolType = "aave-v2",
                                 marketSize = calculateMarketSize(it, aToken, token),
@@ -77,7 +75,7 @@ class AaveV2MainnetLendingMarketProvider(
                                 positionFetcher = PositionFetcher(
                                     aToken.asERC20Contract(getBlockchainGateway())::balanceOfFunction
                                 ),
-                                marketToken = aToken.toFungibleToken(),
+                                marketToken = aToken,
                                 totalSupply = refreshable(aToken.totalSupply.asEth(aToken.decimals)) {
                                     getToken(it.aToken.id).totalSupply.asEth(aToken.decimals)
                                 }
@@ -98,8 +96,8 @@ class AaveV2MainnetLendingMarketProvider(
 
     private suspend fun calculateMarketSize(
         reserve: AaveReserve,
-        aToken: TokenInformationVO,
-        underlyingToken: TokenInformationVO
+        aToken: FungibleToken,
+        underlyingToken: FungibleToken
     ): Refreshable<BigDecimal> {
         return refreshable {
             val underlying = getToken(underlyingToken.address)

@@ -1,8 +1,8 @@
 package io.defitrack.claimable.vo
 
+import io.defitrack.erc20.FungibleToken
 import io.defitrack.network.NetworkVO
 import io.defitrack.protocol.ProtocolVO
-import io.defitrack.token.FungibleToken
 
 data class ClaimableMarketVO(
     val id: String,

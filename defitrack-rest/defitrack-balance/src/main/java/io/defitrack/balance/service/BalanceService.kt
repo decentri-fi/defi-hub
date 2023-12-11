@@ -38,7 +38,7 @@ abstract class BalanceService(
                         val token = erc20Resource.getTokenInformation(getNetwork(), tokenAddresses[i])
                         TokenBalance(
                             amount = balance,
-                            token = token.toFungibleToken(),
+                            token = token,
                             network = getNetwork(),
                         )
                     } else {

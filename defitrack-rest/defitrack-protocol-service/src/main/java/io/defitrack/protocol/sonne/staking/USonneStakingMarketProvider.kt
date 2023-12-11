@@ -4,7 +4,6 @@ import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.protocol.Company
@@ -30,12 +29,12 @@ class USonneStakingMarketProvider : FarmingMarketProvider() {
             create(
                 name = "Staked Sonne (uSonne)",
                 identifier = stakedSonne,
-                stakedToken = stakedtoken.toFungibleToken(),
-                rewardTokens = rewardTokens.map(TokenInformationVO::toFungibleToken),
+                stakedToken = stakedtoken,
+                rewardTokens = rewardTokens,
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     rewardTokens.map { token ->
                         Reward(
-                            token.toFungibleToken(),
+                            token,
                             contract.getClaimableFor(token.address)
                         )
                     },

@@ -31,10 +31,10 @@ class QiDaoPolygonVaultLendingMarketProvider(
             create(
                 name = vault.name(),
                 identifier = vault.address,
-                token = getToken(collateral.address).toFungibleToken(),
+                token = getToken(collateral.address),
                 marketSize = refreshable {
                     getMarketSize(
-                        collateral.toFungibleToken(),
+                        collateral,
                         vault.address,
                     )
                 },

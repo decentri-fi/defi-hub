@@ -1,13 +1,12 @@
 package io.defitrack.event
 
 import io.defitrack.common.network.Network
-import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.erc20.FungibleToken
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.labeledaddresses.LabelAddressesResource
 import io.defitrack.labeledaddresses.LabeledAddress
 import io.defitrack.token.ERC20Resource
-import io.defitrack.token.FungibleToken
 import org.springframework.beans.factory.annotation.Autowired
 import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.protocol.core.methods.response.Log
@@ -53,7 +52,7 @@ abstract class EventDecoder {
 
     abstract fun eventTypes(): List<DefiEventType>
 
-    suspend fun getToken(address: String, network: Network): TokenInformationVO {
+    suspend fun getToken(address: String, network: Network): FungibleToken {
         return erC20Resource.getTokenInformation(network, address)
     }
 

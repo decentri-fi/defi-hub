@@ -3,7 +3,7 @@ package io.defitrack.price.decentrifi
 import arrow.fx.coroutines.parMap
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.erc20.FungibleToken
 import io.defitrack.market.farming.vo.FarmingMarketVO
 import io.defitrack.network.NetworkVO
 import io.defitrack.price.external.ExternalPrice
@@ -62,7 +62,7 @@ class DecentrifiFarmingPriceRepository(
         logger.info("Decentrifi Farming Price Repository populated with ${cache.asMap().entries.size} prices")
     }
 
-    fun contains(token: TokenInformationVO): Boolean {
+    fun contains(token: FungibleToken): Boolean {
         return cache.get(toIndex(token.network, token.address)) != null
     }
 
@@ -84,7 +84,7 @@ class DecentrifiFarmingPriceRepository(
         }
     }
 
-    suspend fun getPrice(token: TokenInformationVO): BigDecimal {
+    suspend fun getPrice(token: FungibleToken): BigDecimal {
         return cache.get(toIndex(token.network, token.address))?.price ?: BigDecimal.ZERO
     }
 }

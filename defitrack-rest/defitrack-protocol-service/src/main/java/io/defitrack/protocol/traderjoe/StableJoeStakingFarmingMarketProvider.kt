@@ -10,6 +10,7 @@ import io.defitrack.market.position.PositionFetcher
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.transaction.PreparedTransaction
+import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import org.springframework.stereotype.Component
@@ -33,24 +34,19 @@ class StableJoeStakingFarmingMarketProvider : FarmingMarketProvider() {
             create(
                 name = "Trader Joe Staking Market",
                 identifier = stableJoeStakingAddress,
-                stakedToken = stakedToken.toFungibleToken(),
-                rewardTokens = rewards.map { it.toFungibleToken() },
+                stakedToken = stakedToken,
+                rewardTokens = rewards,
                 positionFetcher = PositionFetcher(
                     { user -> contract.getUserInfofn(user, stakedToken.address) }
                 ),
                 claimableRewardFetcher = ClaimableRewardFetcher(
-                    rewards.map {
+                    rewards.map { reward ->
                         Reward(
-                            it.toFungibleToken(),
-                            { user -> contract.getUserInfofn(user, it.address) },
+                            reward,
+                            { user -> contract.getUserInfofn(user, reward.address) },
                         )
                     },
-                    preparedTransaction = { user ->
-                        PreparedTransaction(
-                            contract.harvest(),
-                            from = user
-                        )
-                    }
+                    preparedTransaction = selfExecutingTransaction(contract::harvest)
                 )
             ),
         )

@@ -26,7 +26,7 @@ class OldDQuickFarmingMarketProvider(
             quickswapService.getOldDQuickContractAddress(),
         )
         val stakedToken = getToken(contract.address)
-        val quickToken = getToken("0x831753dd7087cac61ab5644b308642cc1c33dc13").toFungibleToken()
+        val quickToken = getToken("0x831753dd7087cac61ab5644b308642cc1c33dc13")
 
         return listOf(
             create(

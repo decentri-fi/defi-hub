@@ -24,7 +24,7 @@ class StethMarketProvider(
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
 
-        val eth = getToken(WETH).toFungibleToken()
+        val eth = getToken(WETH)
 
         val steth = StethContract(
             getBlockchainGateway(),

@@ -31,14 +31,14 @@ class ThalesBaseStakingMarketProvider : FarmingMarketProvider() {
             create(
                 name = "Thales Staking",
                 identifier = stakingThales,
-                stakedToken = stakedToken.toFungibleToken(),
-                rewardTokens = listOf(stakedToken.toFungibleToken()),
+                stakedToken = stakedToken,
+                rewardToken = stakedToken,
                 positionFetcher = PositionFetcher(
                     stakingThalesContract::stakedBalanceOfFn,
                 ),
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
-                        stakedToken.toFungibleToken(),
+                        stakedToken,
                         stakingThalesContract::getRewardsAvailableFn,
                     ),
                     selfExecutingTransaction(stakingThalesContract::claimRewardFn)

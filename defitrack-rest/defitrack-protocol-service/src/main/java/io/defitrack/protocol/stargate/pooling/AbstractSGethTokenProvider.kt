@@ -35,7 +35,7 @@ abstract class AbstractSGethTokenProvider(
                 },
                 address = address,
                 symbol = "sgeth",
-                tokens = listOf(underlying.toFungibleToken()),
+                tokens = listOf(underlying),
                 totalSupply = Refreshable.refreshable(token.totalDecimalSupply()) {
                     getToken(address).totalDecimalSupply()
                 }

@@ -2,7 +2,7 @@ package io.defitrack.erc20.protocolspecific
 
 import io.defitrack.erc20.ERC20
 import io.defitrack.erc20.ERC20Service
-import io.defitrack.token.TokenInformation
+import io.defitrack.erc20.TokenInformation
 import org.springframework.beans.factory.annotation.Autowired
 
 abstract class TokenIdentifier {

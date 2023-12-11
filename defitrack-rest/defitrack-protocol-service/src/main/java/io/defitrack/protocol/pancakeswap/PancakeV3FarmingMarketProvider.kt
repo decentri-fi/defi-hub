@@ -99,7 +99,7 @@ class PancakeV3FarmingMarketProvider : FarmingMarketProvider() {
             create(
                 identifier = "${chef.address}-${poolId}",
                 name = stakedtoken.name + " Farm",
-                stakedToken = stakedtoken.toFungibleToken(),
+                stakedToken = stakedtoken,
                 rewardTokens = listOf(rewardToken),
                 marketSize = Refreshable.refreshable {
                     getMarketSize(stakedtoken, chef.address)

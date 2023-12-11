@@ -5,46 +5,25 @@ import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.network.NetworkVO
 import io.defitrack.protocol.ProtocolVO
-import io.defitrack.token.FungibleToken
 import io.defitrack.token.TokenType
 import java.math.BigDecimal
 import java.math.BigInteger
 
-class TokenInformationVO(
+class FungibleToken(
     val network: NetworkVO,
-    logo: String? = null,
-    name: String,
-    symbol: String,
-    address: String,
-    decimals: Int,
-    type: TokenType,
-    totalSupply: BigInteger = BigInteger.ZERO,
-    val underlyingTokens: List<TokenInformationVO> = emptyList(),
+    val logo: String? = null,
+    val name: String,
+    val symbol: String,
+    val address: String,
+    val decimals: Int,
+    val type: TokenType,
+    val totalSupply: BigInteger = BigInteger.ZERO,
+    val underlyingTokens: List<FungibleToken> = emptyList(),
     val protocol: ProtocolVO? = null
-) : FungibleToken(
-    address,
-    name,
-    decimals,
-    symbol,
-    logo,
-    type.name,
-    totalSupply
 ) {
 
     fun totalDecimalSupply(): BigDecimal {
         return totalSupply.asEth(decimals)
-    }
-
-    fun toFungibleToken(): FungibleToken {
-        return FungibleToken(
-            address,
-            name,
-            decimals,
-            symbol,
-            logo,
-            type,
-            totalSupply
-        )
     }
 
     fun asERC20Contract(blockchainGateway: BlockchainGateway): ERC20Contract {

@@ -6,8 +6,7 @@ import arrow.core.some
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
-import io.defitrack.erc20.TokenInformationVO
-import io.defitrack.evm.contract.BulkConstantResolver
+import io.defitrack.erc20.FungibleToken
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
@@ -17,7 +16,6 @@ import io.defitrack.protocol.balancer.contract.BalancerPoolContract
 import io.defitrack.protocol.balancer.contract.BalancerService
 import io.defitrack.protocol.balancer.contract.BalancerVaultContract
 import io.defitrack.protocol.balancer.pooling.history.BalancerPoolingHistoryProvider
-import io.defitrack.token.FungibleToken
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import org.springframework.beans.factory.annotation.Autowired
@@ -101,10 +99,10 @@ abstract class BalancerPoolingMarketProvider(
                 identifier = poolId,
                 address = poolAddress,
                 name = "${
-                    underlyingTokens.joinToString("/", transform = TokenInformationVO::symbol)
+                    underlyingTokens.joinToString("/", transform = FungibleToken::symbol)
                 } Pool",
                 tokens = underlyingTokens,
-                symbol = underlyingTokens.joinToString("/", transform = TokenInformationVO::symbol),
+                symbol = underlyingTokens.joinToString("/", transform = FungibleToken::symbol),
                 metadata = mapOf("poolId" to poolId),
                 breakdown = breakdown,
                 marketSize = refreshable {

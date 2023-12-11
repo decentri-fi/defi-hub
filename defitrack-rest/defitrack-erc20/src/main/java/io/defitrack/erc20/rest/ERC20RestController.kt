@@ -1,6 +1,6 @@
 package io.defitrack.erc20.rest
 
-import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.erc20.FungibleToken
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.Parameters
@@ -44,7 +44,7 @@ interface ERC20RestController {
                     mediaType = "application/json",
                     array = ArraySchema(
                         schema = Schema(
-                            implementation = TokenInformationVO::class
+                            implementation = FungibleToken::class
                         )
                     )
                 )
@@ -54,7 +54,7 @@ interface ERC20RestController {
     suspend fun getAllTokensForNetwork(
         networkName: String,
         verified: Boolean?
-    ): ResponseEntity<List<TokenInformationVO>>
+    ): ResponseEntity<List<FungibleToken>>
 
     @GetMapping("/{network}/wrapped")
     @Operation(
@@ -107,13 +107,13 @@ interface ERC20RestController {
                 Content(
                     mediaType = "application/json",
                     schema = Schema(
-                        implementation = TokenInformationVO::class
+                        implementation = FungibleToken::class
                     )
                 )
             ]
         )
     )
-    suspend fun getTokenInformation(networkName: String, address: String): ResponseEntity<TokenInformationVO>
+    suspend fun getTokenInformation(networkName: String, address: String): ResponseEntity<FungibleToken>
 
     @GetMapping("/{network}/{address}/{userAddress}")
     @Operation(

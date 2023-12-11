@@ -1,7 +1,7 @@
 package io.defitrack.claimable.domain
 
+import io.defitrack.erc20.FungibleToken
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.token.FungibleToken
 import org.web3j.abi.datatypes.Type
 import java.math.BigInteger
 

@@ -2,13 +2,10 @@ package io.defitrack.protocol.ovix
 
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.AsyncUtils
-import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.erc20.TokenInformationVO
-import io.defitrack.evm.contract.ERC20Contract
+import io.defitrack.erc20.FungibleToken
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.position.Position
@@ -18,9 +15,6 @@ import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.compound.v2.contract.CompoundTokenContract
 import io.defitrack.protocol.moonwell.MoonwellUnitRollerContract
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 import java.math.BigInteger
 
@@ -88,7 +82,7 @@ class OvixZkEVMLendingMarketProvider : LendingMarketProvider() {
                     marketToken = getToken(ctokenContract.address),
                     erc20Compatible = true,
                     totalSupply = refreshable(ctoken.totalDecimalSupply()) {
-                        with(getToken(ctokenContract.address), TokenInformationVO::totalDecimalSupply)
+                        with(getToken(ctokenContract.address), FungibleToken::totalDecimalSupply)
                     },
                     metadata = mapOf(
                         "oToken" to ctokenContract.address,

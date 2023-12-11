@@ -55,16 +55,14 @@ class DinoswapFarmingMarketProvider(
         return create(
             identifier = "${chef.address}-${poolId}",
             name = stakedtoken.name + " Farm",
-            stakedToken = stakedtoken.toFungibleToken(),
-            rewardTokens = listOf(
-                rewardToken.toFungibleToken()
-            ),
+            stakedToken = stakedtoken,
+            rewardToken = rewardToken,
             positionFetcher = PositionFetcher(
                 functionCreator = chef.dinoUserInfoFn(poolId)
             ),
             marketSize = refreshable {
                 marketSizeService.getMarketSize(
-                    stakedtoken.toFungibleToken(),
+                    stakedtoken,
                     chef.address,
                     getNetwork()
                 ).usdAmount

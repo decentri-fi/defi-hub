@@ -1,16 +1,12 @@
 package io.defitrack.protocol.velodrome.pooling
 
 import arrow.core.Either
-import arrow.core.flatMap
 import arrow.core.nonEmptyListOf
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.erc20.TokenInformationVO
-import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
@@ -25,13 +21,8 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.launch
-import net.bytebuddy.implementation.bytecode.Throw
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
-import java.math.BigDecimal
-import kotlin.coroutines.EmptyCoroutineContext
-import kotlin.coroutines.coroutineContext
 
 @Component
 @ConditionalOnCompany(Company.VELODROME)
@@ -126,7 +117,7 @@ class VelodromeV2OptimismPoolingMarketProvider(
             name = poolingToken.name,
             breakdown = breakdown,
             symbol = poolingToken.symbol,
-            tokens = poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
+            tokens = poolingToken.underlyingTokens,
             totalSupply = refreshable(poolingToken.totalSupply.asEth(poolingToken.decimals)) {
                 getToken(it).totalDecimalSupply()
             },

@@ -23,8 +23,7 @@ class FarmingPositionVOMapper(
                 PriceRequest(
                     address = market.stakedToken.address,
                     network = market.network,
-                    amount = underlyingAmount.asEth(market.stakedToken.decimals),
-                    type = market.stakedToken.type
+                    amount = underlyingAmount.asEth(market.stakedToken.decimals)
                 )
             )
 

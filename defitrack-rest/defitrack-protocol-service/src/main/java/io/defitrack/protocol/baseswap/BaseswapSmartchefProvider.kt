@@ -73,12 +73,12 @@ class BaseswapSmartchefProvider : FarmingMarketProvider() {
 
         return create(
             name = stakedToken.name + " earn pool",
-            rewardTokens = listOf(rewardToken.toFungibleToken()),
+            rewardToken = rewardToken,
             identifier = it,
-            stakedToken = stakedToken.toFungibleToken(),
+            stakedToken = stakedToken,
             claimableRewardFetcher = ClaimableRewardFetcher(
                 Reward(
-                    rewardToken.toFungibleToken(),
+                    rewardToken,
                     contract::pendingReward
                 ),
                 preparedTransaction = selfExecutingTransaction(contract::withdraw)

@@ -56,14 +56,14 @@ class VelodromeV2GaugeMarketProvider(
                     create(
                         name = stakedToken.name + " Gauge V2",
                         identifier = stakedToken.symbol + "-v1-${gauge}",
-                        rewardTokens = listOf(rewardToken.toFungibleToken()),
+                        rewardTokens = listOf(rewardToken),
                         marketSize = refreshable {
                             getMarketSize(
-                                stakedToken.toFungibleToken(),
+                                stakedToken,
                                 gaugeContract.address
                             )
                         },
-                        stakedToken = stakedToken.toFungibleToken(),
+                        stakedToken = stakedToken,
                         positionFetcher = defaultPositionFetcher(gauge),
                         deprecated = false,
                         metadata = mapOf(
@@ -71,7 +71,7 @@ class VelodromeV2GaugeMarketProvider(
                         ),
                         claimableRewardFetcher = ClaimableRewardFetcher(
                             Reward(
-                                token = rewardToken.toFungibleToken(),
+                                token = rewardToken,
                                 getRewardFunction = gaugeContract::earnedFn
                             ),
                             preparedTransaction = selfExecutingTransaction(gaugeContract::getRewardFn)

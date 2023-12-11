@@ -25,7 +25,6 @@ class ClaimableVOMapper(
                     address = claimableToken.address,
                     network = network,
                     amount = amount,
-                    type = claimableToken.type
                 )
             )
 

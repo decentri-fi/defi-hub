@@ -3,13 +3,13 @@ package io.defitrack.market.pooling
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.BigDecimalExtensions.isZero
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.erc20.FungibleToken
 import io.defitrack.market.MarketProvider
 import io.defitrack.market.farming.domain.InvestmentPreparer
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
 import io.defitrack.market.pooling.history.HistoricEventExtractor
 import io.defitrack.market.position.PositionFetcher
-import io.defitrack.token.FungibleToken
 import java.math.BigDecimal
 
 abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {

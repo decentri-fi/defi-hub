@@ -1,6 +1,6 @@
 package io.defitrack.price
 
-import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.erc20.FungibleToken
 import io.defitrack.price.coingecko.CoinGeckoPriceService
 import io.defitrack.price.external.ExternalPriceService
 import io.github.reactivecircus.cache4k.Cache
@@ -19,7 +19,7 @@ class PriceProvider(
 
     val priceCache = Cache.Builder<String, BigDecimal>().expireAfterWrite(1.hours).build()
 
-    suspend fun getPrice(token: TokenInformationVO): BigDecimal {
+    suspend fun getPrice(token: FungibleToken): BigDecimal {
         return priceCache.get(token.address.lowercase() + "-" + token.network.name) {
             externalPriceServices
                 .sortedBy {
@@ -33,7 +33,7 @@ class PriceProvider(
         }
     }
 
-    private suspend fun fromCoingecko(token: TokenInformationVO): BigDecimal? {
+    private suspend fun fromCoingecko(token: FungibleToken): BigDecimal? {
         return coingeckoSerivce.getPrice(token.address)?.also {
             logger.info("getting price on coingecko for ${token.name} (${token.symbol}) on ${token.network.name}")
         } ?: BigDecimal.ZERO

@@ -63,7 +63,7 @@ abstract class CompoundRewardProvider(
                 protocol = Protocol.COMPOUND,
                 claimableRewardFetchers = listOf(ClaimableRewardFetcher(
                     Reward(
-                        token = rewardToken.toFungibleToken(),
+                        token = rewardToken,
                         getRewardFunction = deferredContract.await().getRewardOwedFn(comet)
                     ),
                     preparedTransaction = selfExecutingTransaction(deferredContract.await().claimFn(comet)))

@@ -30,10 +30,8 @@ class TornadoCashStakingRewardsFarmProvider : FarmingMarketProvider() {
             create(
                 name = "${stakingToken.symbol} Staking Rewards",
                 identifier = stakingRewards,
-                rewardTokens = listOf(
-                    rewardToken.toFungibleToken()
-                ),
-                stakedToken = stakingToken.toFungibleToken(),
+                rewardToken = rewardToken,
+                stakedToken = stakingToken,
                 apr = calculateSingleRewardPool(stakingRewardsContract),
             )
         )
@@ -57,7 +55,7 @@ class TornadoCashStakingRewardsFarmProvider : FarmingMarketProvider() {
         ).toBigDecimal()
 
         val marketsize = marketSizeService.getMarketSize(
-            getToken(stakingRewardsContract.stakingToken()).toFungibleToken(),
+            getToken(stakingRewardsContract.stakingToken()),
             stakingRewardsContract.address,
             getNetwork()
         )

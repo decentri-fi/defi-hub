@@ -25,7 +25,7 @@ class RadiantMultiFeeDistributorFarmingMarketProvider : FarmingMarketProvider() 
             address
         )
 
-        val stakingToken = getToken(contract.stakingToken.await()).toFungibleToken()
+        val stakingToken = getToken(contract.stakingToken.await())
         val rewardTokens = contract.rewardTokens().map { getToken(it) }
 
         return listOf(
@@ -33,11 +33,11 @@ class RadiantMultiFeeDistributorFarmingMarketProvider : FarmingMarketProvider() 
                 name = "Radiant Staking",
                 identifier = address,
                 stakedToken = stakingToken,
-                rewardTokens = rewardTokens.map { it.toFungibleToken() },
+                rewardTokens = rewardTokens,
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     rewards = rewardTokens.map { token ->
                         Reward(
-                            token.toFungibleToken(),
+                            token,
                             contract::getClaimableRewardFn
                         ) { result, _ ->
                             val value =

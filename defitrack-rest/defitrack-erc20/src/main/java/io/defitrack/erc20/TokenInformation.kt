@@ -1,9 +1,10 @@
-package io.defitrack.token
+package io.defitrack.erc20
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.protocol.Protocol
+import io.defitrack.token.TokenType
 import java.math.BigInteger
 
 data class TokenInformation(
@@ -19,17 +20,6 @@ data class TokenInformation(
     val protocol: Protocol? = null,
     val verified: Boolean = false,
 ) {
-    fun toFungibleToken(): FungibleToken {
-        return FungibleToken(
-            address,
-            name,
-            decimals,
-            symbol,
-            logo,
-            type.name,
-            totalSupply.get(),
-        )
-    }
 
     suspend fun refresh() {
         totalSupply.refresh()

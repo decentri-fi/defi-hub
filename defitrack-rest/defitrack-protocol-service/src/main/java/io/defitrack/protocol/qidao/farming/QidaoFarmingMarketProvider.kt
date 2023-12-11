@@ -64,7 +64,7 @@ class QidaoFarmingMarketProvider(
             ),
             marketSize = refreshable {
                 marketSizeService.getMarketSize(
-                    stakedtoken.toFungibleToken(),
+                    stakedtoken,
                     chef.address,
                     getNetwork()
                 ).usdAmount

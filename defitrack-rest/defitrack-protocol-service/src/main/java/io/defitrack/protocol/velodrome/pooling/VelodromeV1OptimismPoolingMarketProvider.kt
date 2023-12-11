@@ -6,7 +6,6 @@ import arrow.fx.coroutines.parMap
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Company
@@ -15,7 +14,6 @@ import io.defitrack.protocol.velodrome.VelodromeOptimismService
 import io.defitrack.uniswap.v2.PairFactoryContract
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.launch
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 import kotlin.coroutines.EmptyCoroutineContext
@@ -47,7 +45,7 @@ class VelodromeV1OptimismPoolingMarketProvider(
     private suspend fun createMarket(it: String): Either<Throwable, PoolingMarket> {
         return catch {
             val poolingToken = getToken(it)
-            val tokens = poolingToken.underlyingTokens.map { it.toFungibleToken() }
+            val tokens = poolingToken.underlyingTokens
 
             val breakdown = fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address)
             create(
@@ -60,7 +58,7 @@ class VelodromeV1OptimismPoolingMarketProvider(
                 name = poolingToken.name,
                 breakdown = breakdown,
                 symbol = poolingToken.symbol,
-                tokens = poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
+                tokens = poolingToken.underlyingTokens,
                 totalSupply = refreshable(poolingToken.totalDecimalSupply()) {
                     getToken(it).totalDecimalSupply()
                 },

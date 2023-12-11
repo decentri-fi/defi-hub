@@ -1,18 +1,13 @@
 package io.defitrack.erc20.protocolspecific.decentrifi
 
-import arrow.fx.coroutines.parMap
-import io.defitrack.common.configuration.HttpClientConfig
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
-import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.erc20.ERC20
+import io.defitrack.erc20.FungibleToken
 import io.defitrack.erc20.protocolspecific.TokenIdentifier
 import io.defitrack.market.farming.vo.FarmingMarketVO
-import io.defitrack.network.NetworkVO
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.ProtocolVO
-import io.defitrack.token.FungibleToken
-import io.defitrack.token.TokenInformation
+import io.defitrack.erc20.TokenInformation
 import io.defitrack.token.TokenType
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
@@ -20,12 +15,10 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import jakarta.annotation.PostConstruct
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
-import java.math.BigDecimal
 
 @Component
 class DecentrifiTokenIdentifier(

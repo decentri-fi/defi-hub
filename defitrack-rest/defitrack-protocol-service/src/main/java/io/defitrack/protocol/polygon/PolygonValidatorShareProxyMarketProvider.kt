@@ -1,14 +1,12 @@
 package io.defitrack.protocol.polygon
 
-import arrow.core.Either
 import arrow.core.Either.Companion.catch
-import arrow.fx.coroutines.parMap
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.erc20.FungibleToken
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.position.PositionFetcher
@@ -16,7 +14,6 @@ import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import org.springframework.stereotype.Component
-import kotlin.math.log
 
 @Component
 @ConditionalOnCompany(Company.POLYGON)
@@ -44,7 +41,7 @@ class PolygonValidatorShareProxyMarketProvider : FarmingMarketProvider() {
 
     private suspend fun createMarket(
         share: String,
-        matic: TokenInformationVO
+        matic: FungibleToken
     ): FarmingMarket {
         val shareContract = ValidatorShareProxyContract(
             getBlockchainGateway(),

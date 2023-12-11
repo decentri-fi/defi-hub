@@ -63,7 +63,7 @@ class RadiantArbitrumLendingMarketProvider : LendingMarketProvider() {
                 ctokenContract,
                 getERC20Resource()
             ),
-            marketToken = getToken(ctokenContract.address).toFungibleToken(),
+            marketToken = getToken(ctokenContract.address),
             erc20Compatible = true,
             totalSupply = refreshable {
                 with(getToken(ctokenContract.address)) {

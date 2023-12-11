@@ -6,21 +6,18 @@ import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.map
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
-import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.erc20.FungibleToken
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.position.PositionFetcher
-import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.hop.HopService
 import io.defitrack.protocol.hop.contract.HopStakingRewardContract
-import io.defitrack.transaction.PreparedTransaction
 import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import java.math.BigDecimal
-import kotlin.coroutines.EmptyCoroutineContext
 
 abstract class HopFarmingMarketProvider(
     private val hopService: HopService,
@@ -56,7 +53,7 @@ abstract class HopFarmingMarketProvider(
             positionFetcher = PositionFetcher(contract::balanceOfFunction),
             claimableRewardFetcher = ClaimableRewardFetcher(
                 Reward(
-                    rewardToken.toFungibleToken(),
+                    rewardToken,
                     contract::earnedFn,
                 ),
                 preparedTransaction = selfExecutingTransaction(contract::getRewardFn)
@@ -65,7 +62,7 @@ abstract class HopFarmingMarketProvider(
     }
 
     private suspend fun getMarketSize(
-        stakedTokenInformation: TokenInformationVO,
+        stakedTokenInformation: FungibleToken,
         pool: HopStakingRewardContract
     ) = BigDecimal.valueOf(
         getPriceResource().calculatePrice(

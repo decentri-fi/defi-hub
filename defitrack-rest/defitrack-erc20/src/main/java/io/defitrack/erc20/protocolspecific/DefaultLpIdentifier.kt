@@ -4,7 +4,7 @@ import io.defitrack.erc20.ERC20
 import io.defitrack.erc20.LpContractReader
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.Protocol
-import io.defitrack.token.TokenInformation
+import io.defitrack.erc20.TokenInformation
 import io.defitrack.token.TokenType
 import org.springframework.beans.factory.annotation.Autowired
 

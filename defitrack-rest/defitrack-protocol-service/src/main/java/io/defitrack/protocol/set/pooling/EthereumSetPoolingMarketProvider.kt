@@ -43,7 +43,7 @@ class EthereumSetPoolingMarketProvider(
                     breakdown = positions.map {
                         val underlying = getToken(it.token)
                         PoolingMarketTokenShare(
-                            token = underlying.toFungibleToken(),
+                            token = underlying,
                             reserve = it.amount.toBigDecimal().times(supply).toBigInteger(),
                             reserveUSD = getPriceResource().calculatePrice(
                                 PriceRequest(

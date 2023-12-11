@@ -27,11 +27,9 @@ class GOHMMarketProvider(
             create(
                 name = "gohm",
                 identifier = "gohm",
-                stakedToken = ohm.toFungibleToken(),
-                rewardTokens = listOf(ohm.toFungibleToken()),
-                positionFetcher = PositionFetcher(
-                    gohm::balanceOfFunction
-                )
+                stakedToken = ohm,
+                rewardToken = ohm,
+                positionFetcher = PositionFetcher(gohm::balanceOfFunction)
                 { retVal ->
                     val gohmAmount = retVal[0].value as BigInteger
                     if (gohmAmount > BigInteger.ZERO) {

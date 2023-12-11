@@ -31,10 +31,10 @@ class AuraDepositVaultFarmingMarketProvider : FarmingMarketProvider() {
                 create(
                     name = crvRewardsToken.name,
                     identifier = crvrewards.address,
-                    stakedToken = asset.toFungibleToken(),
+                    stakedToken = asset,
                     rewardToken = getToken(crvrewards.rewardToken.await()),
                     marketSize = refreshable {
-                        getMarketSize(asset.toFungibleToken(), crvrewards.rewardToken.await())
+                        getMarketSize(asset, crvrewards.rewardToken.await())
                     },
                     positionFetcher = defaultPositionFetcher(crvrewards.address)
                 )

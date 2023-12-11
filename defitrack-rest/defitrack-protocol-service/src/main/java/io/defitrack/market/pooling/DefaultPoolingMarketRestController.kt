@@ -102,7 +102,7 @@ class DefaultPoolingMarketRestController(
                 it.getMarkets()
             }.filter { poolingMarketElement ->
                 when {
-                    (token.type) != TokenType.SINGLE.name -> {
+                    (token.type) != TokenType.SINGLE -> {
                         poolingMarketElement.tokens.map { pt ->
                             pt.address.lowercase()
                         }.containsAll(

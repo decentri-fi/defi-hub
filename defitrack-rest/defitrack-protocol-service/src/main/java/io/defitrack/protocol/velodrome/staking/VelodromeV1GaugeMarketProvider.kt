@@ -4,6 +4,7 @@ import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -51,15 +52,15 @@ class VelodromeV1GaugeMarketProvider(
                         name = stakedToken.name + " Gauge",
                         identifier = stakedToken.symbol + "-${gauge}",
                         rewardTokens = contract.getRewardList().map { reward ->
-                            getToken(reward).toFungibleToken()
+                            getToken(reward)
                         },
-                        marketSize = Refreshable.refreshable {
+                        marketSize = refreshable {
                             getMarketSize(
-                                stakedToken.toFungibleToken(),
+                                stakedToken,
                                 contract.address
                             )
                         },
-                        stakedToken = stakedToken.toFungibleToken(),
+                        stakedToken = stakedToken,
                         positionFetcher = defaultPositionFetcher(gauge),
                         deprecated = true
                     )

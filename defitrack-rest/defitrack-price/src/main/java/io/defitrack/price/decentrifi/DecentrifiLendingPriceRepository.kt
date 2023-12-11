@@ -1,6 +1,6 @@
 package io.defitrack.price.decentrifi
 
-import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.erc20.FungibleToken
 import io.defitrack.market.lending.vo.LendingMarketVO
 import io.defitrack.network.NetworkVO
 import io.defitrack.price.external.ExternalPrice
@@ -57,7 +57,7 @@ class DecentrifiLendingPriceRepository(
         logger.info("Decentrifi Lending Price Repository populated with ${cache.asMap().entries.size} prices")
     }
 
-    fun contains(token: TokenInformationVO): Boolean {
+    fun contains(token: FungibleToken): Boolean {
         return cache.get(toIndex(token.network, token.address)) != null
     }
 
@@ -79,7 +79,7 @@ class DecentrifiLendingPriceRepository(
         }
     }
 
-    suspend fun getPrice(token: TokenInformationVO): BigDecimal {
+    suspend fun getPrice(token: FungibleToken): BigDecimal {
         return cache.get(toIndex(token.network, token.address))?.price ?: BigDecimal.ZERO
     }
 }

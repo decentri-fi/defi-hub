@@ -21,7 +21,7 @@ abstract class DodoPoolingMarketProvider(
                 address = pool.id,
                 name = baseToken.symbol + "/" + quoteToken.symbol + " LP",
                 symbol = baseToken.symbol + "/" + quoteToken.symbol,
-                tokens = listOf(baseToken, quoteToken).map { it.toFungibleToken() },
+                tokens = listOf(baseToken, quoteToken),
                 totalSupply = Refreshable.refreshable(BigDecimal.ZERO),
                 marketSize = Refreshable.refreshable {
                     getPriceResource().calculatePrice(

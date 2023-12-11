@@ -1,8 +1,7 @@
 package io.defitrack.price.external
 
-import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.erc20.FungibleToken
 import io.defitrack.price.decentrifi.DecentrifiFarmingPriceRepository
-import io.defitrack.price.decentrifi.DecentrifiPoolingPriceRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
@@ -14,7 +13,7 @@ class DecentrifiFarmingPriceService(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override suspend fun appliesTo(token: TokenInformationVO): Boolean {
+    override suspend fun appliesTo(token: FungibleToken): Boolean {
         return priceRepo.contains(token)
     }
 
@@ -24,9 +23,9 @@ class DecentrifiFarmingPriceService(
         }
     }
 
-    override suspend fun getPrice(tokenInformationVO: TokenInformationVO): BigDecimal {
-        return priceRepo.getPrice(tokenInformationVO).also {
-            logger.info("getting price on decentrifi farming for token ${tokenInformationVO.name} (${tokenInformationVO.symbol})")
+    override suspend fun getPrice(fungibleToken: FungibleToken): BigDecimal {
+        return priceRepo.getPrice(fungibleToken).also {
+            logger.info("getting price on decentrifi farming for token ${fungibleToken.name} (${fungibleToken.symbol})")
         }
     }
 }

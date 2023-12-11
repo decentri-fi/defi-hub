@@ -41,10 +41,7 @@ abstract class DefaultSushiPoolingMarketProvider(
                 address = it.id,
                 name = token.name,
                 symbol = token.symbol,
-                tokens = listOf(
-                    token0.toFungibleToken(),
-                    token1.toFungibleToken(),
-                ),
+                tokens = listOf(token0, token1),
                 identifier = it.id,
                 marketSize = refreshable(it.reserveUSD),
                 positionFetcher = defaultPositionFetcher(token.address),

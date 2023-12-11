@@ -1,11 +1,9 @@
 package io.defitrack.protocol.alienbase.pooling
 
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Company
@@ -22,19 +20,15 @@ class AlienbasePoolingMarketProvider : PoolingMarketProvider() {
 
     private val poolFactoryAddress: String = "0x3e84d913803b02a4a7f027165e8ca42c14c0fde7"
 
-    private val poolFactoryContract = lazyAsync {
+    override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
         PairFactoryContract(
             blockchainGateway = getBlockchainGateway(),
             contractAddress = poolFactoryAddress
-        )
-    }
-
-    override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
-        poolFactoryContract.await().allPairs().forEach {
+        ).allPairs().forEach {
             launch {
                 throttled {
                     val poolingToken = getToken(it)
-                    val tokens = poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken)
+                    val tokens = poolingToken.underlyingTokens
 
                     try {
                         val breakdown = fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address)
@@ -43,7 +37,7 @@ class AlienbasePoolingMarketProvider : PoolingMarketProvider() {
                                 identifier = it,
                                 marketSize = refreshable(breakdown.sumOf { it.reserveUSD }) {
                                     getMarketSize(
-                                        poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
+                                        poolingToken.underlyingTokens,
                                         it
                                     )
                                 },
@@ -52,7 +46,7 @@ class AlienbasePoolingMarketProvider : PoolingMarketProvider() {
                                 name = poolingToken.name,
                                 breakdown = breakdown,
                                 symbol = poolingToken.symbol,
-                                tokens = poolingToken.underlyingTokens.map(TokenInformationVO::toFungibleToken),
+                                tokens = poolingToken.underlyingTokens,
                                 totalSupply = refreshable(poolingToken.totalSupply.asEth(poolingToken.decimals)) {
                                     with(getToken(it)) {
                                         totalSupply.asEth(decimals)

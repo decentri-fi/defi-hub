@@ -6,7 +6,6 @@ import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.event.EventDecoder.Companion.extract
 import io.defitrack.evm.GetEventLogsCommand
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -66,16 +65,16 @@ class BalancerPolygonZkEvmGaugeMarketProvider : FarmingMarketProvider() {
                 create(
                     identifier = gaugeAddress,
                     name = lp.name + " gauge",
-                    stakedToken = getToken(gaugecontract.getStakedToken()).toFungibleToken(),
-                    rewardTokens = rewards.map(TokenInformationVO::toFungibleToken),
-
+                    stakedToken = getToken(gaugecontract.getStakedToken()),
+                    rewardTokens = rewards,
                     positionFetcher = PositionFetcher(
                         gaugecontract::workingBalance
                     ) {
                         val balance = it[0].value as BigInteger
                         if (balance > BigInteger.ZERO) {
                             val ratiod =
-                                balance.toBigDecimal().dividePrecisely(gaugecontract.workingSupply.await().toBigDecimal())
+                                balance.toBigDecimal()
+                                    .dividePrecisely(gaugecontract.workingSupply.await().toBigDecimal())
                             val normalized = lp.totalSupply.toBigDecimal().times(ratiod)
                             Position(
                                 normalized.toBigInteger(),
@@ -94,10 +93,10 @@ class BalancerPolygonZkEvmGaugeMarketProvider : FarmingMarketProvider() {
                     },
                     claimableRewardFetchers = listOf(
                         ClaimableRewardFetcher(
-                            rewards = rewards.map {
+                            rewards = rewards.map { reward ->
                                 Reward(
-                                    it.toFungibleToken(),
-                                    gaugecontract.getClaimableRewardFunction(it.address)
+                                    reward,
+                                    gaugecontract.getClaimableRewardFunction(reward.address)
                                 )
                             },
                             preparedTransaction = selfExecutingTransaction(gaugecontract::getClaimRewardsFunction)

@@ -1,13 +1,12 @@
 package io.defitrack.price.external
 
-import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.erc20.FungibleToken
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.stargate.contract.StargatePool
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import org.springframework.stereotype.Service
 import java.math.BigDecimal
 
 @Component
@@ -29,7 +28,7 @@ class StargatePriceService(
         "S*LUSD"
     )
 
-    override suspend fun appliesTo(token: TokenInformationVO): Boolean {
+    override suspend fun appliesTo(token: FungibleToken): Boolean {
         return tokens.any {
             token.symbol == it
         }
@@ -39,21 +38,21 @@ class StargatePriceService(
         return emptyList()
     }
 
-    override suspend fun getPrice(tokenInformationVO: TokenInformationVO): BigDecimal {
+    override suspend fun getPrice(fungibleToken: FungibleToken): BigDecimal {
         return try {
             val contract = StargatePool(
-                blockchainGatewayProvider.getGateway(tokenInformationVO.network.toNetwork()),
-                tokenInformationVO.address
+                blockchainGatewayProvider.getGateway(fungibleToken.network.toNetwork()),
+                fungibleToken.address
             )
             return priceResource.calculatePrice(
                 PriceRequest(
                     address = contract.token(),
-                    tokenInformationVO.network.toNetwork(),
+                    fungibleToken.network.toNetwork(),
                     BigDecimal.ONE
                 )
             ).toBigDecimal()
         } catch (ex: Exception) {
-            logger.error("Error while calculating price for ${tokenInformationVO.symbol}", ex)
+            logger.error("Error while calculating price for ${fungibleToken.symbol}", ex)
             BigDecimal.ZERO
         }
     }

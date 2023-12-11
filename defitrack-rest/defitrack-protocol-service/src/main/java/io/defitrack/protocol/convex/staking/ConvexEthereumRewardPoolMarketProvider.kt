@@ -31,15 +31,15 @@ class ConvexEthereumRewardPoolMarketProvider(
             create(
                 name = "Convex Reward Pool",
                 identifier = poolContract.address,
-                stakedToken = stakingToken.toFungibleToken(),
-                rewardTokens = listOf(rewardToken.toFungibleToken()),
+                stakedToken = stakingToken,
+                rewardTokens = listOf(rewardToken),
                 positionFetcher = defaultPositionFetcher(
                     poolContract.address
                 ),
                 internalMetadata = mapOf("contract" to poolContract),
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
-                        rewardToken.toFungibleToken(),
+                        rewardToken,
                         poolContract::earnedFunction
                     ),
                     selfExecutingTransaction(poolContract::getRewardFunction)

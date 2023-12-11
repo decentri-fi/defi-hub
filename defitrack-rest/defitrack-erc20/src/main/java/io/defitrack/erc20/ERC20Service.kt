@@ -9,7 +9,6 @@ import io.defitrack.common.network.Network
 import io.defitrack.erc20.logo.LogoService
 import io.defitrack.erc20.nativetoken.NativeTokenService
 import io.defitrack.erc20.protocolspecific.TokenIdentifier
-import io.defitrack.token.TokenInformation
 import io.defitrack.token.TokenType
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.coroutineScope

@@ -110,8 +110,8 @@ abstract class UniswapV3PoolingMarketProvider(
             }
 
             val pool = UniswapV3PoolContract(getBlockchainGateway(), address)
-            val token0 = prefetch?.tokens?.get(0) ?: getToken(pool.token0.await()).toFungibleToken()
-            val token1 = prefetch?.tokens?.get(1) ?: getToken(pool.token1.await()).toFungibleToken()
+            val token0 = prefetch?.tokens?.get(0) ?: getToken(pool.token0.await())
+            val token1 = prefetch?.tokens?.get(1) ?: getToken(pool.token1.await())
 
             val breakdown = prefetch?.breakdown?.map {
                 PoolingMarketTokenShare(

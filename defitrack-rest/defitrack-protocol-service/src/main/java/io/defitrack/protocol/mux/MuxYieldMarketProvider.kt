@@ -34,8 +34,8 @@ class MuxYieldMarketProvider : FarmingMarketProvider() {
     }
 
     suspend fun vestedMlp(contract: MuxYieldContract): FarmingMarket {
-        val stakedToken = getToken(contract.mlp.await()).toFungibleToken()
-        val rewardToken = getToken(contract.mlp.await()).toFungibleToken()
+        val stakedToken = getToken(contract.mlp.await())
+        val rewardToken = getToken(contract.mcb.await())
         return create(
             name = "Vested MLP",
             identifier = contract.address + "-0",
@@ -52,8 +52,8 @@ class MuxYieldMarketProvider : FarmingMarketProvider() {
     }
 
     suspend fun vestedMux(contract: MuxYieldContract): FarmingMarket {
-        val stakedToken = getToken(contract.mlp.await()).toFungibleToken()
-        val rewardToken = getToken(contract.mlp.await()).toFungibleToken()
+        val stakedToken = getToken(contract.mlp.await())
+        val rewardToken = getToken(contract.mlp.await())
         return create(
             name = "Vested MUX",
             identifier = contract.address + "-1",

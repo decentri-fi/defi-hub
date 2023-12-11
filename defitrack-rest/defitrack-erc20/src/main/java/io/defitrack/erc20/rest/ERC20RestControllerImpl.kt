@@ -2,7 +2,6 @@ package io.defitrack.erc20.rest
 
 import arrow.core.getOrElse
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.erc20.*
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.token.TokenType
@@ -33,7 +32,7 @@ class ERC20RestControllerImpl(
     override suspend fun getAllTokensForNetwork(
         @PathVariable("network") networkName: String,
         @RequestParam("verified") verified: Boolean?
-    ): ResponseEntity<List<TokenInformationVO>> {
+    ): ResponseEntity<List<FungibleToken>> {
         val network = Network.fromString(networkName) ?: return ResponseEntity.badRequest().build()
         return ResponseEntity.ok(
             erc20Service.getAllTokensForNetwork(network)
@@ -42,7 +41,7 @@ class ERC20RestControllerImpl(
                 }.map {
                     it.toVO()
                 }.filter {
-                    it.type == TokenType.SINGLE.name
+                    it.type == TokenType.SINGLE
                 }
         )
     }
@@ -62,7 +61,7 @@ class ERC20RestControllerImpl(
     override suspend fun getTokenInformation(
         @PathVariable("network") networkName: String,
         @PathVariable("address") address: String
-    ): ResponseEntity<TokenInformationVO> = coroutineScope {
+    ): ResponseEntity<FungibleToken> = coroutineScope {
         val network = Network.fromString(networkName) ?: return@coroutineScope ResponseEntity.badRequest().build()
         val observation = Observation.start("erc20.get-token-information", observationRegistry)
             .lowCardinalityKeyValue("network", networkName)

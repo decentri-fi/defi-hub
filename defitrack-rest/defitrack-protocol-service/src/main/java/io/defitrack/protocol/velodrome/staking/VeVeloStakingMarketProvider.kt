@@ -21,10 +21,10 @@ class VeVeloStakingMarketProvider : FarmingMarketProvider() {
             create(
                 name = "veVELO",
                 identifier = "veVELO",
-                stakedToken = veloToken.toFungibleToken(),
-                rewardTokens = listOf(getToken(veVelo).toFungibleToken()),
+                stakedToken = veloToken,
+                rewardToken = getToken(veVelo),
                 marketSize = refreshable {
-                    getMarketSize(veloToken.toFungibleToken(), veVelo)
+                    getMarketSize(veloToken, veVelo)
                 },
             )
         )

@@ -34,7 +34,7 @@ class AelinRewardMarketProvider(
     override suspend fun fetchMarkets(): List<FarmingMarket> {
 
         val aelin = getToken(aelinAddress)
-        val rewardToken = aelin.toFungibleToken()
+        val rewardToken = aelin
 
         return listOf(
             create(
@@ -44,7 +44,7 @@ class AelinRewardMarketProvider(
                 rewardToken = rewardToken,
                 marketSize = refreshable {
                     getMarketSize(
-                        aelin.toFungibleToken(),
+                        aelin,
                         rewardPool.address,
                     )
                 },

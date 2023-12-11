@@ -21,8 +21,8 @@ class MetavaultStakingProvider : FarmingMarketProvider() {
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         val contract = StakedMVXContract(getBlockchainGateway(), address)
 
-        val mvx = getToken("0x2760e46d9bb43dafcbecaad1f64b93207f9f0ed7").toFungibleToken()
-        val rewardToken = getToken(contract.rewardtoken.await()).toFungibleToken()
+        val mvx = getToken("0x2760e46d9bb43dafcbecaad1f64b93207f9f0ed7")
+        val rewardToken = getToken(contract.rewardtoken.await())
 
         return listOf(
             create(

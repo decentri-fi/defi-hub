@@ -26,8 +26,8 @@ class RibbonEthereumFarmingMarketProvider(
             create(
                 identifier = it.id,
                 name = it.name,
-                stakedToken = stakedToken.toFungibleToken(),
-                rewardTokens = listOf(stakedToken.toFungibleToken()),
+                stakedToken = stakedToken,
+                rewardToken = stakedToken,
                 marketSize = refreshable { //todo: totalBalance is not fetched from the blockchain
                     getPriceResource().calculatePrice(
                         PriceRequest(

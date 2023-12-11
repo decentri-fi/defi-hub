@@ -1,9 +1,9 @@
 package io.defitrack.market.borrowing.domain
 
 import io.defitrack.common.network.Network
+import io.defitrack.erc20.FungibleToken
 import io.defitrack.market.DefiMarket
 import io.defitrack.protocol.Protocol
-import io.defitrack.token.FungibleToken
 import java.math.BigDecimal
 
 data class BorrowMarket(

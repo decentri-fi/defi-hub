@@ -35,7 +35,7 @@ class ThreeCrvPoolingMarketProvider : PoolingMarketProvider() {
             getToken(usdt),
             getToken(usdc),
             getToken(dai)
-        ).map { it.toFungibleToken() }
+        )
 
         send(
             create(

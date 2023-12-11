@@ -1,20 +1,15 @@
 package io.defitrack.protocol.solidlizard.pooling
 
-import arrow.fx.coroutines.parMap
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.uniswap.v2.PairFactoryContract
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 
 @Component
@@ -28,7 +23,7 @@ class SolidLizardPoolingMarketProvider : PoolingMarketProvider() {
         return factory.allPairs().parMapNotNull(concurrency = 12) {
 
             val token = getToken(it)
-            val tokens = token.underlyingTokens.map(TokenInformationVO::toFungibleToken)
+            val tokens = token.underlyingTokens
 
             try {
                 val breakdown = fiftyFiftyBreakdown(tokens[0], tokens[1], token.address)
@@ -39,7 +34,7 @@ class SolidLizardPoolingMarketProvider : PoolingMarketProvider() {
                         fiftyFiftyBreakdown(tokens[0], tokens[1], token.address).sumOf { it.reserveUSD }
                     },
                     positionFetcher = defaultPositionFetcher(token.address),
-                    tokens = token.underlyingTokens.map(TokenInformationVO::toFungibleToken),
+                    tokens = token.underlyingTokens,
                     symbol = token.symbol,
                     breakdown = breakdown,
                     address = token.address,

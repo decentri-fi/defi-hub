@@ -59,15 +59,15 @@ class AlienbaseFarmingMarketProvider : FarmingMarketProvider() {
                     create(
                         identifier = "${farmingContractAddress}-${poolId}",
                         name = stakedtoken.name + " Farm",
-                        stakedToken = stakedtoken.toFungibleToken(),
-                        rewardToken = rewardToken.toFungibleToken(),
+                        stakedToken = stakedtoken,
+                        rewardToken = rewardToken,
                         positionFetcher = PositionFetcher(
                             contract.userInfoFunction(poolId)
                         ),
                         claimableRewardFetcher = ClaimableRewardFetcher(
                             listOf(
                                 Reward(
-                                    rewardToken.toFungibleToken(),
+                                    rewardToken,
                                     { user -> contract.pendingFunction(poolId, user) },
                                     { results, _ ->
                                         val addresses = (results[0].value as List<Address>).map { it.value as String }
@@ -83,7 +83,7 @@ class AlienbaseFarmingMarketProvider : FarmingMarketProvider() {
                                 )
                             ) + extraRewards.map { extraReward ->
                                 Reward(
-                                    extraReward.toFungibleToken(),
+                                    extraReward,
                                     { user -> contract.pendingFunction(poolId, user) },
                                     { results, user ->
                                         val addresses = (results[0].value as List<Address>).map { it.value as String }

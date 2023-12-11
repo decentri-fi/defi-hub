@@ -53,7 +53,7 @@ abstract class AbstractStargatePoolingMarketProvider(
                             identifier = pool.address,
                             address = pool.address,
                             symbol = token.symbol,
-                            tokens = listOf(underlying.toFungibleToken()),
+                            tokens = listOf(underlying),
                             decimals = token.decimals,
                             totalSupply = pool.totalSupply().map {
                                 it.asEth(pool.readDecimals())

@@ -40,7 +40,7 @@ class CamelotAdvisorVestingClaimableMarketProvider : ClaimableMarketProvider() {
                 protocol = Protocol.CAMELOT,
                 claimableRewardFetchers = listOf(ClaimableRewardFetcher(
                     Reward(
-                        xgrail.toFungibleToken(),
+                        xgrail,
                         getRewardFunction = contract.releasableFunction(),
                         extractAmountFromRewardFunction = { results, user ->
                             if (results[0].value as BigInteger > BigInteger.ZERO) {

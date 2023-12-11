@@ -26,8 +26,8 @@ class EthosFarmingProvider : FarmingMarketProvider() {
             getBlockchainGateway(), stabilityPoolAddress
         )
 
-        val reward = getToken(oath).toFungibleToken()
-        val staked = getToken(contract.ernToken.await()).toFungibleToken()
+        val reward = getToken(oath)
+        val staked = getToken(contract.ernToken.await())
 
         return create(
             name = "Ethos Farming",

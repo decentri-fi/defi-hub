@@ -16,7 +16,7 @@ class CowswapVirtualTokenVaultProvider : FarmingMarketProvider() {
     val vtokenAddress = "0xd057b63f5e69cf1b929b356b579cba08d7688048"
     val cowTokenAddress = "0xDEf1CA1fb7FBcDC777520aa7f396b4E015F497aB"
     override suspend fun fetchMarkets(): List<FarmingMarket> {
-        val cowToken = getToken(cowTokenAddress).toFungibleToken()
+        val cowToken = getToken(cowTokenAddress)
         return listOf(
             create(
                 name = "Cow Protocol Virtual Token",

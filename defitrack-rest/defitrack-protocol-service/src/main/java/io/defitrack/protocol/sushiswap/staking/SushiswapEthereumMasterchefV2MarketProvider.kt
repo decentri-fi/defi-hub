@@ -70,21 +70,19 @@ class SushiswapEthereumMasterchefV2MarketProvider : FarmingMarketProvider() {
             create(
                 identifier = "${chef.address}-${poolId}",
                 name = stakedtoken.name + " Farm",
-                stakedToken = stakedtoken.toFungibleToken(),
+                stakedToken = stakedtoken,
                 rewardTokens = listOf(
-                    rewardToken.toFungibleToken(),
-                    extraReward?.toFungibleToken()
+                    rewardToken,
+                    extraReward
                 ).filterNotNull(),
                 marketSize = Refreshable.refreshable {
-                    getMarketSize(stakedtoken.toFungibleToken(), chef.address)
+                    getMarketSize(stakedtoken, chef.address)
                 },
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     listOf(
                         Reward(
-                            token = rewardToken.toFungibleToken(),
-                            getRewardFunction = { user ->
-                                chef.pendingFunction(poolId, user)
-                            }
+                            token = rewardToken,
+                            getRewardFunction = chef.pendingFunction(poolId)
                         ),
                         rewarderContract?.let { rctr ->
                             Reward(

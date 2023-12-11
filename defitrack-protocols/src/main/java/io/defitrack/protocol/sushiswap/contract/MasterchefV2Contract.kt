@@ -56,17 +56,19 @@ class MasterchefV2Contract(
         return rewarders.await()[poolIndex]
     }
 
-    fun pendingFunction(poolId: Int, user: String): ContractCall {
-        return createFunction(
-            "pendingSushi",
-            listOf(
-                poolId.toBigInteger().toUint256(),
-                user.toAddress()
-            ),
-            listOf(
-                uint256()
+    fun pendingFunction(poolId: Int): (String) -> ContractCall {
+        return { user ->
+            createFunction(
+                "pendingSushi",
+                listOf(
+                    poolId.toBigInteger().toUint256(),
+                    user.toAddress()
+                ),
+                listOf(
+                    uint256()
+                )
             )
-        )
+        }
     }
 
     suspend fun poolInfos(): List<MasterChefV2PoolInfo> {

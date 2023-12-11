@@ -4,7 +4,7 @@ import arrow.fx.coroutines.parMap
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
-import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.erc20.FungibleToken
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.pooling.vo.PoolingMarketVO
 import io.defitrack.price.external.ExternalPrice
@@ -201,8 +201,8 @@ class DecentrifiPancakeswapV3UnderlyingPriceRepository(
     }
 
     private fun getNormalizedPrice(
-        token0: TokenInformationVO,
-        token1: TokenInformationVO,
+        token0: FungibleToken,
+        token1: FungibleToken,
         priceInOtherToken: BigDecimal
     ) = if (token0.decimals >= token1.decimals) {
         priceInOtherToken.times(
@@ -214,13 +214,13 @@ class DecentrifiPancakeswapV3UnderlyingPriceRepository(
         )
     }
 
-    fun getPrice(tokenInformationVO: TokenInformationVO): BigDecimal? {
-        return prices.get(toIndex(tokenInformationVO.network.toNetwork(), tokenInformationVO.address))?.price
+    fun getPrice(fungibleToken: FungibleToken): BigDecimal? {
+        return prices.get(toIndex(fungibleToken.network.toNetwork(), fungibleToken.address))?.price
     }
 
-    fun contains(tokenInformationVO: TokenInformationVO): Boolean {
+    fun contains(fungibleToken: FungibleToken): Boolean {
         return prices.asMap()
-            .containsKey(toIndex(tokenInformationVO.network.toNetwork(), tokenInformationVO.address))
+            .containsKey(toIndex(fungibleToken.network.toNetwork(), fungibleToken.address))
     }
 
     suspend fun getUniswapV3Pools(): List<PoolingMarketVO> = withContext(Dispatchers.IO) {

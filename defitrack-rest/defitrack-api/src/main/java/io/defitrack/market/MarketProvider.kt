@@ -1,7 +1,7 @@
 package io.defitrack.market
 
 import arrow.fx.coroutines.parMap
-import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.erc20.FungibleToken
 import io.defitrack.event.EventService
 import io.defitrack.evm.contract.*
 import io.defitrack.exit.ExitPositionCommand
@@ -14,7 +14,6 @@ import io.defitrack.price.PriceResource
 import io.defitrack.protocol.CompaniesProvider
 import io.defitrack.protocol.ProtocolService
 import io.defitrack.token.ERC20Resource
-import io.defitrack.token.FungibleToken
 import io.defitrack.token.MarketSizeService
 import io.defitrack.transaction.PreparedTransaction
 import io.github.reactivecircus.cache4k.Cache
@@ -174,7 +173,7 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
         }
     }
 
-    suspend fun getToken(address: String): TokenInformationVO {
+    suspend fun getToken(address: String): FungibleToken {
         return erC20Resource.getTokenInformation(getNetwork(), address)
     }
 

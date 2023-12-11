@@ -3,7 +3,6 @@ package io.defitrack.protocol.aave.pooling
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.erc20.TokenInformationVO
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Company
@@ -24,7 +23,7 @@ class ABPTPoolingMarketProvider : PoolingMarketProvider(
         val aave = getToken(aaveAddress)
         val weth = getToken(wethAddress)
 
-        val tokens = listOf(aave, weth).map(TokenInformationVO::toFungibleToken)
+        val tokens = listOf(aave, weth)
 
         return listOf(
             create(

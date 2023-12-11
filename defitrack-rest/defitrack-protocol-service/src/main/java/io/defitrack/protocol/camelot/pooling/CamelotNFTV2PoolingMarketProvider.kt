@@ -3,6 +3,7 @@ package io.defitrack.protocol.camelot.pooling
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
@@ -50,23 +51,23 @@ class CamelotNFTV2PoolingMarketProvider(
         )
 
         return create(
-            tokens = listOf(token0.toFungibleToken(), token1.toFungibleToken()),
+            tokens = listOf(token0, token1),
             identifier = pool.address,
             address = pool.address,
             name = "Camelot V3 ${token0.symbol}/${token1.symbol}",
             symbol = token0.symbol + "/" + token1.symbol,
             breakdown = emptyList(),
             erc20Compatible = false,
-            totalSupply = Refreshable.refreshable {
+            totalSupply = refreshable {
                 pool.liquidity().asEth()
             },
-            marketSize = Refreshable.refreshable {
+            marketSize = refreshable {
                 getMarketSize(
-                    listOf(token0.toFungibleToken(), token1.toFungibleToken()),
+                    listOf(token0, token1),
                     pool.address
                 )
             },
-            price = Refreshable.refreshable { BigDecimal.ZERO }
+            price = refreshable(BigDecimal.ZERO)
         )
     }
 

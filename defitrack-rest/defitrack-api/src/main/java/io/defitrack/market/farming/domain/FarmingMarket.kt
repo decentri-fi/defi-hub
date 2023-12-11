@@ -3,11 +3,11 @@ package io.defitrack.market.farming.domain
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.erc20.FungibleToken
 import io.defitrack.exit.ExitPositionPreparer
 import io.defitrack.market.DefiMarket
 import io.defitrack.market.position.PositionFetcher
 import io.defitrack.protocol.Protocol
-import io.defitrack.token.FungibleToken
 import java.math.BigDecimal
 
 data class FarmingMarket(

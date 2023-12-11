@@ -32,7 +32,7 @@ class PoolTogetherOptimismAUSDCTicketMarketProvider(
             name = "PoolTogether aOptUSDC Ticket",
             symbol = "PTaOptUSDC",
             tokens = listOf(
-                token.toFungibleToken()
+                token
             ),
             marketSize = refreshable {
                 priceResource.calculatePrice(

@@ -3,7 +3,7 @@ package io.defitrack.token
 import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.retry
 import io.defitrack.common.network.Network
-import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.erc20.FungibleToken
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
@@ -29,13 +29,13 @@ class DecentrifiERC20Resource(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    val tokensCache = Cache.Builder<String, List<TokenInformationVO>>().expireAfterWrite(1.hours).build()
+    val tokensCache = Cache.Builder<String, List<FungibleToken>>().expireAfterWrite(1.hours).build()
 
-    val tokenCache = Cache.Builder<String, TokenInformationVO>().expireAfterWrite(1.hours).build()
+    val tokenCache = Cache.Builder<String, FungibleToken>().expireAfterWrite(1.hours).build()
 
     val wrappedCache = Cache.Builder<Network, WrappedToken>().build()
 
-    override suspend fun getAllTokens(network: Network, verified: Boolean?): List<TokenInformationVO> {
+    override suspend fun getAllTokens(network: Network, verified: Boolean?): List<FungibleToken> {
         return tokensCache.get("tokens-${network}") {
             withContext(Dispatchers.IO) {
                 val get = client.get("$erc20ResourceLocation/${network.name}") {
@@ -44,7 +44,7 @@ class DecentrifiERC20Resource(
                 if (!get.status.isSuccess()) {
                     emptyList()
                 } else {
-                    get.body<List<TokenInformationVO>>()
+                    get.body<List<FungibleToken>>()
                 }
             }
         }
@@ -61,7 +61,7 @@ class DecentrifiERC20Resource(
             }
         }
 
-    override suspend fun getTokenInformation(network: Network, address: String): TokenInformationVO {
+    override suspend fun getTokenInformation(network: Network, address: String): FungibleToken {
         return withContext(Dispatchers.IO) {
             tokenCache.get("token-${network}-${address}") {
                 val result = client.get("$erc20ResourceLocation/${network.name}/$address/token")

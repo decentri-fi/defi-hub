@@ -28,7 +28,7 @@ class ChainlinkStakingMarketProvider : FarmingMarketProvider(
     }
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
-        val chainlinkToken = getToken(link).toFungibleToken()
+        val chainlinkToken = getToken(link)
         return create(
             name = "Chainlink Staking",
             identifier = "chainlink_staking",

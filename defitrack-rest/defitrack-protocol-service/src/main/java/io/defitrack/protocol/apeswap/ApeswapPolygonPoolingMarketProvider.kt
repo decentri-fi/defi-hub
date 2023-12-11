@@ -44,7 +44,7 @@ class ApeswapPolygonPoolingMarketProvider(
                     async {
                         try {
                             val poolingToken = getToken(pool)
-                            val underlyingTokens = poolingToken.underlyingTokens.map { it.toFungibleToken() }
+                            val underlyingTokens = poolingToken.underlyingTokens
 
                             val breakdown =
                                 fiftyFiftyBreakdown(underlyingTokens[0], underlyingTokens[1], poolingToken.address)

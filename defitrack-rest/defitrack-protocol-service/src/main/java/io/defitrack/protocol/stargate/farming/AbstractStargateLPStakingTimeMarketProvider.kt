@@ -40,7 +40,7 @@ abstract class AbstractStargateLPStakingTimeMarketProvider(
                 rewardToken = stargate,
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
-                        token = stargate.toFungibleToken(),
+                        token = stargate,
                         getRewardFunction = lpStakingContract.pendingFn(index)
                     ),
                     preparedTransaction = selfExecutingTransaction(lpStakingContract.claimFn(index))

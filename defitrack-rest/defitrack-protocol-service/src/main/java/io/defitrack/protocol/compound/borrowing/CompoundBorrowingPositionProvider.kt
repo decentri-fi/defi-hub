@@ -62,7 +62,7 @@ class CompoundBorrowingPositionProvider(
                 val underlying = compoundTokenContract.getUnderlyingAddress().let { tokenAddress ->
                     erC20Resource.getTokenInformation(getNetwork(), tokenAddress)
                 }
-                val token = underlying.toFungibleToken()
+                val token = underlying
                 BorrowPosition(
                     market = BorrowMarket(
                         id = "compound-${token.address}",

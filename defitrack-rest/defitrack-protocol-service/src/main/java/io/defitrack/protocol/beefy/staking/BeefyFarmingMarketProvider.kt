@@ -4,7 +4,7 @@ import arrow.core.Either
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
-import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.erc20.FungibleToken
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.position.Position
@@ -92,7 +92,7 @@ abstract class BeefyFarmingMarketProvider(
     }
 
     private suspend fun getMarketSize(
-        want: TokenInformationVO,
+        want: FungibleToken,
         beefyVault: BeefyVaultContract
     ) = BigDecimal.valueOf(
         getPriceResource().calculatePrice(

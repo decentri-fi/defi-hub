@@ -9,7 +9,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.set.EthereumSetProvider
 import io.defitrack.protocol.set.PolygonSetProvider
 import io.defitrack.protocol.set.SetTokenContract
-import io.defitrack.token.TokenInformation
+import io.defitrack.erc20.TokenInformation
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 

@@ -1,14 +1,12 @@
 package io.defitrack.protocol.polycat.staking
 
-import arrow.core.Either
 import arrow.core.Either.Companion.catch
-import arrow.fx.coroutines.parMap
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.erc20.FungibleToken
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.position.PositionFetcher
@@ -58,9 +56,9 @@ class PolycatFarmingMarketProvider(
         return create(
             identifier = "${chef.address}-${poolId}",
             name = stakedtoken.name + " Farm",
-            stakedToken = stakedtoken.toFungibleToken(),
+            stakedToken = stakedtoken,
             rewardTokens = listOf(
-                rewardToken.toFungibleToken()
+                rewardToken
             ),
             marketSize = Refreshable.refreshable {
                 calculateMarketSize(stakedtoken, chef)
@@ -76,7 +74,7 @@ class PolycatFarmingMarketProvider(
     }
 
     private suspend fun calculateMarketSize(
-        stakedtoken: TokenInformationVO,
+        stakedtoken: FungibleToken,
         chef: PolycatMasterChefContract
     ): BigDecimal {
 

@@ -67,7 +67,7 @@ class SushiswapEthereumMasterchefMarketProvider : FarmingMarketProvider() {
             create(
                 identifier = "${chef.address}-${poolId}",
                 name = stakedtoken.name + " Farm",
-                stakedToken = stakedtoken.toFungibleToken(),
+                stakedToken = stakedtoken,
                 rewardTokens = listOf(rewardToken),
                 marketSize = refreshable {
                     getMarketSize(stakedtoken, chef.address)

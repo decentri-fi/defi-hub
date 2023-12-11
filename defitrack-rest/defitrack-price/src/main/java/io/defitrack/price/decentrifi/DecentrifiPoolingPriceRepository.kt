@@ -1,7 +1,7 @@
 package io.defitrack.price.decentrifi
 
 import arrow.fx.coroutines.parMap
-import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.erc20.FungibleToken
 import io.defitrack.market.pooling.vo.PoolingMarketVO
 import io.defitrack.network.NetworkVO
 import io.defitrack.price.external.ExternalPrice
@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
-import java.math.BigInteger
 
 @Component
 class DecentrifiPoolingPriceRepository(
@@ -59,7 +58,7 @@ class DecentrifiPoolingPriceRepository(
             )
         )
 
-    fun contains(token: TokenInformationVO): Boolean {
+    fun contains(token: FungibleToken): Boolean {
         return cache.get(toIndex(token.network, token.address)) != null
     }
 
@@ -81,7 +80,7 @@ class DecentrifiPoolingPriceRepository(
         }
     }
 
-    suspend fun getPrice(token: TokenInformationVO): BigDecimal {
+    suspend fun getPrice(token: FungibleToken): BigDecimal {
         return cache.get(toIndex(token.network, token.address))?.price ?: BigDecimal.ZERO
     }
 }

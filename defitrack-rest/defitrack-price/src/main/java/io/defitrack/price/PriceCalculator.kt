@@ -4,7 +4,7 @@ import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.retry
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
-import io.defitrack.erc20.TokenInformationVO
+import io.defitrack.erc20.FungibleToken
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import org.slf4j.LoggerFactory
@@ -48,7 +48,7 @@ class PriceCalculator(
             } else {
                 val tokenType = (priceRequest.type ?: token.type)
                 when (tokenType) {
-                    TokenType.STANDARD_LP.name -> {
+                    TokenType.STANDARD_LP -> {
                         calculateLpHolding(priceRequest, token)
                     }
 
@@ -63,7 +63,7 @@ class PriceCalculator(
 
     private suspend fun calculateLpHolding(
         priceRequest: PriceRequest,
-        tokenInformation: TokenInformationVO
+        tokenInformation: FungibleToken
     ): BigDecimal {
         return try {
             return calculateSingleLpHolding(
@@ -84,7 +84,7 @@ class PriceCalculator(
         lpAddress: String,
         userLPAmount: BigDecimal,
         totalLPAmount: BigInteger,
-        underlyingTokens: List<TokenInformationVO>
+        underlyingTokens: List<FungibleToken>
     ): BigDecimal {
         val userShare = userLPAmount.dividePrecisely(
             totalLPAmount.dividePrecisely(BigDecimal.TEN.pow(18))

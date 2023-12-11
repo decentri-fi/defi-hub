@@ -53,10 +53,8 @@ class IdexFarmingMarketProvider(private val idexService: IdexService) : FarmingM
         return create(
             identifier = "${chef.address}-${poolId}",
             name = stakedtoken.name + " Farm",
-            stakedToken = stakedtoken.toFungibleToken(),
-            rewardTokens = listOf(
-                rewardToken.toFungibleToken()
-            ),
+            stakedToken = stakedtoken,
+            rewardToken = rewardToken,
             positionFetcher = PositionFetcher(chef.userInfoFunction(poolId)),
         )
     }

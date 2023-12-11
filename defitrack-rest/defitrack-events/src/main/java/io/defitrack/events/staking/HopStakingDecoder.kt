@@ -57,7 +57,7 @@ class HopStakingDecoder(
             log.address
         )
 
-        val token = "token" to getToken(contract.stakingTokenAddress(), network).toFungibleToken()
+        val token = "token" to getToken(contract.stakingTokenAddress(), network)
 
         return DefiEvent(
             transactionId = log.transactionHash,

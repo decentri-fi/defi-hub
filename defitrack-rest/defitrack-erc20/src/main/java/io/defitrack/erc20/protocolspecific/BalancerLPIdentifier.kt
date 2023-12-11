@@ -6,7 +6,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerPoolContract
 import io.defitrack.protocol.balancer.contract.BalancerService
 import io.defitrack.protocol.balancer.contract.BalancerVaultContract
-import io.defitrack.token.TokenInformation
+import io.defitrack.erc20.TokenInformation
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 
