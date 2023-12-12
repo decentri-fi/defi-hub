@@ -1,8 +1,6 @@
 package io.defitrack.protocol.camelot.farming
 
-import arrow.core.Either
 import arrow.core.Either.Companion.catch
-import arrow.fx.coroutines.parMap
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
@@ -15,6 +13,7 @@ import io.defitrack.protocol.camelot.PoolFactoryContract
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import org.springframework.stereotype.Component
+import java.math.BigInteger
 
 @Component
 @ConditionalOnCompany(Company.CAMELOT)
@@ -27,25 +26,37 @@ class CamelotNftStakingProvider : FarmingMarketProvider() {
         val grail = getToken(grailAddress)
         val factory = PoolFactoryContract(getBlockchainGateway(), nftPoolFactoryAddress)
 
-        factory.getStakingPools().parMapNotNull(concurrency = 12) { poolAddress ->
-            catch {
-                val poolContract = NftPoolContract(getBlockchainGateway(), poolAddress)
+        factory.getStakingPools()
+            .map { poolAddress ->
+                NftPoolContract(getBlockchainGateway(), poolAddress)
+            }
+            .parMapNotNull(concurrency = 12) { contract ->
+                catch {
+                    val poolInfo = contract.getLpToken()
 
-                val token = getToken(poolAddress)
-                val staked = getToken(poolContract.getLpToken())
+                    if (poolInfo.lpSupply == BigInteger.ZERO) {
+                        return@catch null
+                    }
 
-                create(
-                    name = token.name + " staking rewards",
-                    identifier = poolAddress,
-                    rewardToken = grail,
-                    stakedToken = staked,
-                )
-            }.mapLeft {
-                logger.error("Error while fetching Camelot NFT staking market: {}", it.message)
-            }.getOrNull()
-        }.forEach {
-            send(it)
-        }
+                    val token = getToken(contract.address)
+                    val staked = getToken(poolInfo.lpToken)
+
+                    create(
+                        name = token.name + " staking rewards",
+                        identifier = contract.address,
+                        rewardToken = grail,
+                        stakedToken = staked,
+                    )
+                }.mapLeft {
+                    logger.error(
+                        "Error while fetching Camelot NFT staking market: {} for poolAddress {}",
+                        it.message,
+                        contract.address
+                    )
+                }.getOrNull()
+            }.forEach {
+                send(it)
+            }
     }
 
     override fun getProtocol(): Protocol {
