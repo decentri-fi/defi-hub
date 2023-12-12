@@ -2,7 +2,6 @@ package io.defitrack.protocol.rocketpool
 
 import arrow.core.nel
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -49,7 +48,7 @@ class RocketpoolRethMarketProvider : FarmingMarketProvider() {
     }
 
     override fun getProtocol(): Protocol {
-        return Protocol.ROCKETPOOl
+        return Protocol.ROCKETPOOL
     }
 
     override fun getNetwork(): Network {

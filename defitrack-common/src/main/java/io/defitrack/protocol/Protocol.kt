@@ -53,7 +53,7 @@ enum class Protocol(
         networks = listOf(ETHEREUM),
         company = Company.PRISMA
     ),
-    ROCKETPOOl(
+    ROCKETPOOL(
         logo = "rocketpool.png",
         slug = "rocketpool",
         primitives = listOf(FARMING),

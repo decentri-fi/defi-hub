@@ -11,14 +11,15 @@ import io.defitrack.network.toVO
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.velodrome.contract.VelodromeV2GaugeContract
 import org.springframework.stereotype.Component
+import org.web3j.abi.datatypes.Event
 import org.web3j.protocol.core.methods.response.Log
 import java.math.BigInteger
 
 
 @Component
-class VelodromeGetRewardsDecoder : EventDecoder() {
+class ClaimRewardsEventDecoder : EventDecoder() {
 
-    val rewardPairEvent = org.web3j.abi.datatypes.Event(
+    val claimRewardsEvent = Event(
         "ClaimRewards",
         listOf(
             address(true),
@@ -27,16 +28,16 @@ class VelodromeGetRewardsDecoder : EventDecoder() {
     )
 
     override suspend fun appliesTo(log: Log, network: Network): Boolean {
-        return log.appliesTo(rewardPairEvent) &&
+        return log.appliesTo(claimRewardsEvent) &&
                 network == Network.OPTIMISM
     }
 
     override suspend fun extract(log: Log, network: Network): DefiEvent {
         val user = "user" to getLabeledAddress(
-            rewardPairEvent.extract<String>(log, true, 0)
+            claimRewardsEvent.extract<String>(log, true, 0)
         )
 
-        val amount = "amount" to rewardPairEvent.extract<BigInteger>(log, false, 0)
+        val amount = "amount" to claimRewardsEvent.extract<BigInteger>(log, false, 0)
 
         val rewardToken = getToken(
             VelodromeV2GaugeContract(
