@@ -12,6 +12,7 @@ import io.defitrack.protocol.beefy.domain.BeefyLaunchPool
 import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
+import java.util.*
 
 abstract class BeefyBoostMarketProvider(
     private val launchpools: MutableList<BeefyLaunchPool>,
@@ -36,7 +37,7 @@ abstract class BeefyBoostMarketProvider(
                     identifier = it.id,
                     stakedToken = want,
                     rewardToken = reward,
-                    deprecated = it.status == "eol",
+                    deprecated = it.status == "eol" || Date(it.periodFinish).before(Date()),
                     metadata = mapOf("type" to "boost"),
                     positionFetcher = defaultPositionFetcher(contract.address),
                     claimableRewardFetcher = ClaimableRewardFetcher(
