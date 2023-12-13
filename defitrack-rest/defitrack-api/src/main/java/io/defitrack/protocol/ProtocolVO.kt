@@ -1,7 +1,7 @@
 package io.defitrack.protocol
 
 
-class ProtocolVO(
+data class ProtocolVO(
     val name: String,
     val logo: String,
     val slug: String,
