@@ -1,15 +1,14 @@
 package io.defitrack
 
+import arrow.core.Either
+import arrow.fx.coroutines.parMap
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.event.DefiEvent
 import io.defitrack.event.DefiEventType
 import io.defitrack.event.EventDecoder
+import io.defitrack.events.native.NativeTransactionDecoder
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.sync.Semaphore
-import kotlinx.coroutines.sync.withPermit
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
 
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.*
 class EventDecoderRestController(
     private val eventDecoders: List<EventDecoder>,
     private val gatewayProvider: BlockchainGatewayProvider,
+    private val nativeTransactionDecoder: NativeTransactionDecoder
 ) {
 
     val logger = LoggerFactory.getLogger(this::class.java)
@@ -32,39 +32,29 @@ class EventDecoderRestController(
         val network =
             Network.fromString(networkAsString) ?: throw IllegalArgumentException("Invalid network $networkAsString")
 
-        val sema = Semaphore(16)
-
         val logs = gatewayProvider.getGateway(network).getLogs(txId)
 
         if (logs.size > 300) {
             return emptyList()
         }
 
-        return coroutineScope {
-            logs.take(maxLogs ?: 100).map {
-                async {
-                    eventDecoders
-                        .filter {
-                            (type == null || it.eventTypes().contains(type))
-                        }
-                        .map { decoder ->
-                            try {
-                                sema.withPermit {
-                                    if (decoder.appliesTo(it, network)) {
-                                        decoder.extract(it, network)
-                                    } else {
-                                        null
-                                    }
-                                }
-                            } catch (ex: Exception) {
-                                logger.debug("Error decoding event for tx $txId")
-                                null
-                            }
-                        }
+        return logs.take(maxLogs ?: 100).parMap {
+            eventDecoders
+                .filter {
+                    (type == null || it.eventTypes().contains(type))
                 }
-            }.awaitAll().flatten().filterNotNull().filter {
+                .parMapNotNull(concurrency = 8) { decoder ->
+                    Either.catch {
+                        decoder.toDefiEvent(it, network)
+                    }.mapLeft {
+                        logger.error("Error decoding event", it)
+                    }.getOrNull()
+                }
+        }.flatten()
+            .plus(
+                nativeTransactionDecoder.extract(txId, network)
+            ).filter {
                 type == null || it.type == type
             }
-        }
     }
 }

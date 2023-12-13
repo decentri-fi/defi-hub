@@ -32,7 +32,7 @@ class ClaimRewardsEventDecoder : EventDecoder() {
                 network == Network.OPTIMISM
     }
 
-    override suspend fun extract(log: Log, network: Network): DefiEvent {
+    override suspend fun toDefiEvent(log: Log, network: Network): DefiEvent {
         val user = "user" to getLabeledAddress(
             claimRewardsEvent.extract<String>(log, true, 0)
         )

@@ -97,6 +97,25 @@ class BlockchainGateway(
         httpClient.get("$endpoint/tx/${txId}/logs").body()
     }
 
+    suspend fun getTransaction(txId: String): TransactionVO? = withContext(Dispatchers.IO) {
+        val response = httpClient.get("$endpoint/tx/${txId}")
+        if (response.status.isSuccess()) {
+            response.body()
+        } else {
+            null
+        }
+    }
+
+    class TransactionVO(
+        val hash: String,
+        val blockNumber: BigInteger,
+        val from: String,
+        val to: String?,
+        val time: Long,
+        val value: BigInteger,
+        val possibleSpam: Boolean,
+    )
+
 
     suspend fun readFunction(
         address: String,

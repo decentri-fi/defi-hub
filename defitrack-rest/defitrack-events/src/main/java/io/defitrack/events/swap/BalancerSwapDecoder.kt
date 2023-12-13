@@ -34,7 +34,7 @@ class BalancerSwapDecoder(
                 log.appliesTo(swapEvent)
     }
 
-    override suspend fun extract(log: Log, network: Network): DefiEvent {
+    override suspend fun toDefiEvent(log: Log, network: Network): DefiEvent {
         val tokenIn = swapEvent.extract<String>(log, true, 1)
         val tokenOut = swapEvent.extract<String>(log, true,2)
         val amountIn = swapEvent.extract<BigInteger>(log, false, 0)

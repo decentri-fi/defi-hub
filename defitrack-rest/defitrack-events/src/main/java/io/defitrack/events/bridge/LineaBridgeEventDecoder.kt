@@ -17,7 +17,7 @@ class LineaBridgeEventDecoder : EventDecoder() {
                 log.address == LINEA_L1_MESSAGE_SERVICE
     }
 
-    override suspend fun extract(log: Log, network: Network): DefiEvent {
+    override suspend fun toDefiEvent(log: Log, network: Network): DefiEvent {
         return DefiEvent(
             transactionId = log.transactionHash,
             network = network.toVO(),

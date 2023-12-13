@@ -23,7 +23,7 @@ class TransferEventDecoder : EventDecoder() {
         return log.appliesTo(event)
     }
 
-    override suspend fun extract(log: Log, network: Network): DefiEvent {
+    override suspend fun toDefiEvent(log: Log, network: Network): DefiEvent {
         val from = "from" to getLabeledAddress(event.extract<String>(log, true, 0))
         val to = "to" to getLabeledAddress(event.extract<String>(log, true, 1))
         val amount = "amount" to event.extract<BigInteger>(log, false, 0)

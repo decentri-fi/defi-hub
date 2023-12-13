@@ -46,7 +46,7 @@ class HopStakingDecoder(
         }?.contains(log.address.lowercase()) ?: false)
     }
 
-    override suspend fun extract(log: Log, network: Network): DefiEvent {
+    override suspend fun toDefiEvent(log: Log, network: Network): DefiEvent {
         val user = "user" to getLabeledAddress(
             stakedEvent.extract<String>(log, true, 0)
         )

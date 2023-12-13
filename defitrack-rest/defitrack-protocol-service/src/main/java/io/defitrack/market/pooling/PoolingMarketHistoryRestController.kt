@@ -1,10 +1,5 @@
 package io.defitrack.market.pooling
 
-import arrow.core.raise.option
-import com.github.michaelbull.retry.policy.binaryExponentialBackoff
-import com.github.michaelbull.retry.policy.limitAttempts
-import com.github.michaelbull.retry.policy.plus
-import com.github.michaelbull.retry.retry
 import io.defitrack.event.DefiEvent
 import io.defitrack.evm.GetEventLogsCommand
 import io.defitrack.evm.contract.BlockchainGatewayProvider
@@ -13,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.lang.Exception
 
 @RestController
 @RequestMapping("/{protocol}/pooling")

@@ -29,7 +29,7 @@ class FoxTokenClaimedDecoder : EventDecoder() {
         return log.address == "0xb90381dae1a72528660278100c5aa44e1108cef7" && log.appliesTo(claimedEvent)
     }
 
-    override suspend fun extract(log: Log, network: Network): DefiEvent {
+    override suspend fun toDefiEvent(log: Log, network: Network): DefiEvent {
         val user = "user" to getLabeledAddress(
             claimedEvent.getIndexedParameter<String>(log, 0)
         )

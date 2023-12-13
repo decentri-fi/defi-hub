@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.JsonParser
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.protocol.hop.domain.DailyVolume
 import io.defitrack.protocol.hop.domain.HopLpToken
 import io.defitrack.protocol.thegraph.TheGraphGatewayProvider
@@ -27,8 +28,12 @@ class HopService(
 
     val lpCache = Cache.Builder<Network, List<HopLpToken>>().build()
 
+    val cachedResponse = lazyAsync {
+        client.get(addressesUrl).bodyAsText()
+    }
+
     suspend fun getStakingRewardsFromJson(network: Network): List<String> {
-        val response: String = withContext(Dispatchers.IO) { client.get(addressesUrl).bodyAsText() }
+        val response: String = cachedResponse.await()
         return JsonParser.parseString(response).asJsonObject["rewardsContracts"].asJsonObject.entrySet()
             .map {
                 it.value.asJsonObject

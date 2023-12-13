@@ -25,7 +25,7 @@ class HopTokenEventsDecoder : EventDecoder() {
                 && log.topics.map { it.lowercase() }.contains(EventEncoder.encode(claimEvent))
     }
 
-    override suspend fun extract(log: Log, network: Network): DefiEvent {
+    override suspend fun toDefiEvent(log: Log, network: Network): DefiEvent {
         val user = getLabeledAddress(
             FunctionReturnDecoder.decodeIndexedValue(
                 log.topics[1], address()

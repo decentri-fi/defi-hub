@@ -23,7 +23,7 @@ class ENSTokenEventsDecoder : EventDecoder() {
                 && log.topics.map { it.lowercase() }.contains(EventEncoder.encode(claimEvent))
     }
 
-    override suspend fun extract(log: Log, network: Network): DefiEvent {
+    override suspend fun toDefiEvent(log: Log, network: Network): DefiEvent {
         val user = getLabeledAddress(
             claimEvent.getIndexedParameter<String>(log, 0)
         )

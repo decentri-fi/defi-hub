@@ -12,22 +12,17 @@ import io.defitrack.network.toVO
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.hop.HopService
 import org.springframework.stereotype.Component
+import org.web3j.abi.datatypes.Event
 import org.web3j.protocol.core.methods.response.Log
 import java.math.BigInteger
 
 
 @Component
 class HopGetRewardsDecoder(
-    hopService: HopService
+    private val hopService: HopService
 ) : EventDecoder() {
 
-    val pairMap = lazyAsync {
-        mapOf(
-            Network.POLYGON to hopService.getStakingRewardsFromJson(Network.POLYGON)
-        )
-    }
-
-    val event = org.web3j.abi.datatypes.Event(
+    val event = Event(
         "RewardPaid",
         listOf(
             address(true),
@@ -36,13 +31,13 @@ class HopGetRewardsDecoder(
     )
 
     override suspend fun appliesTo(log: Log, network: Network): Boolean {
-        val pairs = pairMap.await()
-        return log.appliesTo(event) && (pairs[network]?.map {
+        val pairs = hopService.getStakingRewardsFromJson(network)
+        return log.appliesTo(event) && pairs.map {
             it.lowercase()
-        }?.contains(log.address.lowercase()) ?: false)
+        }.contains(log.address.lowercase())
     }
 
-    override suspend fun extract(log: Log, network: Network): DefiEvent {
+    override suspend fun toDefiEvent(log: Log, network: Network): DefiEvent {
         val user = "user" to getLabeledAddress(event.extract<String>(log, true, 0))
         val amount = "amount" to event.extract<BigInteger>(log, false, 0)
         val token = "asset" to getToken("0xc5102fe9359fd9a28f877a67e36b0f050d81a3cc", network)

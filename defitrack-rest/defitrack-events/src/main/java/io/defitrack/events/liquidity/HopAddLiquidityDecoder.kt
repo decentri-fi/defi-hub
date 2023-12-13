@@ -41,7 +41,7 @@ class HopAddLiquidityDecoder(
         return log.appliesTo(addLiquidityEvent)
     }
 
-    override suspend fun extract(log: Log, network: Network): DefiEvent {
+    override suspend fun toDefiEvent(log: Log, network: Network): DefiEvent {
 
         val contract = HopLpTokenContract(
             blockchainGatewayProvider.getGateway(network),

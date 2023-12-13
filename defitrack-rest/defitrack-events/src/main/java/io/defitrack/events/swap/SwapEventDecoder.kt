@@ -35,7 +35,7 @@ class SwapEventDecoder(
         return log.appliesTo(swapEvent)
     }
 
-    override suspend fun extract(log: Log, network: Network): DefiEvent {
+    override suspend fun toDefiEvent(log: Log, network: Network): DefiEvent {
         val user = getLabeledAddress(swapEvent.getIndexedParameter<String>(log, 0))
         val amount0In = swapEvent.getNonIndexedParameter<BigInteger>(log, 0)
         val amount1In = swapEvent.getNonIndexedParameter<BigInteger>(log, 1)

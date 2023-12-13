@@ -22,7 +22,7 @@ class ApprovalEventDecoder : EventDecoder() {
         return log.appliesTo(event)
     }
 
-    override suspend fun extract(log: Log, network: Network): DefiEvent {
+    override suspend fun toDefiEvent(log: Log, network: Network): DefiEvent {
         val owner = "owner" to getLabeledAddress(event.extract<String>(log, true, 0))
 
         val spender = "spender" to getLabeledAddress(event.extract<String>(log, true, 1))

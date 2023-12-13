@@ -1,10 +1,12 @@
 package io.defitrack.event
 
+import arrow.core.None
+import arrow.core.toOption
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.FungibleToken
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.labeledaddresses.LabelAddressesResource
+import io.defitrack.labeledaddresses.LabeledAddressesResource
 import io.defitrack.labeledaddresses.LabeledAddress
 import io.defitrack.token.ERC20Resource
 import org.springframework.beans.factory.annotation.Autowired
@@ -45,10 +47,19 @@ abstract class EventDecoder {
     lateinit var erC20Resource: ERC20Resource
 
     @Autowired
-    lateinit var labelAddressesResource: LabelAddressesResource
+    lateinit var labeledAddressesResource: LabeledAddressesResource
 
-    abstract suspend fun appliesTo(log: Log, network: Network): Boolean
-    abstract suspend fun extract(log: Log, network: Network): DefiEvent
+    protected abstract suspend fun appliesTo(log: Log, network: Network): Boolean
+
+    suspend fun extract(log: Log, network: Network): arrow.core.Option<DefiEvent> {
+        return if (appliesTo(log, network)) {
+            return toDefiEvent(log, network).toOption()
+        } else {
+            None
+        }
+    }
+
+    abstract suspend fun toDefiEvent(log: Log, network: Network): DefiEvent
 
     abstract fun eventTypes(): List<DefiEventType>
 
@@ -57,7 +68,7 @@ abstract class EventDecoder {
     }
 
     suspend fun getLabeledAddress(address: String): LabeledAddress {
-        return labelAddressesResource.getLabel(address)
+        return labeledAddressesResource.getLabel(address)
     }
 
     fun getGateway(network: Network): BlockchainGateway {
