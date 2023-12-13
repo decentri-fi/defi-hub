@@ -23,7 +23,7 @@ abstract class DefaultMarketRestController<T : DefiMarket>(
         return getAllMarkets(protocol, network).map(marketMapper::map)
     }
 
-    @GetMapping("/markets", params = ["paged"])
+    @GetMapping("/markets")
     fun pagedMarkets(
         @PathVariable("protocol") protocol: String,
         @RequestParam("network", required = false) network: String? = null,
