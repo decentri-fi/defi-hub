@@ -10,7 +10,6 @@ import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Address
-import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.Utf8String
 import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger

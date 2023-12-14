@@ -1,6 +1,5 @@
 package io.defitrack.protocol.wepiggy.lending
 
-import arrow.fx.coroutines.parMap
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
@@ -9,22 +8,17 @@ import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
-import io.defitrack.market.position.Position
-import io.defitrack.market.position.PositionFetcher
+import io.defitrack.evm.position.Position
+import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.compound.v2.contract.CompoundComptrollerContract
 import io.defitrack.protocol.compound.v2.contract.CompoundTokenContract
 import io.defitrack.protocol.wepiggy.WepiggyPolygonService
-import io.defitrack.token.TokenType
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
-import java.math.BigDecimal
 import java.math.BigInteger
-import java.math.RoundingMode
 
 @Component
 @ConditionalOnCompany(Company.WEPIGGY)

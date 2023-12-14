@@ -6,7 +6,6 @@ import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
-import org.web3j.abi.datatypes.Function
 
 class MuxYieldContract(blockchainGateway: BlockchainGateway, address: String) : EvmContract(
     blockchainGateway, address

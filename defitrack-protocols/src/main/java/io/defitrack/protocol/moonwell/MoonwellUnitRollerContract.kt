@@ -1,6 +1,5 @@
 package io.defitrack.protocol.moonwell
 
-import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.evm.contract.BlockchainGateway

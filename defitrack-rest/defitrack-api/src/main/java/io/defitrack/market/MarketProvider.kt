@@ -3,12 +3,13 @@ package io.defitrack.market
 import arrow.fx.coroutines.parMap
 import io.defitrack.erc20.FungibleToken
 import io.defitrack.event.EventService
+import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.*
 import io.defitrack.exit.ExitPositionCommand
 import io.defitrack.exit.ExitPositionPreparer
 import io.defitrack.market.event.MarketAddedEvent
-import io.defitrack.market.position.Position
-import io.defitrack.market.position.PositionFetcher
+import io.defitrack.evm.position.Position
+import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.CompaniesProvider

@@ -1,6 +1,5 @@
 package io.defitrack.protocol.compound.v3.contract
 
-import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.bool
 import io.defitrack.abi.TypeUtils.Companion.toAddress
@@ -10,7 +9,6 @@ import io.defitrack.abi.TypeUtils.Companion.uint64
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
-import org.web3j.abi.datatypes.Function
 
 open class CompoundRewardContract(
     blockchainGateway: BlockchainGateway,

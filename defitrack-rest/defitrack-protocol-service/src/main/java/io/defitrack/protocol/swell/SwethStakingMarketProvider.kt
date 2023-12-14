@@ -1,19 +1,14 @@
 package io.defitrack.protocol.swell
 
+import arrow.core.nel
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
-import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.market.position.Position
-import io.defitrack.market.position.PositionFetcher
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.channelFlow
 import org.springframework.stereotype.Component
-import java.math.BigInteger
 
 @Component
 @ConditionalOnCompany(Company.SWELL)
@@ -25,29 +20,17 @@ class SwethStakingMarketProvider : FarmingMarketProvider() {
         SwethContract(getBlockchainGateway(), swethAddress)
     }
 
-    override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
+    override suspend fun fetchMarkets(): List<FarmingMarket> {
         val ether = getToken("0x0")
         val contract = deferredContract.await()
-        val rate = contract.rate.await()
 
-        send(
-            create(
-                name = "swETH",
-                identifier = swethAddress,
-                stakedToken = ether,
-                rewardToken = ether,
-                positionFetcher = PositionFetcher(
-                    contract::balanceOfFunction
-                ) { result ->
-                    val bal = result[0].value as BigInteger
-                    if (bal > BigInteger.ZERO) {
-                        Position(bal.times(rate).asEth().toBigInteger(), bal)
-                    } else {
-                        Position.ZERO
-                    }
-                }
-            )
-        )
+        return create(
+            name = "swETH",
+            identifier = swethAddress,
+            stakedToken = ether,
+            rewardToken = ether,
+            positionFetcher = contract.positionFetcher()
+        ).nel()
     }
 
     override fun getProtocol(): Protocol {

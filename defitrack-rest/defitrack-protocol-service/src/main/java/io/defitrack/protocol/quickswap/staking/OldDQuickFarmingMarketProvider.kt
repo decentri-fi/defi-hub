@@ -2,16 +2,14 @@ package io.defitrack.protocol.quickswap.staking
 
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.market.position.PositionFetcher
+import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.contract.DQuickContract
 import io.defitrack.protocol.quickswap.staking.invest.DQuickStakingInvestmentPreparer
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 
 @Component

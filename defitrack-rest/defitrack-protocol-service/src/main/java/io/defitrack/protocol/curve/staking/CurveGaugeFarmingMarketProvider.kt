@@ -4,14 +4,12 @@ import arrow.fx.coroutines.parMap
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.utils.Refreshable
-import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.market.position.PositionFetcher
+import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.crv.contract.CurveL2GaugeContract
 import io.defitrack.protocol.crv.contract.CurvePolygonGaugeControllerContract
-import io.defitrack.transaction.PreparedTransaction
 import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 
 abstract class CurveGaugeFarmingMarketProvider(

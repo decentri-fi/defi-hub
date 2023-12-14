@@ -7,7 +7,7 @@ import io.defitrack.exit.ExitPositionCommand
 import io.defitrack.market.DefiMarket
 import io.defitrack.market.farming.domain.InvestmentPreparer
 import io.defitrack.market.pooling.history.HistoricEventExtractor
-import io.defitrack.market.position.PositionFetcher
+import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.protocol.Protocol
 import org.web3j.abi.datatypes.Event
 import java.math.BigDecimal

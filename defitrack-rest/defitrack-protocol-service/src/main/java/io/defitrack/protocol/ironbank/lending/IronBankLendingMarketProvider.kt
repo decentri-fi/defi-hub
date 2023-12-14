@@ -1,25 +1,20 @@
 package io.defitrack.protocol.ironbank.lending
 
-import arrow.core.Either
 import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMapNotNull
-import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable.Companion.map
 import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
-import io.defitrack.market.position.Position
-import io.defitrack.market.position.PositionFetcher
+import io.defitrack.evm.position.Position
+import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.ironbank.IronBankComptrollerContract
 import io.defitrack.protocol.ironbank.IronBankService
 import io.defitrack.protocol.ironbank.IronbankTokenContract
 import io.defitrack.protocol.ironbank.lending.invest.CompoundLendingInvestmentPreparer
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import java.math.BigInteger
 
 abstract class IronBankLendingMarketProvider(

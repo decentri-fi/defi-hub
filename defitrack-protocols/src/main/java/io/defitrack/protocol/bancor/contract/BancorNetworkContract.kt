@@ -1,7 +1,6 @@
 package io.defitrack.protocol.bancor.contract
 
 import io.defitrack.abi.TypeUtils
-import io.defitrack.abi.TypeUtils.Companion.dynamicArray
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.evm.contract.BlockchainGateway

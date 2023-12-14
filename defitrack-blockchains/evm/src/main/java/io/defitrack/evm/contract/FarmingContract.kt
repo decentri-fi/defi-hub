@@ -3,7 +3,6 @@ package io.defitrack.evm.contract
 import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
-import org.web3j.abi.datatypes.Function
 
 open class FarmingContract(
     blockchainGateway: BlockchainGateway,

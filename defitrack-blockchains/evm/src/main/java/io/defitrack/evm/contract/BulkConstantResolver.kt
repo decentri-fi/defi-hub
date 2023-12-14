@@ -1,12 +1,7 @@
 package io.defitrack.evm.contract
 
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.EvmContract
-import io.defitrack.evm.contract.MultiCallResult
 import org.springframework.stereotype.Component
-import org.web3j.abi.datatypes.Function
 
 @Component
 class BulkConstantResolver(

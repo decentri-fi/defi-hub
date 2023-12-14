@@ -6,7 +6,6 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
-import org.web3j.abi.datatypes.Function
 
 class ThalesLpStakingContract(
     blockchainGateway: BlockchainGateway, address: String

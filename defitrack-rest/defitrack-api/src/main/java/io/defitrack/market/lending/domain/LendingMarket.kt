@@ -6,7 +6,7 @@ import io.defitrack.erc20.FungibleToken
 import io.defitrack.exit.ExitPositionPreparer
 import io.defitrack.market.DefiMarket
 import io.defitrack.market.farming.domain.InvestmentPreparer
-import io.defitrack.market.position.PositionFetcher
+import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.protocol.Protocol
 import java.math.BigDecimal
 

@@ -6,7 +6,6 @@ import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.protocol.sushiswap.contract.MasterChefBasedContract
-import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
 
 class AutoEarnVaultContract(

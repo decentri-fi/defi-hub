@@ -2,11 +2,10 @@ package io.defitrack.protocol.gains.staking
 
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
-import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.market.position.PositionFetcher
+import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.gains.GainsNetworkStakingContract

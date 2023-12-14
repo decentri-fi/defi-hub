@@ -1,13 +1,11 @@
 package io.defitrack.protocol.looksrare
 
-import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
-import org.web3j.abi.datatypes.Function
 
 class FeeSharingSystemContract(
     blockchainGateway: BlockchainGateway, address: String

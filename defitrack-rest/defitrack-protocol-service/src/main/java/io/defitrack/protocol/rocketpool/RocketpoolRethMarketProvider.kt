@@ -6,7 +6,8 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.market.position.PositionFetcher
+import io.defitrack.evm.position.PositionFetcher
+import io.defitrack.evm.position.Position
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.reth.RETHContract
@@ -36,12 +37,12 @@ class RocketpoolRethMarketProvider : FarmingMarketProvider() {
             ) {
                 val bal = it[0].value as BigInteger
                 if (bal > BigInteger.ZERO) {
-                    io.defitrack.market.position.Position(
+                    Position(
                         reth.exchangeRate.await().times(bal).asEth().toBigInteger(),
                         bal,
                     )
                 } else {
-                    io.defitrack.market.position.Position.ZERO
+                    Position.ZERO
                 }
             },
         ).nel()

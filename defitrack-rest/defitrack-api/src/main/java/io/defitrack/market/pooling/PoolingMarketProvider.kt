@@ -9,7 +9,7 @@ import io.defitrack.market.farming.domain.InvestmentPreparer
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
 import io.defitrack.market.pooling.history.HistoricEventExtractor
-import io.defitrack.market.position.PositionFetcher
+import io.defitrack.evm.position.PositionFetcher
 import java.math.BigDecimal
 
 abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {

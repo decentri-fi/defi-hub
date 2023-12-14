@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
-import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
 
 @ConditionalOnCompany(Company.PANCAKESWAP)

@@ -10,7 +10,7 @@ import io.defitrack.erc20.FungibleToken
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
-import io.defitrack.market.position.PositionFetcher
+import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Company

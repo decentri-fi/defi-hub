@@ -9,7 +9,7 @@ import io.defitrack.common.utils.Refreshable.Companion.refreshable
 import io.defitrack.erc20.FungibleToken
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.market.position.PositionFetcher
+import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.hop.HopService

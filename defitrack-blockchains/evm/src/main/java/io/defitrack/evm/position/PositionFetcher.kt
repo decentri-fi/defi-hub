@@ -1,4 +1,4 @@
-package io.defitrack.market.position
+package io.defitrack.evm.position
 
 import io.defitrack.evm.contract.ContractCall
 import org.web3j.abi.datatypes.Type

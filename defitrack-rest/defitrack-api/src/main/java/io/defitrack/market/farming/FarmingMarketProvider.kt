@@ -7,7 +7,7 @@ import io.defitrack.exit.ExitPositionPreparer
 import io.defitrack.market.MarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.domain.InvestmentPreparer
-import io.defitrack.market.position.PositionFetcher
+import io.defitrack.evm.position.PositionFetcher
 import java.math.BigDecimal
 
 abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>() {

@@ -7,7 +7,7 @@ import io.defitrack.erc20.FungibleToken
 import io.defitrack.market.MarketProvider
 import io.defitrack.market.farming.domain.InvestmentPreparer
 import io.defitrack.market.lending.domain.LendingMarket
-import io.defitrack.market.position.PositionFetcher
+import io.defitrack.evm.position.PositionFetcher
 import java.math.BigDecimal
 
 abstract class LendingMarketProvider : MarketProvider<LendingMarket>() {

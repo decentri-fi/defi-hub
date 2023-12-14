@@ -8,7 +8,6 @@ import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.DynamicArray
-import org.web3j.abi.datatypes.Function
 
 class RadiantMultiFeeDistributor(
     blockchainGateway: BlockchainGateway, address: String

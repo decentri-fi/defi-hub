@@ -9,7 +9,6 @@ import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
 import kotlinx.coroutines.Deferred
-import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
 
 open class MasterChefBasedContract(

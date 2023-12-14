@@ -5,13 +5,9 @@ import io.defitrack.abi.TypeUtils.Companion.bool
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
-import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC721Contract
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
 
 class QidaoVaultContract(

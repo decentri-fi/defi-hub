@@ -10,8 +10,8 @@ import io.defitrack.event.EventDecoder.Companion.extract
 import io.defitrack.evm.GetEventLogsCommand
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.market.position.Position
-import io.defitrack.market.position.PositionFetcher
+import io.defitrack.evm.position.Position
+import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerGaugeZkEvmContract

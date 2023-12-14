@@ -8,8 +8,8 @@ import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.erc20.FungibleToken
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
-import io.defitrack.market.position.Position
-import io.defitrack.market.position.PositionFetcher
+import io.defitrack.evm.position.Position
+import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
