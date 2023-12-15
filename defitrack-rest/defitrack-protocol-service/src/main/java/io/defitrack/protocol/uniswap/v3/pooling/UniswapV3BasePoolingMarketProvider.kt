@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component
 class UniswapV3BasePoolingMarketProvider(
     uniswapV3Prefetcher: UniswapV3Prefetcher
 ) : UniswapV3PoolingMarketProvider(
-    listOf("1371680"),
+    "1371680",
     "0x33128a8fC17869897dcE68Ed026d694621f6FDfD",
     uniswapV3Prefetcher
 ) {

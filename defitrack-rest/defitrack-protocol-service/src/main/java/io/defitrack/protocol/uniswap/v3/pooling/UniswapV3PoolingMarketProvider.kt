@@ -31,20 +31,10 @@ import java.math.BigInteger
 import kotlin.coroutines.EmptyCoroutineContext
 
 abstract class UniswapV3PoolingMarketProvider(
-    private val fromBlocks: List<String>,
+    private val startBlock: String,
     private val poolFactoryAddress: String,
     private val uniswapV3Prefetcher: UniswapV3Prefetcher
 ) : PoolingMarketProvider() {
-
-    val poolCreatedEvent = Event(
-        "PoolCreated", listOf(
-            TypeUtils.address(true),
-            TypeUtils.address(true),
-            TypeUtils.uint24(true),
-            TypeUtils.int24(),
-            TypeUtils.address(false)
-        )
-    )
 
     val poolFactory = lazyAsync {
         UniswapV3PoolFactoryContract(
@@ -52,36 +42,12 @@ abstract class UniswapV3PoolingMarketProvider(
         )
     }
 
-    val poolAddresses = lazyAsync {
-        fromBlocks.mapIndexed { index, block ->
-            async {
-                getLogsBetweenBlocks(block, fromBlocks.getOrNull(index + 1))
-            }
-        }.awaitAll().flatten()
-    }
-
     val prefetches = lazyAsync {
         uniswapV3Prefetcher.getPrefetches(getNetwork())
     }
 
-    suspend fun getLogsBetweenBlocks(fromBlock: String, toBlock: String?): List<String> {
-        val gateway = getBlockchainGateway()
-        val logs = gateway.getEventsAsEthLog(
-            GetEventLogsCommand(
-                addresses = listOf(poolFactoryAddress),
-                topic = "0x783cca1c0412dd0d695e784568c96da2e9c22ff989357a2e8b1d9b2b4e6b7118",
-                fromBlock = BigInteger(fromBlock, 10),
-                toBlock = toBlock?.let { BigInteger(toBlock, 10) }
-            )
-        )
-
-        return logs.map {
-            poolCreatedEvent.extract(it, false, 1) as String
-        }
-    }
-
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
-        poolAddresses.await().parMapNotNull(EmptyCoroutineContext, 12) {
+        poolFactory.await().getPools(startBlock).parMapNotNull(EmptyCoroutineContext, 12) {
             marketFromCache(it)
         }.forEach {
             it.getOrNull()?.let {
