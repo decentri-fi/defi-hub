@@ -46,7 +46,7 @@ class PancakeswapV3PoolingPositionProvider(
             it.liquidity > BigInteger.ZERO
         }.parMapNotNull(concurrency = 8) { position ->
             try {
-                val poolAddress = uniswapV3PoolingMarketProvider.poolFactory.await().getPool(
+                val poolAddress = uniswapV3PoolingMarketProvider.uniswapV3PoolFactoryContract.await().getPool(
                     position.token0,
                     position.token1,
                     position.fee

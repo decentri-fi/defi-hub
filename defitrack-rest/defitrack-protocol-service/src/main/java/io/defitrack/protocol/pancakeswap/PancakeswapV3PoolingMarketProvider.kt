@@ -19,8 +19,6 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.uniswap.v3.UniswapV3PoolContract
 import io.defitrack.uniswap.v3.UniswapV3PoolFactoryContract
 import io.github.reactivecircus.cache4k.Cache
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import org.springframework.stereotype.Component
@@ -34,58 +32,16 @@ class PancakeswapV3PoolingMarketProvider(
     private val pancakeswapV3Prefetcher: PancakeswapV3Prefetcher
 ) : PoolingMarketProvider() {
 
-    val fromBlocks = listOf(
-        "750149"
-    )
-
-    val poolCreatedEvent = Event(
-        "PoolCreated", listOf(
-            TypeUtils.address(true),
-            TypeUtils.address(true),
-            TypeUtils.uint24(true),
-            TypeUtils.int24(),
-            TypeUtils.address(false)
-        )
-    )
+    val startBlock = "750149"
 
     val prefetches = lazyAsync {
         pancakeswapV3Prefetcher.getPrefetches(getNetwork())
     }
 
-
     val poolFactoryAddress = "0x0bfbcf9fa4f9c56b0f40a671ad40e0805a091865"
-    val poolFactory = lazyAsync {
-        UniswapV3PoolFactoryContract(
-            getBlockchainGateway(), poolFactoryAddress
-        )
-    }
-
-    val poolAddresses = lazyAsync {
-        fromBlocks.mapIndexed { index, block ->
-            async {
-                getLogsBetweenBlocks(block, fromBlocks.getOrNull(index + 1))
-            }
-        }.awaitAll().flatten()
-    }
-
-    suspend fun getLogsBetweenBlocks(fromBlock: String, toBlock: String?): List<String> {
-        val gateway = getBlockchainGateway()
-        val logs = gateway.getEventsAsEthLog(
-            GetEventLogsCommand(
-                addresses = listOf(poolFactoryAddress),
-                topic = "0x783cca1c0412dd0d695e784568c96da2e9c22ff989357a2e8b1d9b2b4e6b7118",
-                fromBlock = BigInteger(fromBlock, 10),
-                toBlock = toBlock?.let { BigInteger(toBlock, 10) }
-            )
-        )
-
-        return logs.map {
-            poolCreatedEvent.extract(it, false, 1) as String
-        }
-    }
 
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
-        poolAddresses.await().parMapNotNull(EmptyCoroutineContext, 12) {
+        uniswapV3PoolFactoryContract.await().getPools(startBlock).parMapNotNull(EmptyCoroutineContext, 12) {
             marketFromCache(it)
         }.forEach {
             it.getOrNull()?.let {
@@ -94,6 +50,12 @@ class PancakeswapV3PoolingMarketProvider(
         }
     }
 
+    val uniswapV3PoolFactoryContract = lazyAsync {
+        UniswapV3PoolFactoryContract(
+            getBlockchainGateway(),
+            poolFactoryAddress
+        )
+    }
 
     val poolCache = Cache.Builder<String, Option<PoolingMarket>>().build()
 
