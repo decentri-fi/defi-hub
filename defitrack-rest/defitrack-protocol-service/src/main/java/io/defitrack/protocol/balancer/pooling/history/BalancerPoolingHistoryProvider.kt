@@ -1,5 +1,6 @@
 package io.defitrack.protocol.balancer.pooling.history
 
+import arrow.core.nel
 import io.defitrack.abi.TypeUtils
 import io.defitrack.event.DefiEvent
 import io.defitrack.event.DefiEventType
@@ -36,9 +37,7 @@ class BalancerPoolingHistoryProvider(
 
     fun historicEventExtractor(poolId: String, network: io.defitrack.common.network.Network): HistoricEventExtractor {
         return HistoricEventExtractor(
-            addresses = {
-                listOf("0xba12222222228d8ba445958a75a0704d566bf2c8")
-            },
+            addresses = { "0xba12222222228d8ba445958a75a0704d566bf2c8".nel() },
             optionalTopics = { user ->
                 listOf("0x$poolId", "0x${TypeEncoder.encode(Address(user))}")
             },

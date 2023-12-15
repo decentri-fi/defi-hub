@@ -23,10 +23,8 @@ import java.math.BigInteger
 
 abstract class BalancerPoolingMarketProvider(
     private val balancerService: BalancerService,
+    private val balancerPoolingHistoryProvider: BalancerPoolingHistoryProvider
 ) : PoolingMarketProvider() {
-
-    @Autowired
-    private lateinit var balancerPoolingHistoryProvider: BalancerPoolingHistoryProvider
 
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
         val poolingContracts = resolve(

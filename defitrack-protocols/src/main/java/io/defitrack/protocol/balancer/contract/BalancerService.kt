@@ -5,6 +5,8 @@ import io.defitrack.abi.TypeUtils
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.GetEventLogsCommand
+import io.defitrack.evm.contract.EventUtils.extract
+import io.defitrack.protocol.balancer.contract.BalancerPoolFactoryContract.Companion.POOL_CREATED_EVENT
 import io.github.reactivecircus.cache4k.Cache
 import org.springframework.stereotype.Component
 import org.web3j.abi.EventEncoder
@@ -110,7 +112,7 @@ class BalancerService(private val blockchainGatewayProvider: BlockchainGatewayPr
                 "0x813EE7a840CE909E7Fea2117A44a90b8063bd4fd",
                 "0xDB8d758BCb971e482B2C45f7F8a7740283A1bd3A",
 
-            ),
+                ),
             "12703126"
         )
     )
@@ -120,19 +122,16 @@ class BalancerService(private val blockchainGatewayProvider: BlockchainGatewayPr
     suspend fun getPools(network: Network): List<String> {
         return cache.get(network) {
             val config = configs[network] ?: return@get emptyList()
-            val logs = blockchainGatewayProvider.getGateway(network).getEvents(
+            val logs = blockchainGatewayProvider.getGateway(network).getEventsAsEthLog(
                 GetEventLogsCommand(
                     addresses = config.factories,
-                    topic = EventEncoder.encode(BalancerPoolFactoryContract.POOL_CREATED_EVENT),
+                    topic = EventEncoder.encode(POOL_CREATED_EVENT),
                     fromBlock = BigInteger(config.earliestBlock, 10),
                 )
             )
 
-            JsonParser.parseString(logs).asJsonObject["result"].asJsonArray.map {
-                val createdPoolAddress = it.asJsonObject["topics"].asJsonArray[1].asString
-                FunctionReturnDecoder.decodeIndexedValue(
-                    createdPoolAddress, TypeUtils.address(true)
-                ).value as String
+            logs.map {
+               POOL_CREATED_EVENT.extract<String>(it.get(), true, 0)
             }
         }
     }
