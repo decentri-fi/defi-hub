@@ -8,5 +8,5 @@ data class HistoricEventExtractor(
     val addresses: () -> List<String>,
     val topic: String,
     val optionalTopics: (user: String) -> List<String?>,
-    val toMarketEvent: suspend (logObject: EthLog.LogObject, transactionVO: BlockchainGateway.TransactionVO) -> DefiEvent?
+    val toMarketEvent: suspend (logObject: EthLog.LogObject, transactionVO: BlockchainGateway.TransactionVO) -> DefiEvent
 )

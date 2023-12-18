@@ -21,31 +21,49 @@ class BalancerVaultContract(
 
     val cache = Cache.Builder<String, List<PoolTokenResult>>().build()
 
-    suspend fun getPoolTokens(poolId: String, poolAddress: String): List<PoolTokenResult> {
-        return cache.get("$poolId-$poolAddress") {
-            val bytes = Hex.decode(poolId.removePrefix("0x"))
-            val result = read(
-                method = "getPoolTokens",
-                inputs = listOf(bytes.toBytes32()),
-                outputs = listOf(
-                    object : TypeReference<DynamicArray<Address>>() {},
-                    object : TypeReference<DynamicArray<Uint256>>() {},
-                    uint256()
+    suspend fun cachePoolTokens(poolIds: List<String>) {
+        val results = readMultiCall(
+            poolIds.map { poolId ->
+                val bytes = Hex.decode(poolId.removePrefix("0x"))
+                createFunction(
+                    method = "getPoolTokens",
+                    inputs = listOf(bytes.toBytes32()),
+                    outputs = listOf(
+                        object : TypeReference<DynamicArray<Address>>() {},
+                        object : TypeReference<DynamicArray<Uint256>>() {},
+                        uint256()
+                    )
                 )
-            )
+            }
+        )
 
-            val tokens = (result[0].value as List<Address>).map { it.value as String }
-            val balances = (result[1].value as List<Uint256>).map { it.value as BigInteger }
+        results.mapIndexed { index, result ->
+            poolIds[index] to if (result.success) {
+                val tokens = (result.data[0].value as List<Address>).map { it.value as String }
+                val balances = (result.data[1].value as List<Uint256>).map { it.value as BigInteger }
 
-            tokens.mapIndexed { index, token ->
-                PoolTokenResult(
-                    token,
-                    balances[index]
-                )
-            }.filter {
+                tokens.zip(balances).map {
+                    PoolTokenResult(
+                        it.first,
+                        it.second
+                    )
+                }
+            } else {
+                emptyList()
+            }
+        }.forEach {
+            cache.put(it.first, it.second)
+        }
+    }
+
+
+    fun getPoolTokens(poolId: String, poolAddress: String): List<PoolTokenResult> {
+        val cached = cache.get(poolId)
+        return cached?.let {
+            it.filter {
                 it.token.lowercase() != poolAddress.lowercase()
             }
-        }
+        } ?: emptyList()
     }
 
     data class PoolTokenResult(

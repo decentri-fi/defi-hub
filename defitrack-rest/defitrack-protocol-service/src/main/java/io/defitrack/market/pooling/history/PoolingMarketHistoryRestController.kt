@@ -2,6 +2,7 @@ package io.defitrack.market.pooling.history
 
 import io.defitrack.common.network.Network.Companion.fromString
 import io.defitrack.event.DefiEvent
+import io.defitrack.market.pooling.mapper.PoolingMarketVOMapper
 import io.defitrack.protocol.Protocol
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
@@ -13,7 +14,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/{protocol}/pooling")
 class PoolingMarketHistoryRestController(
-    private val poolingHistoryAggregator: PoolingHistoryAggregator
+    private val poolingHistoryAggregator: PoolingHistoryAggregator,
+    private val poolingMarketVOMapper: PoolingMarketVOMapper
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -23,7 +25,7 @@ class PoolingMarketHistoryRestController(
         @PathVariable("protocol") protocol: String,
         @PathVariable("user") user: String,
         @RequestParam("network") networkAsString: String
-    ): List<DefiEvent> {
+    ): List<PoolingDefiEventVO> {
         val network = fromString(networkAsString) ?: throw IllegalArgumentException(
             "Invalid network $networkAsString"
         )
@@ -31,6 +33,12 @@ class PoolingMarketHistoryRestController(
             "Invalid protocol $protocol"
         )
 
-        return poolingHistoryAggregator.getPoolingHistory(proto, network, user)
+
+        return poolingHistoryAggregator.getPoolingHistory(proto, network, user).map {
+            PoolingDefiEventVO(
+                poolingMarketVOMapper.map(it.poolingmarket),
+                it.event
+            )
+        }
     }
 }

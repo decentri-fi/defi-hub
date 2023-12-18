@@ -16,7 +16,7 @@ class BalancerPoolContract(
 
     val poolId: Deferred<ByteArray> = constant("getPoolId", TypeUtils.bytes32())
     val vault: Deferred<String> = constant("getVault", TypeUtils.address())
-    val actualSupply: Deferred<BigInteger> = constant("getActualSupply", TypeUtils.uint256())
+   // val actualSupply: Deferred<BigInteger> = constant("getActualSupply", TypeUtils.uint256())
 
     suspend fun getPoolId(): String {
         return Hex.encodeHexString(poolId.await())

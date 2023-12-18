@@ -6,6 +6,7 @@ import io.defitrack.event.DefiEvent
 import io.defitrack.evm.GetEventLogsCommand
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.pooling.PoolingMarketProvider
+import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -18,7 +19,7 @@ class PoolingHistoryAggregator(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    suspend fun getPoolingHistory(protocol: Protocol, network: Network, user: String): List<DefiEvent> {
+    suspend fun getPoolingHistory(protocol: Protocol, network: Network, user: String): List<PoolingMarketEvent> {
         return poolingMarketProvider
             .filter {
                 it.getNetwork() == network && it.getProtocol() == protocol
@@ -37,9 +38,13 @@ class PoolingHistoryAggregator(
                             topic = extractor.topic,
                             optionalTopics = extractor.optionalTopics(user),
                         )
-                    ).mapNotNull {
-                        val transaction = gateway.getTransaction(it.transactionHash) ?: throw IllegalArgumentException("transaction for ${it.transactionHash} on chain $network  not found")
-                        extractor.toMarketEvent(it, transaction)
+                    ).map {
+                        val transaction = gateway.getTransaction(it.transactionHash)
+                            ?: throw IllegalArgumentException("transaction for ${it.transactionHash} on chain $network  not found")
+                        PoolingMarketEvent(
+                            market,
+                            extractor.toMarketEvent(it, transaction)
+                        )
                     }
                 } catch (ex: Exception) {
                     logger.error("Error getting events for ${market.id}", ex)
@@ -48,3 +53,8 @@ class PoolingHistoryAggregator(
             }.flatten()
     }
 }
+
+data class PoolingMarketEvent(
+    val poolingmarket: PoolingMarket,
+    val event: DefiEvent
+)

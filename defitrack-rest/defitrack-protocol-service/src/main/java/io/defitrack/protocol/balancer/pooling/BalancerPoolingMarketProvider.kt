@@ -1,8 +1,7 @@
 package io.defitrack.protocol.balancer.pooling
 
-import arrow.core.None
-import arrow.core.Option
-import arrow.core.some
+import arrow.core.*
+import arrow.core.raise.catch
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.map
@@ -20,6 +19,7 @@ import io.defitrack.protocol.balancer.contract.BalancerVaultContract
 import io.defitrack.protocol.balancer.pooling.history.BalancerPoolingHistoryProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
+import java.math.BigDecimal
 import java.math.BigInteger
 
 abstract class BalancerPoolingMarketProvider(
@@ -28,36 +28,45 @@ abstract class BalancerPoolingMarketProvider(
 ) : PoolingMarketProvider() {
 
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
-        val poolingContracts = resolve(
+        val poolsPerVault = resolve(
             balancerService.getPools(getNetwork())
                 .map {
                     BalancerPoolContract(
                         getBlockchainGateway(), it
                     )
                 }
-        )
+        ).groupBy { it.vault.await() }.map {
+            BalancerVaultContract(
+                getBlockchainGateway(),
+                it.key
+            ) to it.value
+        }
 
-        poolingContracts
-            .parMapNotNull(concurrency = 8) { pool ->
-                createMarket(pool)
-            }.forEach {
-                it.onSome { send(it) }
-            }
+        poolsPerVault.forEach {
+            val vault = it.first
+            vault.cachePoolTokens(
+                it.second.map { pool ->
+                    pool.getPoolId()
+                }
+            )
+
+            it.second
+                .parMapNotNull(concurrency = 8) { pool ->
+                    createMarket(pool, vault)
+                }.forEach {
+                    it.onSome { send(it) }
+                }
+        }
     }
 
 
     private suspend fun createMarket(
         poolContract: BalancerPoolContract,
+        vault: BalancerVaultContract
     ): Option<PoolingMarket> {
         try {
 
             val poolAddress = poolContract.address
-            val pool = getToken(poolAddress)
-
-            val vault = BalancerVaultContract(
-                getBlockchainGateway(),
-                poolContract.vault.await()
-            )
 
             val poolId = poolContract.getPoolId()
             val poolTokens = vault.getPoolTokens(poolId, poolAddress)
@@ -72,9 +81,8 @@ abstract class BalancerPoolingMarketProvider(
                 getToken(it.token)
             }
 
-            val poolInfo = vault.getPoolTokens(poolId, poolAddress)
 
-            val tokens = poolInfo.map {
+            val tokens = poolTokens.map {
                 TokenWithBalance(
                     getToken(it.token), it.balance
                 )
@@ -110,9 +118,8 @@ abstract class BalancerPoolingMarketProvider(
                     it.sumOf { share -> share.reserveUSD }
                 },
                 positionFetcher = defaultPositionFetcher(poolAddress),
-                totalSupply = refreshable(poolContract.actualSupply.await().asEth(pool.decimals)) {
-                    //todo: refetch
-                    poolContract.actualSupply.await().asEth(pool.decimals)
+                totalSupply = refreshable {
+                    BigDecimal.ZERO
                 },
                 historicEventExtractor = balancerPoolingHistoryProvider.historicEventExtractor(
                     poolId, getNetwork()
