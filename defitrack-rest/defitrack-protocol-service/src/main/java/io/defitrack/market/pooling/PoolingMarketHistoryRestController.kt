@@ -1,53 +1,40 @@
 package io.defitrack.market.pooling
 
+import arrow.fx.coroutines.parMap
+import io.defitrack.common.network.Network.Companion.fromString
 import io.defitrack.event.DefiEvent
 import io.defitrack.evm.GetEventLogsCommand
 import io.defitrack.evm.contract.BlockchainGatewayProvider
+import io.defitrack.protocol.Protocol
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import org.web3j.protocol.Network
 
 @RestController
 @RequestMapping("/{protocol}/pooling")
 class PoolingMarketHistoryRestController(
-    private val poolingMarketProvider: List<PoolingMarketProvider>,
-    private val blockchainGatewayProvider: BlockchainGatewayProvider
+    private val poolingHistoryAggregator: PoolingHistoryAggregator
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @GetMapping("/{id}/history/{user}")
-    suspend fun getEnterMarketEvents(
+    @GetMapping("/history/{user}")
+    suspend fun getMarketEvents(
         @PathVariable("protocol") protocol: String,
         @PathVariable("user") user: String,
-        @PathVariable("id") poolId: String,
+        @RequestParam("network") networkAsString: String
     ): List<DefiEvent> {
+        val network = fromString(networkAsString) ?: throw IllegalArgumentException(
+            "Invalid network $networkAsString"
+        )
+        val proto = Protocol.Companion.fromString(protocol) ?: throw IllegalArgumentException(
+            "Invalid protocol $protocol"
+        )
 
-        val market = poolingMarketProvider.flatMap {
-            it.getMarkets()
-        }.find {
-            it.id == poolId
-        }
-        val extractor = market?.historicEventExtractor
-        return try {
-            if (extractor != null) {
-                blockchainGatewayProvider.getGateway(market.network).getEventsAsEthLog(
-                    GetEventLogsCommand(
-                        addresses = extractor.addresses(),
-                        topic = extractor.topic,
-                        optionalTopics = extractor.optionalTopics(user),
-                    )
-                ).mapNotNull {
-                    extractor.toMarketEvent(it)
-                }
-            } else {
-                emptyList()
-            }
-        } catch (ex: Exception) {
-            logger.error("Error getting events for $poolId", ex)
-            emptyList()
-        }
+        return poolingHistoryAggregator.getPoolingHistory(proto, network, user)
     }
 }

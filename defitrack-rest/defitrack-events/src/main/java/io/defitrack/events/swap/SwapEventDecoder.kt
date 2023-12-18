@@ -73,7 +73,7 @@ class SwapEventDecoder(
         }
 
         return DefiEvent(
-            transactionId = log.transactionHash,
+            transaction = getTransaction(network, log.transactionHash),
             network = network.toVO(),
             type = DefiEventType.SWAP,
             metadata = mapOf(

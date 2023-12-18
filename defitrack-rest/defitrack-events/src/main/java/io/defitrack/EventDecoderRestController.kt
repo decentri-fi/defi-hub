@@ -1,6 +1,7 @@
 package io.defitrack
 
 import arrow.core.Either
+import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMap
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
@@ -44,7 +45,7 @@ class EventDecoderRestController(
                     (type == null || it.eventTypes().contains(type))
                 }
                 .parMapNotNull(concurrency = 8) { decoder ->
-                    Either.catch {
+                    catch {
                         decoder.toDefiEvent(it, network)
                     }.mapLeft {
                         logger.error("Error decoding event", it)

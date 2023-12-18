@@ -8,6 +8,7 @@ import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.labeledaddresses.LabeledAddressesResource
 import io.defitrack.labeledaddresses.LabeledAddress
+import io.defitrack.network.toVO
 import io.defitrack.token.ERC20Resource
 import org.springframework.beans.factory.annotation.Autowired
 import org.web3j.abi.FunctionReturnDecoder
@@ -74,6 +75,11 @@ abstract class EventDecoder {
     fun getGateway(network: Network): BlockchainGateway {
         return blockchainGatewayProvider.getGateway(network)
     }
+
+    suspend fun getTransaction(network: Network, txId: String): BlockchainGateway.TransactionVO {
+        return getGateway(network).getTransaction(txId) ?: throw IllegalArgumentException("Invalid transaction $txId for network $network")
+    }
+
 
     suspend fun createBridgeMetadata(
         token: FungibleToken,

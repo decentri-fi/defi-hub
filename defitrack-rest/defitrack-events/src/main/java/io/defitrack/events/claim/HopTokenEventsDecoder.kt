@@ -38,7 +38,7 @@ class HopTokenEventsDecoder : EventDecoder() {
         )[0].value as BigInteger
 
         return DefiEvent(
-            transactionId = log.transactionHash,
+            transaction = getTransaction(network, log.transactionHash),
             type = DefiEventType.CLAIM,
             protocol = Protocol.HOP,
             metadata = mapOf(

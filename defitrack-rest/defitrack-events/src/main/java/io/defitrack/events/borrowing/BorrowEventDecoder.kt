@@ -36,7 +36,7 @@ class BorrowEventDecoder : EventDecoder() {
         val asset = "asset" to getToken(log.address, network)
 
         return DefiEvent(
-            transactionId = log.transactionHash,
+            transaction = getTransaction(network, log.transactionHash),
             type = DefiEventType.BORROW,
             metadata = mapOf(borrower, borrowAmount, asset),
             network = network.toVO()

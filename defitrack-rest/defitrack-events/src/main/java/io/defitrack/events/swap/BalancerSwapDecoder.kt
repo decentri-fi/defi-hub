@@ -41,7 +41,7 @@ class BalancerSwapDecoder(
         val amountOut = swapEvent.extract<BigInteger>(log, false, 1)
 
         return DefiEvent(
-            transactionId = log.transactionHash,
+            transaction = getTransaction(network, log.transactionHash),
             network = network.toVO(),
             type = DefiEventType.SWAP,
             protocol = Protocol.BALANCER,

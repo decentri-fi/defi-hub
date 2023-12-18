@@ -42,7 +42,7 @@ class BalancerPoolingHistoryProvider(
                 listOf("0x$poolId", "0x${TypeEncoder.encode(Address(user))}")
             },
             topic = "0xe5ce249087ce04f05a957192435400fd97868dba0e6a4b4c049abf8af80dae78",
-            toMarketEvent = { event ->
+            toMarketEvent = { event, transaction ->
                 val log = event.get()
 
                 val deltas = PoolBalanceChangedEvent.getNonIndexedParameter<List<Int256>>(
@@ -64,7 +64,7 @@ class BalancerPoolingHistoryProvider(
                 }
 
                 DefiEvent(
-                    transactionId = log.transactionHash,
+                    transaction = transaction,
                     type = type,
                     protocol = Protocol.BALANCER,
                     network = network.toVO(),

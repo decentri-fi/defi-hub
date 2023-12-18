@@ -24,11 +24,11 @@ class NativeTransactionDecoder(
         return provider.getTransaction(txHash)?.takeIf { it.value > BigInteger.ZERO }?.run {
 
             val from = labeledAddressesResource.getLabel(from)
-            val to =  labeledAddressesResource.getLabel(to ?: "")
+            val to = labeledAddressesResource.getLabel(to ?: "")
             val asset = erC20Resource.getTokenInformation(network, "0x0")
 
             DefiEvent(
-                transactionId = txHash,
+                transaction = provider.getTransaction(txHash)!!,
                 type = DefiEventType.TRANSFER,
                 metadata = mapOf(
                     "from" to from,

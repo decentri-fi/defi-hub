@@ -19,7 +19,7 @@ class LineaBridgeEventDecoder : EventDecoder() {
 
     override suspend fun toDefiEvent(log: Log, network: Network): DefiEvent {
         return DefiEvent(
-            transactionId = log.transactionHash,
+            transaction = getTransaction(network, log.transactionHash),
             network = network.toVO(),
             metadata = emptyMap(),
             type = DefiEventType.BRIDGE

@@ -60,7 +60,7 @@ class HopStakingDecoder(
         val token = "token" to getToken(contract.stakingTokenAddress(), network)
 
         return DefiEvent(
-            transactionId = log.transactionHash,
+            transaction = getTransaction(network, log.transactionHash),
             network = network.toVO(),
             protocol = Protocol.HOP,
             type = DefiEventType.STAKE,

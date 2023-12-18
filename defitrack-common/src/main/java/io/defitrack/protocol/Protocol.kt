@@ -710,5 +710,11 @@ enum class Protocol(
                 it.company == company
             }
         }
+
+        fun fromString(name: String): Protocol? {
+            return Protocol.entries.find {
+                it.slug == name || it.name == name
+            }
+        }
     }
 }

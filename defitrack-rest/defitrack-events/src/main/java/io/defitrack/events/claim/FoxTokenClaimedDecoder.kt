@@ -39,7 +39,7 @@ class FoxTokenClaimedDecoder : EventDecoder() {
         val asset = "asset" to getToken("0xc770eefad204b5180df6a14ee197d99d808ee52d", network)
 
         return DefiEvent(
-            transactionId = log.transactionHash,
+            transaction = getTransaction(network, log.transactionHash),
             type = DefiEventType.CLAIM,
             metadata = mapOf(user, asset, amount),
             network = network.toVO()

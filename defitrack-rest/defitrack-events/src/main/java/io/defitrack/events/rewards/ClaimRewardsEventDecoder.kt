@@ -48,7 +48,7 @@ class ClaimRewardsEventDecoder : EventDecoder() {
         val token = "asset" to rewardToken
 
         return DefiEvent(
-            transactionId = log.transactionHash,
+            transaction = getTransaction(network, log.transactionHash),
             network = network.toVO(),
             protocol = Protocol.VELODROME_V2,
             type = DefiEventType.GET_REWARD,

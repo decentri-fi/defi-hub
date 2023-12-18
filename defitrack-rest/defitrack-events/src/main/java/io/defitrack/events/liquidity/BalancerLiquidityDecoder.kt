@@ -55,7 +55,7 @@ class BalancerLiquidityDecoder : EventDecoder() {
         }
 
         return DefiEvent(
-            transactionId = log.transactionHash,
+            transaction = getTransaction(network, log.transactionHash),
             type = type,
             protocol = Protocol.BALANCER,
             network = network.toVO(),

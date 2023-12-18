@@ -32,7 +32,6 @@ data class PoolingMarket(
     val price: Refreshable<BigDecimal>,
     val metadata: Map<String, Any>,
     val internalMetadata: Map<String, Any>,
-    val enterMarketEvent: Event? = null,
     override val deprecated: Boolean,
     val historicEventExtractor: HistoricEventExtractor? = null,
 ) : DefiMarket(id, "pooling", protocol, network, deprecated) {
