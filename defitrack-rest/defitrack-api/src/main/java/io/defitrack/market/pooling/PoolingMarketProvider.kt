@@ -25,7 +25,7 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
         address: String,
         decimals: Int = 18,
         symbol: String,
-        tokens: List<FungibleToken>,
+        tokens: List<FungibleToken>? = null,
         totalSupply: Refreshable<BigDecimal>,
         positionFetcher: PositionFetcher? = null,
         investmentPreparer: InvestmentPreparer? = null,
@@ -49,7 +49,9 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
             address = address,
             decimals = decimals,
             symbol = symbol,
-            tokens = tokens,
+            tokens = tokens ?: breakdown?.get()?.map {
+                it.token
+            } ?: emptyList(),
             positionFetcher = positionFetcher,
             investmentPreparer = investmentPreparer,
             breakdown = breakdown,

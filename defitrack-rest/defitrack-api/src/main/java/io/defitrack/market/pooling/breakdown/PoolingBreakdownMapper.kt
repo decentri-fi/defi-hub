@@ -47,7 +47,7 @@ class PoolingBreakdownMapper {
             PoolingPositionTokenshareVO(
                 token = it.token,
                 reserve = it.reserve.toBigDecimal().times(ratio).toBigInteger(),
-                reserveUSD = it.reserveUSD.times(ratio)
+                reserveUSD = (it.reserveUSD ?: BigDecimal.ZERO).times(ratio)
             )
         }
     }

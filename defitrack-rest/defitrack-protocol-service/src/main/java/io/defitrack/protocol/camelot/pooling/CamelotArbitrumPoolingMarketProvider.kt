@@ -43,11 +43,7 @@ class CamelotArbitrumPoolingMarketProvider : PoolingMarketProvider() {
                                 address = pool,
                                 name = poolingToken.name,
                                 symbol = poolingToken.symbol,
-                                marketSize = breakdown.map {
-                                    it.sumOf { it.reserveUSD }
-                                },
                                 breakdown = breakdown,
-                                tokens = underlyingTokens,
                                 positionFetcher = defaultPositionFetcher(poolingToken.address),
                                 totalSupply = refreshable(poolingToken.totalDecimalSupply()) {
                                     getToken(pool).totalDecimalSupply()

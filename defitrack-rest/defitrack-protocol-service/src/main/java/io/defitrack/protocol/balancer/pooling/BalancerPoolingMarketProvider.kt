@@ -69,26 +69,16 @@ abstract class BalancerPoolingMarketProvider(
             val poolAddress = poolContract.address
 
             val poolId = poolContract.getPoolId()
-            val poolTokens = vault.getPoolTokens(poolId, poolAddress)
 
-            if (poolTokens.all {
-                    it.balance == BigInteger.ZERO
-                }) {
-                return None
-            }
-
-            val underlyingTokens = poolTokens.map {
-                getToken(it.token)
-            }
-
-
-            val tokens = poolTokens.map {
-                TokenWithBalance(
-                    getToken(it.token), it.balance
-                )
-            }
 
             val breakdown = refreshable {
+                val poolTokens = vault.getPoolTokens(poolId, poolAddress)
+
+                val tokens = poolTokens.map {
+                    TokenWithBalance(
+                        getToken(it.token), it.balance
+                    )
+                }
                 tokens.map {
                     PoolingMarketTokenShare(
                         it.token,
@@ -104,22 +94,22 @@ abstract class BalancerPoolingMarketProvider(
                 }
             }
 
+            val underlying = breakdown.get().map {
+                it.token
+            }
+
             return create(
                 identifier = poolId,
                 address = poolAddress,
                 name = "${
-                    underlyingTokens.joinToString("/", transform = FungibleToken::symbol)
+                    underlying.joinToString("/", transform = FungibleToken::symbol)
                 } Pool",
-                tokens = underlyingTokens,
-                symbol = underlyingTokens.joinToString("/", transform = FungibleToken::symbol),
+                symbol = underlying.joinToString("/", transform = FungibleToken::symbol),
                 metadata = mapOf("poolId" to poolId),
                 breakdown = breakdown,
-                marketSize = breakdown.map {
-                    it.sumOf { share -> share.reserveUSD }
-                },
                 positionFetcher = defaultPositionFetcher(poolAddress),
                 totalSupply = refreshable {
-                    BigDecimal.ZERO
+                    getToken(poolContract.address).totalDecimalSupply()
                 },
                 historicEventExtractor = balancerPoolingHistoryProvider.historicEventExtractor(
                     poolId, getNetwork()

@@ -11,6 +11,7 @@ import io.defitrack.common.utils.refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
+import io.defitrack.market.pooling.domain.marketSize
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.uniswap.v3.prefetch.UniswapV3Prefetcher
 import io.defitrack.uniswap.v3.UniswapV3PoolContract
@@ -83,7 +84,7 @@ abstract class UniswapV3PoolingMarketProvider(
             }
 
             val marketSize = breakdown.map {
-                it.sumOf(PoolingMarketTokenShare::reserveUSD)
+                it.marketSize()
             }
 
             if (marketSize.get() != BigDecimal.ZERO && marketSize.get() > BigDecimal.valueOf(10000)) {

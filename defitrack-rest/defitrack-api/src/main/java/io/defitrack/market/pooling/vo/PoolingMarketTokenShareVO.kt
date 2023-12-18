@@ -7,5 +7,5 @@ import java.math.BigInteger
 class PoolingMarketTokenShareVO(
     val token: FungibleToken,
     val reserve: BigInteger,
-    val reserveUSD: BigDecimal
+    val reserveUSD: BigDecimal?
 )

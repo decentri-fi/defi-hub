@@ -42,18 +42,13 @@ class KyberElasticPoolingMarketProvider : PoolingMarketProvider() {
         }
         return create(
             identifier = poolInfo.address,
-            marketSize = breakdown.map {
-                it.sumOf { it.reserveUSD }
-            },
             address = poolInfo.address,
             name = poolingToken.name,
             breakdown = breakdown,
             symbol = poolingToken.symbol,
             tokens = poolingToken.underlyingTokens,
-            totalSupply = refreshable(poolingToken.totalDecimalSupply())
-            {
-                val token = getToken(poolInfo.address)
-                token.totalDecimalSupply()
+            totalSupply = refreshable {
+                getToken(poolInfo.address).totalDecimalSupply()
             },
         )
     }

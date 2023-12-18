@@ -10,6 +10,7 @@ import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
+import io.defitrack.market.pooling.domain.marketSize
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.uniswap.v2.pooling.prefetch.UniswapV2Prefetcher
@@ -69,7 +70,7 @@ class UniswapV2EthereumPoolingMarketProvider(
 
 
                         val refreshableMarketSize = breakdown.map {
-                            it.sumOf(PoolingMarketTokenShare::reserveUSD)
+                            it.marketSize()
                         }
 
                         val refreshableTotalSupply = refreshable(prefetch.totalSupply) {

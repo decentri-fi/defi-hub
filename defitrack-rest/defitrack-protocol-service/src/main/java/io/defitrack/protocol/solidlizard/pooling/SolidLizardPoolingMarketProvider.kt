@@ -33,7 +33,6 @@ class SolidLizardPoolingMarketProvider : PoolingMarketProvider() {
                 create(
                     name = token.name,
                     identifier = token.address,
-                    marketSize = breakdown.map { it.sumOf(PoolingMarketTokenShare::reserveUSD) },
                     positionFetcher = defaultPositionFetcher(token.address),
                     tokens = token.underlyingTokens,
                     symbol = token.symbol,

@@ -7,9 +7,11 @@ import java.math.BigInteger
 data class PoolingMarketTokenShare(
     val token: FungibleToken,
     val reserve: BigInteger,
-    val reserveUSD: BigDecimal
+    val reserveUSD: BigDecimal?
 )
 
 fun List<PoolingMarketTokenShare>.marketSize(): BigDecimal {
-    return this.sumOf { it.reserveUSD }
+    return this.sumOf {
+        it.reserveUSD ?: BigDecimal.ZERO
+    }
 }

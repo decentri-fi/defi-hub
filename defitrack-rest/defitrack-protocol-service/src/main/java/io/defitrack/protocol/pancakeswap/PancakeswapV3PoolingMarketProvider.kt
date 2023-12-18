@@ -93,10 +93,6 @@ class PancakeswapV3PoolingMarketProvider(
                 address = pool.address,
                 symbol = "${token0.symbol}-${token1.symbol}",
                 breakdown = breakdown,
-                tokens = listOf(token0, token1),
-                marketSize = breakdown.map {
-                    it.sumOf(PoolingMarketTokenShare::reserveUSD)
-                },
                 totalSupply = refreshable(totalSupply) {
                     pool.refreshLiquidity().asEth()
                 },

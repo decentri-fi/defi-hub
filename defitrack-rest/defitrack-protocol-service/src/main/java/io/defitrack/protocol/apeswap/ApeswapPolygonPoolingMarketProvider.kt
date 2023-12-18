@@ -28,11 +28,11 @@ class ApeswapPolygonPoolingMarketProvider(
     }
 
     val pools = lazyAsync {
-            val pairFactoryContract = PairFactoryContract(
-                blockchainGateway = getBlockchainGateway(),
-                contractAddress = apeswapPolygonService.provideFactory()
-            )
-            pairFactoryContract.allPairs()
+        val pairFactoryContract = PairFactoryContract(
+            blockchainGateway = getBlockchainGateway(),
+            contractAddress = apeswapPolygonService.provideFactory()
+        )
+        pairFactoryContract.allPairs()
     }
 
 
@@ -47,17 +47,16 @@ class ApeswapPolygonPoolingMarketProvider(
                             val poolingToken = getToken(pool)
                             val underlyingTokens = poolingToken.underlyingTokens
 
-                            val breakdown =
+                            val breakdown = refreshable {
                                 fiftyFiftyBreakdown(underlyingTokens[0], underlyingTokens[1], poolingToken.address)
+                            }
+
                             create(
                                 identifier = pool,
                                 address = pool,
                                 name = poolingToken.name,
                                 symbol = poolingToken.symbol,
-                                marketSize = refreshable(breakdown.sumOf { it.reserveUSD }) {
-                                   breakdown.sumOf { it.reserveUSD }
-                                },
-                                breakdown = breakdown.toRefreshable(),
+                                breakdown = breakdown,
                                 tokens = underlyingTokens,
                                 positionFetcher = defaultPositionFetcher(poolingToken.address),
                                 totalSupply = refreshable {

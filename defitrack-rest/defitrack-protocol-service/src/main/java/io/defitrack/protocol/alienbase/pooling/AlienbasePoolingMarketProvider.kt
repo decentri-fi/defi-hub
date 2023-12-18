@@ -32,20 +32,17 @@ class AlienbasePoolingMarketProvider : PoolingMarketProvider() {
                     val tokens = poolingToken.underlyingTokens
 
                     try {
-                        val breakdown = fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address)
+                        val breakdown = refreshable {
+                            fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address)
+                        }
+
                         send(
                             create(
                                 identifier = it,
-                                marketSize = refreshable(breakdown.sumOf { it.reserveUSD }) {
-                                    getMarketSize(
-                                        poolingToken.underlyingTokens,
-                                        it
-                                    )
-                                },
                                 positionFetcher = defaultPositionFetcher(poolingToken.address),
                                 address = it,
                                 name = poolingToken.name,
-                                breakdown = breakdown.toRefreshable(),
+                                breakdown = breakdown,
                                 symbol = poolingToken.symbol,
                                 tokens = poolingToken.underlyingTokens,
                                 totalSupply = refreshable(poolingToken.totalSupply.asEth(poolingToken.decimals)) {

@@ -54,13 +54,9 @@ class QuickswapPoolingMarketProvider(
             identifier = it.id,
             name = token.name,
             symbol = token.symbol,
-            tokens = listOf(token0, token1),
             breakdown = breakdown,
-            marketSize = breakdown.map {
-                it.sumOf(PoolingMarketTokenShare::reserveUSD)
-            },
             positionFetcher = defaultPositionFetcher(token.address),
-            totalSupply = refreshable{
+            totalSupply = refreshable {
                 getToken(it.id).totalSupply.asEth(token.decimals)
             }
         )
