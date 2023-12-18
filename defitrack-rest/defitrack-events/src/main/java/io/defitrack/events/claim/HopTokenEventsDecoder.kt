@@ -37,8 +37,8 @@ class HopTokenEventsDecoder : EventDecoder() {
             claimEvent.nonIndexedParameters
         )[0].value as BigInteger
 
-        return DefiEvent(
-            transaction = getTransaction(network, log.transactionHash),
+        return create(
+            log = log,
             type = DefiEventType.CLAIM,
             protocol = Protocol.HOP,
             metadata = mapOf(
@@ -46,7 +46,7 @@ class HopTokenEventsDecoder : EventDecoder() {
                 "amount" to amount,
                 "asset" to getToken("0xc5102fe9359fd9a28f877a67e36b0f050d81a3cc", Network.ETHEREUM)
             ),
-            network = network.toVO()
+            network = network
         )
     }
 

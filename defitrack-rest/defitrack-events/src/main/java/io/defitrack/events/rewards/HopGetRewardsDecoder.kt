@@ -42,9 +42,9 @@ class HopGetRewardsDecoder(
         val amount = "amount" to event.extract<BigInteger>(log, false, 0)
         val token = "asset" to getToken("0xc5102fe9359fd9a28f877a67e36b0f050d81a3cc", network)
 
-        return DefiEvent(
-            transaction = getTransaction(network, log.transactionHash),
-            network = network.toVO(),
+        return create(
+            log = log,
+            network = network,
             protocol = Protocol.HOP,
             type = DefiEventType.GET_REWARD,
             metadata = mapOf(

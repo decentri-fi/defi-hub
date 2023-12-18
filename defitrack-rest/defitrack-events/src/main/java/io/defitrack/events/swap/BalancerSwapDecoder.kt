@@ -36,13 +36,13 @@ class BalancerSwapDecoder(
 
     override suspend fun toDefiEvent(log: Log, network: Network): DefiEvent {
         val tokenIn = swapEvent.extract<String>(log, true, 1)
-        val tokenOut = swapEvent.extract<String>(log, true,2)
+        val tokenOut = swapEvent.extract<String>(log, true, 2)
         val amountIn = swapEvent.extract<BigInteger>(log, false, 0)
         val amountOut = swapEvent.extract<BigInteger>(log, false, 1)
 
-        return DefiEvent(
-            transaction = getTransaction(network, log.transactionHash),
-            network = network.toVO(),
+        return create(
+            log = log,
+            network = network,
             type = DefiEventType.SWAP,
             protocol = Protocol.BALANCER,
             metadata = mapOf(

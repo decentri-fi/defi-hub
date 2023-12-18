@@ -1,12 +1,12 @@
-package io.defitrack.market.pooling
+package io.defitrack.market.pooling.history
 
 import arrow.fx.coroutines.parMap
 import io.defitrack.common.network.Network
 import io.defitrack.event.DefiEvent
 import io.defitrack.evm.GetEventLogsCommand
 import io.defitrack.evm.contract.BlockchainGatewayProvider
+import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.protocol.Protocol
-import net.bytebuddy.asm.Advice.OffsetMapping.Factory.Illegal
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 

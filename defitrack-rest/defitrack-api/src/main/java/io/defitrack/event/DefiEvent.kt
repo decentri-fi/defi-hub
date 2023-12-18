@@ -5,6 +5,7 @@ import io.defitrack.network.NetworkVO
 import io.defitrack.protocol.Protocol
 
 class DefiEvent(
+    val id: String,
     val transaction: BlockchainGateway.TransactionVO,
     val network: NetworkVO,
     val type: DefiEventType,

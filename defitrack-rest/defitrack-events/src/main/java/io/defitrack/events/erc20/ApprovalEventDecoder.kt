@@ -31,11 +31,11 @@ class ApprovalEventDecoder : EventDecoder() {
 
         val asset = "asset" to getToken(log.address, network)
 
-        return DefiEvent(
-            transaction = getTransaction(network, log.transactionHash),
+        return create(
+            log = log,
             type = DefiEventType.APPROVAL,
             metadata = mapOf(owner, spender, asset, amount),
-            network = network.toVO()
+            network = network
         )
     }
 

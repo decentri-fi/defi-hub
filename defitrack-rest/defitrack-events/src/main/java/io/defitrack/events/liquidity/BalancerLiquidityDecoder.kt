@@ -54,18 +54,12 @@ class BalancerLiquidityDecoder : EventDecoder() {
             DefiEventType.REMOVE_LIQUIDITY
         }
 
-        return DefiEvent(
-            transaction = getTransaction(network, log.transactionHash),
+        return create(
+            log = log,
             type = type,
             protocol = Protocol.BALANCER,
-            network = network.toVO(),
+            network = network,
             metadata = mapOf(
-                /*           "market" to mapOf(
-                               "id" to (allMarkets.find {
-                                   it.metadata["poolId"] == poolId
-                               }?.id ?: "unknown"),
-                               "type" to "pooling"
-                           ), */
                 "assets" to tokens.mapIndexed { index, token ->
                     if (deltas[index] == BigInteger.ZERO) {
                         null

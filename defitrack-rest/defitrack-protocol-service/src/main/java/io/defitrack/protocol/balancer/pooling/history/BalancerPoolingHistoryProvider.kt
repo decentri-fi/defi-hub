@@ -2,11 +2,11 @@ package io.defitrack.protocol.balancer.pooling.history
 
 import arrow.core.nel
 import io.defitrack.abi.TypeUtils
-import io.defitrack.event.DefiEvent
+import io.defitrack.common.network.Network
 import io.defitrack.event.DefiEventType
 import io.defitrack.event.EventDecoder.Companion.getNonIndexedParameter
+import io.defitrack.market.pooling.PoolingHistoryProvider
 import io.defitrack.market.pooling.history.HistoricEventExtractor
-import io.defitrack.network.toVO
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Component
@@ -22,7 +22,7 @@ import java.math.BigInteger
 @Component
 class BalancerPoolingHistoryProvider(
     private val erC20Resource: ERC20Resource,
-) {
+) : PoolingHistoryProvider() {
 
     val PoolBalanceChangedEvent = Event(
         "PoolBalanceChanged",
@@ -35,7 +35,7 @@ class BalancerPoolingHistoryProvider(
         )
     )
 
-    fun historicEventExtractor(poolId: String, network: io.defitrack.common.network.Network): HistoricEventExtractor {
+    fun historicEventExtractor(poolId: String, network: Network): HistoricEventExtractor {
         return HistoricEventExtractor(
             addresses = { "0xba12222222228d8ba445958a75a0704d566bf2c8".nel() },
             optionalTopics = { user ->
@@ -63,11 +63,11 @@ class BalancerPoolingHistoryProvider(
                     DefiEventType.REMOVE_LIQUIDITY
                 }
 
-                DefiEvent(
-                    transaction = transaction,
+                event(
+                    log = log,
                     type = type,
                     protocol = Protocol.BALANCER,
-                    network = network.toVO(),
+                    network = network,
                     metadata = mapOf(
                         "assets" to tokens.mapIndexed { index, token ->
                             if (deltas[index] == BigInteger.ZERO) {

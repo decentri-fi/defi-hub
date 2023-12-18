@@ -8,10 +8,13 @@ import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.labeledaddresses.LabeledAddressesResource
 import io.defitrack.labeledaddresses.LabeledAddress
+import io.defitrack.network.NetworkVO
 import io.defitrack.network.toVO
+import io.defitrack.protocol.Protocol
 import io.defitrack.token.ERC20Resource
 import org.springframework.beans.factory.annotation.Autowired
 import org.web3j.abi.FunctionReturnDecoder
+import org.web3j.protocol.core.methods.response.EthLog
 import org.web3j.protocol.core.methods.response.Log
 
 abstract class EventDecoder {
@@ -77,21 +80,29 @@ abstract class EventDecoder {
     }
 
     suspend fun getTransaction(network: Network, txId: String): BlockchainGateway.TransactionVO {
-        return getGateway(network).getTransaction(txId) ?: throw IllegalArgumentException("Invalid transaction $txId for network $network")
+        return getGateway(network).getTransaction(txId)
+            ?: throw IllegalArgumentException("Invalid transaction $txId for network $network")
     }
 
 
-    suspend fun createBridgeMetadata(
-        token: FungibleToken,
-        from: String,
-        to: String,
-        amount: String
-    ): Map<String, Any> {
-        return mapOf(
-            "assset" to token,
-            "from" to getLabeledAddress(from),
-            "to" to getLabeledAddress(to),
-            "amount" to amount
+    suspend fun create(
+        log: Log,
+        network: Network,
+        type: DefiEventType,
+        protocol: Protocol? = null,
+        metadata: Map<String, Any> = emptyMap()
+    ): DefiEvent {
+
+        val transaction = getTransaction(network, log.transactionHash)
+        val id = network.slug + "_" + transaction.hash + "-" + log.logIndex
+
+        return DefiEvent(
+            id = id,
+            protocol = protocol,
+            transaction = getTransaction(network, log.transactionHash),
+            type = type,
+            metadata = metadata,
+            network = network.toVO()
         )
     }
 }

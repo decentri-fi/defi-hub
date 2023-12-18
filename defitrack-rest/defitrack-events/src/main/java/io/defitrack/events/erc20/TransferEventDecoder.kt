@@ -30,26 +30,26 @@ class TransferEventDecoder : EventDecoder() {
         val asset = "asset" to getToken(log.address, network)
 
         if (to.second.address == "0x0000000000000000000000000000000000000000") {
-            return DefiEvent(
-                transaction = getTransaction(network, log.transactionHash),
+            create(
+                log = log,
                 type = DefiEventType.BURN,
                 metadata = mapOf(from, asset, amount),
-                network = network.toVO()
+                network = network
             )
         } else if (from.second.address == "0x0000000000000000000000000000000000000000") {
-            return DefiEvent(
-                transaction = getTransaction(network, log.transactionHash),
+            return create(
+                log = log,
                 type = DefiEventType.MINT,
                 metadata = mapOf(from, asset, amount),
-                network = network.toVO()
+                network = network
             )
         }
 
-        return DefiEvent(
-            transaction = getTransaction(network, log.transactionHash),
+        return create(
+            log = log,
             type = DefiEventType.TRANSFER,
             metadata = mapOf(from, to, asset, amount),
-            network = network.toVO()
+            network = network
         )
     }
 
