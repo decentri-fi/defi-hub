@@ -35,7 +35,7 @@ class PoolingHistoryAggregator(
             .filter {
                 it.historicEventExtractor != null
             }.parMap(concurrency = 32) { market ->
-                logger.info("getting events for $market")
+                logger.debug("getting events for {}", market)
                 val extractor = market.historicEventExtractor!!
                 try {
                     gateway.getEventsAsEthLog(
