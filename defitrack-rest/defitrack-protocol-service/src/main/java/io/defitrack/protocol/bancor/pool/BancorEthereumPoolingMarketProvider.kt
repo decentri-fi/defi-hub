@@ -2,8 +2,7 @@ package io.defitrack.protocol.bancor.pool
 
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.AsyncUtils.lazyAsync
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
@@ -11,11 +10,7 @@ import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.bancor.BancorEthereumProvider
 import io.defitrack.protocol.bancor.contract.BancorNetworkContract
-import io.defitrack.protocol.bancor.contract.BancorPoolCollectionContract
 import io.defitrack.protocol.bancor.contract.PoolTokenContract
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import org.springframework.stereotype.Component

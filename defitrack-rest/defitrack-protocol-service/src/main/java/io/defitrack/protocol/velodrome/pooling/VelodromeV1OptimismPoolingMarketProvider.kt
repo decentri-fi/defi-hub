@@ -4,10 +4,13 @@ import arrow.core.Either
 import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMap
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.map
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
+import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
+import io.defitrack.market.pooling.domain.marketSize
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.velodrome.VelodromeOptimismService
@@ -47,19 +50,20 @@ class VelodromeV1OptimismPoolingMarketProvider(
             val poolingToken = getToken(it)
             val tokens = poolingToken.underlyingTokens
 
-            val breakdown = fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address)
+            val breakdown = refreshable {
+                fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address)
+            }
+
             create(
                 identifier = "v1-$it",
-                marketSize = refreshable(breakdown.sumOf { it.reserveUSD }) {
-                    fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address).sumOf { it.reserveUSD }
-                },
+                marketSize = breakdown.map(List<PoolingMarketTokenShare>::marketSize),
                 positionFetcher = defaultPositionFetcher(poolingToken.address),
                 address = it,
                 name = poolingToken.name,
                 breakdown = breakdown,
                 symbol = poolingToken.symbol,
                 tokens = poolingToken.underlyingTokens,
-                totalSupply = refreshable(poolingToken.totalDecimalSupply()) {
+                totalSupply = refreshable {
                     getToken(it).totalDecimalSupply()
                 },
                 deprecated = true

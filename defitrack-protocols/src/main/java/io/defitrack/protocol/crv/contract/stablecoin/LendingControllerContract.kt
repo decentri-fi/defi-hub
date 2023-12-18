@@ -7,9 +7,12 @@ import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.position.Position
 import org.web3j.abi.TypeReference
+import org.web3j.abi.datatypes.Type
 import org.web3j.abi.datatypes.generated.StaticArray4
 import org.web3j.abi.datatypes.generated.Uint256
+import java.math.BigInteger
 
 class LendingControllerContract(
     blockchainGateway: BlockchainGateway, address: String
@@ -35,5 +38,17 @@ class LendingControllerContract(
                 object : TypeReference<StaticArray4<Uint256>>(false) {}
             )
         )
+    }
+
+    fun positionFromUserState(retVal: List<Type<*>>): Position {
+        val bal = (retVal.first().value as List<Uint256>).first().value as BigInteger
+        return if (bal > BigInteger.ZERO) {
+            Position(
+                bal,
+                bal
+            )
+        } else {
+            Position.ZERO
+        }
     }
 }

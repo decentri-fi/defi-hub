@@ -27,7 +27,7 @@ data class PoolingMarket(
     val positionFetcher: PositionFetcher? = null,
     val investmentPreparer: InvestmentPreparer? = null,
     val exitPositionPreparer: ExitPositionCommand? = null,
-    val breakdown: List<PoolingMarketTokenShare>? = null,
+    val breakdown: Refreshable<List<PoolingMarketTokenShare>>? = null,
     val erc20Compatible: Boolean = true,
     val price: Refreshable<BigDecimal>,
     val metadata: Map<String, Any>,
@@ -37,6 +37,7 @@ data class PoolingMarket(
     val historicEventExtractor: HistoricEventExtractor? = null,
 ) : DefiMarket(id, "pooling", protocol, network, deprecated) {
     init {
+        addRefetchableValue(breakdown)
         addRefetchableValue(totalSupply)
         addRefetchableValue(marketSize)
         addRefetchableValue(price)

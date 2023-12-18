@@ -1,17 +1,21 @@
 package io.defitrack.protocol.lqty.lending
 
+import arrow.core.Either
+import arrow.core.Option
+import arrow.core.getOrElse
 import arrow.core.nel
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
+import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
-import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.liquity.TroveManagerContract
 import org.springframework.stereotype.Component
+import java.math.BigDecimal
 
 @Component
 @ConditionalOnCompany(Company.LIQUITY)
@@ -32,7 +36,11 @@ class LiquityLendingMarketProvider(
             poolType = "liquity",
             marketToken = null,
             totalSupply = refreshable {
-                troveManager.totalCollateralSnapshot.await().asEth()
+                Either.catch {
+                    troveManager.totalCollateralSnapshot.await().asEth()
+                }.mapLeft {
+                    logger.error("Unable to get total collateral snapshot: {}", it.message)
+                }.getOrElse { BigDecimal.ZERO }
             },
             positionFetcher = PositionFetcher(
                 troveManager::getTroveColl,

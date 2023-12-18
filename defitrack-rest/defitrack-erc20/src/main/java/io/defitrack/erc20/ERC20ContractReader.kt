@@ -4,6 +4,7 @@ import arrow.core.Either.Companion.catch
 import arrow.core.Option
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.refreshable
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.contract.MultiCallResult
@@ -33,7 +34,7 @@ class ERC20ContractReader(
                 decimals = getValue<BigInteger>(result.decimals, contract::readDecimals).toInt(),
                 network = network,
                 address = correctAddress.lowercase(),
-                totalSupply = Refreshable.refreshable(
+                totalSupply = refreshable(
                     getValue<BigInteger>(result.totalSupply) {
                         contract.readTotalSupply()
                     }

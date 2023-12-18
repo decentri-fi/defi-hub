@@ -3,7 +3,7 @@ package io.defitrack.protocol.curve.lending
 import arrow.core.Either
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
@@ -61,20 +61,11 @@ class CurveStablecoinLendingMarketProvider : LendingMarketProvider() {
             poolType = "crv",
             marketToken = null,
             token = collateral,
-            totalSupply = refreshable { BigDecimal.ZERO },
+            totalSupply = refreshable(BigDecimal.ZERO),
             positionFetcher = PositionFetcher(
-                controller::userState
-            ) {
-                val bal = (it.first().value as List<Uint256>).first().value as BigInteger
-                if (bal > BigInteger.ZERO) {
-                    Position(
-                        bal,
-                        bal
-                    )
-                } else {
-                    Position.ZERO
-                }
-            }
+                controller::userState,
+                controller::positionFromUserState
+            )
         )
     }
 

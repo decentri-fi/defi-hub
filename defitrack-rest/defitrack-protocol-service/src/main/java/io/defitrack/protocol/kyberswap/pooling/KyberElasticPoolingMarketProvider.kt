@@ -3,7 +3,8 @@ package io.defitrack.protocol.kyberswap.pooling
 import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.map
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
@@ -36,15 +37,13 @@ class KyberElasticPoolingMarketProvider : PoolingMarketProvider() {
         val poolingToken = getToken(poolInfo.address)
         val tokens = poolingToken.underlyingTokens
 
-        val breakdown = fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address)
+        val breakdown = refreshable {
+            fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address)
+        }
         return create(
             identifier = poolInfo.address,
-            marketSize = refreshable(breakdown.sumOf
-            { it.reserveUSD })
-            {
-                fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address).sumOf {
-                    it.reserveUSD
-                }
+            marketSize = breakdown.map {
+                it.sumOf { it.reserveUSD }
             },
             address = poolInfo.address,
             name = poolingToken.name,

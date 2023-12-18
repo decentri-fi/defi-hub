@@ -3,7 +3,7 @@ package io.defitrack.protocol.dinoswap.staking
 import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMap
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -61,11 +61,7 @@ class DinoswapFarmingMarketProvider(
                 functionCreator = chef.dinoUserInfoFn(poolId)
             ),
             marketSize = refreshable {
-                marketSizeService.getMarketSize(
-                    stakedtoken,
-                    chef.address,
-                    getNetwork()
-                ).usdAmount
+                getMarketSize(stakedtoken, chef.address)
             },
             deprecated = true
         )

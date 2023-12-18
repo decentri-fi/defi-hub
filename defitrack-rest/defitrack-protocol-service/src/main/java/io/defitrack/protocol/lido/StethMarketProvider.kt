@@ -2,11 +2,11 @@ package io.defitrack.protocol.lido
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
+import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.Company
@@ -42,7 +42,7 @@ class StethMarketProvider(
                 positionFetcher = PositionFetcher(
                     functionCreator = steth::sharesOfFunction,
                 ),
-                marketSize = Refreshable.refreshable {
+                marketSize = refreshable {
                     priceResource.calculatePrice(
                         PriceRequest(
                             "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",

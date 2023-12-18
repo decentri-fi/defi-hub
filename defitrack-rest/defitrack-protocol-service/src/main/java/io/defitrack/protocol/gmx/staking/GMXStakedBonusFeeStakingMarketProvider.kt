@@ -3,7 +3,7 @@ package io.defitrack.protocol.gmx.staking
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -75,7 +75,7 @@ class GMXStakedBonusFeeStakingMarketProvider : FarmingMarketProvider() {
                 identifier = "staked-gmx-$stakedBonusandFeeGMX",
                 stakedToken = getToken(gmx),
                 rewardToken = rewardToken,
-                marketSize = refreshable { BigDecimal.ZERO },
+                marketSize = refreshable(BigDecimal.ZERO),
                 positionFetcher = PositionFetcher(contract::balanceOfFunction),
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(

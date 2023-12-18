@@ -3,16 +3,11 @@ package io.defitrack.protocol.uniswap.v3.pooling
 import arrow.core.Either
 import arrow.core.Either.Companion.catch
 import arrow.core.Option
-import arrow.core.left
-import arrow.core.right
 import arrow.fx.coroutines.parMapNotNull
-import io.defitrack.abi.TypeUtils
-import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
-import io.defitrack.event.EventDecoder.Companion.extract
-import io.defitrack.evm.GetEventLogsCommand
+import io.defitrack.common.utils.map
+import io.defitrack.common.utils.refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
@@ -21,13 +16,9 @@ import io.defitrack.protocol.uniswap.v3.prefetch.UniswapV3Prefetcher
 import io.defitrack.uniswap.v3.UniswapV3PoolContract
 import io.defitrack.uniswap.v3.UniswapV3PoolFactoryContract
 import io.github.reactivecircus.cache4k.Cache
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import org.web3j.abi.datatypes.Event
 import java.math.BigDecimal
-import java.math.BigInteger
 import kotlin.coroutines.EmptyCoroutineContext
 
 abstract class UniswapV3PoolingMarketProvider(
@@ -79,19 +70,23 @@ abstract class UniswapV3PoolingMarketProvider(
             val token0 = prefetch?.tokens?.get(0) ?: getToken(pool.token0.await())
             val token1 = prefetch?.tokens?.get(1) ?: getToken(pool.token1.await())
 
-            val breakdown = prefetch?.breakdown?.map {
-                PoolingMarketTokenShare(
-                    it.token,
-                    it.reserve,
-                    it.reserveUSD
-                )
-            } ?: fiftyFiftyBreakdown(token0, token1, address)
-
-            val marketSize = breakdown.sumOf {
-                it.reserveUSD
+            val breakdown = refreshable(
+                prefetch?.breakdown?.map {
+                    PoolingMarketTokenShare(
+                        it.token,
+                        it.reserve,
+                        it.reserveUSD
+                    )
+                } ?: fiftyFiftyBreakdown(token0, token1, address)
+            ) {
+                fiftyFiftyBreakdown(token0, token1, address)
             }
 
-            if (marketSize != BigDecimal.ZERO && marketSize > BigDecimal.valueOf(10000)) {
+            val marketSize = breakdown.map {
+                it.sumOf(PoolingMarketTokenShare::reserveUSD)
+            }
+
+            if (marketSize.get() != BigDecimal.ZERO && marketSize.get() > BigDecimal.valueOf(10000)) {
                 val totalSupply = prefetch?.totalSupply ?: pool.liquidity.await().asEth()
                 create(
                     identifier = identifier,
@@ -100,11 +95,7 @@ abstract class UniswapV3PoolingMarketProvider(
                     symbol = "${token0.symbol}-${token1.symbol}",
                     breakdown = breakdown,
                     tokens = listOf(token0, token1),
-                    marketSize = refreshable(marketSize) {
-                        fiftyFiftyBreakdown(token0, token1, pool.address).sumOf {
-                            it.reserveUSD
-                        }
-                    },
+                    marketSize = marketSize,
                     positionFetcher = null,
                     totalSupply = refreshable(totalSupply) {
                         pool.refreshLiquidity().asEth()
@@ -118,14 +109,9 @@ abstract class UniswapV3PoolingMarketProvider(
         }
     }
 
-    override fun getNetwork(): Network {
-        return Network.ARBITRUM
-    }
-
     override fun getProtocol(): Protocol {
         return Protocol.UNISWAP_V3
     }
 
     class MarketTooLowException(msg: String) : RuntimeException(msg)
-
 }

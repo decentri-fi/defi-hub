@@ -5,6 +5,7 @@ import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -80,10 +81,8 @@ class CurveEthereumGaugeMarketProvider : FarmingMarketProvider() {
             name = stakedToken.name + " Gauge",
             stakedToken = stakedToken,
             rewardToken = stakedToken,
-            marketSize = Refreshable.refreshable {
-                marketSizeService.getMarketSize(
-                    stakedToken, gauge, getNetwork()
-                ).usdAmount
+            marketSize = refreshable {
+                getMarketSize(stakedToken, gauge)
             },
             positionFetcher = PositionFetcher(
                 contract::balanceOfFunction

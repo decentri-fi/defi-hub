@@ -3,6 +3,8 @@ package io.defitrack.market.pooling
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.BigDecimalExtensions.isZero
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.map
+import io.defitrack.common.utils.refreshable
 import io.defitrack.erc20.FungibleToken
 import io.defitrack.market.MarketProvider
 import io.defitrack.market.farming.domain.InvestmentPreparer
@@ -10,6 +12,7 @@ import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
 import io.defitrack.market.pooling.history.HistoricEventExtractor
 import io.defitrack.evm.position.PositionFetcher
+import io.defitrack.market.pooling.domain.marketSize
 import java.math.BigDecimal
 
 abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
@@ -26,7 +29,7 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
         totalSupply: Refreshable<BigDecimal>,
         positionFetcher: PositionFetcher? = null,
         investmentPreparer: InvestmentPreparer? = null,
-        breakdown: List<PoolingMarketTokenShare>? = null,
+        breakdown: Refreshable<List<PoolingMarketTokenShare>>? = null,
         erc20Compatible: Boolean = true,
         price: Refreshable<BigDecimal>? = null,
         metadata: Map<String, Any> = emptyMap(),
@@ -39,7 +42,9 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
             network = getNetwork(),
             protocol = getProtocol(),
             name = name,
-            marketSize = marketSize,
+            marketSize = marketSize ?: breakdown?.map {
+                it.marketSize()
+            },
             apr = apr,
             address = address,
             decimals = decimals,
@@ -64,8 +69,7 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
         marketSize: Refreshable<BigDecimal>?,
         totalSupply: Refreshable<BigDecimal>,
     ): Refreshable<BigDecimal> {
-
-        return Refreshable.refreshable {
+        return refreshable {
             if (marketSize == null || marketSize.get() <= BigDecimal.ZERO) return@refreshable BigDecimal.ZERO
 
             val supply = totalSupply.get()

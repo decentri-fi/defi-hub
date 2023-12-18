@@ -4,8 +4,8 @@ import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable.Companion.map
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.map
+import io.defitrack.common.utils.refreshable
 import io.defitrack.erc20.FungibleToken
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -48,7 +48,7 @@ abstract class HopFarmingMarketProvider(
             stakedToken = stakedToken,
             rewardToken = rewardToken,
             marketSize = refreshable {
-                getMarketSize(stakedToken, contract)
+                getMarketSize(stakedToken, contract.address)
             },
             positionFetcher = PositionFetcher(contract::balanceOfFunction),
             claimableRewardFetcher = ClaimableRewardFetcher(
@@ -60,22 +60,6 @@ abstract class HopFarmingMarketProvider(
             ),
         )
     }
-
-    private suspend fun getMarketSize(
-        stakedTokenInformation: FungibleToken,
-        pool: HopStakingRewardContract
-    ) = BigDecimal.valueOf(
-        getPriceResource().calculatePrice(
-            PriceRequest(
-                address = stakedTokenInformation.address,
-                network = getNetwork(),
-                amount = pool.totalSupply().map {
-                    it.asEth(stakedTokenInformation.decimals)
-                }.get(),
-                type = stakedTokenInformation.type
-            )
-        )
-    )
 
     override fun getProtocol(): Protocol {
         return Protocol.HOP

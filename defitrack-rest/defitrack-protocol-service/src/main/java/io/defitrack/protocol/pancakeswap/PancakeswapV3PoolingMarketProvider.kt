@@ -3,14 +3,12 @@ package io.defitrack.protocol.pancakeswap
 import arrow.core.Either
 import arrow.core.Option
 import arrow.fx.coroutines.parMapNotNull
-import io.defitrack.abi.TypeUtils
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.map
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.event.EventDecoder.Companion.extract
-import io.defitrack.evm.GetEventLogsCommand
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
@@ -22,8 +20,6 @@ import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import org.springframework.stereotype.Component
-import org.web3j.abi.datatypes.Event
-import java.math.BigInteger
 import kotlin.coroutines.EmptyCoroutineContext
 
 @Component
@@ -77,17 +73,18 @@ class PancakeswapV3PoolingMarketProvider(
             val token0 = prefetch?.tokens?.get(0) ?: getToken(pool.token0.await())
             val token1 = prefetch?.tokens?.get(1) ?: getToken(pool.token1.await())
 
-            val breakdown = prefetch?.breakdown?.map {
-                PoolingMarketTokenShare(
-                    it.token,
-                    it.reserve,
-                    it.reserveUSD
-                )
-            } ?: fiftyFiftyBreakdown(token0, token1, address)
-
-            val marketSize = breakdown.sumOf {
-                it.reserveUSD
+            val breakdown = refreshable(
+                prefetch?.breakdown?.map {
+                    PoolingMarketTokenShare(
+                        it.token,
+                        it.reserve,
+                        it.reserveUSD
+                    )
+                } ?: fiftyFiftyBreakdown(token0, token1, address)
+            ) {
+                fiftyFiftyBreakdown(token0, token1, address)
             }
+
 
             val totalSupply = prefetch?.totalSupply ?: pool.liquidity.await().asEth()
             create(
@@ -97,10 +94,8 @@ class PancakeswapV3PoolingMarketProvider(
                 symbol = "${token0.symbol}-${token1.symbol}",
                 breakdown = breakdown,
                 tokens = listOf(token0, token1),
-                marketSize = refreshable(marketSize) {
-                    fiftyFiftyBreakdown(token0, token1, pool.address).sumOf {
-                        it.reserveUSD
-                    }
+                marketSize = breakdown.map {
+                    it.sumOf(PoolingMarketTokenShare::reserveUSD)
                 },
                 totalSupply = refreshable(totalSupply) {
                     pool.refreshLiquidity().asEth()

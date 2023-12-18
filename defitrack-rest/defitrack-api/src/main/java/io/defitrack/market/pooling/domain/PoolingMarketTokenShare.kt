@@ -9,3 +9,7 @@ data class PoolingMarketTokenShare(
     val reserve: BigInteger,
     val reserveUSD: BigDecimal
 )
+
+fun List<PoolingMarketTokenShare>.marketSize(): BigDecimal {
+    return this.sumOf { it.reserveUSD }
+}

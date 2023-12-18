@@ -1,11 +1,10 @@
 package io.defitrack.protocol.kyberswap.pooling
 
-import arrow.core.Either
 import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
@@ -14,9 +13,6 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.kyberswap.apr.KyberswapAPRService
 import io.defitrack.protocol.kyberswap.graph.KyberswapEthereumGraphProvider
 import io.defitrack.protocol.kyberswap.graph.domain.Pool
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 
 @Component
@@ -51,7 +47,7 @@ class KyberswapEthereumPoolingMarketProvider(
             apr = kyberswapAPRService.getAPR(it.pair.id, getNetwork()),
             marketSize = refreshable(it.reserveUSD),
             positionFetcher = defaultPositionFetcher(token.address),
-            totalSupply = refreshable(token.totalSupply.asEth(token.decimals)) {
+            totalSupply = refreshable {
                 getToken(it.id).totalDecimalSupply()
             }
         )

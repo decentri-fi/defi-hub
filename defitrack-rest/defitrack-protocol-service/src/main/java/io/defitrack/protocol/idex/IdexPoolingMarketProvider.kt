@@ -3,20 +3,13 @@ package io.defitrack.protocol.idex
 import arrow.core.Either
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
-import java.math.BigDecimal
 
 @Component
 @ConditionalOnCompany(Company.IDEX)
@@ -48,7 +41,7 @@ class IdexPoolingMarketProvider(
             tokens = listOf(token0, token1),
             marketSize = refreshable(it.reserveUsd),
             positionFetcher = defaultPositionFetcher(token.address),
-            totalSupply = refreshable(token.totalSupply.asEth(token.decimals)) {
+            totalSupply = refreshable {
                 getToken(it.liquidityToken).totalDecimalSupply()
             }
         )

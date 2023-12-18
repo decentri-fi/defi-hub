@@ -2,12 +2,11 @@ package io.defitrack.protocol.spark
 
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
+import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
-import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import org.springframework.stereotype.Component
@@ -34,12 +33,10 @@ class SparkLendingMarketProvider : LendingMarketProvider() {
                     name = aToken.name,
                     token = underlying,
                     poolType = "spark",
-                    positionFetcher = PositionFetcher(
-                        aToken.asERC20Contract(getBlockchainGateway())::balanceOfFunction
-                    ),
+                    positionFetcher = defaultPositionFetcher(aToken.address),
                     marketToken = aToken,
-                    totalSupply = Refreshable.refreshable(aToken.totalSupply.asEth(aToken.decimals)) {
-                        getToken(aToken.address).totalSupply.asEth(aToken.decimals)
+                    totalSupply = refreshable {
+                        getToken(aToken.address).totalDecimalSupply()
                     }
                 )
             } catch (ex: Exception) {

@@ -4,6 +4,8 @@ import arrow.fx.coroutines.parMap
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.refreshable
+import io.defitrack.common.utils.toRefreshable
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.evm.position.PositionFetcher
@@ -47,10 +49,8 @@ abstract class CurveGaugeFarmingMarketProvider(
                     name = stakedToken.name + " Gauge",
                     stakedToken = stakedToken,
                     rewardTokens = rewardTokens,
-                    marketSize = Refreshable.refreshable {
-                        marketSizeService.getMarketSize(
-                            stakedToken, gauge, getNetwork()
-                        ).usdAmount
+                    marketSize = refreshable {
+                        getMarketSize(stakedToken, gauge)
                     },
                     positionFetcher = PositionFetcher(
                         contract::balanceOfFunction

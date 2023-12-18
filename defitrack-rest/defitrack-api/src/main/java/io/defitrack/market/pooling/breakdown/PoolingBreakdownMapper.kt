@@ -31,7 +31,7 @@ class PoolingBreakdownMapper {
     }
 
     fun toPositionVO(poolingMarket: PoolingMarket, userSupply: BigDecimal): List<PoolingPositionTokenshareVO> {
-        val toVO = toVO(poolingMarket.breakdown)
+        val toVO = toVO(poolingMarket.breakdown?.get())
         if (poolingMarket.totalSupply == BigInteger.ZERO) {
             logger.warn("totalSupply is zero for ${poolingMarket.name}")
             return emptyList()

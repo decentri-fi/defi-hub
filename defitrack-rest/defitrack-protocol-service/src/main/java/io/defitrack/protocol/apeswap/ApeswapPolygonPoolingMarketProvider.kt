@@ -2,7 +2,8 @@ package io.defitrack.protocol.apeswap
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.refreshable
+import io.defitrack.common.utils.toRefreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
@@ -56,7 +57,7 @@ class ApeswapPolygonPoolingMarketProvider(
                                 marketSize = refreshable(breakdown.sumOf { it.reserveUSD }) {
                                    breakdown.sumOf { it.reserveUSD }
                                 },
-                                breakdown = breakdown,
+                                breakdown = breakdown.toRefreshable(),
                                 tokens = underlyingTokens,
                                 positionFetcher = defaultPositionFetcher(poolingToken.address),
                                 totalSupply = refreshable {

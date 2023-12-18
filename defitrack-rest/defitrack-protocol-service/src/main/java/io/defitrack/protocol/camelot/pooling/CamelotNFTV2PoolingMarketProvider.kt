@@ -3,8 +3,7 @@ package io.defitrack.protocol.camelot.pooling
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
@@ -13,9 +12,6 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.algebra.AlgebraPoolContract
 import io.defitrack.protocol.algebra.AlgebraPosition
 import io.defitrack.protocol.camelot.CamelotService
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
@@ -59,7 +55,7 @@ class CamelotNFTV2PoolingMarketProvider(
             address = pool.address,
             name = "Camelot V3 ${token0.symbol}/${token1.symbol}",
             symbol = token0.symbol + "/" + token1.symbol,
-            breakdown = emptyList(),
+            breakdown = refreshable(emptyList()),
             erc20Compatible = false,
             totalSupply = refreshable {
                 pool.liquidity.await().asEth()

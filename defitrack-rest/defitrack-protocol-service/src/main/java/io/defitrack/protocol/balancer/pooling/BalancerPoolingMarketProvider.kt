@@ -5,7 +5,9 @@ import arrow.core.Option
 import arrow.core.some
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.map
+import io.defitrack.common.utils.refreshable
+import io.defitrack.common.utils.toRefreshable
 import io.defitrack.erc20.FungibleToken
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
@@ -18,7 +20,6 @@ import io.defitrack.protocol.balancer.contract.BalancerVaultContract
 import io.defitrack.protocol.balancer.pooling.history.BalancerPoolingHistoryProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import org.springframework.beans.factory.annotation.Autowired
 import java.math.BigInteger
 
 abstract class BalancerPoolingMarketProvider(
@@ -79,18 +80,20 @@ abstract class BalancerPoolingMarketProvider(
                 )
             }
 
-            val breakdown = tokens.map {
-                PoolingMarketTokenShare(
-                    it.token,
-                    it.balance,
-                    getPriceResource().calculatePrice(
-                        PriceRequest(
-                            it.token.address,
-                            getNetwork(),
-                            it.balance.asEth(it.token.decimals)
-                        )
-                    ).toBigDecimal()
-                )
+            val breakdown = refreshable {
+                tokens.map {
+                    PoolingMarketTokenShare(
+                        it.token,
+                        it.balance,
+                        getPriceResource().calculatePrice(
+                            PriceRequest(
+                                it.token.address,
+                                getNetwork(),
+                                it.balance.asEth(it.token.decimals)
+                            )
+                        ).toBigDecimal()
+                    )
+                }
             }
 
             return create(
@@ -103,8 +106,8 @@ abstract class BalancerPoolingMarketProvider(
                 symbol = underlyingTokens.joinToString("/", transform = FungibleToken::symbol),
                 metadata = mapOf("poolId" to poolId),
                 breakdown = breakdown,
-                marketSize = refreshable {
-                    breakdown.sumOf { it.reserveUSD }
+                marketSize = breakdown.map {
+                    it.sumOf { share -> share.reserveUSD }
                 },
                 positionFetcher = defaultPositionFetcher(poolAddress),
                 totalSupply = refreshable(poolContract.actualSupply.await().asEth(pool.decimals)) {

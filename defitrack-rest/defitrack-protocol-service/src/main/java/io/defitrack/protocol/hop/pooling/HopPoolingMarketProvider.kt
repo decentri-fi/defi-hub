@@ -4,8 +4,8 @@ import arrow.core.Either
 import arrow.core.nonEmptyListOf
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable.Companion.map
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.map
+import io.defitrack.common.utils.refreshable
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
@@ -18,7 +18,6 @@ import io.defitrack.protocol.hop.domain.HopLpToken
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import java.math.BigDecimal
-import kotlin.coroutines.EmptyCoroutineContext
 
 abstract class HopPoolingMarketProvider(
     private val hopService: HopService,
@@ -55,14 +54,13 @@ abstract class HopPoolingMarketProvider(
             val htoken = getToken(hopLpToken.hToken)
             val canonical = getToken(hopLpToken.canonicalToken)
 
-            val marketSize = getPrice(canonical.address, contract, swapContract).toBigDecimal()
             create(
                 identifier = hopLpToken.canonicalToken,
                 address = hopLpToken.lpToken,
                 symbol = htoken.symbol + "-" + canonical.symbol,
                 name = lp.name,
                 tokens = nonEmptyListOf(htoken, canonical),
-                marketSize = refreshable(marketSize) {
+                marketSize = refreshable {
                     getPrice(canonical.address, contract, swapContract).toBigDecimal()
                 },
                 positionFetcher = defaultPositionFetcher(hopLpToken.lpToken),

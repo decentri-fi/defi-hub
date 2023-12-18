@@ -10,6 +10,7 @@ import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -71,7 +72,7 @@ class AerodromeGaugeMarketProvider(
                 name = stakedToken.name + " Gauge V2",
                 identifier = stakedToken.symbol + "-v1-${gauge}",
                 rewardToken = rewardToken,
-                marketSize = Refreshable.refreshable {
+                marketSize = refreshable {
                     getMarketSize(
                         stakedToken,
                         contract.address

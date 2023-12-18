@@ -5,6 +5,7 @@ import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.refreshable
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.evm.position.PositionFetcher
@@ -67,7 +68,7 @@ abstract class AaveV3LendingMarketProvider(
                 poolContract,
                 getERC20Resource()
             ),
-            marketSize = Refreshable.refreshable {
+            marketSize = refreshable {
                 getPriceResource().calculatePrice(
                     PriceRequest(
                         underlying.address,
@@ -81,7 +82,7 @@ abstract class AaveV3LendingMarketProvider(
                 aToken.asERC20Contract(getBlockchainGateway())::balanceOfFunction
             ),
             marketToken = aToken,
-            totalSupply = Refreshable.refreshable(aToken.totalSupply.asEth(aToken.decimals)) {
+            totalSupply = refreshable(aToken.totalSupply.asEth(aToken.decimals)) {
                 getToken(aToken.address).totalSupply.asEth(aToken.decimals)
             }
         )

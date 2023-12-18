@@ -1,8 +1,8 @@
 package io.defitrack.protocol.stargate.pooling
 
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable.Companion.map
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.map
+import io.defitrack.common.utils.refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.price.PriceRequest
@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
 
 abstract class AbstractStargatePoolingMarketProvider(
-    stargateService: StargateService
+    private val stargateService: StargateService
 ) : PoolingMarketProvider() {
 
 
@@ -23,18 +23,15 @@ abstract class AbstractStargatePoolingMarketProvider(
         return Protocol.STARGATE
     }
 
-    val factory by lazy {
-        StargatePoolFactory(
+    override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
+        val pools = StargatePoolFactory(
             getBlockchainGateway(),
             stargateService.getPoolFactory()
-        )
-    }
-
-    override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
-        val pools = factory.getPools().filter {
+        ).getPools().filter {
             it != "0x0000000000000000000000000000000000000000"
         }
 
+        //TODO
         pools.forEach {
             launch {
                 throttled {

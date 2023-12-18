@@ -5,6 +5,7 @@ import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
@@ -43,7 +44,7 @@ class MakerDAOEthereumLendingMarketProvider(private val makerDAOEthereumGraphPro
             poolType = "makerdao-lending",
             token = token,
             marketToken = null,
-            totalSupply = Refreshable.refreshable(BigDecimal.ZERO)
+            totalSupply = refreshable(BigDecimal.ZERO)
         )
     }
 

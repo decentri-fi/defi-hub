@@ -2,7 +2,7 @@ package io.defitrack.erc20
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.refreshable
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.TokenType
 import java.math.BigInteger

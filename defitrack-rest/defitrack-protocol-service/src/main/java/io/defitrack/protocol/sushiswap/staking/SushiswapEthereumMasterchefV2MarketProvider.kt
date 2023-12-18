@@ -5,6 +5,7 @@ import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -70,7 +71,7 @@ class SushiswapEthereumMasterchefV2MarketProvider : FarmingMarketProvider() {
                     rewardToken,
                     extraReward
                 ).filterNotNull(),
-                marketSize = Refreshable.refreshable {
+                marketSize = refreshable {
                     getMarketSize(stakedtoken, chef.address)
                 },
                 claimableRewardFetcher = ClaimableRewardFetcher(

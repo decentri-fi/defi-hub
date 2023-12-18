@@ -2,7 +2,8 @@ package io.defitrack.protocol.camelot.pooling
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.map
+import io.defitrack.common.utils.refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -32,19 +33,18 @@ class CamelotArbitrumPoolingMarketProvider : PoolingMarketProvider() {
                         val underlyingTokens = poolingToken.underlyingTokens
 
 
-                        val breakdown =
+                        val breakdown = refreshable {
                             fiftyFiftyBreakdown(underlyingTokens[0], underlyingTokens[1], poolingToken.address)
+                        }
+
                         send(
                             create(
                                 identifier = pool,
                                 address = pool,
                                 name = poolingToken.name,
                                 symbol = poolingToken.symbol,
-                                marketSize = refreshable(breakdown.sumOf { it.reserveUSD }) {
-                                    getMarketSize(
-                                        poolingToken.underlyingTokens,
-                                        pool
-                                    )
+                                marketSize = breakdown.map {
+                                    it.sumOf { it.reserveUSD }
                                 },
                                 breakdown = breakdown,
                                 tokens = underlyingTokens,

@@ -2,7 +2,7 @@ package io.defitrack.protocol.synthetix
 
 import arrow.core.nel
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
@@ -29,7 +29,7 @@ class SNXLendingMarketProvider : LendingMarketProvider() {
             name = "SNX",
             token = snx,
             marketToken = snxProxy,
-            totalSupply = refreshable(snxProxy.totalDecimalSupply()) {
+            totalSupply = refreshable {
                 getToken(erc20ProxyAddress).totalDecimalSupply()
             },
             poolType = "synthetix",

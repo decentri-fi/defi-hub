@@ -5,7 +5,7 @@ import arrow.core.Option
 import arrow.core.getOrElse
 import arrow.fx.coroutines.parMap
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -55,7 +55,7 @@ abstract class CurvePoolingMarketProvider(
             identifier = createId(pool),
             symbol = poolAsERC20.symbol,
             tokens = underlyingTokens,
-            totalSupply = refreshable(poolAsERC20.totalDecimalSupply()) {
+            totalSupply = refreshable {
                 getToken(pool).totalDecimalSupply()
             },
             price = refreshable {

@@ -4,7 +4,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.erc20.FungibleToken
 import io.defitrack.evm.contract.BlockchainGatewayProvider
@@ -49,6 +49,7 @@ class AaveV2PolygonLendingMarketProvider(
         )
     }
 
+    //todo parmap
     override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
         aaveV2PolygonService.getReserves()
             .filter {

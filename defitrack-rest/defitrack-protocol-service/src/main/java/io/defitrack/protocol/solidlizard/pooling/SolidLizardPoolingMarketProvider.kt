@@ -2,11 +2,12 @@ package io.defitrack.protocol.solidlizard.pooling
 
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.map
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
+import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.uniswap.v2.PairFactoryContract
@@ -26,20 +27,20 @@ class SolidLizardPoolingMarketProvider : PoolingMarketProvider() {
             val tokens = token.underlyingTokens
 
             try {
-                val breakdown = fiftyFiftyBreakdown(tokens[0], tokens[1], token.address)
+                val breakdown = refreshable {
+                    fiftyFiftyBreakdown(tokens[0], tokens[1], token.address)
+                }
                 create(
                     name = token.name,
                     identifier = token.address,
-                    marketSize = refreshable(breakdown.sumOf { it.reserveUSD }) {
-                        fiftyFiftyBreakdown(tokens[0], tokens[1], token.address).sumOf { it.reserveUSD }
-                    },
+                    marketSize = breakdown.map { it.sumOf(PoolingMarketTokenShare::reserveUSD) },
                     positionFetcher = defaultPositionFetcher(token.address),
                     tokens = token.underlyingTokens,
                     symbol = token.symbol,
                     breakdown = breakdown,
                     address = token.address,
-                    totalSupply = refreshable(token.totalSupply.asEth(token.decimals)) {
-                        getToken(it).totalSupply.asEth(token.decimals)
+                    totalSupply = refreshable {
+                        getToken(it).totalDecimalSupply()
                     }
                 )
             } catch (ex: Exception) {

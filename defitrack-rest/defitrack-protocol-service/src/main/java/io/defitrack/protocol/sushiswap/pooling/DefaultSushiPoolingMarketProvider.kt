@@ -1,8 +1,9 @@
 package io.defitrack.protocol.sushiswap.pooling
 
 import arrow.core.Either
+import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMap
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -32,7 +33,7 @@ abstract class DefaultSushiPoolingMarketProvider(
     }
 
     private suspend fun createMarket(it: SushiswapPair): Either<Throwable, PoolingMarket> {
-        return Either.catch {
+        return catch {
             val token = getToken(it.id)
             val token0 = getToken(it.token0.id)
             val token1 = getToken(it.token1.id)

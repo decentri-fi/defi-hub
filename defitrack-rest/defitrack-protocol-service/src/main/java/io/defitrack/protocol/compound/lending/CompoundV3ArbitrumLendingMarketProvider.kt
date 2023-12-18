@@ -1,8 +1,7 @@
 package io.defitrack.protocol.compound.lending
 
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
@@ -35,8 +34,8 @@ class CompoundV3ArbitrumLendingMarketProvider : LendingMarketProvider() {
                     marketToken = cToken,
                     erc20Compatible = true,
                     positionFetcher = PositionFetcher(cToken.asERC20Contract(getBlockchainGateway())::balanceOfFunction),
-                    totalSupply = refreshable(cToken.totalSupply.asEth()) {
-                        getToken(cTokenAddress).totalSupply.asEth()
+                    totalSupply = refreshable(cToken.totalDecimalSupply()) {
+                        getToken(cTokenAddress).totalDecimalSupply()
                     }
                 )
             }

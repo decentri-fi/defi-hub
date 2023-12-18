@@ -3,11 +3,11 @@ package io.defitrack.protocol.radiant
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
+import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
-import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.v2.contract.LendingPoolAddressProviderContract
@@ -64,7 +64,7 @@ class RadiantArbitrumLendingMarketProvider : LendingMarketProvider() {
             erc20Compatible = true,
             totalSupply = refreshable {
                 with(getToken(ctokenContract.address)) {
-                    totalSupply.asEth(decimals)
+                    totalDecimalSupply()
                 }
             }
         )

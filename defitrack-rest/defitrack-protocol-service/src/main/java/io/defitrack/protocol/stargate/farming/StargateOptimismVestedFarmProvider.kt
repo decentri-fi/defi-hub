@@ -3,6 +3,7 @@ package io.defitrack.protocol.stargate.farming
 import arrow.core.nel
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -35,7 +36,7 @@ class StargateOptimismVestedFarmProvider : FarmingMarketProvider() {
             identifier = "stg-vested",
             stakedToken = stg,
             rewardToken = stg,
-            marketSize = Refreshable.refreshable { getMarketSize(stg, veSTGAddress) },
+            marketSize = refreshable { getMarketSize(stg, veSTGAddress) },
             positionFetcher = PositionFetcher(contract::lockedFn)
         ).nel()
     }

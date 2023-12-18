@@ -1,20 +1,18 @@
 package io.defitrack.protocol.quickswap.pooling
 
 import arrow.core.Either.Companion.catch
-import arrow.core.None
-import arrow.core.Option
-import arrow.core.some
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.map
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
+import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapService
-import io.defitrack.protocol.quickswap.apr.QuickswapAPRService
 import io.defitrack.protocol.quickswap.domain.QuickswapPair
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
@@ -47,16 +45,22 @@ class QuickswapPoolingMarketProvider(
 
         val token = getToken(it.id)
 
+        val breakdown = refreshable {
+            fiftyFiftyBreakdown(token0, token1, token.address)
+        }
+
         return create(
             address = it.id,
             identifier = it.id,
             name = token.name,
             symbol = token.symbol,
             tokens = listOf(token0, token1),
-            breakdown = fiftyFiftyBreakdown(token0, token1, token.address),
-            marketSize = refreshable(it.reserveUSD),
+            breakdown = breakdown,
+            marketSize = breakdown.map {
+                it.sumOf(PoolingMarketTokenShare::reserveUSD)
+            },
             positionFetcher = defaultPositionFetcher(token.address),
-            totalSupply = refreshable(token.totalDecimalSupply()) {
+            totalSupply = refreshable{
                 getToken(it.id).totalSupply.asEth(token.decimals)
             }
         )

@@ -3,7 +3,8 @@ package io.defitrack.protocol.aerodrome.pooling
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.refreshable
+import io.defitrack.common.utils.toRefreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
@@ -37,6 +38,7 @@ class AerodromePoolingMarketProvider : PoolingMarketProvider() {
 
                     try {
                         val breakdown = fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address)
+
                         send(
                             create(
                                 identifier = it,
@@ -49,7 +51,7 @@ class AerodromePoolingMarketProvider : PoolingMarketProvider() {
                                 positionFetcher = defaultPositionFetcher(poolingToken.address),
                                 address = it,
                                 name = poolingToken.name,
-                                breakdown = breakdown,
+                                breakdown = breakdown.toRefreshable(),
                                 symbol = poolingToken.symbol,
                                 tokens = poolingToken.underlyingTokens,
                                 totalSupply = refreshable(poolingToken.totalSupply.asEth(poolingToken.decimals)) {

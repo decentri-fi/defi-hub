@@ -2,6 +2,7 @@ package io.defitrack.protocol.cowswap.farming
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
@@ -23,7 +24,7 @@ class CowswapVirtualTokenVaultProvider : FarmingMarketProvider() {
                 identifier = "vCOW",
                 stakedToken = cowToken,
                 rewardToken = cowToken,
-                marketSize = Refreshable.refreshable {
+                marketSize = refreshable {
                     getMarketSize(
                         cowToken, vtokenAddress
                     )

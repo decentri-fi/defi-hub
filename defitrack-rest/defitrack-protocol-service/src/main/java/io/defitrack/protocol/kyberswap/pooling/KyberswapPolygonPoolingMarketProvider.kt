@@ -1,11 +1,9 @@
 package io.defitrack.protocol.kyberswap.pooling
 
-import arrow.core.Either
 import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
@@ -14,9 +12,6 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.kyberswap.apr.KyberswapAPRService
 import io.defitrack.protocol.kyberswap.graph.KyberswapPolygonGraphProvider
 import io.defitrack.protocol.kyberswap.graph.domain.Pool
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 
 @Component
@@ -42,8 +37,6 @@ class KyberswapPolygonPoolingMarketProvider(
         val token0 = getToken(it.token0.id)
         val token1 = getToken(it.token1.id)
 
-        val supply = token.totalSupply.asEth(token.decimals)
-
         return create(
             identifier = it.id,
             address = it.id,
@@ -53,7 +46,7 @@ class KyberswapPolygonPoolingMarketProvider(
             apr = kyberswapAPRService.getAPR(it.pair.id, getNetwork()),
             marketSize = refreshable(it.reserveUSD),
             positionFetcher = defaultPositionFetcher(token.address),
-            totalSupply = refreshable(supply) {
+            totalSupply = refreshable {
                 getToken(it.id).totalDecimalSupply()
             }
         )

@@ -6,7 +6,7 @@ import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint24
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.market.farming.FarmingMarketProvider
@@ -100,7 +100,7 @@ class PancakeV3FarmingMarketProvider : FarmingMarketProvider() {
                 name = stakedtoken.name + " Farm",
                 stakedToken = stakedtoken,
                 rewardTokens = listOf(rewardToken),
-                marketSize = Refreshable.refreshable {
+                marketSize = refreshable {
                     getMarketSize(stakedtoken, chef.address)
                 }
             )

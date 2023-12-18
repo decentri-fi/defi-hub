@@ -1,7 +1,7 @@
 package io.defitrack.protocol.dfyn.pooling
 
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
@@ -53,7 +53,7 @@ class DfynPoolingMarketProvider(
                     apr = dfynAPRService.getAPR(it.id),
                     marketSize = refreshable(it.reserveUSD),
                     positionFetcher = defaultPositionFetcher(token.address),
-                    totalSupply = refreshable(token.totalDecimalSupply()) {
+                    totalSupply = refreshable {
                         getToken(it.id).totalDecimalSupply()
                     }
                 )

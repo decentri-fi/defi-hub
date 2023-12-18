@@ -5,11 +5,13 @@ import arrow.core.nonEmptyListOf
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.map
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
+import io.defitrack.market.pooling.domain.marketSize
 import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
@@ -40,7 +42,7 @@ class VelodromeV2OptimismPoolingMarketProvider(
         pairFactoryContract.allPools().parMapNotNull(concurrency = 12) {
             Either.catch {
                 createMarket(it)
-            }.mapLeft { throwable ->
+            }.mapLeft { _ ->
                 logger.error("Error creating market for address {}", it)
             }.getOrNull()
         }.forEach {
@@ -56,69 +58,42 @@ class VelodromeV2OptimismPoolingMarketProvider(
 
         val reserves = contract.getReserves()
 
-        val share0 = async {
-            val token0 = getToken(contract.token0.await())
-            val amount0 = reserves.amount0
-            PoolingMarketTokenShare(
-                token0,
-                amount0,
-                getPriceResource().calculatePrice(
-                    PriceRequest(token0.address, getNetwork(), amount0.asEth(token0.decimals))
-                ).toBigDecimal()
-            )
-        }
-
-        val share1 = async {
-            val token1 = getToken(contract.token1.await())
-            val amount1 = reserves.amount1
-            PoolingMarketTokenShare(
-                token1,
-                amount1,
-                getPriceResource().calculatePrice(
-                    PriceRequest(token1.address, getNetwork(), amount1.asEth(token1.decimals))
-                ).toBigDecimal()
-            )
-        }
-
-        val breakdown = nonEmptyListOf(
-            share0, share1
-        ).awaitAll()
-
-        create(
-            identifier = "v2-$it",
-            marketSize = refreshable(breakdown.sumOf { it.reserveUSD }) {
-                val token0 = getToken(contract.token0.await())
-                val token1 = getToken(contract.token1.await())
-
-                val contract = VelodromePoolContract(
-                    getBlockchainGateway(), it
-                )
-                val amount0 = contract.getReserves().amount0
-                val amount1 = contract.getReserves().amount1
-                nonEmptyListOf(
+        val breakdown = refreshable {
+            nonEmptyListOf(
+                async {
+                    val token0 = getToken(contract.token0.await())
+                    val amount0 = reserves.amount0
                     PoolingMarketTokenShare(
                         token0,
                         amount0,
                         getPriceResource().calculatePrice(
                             PriceRequest(token0.address, getNetwork(), amount0.asEth(token0.decimals))
                         ).toBigDecimal()
-                    ),
+                    )
+                },
+                async {
+                    val token1 = getToken(contract.token1.await())
+                    val amount1 = reserves.amount1
                     PoolingMarketTokenShare(
-                        token0,
-                        amount0,
+                        token1,
+                        amount1,
                         getPriceResource().calculatePrice(
-                            PriceRequest(token1.address, getNetwork(), amount1.asEth(token0.decimals))
+                            PriceRequest(token1.address, getNetwork(), amount1.asEth(token1.decimals))
                         ).toBigDecimal()
                     )
-                ).sumOf { it.reserveUSD }
-            },
+                }
+            ).awaitAll()
+        }
+
+        create(
+            identifier = "v2-$it",
             positionFetcher = defaultPositionFetcher(poolingToken.address),
             address = it,
             name = poolingToken.name,
             breakdown = breakdown,
             symbol = poolingToken.symbol,
             tokens = poolingToken.underlyingTokens,
-            totalSupply = refreshable(poolingToken.totalSupply.asEth(poolingToken.decimals)) {
+            totalSupply = refreshable {
                 getToken(it).totalDecimalSupply()
             },
             deprecated = false,

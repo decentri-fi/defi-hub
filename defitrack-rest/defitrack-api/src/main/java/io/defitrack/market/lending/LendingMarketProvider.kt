@@ -3,6 +3,7 @@ package io.defitrack.market.lending
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.BigDecimalExtensions.isZero
 import io.defitrack.common.utils.Refreshable
+import io.defitrack.common.utils.refreshable
 import io.defitrack.erc20.FungibleToken
 import io.defitrack.market.MarketProvider
 import io.defitrack.market.farming.domain.InvestmentPreparer
@@ -25,7 +26,7 @@ abstract class LendingMarketProvider : MarketProvider<LendingMarket>() {
         price: Refreshable<BigDecimal>? = null,
         marketToken: FungibleToken? = null,
         erc20Compatible: Boolean = false,
-        totalSupply: Refreshable<BigDecimal> = Refreshable.refreshable(BigDecimal.ZERO),
+        totalSupply: Refreshable<BigDecimal> = refreshable(BigDecimal.ZERO),
         deprecated: Boolean = false,
         internalMetaData: Map<String, Any> = emptyMap(),
     ): LendingMarket {
@@ -55,7 +56,7 @@ abstract class LendingMarketProvider : MarketProvider<LendingMarket>() {
         marketSize: Refreshable<BigDecimal>?,
         totalSupply: Refreshable<BigDecimal>,
     ): Refreshable<BigDecimal> {
-        return Refreshable.refreshable {
+        return refreshable {
             if (marketSize == null || marketSize.get() <= BigDecimal.ZERO) return@refreshable BigDecimal.ZERO
 
             if (totalSupply.get().isZero()) {

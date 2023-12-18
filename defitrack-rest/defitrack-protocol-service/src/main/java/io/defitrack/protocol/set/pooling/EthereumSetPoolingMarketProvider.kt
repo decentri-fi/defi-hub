@@ -3,8 +3,8 @@ package io.defitrack.protocol.set.pooling
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable.Companion.map
-import io.defitrack.common.utils.Refreshable.Companion.refreshable
+import io.defitrack.common.utils.map
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
@@ -32,15 +32,14 @@ class EthereumSetPoolingMarketProvider(
 
                 val supply = tokenContract.totalSupply().get().asEth(tokenContract.readDecimals())
                 val token = getToken(it)
-                val positions = tokenContract.getPositions()
 
-                create(
-                    identifier = it,
-                    address = it,
-                    name = token.name,
-                    symbol = token.symbol,
-                    tokens = positions.map { position -> getToken(position.token) },
-                    breakdown = positions.map {
+                val positionsRefreshable = refreshable {
+                    tokenContract.getPositions()
+                }
+
+
+                val breakdown = positionsRefreshable.map { positions ->
+                    positions.map {
                         val underlying = getToken(it.token)
                         PoolingMarketTokenShare(
                             token = underlying,
@@ -53,7 +52,15 @@ class EthereumSetPoolingMarketProvider(
                                 )
                             ).toBigDecimal().times(supply)
                         )
-                    },
+                    }
+                }
+                create(
+                    identifier = it,
+                    address = it,
+                    name = token.name,
+                    symbol = token.symbol,
+                    tokens = positionsRefreshable.get().map { position -> getToken(position.token) },
+                    breakdown = breakdown,
                     apr = null,
                     marketSize = tokenContract.totalSupply().map {
                         it.asEth(token.decimals).times(
