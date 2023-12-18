@@ -109,7 +109,13 @@ abstract class BalancerPoolingMarketProvider(
                 breakdown = breakdown,
                 positionFetcher = defaultPositionFetcher(poolAddress),
                 totalSupply = refreshable {
-                    getToken(poolContract.address).totalDecimalSupply()
+                    Either.catch {
+                        poolContract.actualSupply.await().asEth(
+                            getToken(poolContract.address).decimals
+                        )
+                    }.getOrElse {
+                        getToken(poolContract.address).totalDecimalSupply()
+                    }
                 },
                 historicEventExtractor = balancerPoolingHistoryProvider.historicEventExtractor(
                     poolId, getNetwork()

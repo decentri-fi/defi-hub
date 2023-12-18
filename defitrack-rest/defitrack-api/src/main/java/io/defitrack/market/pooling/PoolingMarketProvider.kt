@@ -37,27 +37,32 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
         deprecated: Boolean = false,
         historicEventExtractor: HistoricEventExtractor? = null,
     ): PoolingMarket {
+        val actualTokens = tokens ?: breakdown?.get()?.map {
+            it.token
+        } ?: emptyList()
+
+        val actualMarketSize = marketSize ?: breakdown?.map {
+            it.marketSize()
+        }
+
+        val actualPrice = price ?: calculatePrice(actualMarketSize, totalSupply)
         return PoolingMarket(
             id = createId(identifier),
             network = getNetwork(),
             protocol = getProtocol(),
             name = name,
-            marketSize = marketSize ?: breakdown?.map {
-                it.marketSize()
-            },
+            marketSize = actualMarketSize,
             apr = apr,
             address = address,
             decimals = decimals,
             symbol = symbol,
-            tokens = tokens ?: breakdown?.get()?.map {
-                it.token
-            } ?: emptyList(),
+            tokens = actualTokens,
             positionFetcher = positionFetcher,
             investmentPreparer = investmentPreparer,
             breakdown = breakdown,
             erc20Compatible = erc20Compatible,
             totalSupply = totalSupply,
-            price = price ?: calculatePrice(marketSize, totalSupply),
+            price = actualPrice,
             metadata = metadata,
             internalMetadata = internalMetadata,
             deprecated = deprecated,
