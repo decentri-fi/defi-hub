@@ -28,7 +28,11 @@ class PoolingHistoryAggregator(
                 it.getNetwork() == getPoolingHistoryCommand.network && it.getProtocol() == getPoolingHistoryCommand.protocol
             }.flatMap {
                 it.getMarkets()
-            }.filter {
+            }
+            .filter {
+                getPoolingHistoryCommand.markets == null || getPoolingHistoryCommand.markets.contains(it.id)
+            }
+            .filter {
                 it.historicEventExtractor != null
             }.parMap(concurrency = 32) { market ->
                 logger.info("getting events for $market")
@@ -66,5 +70,6 @@ data class GetHistoryCommand(
     val network: Network,
     val user: String,
     val fromBlock: BigInteger?,
-    val toBlock: BigInteger?
+    val toBlock: BigInteger?,
+    val markets: List<String>?
 )

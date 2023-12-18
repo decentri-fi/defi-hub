@@ -1,7 +1,6 @@
 package io.defitrack.market.pooling.history
 
 import io.defitrack.common.network.Network.Companion.fromString
-import io.defitrack.market.pooling.mapper.PoolingMarketVOMapper
 import io.defitrack.protocol.Protocol
 import kotlinx.coroutines.runBlocking
 import org.springframework.web.bind.annotation.PathVariable
@@ -13,8 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/{protocol}/pooling")
 class PoolingMarketHistoryRestController(
-    private val poolingHistoryAggregator: PoolingHistoryAggregator,
-    private val poolingMarketVOMapper: PoolingMarketVOMapper
+    private val poolingHistoryAggregator: PoolingHistoryAggregator
 ) {
 
     @PostMapping("/history/{user}")
@@ -32,7 +30,12 @@ class PoolingMarketHistoryRestController(
 
         poolingHistoryAggregator.getPoolingHistory(
             GetHistoryCommand(
-                proto, network, user, getHistoryRequest.fromBlock, getHistoryRequest.toBlock
+                proto,
+                network,
+                user,
+                getHistoryRequest.fromBlock,
+                getHistoryRequest.toBlock,
+                getHistoryRequest.markets
             )
         ).map {
             PoolingDefiEventVO(
