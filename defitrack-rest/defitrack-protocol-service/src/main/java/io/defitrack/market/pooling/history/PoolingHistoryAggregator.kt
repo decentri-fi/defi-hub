@@ -10,6 +10,7 @@ import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
+import java.math.BigInteger
 
 @Component
 class PoolingHistoryAggregator(
@@ -19,28 +20,29 @@ class PoolingHistoryAggregator(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    suspend fun getPoolingHistory(protocol: Protocol, network: Network, user: String): List<PoolingMarketEvent> {
+    suspend fun getPoolingHistory(getPoolingHistoryCommand: GetHistoryCommand): List<PoolingMarketEvent> {
+        val gateway = blockchainGatewayProvider.getGateway(getPoolingHistoryCommand.network)
+
         return poolingMarketProvider
             .filter {
-                it.getNetwork() == network && it.getProtocol() == protocol
+                it.getNetwork() == getPoolingHistoryCommand.network && it.getProtocol() == getPoolingHistoryCommand.protocol
             }.flatMap {
                 it.getMarkets()
             }.filter {
                 it.historicEventExtractor != null
-            }.parMap(concurrency = 16) { market ->
+            }.parMap(concurrency = 32) { market ->
                 logger.info("getting events for $market")
                 val extractor = market.historicEventExtractor!!
                 try {
-                    val gateway = blockchainGatewayProvider.getGateway(market.network)
                     gateway.getEventsAsEthLog(
                         GetEventLogsCommand(
                             addresses = extractor.addresses(),
                             topic = extractor.topic,
-                            optionalTopics = extractor.optionalTopics(user),
+                            optionalTopics = extractor.optionalTopics(getPoolingHistoryCommand.user),
                         )
                     ).map {
                         val transaction = gateway.getTransaction(it.transactionHash)
-                            ?: throw IllegalArgumentException("transaction for ${it.transactionHash} on chain $network  not found")
+                            ?: throw IllegalArgumentException("transaction for ${it.transactionHash} on chain ${getPoolingHistoryCommand.network}  not found")
                         PoolingMarketEvent(
                             market,
                             extractor.toMarketEvent(it, transaction)
@@ -57,4 +59,12 @@ class PoolingHistoryAggregator(
 data class PoolingMarketEvent(
     val poolingmarket: PoolingMarket,
     val event: DefiEvent
+)
+
+data class GetHistoryCommand(
+    val protocol: Protocol,
+    val network: Network,
+    val user: String,
+    val fromBlock: BigInteger?,
+    val toBlock: BigInteger?
 )

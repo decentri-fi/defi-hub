@@ -25,6 +25,7 @@ import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Type
 import org.web3j.protocol.core.methods.response.EthCall
+import org.web3j.protocol.core.methods.response.EthLog
 import org.web3j.protocol.core.methods.response.EthLog.LogObject
 import org.web3j.protocol.core.methods.response.Log
 import java.math.BigDecimal
@@ -90,6 +91,18 @@ class BlockchainGateway(
         } else {
             logger.error("Unable to get events from blockchain, result was ${result.bodyAsText()}")
             return emptyList()
+        }
+    }
+
+    suspend fun getEventsAsEthLog(commands: List<GetEventLogsCommand>): List<EthLog> {
+        val result = httpClient.post("$endpoint/events/logs?bulk") {
+            contentType(ContentType.Application.Json)
+            setBody(commands)
+        }
+        return if (result.status.isSuccess()) {
+            result.body()
+        } else {
+            emptyList()
         }
     }
 
