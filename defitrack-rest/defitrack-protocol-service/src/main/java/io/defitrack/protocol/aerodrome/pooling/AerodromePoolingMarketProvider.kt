@@ -52,12 +52,10 @@ class AerodromePoolingMarketProvider : PoolingMarketProvider() {
                                 breakdown = breakdown,
                                 symbol = poolingToken.symbol,
                                 tokens = poolingToken.underlyingTokens,
-                                totalSupply = refreshable(poolingToken.totalSupply.asEth(poolingToken.decimals)) {
-                                    with(getToken(it)) {
-                                        totalSupply.asEth(decimals)
-                                    }
+                                totalSupply = refreshable {
+                                    getToken(it).totalDecimalSupply()
                                 },
-                                deprecated = true
+                                deprecated = false
                             )
                         )
                     } catch (ex: Exception) {

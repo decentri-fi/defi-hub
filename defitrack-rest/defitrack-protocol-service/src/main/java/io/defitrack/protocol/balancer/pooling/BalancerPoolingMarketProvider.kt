@@ -50,12 +50,13 @@ abstract class BalancerPoolingMarketProvider(
                 }
             )
 
-            it.second
-                .parMapNotNull(concurrency = 8) { pool ->
-                    createMarket(pool, vault)
-                }.forEach {
-                    it.onSome { send(it) }
-                }
+            it.second.parMapNotNull(concurrency = 8) { pool ->
+                createMarket(pool, vault)
+            }.mapNotNull {
+                it.getOrNull()
+            }.forEach {
+                send(it)
+            }
         }
     }
 
@@ -69,7 +70,6 @@ abstract class BalancerPoolingMarketProvider(
             val poolAddress = poolContract.address
 
             val poolId = poolContract.getPoolId()
-
 
             val breakdown = refreshable {
                 val poolTokens = vault.getPoolTokens(poolId, poolAddress)

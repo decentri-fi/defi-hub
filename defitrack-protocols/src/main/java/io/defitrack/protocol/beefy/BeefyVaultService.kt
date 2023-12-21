@@ -2,6 +2,7 @@ package io.defitrack.protocol.beefy
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.defitrack.common.network.Network
 import io.defitrack.protocol.beefy.domain.BeefyVault
 import io.ktor.client.*
 import io.ktor.client.request.*
@@ -9,6 +10,8 @@ import io.ktor.client.statement.*
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import jakarta.annotation.PostConstruct
+import org.slf4j.LoggerFactory
+import kotlin.math.log
 
 @Service
 class BeefyVaultService(
@@ -16,55 +19,47 @@ class BeefyVaultService(
     private val client: HttpClient
 ) {
 
-    val beefyPolygonVaults: MutableList<BeefyVault> = mutableListOf()
-    val beefyArbitrumVaults: MutableList<BeefyVault> = mutableListOf()
-    val beefyOptimismVaults: MutableList<BeefyVault> = mutableListOf()
-    val beefyEthereumVaults: MutableList<BeefyVault> = mutableListOf()
-    val beefyPolygonZkEvmVaults: MutableList<BeefyVault> = mutableListOf()
-    val beefyBaseVaults: MutableList<BeefyVault> = mutableListOf()
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
+    val beefyVaults: MutableMap<Network, List<BeefyVault>> = mutableMapOf()
 
     @PostConstruct
     fun startup() {
+        logger.info("Fetching Beefy Vaults from beefy api")
         runBlocking {
             val vaultsAsList: String =
                 client.get("https://api.beefy.finance/vaults").bodyAsText()
             val vaults = objectMapper.readValue(vaultsAsList, object : TypeReference<List<BeefyVault>>() {})
 
-            beefyPolygonVaults.addAll(
-                vaults.filter {
-                    it.chain == "polygon"
-                }
-            )
+            //TODO: refresh
+            //TODO: dynamically support the networks
+            beefyVaults[Network.POLYGON] = vaults.filter {
+                it.chain == "polygon"
+            }
 
-            beefyArbitrumVaults.addAll(
-                vaults.filter {
-                    it.chain == "arbitrum"
-                }
-            )
+            beefyVaults[Network.ARBITRUM] = vaults.filter {
+                it.chain == "arbitrum"
+            }
 
-            beefyOptimismVaults.addAll(
-                vaults.filter {
-                    it.chain == "optimism"
-                }
-            )
+            beefyVaults[Network.OPTIMISM] = vaults.filter {
+                it.chain == "optimism"
+            }
 
-            beefyEthereumVaults.addAll(
-                vaults.filter {
-                    it.chain == "ethereum"
-                }
-            )
+            beefyVaults[Network.ETHEREUM] = vaults.filter {
+                it.chain == "ethereum"
+            }
 
-            beefyPolygonZkEvmVaults.addAll(
-                vaults.filter {
-                    it.chain == "zkevm"
-                }
-            )
+            beefyVaults[Network.POLYGON_ZKEVM] = vaults.filter {
+                it.chain == "zkevm"
+            }
 
-            beefyBaseVaults.addAll(
-                vaults.filter {
-                    it.chain == "base"
-                }
-            )
+            beefyVaults[Network.BASE] = vaults.filter {
+                it.chain == "base"
+            }
         }
+    }
+
+    fun getVaults(network: Network): List<BeefyVault> {
+        return beefyVaults.getOrDefault(network, emptyList())
     }
 }

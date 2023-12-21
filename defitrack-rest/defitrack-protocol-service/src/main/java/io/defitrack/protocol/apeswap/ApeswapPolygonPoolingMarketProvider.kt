@@ -1,5 +1,7 @@
 package io.defitrack.protocol.apeswap
 
+import arrow.fx.coroutines.parMap
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.refreshable
@@ -37,39 +39,30 @@ class ApeswapPolygonPoolingMarketProvider(
 
 
     override suspend fun fetchMarkets(): List<PoolingMarket> {
-        val semaphore = Semaphore(16)
+        return pools.await().parMapNotNull(concurrency = 12) { pool ->
+            try {
+                val poolingToken = getToken(pool)
+                val underlyingTokens = poolingToken.underlyingTokens
 
-        return coroutineScope {
-            pools.await().map { pool ->
-                semaphore.withPermit {
-                    async {
-                        try {
-                            val poolingToken = getToken(pool)
-                            val underlyingTokens = poolingToken.underlyingTokens
-
-                            val breakdown = refreshable {
-                                fiftyFiftyBreakdown(underlyingTokens[0], underlyingTokens[1], poolingToken.address)
-                            }
-
-                            create(
-                                identifier = pool,
-                                address = pool,
-                                name = poolingToken.name,
-                                symbol = poolingToken.symbol,
-                                breakdown = breakdown,
-                                tokens = underlyingTokens,
-                                positionFetcher = defaultPositionFetcher(poolingToken.address),
-                                totalSupply = refreshable {
-                                    getToken(pool).totalDecimalSupply()
-                                }
-                            )
-                        } catch (ex: Exception) {
-                            logger.error("Error while fetching pooling market $pool", ex)
-                            null
-                        }
-                    }
+                val breakdown = refreshable {
+                    fiftyFiftyBreakdown(underlyingTokens[0], underlyingTokens[1], poolingToken.address)
                 }
-            }.awaitAll().filterNotNull()
+                create(
+                    identifier = pool,
+                    address = pool,
+                    name = poolingToken.name,
+                    symbol = poolingToken.symbol,
+                    breakdown = breakdown,
+                    tokens = underlyingTokens,
+                    positionFetcher = defaultPositionFetcher(poolingToken.address),
+                    totalSupply = refreshable {
+                        getToken(pool).totalDecimalSupply()
+                    }
+                )
+            } catch (ex: Exception) {
+                logger.error("Error while fetching pooling market $pool", ex)
+                null
+            }
         }
     }
 

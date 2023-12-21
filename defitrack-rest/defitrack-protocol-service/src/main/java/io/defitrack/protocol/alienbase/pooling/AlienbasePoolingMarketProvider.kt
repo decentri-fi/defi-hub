@@ -1,9 +1,11 @@
 package io.defitrack.protocol.alienbase.pooling
 
+import arrow.core.Either
+import arrow.core.Either.Companion.catch
+import arrow.fx.coroutines.parMap
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.refreshable
-import io.defitrack.common.utils.toRefreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
@@ -12,7 +14,6 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.uniswap.v2.PairFactoryContract
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 
 @Component
@@ -25,40 +26,38 @@ class AlienbasePoolingMarketProvider : PoolingMarketProvider() {
         PairFactoryContract(
             blockchainGateway = getBlockchainGateway(),
             contractAddress = poolFactoryAddress
-        ).allPairs().forEach {
-            launch {
-                throttled {
-                    val poolingToken = getToken(it)
-                    val tokens = poolingToken.underlyingTokens
-
-                    try {
-                        val breakdown = refreshable {
-                            fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address)
-                        }
-
-                        send(
-                            create(
-                                identifier = it,
-                                positionFetcher = defaultPositionFetcher(poolingToken.address),
-                                address = it,
-                                name = poolingToken.name,
-                                breakdown = breakdown,
-                                symbol = poolingToken.symbol,
-                                tokens = poolingToken.underlyingTokens,
-                                totalSupply = refreshable(poolingToken.totalSupply.asEth(poolingToken.decimals)) {
-                                    with(getToken(it)) {
-                                        totalSupply.asEth(decimals)
-                                    }
-                                },
-                                deprecated = true
-                            )
-                        )
-                    } catch (ex: Exception) {
-                        logger.error("Error while fetching pooling market $it", ex)
-                    }
-                }
-            }
+        ).allPairs().parMapNotNull(concurrency = 12) { pair ->
+            catch {
+                createMarket(pair)
+            }.mapLeft {
+                logger.info("Unable to create market {}", pair)
+            }.getOrNull()
+        }.forEach {
+            send(it)
         }
+    }
+
+    private suspend fun AlienbasePoolingMarketProvider.createMarket(it: String): PoolingMarket {
+        val poolingToken = getToken(it)
+        val tokens = poolingToken.underlyingTokens
+
+        val breakdown = refreshable {
+            fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address)
+        }
+
+        return create(
+            identifier = it,
+            positionFetcher = defaultPositionFetcher(poolingToken.address),
+            address = it,
+            name = poolingToken.name,
+            breakdown = breakdown,
+            symbol = poolingToken.symbol,
+            tokens = poolingToken.underlyingTokens,
+            totalSupply = refreshable {
+                getToken(it).totalDecimalSupply()
+            },
+            deprecated = false
+        )
     }
 
     override fun getProtocol(): Protocol {

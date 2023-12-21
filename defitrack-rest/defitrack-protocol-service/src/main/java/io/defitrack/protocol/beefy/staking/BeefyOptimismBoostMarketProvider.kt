@@ -11,9 +11,8 @@ import org.springframework.stereotype.Component
 @ConditionalOnCompany(Company.BEEFY)
 @ConditionalOnProperty(value = ["optimism.enabled"], havingValue = "true", matchIfMissing = true)
 class BeefyOptimismBoostMarketProvider(
-    beefyBoostService: BeefyBoostService,
     beefyOptimismFarmingMarketProvider: BeefyOptimismFarmingMarketProvider
-) : BeefyBoostMarketProvider(beefyBoostService.beefyOptimismVaults, beefyOptimismFarmingMarketProvider) {
+) : BeefyBoostMarketProvider(beefyOptimismFarmingMarketProvider) {
 
     override fun getNetwork(): Network {
         return Network.OPTIMISM

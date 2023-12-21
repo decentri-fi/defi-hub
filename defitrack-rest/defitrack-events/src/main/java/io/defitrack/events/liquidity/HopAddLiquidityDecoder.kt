@@ -7,9 +7,8 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.event.DefiEvent
 import io.defitrack.event.DefiEventType
 import io.defitrack.event.EventDecoder
-import io.defitrack.event.EventUtils.Companion.appliesTo
+import io.defitrack.event.appliesTo
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.network.toVO
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.hop.contract.HopLpTokenContract
 import org.springframework.stereotype.Component

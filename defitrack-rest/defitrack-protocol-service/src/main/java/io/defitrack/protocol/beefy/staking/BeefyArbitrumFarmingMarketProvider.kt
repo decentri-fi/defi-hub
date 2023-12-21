@@ -11,14 +11,7 @@ import org.springframework.stereotype.Component
 @Component
 @ConditionalOnCompany(Company.BEEFY)
 @ConditionalOnProperty(value = ["arbitrum.enabled"], havingValue = "true", matchIfMissing = true)
-class BeefyArbitrumFarmingMarketProvider(
-    beefyAPYService: BeefyAPYService,
-    beefyService: BeefyVaultService,
-) : BeefyFarmingMarketProvider(
-    beefyAPYService,
-    beefyService.beefyArbitrumVaults,
-) {
-
+class BeefyArbitrumFarmingMarketProvider : BeefyFarmingMarketProvider() {
 
     override fun getNetwork(): Network {
         return Network.ARBITRUM

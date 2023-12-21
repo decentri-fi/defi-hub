@@ -2,14 +2,14 @@ package io.defitrack.protocol.beefy
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.defitrack.common.network.Network
 import io.defitrack.protocol.beefy.domain.BeefyLaunchPool
-import io.defitrack.protocol.beefy.domain.BeefyVault
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import jakarta.annotation.PostConstruct
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
-import jakarta.annotation.PostConstruct
 
 @Service
 class BeefyBoostService(
@@ -17,12 +17,17 @@ class BeefyBoostService(
     private val client: HttpClient
 ) {
 
-    val beefyPolygonVaults: MutableList<BeefyLaunchPool> = mutableListOf()
-    val beefyArbitrumVaults: MutableList<BeefyLaunchPool> = mutableListOf()
-    val beefyOptimismVaults: MutableList<BeefyLaunchPool> = mutableListOf()
-    val beefyEthereumVaults: MutableList<BeefyLaunchPool> = mutableListOf()
-    val beefyPolygonZkEvmVaults: MutableList<BeefyLaunchPool> = mutableListOf()
-    val beefyBaseVaults: MutableList<BeefyLaunchPool> = mutableListOf()
+
+    val beefyMapping = mapOf(
+        Network.POLYGON to "polygon",
+        Network.ARBITRUM to "arbitrum",
+        Network.OPTIMISM to "optimism",
+        Network.ETHEREUM to "ethereum",
+        Network.POLYGON_ZKEVM to "zkevm",
+        Network.BASE to "base"
+    )
+
+    private val beefyBoosts: MutableMap<Network, List<BeefyLaunchPool>> = mutableMapOf()
 
     @PostConstruct
     fun startup() {
@@ -31,41 +36,15 @@ class BeefyBoostService(
                 client.get("https://api.beefy.finance/boosts").bodyAsText()
             val vaults = objectMapper.readValue(vaultsAsList, object : TypeReference<List<BeefyLaunchPool>>() {})
 
-            beefyPolygonVaults.addAll(
-                vaults.filter {
-                    it.chain == "polygon"
+            beefyMapping.map { (network, chain) ->
+                beefyBoosts[network] = vaults.filter {
+                    it.chain == chain
                 }
-            )
-
-            beefyArbitrumVaults.addAll(
-                vaults.filter {
-                    it.chain == "arbitrum"
-                }
-            )
-
-            beefyOptimismVaults.addAll(
-                vaults.filter {
-                    it.chain == "optimism"
-                }
-            )
-
-            beefyEthereumVaults.addAll(
-                vaults.filter {
-                    it.chain == "ethereum"
-                }
-            )
-
-            beefyPolygonZkEvmVaults.addAll(
-                vaults.filter {
-                    it.chain == "zkevm"
-                }
-            )
-
-            beefyBaseVaults.addAll(
-                vaults.filter {
-                    it.chain == "base"
-                }
-            )
+            }
         }
+    }
+
+    fun getBoosts(network: Network): List<BeefyLaunchPool> {
+        return beefyBoosts.getOrDefault(network, emptyList())
     }
 }

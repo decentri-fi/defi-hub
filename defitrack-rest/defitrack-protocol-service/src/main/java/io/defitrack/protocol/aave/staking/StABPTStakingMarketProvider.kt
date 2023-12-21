@@ -15,6 +15,8 @@ import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import org.springframework.stereotype.Component
+import org.web3j.abi.datatypes.Type
+import java.math.BigDecimal
 import java.math.BigInteger
 
 @Component
@@ -33,9 +35,6 @@ class StABPTStakingMarketProvider : FarmingMarketProvider() {
             stABPT
         )
 
-        val totalStakedAbpt = getBalance(abpt, stABPT)
-        val ratio = totalStakedAbpt.toBigDecimal().dividePrecisely(stakingContract.totalSupply().get().toBigDecimal())
-
         return create(
             name = "stABPT",
             identifier = "stABPT",
@@ -46,16 +45,10 @@ class StABPTStakingMarketProvider : FarmingMarketProvider() {
             },
             positionFetcher = PositionFetcher(
                 stakingContract::balanceOfFunction,
-            ) { retVal ->
-                val userStAave = (retVal[0].value as BigInteger)
-
-                if (userStAave > BigInteger.ZERO) {
-                    Position(
-                        userStAave.toBigDecimal().times(ratio).toBigInteger(),
-                        userStAave
-                    )
-                } else Position.ZERO
-            },
+                stakingContract.extractBalanceFunction {
+                    getRatio(stakingContract)
+                },
+            ),
             claimableRewardFetcher = ClaimableRewardFetcher(
                 Reward(
                     token = aaveToken,
@@ -64,6 +57,11 @@ class StABPTStakingMarketProvider : FarmingMarketProvider() {
                 preparedTransaction = selfExecutingTransaction(stakingContract::getClaimRewardsFunction)
             )
         ).nel()
+    }
+
+    private suspend fun StABPTStakingMarketProvider.getRatio(stakingContract: StakedAaveContract): BigDecimal {
+        val totalStakedAbpt = getBalance(abpt, stABPT)
+        return totalStakedAbpt.toBigDecimal().dividePrecisely(stakingContract.totalSupply().get().toBigDecimal())
     }
 
     override fun getProtocol(): Protocol {

@@ -11,9 +11,8 @@ import org.springframework.stereotype.Component
 @ConditionalOnCompany(Company.BEEFY)
 @ConditionalOnProperty(value = ["polygon-zkevm.enabled"], havingValue = "true", matchIfMissing = true)
 class BeefyPolygonZkEvmBoostMarketProvider(
-    beefyBoostService: BeefyBoostService,
     beefyZkEvmFarmingMarketProvider: BeefyZkEvmFarmingMarketProvider
-) : BeefyBoostMarketProvider(beefyBoostService.beefyPolygonZkEvmVaults, beefyZkEvmFarmingMarketProvider) {
+) : BeefyBoostMarketProvider(beefyZkEvmFarmingMarketProvider) {
 
     override fun getNetwork(): Network {
         return Network.POLYGON_ZKEVM

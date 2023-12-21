@@ -1,5 +1,7 @@
 package io.defitrack.protocol.autoearn
 
+import arrow.core.Either
+import arrow.fx.coroutines.parMap
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
@@ -13,7 +15,6 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.launch
 import org.springframework.stereotype.Component
 
 @Component
@@ -22,49 +23,45 @@ class AutoEarnBaseFarmingMarketProvider : FarmingMarketProvider() {
 
     final val vaultAddress = "0x04888afae97dc01e337582a2c8d3d232e27273fe"
 
-    val deferredVault = lazyAsync {
-        AutoEarnVaultContract(
+    override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
+        val vault = AutoEarnVaultContract(
             getBlockchainGateway(),
             vaultAddress
         )
-    }
 
-    override suspend fun produceMarkets(): Flow<FarmingMarket> {
-        val vault = deferredVault.await()
+        val poolInfos = vault.poolInfos2()
 
-        return channelFlow {
-            val poolInfos = vault.poolInfos2()
+        poolInfos.parMap(concurrency = 8) { poolInfo ->
+            Either.catch {
+                val index = poolInfos.indexOf(poolInfo)
+                val underlying = getToken(poolInfo.lpToken)
+                val rewardToken = getToken(vault.rewardToken.await())
 
-            poolInfos.forEachIndexed { index, it ->
-                launch {
-                    throttled {
-
-                        val underlying = getToken(it.lpToken)
-                        val rewardToken = getToken(vault.rewardToken.await())
-
-                        send(
-                            create(
-                                name = underlying.name,
-                                identifier = "$vaultAddress-$index",
-                                stakedToken = underlying,
-                                rewardToken = rewardToken,
-                                positionFetcher = PositionFetcher(
-                                    vault.autoEarnUserInfoFunction(index)
-                                ),
-                                claimableRewardFetcher = ClaimableRewardFetcher(
-                                    Reward(
-                                        rewardToken,
-                                        vault.pendingFunction(index)
-                                    ),
-                                    preparedTransaction = selfExecutingTransaction(
-                                        vault.getRewardFn(index)
-                                    )
-                                )
-                            )
+                create(
+                    name = underlying.name,
+                    identifier = "$vaultAddress-$index",
+                    stakedToken = underlying,
+                    rewardToken = rewardToken,
+                    positionFetcher = PositionFetcher(
+                        vault.autoEarnUserInfoFunction(index)
+                    ),
+                    claimableRewardFetcher = ClaimableRewardFetcher(
+                        Reward(
+                            rewardToken,
+                            vault.pendingFunction(index)
+                        ),
+                        preparedTransaction = selfExecutingTransaction(
+                            vault.getRewardFn(index)
                         )
-                    }
-                }
+                    )
+                )
+            }.mapLeft {
+                logger.info("Unable to fetch market for {}", poolInfo.lpToken)
             }
+        }.mapNotNull {
+            it.getOrNull()
+        }.forEach {
+            send(it)
         }
     }
 

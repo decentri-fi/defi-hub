@@ -25,7 +25,6 @@ class BancorEthereumPoolingMarketProvider(
         return Protocol.BANCOR
     }
 
-
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
         val bancor = BancorNetworkContract(
             getBlockchainGateway(), bancorEthreumProvider.bancorNetwork

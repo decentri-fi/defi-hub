@@ -1,5 +1,6 @@
 package io.defitrack.protocol.arpa.staking
 
+import arrow.core.nel
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
@@ -21,7 +22,7 @@ class ArpaStakingMarketProvider : FarmingMarketProvider() {
 
     val arpaStakingAddress = "0xEe710f79aA85099e200be4d40Cdf1Bfb2B467a01"
 
-    override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
+    override suspend fun fetchMarkets(): List<FarmingMarket> {
         val contract = ArpaStakingContract(
             getBlockchainGateway(),
             arpaStakingAddress
@@ -29,24 +30,22 @@ class ArpaStakingMarketProvider : FarmingMarketProvider() {
 
         val arpa = getToken(contract.arpaToken.await())
 
-        send(
-            create(
-                name = "ARPA Staking",
-                identifier = arpaStakingAddress,
-                stakedToken = arpa,
-                rewardToken = arpa,
-                positionFetcher = PositionFetcher(
-                    contract::getStakeFn
+        return create(
+            name = "ARPA Staking",
+            identifier = arpaStakingAddress,
+            stakedToken = arpa,
+            rewardToken = arpa,
+            positionFetcher = PositionFetcher(
+                contract::getStakeFn
+            ),
+            claimableRewardFetcher = ClaimableRewardFetcher(
+                Reward(
+                    arpa,
+                    contract::getBaseReward
                 ),
-                claimableRewardFetcher = ClaimableRewardFetcher(
-                    Reward(
-                        arpa,
-                        contract::getBaseReward
-                    ),
-                    preparedTransaction = selfExecutingTransaction(contract::claimReward)
-                )
+                preparedTransaction = selfExecutingTransaction(contract::claimReward)
             )
-        )
+        ).nel()
     }
 
     override fun getProtocol(): Protocol {

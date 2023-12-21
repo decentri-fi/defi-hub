@@ -1,6 +1,7 @@
 package io.defitrack.market
 
 import arrow.fx.coroutines.parMap
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.erc20.FungibleToken
 import io.defitrack.event.EventService
 import io.defitrack.evm.contract.ContractCall
@@ -11,6 +12,7 @@ import io.defitrack.market.event.MarketAddedEvent
 import io.defitrack.evm.position.Position
 import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.network.toVO
+import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
 import io.defitrack.protocol.CompaniesProvider
 import io.defitrack.protocol.ProtocolService
@@ -196,6 +198,16 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
 
     fun getPriceResource(): PriceResource {
         return priceResource
+    }
+
+    suspend fun getPrice(token: String, amount: BigDecimal): BigDecimal {
+        return getPriceResource().calculatePrice(
+            PriceRequest(
+                token,
+                getNetwork(),
+                amount,
+            )
+        ).toBigDecimal()
     }
 
     fun prepareExit(preparedExit: (exitPositionCommand: ExitPositionCommand) -> ContractCall): ExitPositionPreparer {

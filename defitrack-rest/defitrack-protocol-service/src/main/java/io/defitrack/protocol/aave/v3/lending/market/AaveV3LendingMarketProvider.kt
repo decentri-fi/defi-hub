@@ -21,7 +21,6 @@ abstract class AaveV3LendingMarketProvider(
     private val dataProvider: AaveV3DataProvider,
 ) : LendingMarketProvider() {
 
-
     override suspend fun fetchMarkets(): List<LendingMarket> {
 
         val poolDataProvider = PoolDataProvider(
@@ -37,9 +36,9 @@ abstract class AaveV3LendingMarketProvider(
 
         return poolContract
             .reservesList()
-            .parMapNotNull(concurrency = 8) {
+            .parMapNotNull(concurrency = 8) { reserve ->
                 catch {
-                    createMarket(poolDataProvider, it, poolContract)
+                    createMarket(poolDataProvider, reserve, poolContract)
                 }.mapLeft {
                     logger.error("Error while fetching aave v3 market $it", it)
                 }.getOrNull()
@@ -55,7 +54,6 @@ abstract class AaveV3LendingMarketProvider(
         val reserveTokenAddresses = poolDataProvider.getReserveTokensAddresses(it)
         val aToken = getToken(reserveTokenAddresses.aTokenAddress)
         val underlying = getToken(it)
-        val totalSupply = poolDataProvider.getATokenTotalSupply(it)
 
         return create(
             identifier = aToken.address,
@@ -69,20 +67,14 @@ abstract class AaveV3LendingMarketProvider(
                 getERC20Resource()
             ),
             marketSize = refreshable {
-                getPriceResource().calculatePrice(
-                    PriceRequest(
-                        underlying.address,
-                        getNetwork(),
-                        totalSupply.asEth(aToken.decimals),
-                        underlying.type
-                    )
-                ).toBigDecimal()
+                getPrice(
+                    underlying.address,
+                    poolDataProvider.getATokenTotalSupply(it).asEth(aToken.decimals)
+                )
             },
-            positionFetcher = PositionFetcher(
-                aToken.asERC20Contract(getBlockchainGateway())::balanceOfFunction
-            ),
+            positionFetcher = defaultPositionFetcher(aToken.address),
             marketToken = aToken,
-            totalSupply = refreshable(aToken.totalSupply.asEth(aToken.decimals)) {
+            totalSupply = refreshable {
                 getToken(aToken.address).totalSupply.asEth(aToken.decimals)
             }
         )

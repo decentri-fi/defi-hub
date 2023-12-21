@@ -1,6 +1,5 @@
 package io.defitrack.protocol.stargate.pooling
 
-import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.refreshable
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
@@ -19,7 +18,6 @@ abstract class AbstractSGethTokenProvider(
     }
 
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
-        val token = getToken(address)
         val underlying = getToken("0x0")
         send(
             create(

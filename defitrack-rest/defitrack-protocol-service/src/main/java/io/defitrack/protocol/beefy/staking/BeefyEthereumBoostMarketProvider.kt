@@ -11,9 +11,8 @@ import org.springframework.stereotype.Component
 @ConditionalOnCompany(Company.BEEFY)
 @ConditionalOnProperty(value = ["ethereum.enabled"], havingValue = "true", matchIfMissing = true)
 class BeefyEthereumBoostMarketProvider(
-    beefyBoostService: BeefyBoostService,
     beefyEthereumFarmingMarketProvider: BeefyEthereumFarmingMarketProvider
-) : BeefyBoostMarketProvider(beefyBoostService.beefyEthereumVaults, beefyEthereumFarmingMarketProvider) {
+) : BeefyBoostMarketProvider(beefyEthereumFarmingMarketProvider) {
 
     override fun getNetwork(): Network {
         return Network.ETHEREUM

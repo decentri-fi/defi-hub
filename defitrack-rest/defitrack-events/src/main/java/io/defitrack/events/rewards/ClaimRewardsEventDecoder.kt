@@ -6,8 +6,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.event.DefiEvent
 import io.defitrack.event.DefiEventType
 import io.defitrack.event.EventDecoder
-import io.defitrack.event.EventUtils.Companion.appliesTo
-import io.defitrack.network.toVO
+import io.defitrack.event.appliesTo
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.velodrome.contract.VelodromeV2GaugeContract
 import org.springframework.stereotype.Component
