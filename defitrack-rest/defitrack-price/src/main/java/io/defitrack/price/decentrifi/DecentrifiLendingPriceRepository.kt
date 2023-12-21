@@ -42,11 +42,7 @@ class DecentrifiLendingPriceRepository(
                         if (price == null) {
                             logger.error("Price for market ${market.name} in ${market.protocol.name} is null")
                         } else {
-                            cache.put(
-                                toIndex(market.network, market.marketToken!!.address.lowercase()), ExternalPrice(
-                                    market.marketToken!!.address, market.network.toNetwork(), price, "decentrifi-lending"
-                                )
-                            )
+                            putInCache(market.network, market.marketToken!!.address, price)
                         }
                     }
             } catch (ex: Exception) {
@@ -55,6 +51,14 @@ class DecentrifiLendingPriceRepository(
         }
 
         logger.info("Decentrifi Lending Price Repository populated with ${cache.asMap().entries.size} prices")
+    }
+
+    fun putInCache(network: NetworkVO, address: String, price: BigDecimal) {
+        cache.put(
+            toIndex(network, address.lowercase()), ExternalPrice(
+                address.lowercase(), network.toNetwork(), price, "decentrifi-lending"
+            )
+        )
     }
 
     fun contains(token: FungibleToken): Boolean {

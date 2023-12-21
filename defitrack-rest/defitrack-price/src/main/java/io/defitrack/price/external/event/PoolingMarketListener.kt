@@ -7,6 +7,7 @@ import io.defitrack.price.decentrifi.DecentrifiPoolingPriceRepository
 import org.slf4j.LoggerFactory
 import org.springframework.amqp.core.*
 import org.springframework.amqp.rabbit.annotation.RabbitListener
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -21,13 +22,17 @@ class PoolingMarketListener(
     val logger = LoggerFactory.getLogger(this::class.java)
 
     @Bean
+    @Qualifier("pricePoolingMarket")
     fun pricePoolingMarketsQueue(): Queue {
         return Queue("price-pooling-markets", false)
     }
 
     @Bean
-    fun poolingUpdatedBinding(domainEventsExchange: TopicExchange, newUserQueue: Queue): Binding {
-        return BindingBuilder.bind(newUserQueue).to(domainEventsExchange).with("markets.pooling.updated")
+    fun poolingUpdatedBinding(
+        domainEventsExchange: TopicExchange,
+        @Qualifier("pricePoolingMarket") pricePoolingMarketsQueue: Queue
+    ): Binding {
+        return BindingBuilder.bind(pricePoolingMarketsQueue).to(domainEventsExchange).with("markets.pooling.updated")
     }
 
     @RabbitListener(queues = ["price-pooling-markets"])
