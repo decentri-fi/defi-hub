@@ -20,6 +20,7 @@ import java.math.RoundingMode
 @Component
 @ConditionalOnCompany(Company.COMPOUND)
 class CompoundBorrowingPositionProvider(
+    private val compoundAddressesProvider: CompoundAddressesProvider,
     private val erC20Resource: ERC20Resource,
     blockchainGatewayProvider: BlockchainGatewayProvider,
 ) : BorrowPositionProvider {
@@ -40,7 +41,7 @@ class CompoundBorrowingPositionProvider(
 
     private suspend fun getTokenContracts() = CompoundComptrollerContract(
         gateway,
-        CompoundAddressesProvider.CONFIG[getNetwork()]!!.v2Controller!!
+        compoundAddressesProvider.CONFIG[getNetwork()]!!.v2Controller!!
     ).getMarkets().map {
         CompoundTokenContract(
             gateway,

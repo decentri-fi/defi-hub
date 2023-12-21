@@ -9,17 +9,19 @@ import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.network.toVO
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.compound.CompoundAddressesProvider
 import io.defitrack.protocol.compound.v3.contract.CompoundRewardContract
 import io.defitrack.protocol.compound.v3.contract.CompoundV3AssetContract
-import io.defitrack.transaction.PreparedTransaction
 import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
+import org.springframework.beans.factory.annotation.Autowired
 
 abstract class CompoundRewardProvider(
     val network: Network
 ) : ClaimableMarketProvider() {
+
+    @Autowired
+    private lateinit var compoundAddressesProvider: CompoundAddressesProvider
 
     private val deferredContract = lazyAsync {
         getContract()
@@ -29,7 +31,7 @@ abstract class CompoundRewardProvider(
         return object :
             CompoundRewardContract(
                 blockchainGatewayProvider.getGateway(network),
-                CompoundAddressesProvider.CONFIG[network]!!.rewards
+                compoundAddressesProvider.CONFIG[network]!!.rewards
             ) {
             override suspend fun getRewardConfig(comet: String): RewardConfig {
                 return (read(
@@ -48,7 +50,7 @@ abstract class CompoundRewardProvider(
     }
 
     override suspend fun fetchClaimables(): List<ClaimableMarket> {
-        val markets = CompoundAddressesProvider.CONFIG[network]!!.v3Tokens
+        val markets = compoundAddressesProvider.CONFIG[network]!!.v3Tokens
         return markets.map { comet ->
             val asset = CompoundV3AssetContract(getBlockchainGateway(), comet)
             val basetoken = erC20Resource.getTokenInformation(network, asset.baseToken())
@@ -61,12 +63,14 @@ abstract class CompoundRewardProvider(
                 name = "compound ${basetoken.name} rewards",
                 network = network,
                 protocol = Protocol.COMPOUND,
-                claimableRewardFetchers = listOf(ClaimableRewardFetcher(
-                    Reward(
-                        token = rewardToken,
-                        getRewardFunction = deferredContract.await().getRewardOwedFn(comet)
-                    ),
-                    preparedTransaction = selfExecutingTransaction(deferredContract.await().claimFn(comet)))
+                claimableRewardFetchers = listOf(
+                    ClaimableRewardFetcher(
+                        Reward(
+                            token = rewardToken,
+                            getRewardFunction = deferredContract.await().getRewardOwedFn(comet)
+                        ),
+                        preparedTransaction = selfExecutingTransaction(deferredContract.await().claimFn(comet))
+                    )
                 )
             )
         }

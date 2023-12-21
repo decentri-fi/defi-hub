@@ -25,6 +25,7 @@ import java.math.RoundingMode
 @Component
 @ConditionalOnCompany(Company.COMPOUND)
 class CompoundLendingMarketProvider(
+    private val compoundAddressesProvider: CompoundAddressesProvider
 ) : LendingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
@@ -113,7 +114,7 @@ class CompoundLendingMarketProvider(
     private suspend fun getComptroller(): CompoundComptrollerContract {
         return CompoundComptrollerContract(
             getBlockchainGateway(),
-            CompoundAddressesProvider.CONFIG[getNetwork()]!!.v2Controller!!
+            compoundAddressesProvider.CONFIG[getNetwork()]!!.v2Controller!!
         )
     }
 }
