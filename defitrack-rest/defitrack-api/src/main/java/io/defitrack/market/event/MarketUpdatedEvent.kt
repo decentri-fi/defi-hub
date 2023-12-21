@@ -1,15 +1,15 @@
 package io.defitrack.market.event
 
 import io.defitrack.market.DefiMarket
+import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.market.pooling.domain.PoolingMarket
 
-abstract class MarketUpdatedEvent(val type: String) {
-    companion object {
-        fun create(defiMarket: DefiMarket): MarketUpdatedEvent? {
-            return when (defiMarket) {
-                is PoolingMarket -> PoolMarketUpdatedEvent.createPoolMarketAddedEvent( defiMarket)
-                else -> null
-            }
-        }
+sealed class MarketUpdatedEvent(val type: String)
+
+fun DefiMarket.marketUpdatedEvent(): MarketUpdatedEvent? {
+    return when (this) {
+        is PoolingMarket -> createPoolMarketUpdatedEvent()
+        is LendingMarket -> createLendingMarketUpdatedEvent()
+        else -> null
     }
 }

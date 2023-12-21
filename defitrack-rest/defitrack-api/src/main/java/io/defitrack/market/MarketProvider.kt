@@ -8,9 +8,9 @@ import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.*
 import io.defitrack.exit.ExitPositionCommand
 import io.defitrack.exit.ExitPositionPreparer
-import io.defitrack.market.event.MarketAddedEvent
 import io.defitrack.evm.position.Position
 import io.defitrack.evm.position.PositionFetcher
+import io.defitrack.market.event.marketUpdatedEvent
 import io.defitrack.network.toVO
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
@@ -91,7 +91,12 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
         val millis = measureTimeMillis {
             try {
                 getMarkets().parMap(concurrency = 12) { market ->
-                    market.refresh()
+                    market.refresh().also {
+                        eventService.publish(
+                            "markets.${it.type}.updated",
+                            it.marketUpdatedEvent()
+                        )
+                    }
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -125,7 +130,7 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
         cache.put(it.id, it)
         eventService.publish(
             "markets.${it.type}.updated",
-            MarketAddedEvent.create(it)
+            it.marketUpdatedEvent()
         )
         meterregisty.counter(
             "markets.${it.type}.added", listOf(

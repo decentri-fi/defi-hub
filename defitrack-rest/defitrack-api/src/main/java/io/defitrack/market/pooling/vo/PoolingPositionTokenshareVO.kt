@@ -7,5 +7,6 @@ import java.math.BigInteger
 class PoolingPositionTokenshareVO(
     val token: FungibleToken,
     val reserve: BigInteger,
+    val reserveDecimal: BigDecimal,
     val reserveUSD: BigDecimal
 )

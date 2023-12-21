@@ -10,15 +10,11 @@ data class PoolMarketUpdatedEvent(
     val price: BigDecimal,
     val address: String,
     val network: NetworkVO
-) : MarketUpdatedEvent("pooling") {
-    companion object {
-        fun createPoolMarketAddedEvent(poolingMarket: PoolingMarket): PoolMarketUpdatedEvent {
-            return PoolMarketUpdatedEvent(
-                id = poolingMarket.id,
-                price = poolingMarket.price.get(),
-                address = poolingMarket.address,
-                network = poolingMarket.network.toVO()
-            )
-        }
-    }
-}
+) : MarketUpdatedEvent("pooling")
+
+fun PoolingMarket.createPoolMarketUpdatedEvent(): PoolMarketUpdatedEvent = PoolMarketUpdatedEvent(
+    id = id,
+    price = price.get(),
+    address = address,
+    network = network.toVO()
+)

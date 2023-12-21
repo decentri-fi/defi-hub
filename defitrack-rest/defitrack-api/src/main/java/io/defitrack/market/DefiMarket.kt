@@ -47,7 +47,7 @@ abstract class DefiMarket(
         }
     }
 
-    suspend fun refresh() {
+    suspend fun refresh(): DefiMarket {
         refreshables.forEach {
             try {
                 it.refresh()
@@ -56,5 +56,6 @@ abstract class DefiMarket(
                 ex.printStackTrace()
             }
         }
+        return this
     }
 }

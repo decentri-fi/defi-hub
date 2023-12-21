@@ -16,6 +16,7 @@ import io.defitrack.protocol.set.EthereumSetProvider
 import io.defitrack.protocol.set.SetTokenContract
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
+import java.math.BigDecimal.TEN
 
 @Service
 @ConditionalOnCompany(Company.SET)
@@ -24,14 +25,14 @@ class EthereumSetPoolingMarketProvider(
 ) : PoolingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<PoolingMarket> {
-        return ethereumSetProvider.getSets().mapNotNull {
+        return ethereumSetProvider.getSets().mapNotNull { set ->
             try {
                 val tokenContract = SetTokenContract(
-                    getBlockchainGateway(), it
+                    getBlockchainGateway(), set
                 )
 
                 val supply = tokenContract.totalSupply().get().asEth(tokenContract.readDecimals())
-                val token = getToken(it)
+                val token = getToken(set)
 
                 val positionsRefreshable = refreshable {
                     tokenContract.getPositions()
@@ -41,22 +42,19 @@ class EthereumSetPoolingMarketProvider(
                 val breakdown = positionsRefreshable.map { positions ->
                     positions.map {
                         val underlying = getToken(it.token)
+                        val reserve = it.amount.toBigDecimal()
+                            .times(tokenContract.positionMultiplier.await().asEth())
+                            .times(supply).toBigInteger()
                         PoolingMarketTokenShare(
                             token = underlying,
-                            reserve = it.amount.toBigDecimal().times(supply).toBigInteger(),
-                            reserveUSD = getPriceResource().calculatePrice(
-                                PriceRequest(
-                                    it.token,
-                                    getNetwork(),
-                                    it.amount.asEth(underlying.decimals)
-                                )
-                            ).toBigDecimal().times(supply)
+                            reserve = reserve,
+                            reserveUSD = getPrice(it.token, reserve.asEth(underlying.decimals))
                         )
                     }
                 }
                 create(
-                    identifier = it,
-                    address = it,
+                    identifier = set,
+                    address = set,
                     name = token.name,
                     symbol = token.symbol,
                     tokens = positionsRefreshable.get().map { position -> getToken(position.token) },
@@ -67,13 +65,13 @@ class EthereumSetPoolingMarketProvider(
                             getPrice(tokenContract.getPositions())
                         )
                     },
-                    positionFetcher = defaultPositionFetcher(it),
+                    positionFetcher = defaultPositionFetcher(set),
                     investmentPreparer = null,
                     totalSupply = refreshable(token.totalDecimalSupply()) {
-                        getToken(it).totalDecimalSupply()
+                        getToken(set).totalDecimalSupply()
                     })
             } catch (ex: Exception) {
-                logger.error("Unable to import set with address $it")
+                logger.error("Unable to import set with address $set")
                 null
             }
         }

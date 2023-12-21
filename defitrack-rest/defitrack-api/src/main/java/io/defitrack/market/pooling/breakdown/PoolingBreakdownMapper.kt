@@ -2,6 +2,7 @@ package io.defitrack.market.pooling.breakdown
 
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.BigDecimalExtensions.isZero
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
 import io.defitrack.market.pooling.vo.PoolingMarketTokenShareVO
@@ -26,6 +27,7 @@ class PoolingBreakdownMapper {
                 token = it.token,
                 reserve = it.reserve,
                 reserveUSD = it.reserveUSD,
+                reserveDecimal = it.reserve.asEth(it.token.decimals)
             )
         }
     }
@@ -47,6 +49,7 @@ class PoolingBreakdownMapper {
             PoolingPositionTokenshareVO(
                 token = it.token,
                 reserve = it.reserve.toBigDecimal().times(ratio).toBigInteger(),
+                reserveDecimal = it.reserveDecimal.times(ratio),
                 reserveUSD = (it.reserveUSD ?: BigDecimal.ZERO).times(ratio)
             )
         }

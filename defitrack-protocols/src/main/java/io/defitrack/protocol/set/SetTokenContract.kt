@@ -1,5 +1,6 @@
 package io.defitrack.protocol.set
 
+import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
 import org.web3j.abi.TypeReference
@@ -17,6 +18,8 @@ class SetTokenContract(
 ) : ERC20Contract(
     blockchainGateway, address
 ) {
+
+    val positionMultiplier = constant<BigInteger>("positionMultiplier", uint256())
 
     suspend fun getPositions(): List<Position> {
         return read(
