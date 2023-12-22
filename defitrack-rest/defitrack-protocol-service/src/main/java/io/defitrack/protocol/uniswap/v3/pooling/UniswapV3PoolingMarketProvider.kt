@@ -2,6 +2,7 @@ package io.defitrack.protocol.uniswap.v3.pooling
 
 import arrow.core.Either
 import arrow.core.Either.Companion.catch
+import arrow.core.None
 import arrow.core.Option
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
@@ -28,48 +29,57 @@ abstract class UniswapV3PoolingMarketProvider(
     private val uniswapV3Prefetcher: UniswapV3Prefetcher
 ) : PoolingMarketProvider() {
 
-    val poolFactory = lazyAsync {
-        UniswapV3PoolFactoryContract(
-            getBlockchainGateway(), poolFactoryAddress
-        )
-    }
-
     val prefetches = lazyAsync {
         uniswapV3Prefetcher.getPrefetches(getNetwork())
     }
 
+    val poolFactory by lazy {
+        createPoolFactory()
+    }
+
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
-        poolFactory.await().getPools(startBlock).parMapNotNull(EmptyCoroutineContext, 12) {
-            marketFromCache(it)
+        val pools = resolve(
+            createPoolFactory().getPools(startBlock)
+                .map {
+                    UniswapV3PoolContract(getBlockchainGateway(), it)
+                }
+        )
+
+
+        pools.parMapNotNull(EmptyCoroutineContext, 12) {
+            it.address to getMarket(it).mapLeft {
+                when (it) {
+                    is MarketTooLowException -> logger.debug("market too low for ${it.message}")
+                    else -> logger.error("error getting market for ${it.message}")
+                }
+            }.getOrNone()
         }.forEach {
-            it.getOrNull()?.let {
+            poolCache.put(it.first.lowercase(), it.second)
+
+            it.second.onSome {
                 send(it)
             }
         }
     }
 
+    private fun createPoolFactory() = UniswapV3PoolFactoryContract(
+        getBlockchainGateway(), poolFactoryAddress
+    )
+
     val poolCache = Cache.Builder<String, Option<PoolingMarket>>().build()
+    fun marketFromCache(poolAddress: String) = poolCache.get(poolAddress.lowercase()) ?: None
 
-    suspend fun marketFromCache(poolAddress: String) = poolCache.get(poolAddress.lowercase()) {
-        getMarket(poolAddress).mapLeft { throwable ->
-            when (throwable) {
-                is MarketTooLowException -> logger.debug("market too low for ${throwable.message}")
-                else -> logger.error("error getting market for ${throwable.message}")
-            }
-        }.getOrNone()
-    }
-
-    suspend fun getMarket(address: String): Either<Throwable, PoolingMarket> {
+    suspend fun getMarket(market: UniswapV3PoolContract): Either<Throwable, PoolingMarket> {
         return catch {
-            val identifier = "v3-${address}"
+            val identifier = "v3-${market.address}"
 
             val prefetch = prefetches.await().find {
                 it.id == createId(identifier)
             }
 
-            val pool = UniswapV3PoolContract(getBlockchainGateway(), address)
-            val token0 = prefetch?.tokens?.get(0) ?: getToken(pool.token0.await())
-            val token1 = prefetch?.tokens?.get(1) ?: getToken(pool.token1.await())
+
+            val token0 = prefetch?.tokens?.get(0) ?: getToken(market.token0.await())
+            val token1 = prefetch?.tokens?.get(1) ?: getToken(market.token1.await())
 
             val breakdown = refreshable(
                 prefetch?.breakdown?.map {
@@ -78,34 +88,34 @@ abstract class UniswapV3PoolingMarketProvider(
                         it.reserve,
                         it.reserveUSD
                     )
-                } ?: fiftyFiftyBreakdown(token0, token1, address)
+                } ?: fiftyFiftyBreakdown(token0, token1, market.address)
             ) {
-                fiftyFiftyBreakdown(token0, token1, address)
+                fiftyFiftyBreakdown(token0, token1, market.address)
             }
 
             val marketSize = breakdown.map {
                 it.marketSize()
             }
 
-            if (marketSize.get() != BigDecimal.ZERO && marketSize.get() > BigDecimal.valueOf(10000)) {
-                val totalSupply = prefetch?.totalSupply ?: pool.liquidity.await().asEth()
+            if (marketSize.get() > BigDecimal.valueOf(10000)) {
+                val totalSupply = prefetch?.totalSupply ?: market.liquidity.await().asEth()
                 create(
                     identifier = identifier,
                     name = "${token0.symbol}/${token1.symbol}",
-                    address = pool.address,
+                    address = market.address,
                     symbol = "${token0.symbol}-${token1.symbol}",
                     breakdown = breakdown,
                     tokens = listOf(token0, token1),
                     marketSize = marketSize,
                     positionFetcher = null,
                     totalSupply = refreshable(totalSupply) {
-                        pool.refreshLiquidity().asEth()
+                        market.refreshLiquidity().asEth()
                     },
                     erc20Compatible = false,
-                    internalMetadata = mapOf("contract" to pool),
+                    internalMetadata = mapOf("contract" to market),
                 )
             } else {
-                throw MarketTooLowException("market size is zero for ${pool.address}")
+                throw MarketTooLowException("market size is ${marketSize.get()} for ${market.address}")
             }
         }
     }

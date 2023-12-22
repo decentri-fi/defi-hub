@@ -40,7 +40,7 @@ abstract class UniswapV3PoolingPositionProvider(
         }.map { position ->
             async {
                 try {
-                    val poolAddress = uniswapV3PoolingMarketProvider.poolFactory.await().getPool(
+                    val poolAddress = uniswapV3PoolingMarketProvider.poolFactory.getPool(
                         position.token0,
                         position.token1,
                         position.fee

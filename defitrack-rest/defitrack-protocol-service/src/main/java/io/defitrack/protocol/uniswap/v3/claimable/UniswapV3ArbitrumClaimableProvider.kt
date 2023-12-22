@@ -1,7 +1,7 @@
 package io.defitrack.protocol.uniswap.v3.claimable
 
-import io.defitrack.claimable.domain.UserClaimable
 import io.defitrack.claimable.UserClaimableProvider
+import io.defitrack.claimable.domain.UserClaimable
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.protocol.Company
@@ -27,13 +27,10 @@ class UniswapV3ArbitrumClaimableProvider(
 
     val logger = LoggerFactory.getLogger(this::class.java)
 
-
-    val poolingNftContract by lazy {
-        UniswapPositionsV3Contract(
-            uniswapV3PoolingMarketProvider.getBlockchainGateway(),
-            "0xC36442b4a4522E871399CD717aBDD847Ab11FE88"
-        )
-    }
+    val poolingNftContract = UniswapPositionsV3Contract(
+        uniswapV3PoolingMarketProvider.getBlockchainGateway(),
+        "0xC36442b4a4522E871399CD717aBDD847Ab11FE88"
+    )
 
     private fun calculateOwed(
         feeGrowthGlobalX128: BigInteger,
@@ -69,7 +66,7 @@ class UniswapV3ArbitrumClaimableProvider(
         address: String
     ): List<UserClaimable> = coroutineScope {
         try {
-            val poolAddress = uniswapV3PoolingMarketProvider.poolFactory.await().getPool(
+            val poolAddress = uniswapV3PoolingMarketProvider.poolFactory.getPool(
                 position.token0,
                 position.token1,
                 position.fee

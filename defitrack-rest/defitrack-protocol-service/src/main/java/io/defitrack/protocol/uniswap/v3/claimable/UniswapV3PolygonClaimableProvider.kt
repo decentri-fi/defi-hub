@@ -67,7 +67,7 @@ class UniswapV3PolygonClaimableProvider(
         address: String
     ): List<UserClaimable> = coroutineScope {
         try {
-            val poolAddress = uniswapV3PoolingMarketProvider.poolFactory.await().getPool(
+            val poolAddress = uniswapV3PoolingMarketProvider.poolFactory.getPool(
                 position.token0,
                 position.token1,
                 position.fee
