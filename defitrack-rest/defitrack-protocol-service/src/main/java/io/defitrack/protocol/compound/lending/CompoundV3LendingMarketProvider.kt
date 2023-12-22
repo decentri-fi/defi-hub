@@ -35,7 +35,6 @@ abstract class CompoundV3LendingMarketProvider : LendingMarketProvider() {
                     poolType = "compoundv3",
                     marketToken = cToken,
                     erc20Compatible = true,
-                    positionFetcher = PositionFetcher(cToken.asERC20Contract(getBlockchainGateway())::balanceOfFunction),
                     totalSupply = refreshable {
                         getToken(cTokenAddress).totalDecimalSupply()
                     }
