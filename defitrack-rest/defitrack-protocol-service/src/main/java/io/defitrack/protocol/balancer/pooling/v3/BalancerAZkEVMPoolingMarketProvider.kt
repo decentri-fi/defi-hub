@@ -1,4 +1,4 @@
-package io.defitrack.protocol.balancer.pooling
+package io.defitrack.protocol.balancer.pooling.v3
 
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
@@ -10,14 +10,13 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.BALANCER)
-@ConditionalOnProperty(value = ["arbitrum.enabled"], havingValue = "true", matchIfMissing = true)
-class BalancerArbitrumPoolingMarketProvider(
-    balancerService: BalancerService, balancerPoolingHistoryProvider: BalancerPoolingHistoryProvider
-) : BalancerPoolingMarketProvider(
-    balancerService, balancerPoolingHistoryProvider
-) {
+@ConditionalOnProperty(value = ["polygon-zkevm.enabled"], havingValue = "true", matchIfMissing = true)
+class BalancerAZkEVMPoolingMarketProvider(
+    balancerService: BalancerService,
+    balancerPoolingHistoryProvider: BalancerPoolingHistoryProvider
+) : BalancerPoolingMarketProvider(balancerService, balancerPoolingHistoryProvider) {
 
     override fun getNetwork(): Network {
-        return Network.ARBITRUM
+        return Network.POLYGON_ZKEVM
     }
 }

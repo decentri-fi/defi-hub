@@ -2,7 +2,7 @@ package io.defitrack.protocol.balancer.staking
 
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.balancer.pooling.BalancerOptimismPoolingMarketProvider
+import io.defitrack.protocol.balancer.pooling.v3.BalancerOptimismPoolingMarketProvider
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 

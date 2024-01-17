@@ -1,12 +1,9 @@
-package io.defitrack.protocol.balancer.pooling
+package io.defitrack.protocol.balancer.pooling.v3
 
 import arrow.core.*
-import arrow.core.raise.catch
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.map
 import io.defitrack.common.utils.refreshable
-import io.defitrack.common.utils.toRefreshable
 import io.defitrack.erc20.FungibleToken
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
@@ -19,7 +16,6 @@ import io.defitrack.protocol.balancer.contract.BalancerVaultContract
 import io.defitrack.protocol.balancer.pooling.history.BalancerPoolingHistoryProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import java.math.BigDecimal
 import java.math.BigInteger
 
 abstract class BalancerPoolingMarketProvider(

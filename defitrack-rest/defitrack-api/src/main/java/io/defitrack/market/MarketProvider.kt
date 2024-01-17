@@ -87,10 +87,10 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
         return emptyList()
     }
 
-    suspend fun refreshMarkets() = coroutineScope {
+    suspend fun refreshMarkets() {
         val millis = measureTimeMillis {
             try {
-                getMarkets().parMap(concurrency = 12) { market ->
+                getMarkets().forEach { market ->
                     market.refresh().also {
                         eventService.publish(
                             "markets.${it.type}.updated",

@@ -88,7 +88,10 @@ class BalancerService(private val blockchainGatewayProvider: BlockchainGatewayPr
                 "0x7ADbdabaA80F654568421887c12F09E0C7BD9629",
                 "0x8eA89804145c007e7D226001A96955ad53836087",
                 "0xc7E5ED1054A24Ef31D827E6F86caA58B3Bc168d7",
-                "0x19DFEF0a828EEC0c85FbB335aa65437417390b85"
+                "0x19DFEF0a828EEC0c85FbB335aa65437417390b85",
+                "0x7dFdEF5f355096603419239CE743BfaF1120312B", //deprecated,
+                "0x8df6EfEc5547e31B0eb7d1291B511FF8a2bf987c", //deprecated
+                "0xf1665E19bc105BE4EDD3739F88315cC699cc5b65" //deprecated
             ),
             "0"
         ),

@@ -4,17 +4,18 @@ import arrow.core.nel
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
+import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.util.Date
+import java.util.*
 
 @Component
 @ConditionalOnCompany(Company.VESTA)
@@ -37,9 +38,13 @@ class VestaLiquidityStakingFarmingProvider : FarmingMarketProvider() {
             stakedToken = stakedToken,
             rewardToken = rewardToken,
             deprecated = LocalDateTime.from(
-                Date(contract.lastTimeRewardApplicable.await().toLong() * 1000).toInstant().atZone(ZoneId.systemDefault())
+                Date(contract.lastTimeRewardApplicable.await().toLong() * 1000).toInstant()
+                    .atZone(ZoneId.systemDefault())
             ) < LocalDateTime.now(),
             positionFetcher = PositionFetcher(contract::balances),
+            marketSize = refreshable {
+                getMarketSize(stakedToken, liquidityStakingAddress)
+            },
             claimableRewardFetcher = ClaimableRewardFetcher(
                 reward = Reward(
                     rewardToken,

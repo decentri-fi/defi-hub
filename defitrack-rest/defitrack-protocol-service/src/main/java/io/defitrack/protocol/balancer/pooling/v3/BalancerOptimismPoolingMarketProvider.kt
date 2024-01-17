@@ -1,4 +1,4 @@
-package io.defitrack.protocol.balancer.pooling
+package io.defitrack.protocol.balancer.pooling.v3
 
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany

@@ -1,4 +1,4 @@
-package io.defitrack.protocol.balancer.pooling
+package io.defitrack.protocol.balancer.pooling.v3
 
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
@@ -10,13 +10,13 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.BALANCER)
-@ConditionalOnProperty(value = ["polygon-zkevm.enabled"], havingValue = "true", matchIfMissing = true)
-class BalancerAZkEVMPoolingMarketProvider(
+@ConditionalOnProperty(value = ["polygon.enabled"], havingValue = "true", matchIfMissing = true)
+class BalancerPolygonPoolingMarketProvider(
     balancerService: BalancerService,
-    balancerPoolingHistoryProvider: BalancerPoolingHistoryProvider
+    balancerPoolingHistoryProvider: BalancerPoolingHistoryProvider,
 ) : BalancerPoolingMarketProvider(balancerService, balancerPoolingHistoryProvider) {
 
     override fun getNetwork(): Network {
-        return Network.POLYGON_ZKEVM
+        return Network.POLYGON
     }
 }
