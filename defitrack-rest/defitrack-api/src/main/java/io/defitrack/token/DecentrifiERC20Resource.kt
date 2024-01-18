@@ -3,7 +3,6 @@ package io.defitrack.token
 import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.retry
 import io.defitrack.common.network.Network
-import io.defitrack.erc20.FungibleToken
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
@@ -33,7 +32,7 @@ class DecentrifiERC20Resource(
 
     val tokenCache = Cache.Builder<String, FungibleToken>().expireAfterWrite(1.hours).build()
 
-    val wrappedCache = Cache.Builder<Network, WrappedToken>().build()
+    val wrappedCache = Cache.Builder<Network, WrappedTokenDTO>().build()
 
     override suspend fun getAllTokens(network: Network, verified: Boolean?): List<FungibleToken> {
         return tokensCache.get("tokens-${network}") {
@@ -73,7 +72,7 @@ class DecentrifiERC20Resource(
         }
     }
 
-    override suspend fun getWrappedToken(network: Network): WrappedToken = withContext(Dispatchers.IO) {
+    override suspend fun getWrappedToken(network: Network): WrappedTokenDTO = withContext(Dispatchers.IO) {
         wrappedCache.get(network) {
             retry(limitAttempts(3)) {
                 val result = client.get("$erc20ResourceLocation/${network.name}/wrapped")

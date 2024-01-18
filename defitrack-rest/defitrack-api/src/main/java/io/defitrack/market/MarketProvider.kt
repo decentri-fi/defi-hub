@@ -1,8 +1,6 @@
 package io.defitrack.market
 
-import arrow.fx.coroutines.parMap
-import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.erc20.FungibleToken
+import io.defitrack.token.FungibleToken
 import io.defitrack.event.EventService
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.*

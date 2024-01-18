@@ -2,7 +2,7 @@ package io.defitrack.price.external
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils
-import io.defitrack.erc20.FungibleToken
+import io.defitrack.token.FungibleToken
 import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Component
 import java.math.BigDecimal

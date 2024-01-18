@@ -1,7 +1,7 @@
 package io.defitrack.claimable.domain
 
 import io.defitrack.common.network.Network
-import io.defitrack.erc20.FungibleToken
+import io.defitrack.token.FungibleToken
 import io.defitrack.protocol.Protocol
 import io.defitrack.transaction.PreparedTransaction
 import java.math.BigInteger

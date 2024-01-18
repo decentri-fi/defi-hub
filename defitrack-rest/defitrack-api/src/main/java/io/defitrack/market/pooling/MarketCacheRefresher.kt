@@ -1,6 +1,6 @@
 package io.defitrack.market.pooling
 
-import io.defitrack.claimable.ClaimableMarketProvider
+import io.defitrack.claimable.AbstractClaimableMarketProvider
 import io.defitrack.market.MarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.lending.domain.LendingMarket
@@ -24,7 +24,7 @@ class MarketCacheRefresher(
     private val poolingMarketProviders: List<MarketProvider<PoolingMarket>>,
     private val lendingMarketProviders: List<MarketProvider<LendingMarket>>,
     private val farmingMarketProviders: List<MarketProvider<FarmingMarket>>,
-    private val claimableMarketProviders: List<ClaimableMarketProvider>,
+    private val claimableMarketProviders: List<AbstractClaimableMarketProvider>,
     private val applicationContext: ApplicationContext
 ) : ApplicationRunner {
     val logger = LoggerFactory.getLogger(this::class.java)

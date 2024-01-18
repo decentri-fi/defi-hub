@@ -1,10 +1,10 @@
 package io.defitrack
 
 import io.defitrack.common.network.Network
-import io.defitrack.network.NetworkVO
+import io.defitrack.network.NetworkInformation
 import io.defitrack.network.toVO
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.ProtocolVO
+import io.defitrack.protocol.ProtocolInformation
 import io.defitrack.protocol.mapper.ProtocolVOMapper
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -22,13 +22,13 @@ class MetaRestController(
 
     @GetMapping("/protocols")
     @Operation(summary = "Get all supported protocols")
-    fun getProtocols(): List<ProtocolVO> {
+    fun getProtocols(): List<ProtocolInformation> {
         return Protocol.values().map(protocolVOMapper::map)
     }
 
     @GetMapping("/networks")
     @Operation(summary = "Get all supported network")
-    fun getNetworks(): List<NetworkVO> {
+    fun getNetworks(): List<NetworkInformation> {
         return Network.values().map(Network::toVO)
     }
 }

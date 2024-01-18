@@ -2,7 +2,7 @@ package io.defitrack.price.external
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
-import io.defitrack.erc20.FungibleToken
+import io.defitrack.token.FungibleToken
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.price.PriceProvider
 import io.defitrack.protocol.quickswap.QuickswapService

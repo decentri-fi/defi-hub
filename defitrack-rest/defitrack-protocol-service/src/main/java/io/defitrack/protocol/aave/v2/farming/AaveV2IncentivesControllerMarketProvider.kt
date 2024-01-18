@@ -2,7 +2,7 @@ package io.defitrack.protocol.aave.v2.farming
 
 import arrow.core.nel
 import arrow.core.nonEmptyListOf
-import io.defitrack.claimable.ClaimableMarketProvider
+import io.defitrack.claimable.AbstractClaimableMarketProvider
 import io.defitrack.claimable.domain.ClaimableMarket
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.AAVE)
-class AaveV2IncentivesControllerMarketProvider : ClaimableMarketProvider() {
+class AaveV2IncentivesControllerMarketProvider : AbstractClaimableMarketProvider() {
 
     val stkAave = "0x4da27a545c0c5B758a6BA100e3a049001de870f5"
     val incentivesController = "0xd784927ff2f95ba542bfc824c8a8a98f3495f6b5"

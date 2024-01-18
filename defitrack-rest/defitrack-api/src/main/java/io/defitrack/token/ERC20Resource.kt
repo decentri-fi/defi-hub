@@ -1,14 +1,13 @@
 package io.defitrack.token
 
 import io.defitrack.common.network.Network
-import io.defitrack.erc20.FungibleToken
 import java.math.BigInteger
 
 interface ERC20Resource {
     suspend fun getAllTokens(network: Network, verified: Boolean?): List<FungibleToken>
     suspend fun getBalance(network: Network, tokenAddress: String, user: String): BigInteger
     suspend fun getTokenInformation(network: Network, address: String): FungibleToken
-    suspend fun getWrappedToken(network: Network): WrappedToken
+    suspend fun getWrappedToken(network: Network): WrappedTokenDTO
     suspend fun getBalancesFor(
         address: String,
         tokens: List<String>,

@@ -1,7 +1,7 @@
 package io.defitrack.statistics.client
 
 import com.google.gson.JsonParser
-import io.defitrack.protocol.ProtocolVO
+import io.defitrack.protocol.ProtocolInformation
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.*
@@ -19,45 +19,45 @@ class DefitrackClient(
 
     val logger = LoggerFactory.getLogger(this::class.java)
 
-    suspend fun getProtocols(): List<ProtocolVO> = withContext(Dispatchers.IO) {
+    suspend fun getProtocols(): List<ProtocolInformation> = withContext(Dispatchers.IO) {
         httpClient.get("https://api.decentri.fi/protocols").body()
     }
 
-    suspend fun getFarmingMarketsCount(protocolVO: ProtocolVO): Int = withContext(Dispatchers.IO) {
+    suspend fun getFarmingMarketsCount(protocolInformation: ProtocolInformation): Int = withContext(Dispatchers.IO) {
         try {
-            JsonParser.parseString(httpClient.get("https://api.decentri.fi/${protocolVO.slug}/farming/markets?paged&size=1") {
+            JsonParser.parseString(httpClient.get("https://api.decentri.fi/${protocolInformation.slug}/farming/markets?paged&size=1") {
                 timeout {
                     this.requestTimeoutMillis = 3000
                 }
             }.bodyAsText()).asJsonObject["totalElements"].asInt
         } catch (ex: Exception) {
-            logger.error("Unable to get farming markets for ${protocolVO.slug}")
+            logger.error("Unable to get farming markets for ${protocolInformation.slug}")
             0
         }
     }
 
-    suspend fun getPoolingMarketsCount(protocolVO: ProtocolVO): Int = withContext(Dispatchers.IO) {
+    suspend fun getPoolingMarketsCount(protocolInformation: ProtocolInformation): Int = withContext(Dispatchers.IO) {
         try {
-            JsonParser.parseString(httpClient.get("https://api.decentri.fi/${protocolVO.slug}/pooling/markets?paged&size=1") {
+            JsonParser.parseString(httpClient.get("https://api.decentri.fi/${protocolInformation.slug}/pooling/markets?paged&size=1") {
                 timeout {
                     this.requestTimeoutMillis = 3000
                 }
             }.bodyAsText()).asJsonObject["totalElements"].asInt
         } catch (ex: Exception) {
-            logger.error("Unable to get pooling markets for ${protocolVO.slug}")
+            logger.error("Unable to get pooling markets for ${protocolInformation.slug}")
             0
         }
     }
 
-    suspend fun getLendingMarketCount(protocolVO: ProtocolVO): Int = withContext(Dispatchers.IO) {
+    suspend fun getLendingMarketCount(protocolInformation: ProtocolInformation): Int = withContext(Dispatchers.IO) {
         try {
-            JsonParser.parseString(httpClient.get("https://api.decentri.fi/${protocolVO.slug}/lending/markets?paged&size+1") {
+            JsonParser.parseString(httpClient.get("https://api.decentri.fi/${protocolInformation.slug}/lending/markets?paged&size+1") {
                 timeout {
                     this.requestTimeoutMillis = 3000
                 }
             }.bodyAsText()).asJsonObject["totalElements"].asInt
         } catch (ex: Exception) {
-            logger.error("Unable to get lending markets for ${protocolVO.slug}")
+            logger.error("Unable to get lending markets for ${protocolInformation.slug}")
             0
         }
     }

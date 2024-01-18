@@ -1,10 +1,10 @@
 package io.defitrack.network
 
 import io.defitrack.common.network.Network
-import io.defitrack.network.NetworkVO.Companion.IMAGE_BASE_PATH
+import io.defitrack.network.NetworkInformation.Companion.IMAGE_BASE_PATH
 
 
-class NetworkVO(
+class NetworkInformation(
     val name: String,
     val logo: String,
     val chainId: Int
@@ -19,11 +19,11 @@ class NetworkVO(
     }
 }
 
-fun Network.toVO(): NetworkVO {
+fun Network.toVO(): NetworkInformation {
 
     fun getImage(): String = IMAGE_BASE_PATH + logo
 
-    return NetworkVO(
+    return NetworkInformation(
         name = this.name,
         logo = getImage(),
         chainId = this.chainId

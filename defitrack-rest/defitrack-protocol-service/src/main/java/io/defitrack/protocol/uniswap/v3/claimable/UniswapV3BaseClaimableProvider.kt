@@ -1,7 +1,7 @@
 package io.defitrack.protocol.uniswap.v3.claimable
 
 import io.defitrack.claimable.domain.UserClaimable
-import io.defitrack.claimable.UserClaimableProvider
+import io.defitrack.claimable.AbstractUserClaimableProvider
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.protocol.Company
@@ -23,7 +23,7 @@ import java.math.BigInteger
 @ConditionalOnProperty(value = ["base.enabled", "uniswapv3.enabled"], havingValue = "true", matchIfMissing = true)
 class UniswapV3BaseClaimableProvider(
     private val uniswapV3PoolingMarketProvider: UniswapV3BasePoolingMarketProvider,
-) : UserClaimableProvider() {
+) : AbstractUserClaimableProvider() {
 
     val logger = LoggerFactory.getLogger(this::class.java)
 

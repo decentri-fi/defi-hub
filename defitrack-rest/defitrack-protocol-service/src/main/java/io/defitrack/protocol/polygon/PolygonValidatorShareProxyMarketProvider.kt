@@ -6,7 +6,7 @@ import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.erc20.FungibleToken
+import io.defitrack.token.FungibleToken
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.evm.position.PositionFetcher

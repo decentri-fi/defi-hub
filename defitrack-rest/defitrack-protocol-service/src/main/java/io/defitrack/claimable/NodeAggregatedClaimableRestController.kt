@@ -15,7 +15,7 @@ import org.web3j.crypto.WalletUtils
 class NodeAggregatedClaimableRestController(
     private val defaultUserClaimableProvider: DefaultUserClaimableProvider,
     private val claimableVOMapper: ClaimableVOMapper,
-    private val userClaimableProviders: List<UserClaimableProvider>,
+    private val userClaimableProviders: List<AbstractUserClaimableProvider>,
 ) {
 
     @GetMapping(value = ["/claimables/{address}"])

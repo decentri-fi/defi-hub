@@ -2,11 +2,11 @@ package io.defitrack.erc20.application.protocolspecific.decentrifi
 
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.ERC20
-import io.defitrack.erc20.FungibleToken
+import io.defitrack.token.FungibleToken
 import io.defitrack.erc20.application.protocolspecific.TokenIdentifier
 import io.defitrack.market.farming.vo.FarmingMarketVO
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.ProtocolVO
+import io.defitrack.protocol.ProtocolInformation
 import io.defitrack.erc20.domain.TokenInformation
 import io.defitrack.token.TokenType
 import io.github.reactivecircus.cache4k.Cache
@@ -27,7 +27,7 @@ class DecentrifiTokenIdentifier(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    val tokens = Cache.Builder<String, Pair<FungibleToken, ProtocolVO>>().build()
+    val tokens = Cache.Builder<String, Pair<FungibleToken, ProtocolInformation>>().build()
 
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 6)
     fun init() = runBlocking {
@@ -69,11 +69,11 @@ class DecentrifiTokenIdentifier(
         )
     }
 
-    suspend fun getProtocols(): List<ProtocolVO> {
+    suspend fun getProtocols(): List<ProtocolInformation> {
         return httpClient.get("https://api.decentri.fi/protocols").body()
     }
 
-    suspend fun getFarms(protocol: ProtocolVO): List<FarmingMarketVO> {
+    suspend fun getFarms(protocol: ProtocolInformation): List<FarmingMarketVO> {
         val result =
             httpClient.get("https://api.decentri.fi/${protocol.slug}/farming/all-markets")
         return if (result.status.isSuccess())

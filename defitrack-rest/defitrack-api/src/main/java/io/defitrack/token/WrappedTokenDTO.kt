@@ -1,5 +1,5 @@
 package io.defitrack.token
 
-data class WrappedToken(
+data class WrappedTokenDTO(
         val address: String
     )

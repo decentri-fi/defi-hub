@@ -1,16 +1,16 @@
 package io.defitrack.market.lending.vo
 
-import io.defitrack.erc20.FungibleToken
+import io.defitrack.token.FungibleToken
 import io.defitrack.market.MarketVO
-import io.defitrack.network.NetworkVO
-import io.defitrack.protocol.ProtocolVO
+import io.defitrack.network.NetworkInformation
+import io.defitrack.protocol.ProtocolInformation
 import java.math.BigDecimal
 
 class LendingMarketVO(
     id: String,
     name: String,
-    protocol: ProtocolVO,
-    network: NetworkVO,
+    protocol: ProtocolInformation,
+    network: NetworkInformation,
     val token: FungibleToken,
     val marketToken: FungibleToken?,
     val rate: Double?,

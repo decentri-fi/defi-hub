@@ -2,10 +2,9 @@ package io.defitrack.protocol.beefy.staking
 
 import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMapNotNull
-import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.refreshable
-import io.defitrack.erc20.FungibleToken
+import io.defitrack.token.FungibleToken
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.evm.position.Position
@@ -15,7 +14,6 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.beefy.BeefyVaultService
 import io.defitrack.protocol.beefy.apy.BeefyAPYService
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
-import io.defitrack.protocol.beefy.domain.BeefyVault
 import io.defitrack.protocol.beefy.staking.invest.BeefyStakingInvestmentPreparer
 import org.springframework.beans.factory.annotation.Autowired
 import java.math.BigDecimal

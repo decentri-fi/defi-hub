@@ -4,7 +4,7 @@ import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.BigDecimalExtensions.isZero
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.refreshable
-import io.defitrack.erc20.FungibleToken
+import io.defitrack.token.FungibleToken
 import io.defitrack.market.MarketProvider
 import io.defitrack.market.farming.domain.InvestmentPreparer
 import io.defitrack.market.lending.domain.LendingMarket

@@ -3,18 +3,16 @@ package io.defitrack.event
 import arrow.core.None
 import arrow.core.toOption
 import io.defitrack.common.network.Network
-import io.defitrack.erc20.FungibleToken
+import io.defitrack.token.FungibleToken
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.labeledaddresses.LabeledAddressesResource
 import io.defitrack.labeledaddresses.LabeledAddress
-import io.defitrack.network.NetworkVO
 import io.defitrack.network.toVO
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.ERC20Resource
 import org.springframework.beans.factory.annotation.Autowired
 import org.web3j.abi.FunctionReturnDecoder
-import org.web3j.protocol.core.methods.response.EthLog
 import org.web3j.protocol.core.methods.response.Log
 
 abstract class EventDecoder {

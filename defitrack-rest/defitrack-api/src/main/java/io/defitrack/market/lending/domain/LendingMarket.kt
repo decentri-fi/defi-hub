@@ -2,7 +2,7 @@ package io.defitrack.market.lending.domain
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable
-import io.defitrack.erc20.FungibleToken
+import io.defitrack.token.FungibleToken
 import io.defitrack.exit.ExitPositionPreparer
 import io.defitrack.market.DefiMarket
 import io.defitrack.market.farming.domain.InvestmentPreparer

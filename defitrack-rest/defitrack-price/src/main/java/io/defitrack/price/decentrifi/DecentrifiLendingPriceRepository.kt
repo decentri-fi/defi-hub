@@ -1,10 +1,10 @@
 package io.defitrack.price.decentrifi
 
-import io.defitrack.erc20.FungibleToken
+import io.defitrack.token.FungibleToken
 import io.defitrack.market.lending.vo.LendingMarketVO
-import io.defitrack.network.NetworkVO
+import io.defitrack.network.NetworkInformation
 import io.defitrack.price.external.ExternalPrice
-import io.defitrack.protocol.ProtocolVO
+import io.defitrack.protocol.ProtocolInformation
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -53,7 +53,7 @@ class DecentrifiLendingPriceRepository(
         logger.info("Decentrifi Lending Price Repository populated with ${cache.asMap().entries.size} prices")
     }
 
-    fun putInCache(network: NetworkVO, address: String, price: BigDecimal) {
+    fun putInCache(network: NetworkInformation, address: String, price: BigDecimal) {
         cache.put(
             toIndex(network, address.lowercase()), ExternalPrice(
                 address.lowercase(), network.toNetwork(), price, "decentrifi-lending"
@@ -65,9 +65,9 @@ class DecentrifiLendingPriceRepository(
         return cache.get(toIndex(token.network, token.address)) != null
     }
 
-    private fun toIndex(network: NetworkVO, address: String) = "${network.name}-${address.lowercase()}"
+    private fun toIndex(network: NetworkInformation, address: String) = "${network.name}-${address.lowercase()}"
 
-    suspend fun getProtocols(): List<ProtocolVO> {
+    suspend fun getProtocols(): List<ProtocolInformation> {
         return httpClient.get("https://api.decentri.fi/protocols").body()
     }
 

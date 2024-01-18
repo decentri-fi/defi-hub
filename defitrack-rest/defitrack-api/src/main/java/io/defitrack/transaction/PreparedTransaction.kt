@@ -1,12 +1,12 @@
 package io.defitrack.transaction
 
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.network.NetworkVO
+import io.defitrack.network.NetworkInformation
 import io.defitrack.network.toVO
 import org.web3j.abi.FunctionEncoder
 
 data class PreparedTransaction(
-    val network: NetworkVO,
+    val network: NetworkInformation,
     val function: org.web3j.abi.datatypes.Function,
     val to: String,
     val from: String? = null

@@ -1,7 +1,7 @@
 package io.defitrack.price.external
 
 import io.defitrack.common.network.Network
-import io.defitrack.erc20.FungibleToken
+import io.defitrack.token.FungibleToken
 import io.defitrack.price.decentrifi.DecentriUniswapV2UnderlyingPriceRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component

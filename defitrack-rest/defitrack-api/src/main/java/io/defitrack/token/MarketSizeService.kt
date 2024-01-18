@@ -2,7 +2,6 @@ package io.defitrack.token
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.erc20.FungibleToken
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource

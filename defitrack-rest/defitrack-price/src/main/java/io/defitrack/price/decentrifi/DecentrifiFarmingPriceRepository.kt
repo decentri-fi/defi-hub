@@ -3,11 +3,11 @@ package io.defitrack.price.decentrifi
 import arrow.fx.coroutines.parMap
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.erc20.FungibleToken
+import io.defitrack.token.FungibleToken
 import io.defitrack.market.farming.vo.FarmingMarketVO
-import io.defitrack.network.NetworkVO
+import io.defitrack.network.NetworkInformation
 import io.defitrack.price.external.ExternalPrice
-import io.defitrack.protocol.ProtocolVO
+import io.defitrack.protocol.ProtocolInformation
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -66,14 +66,14 @@ class DecentrifiFarmingPriceRepository(
         return cache.get(toIndex(token.network, token.address)) != null
     }
 
-    private fun toIndex(network: NetworkVO, address: String) =
+    private fun toIndex(network: NetworkInformation, address: String) =
         "${network.name}-${address.lowercase()}"
 
-    suspend fun getProtocols(): List<ProtocolVO> {
+    suspend fun getProtocols(): List<ProtocolInformation> {
         return httpClient.get("https://api.decentri.fi/protocols").body()
     }
 
-    suspend fun getFarms(protocol: ProtocolVO): List<FarmingMarketVO> {
+    suspend fun getFarms(protocol: ProtocolInformation): List<FarmingMarketVO> {
         val result =
             httpClient.get("https://api.decentri.fi/${protocol.slug}/farming/all-markets")
         return if (result.status.isSuccess())

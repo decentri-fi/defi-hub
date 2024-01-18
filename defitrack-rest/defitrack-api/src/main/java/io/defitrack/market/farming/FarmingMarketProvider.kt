@@ -2,7 +2,7 @@ package io.defitrack.market.farming
 
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.common.utils.Refreshable
-import io.defitrack.erc20.FungibleToken
+import io.defitrack.token.FungibleToken
 import io.defitrack.exit.ExitPositionPreparer
 import io.defitrack.market.MarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket

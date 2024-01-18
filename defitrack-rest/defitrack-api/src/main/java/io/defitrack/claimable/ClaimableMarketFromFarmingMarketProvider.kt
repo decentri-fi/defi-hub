@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component
 @Component
 class ClaimableMarketFromFarmingMarketProvider(
     private val farmingMarketProvider: List<FarmingMarketProvider>
-) : ClaimableMarketProvider() {
+) : AbstractClaimableMarketProvider() {
 
     override suspend fun fetchClaimables(): List<ClaimableMarket> {
         return farmingMarketProvider.flatMap {

@@ -1,7 +1,7 @@
 package io.defitrack.protocol.prisma
 
 import arrow.fx.coroutines.parMapNotNull
-import io.defitrack.claimable.ClaimableMarketProvider
+import io.defitrack.claimable.AbstractClaimableMarketProvider
 import io.defitrack.claimable.domain.ClaimableMarket
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component
 @ConditionalOnCompany(Company.PRISMA)
 class PrismaClaimableMarketProvider(
     private val prismaLendingMarketProvider: PrismaLendingMarketProvider
-) : ClaimableMarketProvider() {
+) : AbstractClaimableMarketProvider() {
 
     val prismaAddress = "0xda47862a83dac0c112ba89c6abc2159b95afd71c"
 

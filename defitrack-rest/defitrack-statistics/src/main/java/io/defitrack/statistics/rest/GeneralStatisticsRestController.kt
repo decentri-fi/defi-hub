@@ -1,6 +1,6 @@
 package io.defitrack.statistics.rest
 
-import io.defitrack.protocol.ProtocolVO
+import io.defitrack.protocol.ProtocolInformation
 import io.defitrack.statistics.service.AggregatedMarketStatisticsService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
@@ -28,7 +28,7 @@ class GeneralStatisticsRestController(
     }
 
     class StatisticsPerProtocol(
-        val protocol: ProtocolVO,
+        val protocol: ProtocolInformation,
         val marketCount: Int
     )
 

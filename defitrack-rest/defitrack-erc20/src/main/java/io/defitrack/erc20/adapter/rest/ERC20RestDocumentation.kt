@@ -1,6 +1,6 @@
 package io.defitrack.erc20.adapter.rest
 
-import io.defitrack.erc20.FungibleToken
+import io.defitrack.token.FungibleToken
 import io.defitrack.erc20.adapter.rest.vo.UserBalanceVO
 import io.defitrack.erc20.adapter.rest.vo.WrappedTokenVO
 import io.swagger.v3.oas.annotations.Operation

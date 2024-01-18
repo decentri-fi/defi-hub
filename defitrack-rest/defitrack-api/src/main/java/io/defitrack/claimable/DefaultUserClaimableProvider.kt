@@ -17,7 +17,7 @@ import kotlin.collections.flatten
 
 @Component
 class DefaultUserClaimableProvider(
-    private val claimableMarketProviders: List<ClaimableMarketProvider>,
+    private val claimableMarketProviders: List<AbstractClaimableMarketProvider>,
     private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) {
 

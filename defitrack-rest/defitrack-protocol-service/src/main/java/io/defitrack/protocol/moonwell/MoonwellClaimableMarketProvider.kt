@@ -1,7 +1,7 @@
 package io.defitrack.protocol.moonwell
 
 import arrow.fx.coroutines.parMap
-import io.defitrack.claimable.ClaimableMarketProvider
+import io.defitrack.claimable.AbstractClaimableMarketProvider
 import io.defitrack.claimable.domain.ClaimableMarket
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
@@ -18,7 +18,7 @@ import java.math.BigInteger
 @ConditionalOnCompany(Company.MOONWELL)
 class MoonwellClaimableMarketProvider(
     private val moonwellLendingMarketProvider: MoonwellLendingMarketProvider,
-) : ClaimableMarketProvider() {
+) : AbstractClaimableMarketProvider() {
 
     val well = lazyAsync {
         erC20Resource.getTokenInformation(Network.BASE, "0xFF8adeC2221f9f4D8dfbAFa6B9a297d17603493D")

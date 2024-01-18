@@ -1,4 +1,4 @@
-package io.defitrack.erc20
+package io.defitrack.erc20.application.repository
 
 class TokenListResponse(
     var tokens: List<TokenListEntry>

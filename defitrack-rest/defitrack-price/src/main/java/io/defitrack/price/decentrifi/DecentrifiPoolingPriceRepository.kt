@@ -1,11 +1,11 @@
 package io.defitrack.price.decentrifi
 
 import arrow.fx.coroutines.parMap
-import io.defitrack.erc20.FungibleToken
+import io.defitrack.token.FungibleToken
 import io.defitrack.market.pooling.vo.PoolingMarketVO
-import io.defitrack.network.NetworkVO
+import io.defitrack.network.NetworkInformation
 import io.defitrack.price.external.ExternalPrice
-import io.defitrack.protocol.ProtocolVO
+import io.defitrack.protocol.ProtocolInformation
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -51,7 +51,7 @@ class DecentrifiPoolingPriceRepository(
         logger.info("Decentrifi Pooling Price Repository populated with ${cache.asMap().entries.size} prices")
     }
 
-    fun putInCache(network: NetworkVO, address: String, price: BigDecimal) =
+    fun putInCache(network: NetworkInformation, address: String, price: BigDecimal) =
         cache.put(
             toIndex(network, address), ExternalPrice(
                 address, network.toNetwork(), price, "decentrifi-pooling"
@@ -62,14 +62,14 @@ class DecentrifiPoolingPriceRepository(
         return cache.get(toIndex(token.network, token.address)) != null
     }
 
-    private fun toIndex(network: NetworkVO, address: String) =
+    private fun toIndex(network: NetworkInformation, address: String) =
         "${network.name}-${address.lowercase()}"
 
-    suspend fun getProtocols(): List<ProtocolVO> {
+    suspend fun getProtocols(): List<ProtocolInformation> {
         return httpClient.get("https://api.decentri.fi/protocols").body()
     }
 
-    suspend fun getPools(protocol: ProtocolVO): List<PoolingMarketVO> {
+    suspend fun getPools(protocol: ProtocolInformation): List<PoolingMarketVO> {
         val result =
             httpClient.get("https://api.decentri.fi/${protocol.slug}/pooling/all-markets")
         return if (result.status.isSuccess())

@@ -8,7 +8,7 @@ import io.defitrack.token.ERC20Resource
 import org.springframework.beans.factory.annotation.Autowired
 
 @Deprecated("use io.defitrack.claimable.ClaimableMarketProvider instead")
-abstract class UserClaimableProvider : ProtocolService {
+abstract class AbstractUserClaimableProvider : ProtocolService {
 
     @Autowired
     lateinit var erC20Resource: ERC20Resource

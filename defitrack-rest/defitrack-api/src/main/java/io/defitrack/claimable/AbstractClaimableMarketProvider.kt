@@ -1,6 +1,5 @@
 package io.defitrack.claimable
 
-import arrow.core.Either
 import arrow.core.Either.Companion.catch
 import arrow.core.getOrElse
 import io.defitrack.claimable.domain.ClaimableMarket
@@ -10,7 +9,7 @@ import io.github.reactivecircus.cache4k.Cache
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 
-abstract class ClaimableMarketProvider {
+abstract class AbstractClaimableMarketProvider {
 
     @Autowired
     protected lateinit var erC20Resource: DecentrifiERC20Resource

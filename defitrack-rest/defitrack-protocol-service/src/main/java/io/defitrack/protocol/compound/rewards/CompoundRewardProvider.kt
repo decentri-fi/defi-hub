@@ -2,7 +2,7 @@ package io.defitrack.protocol.compound.rewards
 
 import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
-import io.defitrack.claimable.ClaimableMarketProvider
+import io.defitrack.claimable.AbstractClaimableMarketProvider
 import io.defitrack.claimable.domain.ClaimableMarket
 import io.defitrack.claimable.domain.ClaimableRewardFetcher
 import io.defitrack.claimable.domain.Reward
@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired
 
 abstract class CompoundRewardProvider(
     val network: Network
-) : ClaimableMarketProvider() {
+) : AbstractClaimableMarketProvider() {
 
     @Autowired
     private lateinit var compoundAddressesProvider: CompoundAddressesProvider

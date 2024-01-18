@@ -20,8 +20,8 @@ import org.web3j.crypto.WalletUtils.isValidAddress
 @RestController
 @RequestMapping("/{protocol}")
 class DefaultClaimableRestController(
-    private val userClaimableProviders: List<UserClaimableProvider>,
-    private val claimableMarketProviders: List<ClaimableMarketProvider>,
+    private val userClaimableProviders: List<AbstractUserClaimableProvider>,
+    private val claimableMarketProviders: List<AbstractClaimableMarketProvider>,
     private val defaultUserClaimableProvider: DefaultUserClaimableProvider,
     private val claimableVOMapper: ClaimableVOMapper,
     private val protocolVOMapper: ProtocolVOMapper,

@@ -4,7 +4,7 @@ import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.retry
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
-import io.defitrack.erc20.FungibleToken
+import io.defitrack.token.FungibleToken
 import io.defitrack.token.ERC20Resource
 import io.defitrack.token.TokenType
 import org.slf4j.LoggerFactory

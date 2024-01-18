@@ -2,7 +2,6 @@ package io.defitrack.erc20.application.repository
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.common.network.Network
-import io.defitrack.erc20.TokenListResponse
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*

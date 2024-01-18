@@ -1,16 +1,15 @@
-package io.defitrack.erc20
+package io.defitrack.token
 
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
-import io.defitrack.network.NetworkVO
-import io.defitrack.protocol.ProtocolVO
-import io.defitrack.token.TokenType
+import io.defitrack.network.NetworkInformation
+import io.defitrack.protocol.ProtocolInformation
 import java.math.BigDecimal
 import java.math.BigInteger
 
 class FungibleToken(
-    val network: NetworkVO,
+    val network: NetworkInformation,
     val logo: String? = null,
     val name: String,
     val symbol: String,
@@ -19,7 +18,7 @@ class FungibleToken(
     val type: TokenType,
     val totalSupply: BigInteger = BigInteger.ZERO,
     val underlyingTokens: List<FungibleToken> = emptyList(),
-    val protocol: ProtocolVO? = null
+    val protocol: ProtocolInformation? = null
 ) {
 
     fun totalDecimalSupply(): BigDecimal {

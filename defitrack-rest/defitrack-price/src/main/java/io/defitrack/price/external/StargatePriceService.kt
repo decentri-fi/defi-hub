@@ -1,6 +1,6 @@
 package io.defitrack.price.external
 
-import io.defitrack.erc20.FungibleToken
+import io.defitrack.token.FungibleToken
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.price.PriceRequest
 import io.defitrack.price.PriceResource
