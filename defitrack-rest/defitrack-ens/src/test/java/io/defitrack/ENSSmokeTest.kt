@@ -1,6 +1,6 @@
 package io.defitrack
 
-import io.defitrack.ens.rest.ENSRestController
+import io.defitrack.ens.adapter.rest.ENSRestController
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
