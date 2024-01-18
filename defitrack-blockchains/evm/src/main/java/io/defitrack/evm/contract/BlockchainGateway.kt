@@ -60,19 +60,6 @@ class BlockchainGateway(
             executeCall(address, function)
         }
     }
-
-    suspend fun getEvents(getEventsLog: GetEventLogsCommand): String? {
-        val result = httpClient.post("$endpoint/events/logs") {
-            contentType(ContentType.Application.Json)
-            setBody(getEventsLog)
-        }
-        return if (result.status.isSuccess()) {
-            result.body()
-        } else {
-            null
-        }
-    }
-
     suspend fun getEventsAsEthLog(getEventsLog: GetEventLogsCommand): List<LogObject> {
         val result = httpClient.post("$endpoint/events/logs") {
             contentType(ContentType.Application.Json)
