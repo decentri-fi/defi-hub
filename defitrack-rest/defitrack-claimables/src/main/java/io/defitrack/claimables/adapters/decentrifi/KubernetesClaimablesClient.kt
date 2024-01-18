@@ -1,8 +1,9 @@
-package io.defitrack.claimables
+package io.defitrack.claimables.adapters.decentrifi
 
 import arrow.fx.coroutines.parMap
 import io.defitrack.claimable.vo.ClaimableMarketVO
 import io.defitrack.claimable.vo.UserClaimableVO
+import io.defitrack.claimables.ports.outputs.ClaimablesClient
 import io.defitrack.node.Node
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.ProtocolVO

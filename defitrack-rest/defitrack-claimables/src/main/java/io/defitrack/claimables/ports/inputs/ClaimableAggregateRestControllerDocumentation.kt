@@ -1,4 +1,4 @@
-package io.defitrack.claimables
+package io.defitrack.claimables.ports.inputs
 
 import io.defitrack.claimable.vo.ClaimableMarketVO
 import io.defitrack.claimable.vo.UserClaimableVO
@@ -22,7 +22,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
     name = "Claimables",
     description = "Claimables API, enabling us to easily fetch all types of claimables from different protocols"
 )
-interface ClaimableAggregateRestController {
+interface ClaimableAggregateRestControllerDocumentation {
     @GetMapping
     @Operation(
         summary = "Get all claimables markets",

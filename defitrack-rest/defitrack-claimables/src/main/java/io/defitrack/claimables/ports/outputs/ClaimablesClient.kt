@@ -1,4 +1,4 @@
-package io.defitrack.claimables
+package io.defitrack.claimables.ports.outputs
 
 import io.defitrack.claimable.vo.ClaimableMarketVO
 import io.defitrack.claimable.vo.UserClaimableVO

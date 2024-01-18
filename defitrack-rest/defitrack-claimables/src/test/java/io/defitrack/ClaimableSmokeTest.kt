@@ -1,6 +1,6 @@
 package io.defitrack
 
-import io.defitrack.claimables.ClaimableAggregateRestController
+import io.defitrack.claimables.ports.inputs.ClaimableAggregateRestControllerDocumentation
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest
 class ClaimableSmokeTest {
 
     @Autowired
-    private lateinit var claimableRestController: ClaimableAggregateRestController
+    private lateinit var claimableRestController: ClaimableAggregateRestControllerDocumentation
 
     @Test
     fun contextLoads() {

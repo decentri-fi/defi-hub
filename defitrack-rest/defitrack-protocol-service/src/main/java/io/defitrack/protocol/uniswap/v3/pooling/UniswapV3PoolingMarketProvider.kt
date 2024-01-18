@@ -46,10 +46,10 @@ abstract class UniswapV3PoolingMarketProvider(
         )
 
 
-        pools.parMapNotNull(EmptyCoroutineContext, 12) {
+        pools.parMapNotNull(concurrency = 12) {
             it.address to getMarket(it).mapLeft {
                 when (it) {
-                    is MarketTooLowException -> logger.debug("market too low for ${it.message}")
+                    is MarketTooLowException -> logger.trace("market too low for ${it.message}")
                     else -> logger.error("error getting market for ${it.message}")
                 }
             }.getOrNone()

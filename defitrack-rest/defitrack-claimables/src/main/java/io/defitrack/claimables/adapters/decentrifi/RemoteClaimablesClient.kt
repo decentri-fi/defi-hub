@@ -1,7 +1,8 @@
-package io.defitrack.claimables
+package io.defitrack.claimables.adapters.decentrifi
 
 import io.defitrack.claimable.vo.ClaimableMarketVO
 import io.defitrack.claimable.vo.UserClaimableVO
+import io.defitrack.claimables.ports.outputs.ClaimablesClient
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.ProtocolVO
 import io.github.reactivecircus.cache4k.Cache
@@ -26,7 +27,6 @@ class RemoteClaimablesClient(
 
     val baseUrl = "https://api.decentri.fi"
     private val logger = LoggerFactory.getLogger(this::class.java)
-
 
     override suspend fun getClaimables(address: String, protocols: List<Protocol>): List<UserClaimableVO> =
         withContext(Dispatchers.IO) {
