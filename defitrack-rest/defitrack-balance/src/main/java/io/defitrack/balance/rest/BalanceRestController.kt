@@ -7,12 +7,10 @@ import io.defitrack.balance.service.dto.BalanceElement
 import io.defitrack.balance.service.dto.TokenBalance
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.network.toVO
-import io.defitrack.price.PriceRequest
-import io.defitrack.price.PriceResource
-import io.defitrack.token.ERC20Resource
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
+import io.defitrack.domain.GetPriceCommand
+import io.defitrack.domain.toNetworkInformation
+import io.defitrack.port.input.ERC20Resource
+import io.defitrack.port.input.PriceResource
 import kotlinx.coroutines.coroutineScope
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
@@ -38,13 +36,13 @@ class BalanceRestController(
 
                 if (balance > BigDecimal.ZERO) {
                     val price = priceResource.calculatePrice(
-                        PriceRequest(
+                        GetPriceCommand(
                             "0x0", it.getNetwork(), 1.0.toBigDecimal()
                         )
                     )
                     BalanceElement(
                         amount = balance.toDouble(),
-                        network = it.getNetwork().toVO(),
+                        network = it.getNetwork().toNetworkInformation(),
                         token = erC20Resource.getTokenInformation(
                             it.getNetwork(), "0x0"
                         ),
@@ -75,7 +73,7 @@ class BalanceRestController(
 
         val balance = balanceService.getNativeBalance(address)
         val price = priceResource.calculatePrice(
-            PriceRequest(
+            GetPriceCommand(
                 "0x0",
                 balanceService.getNetwork(),
                 1.0.toBigDecimal(),
@@ -84,7 +82,7 @@ class BalanceRestController(
 
         return ResponseEntity.ok(
             BalanceElement(
-                amount = balance.toDouble(), network = network.toVO(), token = erC20Resource.getTokenInformation(
+                amount = balance.toDouble(), network = network.toNetworkInformation(), token = erC20Resource.getTokenInformation(
                     network, "0x0"
                 ), dollarValue = price.times(balance.toDouble()), price = price
             )
@@ -121,13 +119,13 @@ class BalanceRestController(
     suspend fun TokenBalance.toBalanceElement(): BalanceElement {
         val normalizedAmount = amount.asEth(token.decimals).toDouble()
         val price = priceResource.calculatePrice(
-            PriceRequest(
+            GetPriceCommand(
                 token.address, network, 1.0.toBigDecimal()
             )
         )
         return BalanceElement(
             amount = normalizedAmount,
-            network = network.toVO(),
+            network = network.toNetworkInformation(),
             token = token,
             dollarValue = price.times(normalizedAmount),
             price = price

@@ -3,8 +3,8 @@ package io.defitrack.claimable
 import io.defitrack.claimable.domain.UserClaimable
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGatewayProvider
+import io.defitrack.port.input.ERC20Resource
 import io.defitrack.protocol.ProtocolService
-import io.defitrack.token.ERC20Resource
 import org.springframework.beans.factory.annotation.Autowired
 
 @Deprecated("use io.defitrack.claimable.ClaimableMarketProvider instead")

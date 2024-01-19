@@ -1,15 +1,15 @@
 package io.defitrack.market.lending.vo
 
-import io.defitrack.token.FungibleToken
-import io.defitrack.network.NetworkInformation
-import io.defitrack.protocol.ProtocolInformation
+import io.defitrack.domain.FungibleToken
+import io.defitrack.domain.NetworkInformation
+import io.defitrack.protocol.ProtocolVO
 import java.math.BigDecimal
 import java.math.BigInteger
 
 data class LendingPositionVO(
     val id: String,
     val network: NetworkInformation,
-    val protocol: ProtocolInformation,
+    val protocol: ProtocolVO,
     val dollarValue: BigDecimal,
     val rate: Double?,
     val name: String,

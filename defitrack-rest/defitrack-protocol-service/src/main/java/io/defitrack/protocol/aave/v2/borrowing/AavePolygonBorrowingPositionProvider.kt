@@ -5,10 +5,10 @@ import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.borrowing.BorrowPositionProvider
 import io.defitrack.market.borrowing.domain.BorrowMarket
 import io.defitrack.market.borrowing.domain.BorrowPosition
+import io.defitrack.port.input.ERC20Resource
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.v2.AaveV2PolygonService
-import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Component
 import java.math.BigInteger
 

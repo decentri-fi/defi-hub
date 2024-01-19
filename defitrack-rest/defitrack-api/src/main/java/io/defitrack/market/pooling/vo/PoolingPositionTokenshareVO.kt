@@ -1,6 +1,6 @@
 package io.defitrack.market.pooling.vo
 
-import io.defitrack.token.FungibleToken
+import io.defitrack.domain.FungibleToken
 import java.math.BigDecimal
 import java.math.BigInteger
 

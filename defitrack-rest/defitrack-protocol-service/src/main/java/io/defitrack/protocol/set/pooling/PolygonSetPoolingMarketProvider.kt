@@ -5,9 +5,9 @@ import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
+import io.defitrack.domain.GetPriceCommand
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
-import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.set.PolygonSetProvider
@@ -75,7 +75,7 @@ class PolygonSetPoolingMarketProvider(
             val token = getToken(it.token)
 
             getPriceResource().calculatePrice(
-                PriceRequest(
+                GetPriceCommand(
                     it.token,
                     getNetwork(),
                     it.amount.dividePrecisely(BigDecimal.TEN.pow(token.decimals)),

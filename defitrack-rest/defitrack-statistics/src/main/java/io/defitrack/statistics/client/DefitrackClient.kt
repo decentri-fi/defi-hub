@@ -1,7 +1,7 @@
 package io.defitrack.statistics.client
 
 import com.google.gson.JsonParser
-import io.defitrack.protocol.ProtocolInformation
+import io.defitrack.domain.ProtocolInformation
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.*
@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
+@Deprecated("Use decentrificlient instead")
 class DefitrackClient(
     private val httpClient: HttpClient,
 ) {

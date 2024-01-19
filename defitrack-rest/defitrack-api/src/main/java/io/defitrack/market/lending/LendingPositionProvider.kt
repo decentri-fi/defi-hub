@@ -2,7 +2,7 @@ package io.defitrack.market.lending
 
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.lending.domain.LendingPosition
-import io.defitrack.token.ERC20Resource
+import io.defitrack.port.input.ERC20Resource
 import org.springframework.beans.factory.annotation.Autowired
 
 abstract class LendingPositionProvider {

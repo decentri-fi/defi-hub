@@ -1,9 +1,9 @@
 package io.defitrack.price.external
 
-import io.defitrack.token.FungibleToken
+import io.defitrack.domain.FungibleToken
+import io.defitrack.domain.GetPriceCommand
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.price.PriceRequest
-import io.defitrack.price.PriceResource
+import io.defitrack.port.input.PriceResource
 import io.defitrack.protocol.stargate.contract.StargatePool
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -45,7 +45,7 @@ class StargatePriceService(
                 fungibleToken.address
             )
             return priceResource.calculatePrice(
-                PriceRequest(
+                GetPriceCommand(
                     address = contract.token(),
                     fungibleToken.network.toNetwork(),
                     BigDecimal.ONE

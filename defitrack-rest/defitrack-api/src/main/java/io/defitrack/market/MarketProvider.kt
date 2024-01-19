@@ -1,27 +1,28 @@
 package io.defitrack.market
 
-import io.defitrack.token.FungibleToken
+import io.defitrack.domain.FungibleToken
+import io.defitrack.domain.GetPriceCommand
+import io.defitrack.domain.toNetworkInformation
 import io.defitrack.event.EventService
-import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.*
-import io.defitrack.exit.ExitPositionCommand
-import io.defitrack.exit.ExitPositionPreparer
 import io.defitrack.evm.position.Position
 import io.defitrack.evm.position.PositionFetcher
+import io.defitrack.exit.ExitPositionCommand
+import io.defitrack.exit.ExitPositionPreparer
 import io.defitrack.market.event.marketUpdatedEvent
-import io.defitrack.network.toVO
-import io.defitrack.price.PriceRequest
-import io.defitrack.price.PriceResource
+import io.defitrack.port.input.ERC20Resource
+import io.defitrack.port.input.PriceResource
 import io.defitrack.protocol.CompaniesProvider
 import io.defitrack.protocol.ProtocolService
-import io.defitrack.token.ERC20Resource
 import io.defitrack.token.MarketSizeService
 import io.defitrack.transaction.PreparedTransaction
 import io.github.reactivecircus.cache4k.Cache
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
 import io.micrometer.observation.ObservationRegistry
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.sync.Semaphore
@@ -205,7 +206,7 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
 
     suspend fun getPrice(token: String, amount: BigDecimal): BigDecimal {
         return getPriceResource().calculatePrice(
-            PriceRequest(
+            GetPriceCommand(
                 token,
                 getNetwork(),
                 amount,
@@ -220,7 +221,7 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
                     async {
                         val prepared = preparedExit(exitPositionCommand)
                         PreparedTransaction(
-                            network = getNetwork().toVO(),
+                            network = getNetwork().toNetworkInformation(),
                             function = prepared.function,
                             to = prepared.address,
                             from = exitPositionCommand.user
@@ -233,5 +234,9 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
 
     suspend inline fun <T> throttled(action: () -> T): T {
         return semaphore.withPermit(action)
+    }
+
+    fun FungibleToken.asERC20Contract(blockchainGateway: BlockchainGateway): ERC20Contract {
+        return ERC20Contract(blockchainGateway, address)
     }
 }

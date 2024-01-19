@@ -7,7 +7,7 @@ import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.price.PriceResource
+import io.defitrack.port.input.PriceResource
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aelin.StakingRewardsContract

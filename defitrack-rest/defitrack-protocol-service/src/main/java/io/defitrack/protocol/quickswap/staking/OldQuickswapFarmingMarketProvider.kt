@@ -6,11 +6,11 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.token.FungibleToken
+import io.defitrack.domain.FungibleToken
+import io.defitrack.domain.GetPriceCommand
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.price.PriceRequest
-import io.defitrack.price.PriceResource
+import io.defitrack.port.input.PriceResource
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapService
@@ -29,15 +29,11 @@ class OldQuickswapFarmingMarketProvider(
     private val priceResource: PriceResource,
 ) : FarmingMarketProvider() {
 
-    val rewardFactoryContract = lazyAsync {
-        RewardFactoryContract(
+    override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
+        val contract =   RewardFactoryContract(
             getBlockchainGateway(),
             quickswapService.getOldRewardFactory(),
         )
-    }
-
-    override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
-        val contract = rewardFactoryContract.await()
 
         contract.getRewardPools().map {
             QuickswapRewardPoolContract(
@@ -82,7 +78,7 @@ class OldQuickswapFarmingMarketProvider(
         pool: QuickswapRewardPoolContract
     ) = BigDecimal.valueOf(
         priceResource.calculatePrice(
-            PriceRequest(
+            GetPriceCommand(
                 address = stakedTokenInformation.address,
                 network = getNetwork(),
                 amount = pool.totalSupply().get().toBigDecimal().divide(

@@ -7,7 +7,7 @@ import io.defitrack.market.farming.vo.TransactionPreparationVO
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.mapper.PoolingMarketVOMapper
 import io.defitrack.market.pooling.vo.PoolingMarketVO
-import io.defitrack.token.DecentrifiERC20Resource
+import io.defitrack.port.input.ERC20Resource
 import io.defitrack.token.TokenType
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/{protocol}/pooling")
 class DefaultPoolingMarketRestController(
     private val poolingMarketProviders: List<PoolingMarketProvider>,
-    private val erC20Resource: DecentrifiERC20Resource,
+    private val erC20Resource: ERC20Resource,
     private val poolingMarketVOMapper: PoolingMarketVOMapper
 ) : DefaultMarketRestController<PoolingMarket>(
     poolingMarketProviders, poolingMarketVOMapper

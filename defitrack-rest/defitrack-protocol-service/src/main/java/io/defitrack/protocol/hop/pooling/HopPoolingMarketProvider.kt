@@ -6,10 +6,10 @@ import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.map
 import io.defitrack.common.utils.refreshable
+import io.defitrack.domain.GetPriceCommand
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
-import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.hop.HopService
 import io.defitrack.protocol.hop.contract.HopLpTokenContract
@@ -81,7 +81,7 @@ abstract class HopPoolingMarketProvider(
         }
 
         return getPriceResource().calculatePrice(
-            PriceRequest(
+            GetPriceCommand(
                 address = canonicalTokenAddress,
                 network = getNetwork(),
                 amount = tokenAmount.get(),

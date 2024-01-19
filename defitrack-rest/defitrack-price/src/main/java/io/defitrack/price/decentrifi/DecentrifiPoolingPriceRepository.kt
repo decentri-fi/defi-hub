@@ -1,11 +1,11 @@
 package io.defitrack.price.decentrifi
 
 import arrow.fx.coroutines.parMap
-import io.defitrack.token.FungibleToken
+import io.defitrack.domain.FungibleToken
+import io.defitrack.domain.NetworkInformation
+import io.defitrack.domain.ProtocolInformation
 import io.defitrack.market.pooling.vo.PoolingMarketVO
-import io.defitrack.network.NetworkInformation
 import io.defitrack.price.external.ExternalPrice
-import io.defitrack.protocol.ProtocolInformation
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.call.*

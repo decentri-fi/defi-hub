@@ -4,12 +4,12 @@ import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.refreshable
-import io.defitrack.token.FungibleToken
+import io.defitrack.domain.FungibleToken
+import io.defitrack.domain.GetPriceCommand
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.evm.position.Position
 import io.defitrack.evm.position.PositionFetcher
-import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.beefy.BeefyVaultService
 import io.defitrack.protocol.beefy.apy.BeefyAPYService
@@ -94,7 +94,7 @@ abstract class BeefyFarmingMarketProvider(
         beefyVault: BeefyVaultContract
     ) = BigDecimal.valueOf(
         getPriceResource().calculatePrice(
-            PriceRequest(
+            GetPriceCommand(
                 want.address,
                 getNetwork(),
                 beefyVault.balance.await().toBigDecimal()

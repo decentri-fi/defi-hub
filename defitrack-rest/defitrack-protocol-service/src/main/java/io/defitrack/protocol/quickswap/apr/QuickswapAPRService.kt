@@ -2,9 +2,9 @@ package io.defitrack.protocol.quickswap.apr
 
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
+import io.defitrack.domain.GetPriceCommand
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.price.PriceRequest
-import io.defitrack.price.PriceResource
+import io.defitrack.port.input.PriceResource
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.contract.QuickswapDualRewardPoolContract
@@ -53,7 +53,7 @@ class QuickswapAPRService(
             (contract.rewardRateA().times(BigInteger.valueOf(BLOCKS_PER_YEAR))).toBigDecimal()
                 .divide(BigDecimal.TEN.pow(18))
         val usdQuickRewardsPerYear = priceResource.calculatePrice(
-            PriceRequest(
+            GetPriceCommand(
                 DQUICK,
                 Network.POLYGON,
                 quickRewardsPerYear
@@ -64,7 +64,7 @@ class QuickswapAPRService(
             (contract.rewardRateB().times(BigInteger.valueOf(BLOCKS_PER_YEAR))).toBigDecimal()
                 .divide(BigDecimal.TEN.pow(18))
         val usdMaticRewardsPerYear = priceResource.calculatePrice(
-            PriceRequest(
+            GetPriceCommand(
                 "0x0",
                 Network.POLYGON,
                 maticRewardsPerYear
@@ -93,7 +93,7 @@ class QuickswapAPRService(
             (contract.rewardRate.await().times(BigInteger.valueOf(BLOCKS_PER_YEAR))).toBigDecimal()
                 .divide(BigDecimal.TEN.pow(18))
         val usdRewardsPerYear = priceResource.calculatePrice(
-            PriceRequest(
+            GetPriceCommand(
                 DQUICK,
                 Network.POLYGON,
                 quickRewardsPerYear

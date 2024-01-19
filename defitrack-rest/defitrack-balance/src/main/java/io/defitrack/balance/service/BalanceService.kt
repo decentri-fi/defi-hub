@@ -3,7 +3,9 @@ package io.defitrack.balance.service
 import io.defitrack.balance.service.dto.TokenBalance
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.token.ERC20Resource
+import io.defitrack.evm.contract.ContractCall
+import io.defitrack.evm.contract.ERC20Contract
+import io.defitrack.port.input.ERC20Resource
 import org.slf4j.LoggerFactory
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -32,7 +34,7 @@ abstract class BalanceService(
                 it.address
             }
 
-            return erc20Resource.getBalancesFor(user, tokenAddresses, getNetwork())
+            return getBalancesFor(user, tokenAddresses, getNetwork())
                 .mapIndexed { i, balance ->
                     if (balance > BigInteger.ZERO) {
                         val token = erc20Resource.getTokenInformation(getNetwork(), tokenAddresses[i])
@@ -48,6 +50,33 @@ abstract class BalanceService(
         } catch (ex: Exception) {
             logger.error("Unable to get token balances for {}", this.getNetwork())
             emptyList()
+        }
+    }
+
+
+    private suspend fun getBalancesFor(
+        address: String,
+        tokens: List<String>,
+        network: Network,
+    ): List<BigInteger> {
+        with(blockchainGatewayProvider.getGateway(network)) {
+            return readMultiCall(tokens.map { token ->
+                ContractCall(
+                    ERC20Contract.balanceOf(address),
+                    network,
+                    token
+                )
+            }).map {
+                try {
+                    if (!it.success) {
+                        BigInteger.ZERO
+                    } else {
+                        it.data[0].value as BigInteger
+                    }
+                } catch (_: Exception) {
+                    BigInteger.ZERO
+                }
+            }
         }
     }
 }

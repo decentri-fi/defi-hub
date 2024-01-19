@@ -6,17 +6,16 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.map
 import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
+import io.defitrack.domain.GetPriceCommand
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
-import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.set.EthereumSetProvider
 import io.defitrack.protocol.set.SetTokenContract
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
-import java.math.BigDecimal.TEN
 
 @Service
 @ConditionalOnCompany(Company.SET)
@@ -86,7 +85,7 @@ class EthereumSetPoolingMarketProvider(
             val token = getToken(it.token)
 
             getPriceResource().calculatePrice(
-                PriceRequest(
+                GetPriceCommand(
                     it.token,
                     getNetwork(),
                     it.amount.dividePrecisely(BigDecimal.TEN.pow(token.decimals)),

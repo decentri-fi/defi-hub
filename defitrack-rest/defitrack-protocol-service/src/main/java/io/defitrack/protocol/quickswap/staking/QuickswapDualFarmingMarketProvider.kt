@@ -26,10 +26,6 @@ class QuickswapDualFarmingMarketProvider(
     private val quickswapService: QuickswapService,
 ) : FarmingMarketProvider() {
 
-    val dualStakingFactory = lazyAsync {
-
-    }
-
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
         val contract = DualRewardFactoryContract(
             getBlockchainGateway(),

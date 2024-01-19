@@ -2,8 +2,8 @@ package io.defitrack.apr
 
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.BigDecimalExtensions.isZero
-import io.defitrack.price.PriceRequest
-import io.defitrack.price.PriceResource
+import io.defitrack.domain.GetPriceCommand
+import io.defitrack.port.input.PriceResource
 import io.github.reactivecircus.cache4k.Cache
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -39,7 +39,7 @@ abstract class StakingAprCalculator(
 
     private suspend fun calculateStakedTokenInUsd(stakedAsset: StakedAsset): BigDecimal = BigDecimal.valueOf(
         priceResource.calculatePrice(
-            PriceRequest(
+            GetPriceCommand(
                 stakedAsset.address,
                 stakedAsset.network,
                 stakedAsset.amount,
@@ -53,7 +53,7 @@ abstract class StakingAprCalculator(
                 .divide(BigDecimal.valueOf(reward.blocksPerSecond.toLong()), 18, RoundingMode.HALF_UP)
             BigDecimal.valueOf(
                 priceResource.calculatePrice(
-                    PriceRequest(
+                    GetPriceCommand(
                         reward.address,
                         reward.network,
                         amount,

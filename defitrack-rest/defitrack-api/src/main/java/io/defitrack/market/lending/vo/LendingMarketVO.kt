@@ -1,15 +1,15 @@
 package io.defitrack.market.lending.vo
 
-import io.defitrack.token.FungibleToken
+import io.defitrack.domain.FungibleToken
+import io.defitrack.domain.NetworkInformation
 import io.defitrack.market.MarketVO
-import io.defitrack.network.NetworkInformation
-import io.defitrack.protocol.ProtocolInformation
+import io.defitrack.protocol.ProtocolVO
 import java.math.BigDecimal
 
 class LendingMarketVO(
     id: String,
     name: String,
-    protocol: ProtocolInformation,
+    protocol: ProtocolVO,
     network: NetworkInformation,
     val token: FungibleToken,
     val marketToken: FungibleToken?,
@@ -24,5 +24,14 @@ class LendingMarketVO(
     updatedAt: Long,
     deprecated: Boolean
 ) : MarketVO(
-    id, network, protocol, name, prepareInvestmentSupported, exitPositionSupported, marketSize, "lending", updatedAt, deprecated
+    id,
+    network,
+    protocol,
+    name,
+    prepareInvestmentSupported,
+    exitPositionSupported,
+    marketSize,
+    "lending",
+    updatedAt,
+    deprecated
 )

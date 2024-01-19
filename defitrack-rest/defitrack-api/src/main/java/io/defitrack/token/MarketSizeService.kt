@@ -2,9 +2,11 @@ package io.defitrack.token
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.domain.FungibleToken
+import io.defitrack.domain.GetPriceCommand
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.price.PriceRequest
-import io.defitrack.price.PriceResource
+import io.defitrack.port.input.ERC20Resource
+import io.defitrack.port.input.PriceResource
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -37,7 +39,7 @@ class MarketSizeService(
         return MarketSize(
             tokenAmount = balance,
             usdAmount = priceResource.calculatePrice(
-                PriceRequest(
+                GetPriceCommand(
                     address = token.address,
                     network = network,
                     amount = balance.asEth(token.decimals),

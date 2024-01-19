@@ -6,12 +6,12 @@ import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.borrowing.BorrowPositionProvider
 import io.defitrack.market.borrowing.domain.BorrowMarket
 import io.defitrack.market.borrowing.domain.BorrowPosition
+import io.defitrack.port.input.ERC20Resource
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.compound.CompoundAddressesProvider
 import io.defitrack.protocol.compound.v2.contract.CompoundComptrollerContract
 import io.defitrack.protocol.compound.v2.contract.CompoundTokenContract
-import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.BigInteger

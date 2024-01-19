@@ -1,13 +1,13 @@
 package io.defitrack.market
 
-import io.defitrack.network.NetworkInformation
-import io.defitrack.protocol.ProtocolInformation
+import io.defitrack.domain.NetworkInformation
+import io.defitrack.protocol.ProtocolVO
 import java.math.BigDecimal
 
 abstract class MarketVO(
     val id: String,
     val network: NetworkInformation,
-    val protocol: ProtocolInformation,
+    val protocol: ProtocolVO,
     val name: String,
     val prepareInvestmentSupported: Boolean,
     val exitPositionSupported: Boolean,

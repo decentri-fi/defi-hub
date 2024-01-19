@@ -5,14 +5,12 @@ import arrow.core.nonEmptyListOf
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.map
 import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
+import io.defitrack.domain.GetPriceCommand
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
-import io.defitrack.market.pooling.domain.marketSize
-import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.velodrome.VelodromeOptimismService
@@ -67,7 +65,7 @@ class VelodromeV2OptimismPoolingMarketProvider(
                         token0,
                         amount0,
                         getPriceResource().calculatePrice(
-                            PriceRequest(token0.address, getNetwork(), amount0.asEth(token0.decimals))
+                            GetPriceCommand(token0.address, getNetwork(), amount0.asEth(token0.decimals))
                         ).toBigDecimal()
                     )
                 },
@@ -78,7 +76,7 @@ class VelodromeV2OptimismPoolingMarketProvider(
                         token1,
                         amount1,
                         getPriceResource().calculatePrice(
-                            PriceRequest(token1.address, getNetwork(), amount1.asEth(token1.decimals))
+                            GetPriceCommand(token1.address, getNetwork(), amount1.asEth(token1.decimals))
                         ).toBigDecimal()
                     )
                 }

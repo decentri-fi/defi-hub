@@ -7,10 +7,10 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.map
 import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
+import io.defitrack.domain.GetPriceCommand
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
-import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import org.springframework.stereotype.Component
@@ -56,7 +56,7 @@ class BlurDepositPoolingMarketProvider : PoolingMarketProvider() {
     private suspend fun calculateMarketSize(): BigDecimal {
         val balance = getBlockchainGateway().getNativeBalance(blurEthDeposit)
         return getPriceResource().calculatePrice(
-            PriceRequest(
+            GetPriceCommand(
                 "0x0",
                 getNetwork(),
                 balance

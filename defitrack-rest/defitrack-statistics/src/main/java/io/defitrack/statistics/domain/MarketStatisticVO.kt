@@ -1,6 +1,6 @@
 package io.defitrack.statistics.domain
 
-import io.defitrack.protocol.ProtocolInformation
+import io.defitrack.domain.ProtocolInformation
 
 class MarketStatisticVO(
     val total: Int,

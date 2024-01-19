@@ -3,9 +3,9 @@ package io.defitrack.protocol.stargate.pooling
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.map
 import io.defitrack.common.utils.refreshable
+import io.defitrack.domain.GetPriceCommand
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
-import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.stargate.StargateService
 import io.defitrack.protocol.stargate.contract.StargatePool
@@ -57,7 +57,7 @@ abstract class AbstractStargatePoolingMarketProvider(
                             },
                             marketSize = refreshable {
                                 getPriceResource().calculatePrice(
-                                    PriceRequest(
+                                    GetPriceCommand(
                                         underlying.address,
                                         getNetwork(),
                                         pool.totalLiquidity().asEth(underlying.decimals),

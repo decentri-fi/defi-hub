@@ -6,7 +6,6 @@ import io.defitrack.common.network.Network
 import io.defitrack.event.DefiEvent
 import io.defitrack.event.DefiEventType
 import io.defitrack.event.EventDecoder
-import io.defitrack.network.toVO
 import io.defitrack.protocol.Protocol
 import org.springframework.stereotype.Component
 import org.web3j.abi.EventEncoder

@@ -3,9 +3,9 @@ package io.defitrack.claimable.mapper
 import io.defitrack.claimable.domain.UserClaimable
 import io.defitrack.claimable.vo.UserClaimableVO
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.network.toVO
-import io.defitrack.price.PriceRequest
-import io.defitrack.price.PriceResource
+import io.defitrack.domain.GetPriceCommand
+import io.defitrack.domain.toNetworkInformation
+import io.defitrack.port.input.PriceResource
 import io.defitrack.protocol.mapper.ProtocolVOMapper
 import io.defitrack.transaction.PreparedTransactionVOMapper
 import org.springframework.stereotype.Component
@@ -21,7 +21,7 @@ class ClaimableVOMapper(
         return with(userClaimable) {
             val amount = amount.asEth(claimableToken.decimals)
             val claimableInDollar = priceResource.calculatePrice(
-                PriceRequest(
+                GetPriceCommand(
                     address = claimableToken.address,
                     network = network,
                     amount = amount,
@@ -32,7 +32,7 @@ class ClaimableVOMapper(
                 id = id,
                 name = name,
                 protocol = protocolVOMapper.map(protocol),
-                network = network.toVO(),
+                network = network.toNetworkInformation(),
                 token = claimableToken,
                 amount = amount.toDouble(),
                 dollarValue = claimableInDollar,

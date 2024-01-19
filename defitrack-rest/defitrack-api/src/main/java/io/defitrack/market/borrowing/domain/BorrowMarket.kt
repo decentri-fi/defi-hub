@@ -1,7 +1,7 @@
 package io.defitrack.market.borrowing.domain
 
 import io.defitrack.common.network.Network
-import io.defitrack.token.FungibleToken
+import io.defitrack.domain.FungibleToken
 import io.defitrack.market.DefiMarket
 import io.defitrack.protocol.Protocol
 import java.math.BigDecimal

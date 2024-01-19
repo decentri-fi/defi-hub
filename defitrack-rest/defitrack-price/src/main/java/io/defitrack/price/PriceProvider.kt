@@ -1,6 +1,6 @@
 package io.defitrack.price
 
-import io.defitrack.token.FungibleToken
+import io.defitrack.domain.FungibleToken
 import io.defitrack.price.coingecko.CoinGeckoPriceService
 import io.defitrack.price.external.ExternalPriceService
 import io.github.reactivecircus.cache4k.Cache

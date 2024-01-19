@@ -1,10 +1,9 @@
 package io.defitrack.protocol.dodo.pooling
 
-import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.refreshable
+import io.defitrack.domain.GetPriceCommand
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
-import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.dodo.DodoGraphProvider
 import java.math.BigDecimal
 
@@ -26,7 +25,7 @@ abstract class DodoPoolingMarketProvider(
                 totalSupply = refreshable(BigDecimal.ZERO),
                 marketSize = refreshable {
                     getPriceResource().calculatePrice(
-                        PriceRequest(
+                        GetPriceCommand(
                             baseToken.address,
                             getNetwork(),
                             pool.baseReserve,
@@ -34,7 +33,7 @@ abstract class DodoPoolingMarketProvider(
                         )
                     ).toBigDecimal().plus(
                         getPriceResource().calculatePrice(
-                            PriceRequest(
+                            GetPriceCommand(
                                 quoteToken.address,
                                 getNetwork(),
                                 pool.quoteReserve,

@@ -3,10 +3,10 @@ package io.defitrack.protocol.uniswap.v3.pooling
 import arrow.core.getOrElse
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.domain.GetPriceCommand
 import io.defitrack.market.pooling.PoolingPositionProvider
 import io.defitrack.market.pooling.domain.PoolingPosition
 import io.defitrack.market.pooling.domain.PriceCalculator
-import io.defitrack.price.PriceRequest
 import io.defitrack.uniswap.v3.UniswapPositionsV3Contract
 import io.defitrack.uniswap.v3.UniswapV3PoolContract
 import kotlinx.coroutines.async
@@ -81,7 +81,7 @@ abstract class UniswapV3PoolingPositionProvider(
                     val totalToken0Usd = if (userTokens0 > BigDecimal.ZERO) {
                         uniswapV3PoolingMarketProvider.getPriceResource()
                             .calculatePrice(
-                                PriceRequest(
+                                GetPriceCommand(
                                     token0.address,
                                     uniswapV3PoolingMarketProvider.getNetwork(),
                                     userTokens0
@@ -93,7 +93,7 @@ abstract class UniswapV3PoolingPositionProvider(
 
                     val totalToken1Usd = if (userTokens1 > BigDecimal.ZERO) {
                         uniswapV3PoolingMarketProvider.getPriceResource().calculatePrice(
-                            PriceRequest(
+                            GetPriceCommand(
                                 token1.address,
                                 uniswapV3PoolingMarketProvider.getNetwork(),
                                 userTokens1

@@ -4,10 +4,10 @@ import arrow.core.nel
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
+import io.defitrack.domain.GetPriceCommand
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
-import io.defitrack.price.PriceRequest
-import io.defitrack.price.PriceResource
+import io.defitrack.port.input.PriceResource
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import org.springframework.stereotype.Component
@@ -35,7 +35,7 @@ class PoolTogetherOptimismAUSDCTicketMarketProvider(
             ),
             marketSize = refreshable {
                 priceResource.calculatePrice(
-                    PriceRequest(
+                    GetPriceCommand(
                         usdcAddress, getNetwork(), supply
                     )
                 ).toBigDecimal()

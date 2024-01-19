@@ -4,9 +4,9 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
+import io.defitrack.domain.GetPriceCommand
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import org.springframework.stereotype.Component
@@ -61,7 +61,7 @@ class WStethMarketProvider(
         val wrappedStethTokens = wstEthContract.getStethByWstethFunction(totalTokens)
         val pooledEth = stEthContract.getPooledEthByShares(wrappedStethTokens)
         return getPriceResource().calculatePrice(
-            PriceRequest(
+            GetPriceCommand(
                 WETH,
                 getNetwork(),
                 pooledEth.asEth()

@@ -4,12 +4,12 @@ import arrow.fx.coroutines.parMap
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
-import io.defitrack.token.FungibleToken
+import io.defitrack.domain.FungibleToken
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.pooling.vo.PoolingMarketVO
+import io.defitrack.port.input.ERC20Resource
 import io.defitrack.price.external.ExternalPrice
 import io.defitrack.price.external.StablecoinPriceProvider
-import io.defitrack.token.DecentrifiERC20Resource
 import io.defitrack.uniswap.v3.UniswapV3PoolContract
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
@@ -31,7 +31,7 @@ import kotlin.time.measureTime
 class DecentrifiPancakeswapV3UnderlyingPriceRepository(
     private val httpClient: HttpClient,
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
-    private val erC20Resource: DecentrifiERC20Resource,
+    private val erC20Resource: ERC20Resource,
     private val stablecoinPriceProvider: StablecoinPriceProvider
 ) {
 

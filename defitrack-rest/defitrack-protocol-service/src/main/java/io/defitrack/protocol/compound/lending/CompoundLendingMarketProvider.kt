@@ -5,11 +5,11 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.market.lending.LendingMarketProvider
-import io.defitrack.market.lending.domain.LendingMarket
+import io.defitrack.domain.GetPriceCommand
 import io.defitrack.evm.position.Position
 import io.defitrack.evm.position.PositionFetcher
-import io.defitrack.price.PriceRequest
+import io.defitrack.market.lending.LendingMarketProvider
+import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.compound.CompoundAddressesProvider
@@ -51,7 +51,7 @@ class CompoundLendingMarketProvider(
                     token = underlyingToken,
                     marketSize = refreshable {
                         getPriceResource().calculatePrice(
-                            PriceRequest(
+                            GetPriceCommand(
                                 underlyingToken.address,
                                 getNetwork(),
                                 ctokenContract.cash.await().add(ctokenContract.totalBorrows.await())

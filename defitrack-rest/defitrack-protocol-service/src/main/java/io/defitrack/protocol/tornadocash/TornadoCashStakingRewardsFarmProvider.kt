@@ -2,9 +2,9 @@ package io.defitrack.protocol.tornadocash
 
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
+import io.defitrack.domain.GetPriceCommand
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import org.springframework.stereotype.Component
@@ -47,7 +47,7 @@ class TornadoCashStakingRewardsFarmProvider : FarmingMarketProvider() {
             (stakingRewardsContract.rewardRate().times(blocksPerYear)).toBigDecimal()
                 .divide(BigDecimal.TEN.pow(18))
         val usdRewardsPerYear = getPriceResource().calculatePrice(
-            PriceRequest(
+            GetPriceCommand(
                 stakingRewardsContract.rewardsToken(),
                 getNetwork(),
                 quickRewardsPerYear

@@ -1,11 +1,11 @@
 package io.defitrack.market.lending.mapper
 
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.domain.GetPriceCommand
+import io.defitrack.domain.toNetworkInformation
 import io.defitrack.market.lending.domain.LendingPosition
 import io.defitrack.market.lending.vo.LendingPositionVO
-import io.defitrack.network.toVO
-import io.defitrack.price.PriceRequest
-import io.defitrack.price.PriceResource
+import io.defitrack.port.input.PriceResource
 import io.defitrack.protocol.mapper.ProtocolVOMapper
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
@@ -24,7 +24,7 @@ class LendingPositionVOMapper(
                 tokenAmount.asEth(market.marketToken!!.decimals).times(market.price.get())
             } else {
                 priceResource.calculatePrice(
-                    PriceRequest(
+                    GetPriceCommand(
                         address = market.token.address,
                         network = market.network,
                         amount = underlyingAmount.asEth(market.token.decimals),
@@ -33,7 +33,7 @@ class LendingPositionVOMapper(
             }
 
             LendingPositionVO(
-                network = market.network.toVO(),
+                network = market.network.toNetworkInformation(),
                 protocol = protocolVOMapper.map(market.protocol),
                 dollarValue = lendingInDollars,
                 rate = market.rate?.toDouble(),

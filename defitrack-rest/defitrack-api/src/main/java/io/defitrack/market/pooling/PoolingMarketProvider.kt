@@ -5,14 +5,14 @@ import io.defitrack.common.utils.BigDecimalExtensions.isZero
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.map
 import io.defitrack.common.utils.refreshable
-import io.defitrack.token.FungibleToken
+import io.defitrack.domain.FungibleToken
+import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.market.MarketProvider
 import io.defitrack.market.farming.domain.InvestmentPreparer
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
-import io.defitrack.market.pooling.history.HistoricEventExtractor
-import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.market.pooling.domain.marketSize
+import io.defitrack.market.pooling.history.HistoricEventExtractor
 import java.math.BigDecimal
 
 abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {

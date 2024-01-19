@@ -5,11 +5,11 @@ import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.map
 import io.defitrack.common.utils.refreshable
+import io.defitrack.domain.GetPriceCommand
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
 import io.defitrack.evm.position.Position
 import io.defitrack.evm.position.PositionFetcher
-import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.ironbank.IronBankComptrollerContract
 import io.defitrack.protocol.ironbank.IronBankService
@@ -41,7 +41,7 @@ abstract class IronBankLendingMarketProvider(
                 token = underlyingToken,
                 marketSize = refreshable {
                     getPriceResource().calculatePrice(
-                        PriceRequest(
+                        GetPriceCommand(
                             underlyingToken.address,
                             getNetwork(),
                             ctokenContract.cash()

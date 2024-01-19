@@ -1,9 +1,9 @@
 package io.defitrack.market.event
 
-import io.defitrack.token.FungibleToken
+import io.defitrack.domain.FungibleToken
+import io.defitrack.domain.NetworkInformation
+import io.defitrack.domain.toNetworkInformation
 import io.defitrack.market.lending.domain.LendingMarket
-import io.defitrack.network.NetworkInformation
-import io.defitrack.network.toVO
 import java.math.BigDecimal
 
 data class LendingMarketUpdatedEvent(
@@ -17,5 +17,5 @@ fun LendingMarket.createLendingMarketUpdatedEvent(): LendingMarketUpdatedEvent =
     id = id,
     price = price.get(),
     marketToken = marketToken,
-    network = network.toVO()
+    network = network.toNetworkInformation()
 )

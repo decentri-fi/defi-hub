@@ -1,12 +1,12 @@
 package io.defitrack.market.lending
 
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.domain.GetPriceCommand
+import io.defitrack.domain.toNetworkInformation
 import io.defitrack.market.borrowing.BorrowPositionProvider
 import io.defitrack.market.borrowing.domain.BorrowPosition
 import io.defitrack.market.borrowing.vo.BorrowPositionVO
-import io.defitrack.network.toVO
-import io.defitrack.price.PriceRequest
-import io.defitrack.price.PriceResource
+import io.defitrack.port.input.PriceResource
 import io.defitrack.protocol.mapper.ProtocolVOMapper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -49,9 +49,9 @@ class DefaultBorrowingRestController(
     suspend fun BorrowPosition.toVO(): BorrowPositionVO {
         return with(this) {
             BorrowPositionVO(
-                network = market.network.toVO(),
+                network = market.network.toNetworkInformation(),
                 dollarValue = priceResource.calculatePrice(
-                    PriceRequest(
+                    GetPriceCommand(
                         market.token.address,
                         market.network,
                         underlyingAmount.asEth(market.token.decimals),

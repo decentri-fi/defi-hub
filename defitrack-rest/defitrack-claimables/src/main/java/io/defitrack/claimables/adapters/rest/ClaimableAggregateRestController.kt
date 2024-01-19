@@ -49,7 +49,7 @@ class ClaimableAggregateRestController(
             )
 
         val result = filteredProtocols(includes, excludes).parMap {
-            claimablesClient.getClaimableMarkets(protocolVOMapper.map(it))
+            claimablesClient.getClaimableMarkets(it)
         }.flatten()
 
         return ResponseEntity.ok(

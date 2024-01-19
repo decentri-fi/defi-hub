@@ -1,8 +1,8 @@
 package io.defitrack.transaction
 
+import io.defitrack.domain.NetworkInformation
+import io.defitrack.domain.toNetworkInformation
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.network.NetworkInformation
-import io.defitrack.network.toVO
 import org.web3j.abi.FunctionEncoder
 
 data class PreparedTransaction(
@@ -32,7 +32,7 @@ data class PreparedTransaction(
 
     constructor(contractCall: ContractCall, from: String? = null) :
             this(
-                network = contractCall.network.toVO(),
+                network = contractCall.network.toNetworkInformation(),
                 function = contractCall.function,
                 to = contractCall.address,
                 from = from

@@ -1,7 +1,7 @@
 package io.defitrack.event
 
+import io.defitrack.domain.NetworkInformation
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.network.NetworkInformation
 import io.defitrack.protocol.Protocol
 
 class DefiEvent(

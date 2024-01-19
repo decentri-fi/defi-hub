@@ -1,6 +1,6 @@
 package io.defitrack.transaction
 
-import io.defitrack.network.NetworkInformation
+import io.defitrack.domain.NetworkInformation
 
 class PreparedTransactionVO(
     val network: NetworkInformation,

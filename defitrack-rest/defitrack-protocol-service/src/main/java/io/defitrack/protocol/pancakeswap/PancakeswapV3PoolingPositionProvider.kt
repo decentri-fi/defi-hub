@@ -5,16 +5,13 @@ import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.conditional.ConditionalOnCompany
+import io.defitrack.domain.GetPriceCommand
 import io.defitrack.market.pooling.PoolingPositionProvider
 import io.defitrack.market.pooling.domain.PoolingPosition
 import io.defitrack.market.pooling.domain.PriceCalculator
 import io.defitrack.pancakeswap.PancakePositionsV3Contract
-import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Company
-import io.defitrack.uniswap.v3.UniswapPositionsV3Contract
 import io.defitrack.uniswap.v3.UniswapV3PoolContract
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -87,7 +84,7 @@ class PancakeswapV3PoolingPositionProvider(
                 val totalToken0Usd = if (userTokens0 > BigDecimal.ZERO) {
                     uniswapV3PoolingMarketProvider.getPriceResource()
                         .calculatePrice(
-                            PriceRequest(
+                            GetPriceCommand(
                                 token0.address,
                                 uniswapV3PoolingMarketProvider.getNetwork(),
                                 userTokens0
@@ -99,7 +96,7 @@ class PancakeswapV3PoolingPositionProvider(
 
                 val totalToken1Usd = if (userTokens1 > BigDecimal.ZERO) {
                     uniswapV3PoolingMarketProvider.getPriceResource().calculatePrice(
-                        PriceRequest(
+                        GetPriceCommand(
                             token1.address,
                             uniswapV3PoolingMarketProvider.getNetwork(),
                             userTokens1

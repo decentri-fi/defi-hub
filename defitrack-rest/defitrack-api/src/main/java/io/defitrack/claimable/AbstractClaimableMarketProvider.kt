@@ -4,15 +4,15 @@ import arrow.core.Either.Companion.catch
 import arrow.core.getOrElse
 import io.defitrack.claimable.domain.ClaimableMarket
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.token.DecentrifiERC20Resource
+import io.defitrack.port.input.ERC20Resource
 import io.github.reactivecircus.cache4k.Cache
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 
-abstract class AbstractClaimableMarketProvider {
+ abstract class AbstractClaimableMarketProvider {
 
     @Autowired
-    protected lateinit var erC20Resource: DecentrifiERC20Resource
+    protected lateinit var erC20Resource: ERC20Resource
 
     @Autowired
     protected lateinit var blockchainGatewayProvider: BlockchainGatewayProvider

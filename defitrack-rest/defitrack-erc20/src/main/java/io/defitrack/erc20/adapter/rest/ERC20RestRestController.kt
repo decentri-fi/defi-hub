@@ -2,7 +2,7 @@ package io.defitrack.erc20.adapter.rest
 
 import arrow.core.getOrElse
 import io.defitrack.common.network.Network
-import io.defitrack.token.FungibleToken
+import io.defitrack.domain.FungibleToken
 import io.defitrack.erc20.adapter.rest.vo.UserBalanceVO
 import io.defitrack.erc20.adapter.rest.vo.WrappedTokenVO
 import io.defitrack.erc20.application.ERC20BalanceService

@@ -3,7 +3,7 @@ package io.defitrack.market.farming
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.domain.FarmingPosition
-import io.defitrack.token.ERC20Resource
+import io.defitrack.port.input.ERC20Resource
 import org.springframework.beans.factory.annotation.Autowired
 import java.math.BigInteger
 

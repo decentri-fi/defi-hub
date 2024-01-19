@@ -1,14 +1,14 @@
 package io.defitrack.market.farming.vo
 
-import io.defitrack.token.FungibleToken
-import io.defitrack.network.NetworkInformation
-import io.defitrack.protocol.ProtocolInformation
+import io.defitrack.domain.FungibleToken
+import io.defitrack.domain.NetworkInformation
+import io.defitrack.protocol.ProtocolVO
 import java.math.BigDecimal
 
 data class FarmingPositionVO(
     val id: String,
     val network: NetworkInformation,
-    val protocol: ProtocolInformation,
+    val protocol: ProtocolVO,
     val dollarValue: Double,
     val name: String,
     val apr: Double?,

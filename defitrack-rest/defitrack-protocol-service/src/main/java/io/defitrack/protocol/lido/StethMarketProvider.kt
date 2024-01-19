@@ -4,11 +4,11 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
+import io.defitrack.domain.GetPriceCommand
 import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.price.PriceRequest
-import io.defitrack.price.PriceResource
+import io.defitrack.port.input.PriceResource
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import org.springframework.stereotype.Component
@@ -44,7 +44,7 @@ class StethMarketProvider(
                 ),
                 marketSize = refreshable {
                     priceResource.calculatePrice(
-                        PriceRequest(
+                        GetPriceCommand(
                             "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
                             getNetwork(),
                             pooledEth.asEth(),

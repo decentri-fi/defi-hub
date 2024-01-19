@@ -6,7 +6,6 @@ import io.defitrack.claimable.vo.UserClaimableVO
 import io.defitrack.claimables.ports.outputs.ClaimablesClient
 import io.defitrack.node.Node
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.ProtocolInformation
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -87,7 +86,7 @@ class KubernetesClaimablesClient(
         }
 
     val cache = Cache.Builder<String, List<ClaimableMarketVO>>().expireAfterWrite(1.hours).build()
-    override suspend fun getClaimableMarkets(protocol: ProtocolInformation): List<ClaimableMarketVO> {
+    override suspend fun getClaimableMarkets(protocol: Protocol): List<ClaimableMarketVO> {
         return cache.get(protocol.slug) {
             withContext(Dispatchers.IO) {
                 try {

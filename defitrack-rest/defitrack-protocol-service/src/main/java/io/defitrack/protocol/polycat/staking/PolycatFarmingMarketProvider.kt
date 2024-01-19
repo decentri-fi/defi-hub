@@ -6,11 +6,11 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.token.FungibleToken
+import io.defitrack.domain.FungibleToken
+import io.defitrack.domain.GetPriceCommand
 import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.polycat.PolycatService
@@ -86,7 +86,7 @@ class PolycatFarmingMarketProvider(
 
         return BigDecimal(
             getPriceResource().calculatePrice(
-                PriceRequest(
+                GetPriceCommand(
                     stakedtoken.address,
                     getNetwork(),
                     balance.asEth(stakedtoken.decimals),

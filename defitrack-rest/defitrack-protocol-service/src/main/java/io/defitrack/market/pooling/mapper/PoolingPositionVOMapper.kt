@@ -1,12 +1,12 @@
 package io.defitrack.market.pooling.mapper
 
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.domain.toNetworkInformation
 import io.defitrack.market.pooling.breakdown.PoolingBreakdownMapper
 import io.defitrack.market.pooling.domain.PoolingPosition
 import io.defitrack.market.pooling.vo.PoolingPositionVO
-import io.defitrack.network.toVO
+import io.defitrack.port.input.ERC20Resource
 import io.defitrack.protocol.mapper.ProtocolVOMapper
-import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Component
 
 @Component
@@ -28,7 +28,7 @@ class PoolingPositionVOMapper(
                 amountDecimal = amount,
                 name = market.name,
                 dollarValue = dollarValue,
-                network = market.network.toVO(),
+                network = market.network.toNetworkInformation(),
                 symbol = market.symbol,
                 protocol = protocolVOMapper.map(market.protocol),
                 id = market.id,

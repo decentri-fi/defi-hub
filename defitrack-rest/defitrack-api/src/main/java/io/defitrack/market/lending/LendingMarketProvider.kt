@@ -4,11 +4,11 @@ import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.BigDecimalExtensions.isZero
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.refreshable
-import io.defitrack.token.FungibleToken
+import io.defitrack.domain.FungibleToken
+import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.market.MarketProvider
 import io.defitrack.market.farming.domain.InvestmentPreparer
 import io.defitrack.market.lending.domain.LendingMarket
-import io.defitrack.evm.position.PositionFetcher
 import java.math.BigDecimal
 
 abstract class LendingMarketProvider : MarketProvider<LendingMarket>() {

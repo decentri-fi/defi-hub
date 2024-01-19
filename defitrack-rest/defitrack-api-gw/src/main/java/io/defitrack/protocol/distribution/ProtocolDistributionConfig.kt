@@ -1,8 +1,8 @@
 package io.defitrack.protocol.distribution
 
+import io.defitrack.company.CompanyVO
 import io.defitrack.node.Node
 import io.defitrack.protocol.Company
-import io.defitrack.protocol.CompanyVO
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -12,7 +12,6 @@ import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
-import kotlin.IllegalArgumentException
 
 @Configuration
 class ProtocolDistributionConfig(

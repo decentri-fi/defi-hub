@@ -1,6 +1,7 @@
 package io.defitrack.price
 
 import io.defitrack.common.network.Network
+import io.defitrack.domain.GetPriceCommand
 import io.defitrack.price.external.ExternalPrice
 import io.defitrack.price.external.ExternalPriceService
 import io.micrometer.observation.Observation
@@ -20,10 +21,10 @@ class PriceRestController(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @PostMapping
-    suspend fun calculatePrice(@RequestBody priceRequest: PriceRequest): Double {
+    suspend fun calculatePrice(@RequestBody getPriceCommand: GetPriceCommand): Double {
         val observation = Observation.start("price-calculate", observationRegistry)
         return observation.openScope().use {
-            priceCalculator.calculatePrice(priceRequest)
+            priceCalculator.calculatePrice(getPriceCommand)
         }.also {
             observation.stop()
         }
@@ -50,7 +51,7 @@ class PriceRestController(
         try {
             return mapOf(
                 "price" to priceCalculator.calculatePrice(
-                    PriceRequest(
+                    GetPriceCommand(
                         address,
                         network,
                         BigDecimal.ONE

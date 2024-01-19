@@ -4,11 +4,11 @@ import arrow.core.*
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.refreshable
-import io.defitrack.token.FungibleToken
+import io.defitrack.domain.FungibleToken
+import io.defitrack.domain.GetPriceCommand
 import io.defitrack.market.pooling.PoolingMarketProvider
 import io.defitrack.market.pooling.domain.PoolingMarket
 import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
-import io.defitrack.price.PriceRequest
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerPoolContract
 import io.defitrack.protocol.balancer.contract.BalancerService
@@ -80,7 +80,7 @@ abstract class BalancerPoolingMarketProvider(
                         it.token,
                         it.balance,
                         getPriceResource().calculatePrice(
-                            PriceRequest(
+                            GetPriceCommand(
                                 it.token.address,
                                 getNetwork(),
                                 it.balance.asEth(it.token.decimals)

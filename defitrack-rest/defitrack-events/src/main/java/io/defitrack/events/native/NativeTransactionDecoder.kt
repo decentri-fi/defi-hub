@@ -2,12 +2,12 @@ package io.defitrack.events.native
 
 import arrow.core.nel
 import io.defitrack.common.network.Network
+import io.defitrack.domain.toNetworkInformation
 import io.defitrack.event.DefiEvent
 import io.defitrack.event.DefiEventType
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.labeledaddresses.LabeledAddressesResource
-import io.defitrack.network.toVO
-import io.defitrack.token.ERC20Resource
+import io.defitrack.port.input.ERC20Resource
 import org.springframework.stereotype.Component
 import java.math.BigInteger
 
@@ -40,7 +40,7 @@ class NativeTransactionDecoder(
                     "value" to value,
                     "asset" to asset
                 ),
-                network = network.toVO()
+                network = network.toNetworkInformation()
             ).nel()
         } ?: emptyList()
     }

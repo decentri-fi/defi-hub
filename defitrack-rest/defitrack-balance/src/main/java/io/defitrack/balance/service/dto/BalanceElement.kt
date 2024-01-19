@@ -1,7 +1,7 @@
 package io.defitrack.balance.service.dto
 
-import io.defitrack.token.FungibleToken
-import io.defitrack.network.NetworkInformation
+import io.defitrack.domain.FungibleToken
+import io.defitrack.domain.NetworkInformation
 
 data class BalanceElement(
     val amount: Double,

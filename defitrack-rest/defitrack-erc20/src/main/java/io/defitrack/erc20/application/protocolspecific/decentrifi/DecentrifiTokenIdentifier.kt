@@ -1,13 +1,13 @@
 package io.defitrack.erc20.application.protocolspecific.decentrifi
 
 import io.defitrack.common.network.Network
+import io.defitrack.domain.FungibleToken
+import io.defitrack.domain.ProtocolInformation
 import io.defitrack.erc20.ERC20
-import io.defitrack.token.FungibleToken
 import io.defitrack.erc20.application.protocolspecific.TokenIdentifier
+import io.defitrack.erc20.domain.TokenInformation
 import io.defitrack.market.farming.vo.FarmingMarketVO
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.ProtocolInformation
-import io.defitrack.erc20.domain.TokenInformation
 import io.defitrack.token.TokenType
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*

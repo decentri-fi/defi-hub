@@ -1,9 +1,9 @@
 package io.defitrack.price.external
 
 import io.defitrack.common.network.Network
-import io.defitrack.token.FungibleToken
+import io.defitrack.domain.FungibleToken
+import io.defitrack.port.input.ERC20Resource
 import io.defitrack.price.PriceProvider
-import io.defitrack.token.ERC20Resource
 import org.springframework.beans.factory.annotation.Autowired
 import java.math.BigDecimal
 

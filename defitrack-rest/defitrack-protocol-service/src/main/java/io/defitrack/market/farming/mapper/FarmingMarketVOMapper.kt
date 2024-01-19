@@ -1,9 +1,9 @@
 package io.defitrack.market.farming.mapper
 
+import io.defitrack.domain.toNetworkInformation
 import io.defitrack.market.MarketVOMapper
 import io.defitrack.market.farming.domain.FarmingMarket
 import io.defitrack.market.farming.vo.FarmingMarketVO
-import io.defitrack.network.toVO
 import io.defitrack.protocol.mapper.ProtocolVOMapper
 import org.springframework.stereotype.Component
 import java.time.ZoneOffset
@@ -18,7 +18,7 @@ class FarmingMarketVOMapper(
         return with(market) {
             FarmingMarketVO(
                 id = this.id,
-                network = this.network.toVO(),
+                network = this.network.toNetworkInformation(),
                 protocol = protocolVOMapper.map(this.protocol),
                 name = this.name,
                 stakedToken = this.stakedToken,

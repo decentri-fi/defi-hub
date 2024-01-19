@@ -7,8 +7,8 @@ import io.defitrack.event.DefiEventType
 import io.defitrack.event.EventDecoder.Companion.getNonIndexedParameter
 import io.defitrack.market.pooling.PoolingHistoryProvider
 import io.defitrack.market.pooling.history.HistoricEventExtractor
+import io.defitrack.port.input.ERC20Resource
 import io.defitrack.protocol.Protocol
-import io.defitrack.token.ERC20Resource
 import org.springframework.stereotype.Component
 import org.web3j.abi.TypeEncoder
 import org.web3j.abi.TypeReference

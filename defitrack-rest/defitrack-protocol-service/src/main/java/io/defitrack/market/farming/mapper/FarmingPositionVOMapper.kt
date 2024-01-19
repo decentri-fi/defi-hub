@@ -1,11 +1,11 @@
 package io.defitrack.market.farming.mapper
 
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.domain.GetPriceCommand
+import io.defitrack.domain.toNetworkInformation
 import io.defitrack.market.farming.domain.FarmingPosition
 import io.defitrack.market.farming.vo.FarmingPositionVO
-import io.defitrack.network.toVO
-import io.defitrack.price.PriceRequest
-import io.defitrack.price.PriceResource
+import io.defitrack.port.input.PriceResource
 import io.defitrack.protocol.mapper.ProtocolVOMapper
 import org.springframework.stereotype.Component
 
@@ -20,7 +20,7 @@ class FarmingPositionVOMapper(
         return with(farmingPosition) {
 
             val stakedInDollars = priceResource.calculatePrice(
-                PriceRequest(
+                GetPriceCommand(
                     address = market.stakedToken.address,
                     network = market.network,
                     amount = underlyingAmount.asEth(market.stakedToken.decimals)
@@ -29,7 +29,7 @@ class FarmingPositionVOMapper(
 
             FarmingPositionVO(
                 id = market.id,
-                network = market.network.toVO(),
+                network = market.network.toNetworkInformation(),
                 protocol = protocolVOMapper.map(market.protocol),
                 dollarValue = stakedInDollars,
                 name = market.name,

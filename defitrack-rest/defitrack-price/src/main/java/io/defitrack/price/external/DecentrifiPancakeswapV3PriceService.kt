@@ -1,6 +1,6 @@
 package io.defitrack.price.external
 
-import io.defitrack.token.FungibleToken
+import io.defitrack.domain.FungibleToken
 import io.defitrack.price.decentrifi.DecentrifiUniswapV3UnderlyingPriceRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component

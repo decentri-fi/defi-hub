@@ -1,5 +1,6 @@
 package io.defitrack.protocol
 
+import io.defitrack.company.CompanyVO
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.MediaType

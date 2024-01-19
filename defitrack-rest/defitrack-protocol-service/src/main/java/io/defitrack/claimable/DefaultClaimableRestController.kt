@@ -4,7 +4,7 @@ import io.defitrack.claimable.domain.UserClaimable
 import io.defitrack.claimable.mapper.ClaimableVOMapper
 import io.defitrack.claimable.vo.ClaimableMarketVO
 import io.defitrack.claimable.vo.UserClaimableVO
-import io.defitrack.network.toVO
+import io.defitrack.domain.toNetworkInformation
 import io.defitrack.protocol.mapper.ProtocolVOMapper
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -44,7 +44,7 @@ class DefaultClaimableRestController(
             ClaimableMarketVO(
                 it.id,
                 it.name,
-                it.network.toVO(),
+                it.network.toNetworkInformation(),
                 protocolVOMapper.map(it.protocol),
                 rewards = it.claimableRewardFetchers.flatMap { fetcher ->
                     fetcher.rewards.map { reward ->

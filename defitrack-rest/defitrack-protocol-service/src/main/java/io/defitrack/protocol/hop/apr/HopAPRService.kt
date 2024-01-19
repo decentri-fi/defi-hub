@@ -2,8 +2,8 @@ package io.defitrack.protocol.hop.apr
 
 import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.price.PriceRequest
-import io.defitrack.price.PriceResource
+import io.defitrack.domain.GetPriceCommand
+import io.defitrack.port.input.PriceResource
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.hop.HopService
 import io.defitrack.token.TokenType
@@ -34,7 +34,7 @@ class HopAPRService(
                     it.amount.toBigDecimal()
                 }.reduce { a, b -> a.plus(b) }.times(BigDecimal.valueOf(0.004)).times(BigDecimal.valueOf(52))
                 val yearlyTokenInDollar = priceResource.calculatePrice(
-                    PriceRequest(
+                    GetPriceCommand(
                         address = tokenAddress,
                         network = network,
                         yearlyTokenFee,

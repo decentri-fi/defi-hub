@@ -1,11 +1,11 @@
 package io.defitrack.market.pooling
 
 import io.defitrack.common.network.Network
+import io.defitrack.domain.toNetworkInformation
 import io.defitrack.event.DefiEvent
 import io.defitrack.event.DefiEventType
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.network.toVO
 import io.defitrack.protocol.Protocol
 import org.springframework.beans.factory.annotation.Autowired
 import org.web3j.protocol.core.methods.response.Log
@@ -41,7 +41,7 @@ abstract class PoolingHistoryProvider {
             transaction = getTransaction(network, log.transactionHash),
             type = type,
             metadata = metadata,
-            network = network.toVO()
+            network = network.toNetworkInformation()
         )
     }
 

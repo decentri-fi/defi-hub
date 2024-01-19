@@ -1,6 +1,6 @@
 package io.defitrack.price.external
 
-import io.defitrack.token.FungibleToken
+import io.defitrack.domain.FungibleToken
 import java.math.BigDecimal
 
 interface ExternalPriceService {

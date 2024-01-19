@@ -2,10 +2,10 @@ package io.defitrack.ens.application
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils
-import io.defitrack.ens.contract.EnsRegistrarContract
-import io.defitrack.ens.contract.EnsRegistryContract
-import io.defitrack.ens.contract.EnsResolverContract
-import io.defitrack.ens.port.input.ENSUseCase
+import io.defitrack.ens.infrastructure.adapter.out.blockchain.EnsRegistrarContract
+import io.defitrack.ens.infrastructure.adapter.out.blockchain.EnsRegistryContract
+import io.defitrack.ens.infrastructure.adapter.out.blockchain.EnsResolverContract
+import io.defitrack.ens.application.input.ENSUseCase
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.github.reactivecircus.cache4k.Cache
 import org.slf4j.LoggerFactory

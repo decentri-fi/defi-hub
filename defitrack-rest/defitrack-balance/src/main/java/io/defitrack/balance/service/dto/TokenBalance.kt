@@ -1,7 +1,7 @@
 package io.defitrack.balance.service.dto
 
 import io.defitrack.common.network.Network
-import io.defitrack.token.FungibleToken
+import io.defitrack.domain.FungibleToken
 import java.math.BigInteger
 
 class TokenBalance(

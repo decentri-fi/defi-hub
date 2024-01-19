@@ -1,11 +1,11 @@
 package io.defitrack.market.farming.domain
 
 import io.defitrack.common.network.Network
+import io.defitrack.domain.toNetworkInformation
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.exception.TransactionPreparationException
 import io.defitrack.invest.PrepareInvestmentCommand
-import io.defitrack.network.toVO
-import io.defitrack.token.ERC20Resource
+import io.defitrack.port.input.ERC20Resource
 import io.defitrack.transaction.PreparedTransaction
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -74,7 +74,7 @@ abstract class InvestmentPreparer(
             PreparedTransaction(
                 function = ERC20Contract.fullApprove(getEntryContract()),
                 to = getWant(),
-                network = getNetwork().toVO()
+                network = getNetwork().toNetworkInformation()
             )
         } else {
             null

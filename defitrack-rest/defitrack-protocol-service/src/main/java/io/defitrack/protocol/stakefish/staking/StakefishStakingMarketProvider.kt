@@ -6,11 +6,9 @@ import io.defitrack.common.network.Network
 import io.defitrack.conditional.ConditionalOnCompany
 import io.defitrack.market.farming.FarmingMarketProvider
 import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.network.toVO
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.stakefish.StakefishFeeRecipientContract
-import io.defitrack.transaction.PreparedTransaction
 import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
@@ -41,11 +39,9 @@ class StakefishStakingMarketProvider : FarmingMarketProvider() {
                     stakedToken = rewardToken,
                     rewardTokens = listOf(rewardToken),
                     claimableRewardFetcher = ClaimableRewardFetcher(
-                        rewards = listOf(
-                            Reward(
-                                token = rewardToken,
-                                getRewardFunction = stakefishStakingContract::getPendingRewardFunction,
-                            )
+                        reward = Reward(
+                            token = rewardToken,
+                            getRewardFunction = stakefishStakingContract::getPendingRewardFunction,
                         ),
                         preparedTransaction = selfExecutingTransaction(stakefishStakingContract::claimFunction)
                     )

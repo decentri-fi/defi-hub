@@ -2,12 +2,12 @@ package io.defitrack.price.external
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
-import io.defitrack.token.FungibleToken
+import io.defitrack.domain.FungibleToken
 import io.defitrack.evm.contract.BlockchainGatewayProvider
+import io.defitrack.port.input.ERC20Resource
 import io.defitrack.price.PriceProvider
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.contract.DQuickContract
-import io.defitrack.token.ERC20Resource
 import io.github.reactivecircus.cache4k.Cache
 import org.springframework.beans.factory.annotation.Autowired
 import java.math.BigDecimal

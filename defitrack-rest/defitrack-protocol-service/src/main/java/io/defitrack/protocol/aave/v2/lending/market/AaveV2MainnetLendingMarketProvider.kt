@@ -6,13 +6,13 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.refreshable
 import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.token.FungibleToken
+import io.defitrack.domain.FungibleToken
+import io.defitrack.domain.GetPriceCommand
 import io.defitrack.evm.contract.BlockchainGatewayProvider
+import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.market.lending.LendingMarketProvider
 import io.defitrack.market.lending.domain.LendingMarket
-import io.defitrack.evm.position.PositionFetcher
-import io.defitrack.price.PriceRequest
-import io.defitrack.price.PriceResource
+import io.defitrack.port.input.PriceResource
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.v2.AaveV2MainnetService
@@ -102,7 +102,7 @@ class AaveV2MainnetLendingMarketProvider(
         return refreshable {
             val underlying = getToken(underlyingToken.address)
             priceResource.calculatePrice(
-                PriceRequest(
+                GetPriceCommand(
                     underlying.address,
                     getNetwork(),
                     reserve.totalLiquidity.asEth(aToken.decimals),
