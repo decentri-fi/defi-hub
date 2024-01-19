@@ -13,6 +13,14 @@ enum class Protocol(
     val networks: List<Network>,
     val company: Company,
 ) {
+    SEAMLESS(
+        logo = "seamless.png",
+        slug = "seamless",
+        primitives = listOf(LENDING),
+        website = "https://seamlessprotocol.com",
+        networks = listOf(BASE),
+        company = Company.SEAMLESS
+    ),
     LYRA(
         logo = "lyra.png",
         slug = "lyra",
