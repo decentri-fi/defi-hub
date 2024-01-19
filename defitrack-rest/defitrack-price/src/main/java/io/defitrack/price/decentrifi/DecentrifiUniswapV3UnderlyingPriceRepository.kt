@@ -4,18 +4,16 @@ import arrow.fx.coroutines.parMap
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
-import io.defitrack.domain.FungibleToken
+import io.defitrack.erc20.domain.FungibleTokenInformation
+import io.defitrack.erc20.port.`in`.ERC20Resource
+import io.defitrack.market.domain.pooling.PoolingMarketInformation
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.market.pooling.vo.PoolingMarketVO
-import io.defitrack.port.input.ERC20Resource
+import io.defitrack.marketinfo.port.out.Markets
 import io.defitrack.price.external.ExternalPrice
 import io.defitrack.price.external.StablecoinPriceProvider
 import io.defitrack.uniswap.v3.UniswapV3PoolContract
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.http.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
@@ -29,9 +27,9 @@ import kotlin.time.measureTime
 
 @Component
 class DecentrifiUniswapV3UnderlyingPriceRepository(
-    private val httpClient: HttpClient,
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val erC20Resource: ERC20Resource,
+    private val marketResource: Markets,
     private val stablecoinPriceProvider: StablecoinPriceProvider
 ) {
 
@@ -57,17 +55,17 @@ class DecentrifiUniswapV3UnderlyingPriceRepository(
         }
     }
 
-    private suspend fun importEthPairs(pools: List<PoolingMarketVO>) {
+    private suspend fun importEthPairs(pools: List<PoolingMarketInformation>) {
         val eths = eths.await()
         val stables = stablecoinPriceProvider.stableCoins.await()
 
-        val containsEth: (PoolingMarketVO) -> Boolean = {
+        val containsEth: (PoolingMarketInformation) -> Boolean = {
             it.breakdown?.any { share ->
                 (eths.get(it.network.toNetwork())?.address?.lowercase() == share.token.address.lowercase())
             } ?: false
         }
 
-        val containsNoStables: (PoolingMarketVO) -> Boolean = {
+        val containsNoStables: (PoolingMarketInformation) -> Boolean = {
             it.breakdown?.none { share ->
                 stables.getOrDefault(it.network.toNetwork(), emptyList()).map { it.address.lowercase() }
                     .contains(share.token.address.lowercase())
@@ -138,10 +136,10 @@ class DecentrifiUniswapV3UnderlyingPriceRepository(
     }
 
 
-    private suspend fun importUsdPairs(pools: List<PoolingMarketVO>) = coroutineScope {
+    private suspend fun importUsdPairs(pools: List<PoolingMarketInformation>) = coroutineScope {
         val stables = stablecoinPriceProvider.stableCoins.await()
 
-        val containsStableCoin: (PoolingMarketVO) -> Boolean = {
+        val containsStableCoin: (PoolingMarketInformation) -> Boolean = {
             it.breakdown?.any { share ->
                 stables.getOrDefault(it.network.toNetwork(), emptyList()).map { it.address.lowercase() }
                     .contains(share.token.address.lowercase())
@@ -201,8 +199,8 @@ class DecentrifiUniswapV3UnderlyingPriceRepository(
     }
 
     private fun getNormalizedPrice(
-        token0: FungibleToken,
-        token1: FungibleToken,
+        token0: FungibleTokenInformation,
+        token1: FungibleTokenInformation,
         priceInOtherToken: BigDecimal
     ) = if (token0.decimals >= token1.decimals) {
         priceInOtherToken.times(
@@ -214,22 +212,17 @@ class DecentrifiUniswapV3UnderlyingPriceRepository(
         )
     }
 
-    fun getPrice(fungibleToken: FungibleToken): BigDecimal? {
+    fun getPrice(fungibleToken: FungibleTokenInformation): BigDecimal? {
         return prices.get(toIndex(fungibleToken.network.toNetwork(), fungibleToken.address))?.price
     }
 
-    fun contains(fungibleToken: FungibleToken): Boolean {
+    fun contains(fungibleToken: FungibleTokenInformation): Boolean {
         return prices.asMap()
             .containsKey(toIndex(fungibleToken.network.toNetwork(), fungibleToken.address))
     }
 
-    suspend fun getUniswapV3Pools(): List<PoolingMarketVO> = withContext(Dispatchers.IO) {
-        val result = httpClient.get("https://api.decentri.fi/uniswap_v3/pooling/all-markets")
-        if (result.status.isSuccess()) result.body()
-        else {
-            logger.error("Unable to fetch pools for UNISWAP_V3, result was ${result.body<String>()}")
-            emptyList()
-        }
+    suspend fun getUniswapV3Pools(): List<PoolingMarketInformation> {
+        return marketResource.getPoolingMarkets("uniswap_v3")
     }
 
     fun toIndex(network: Network, address: String): String {

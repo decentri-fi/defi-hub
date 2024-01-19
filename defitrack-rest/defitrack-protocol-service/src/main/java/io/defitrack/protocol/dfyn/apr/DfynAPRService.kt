@@ -1,6 +1,6 @@
 package io.defitrack.protocol.dfyn.apr
 
-import io.defitrack.conditional.ConditionalOnCompany
+import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.dfyn.DfynService
 import io.github.reactivecircus.cache4k.Cache

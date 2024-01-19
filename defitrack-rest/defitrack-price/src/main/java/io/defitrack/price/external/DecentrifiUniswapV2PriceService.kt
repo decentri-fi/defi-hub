@@ -1,7 +1,7 @@
 package io.defitrack.price.external
 
 import io.defitrack.common.network.Network
-import io.defitrack.domain.FungibleToken
+import io.defitrack.erc20.domain.FungibleTokenInformation
 import io.defitrack.price.decentrifi.DecentriUniswapV2UnderlyingPriceRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -14,7 +14,7 @@ class DecentrifiUniswapV2PriceService(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override suspend fun appliesTo(token: FungibleToken): Boolean {
+    override suspend fun appliesTo(token: FungibleTokenInformation): Boolean {
         return decentriUniswapV2UnderlyingPriceRepository.contains(token.address)
     }
 
@@ -24,7 +24,7 @@ class DecentrifiUniswapV2PriceService(
         }
     }
 
-    override suspend fun getPrice(fungibleToken: FungibleToken): BigDecimal {
+    override suspend fun getPrice(fungibleToken: FungibleTokenInformation): BigDecimal {
         return decentriUniswapV2UnderlyingPriceRepository.getPrice(fungibleToken.address)?.also {
             logger.info("getting logging price on decentrifi uniswapv2 for ${fungibleToken.name} (${fungibleToken.symbol}) on ${fungibleToken.network.name}")
         } ?: BigDecimal.ZERO

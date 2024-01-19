@@ -7,10 +7,10 @@ import io.defitrack.balance.service.dto.BalanceElement
 import io.defitrack.balance.service.dto.TokenBalance
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.domain.GetPriceCommand
-import io.defitrack.domain.toNetworkInformation
-import io.defitrack.port.input.ERC20Resource
-import io.defitrack.port.input.PriceResource
+import io.defitrack.erc20.port.`in`.ERC20Resource
+import io.defitrack.price.domain.GetPriceCommand
+import io.defitrack.networkinfo.toNetworkInformation
+import io.defitrack.price.port.`in`.PricePort
 import kotlinx.coroutines.coroutineScope
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
@@ -21,7 +21,7 @@ import java.math.BigDecimal
 @RequestMapping
 class BalanceRestController(
     private val balanceServices: List<BalanceService>,
-    private val priceResource: PriceResource,
+    private val priceResource: PricePort,
     private val erC20Resource: ERC20Resource,
 ) {
 

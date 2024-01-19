@@ -1,9 +1,10 @@
 package io.defitrack.claimable.vo
 
-import io.defitrack.domain.FungibleToken
-import io.defitrack.domain.NetworkInformation
+import io.defitrack.erc20.domain.FungibleTokenInformation
+import io.defitrack.networkinfo.NetworkInformation
 import io.defitrack.protocol.ProtocolVO
 
+//TODO: move
 data class ClaimableMarketVO(
     val id: String,
     val name: String,
@@ -12,6 +13,6 @@ data class ClaimableMarketVO(
     val rewards: List<Reward>
 ) {
     data class Reward(
-        val token: FungibleToken
+        val token: FungibleTokenInformation
     )
 }

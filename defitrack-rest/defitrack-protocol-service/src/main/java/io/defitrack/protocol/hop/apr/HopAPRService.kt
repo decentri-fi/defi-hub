@@ -1,9 +1,9 @@
 package io.defitrack.protocol.hop.apr
 
 import io.defitrack.common.network.Network
-import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.domain.GetPriceCommand
-import io.defitrack.port.input.PriceResource
+import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.price.domain.GetPriceCommand
+import io.defitrack.price.port.`in`.PricePort
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.hop.HopService
 import io.defitrack.token.TokenType
@@ -15,7 +15,7 @@ import java.math.RoundingMode
 @ConditionalOnCompany(Company.HOP)
 class HopAPRService(
     private val hopService: HopService,
-    private val priceResource: PriceResource
+    private val priceResource: PricePort,
 ) {
 
     suspend fun getAPR(

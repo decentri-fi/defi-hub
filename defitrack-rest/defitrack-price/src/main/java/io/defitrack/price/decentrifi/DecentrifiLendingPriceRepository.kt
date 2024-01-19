@@ -1,9 +1,9 @@
 package io.defitrack.price.decentrifi
 
-import io.defitrack.domain.FungibleToken
-import io.defitrack.domain.NetworkInformation
-import io.defitrack.domain.ProtocolInformation
-import io.defitrack.market.lending.vo.LendingMarketVO
+import io.defitrack.erc20.domain.FungibleTokenInformation
+import io.defitrack.networkinfo.NetworkInformation
+import io.defitrack.protocol.ProtocolInformation
+import io.defitrack.market.domain.lending.LendingMarketInformation
 import io.defitrack.price.external.ExternalPrice
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
@@ -61,7 +61,7 @@ class DecentrifiLendingPriceRepository(
         )
     }
 
-    fun contains(token: FungibleToken): Boolean {
+    fun contains(token: FungibleTokenInformation): Boolean {
         return cache.get(toIndex(token.network, token.address)) != null
     }
 
@@ -71,7 +71,7 @@ class DecentrifiLendingPriceRepository(
         return httpClient.get("https://api.decentri.fi/protocols").body()
     }
 
-    suspend fun getLendingMarkets(protocol: String): List<LendingMarketVO> {
+    suspend fun getLendingMarkets(protocol: String): List<LendingMarketInformation> {
         val result = httpClient.get("https://api.decentri.fi/$protocol/lending/all-markets")
         return if (result.status.isSuccess())
             result.body()
@@ -83,7 +83,7 @@ class DecentrifiLendingPriceRepository(
         }
     }
 
-    suspend fun getPrice(token: FungibleToken): BigDecimal {
+    suspend fun getPrice(token: FungibleTokenInformation): BigDecimal {
         return cache.get(toIndex(token.network, token.address))?.price ?: BigDecimal.ZERO
     }
 }

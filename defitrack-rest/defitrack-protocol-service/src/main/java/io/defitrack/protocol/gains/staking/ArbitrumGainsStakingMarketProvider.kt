@@ -1,7 +1,7 @@
 package io.defitrack.protocol.gains.staking
 
 import io.defitrack.common.network.Network
-import io.defitrack.conditional.ConditionalOnCompany
+import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.protocol.Company
 import org.springframework.stereotype.Component
 

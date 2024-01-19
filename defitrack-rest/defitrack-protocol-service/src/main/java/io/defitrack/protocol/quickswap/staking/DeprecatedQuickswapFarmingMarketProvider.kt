@@ -2,16 +2,16 @@ package io.defitrack.protocol.quickswap.staking
 
 import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMapNotNull
-import io.defitrack.claimable.domain.ClaimableRewardFetcher
-import io.defitrack.claimable.domain.Reward
+import io.defitrack.claim.ClaimableRewardFetcher
+import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.refreshable
-import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.domain.FungibleToken
-import io.defitrack.domain.GetPriceCommand
-import io.defitrack.market.farming.FarmingMarketProvider
-import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.port.input.PriceResource
+import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.erc20.domain.FungibleTokenInformation
+import io.defitrack.price.domain.GetPriceCommand
+import io.defitrack.market.port.out.FarmingMarketProvider
+import io.defitrack.market.domain.farming.FarmingMarket
+import io.defitrack.price.port.`in`.PricePort
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.quickswap.QuickswapService
@@ -27,7 +27,7 @@ import kotlin.coroutines.EmptyCoroutineContext
 @ConditionalOnCompany(Company.QUICKSWAP)
 class DeprecatedQuickswapFarmingMarketProvider(
     private val quickswapService: QuickswapService,
-    private val priceResource: PriceResource,
+    private val priceResource: PricePort,
 ) : FarmingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
@@ -75,7 +75,7 @@ class DeprecatedQuickswapFarmingMarketProvider(
     }
 
     private suspend fun getMarketSize(
-        stakedTokenInformation: FungibleToken,
+        stakedTokenInformation: FungibleTokenInformation,
         pool: QuickswapRewardPoolContract
     ) = BigDecimal.valueOf(
         priceResource.calculatePrice(

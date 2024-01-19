@@ -1,11 +1,11 @@
 package io.defitrack.protocol.aave.v2.borrowing
 
 import io.defitrack.common.network.Network
-import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.market.borrowing.BorrowPositionProvider
-import io.defitrack.market.borrowing.domain.BorrowMarket
-import io.defitrack.market.borrowing.domain.BorrowPosition
-import io.defitrack.port.input.ERC20Resource
+import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.erc20.port.`in`.ERC20Resource
+import io.defitrack.market.port.out.BorrowPositionProvider
+import io.defitrack.market.domain.borrow.BorrowMarket
+import io.defitrack.market.domain.borrow.BorrowPosition
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.v2.AaveV2PolygonService

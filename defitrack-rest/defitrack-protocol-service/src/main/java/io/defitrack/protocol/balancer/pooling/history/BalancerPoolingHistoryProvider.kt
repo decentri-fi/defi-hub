@@ -3,11 +3,11 @@ package io.defitrack.protocol.balancer.pooling.history
 import arrow.core.nel
 import io.defitrack.abi.TypeUtils
 import io.defitrack.common.network.Network
+import io.defitrack.erc20.port.`in`.ERC20Resource
 import io.defitrack.event.DefiEventType
 import io.defitrack.event.EventDecoder.Companion.getNonIndexedParameter
-import io.defitrack.market.pooling.PoolingHistoryProvider
-import io.defitrack.market.pooling.history.HistoricEventExtractor
-import io.defitrack.port.input.ERC20Resource
+import io.defitrack.market.port.out.PoolingHistoryProvider
+import io.defitrack.event.HistoricEventExtractor
 import io.defitrack.protocol.Protocol
 import org.springframework.stereotype.Component
 import org.web3j.abi.TypeEncoder

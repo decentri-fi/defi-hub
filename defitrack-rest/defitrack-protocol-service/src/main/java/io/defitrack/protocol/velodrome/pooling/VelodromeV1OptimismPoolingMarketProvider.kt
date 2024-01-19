@@ -6,11 +6,11 @@ import arrow.fx.coroutines.parMap
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.map
 import io.defitrack.common.utils.refreshable
-import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.market.pooling.PoolingMarketProvider
-import io.defitrack.market.pooling.domain.PoolingMarket
-import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
-import io.defitrack.market.pooling.domain.marketSize
+import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.market.port.out.PoolingMarketProvider
+import io.defitrack.market.domain.PoolingMarket
+import io.defitrack.market.domain.PoolingMarketTokenShare
+import io.defitrack.market.domain.marketSize
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.velodrome.VelodromeOptimismService

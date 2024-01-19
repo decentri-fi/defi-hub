@@ -2,7 +2,7 @@ package io.defitrack.price.external.event
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import io.defitrack.market.event.PoolMarketUpdatedEvent
+import io.defitrack.event.event.PoolMarketUpdatedEvent
 import io.defitrack.price.decentrifi.DecentrifiPoolingPriceRepository
 import org.slf4j.LoggerFactory
 import org.springframework.amqp.core.*

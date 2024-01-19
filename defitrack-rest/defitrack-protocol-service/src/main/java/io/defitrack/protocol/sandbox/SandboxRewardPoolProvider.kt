@@ -1,9 +1,9 @@
 package io.defitrack.protocol.sandbox
 
 import io.defitrack.common.network.Network
-import io.defitrack.conditional.ConditionalOnCompany
+import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.evm.contract.FarmingContract
-import io.defitrack.market.farming.SingleContractFarmingMarketProvider
+import io.defitrack.market.port.out.SingleContractFarmingMarketProvider
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import org.springframework.stereotype.Component

@@ -1,20 +1,17 @@
 package io.defitrack.erc20.application.protocolspecific.decentrifi
 
 import io.defitrack.common.network.Network
-import io.defitrack.domain.FungibleToken
-import io.defitrack.domain.ProtocolInformation
+import io.defitrack.erc20.domain.FungibleTokenInformation
+import io.defitrack.protocol.ProtocolInformation
+import io.defitrack.market.domain.farming.FarmingMarketInformation
 import io.defitrack.erc20.ERC20
 import io.defitrack.erc20.application.protocolspecific.TokenIdentifier
 import io.defitrack.erc20.domain.TokenInformation
-import io.defitrack.market.farming.vo.FarmingMarketVO
+import io.defitrack.marketinfo.port.out.Markets
 import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.port.`in`.ProtocolResource
 import io.defitrack.token.TokenType
 import io.github.reactivecircus.cache4k.Cache
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
@@ -22,17 +19,17 @@ import org.springframework.stereotype.Component
 
 @Component
 class DecentrifiTokenIdentifier(
-    private val httpClient: HttpClient
+    private val protocolResource: ProtocolResource,
+    private val marketResource: Markets
 ) : TokenIdentifier() {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    val tokens = Cache.Builder<String, Pair<FungibleToken, ProtocolInformation>>().build()
+    val tokens = Cache.Builder<String, Pair<FungibleTokenInformation, ProtocolInformation>>().build()
 
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 6)
     fun init() = runBlocking {
-        val protocols = getProtocols()
-        protocols.map { proto ->
+        protocolResource.getProtocols().map { proto ->
             try {
                 getFarms(proto)
                     .filter { farm ->
@@ -69,18 +66,7 @@ class DecentrifiTokenIdentifier(
         )
     }
 
-    suspend fun getProtocols(): List<ProtocolInformation> {
-        return httpClient.get("https://api.decentri.fi/protocols").body()
-    }
-
-    suspend fun getFarms(protocol: ProtocolInformation): List<FarmingMarketVO> {
-        val result =
-            httpClient.get("https://api.decentri.fi/${protocol.slug}/farming/all-markets")
-        return if (result.status.isSuccess())
-            result.body()
-        else {
-            logger.error("Unable to fetch farms for ${protocol.name} ${result.bodyAsText()}")
-            emptyList()
-        }
+    suspend fun getFarms(protocol: ProtocolInformation): List<FarmingMarketInformation> {
+        return marketResource.getFarmingMarkets(protocol.slug)
     }
 }

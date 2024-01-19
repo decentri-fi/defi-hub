@@ -1,6 +1,5 @@
 package io.defitrack
 
-import arrow.core.Either
 import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMap
 import arrow.fx.coroutines.parMapNotNull
@@ -8,7 +7,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.event.DefiEvent
 import io.defitrack.event.DefiEventType
 import io.defitrack.event.EventDecoder
-import io.defitrack.events.native.NativeTransactionDecoder
+import io.defitrack.event.native.NativeTransactionDecoder
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*

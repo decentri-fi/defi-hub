@@ -1,9 +1,9 @@
 package io.defitrack.price.external
 
-import io.defitrack.domain.FungibleToken
-import io.defitrack.domain.GetPriceCommand
+import io.defitrack.erc20.domain.FungibleTokenInformation
+import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.port.input.PriceResource
+import io.defitrack.price.port.`in`.PricePort
 import io.defitrack.protocol.stargate.contract.StargatePool
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -12,7 +12,7 @@ import java.math.BigDecimal
 @Component
 class StargatePriceService(
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
-    private val priceResource: PriceResource
+    private val priceResource: PricePort,
 ) : ExternalPriceService {
 
     val logger = LoggerFactory.getLogger(this::class.java)
@@ -28,7 +28,7 @@ class StargatePriceService(
         "S*LUSD"
     )
 
-    override suspend fun appliesTo(token: FungibleToken): Boolean {
+    override suspend fun appliesTo(token: FungibleTokenInformation): Boolean {
         return tokens.any {
             token.symbol == it
         }
@@ -38,7 +38,7 @@ class StargatePriceService(
         return emptyList()
     }
 
-    override suspend fun getPrice(fungibleToken: FungibleToken): BigDecimal {
+    override suspend fun getPrice(fungibleToken: FungibleTokenInformation): BigDecimal {
         return try {
             val contract = StargatePool(
                 blockchainGatewayProvider.getGateway(fungibleToken.network.toNetwork()),

@@ -4,10 +4,9 @@ import arrow.core.Either
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.refreshable
-import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.market.lending.LendingMarketProvider
-import io.defitrack.market.lending.domain.LendingMarket
-import io.defitrack.evm.position.Position
+import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.market.port.out.LendingMarketProvider
+import io.defitrack.market.domain.lending.LendingMarket
 import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
@@ -16,9 +15,7 @@ import io.defitrack.protocol.crv.contract.stablecoin.LendingControllerContract
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import org.springframework.stereotype.Component
-import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigDecimal
-import java.math.BigInteger
 
 @ConditionalOnCompany(Company.CURVE)
 @Component

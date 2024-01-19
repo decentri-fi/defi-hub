@@ -2,7 +2,7 @@ package io.defitrack.protocol.pancakeswap
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
-import io.defitrack.conditional.ConditionalOnCompany
+import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.market.pooling.vo.PoolingMarketVO
 import io.defitrack.protocol.Company
 import io.ktor.client.*

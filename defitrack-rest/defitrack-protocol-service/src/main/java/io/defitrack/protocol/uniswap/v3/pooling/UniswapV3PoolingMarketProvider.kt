@@ -9,10 +9,10 @@ import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.map
 import io.defitrack.common.utils.refreshable
-import io.defitrack.market.pooling.PoolingMarketProvider
-import io.defitrack.market.pooling.domain.PoolingMarket
-import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
-import io.defitrack.market.pooling.domain.marketSize
+import io.defitrack.market.port.out.PoolingMarketProvider
+import io.defitrack.market.domain.PoolingMarket
+import io.defitrack.market.domain.PoolingMarketTokenShare
+import io.defitrack.market.domain.marketSize
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.uniswap.v3.prefetch.UniswapV3Prefetcher
 import io.defitrack.uniswap.v3.UniswapV3PoolContract
@@ -21,7 +21,6 @@ import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import java.math.BigDecimal
-import kotlin.coroutines.EmptyCoroutineContext
 
 abstract class UniswapV3PoolingMarketProvider(
     private val startBlock: String,

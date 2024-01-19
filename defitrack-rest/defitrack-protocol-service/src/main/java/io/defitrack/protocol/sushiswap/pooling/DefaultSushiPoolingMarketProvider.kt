@@ -4,8 +4,8 @@ import arrow.core.Either
 import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMap
 import io.defitrack.common.utils.refreshable
-import io.defitrack.market.pooling.PoolingMarketProvider
-import io.defitrack.market.pooling.domain.PoolingMarket
+import io.defitrack.market.port.out.PoolingMarketProvider
+import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.sushiswap.SushiswapService
 import io.defitrack.protocol.sushiswap.domain.SushiswapPair

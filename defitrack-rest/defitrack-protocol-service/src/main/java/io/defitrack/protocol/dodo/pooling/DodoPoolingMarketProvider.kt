@@ -1,9 +1,9 @@
 package io.defitrack.protocol.dodo.pooling
 
 import io.defitrack.common.utils.refreshable
-import io.defitrack.domain.GetPriceCommand
-import io.defitrack.market.pooling.PoolingMarketProvider
-import io.defitrack.market.pooling.domain.PoolingMarket
+import io.defitrack.price.domain.GetPriceCommand
+import io.defitrack.market.port.out.PoolingMarketProvider
+import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.protocol.dodo.DodoGraphProvider
 import java.math.BigDecimal
 

@@ -1,9 +1,8 @@
 package io.defitrack.market.pooling.mapper
 
-import io.defitrack.domain.toNetworkInformation
-import io.defitrack.market.MarketVOMapper
-import io.defitrack.market.pooling.breakdown.PoolingBreakdownMapper
-import io.defitrack.market.pooling.domain.PoolingMarket
+import io.defitrack.networkinfo.toNetworkInformation
+import io.defitrack.market.adapter.`in`.mapper.MarketVOMapper
+import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.market.pooling.vo.PoolingMarketVO
 import io.defitrack.protocol.mapper.ProtocolVOMapper
 import org.springframework.stereotype.Component
@@ -12,7 +11,7 @@ import java.util.*
 
 @Component
 class PoolingMarketVOMapper(
-    private val poolingBreakdownMapper: PoolingBreakdownMapper,
+    private val poolingBreakdownVOMapper: PoolingBreakdownVOMapper,
     private val protocolVOMapper: ProtocolVOMapper
 ) : MarketVOMapper<PoolingMarket> {
 
@@ -24,7 +23,7 @@ class PoolingMarketVOMapper(
                 network = network.toNetworkInformation(),
                 tokens = tokens,
                 id = id,
-                breakdown = poolingBreakdownMapper.toVO(breakdown?.get()),
+                breakdown = poolingBreakdownVOMapper.toVO(breakdown?.get()),
                 decimals = decimals,
                 address = address,
                 apr = apr,

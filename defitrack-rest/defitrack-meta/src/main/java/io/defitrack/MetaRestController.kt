@@ -1,8 +1,8 @@
 package io.defitrack
 
 import io.defitrack.common.network.Network
-import io.defitrack.domain.NetworkInformation
-import io.defitrack.domain.toNetworkInformation
+import io.defitrack.networkinfo.NetworkInformation
+import io.defitrack.networkinfo.toNetworkInformation
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.ProtocolVO
 import io.defitrack.protocol.mapper.ProtocolVOMapper

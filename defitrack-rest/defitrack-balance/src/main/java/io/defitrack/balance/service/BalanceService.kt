@@ -2,10 +2,10 @@ package io.defitrack.balance.service
 
 import io.defitrack.balance.service.dto.TokenBalance
 import io.defitrack.common.network.Network
+import io.defitrack.erc20.port.`in`.ERC20Resource
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
-import io.defitrack.port.input.ERC20Resource
 import org.slf4j.LoggerFactory
 import java.math.BigDecimal
 import java.math.BigInteger

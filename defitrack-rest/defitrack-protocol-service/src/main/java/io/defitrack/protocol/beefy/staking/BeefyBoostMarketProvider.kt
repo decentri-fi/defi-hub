@@ -1,17 +1,14 @@
 package io.defitrack.protocol.beefy.staking
 
-import arrow.core.Either
 import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMapNotNull
-import io.defitrack.claimable.domain.ClaimableRewardFetcher
-import io.defitrack.claimable.domain.Reward
-import io.defitrack.market.farming.FarmingMarketProvider
-import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.claim.ClaimableRewardFetcher
+import io.defitrack.claim.Reward
+import io.defitrack.market.port.out.FarmingMarketProvider
+import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.beefy.BeefyBoostService
 import io.defitrack.protocol.beefy.contract.`BeefyLaunchPoolContract`
-import io.defitrack.protocol.beefy.domain.BeefyLaunchPool
-import io.defitrack.protocol.maple.Market
 import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow

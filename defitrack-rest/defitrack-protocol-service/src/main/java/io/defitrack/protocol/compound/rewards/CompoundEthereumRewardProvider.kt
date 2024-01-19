@@ -3,7 +3,7 @@ package io.defitrack.protocol.compound.rewards
 import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.common.network.Network
-import io.defitrack.conditional.ConditionalOnCompany
+import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.compound.CompoundAddressesProvider
 import io.defitrack.protocol.compound.v3.contract.CompoundRewardContract

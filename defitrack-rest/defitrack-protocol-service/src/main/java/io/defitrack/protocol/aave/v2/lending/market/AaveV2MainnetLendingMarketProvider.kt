@@ -5,14 +5,13 @@ import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.refreshable
-import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.domain.FungibleToken
-import io.defitrack.domain.GetPriceCommand
+import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.erc20.domain.FungibleTokenInformation
+import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.position.PositionFetcher
-import io.defitrack.market.lending.LendingMarketProvider
-import io.defitrack.market.lending.domain.LendingMarket
-import io.defitrack.port.input.PriceResource
+import io.defitrack.market.port.out.LendingMarketProvider
+import io.defitrack.market.domain.lending.LendingMarket
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.v2.AaveV2MainnetService
@@ -32,7 +31,6 @@ import java.math.BigInteger
 class AaveV2MainnetLendingMarketProvider(
     blockchainGatewayProvider: BlockchainGatewayProvider,
     private val aaveV2MainnetService: AaveV2MainnetService,
-    private val priceResource: PriceResource,
 ) : LendingMarketProvider() {
 
     val lendingPoolAddressesProviderContract = lazyAsync {
@@ -96,12 +94,12 @@ class AaveV2MainnetLendingMarketProvider(
 
     private suspend fun calculateMarketSize(
         reserve: AaveReserve,
-        aToken: FungibleToken,
-        underlyingToken: FungibleToken
+        aToken: FungibleTokenInformation,
+        underlyingToken: FungibleTokenInformation
     ): Refreshable<BigDecimal> {
         return refreshable {
             val underlying = getToken(underlyingToken.address)
-            priceResource.calculatePrice(
+            getPriceResource().calculatePrice(
                 GetPriceCommand(
                     underlying.address,
                     getNetwork(),

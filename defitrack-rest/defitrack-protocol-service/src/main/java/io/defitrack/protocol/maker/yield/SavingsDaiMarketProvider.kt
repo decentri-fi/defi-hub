@@ -2,9 +2,9 @@ package io.defitrack.protocol.maker.yield
 
 import arrow.core.nel
 import io.defitrack.common.network.Network
-import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.market.farming.FarmingMarketProvider
-import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.market.port.out.FarmingMarketProvider
+import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.evm.position.Position
 import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.protocol.Company

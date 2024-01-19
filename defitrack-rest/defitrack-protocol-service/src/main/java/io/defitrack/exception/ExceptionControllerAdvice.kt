@@ -1,5 +1,6 @@
 package io.defitrack.exception
 
+import io.defitrack.transaction.domain.TransactionPreparationException
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler

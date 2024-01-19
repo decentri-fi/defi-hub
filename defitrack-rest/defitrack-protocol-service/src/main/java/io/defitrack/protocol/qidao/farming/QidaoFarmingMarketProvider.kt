@@ -5,11 +5,11 @@ import arrow.fx.coroutines.parMap
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.refreshable
-import io.defitrack.conditional.ConditionalOnCompany
+import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.erc20.port.`in`.ERC20Resource
 import io.defitrack.evm.position.PositionFetcher
-import io.defitrack.market.farming.FarmingMarketProvider
-import io.defitrack.market.farming.domain.FarmingMarket
-import io.defitrack.port.input.ERC20Resource
+import io.defitrack.market.port.out.FarmingMarketProvider
+import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.qidao.QidaoPolygonService

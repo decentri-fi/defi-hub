@@ -1,8 +1,8 @@
 package io.defitrack.protocol.beefy.staking.invest
 
 import io.defitrack.common.network.Network
-import io.defitrack.market.farming.domain.InvestmentPreparer
-import io.defitrack.port.input.ERC20Resource
+import io.defitrack.erc20.port.`in`.ERC20Resource
+import io.defitrack.invest.InvestmentPreparer
 import io.defitrack.protocol.beefy.contract.BeefyVaultContract
 import io.defitrack.transaction.PreparedTransaction
 import java.math.BigInteger

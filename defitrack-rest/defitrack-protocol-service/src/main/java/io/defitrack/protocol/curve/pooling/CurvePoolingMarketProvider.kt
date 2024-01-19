@@ -6,8 +6,8 @@ import arrow.core.getOrElse
 import arrow.fx.coroutines.parMap
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.refreshable
-import io.defitrack.market.pooling.PoolingMarketProvider
-import io.defitrack.market.pooling.domain.PoolingMarket
+import io.defitrack.market.port.out.PoolingMarketProvider
+import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.crv.contract.CurveFactoryContract
 import io.defitrack.protocol.crv.contract.CurvePoolContract

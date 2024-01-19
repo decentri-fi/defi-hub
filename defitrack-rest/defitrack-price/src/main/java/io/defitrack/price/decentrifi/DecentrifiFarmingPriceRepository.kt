@@ -3,17 +3,12 @@ package io.defitrack.price.decentrifi
 import arrow.fx.coroutines.parMap
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.domain.FungibleToken
-import io.defitrack.domain.NetworkInformation
-import io.defitrack.domain.ProtocolInformation
-import io.defitrack.market.farming.vo.FarmingMarketVO
+import io.defitrack.erc20.domain.FungibleTokenInformation
+import io.defitrack.marketinfo.port.out.Markets
+import io.defitrack.networkinfo.NetworkInformation
 import io.defitrack.price.external.ExternalPrice
+import io.defitrack.protocol.port.`in`.ProtocolResource
 import io.github.reactivecircus.cache4k.Cache
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
@@ -22,7 +17,8 @@ import java.math.BigDecimal
 
 @Component
 class DecentrifiFarmingPriceRepository(
-    private val httpClient: HttpClient
+    private val marketResource: Markets,
+    private val protocolResource: ProtocolResource
 ) {
 
     val logger = LoggerFactory.getLogger(this::class.java)
@@ -31,10 +27,9 @@ class DecentrifiFarmingPriceRepository(
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 6)
     fun populateFarmPrices() = runBlocking {
         logger.info("fetching prices from decentrifi farms")
-        val protocols = getProtocols()
-        protocols.map { proto ->
+        protocolResource.getProtocols().map { proto ->
             try {
-                getFarms(proto)
+                marketResource.getFarmingMarkets(proto.slug)
                     .filter {
                         it.token != null && (it.marketSize ?: BigDecimal.ZERO) > BigDecimal.ONE
                     }.parMap(concurrency = 12) { farm ->
@@ -62,29 +57,14 @@ class DecentrifiFarmingPriceRepository(
         logger.info("Decentrifi Farming Price Repository populated with ${cache.asMap().entries.size} prices")
     }
 
-    fun contains(token: FungibleToken): Boolean {
+    fun contains(token: FungibleTokenInformation): Boolean {
         return cache.get(toIndex(token.network, token.address)) != null
     }
 
     private fun toIndex(network: NetworkInformation, address: String) =
         "${network.name}-${address.lowercase()}"
 
-    suspend fun getProtocols(): List<ProtocolInformation> {
-        return httpClient.get("https://api.decentri.fi/protocols").body()
-    }
-
-    suspend fun getFarms(protocol: ProtocolInformation): List<FarmingMarketVO> {
-        val result =
-            httpClient.get("https://api.decentri.fi/${protocol.slug}/farming/all-markets")
-        return if (result.status.isSuccess())
-            result.body()
-        else {
-            logger.error("Unable to fetch farms for ${protocol.name} ${result.bodyAsText()}")
-            emptyList()
-        }
-    }
-
-    suspend fun getPrice(token: FungibleToken): BigDecimal {
+    suspend fun getPrice(token: FungibleTokenInformation): BigDecimal {
         return cache.get(toIndex(token.network, token.address))?.price ?: BigDecimal.ZERO
     }
 }

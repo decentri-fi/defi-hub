@@ -4,11 +4,11 @@ import arrow.core.getOrElse
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.domain.GetPriceCommand
-import io.defitrack.market.pooling.PoolingPositionProvider
-import io.defitrack.market.pooling.domain.PoolingPosition
-import io.defitrack.market.pooling.domain.PriceCalculator
+import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.price.domain.GetPriceCommand
+import io.defitrack.market.port.out.PoolingPositionProvider
+import io.defitrack.market.domain.pooling.PoolingPosition
+import io.defitrack.market.domain.pooling.PriceCalculator
 import io.defitrack.pancakeswap.PancakePositionsV3Contract
 import io.defitrack.protocol.Company
 import io.defitrack.uniswap.v3.UniswapV3PoolContract

@@ -5,12 +5,12 @@ import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.refreshable
-import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.domain.FungibleToken
-import io.defitrack.domain.GetPriceCommand
+import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.erc20.domain.FungibleTokenInformation
+import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.evm.position.PositionFetcher
-import io.defitrack.market.farming.FarmingMarketProvider
-import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.market.port.out.FarmingMarketProvider
+import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.polycat.PolycatService
@@ -74,7 +74,7 @@ class PolycatFarmingMarketProvider(
     }
 
     private suspend fun calculateMarketSize(
-        stakedtoken: FungibleToken,
+        stakedtoken: FungibleTokenInformation,
         chef: PolycatMasterChefContract
     ): BigDecimal {
 

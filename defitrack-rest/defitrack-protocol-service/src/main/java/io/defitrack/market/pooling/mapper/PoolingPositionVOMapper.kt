@@ -1,11 +1,10 @@
 package io.defitrack.market.pooling.mapper
 
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.domain.toNetworkInformation
-import io.defitrack.market.pooling.breakdown.PoolingBreakdownMapper
-import io.defitrack.market.pooling.domain.PoolingPosition
+import io.defitrack.erc20.port.`in`.ERC20Resource
+import io.defitrack.networkinfo.toNetworkInformation
+import io.defitrack.market.domain.pooling.PoolingPosition
 import io.defitrack.market.pooling.vo.PoolingPositionVO
-import io.defitrack.port.input.ERC20Resource
 import io.defitrack.protocol.mapper.ProtocolVOMapper
 import org.springframework.stereotype.Component
 
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Component
 class PoolingPositionVOMapper(
     private val erC20Resource: ERC20Resource,
     private val protocolVOMapper: ProtocolVOMapper,
-    private val breakdownMapper: PoolingBreakdownMapper,
+    private val breakdownMapper: PoolingBreakdownVOMapper,
     private val poolingMarketVOMapper: PoolingMarketVOMapper
 ) {
 

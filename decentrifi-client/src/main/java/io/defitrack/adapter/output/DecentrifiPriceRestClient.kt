@@ -1,7 +1,7 @@
 package io.defitrack.adapter.output
 
-import io.defitrack.domain.GetPriceCommand
-import io.defitrack.port.output.Prices
+import io.defitrack.price.domain.GetPriceCommand
+import io.defitrack.price.port.out.Prices
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*

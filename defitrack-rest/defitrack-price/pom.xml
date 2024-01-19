@@ -23,7 +23,7 @@
         </dependency>
         <dependency>
             <groupId>io.defitrack</groupId>
-            <artifactId>defitrack-protocols</artifactId>
+            <artifactId>defitrack-protocol-contracts</artifactId>
         </dependency>
         <dependency>
             <groupId>io.defitrack</groupId>

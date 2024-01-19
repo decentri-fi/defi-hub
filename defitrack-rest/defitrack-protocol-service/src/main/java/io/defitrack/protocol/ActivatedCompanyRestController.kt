@@ -1,5 +1,6 @@
 package io.defitrack.protocol
 
+import io.defitrack.company.CompaniesProvider
 import io.defitrack.company.CompanyVO
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping

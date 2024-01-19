@@ -1,13 +1,13 @@
 package io.defitrack.protocol.camelot.claiming
 
-import io.defitrack.claimable.AbstractClaimableMarketProvider
-import io.defitrack.claimable.domain.ClaimableRewardFetcher
-import io.defitrack.claimable.domain.ClaimableMarket
-import io.defitrack.claimable.domain.Reward
+import io.defitrack.claim.AbstractClaimableMarketProvider
+import io.defitrack.claim.ClaimableRewardFetcher
+import io.defitrack.claim.ClaimableMarket
+import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
-import io.defitrack.conditional.ConditionalOnCompany
+import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.camelot.CamelotAdvisorVestingContract

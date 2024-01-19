@@ -1,6 +1,6 @@
 package io.defitrack
 
-import io.defitrack.protocol.CompaniesProvider
+import io.defitrack.company.CompaniesProvider
 import io.defitrack.protocol.Company
 import jakarta.annotation.PostConstruct
 import org.slf4j.LoggerFactory

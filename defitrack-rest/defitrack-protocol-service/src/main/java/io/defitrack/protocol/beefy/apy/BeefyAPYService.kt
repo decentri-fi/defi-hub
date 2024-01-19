@@ -2,7 +2,7 @@ package io.defitrack.protocol.beefy.apy
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.defitrack.conditional.ConditionalOnCompany
+import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.protocol.Company
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*

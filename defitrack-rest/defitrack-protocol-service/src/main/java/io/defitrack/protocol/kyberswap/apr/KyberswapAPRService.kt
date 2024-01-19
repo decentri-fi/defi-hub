@@ -1,7 +1,7 @@
 package io.defitrack.protocol.kyberswap.apr
 
 import io.defitrack.common.network.Network
-import io.defitrack.conditional.ConditionalOnCompany
+import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.kyberswap.graph.KyberswapEthereumGraphProvider
 import io.defitrack.protocol.kyberswap.graph.domain.PairDayData

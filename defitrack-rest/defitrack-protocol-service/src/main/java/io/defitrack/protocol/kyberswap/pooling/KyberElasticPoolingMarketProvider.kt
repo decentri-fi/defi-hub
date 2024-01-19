@@ -3,11 +3,10 @@ package io.defitrack.protocol.kyberswap.pooling
 import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.map
 import io.defitrack.common.utils.refreshable
-import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.market.pooling.PoolingMarketProvider
-import io.defitrack.market.pooling.domain.PoolingMarket
+import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.market.port.out.PoolingMarketProvider
+import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.kyberswap.contract.KyberswapElasticContract

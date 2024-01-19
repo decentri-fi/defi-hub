@@ -2,15 +2,13 @@ package io.defitrack.protocol.uniswap.v2.pooling
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
-import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.map
 import io.defitrack.common.utils.refreshable
-import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.market.pooling.PoolingMarketProvider
-import io.defitrack.market.pooling.domain.PoolingMarket
-import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
-import io.defitrack.market.pooling.domain.marketSize
+import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.market.port.out.PoolingMarketProvider
+import io.defitrack.market.domain.PoolingMarket
+import io.defitrack.market.domain.PoolingMarketTokenShare
+import io.defitrack.market.domain.marketSize
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.uniswap.v2.pooling.prefetch.UniswapV2Prefetcher
@@ -19,7 +17,6 @@ import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
-import java.math.BigDecimal
 
 @Component
 @ConditionalOnCompany(Company.UNISWAP)

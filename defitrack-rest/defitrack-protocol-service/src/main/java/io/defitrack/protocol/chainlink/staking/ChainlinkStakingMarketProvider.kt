@@ -3,9 +3,9 @@ package io.defitrack.protocol.chainlink.staking
 import arrow.core.nel
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.refreshable
-import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.market.farming.FarmingMarketProvider
-import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.market.port.out.FarmingMarketProvider
+import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol

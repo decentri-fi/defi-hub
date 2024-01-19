@@ -1,9 +1,9 @@
 package io.defitrack.protocol.velodrome.staking
 
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
-import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.market.farming.FarmingPositionProvider
-import io.defitrack.market.farming.domain.FarmingPosition
+import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.market.port.out.FarmingPositionProvider
+import io.defitrack.market.domain.farming.FarmingPosition
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.velodrome.contract.VeVeloContract
 import org.springframework.stereotype.Component

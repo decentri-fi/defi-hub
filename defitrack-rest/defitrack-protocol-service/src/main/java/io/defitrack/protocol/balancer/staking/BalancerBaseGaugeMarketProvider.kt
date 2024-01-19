@@ -2,15 +2,15 @@ package io.defitrack.protocol.balancer.staking
 
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.abi.TypeUtils
-import io.defitrack.claimable.domain.ClaimableRewardFetcher
-import io.defitrack.claimable.domain.Reward
+import io.defitrack.claim.ClaimableRewardFetcher
+import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
-import io.defitrack.conditional.ConditionalOnCompany
+import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.event.EventDecoder.Companion.extract
 import io.defitrack.evm.GetEventLogsCommand
-import io.defitrack.market.farming.FarmingMarketProvider
-import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.market.port.out.FarmingMarketProvider
+import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.evm.position.Position
 import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.protocol.Company

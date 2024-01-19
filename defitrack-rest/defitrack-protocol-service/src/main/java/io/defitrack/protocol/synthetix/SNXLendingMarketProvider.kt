@@ -3,9 +3,9 @@ package io.defitrack.protocol.synthetix
 import arrow.core.nel
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.refreshable
-import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.market.lending.LendingMarketProvider
-import io.defitrack.market.lending.domain.LendingMarket
+import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.market.port.out.LendingMarketProvider
+import io.defitrack.market.domain.lending.LendingMarket
 import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol

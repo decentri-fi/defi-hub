@@ -1,7 +1,7 @@
 package io.defitrack.statistics.client
 
 import com.google.gson.JsonParser
-import io.defitrack.domain.ProtocolInformation
+import io.defitrack.protocol.ProtocolInformation
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.*

@@ -2,16 +2,12 @@ package io.defitrack.price.decentrifi
 
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.market.pooling.vo.PoolingMarketTokenShareVO
-import io.defitrack.market.pooling.vo.PoolingMarketVO
+import io.defitrack.market.domain.pooling.PoolingMarketInformation
+import io.defitrack.market.domain.pooling.PoolingMarketTokenShareInformation
+import io.defitrack.marketinfo.port.out.Markets
+import io.defitrack.price.port.`in`.PricePort
 import io.github.reactivecircus.cache4k.Cache
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
@@ -21,7 +17,7 @@ import java.util.concurrent.Executors
 
 @Component
 class DecentriUniswapV2UnderlyingPriceRepository(
-    private val httpClient: HttpClient
+    private val markets: Markets
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -39,8 +35,8 @@ class DecentriUniswapV2UnderlyingPriceRepository(
         }
     }
 
-    private fun importUsdPairs(pools: List<PoolingMarketVO>) {
-        val stableCoinPredicate: (PoolingMarketTokenShareVO) -> Boolean = { share ->
+    private fun importUsdPairs(pools: List<PoolingMarketInformation>) {
+        val stableCoinPredicate: (PoolingMarketTokenShareInformation) -> Boolean = { share ->
             share.token.address.lowercase() == "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
                     || share.token.address.lowercase() == "0xdac17f958d2ee523a2206206994597c13d831ec7"
                     || share.token.address.lowercase() == "0x6b175474e89094c44da98b954eedeac495271d0f"
@@ -84,12 +80,7 @@ class DecentriUniswapV2UnderlyingPriceRepository(
         return prices.asMap().containsKey(toIndex(address))
     }
 
-    suspend fun getUniswapV2Pools(): List<PoolingMarketVO> = withContext(Dispatchers.IO) {
-        val result = httpClient.get("https://api.decentri.fi/uniswap_v2/pooling/all-markets")
-        if (result.status.isSuccess()) result.body()
-        else {
-            logger.error("Unable to fetch pools for UNISWAP_V2, result was ${result.body<String>()}")
-            emptyList()
-        }
+    suspend fun getUniswapV2Pools(): List<PoolingMarketInformation> {
+        return markets.getPoolingMarkets("uniswap_v2")
     }
 }

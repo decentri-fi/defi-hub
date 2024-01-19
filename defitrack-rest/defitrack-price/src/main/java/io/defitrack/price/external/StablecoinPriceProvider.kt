@@ -2,8 +2,8 @@ package io.defitrack.price.external
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils
-import io.defitrack.domain.FungibleToken
-import io.defitrack.port.input.ERC20Resource
+import io.defitrack.erc20.domain.FungibleTokenInformation
+import io.defitrack.erc20.port.`in`.ERC20Resource
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
@@ -58,7 +58,7 @@ class StablecoinPriceProvider(private val erC20Resource: ERC20Resource) : Extern
         )
     }
 
-    override suspend fun appliesTo(token: FungibleToken): Boolean {
+    override suspend fun appliesTo(token: FungibleTokenInformation): Boolean {
         return stableCoins.await()[token.network.toNetwork()]?.any {
             it.address.lowercase() == token.address.lowercase()
         } ?: false
@@ -77,7 +77,7 @@ class StablecoinPriceProvider(private val erC20Resource: ERC20Resource) : Extern
         }
     }
 
-    override suspend fun getPrice(fungibleToken: FungibleToken): BigDecimal {
+    override suspend fun getPrice(fungibleToken: FungibleTokenInformation): BigDecimal {
         return BigDecimal.ONE
     }
 }

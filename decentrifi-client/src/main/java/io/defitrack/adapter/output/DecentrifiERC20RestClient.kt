@@ -1,9 +1,9 @@
 package io.defitrack.adapter.output
 
-import io.defitrack.adapter.output.resource.FungibleTokenResponse
-import io.defitrack.adapter.output.resource.WrappedTokenResponse
 import io.defitrack.common.network.Network
-import io.defitrack.port.output.ERC20s
+import io.defitrack.erc20.domain.FungibleTokenInformation
+import io.defitrack.erc20.domain.WrappedToken
+import io.defitrack.erc20.port.out.ERC20s
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -22,7 +22,7 @@ internal class DecentrifiERC20RestClient(
 ) : ERC20s {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
-    override suspend fun getAllTokens(network: Network, verified: Boolean?): List<FungibleTokenResponse> {
+    override suspend fun getAllTokens(network: Network, verified: Boolean?): List<FungibleTokenInformation> {
         return withContext(Dispatchers.IO) {
             val get = client.get("$erc20ResourceLocation/${network.name}") {
                 parameter("verified", verified)
@@ -30,7 +30,7 @@ internal class DecentrifiERC20RestClient(
             if (!get.status.isSuccess()) {
                 emptyList()
             } else {
-                get.body<List<FungibleTokenResponse>>()
+                get.body<List<FungibleTokenInformation>>()
             }
         }
     }
@@ -47,7 +47,7 @@ internal class DecentrifiERC20RestClient(
         }
     }
 
-    override suspend fun getTokenInformation(network: Network, address: String): FungibleTokenResponse {
+    override suspend fun getTokenInformation(network: Network, address: String): FungibleTokenInformation {
         return withContext(Dispatchers.IO) {
             val result = client.get("$erc20ResourceLocation/${network.name}/$address/token")
             if (!result.status.isSuccess()) {
@@ -57,12 +57,12 @@ internal class DecentrifiERC20RestClient(
         }
     }
 
-    override suspend fun getWrappedToken(network: Network): WrappedTokenResponse = withContext(Dispatchers.IO) {
-        val result = client.get("$erc20ResourceLocation/${network.name}/wrapped")
-        if (!result.status.isSuccess()) {
+    override suspend fun getWrappedToken(network: Network): WrappedToken = withContext(Dispatchers.IO) {
+        val response = client.get("$erc20ResourceLocation/${network.name}/wrapped")
+        if (!response.status.isSuccess()) {
             throw RuntimeException("Failed to get wrapped token for $network")
         }
-        result.body()
+        response.body()
     }
 
     override suspend fun getAllowance(network: Network, token: String, owner: String, spender: String): BigInteger {

@@ -1,10 +1,10 @@
 package io.defitrack.protocol.tornadocash
 
 import io.defitrack.common.network.Network
-import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.domain.GetPriceCommand
-import io.defitrack.market.farming.FarmingMarketProvider
-import io.defitrack.market.farming.domain.FarmingMarket
+import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.price.domain.GetPriceCommand
+import io.defitrack.market.port.out.FarmingMarketProvider
+import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import org.springframework.stereotype.Component

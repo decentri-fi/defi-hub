@@ -1,12 +1,11 @@
 package io.defitrack.protocol.maple.market
 
-import arrow.core.Either
 import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
-import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.market.lending.LendingMarketProvider
-import io.defitrack.market.lending.domain.LendingMarket
+import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.market.port.out.LendingMarketProvider
+import io.defitrack.market.domain.lending.LendingMarket
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.maple.MapleFinanceEthereumGraphProvider

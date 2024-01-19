@@ -4,11 +4,11 @@ import arrow.core.*
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.refreshable
-import io.defitrack.domain.FungibleToken
-import io.defitrack.domain.GetPriceCommand
-import io.defitrack.market.pooling.PoolingMarketProvider
-import io.defitrack.market.pooling.domain.PoolingMarket
-import io.defitrack.market.pooling.domain.PoolingMarketTokenShare
+import io.defitrack.erc20.domain.FungibleTokenInformation
+import io.defitrack.price.domain.GetPriceCommand
+import io.defitrack.market.port.out.PoolingMarketProvider
+import io.defitrack.market.domain.PoolingMarket
+import io.defitrack.market.domain.PoolingMarketTokenShare
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerPoolContract
 import io.defitrack.protocol.balancer.contract.BalancerService
@@ -98,9 +98,9 @@ abstract class BalancerPoolingMarketProvider(
                 identifier = poolId,
                 address = poolAddress,
                 name = "${
-                    underlying.joinToString("/", transform = FungibleToken::symbol)
+                    underlying.joinToString("/", transform = FungibleTokenInformation::symbol)
                 } Pool",
-                symbol = underlying.joinToString("/", transform = FungibleToken::symbol),
+                symbol = underlying.joinToString("/", transform = FungibleTokenInformation::symbol),
                 metadata = mapOf("poolId" to poolId),
                 breakdown = breakdown,
                 positionFetcher = defaultPositionFetcher(poolAddress),
@@ -124,7 +124,7 @@ abstract class BalancerPoolingMarketProvider(
     }
 
     data class TokenWithBalance(
-        val token: FungibleToken,
+        val token: FungibleTokenInformation,
         val balance: BigInteger
     )
 

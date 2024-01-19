@@ -2,10 +2,9 @@ package io.defitrack.protocol.camelot.pooling
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
-import io.defitrack.common.utils.map
 import io.defitrack.common.utils.refreshable
-import io.defitrack.market.pooling.PoolingMarketProvider
-import io.defitrack.market.pooling.domain.PoolingMarket
+import io.defitrack.market.port.out.PoolingMarketProvider
+import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.uniswap.v2.PairFactoryContract
 import kotlinx.coroutines.flow.Flow

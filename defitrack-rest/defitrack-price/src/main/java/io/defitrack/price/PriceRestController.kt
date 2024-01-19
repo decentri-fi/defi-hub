@@ -1,7 +1,7 @@
 package io.defitrack.price
 
 import io.defitrack.common.network.Network
-import io.defitrack.domain.GetPriceCommand
+import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.price.external.ExternalPrice
 import io.defitrack.price.external.ExternalPriceService
 import io.micrometer.observation.Observation

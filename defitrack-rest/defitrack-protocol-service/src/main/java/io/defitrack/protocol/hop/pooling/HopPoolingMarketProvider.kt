@@ -6,10 +6,10 @@ import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.map
 import io.defitrack.common.utils.refreshable
-import io.defitrack.domain.GetPriceCommand
+import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.market.pooling.PoolingMarketProvider
-import io.defitrack.market.pooling.domain.PoolingMarket
+import io.defitrack.market.port.out.PoolingMarketProvider
+import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.hop.HopService
 import io.defitrack.protocol.hop.contract.HopLpTokenContract

@@ -4,13 +4,13 @@ import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.refreshable
-import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.domain.FungibleToken
-import io.defitrack.domain.GetPriceCommand
+import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.erc20.domain.FungibleTokenInformation
+import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.evm.position.Position
 import io.defitrack.evm.position.PositionFetcher
-import io.defitrack.market.lending.LendingMarketProvider
-import io.defitrack.market.lending.domain.LendingMarket
+import io.defitrack.market.port.out.LendingMarketProvider
+import io.defitrack.market.domain.lending.LendingMarket
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.compound.v2.contract.CompoundTokenContract
@@ -82,7 +82,7 @@ class OvixZkEVMLendingMarketProvider : LendingMarketProvider() {
                     marketToken = getToken(ctokenContract.address),
                     erc20Compatible = true,
                     totalSupply = refreshable(ctoken.totalDecimalSupply()) {
-                        with(getToken(ctokenContract.address), FungibleToken::totalDecimalSupply)
+                        with(getToken(ctokenContract.address), FungibleTokenInformation::totalDecimalSupply)
                     },
                     metadata = mapOf(
                         "oToken" to ctokenContract.address,

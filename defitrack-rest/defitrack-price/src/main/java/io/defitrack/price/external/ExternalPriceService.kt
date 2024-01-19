@@ -1,6 +1,6 @@
 package io.defitrack.price.external
 
-import io.defitrack.domain.FungibleToken
+import io.defitrack.erc20.domain.FungibleTokenInformation
 import java.math.BigDecimal
 
 interface ExternalPriceService {
@@ -8,9 +8,9 @@ interface ExternalPriceService {
     fun order() = 0
 
     fun getOracleName(): String = "unknown oracle"
-    suspend fun getPrice(fungibleToken: FungibleToken): BigDecimal
+    suspend fun getPrice(fungibleToken: FungibleTokenInformation): BigDecimal
 
-    suspend fun appliesTo(token: FungibleToken): Boolean {
+    suspend fun appliesTo(token: FungibleTokenInformation): Boolean {
         return getOracleName() == token.name.lowercase()
     }
 

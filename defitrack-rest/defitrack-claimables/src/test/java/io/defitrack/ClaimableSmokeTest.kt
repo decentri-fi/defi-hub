@@ -1,6 +1,6 @@
 package io.defitrack
 
-import io.defitrack.claimables.ports.inputs.ClaimableAggregateRestControllerDocumentation
+import io.defitrack.claimables.adapters.ClaimableAggregateRestControllerDocumentation
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

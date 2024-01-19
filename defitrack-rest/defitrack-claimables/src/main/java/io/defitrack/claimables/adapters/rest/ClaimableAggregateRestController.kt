@@ -2,12 +2,11 @@ package io.defitrack.claimables.adapters.rest
 
 import arrow.fx.coroutines.parMap
 import io.defitrack.PageUtils
-import io.defitrack.claimables.ports.inputs.ClaimableAggregateRestControllerDocumentation
+import io.defitrack.claimables.adapters.rest.resource.ExceptionResult
+import io.defitrack.claimables.adapters.ClaimableAggregateRestControllerDocumentation
 import io.defitrack.claimables.ports.outputs.ClaimablesClient
-import io.defitrack.exception.ExceptionResult
 import io.defitrack.protocol.DefiPrimitive
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.mapper.ProtocolVOMapper
 import io.micrometer.observation.Observation.start
 import io.micrometer.observation.ObservationRegistry
 import jakarta.servlet.http.HttpServletResponse
@@ -29,7 +28,6 @@ import kotlin.time.measureTimedValue
 @RestController
 class ClaimableAggregateRestController(
     private val claimablesClient: ClaimablesClient,
-    private val protocolVOMapper: ProtocolVOMapper,
     private val observationRegistry: ObservationRegistry
 ) : ClaimableAggregateRestControllerDocumentation {
 

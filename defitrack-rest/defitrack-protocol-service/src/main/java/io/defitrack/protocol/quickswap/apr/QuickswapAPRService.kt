@@ -1,10 +1,10 @@
 package io.defitrack.protocol.quickswap.apr
 
 import io.defitrack.common.network.Network
-import io.defitrack.conditional.ConditionalOnCompany
-import io.defitrack.domain.GetPriceCommand
+import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.port.input.PriceResource
+import io.defitrack.price.port.`in`.PricePort
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.quickswap.QuickswapService
 import io.defitrack.protocol.quickswap.contract.QuickswapDualRewardPoolContract
@@ -25,7 +25,7 @@ private const val BLOCKS_PER_YEAR = 31536000L
 class QuickswapAPRService(
     private val quickswapService: QuickswapService,
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
-    private val priceResource: PriceResource,
+    private val priceResource: PricePort,
 ) {
 
     val cache = Cache.Builder<String, BigDecimal>().expireAfterWrite(

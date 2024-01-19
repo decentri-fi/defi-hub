@@ -1,10 +1,10 @@
 package io.defitrack.price.decentrifi
 
 import arrow.fx.coroutines.parMap
-import io.defitrack.domain.FungibleToken
-import io.defitrack.domain.NetworkInformation
-import io.defitrack.domain.ProtocolInformation
-import io.defitrack.market.pooling.vo.PoolingMarketVO
+import io.defitrack.erc20.domain.FungibleTokenInformation
+import io.defitrack.networkinfo.NetworkInformation
+import io.defitrack.protocol.ProtocolInformation
+import io.defitrack.market.domain.pooling.PoolingMarketInformation
 import io.defitrack.price.external.ExternalPrice
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
@@ -58,7 +58,7 @@ class DecentrifiPoolingPriceRepository(
             )
         )
 
-    fun contains(token: FungibleToken): Boolean {
+    fun contains(token: FungibleTokenInformation): Boolean {
         return cache.get(toIndex(token.network, token.address)) != null
     }
 
@@ -69,7 +69,7 @@ class DecentrifiPoolingPriceRepository(
         return httpClient.get("https://api.decentri.fi/protocols").body()
     }
 
-    suspend fun getPools(protocol: ProtocolInformation): List<PoolingMarketVO> {
+    suspend fun getPools(protocol: ProtocolInformation): List<PoolingMarketInformation> {
         val result =
             httpClient.get("https://api.decentri.fi/${protocol.slug}/pooling/all-markets")
         return if (result.status.isSuccess())
@@ -80,7 +80,7 @@ class DecentrifiPoolingPriceRepository(
         }
     }
 
-    suspend fun getPrice(token: FungibleToken): BigDecimal {
+    suspend fun getPrice(token: FungibleTokenInformation): BigDecimal {
         return cache.get(toIndex(token.network, token.address))?.price ?: BigDecimal.ZERO
     }
 }
