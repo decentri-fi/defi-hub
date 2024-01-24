@@ -30,7 +30,6 @@ class EthereumSetPoolingMarketProvider(
                     getBlockchainGateway(), set
                 )
 
-                val supply = tokenContract.totalSupply().get().asEth(tokenContract.readDecimals())
                 val token = getToken(set)
 
                 val positionsRefreshable = refreshable {
@@ -40,6 +39,7 @@ class EthereumSetPoolingMarketProvider(
 
                 val breakdown = positionsRefreshable.map { positions ->
                     positions.map {
+                        val supply = tokenContract.totalSupply().get().asEth(tokenContract.readDecimals())
                         val underlying = getToken(it.token)
                         val reserve = it.amount.toBigDecimal()
                             .times(tokenContract.positionMultiplier.await().asEth())
