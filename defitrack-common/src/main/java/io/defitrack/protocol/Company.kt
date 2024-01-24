@@ -4,6 +4,10 @@ enum class Company(
     val prettyName: String,
     val slug: String
 ) {
+    MANTLE(
+        prettyName = "Mantle",
+        slug = "mantle"
+    ),
     SEAMLESS(
         prettyName = "Seamless",
         slug = "seamless"

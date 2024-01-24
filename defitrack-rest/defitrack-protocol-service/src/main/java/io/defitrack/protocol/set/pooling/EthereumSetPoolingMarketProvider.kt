@@ -42,7 +42,7 @@ class EthereumSetPoolingMarketProvider(
                         val supply = tokenContract.totalSupply().get().asEth(tokenContract.readDecimals())
                         val underlying = getToken(it.token)
                         val reserve = it.amount.toBigDecimal()
-                            .times(tokenContract.positionMultiplier.await().asEth())
+                            .times(tokenContract.getPositionMultiplier().asEth())
                             .times(supply).toBigInteger()
                         PoolingMarketTokenShare(
                             token = underlying,

@@ -52,8 +52,8 @@ class MarketCacheRefresher(
     }
 
     @Scheduled(
-        fixedDelay = 1000 * 60 * 60 * 3,
-        initialDelay = 1000 * 60 * 60 * 3
+        fixedDelay = 1000 * 60 * 60 * 4,
+        initialDelay = 1000 * 60 * 60 * 4
     )
     fun refreshCaches() = runBlocking(Dispatchers.Default) {
         if (poolingMarketProviders.isEmpty() && lendingMarketProviders.isEmpty() && farmingMarketProviders.isEmpty()) {

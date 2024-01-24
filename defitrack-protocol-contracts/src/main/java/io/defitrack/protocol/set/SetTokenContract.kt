@@ -19,7 +19,9 @@ class SetTokenContract(
     blockchainGateway, address
 ) {
 
-    val positionMultiplier = constant<BigInteger>("positionMultiplier", uint256())
+    suspend fun getPositionMultiplier() : BigInteger {
+        return readSingle("positionMultiplier", uint256())
+    }
 
     suspend fun getPositions(): List<Position> {
         return read(
