@@ -24,7 +24,7 @@
         <module>defitrack-balance</module>
         <module>defitrack-price</module>
         <module>defitrack-protocol-service</module>
-        <module>defitrack-blockchain-services</module>
+        <module>defitrack-evm</module>
         <module>defitrack-statistics</module>
         <module>defitrack-events</module>
     </modules>

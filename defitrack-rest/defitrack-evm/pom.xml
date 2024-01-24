@@ -7,7 +7,7 @@
 
     <parent>
         <groupId>io.defitrack</groupId>
-        <artifactId>defitrack-blockchain-services</artifactId>
+        <artifactId>defitrack-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
@@ -19,10 +19,12 @@
         <dependency>
             <groupId>io.defitrack</groupId>
             <artifactId>defitrack-common</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>io.defitrack</groupId>
             <artifactId>evm</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

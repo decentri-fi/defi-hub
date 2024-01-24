@@ -3,17 +3,17 @@ pipeline {
     stages {
         stage('compile') {
             steps {
-                sh './mvnw -T 1.5C clean compile -U'
+                sh './mvnw clean compile -U'
             }
         }
         stage('Test') {
             steps {
-                sh './mvnw -T 1.5C test'
+                sh './mvnw test'
              }
          }
         stage('Package') {
              steps {
-                 sh "./mvnw -T 1.5C package -DskipTests"
+                 sh "./mvnw package -DskipTests"
              }
         }
     }

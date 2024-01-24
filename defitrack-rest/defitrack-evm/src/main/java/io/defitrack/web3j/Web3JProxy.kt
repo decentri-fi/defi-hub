@@ -18,6 +18,7 @@ import org.web3j.protocol.core.methods.request.EthFilter
 import org.web3j.protocol.core.methods.request.Transaction
 import org.web3j.protocol.core.methods.response.*
 import java.math.BigInteger
+import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 @Component
@@ -43,45 +44,90 @@ class Web3JProxy(
             _web3j.ethGetLogs(ethFilter)
         })
 
-        return if (log.exceedsSize()) {
-            //regex: "Log response size exceeded.[\\s\\S]*?range should work: \\[([\\w]*?), ([\\w]*?)\\]"
-            val matcher = log.exceededPattern.matcher(log.error.message)
-            if (matcher.find()) {
-                val start = matcher.group(1).removePrefix("0x")
-                val end = matcher.group(2).removePrefix("0x")
-                val startBlock = BigInteger(start, 16)
-                val endBlock = BigInteger(end, 16)
-                logger.info("too many results, splitting into two calls: {} - {}", startBlock, endBlock)
-                listOf(
-                    getLogs(
-                        GetEventLogsCommand(
-                            getEventLogsCommand.addresses,
-                            getEventLogsCommand.topic,
-                            getEventLogsCommand.optionalTopics,
-                            startBlock,
-                            endBlock
-                        )
-                    ),
-                    getLogs(
-                        GetEventLogsCommand(
-                            getEventLogsCommand.addresses,
-                            getEventLogsCommand.topic,
-                            getEventLogsCommand.optionalTopics,
-                            endBlock.plus(BigInteger.ONE),
-                            getEventLogsCommand.toBlock
-                        )
-                    )
-                ).reduce { acc, ethLog ->
-                    return EthLog().apply {
-                        this.result = acc.logs + ethLog.logs
-                        this.error = if (acc.hasError()) acc.error else ethLog.error
-                    }
+
+        return when {
+            log.exceedsSize() -> {
+                val splitMatcher = log.exceededPattern.matcher(log.error.message)
+                if (splitMatcher.find()) {
+                    fromSplitMatcher(splitMatcher, getEventLogsCommand)
+                } else {
+                    log
                 }
-            } else {
+            }
+
+            log.exceedsBlockLimit() -> {
+                split(getEventLogsCommand)
+            }
+            else -> {
                 log
             }
-        } else {
-            log
+        }
+    }
+
+    private suspend fun split(getEventLogsCommand: GetEventLogsCommand): EthLog {
+        val startBlock = getEventLogsCommand.fromBlock ?: BigInteger.ZERO
+        val endBlock = startBlock + BigInteger.valueOf(10000)
+        logger.info("too many results, splitting into two calls: {} - {}", startBlock, endBlock)
+        return listOf(
+            getLogs(
+                GetEventLogsCommand(
+                    getEventLogsCommand.addresses,
+                    getEventLogsCommand.topic,
+                    getEventLogsCommand.optionalTopics,
+                    startBlock,
+                    endBlock
+                )
+            ),
+            getLogs(
+                GetEventLogsCommand(
+                    getEventLogsCommand.addresses,
+                    getEventLogsCommand.topic,
+                    getEventLogsCommand.optionalTopics,
+                    endBlock.plus(BigInteger.ONE),
+                    getEventLogsCommand.toBlock
+                )
+            )
+        ).reduce { acc, ethLog ->
+            return EthLog().apply {
+                this.result = acc.logs + ethLog.logs
+                this.error = if (acc.hasError()) acc.error else ethLog.error
+            }
+        }
+    }
+
+    private suspend fun fromSplitMatcher(
+        matcher: Matcher,
+        getEventLogsCommand: GetEventLogsCommand
+    ): EthLog {
+        val start = matcher.group(1).removePrefix("0x")
+        val end = matcher.group(2).removePrefix("0x")
+        val startBlock = BigInteger(start, 16)
+        val endBlock = BigInteger(end, 16)
+        logger.info("too many results, splitting into two calls: {} - {}", startBlock, endBlock)
+        return listOf(
+            getLogs(
+                GetEventLogsCommand(
+                    getEventLogsCommand.addresses,
+                    getEventLogsCommand.topic,
+                    getEventLogsCommand.optionalTopics,
+                    startBlock,
+                    endBlock
+                )
+            ),
+            getLogs(
+                GetEventLogsCommand(
+                    getEventLogsCommand.addresses,
+                    getEventLogsCommand.topic,
+                    getEventLogsCommand.optionalTopics,
+                    endBlock.plus(BigInteger.ONE),
+                    getEventLogsCommand.toBlock
+                )
+            )
+        ).reduce { acc, ethLog ->
+            return EthLog().apply {
+                this.result = acc.logs + ethLog.logs
+                this.error = if (acc.hasError()) acc.error else ethLog.error
+            }
         }
     }
 
@@ -116,7 +162,12 @@ class Web3JProxy(
         }
 
     fun EthLog.exceedsSize(): Boolean {
+        //regex: "Log response size exceeded.[\\s\\S]*?range should work: \\[([\\w]*?), ([\\w]*?)\\]"
         return this.hasError() && exceededPattern.matcher(this.error.message).matches()
+    }
+
+    fun EthLog.exceedsBlockLimit(): Boolean {
+        return this.hasError() && this.error.message.contains("logs are limited to a 10000 block range")
     }
 
     suspend fun getBlockByHash(hash: String, _web3j: Web3j = primaryWeb3j): EthBlock? {
