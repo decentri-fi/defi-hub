@@ -1,5 +1,7 @@
 package io.defitrack.protocol.mantle
 
+import arrow.core.Either
+import arrow.core.getOrElse
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
@@ -12,7 +14,10 @@ class MantleStakingContract(
 ) : EvmContract(blockchainGateway, address) {
 
     suspend fun mEThToEth(amount: BigInteger): BigInteger {
-        return readSingle("mETHToETH", listOf(amount.toUint256()), uint256())
+        return Either.catch<BigInteger> {
+            readSingle("mETHToETH", listOf(amount.toUint256()), uint256())
+        }.mapLeft {
+            logger.error("unable to fetch mETHToETH")
+        }.getOrElse { BigInteger.ZERO }
     }
-
 }
