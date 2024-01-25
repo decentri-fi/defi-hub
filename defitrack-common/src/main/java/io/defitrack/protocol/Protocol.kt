@@ -13,6 +13,14 @@ enum class Protocol(
     val networks: List<Network>,
     val company: Company,
 ) {
+    EIGENLAYER(
+        logo = "eigenlayer.png",
+        slug = "eigenlayer",
+        primitives = listOf(FARMING),
+        website = "https://eigenlayer.xyz",
+        networks = listOf(ETHEREUM),
+        company = Company.EIGENLAYER
+    ),
     MANTLE(
         logo = "mantle.png",
         slug = "mantle",

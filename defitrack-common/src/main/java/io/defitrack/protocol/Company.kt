@@ -4,6 +4,10 @@ enum class Company(
     val prettyName: String,
     val slug: String
 ) {
+    EIGENLAYER(
+        prettyName = "Eigenlayer",
+        slug = "eigenlayer"
+    ),
     MANTLE(
         prettyName = "Mantle",
         slug = "mantle"
