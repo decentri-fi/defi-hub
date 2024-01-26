@@ -13,6 +13,14 @@ enum class Protocol(
     val networks: List<Network>,
     val company: Company,
 ) {
+    MORPHO_AAVE_V3(
+        logo = "morpho.png",
+        slug = "morpho-aave-v3",
+        primitives = listOf(LENDING),
+        website = "https://morpho.finance",
+        networks = listOf(ETHEREUM),
+        company = Company.MORPHO
+    ),
     EQUATION(
         logo = "equation.png",
         slug = "equation",
