@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/{protocol}/pooling")
 class DefaultPoolingMarketRestController(
     private val poolingMarkets: PoolingMarkets,
-    private val erC20Resource: ERC20Resource,
     private val poolingMarketVOMapper: PoolingMarketVOMapper
 ) : DefaultMarketRestController<PoolingMarket>(
     poolingMarkets, poolingMarketVOMapper

@@ -62,25 +62,16 @@ class MarketCacheRefresher(
 
         logger.info("Refreshing all caches. No full population.")
         poolingMarketProviders.map {
-            launch {
-                it.refreshMarkets()
-            }
-        }.joinAll()
-
-        lendingMarketProviders.map {
-            launch {
-                it.refreshMarkets()
-            }
-        }.joinAll()
-        farmingMarketProviders.map {
-            launch {
-                it.refreshMarkets()
-            }
-        }.joinAll()
+            it.refreshMarkets()
+        }
+        lendingMarketProviders.forEach {
+            it.refreshMarkets()
+        }
+        farmingMarketProviders.forEach {
+            it.refreshMarkets()
+        }
         claimableMarketProviders.map {
-            launch {
-                it.populateCaches()
-            }
+            it.populateCaches()
         }
     }
 
