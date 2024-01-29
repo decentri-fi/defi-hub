@@ -60,10 +60,10 @@ class TornadoCashStakingRewardsFarmProvider : FarmingMarketProvider() {
             getNetwork()
         )
 
-        return if (usdRewardsPerYear == BigDecimal.ZERO || marketsize.usdAmount == BigDecimal.ZERO) {
-            BigDecimal.ZERO
-        } else {
+        return if (usdRewardsPerYear > BigDecimal.ZERO && marketsize.usdAmount > BigDecimal.ZERO) {
             usdRewardsPerYear.divide(marketsize.usdAmount, 4, RoundingMode.HALF_UP)
+        } else {
+            BigDecimal.ZERO
         }
     }
 
