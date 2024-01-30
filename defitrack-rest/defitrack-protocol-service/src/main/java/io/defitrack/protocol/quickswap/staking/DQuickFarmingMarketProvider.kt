@@ -3,6 +3,7 @@ package io.defitrack.protocol.quickswap.staking
 import arrow.core.nel
 import io.defitrack.common.network.Network
 import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.architecture.conditional.ConditionalOnNetwork
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.evm.position.PositionFetcher
@@ -17,6 +18,7 @@ private const val QUICK = "0x831753dd7087cac61ab5644b308642cc1c33dc13"
 
 @Component
 @ConditionalOnCompany(Company.QUICKSWAP)
+@ConditionalOnNetwork(Network.POLYGON)
 class DQuickFarmingMarketProvider(
     private val quickswapService: QuickswapService,
 ) : FarmingMarketProvider() {

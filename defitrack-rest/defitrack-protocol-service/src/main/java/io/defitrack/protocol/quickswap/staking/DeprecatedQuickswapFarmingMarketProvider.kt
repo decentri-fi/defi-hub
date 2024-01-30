@@ -7,6 +7,7 @@ import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.refreshable
 import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.architecture.conditional.ConditionalOnNetwork
 import io.defitrack.erc20.domain.FungibleTokenInformation
 import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.market.port.out.FarmingMarketProvider
@@ -25,6 +26,7 @@ import kotlin.coroutines.EmptyCoroutineContext
 
 @Component
 @ConditionalOnCompany(Company.QUICKSWAP)
+@ConditionalOnNetwork(Network.POLYGON)
 class DeprecatedQuickswapFarmingMarketProvider(
     private val quickswapService: QuickswapService,
     private val priceResource: PricePort,

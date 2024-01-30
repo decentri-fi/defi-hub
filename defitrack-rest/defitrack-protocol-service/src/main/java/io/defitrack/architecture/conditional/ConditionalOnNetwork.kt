@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Conditional
 @Target(AnnotationTarget.TYPE, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
-@Conditional(OnCompanyCondition::class)
+@Conditional(OnNetworkCondition::class)
 annotation class ConditionalOnNetwork(
     val value: Network
 )

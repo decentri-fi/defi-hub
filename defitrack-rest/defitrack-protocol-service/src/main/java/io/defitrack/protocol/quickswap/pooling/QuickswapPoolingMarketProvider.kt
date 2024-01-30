@@ -6,6 +6,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.refreshable
 import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.architecture.conditional.ConditionalOnNetwork
 import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.protocol.Company
@@ -19,6 +20,7 @@ import kotlin.coroutines.EmptyCoroutineContext
 
 @Component
 @ConditionalOnCompany(Company.QUICKSWAP)
+@ConditionalOnNetwork(Network.POLYGON)
 class QuickswapPoolingMarketProvider(
     private val quickswapService: QuickswapService,
 ) : PoolingMarketProvider() {

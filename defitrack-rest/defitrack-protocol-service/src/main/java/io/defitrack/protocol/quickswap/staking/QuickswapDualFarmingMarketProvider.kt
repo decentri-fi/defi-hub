@@ -5,6 +5,7 @@ import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.refreshable
 import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.architecture.conditional.ConditionalOnNetwork
 import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
@@ -21,6 +22,7 @@ import kotlin.coroutines.EmptyCoroutineContext
 
 @Component
 @ConditionalOnCompany(Company.QUICKSWAP)
+@ConditionalOnNetwork(Network.POLYGON)
 class QuickswapDualFarmingMarketProvider(
     private val quickswapService: QuickswapService,
 ) : FarmingMarketProvider() {

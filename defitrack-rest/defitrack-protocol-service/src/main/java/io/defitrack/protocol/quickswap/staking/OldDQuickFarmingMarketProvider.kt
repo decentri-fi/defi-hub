@@ -2,6 +2,7 @@ package io.defitrack.protocol.quickswap.staking
 
 import io.defitrack.common.network.Network
 import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.architecture.conditional.ConditionalOnNetwork
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.evm.position.PositionFetcher
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.QUICKSWAP)
+@ConditionalOnNetwork(Network.POLYGON)
 class OldDQuickFarmingMarketProvider(
     private val quickswapService: QuickswapService,
 ) : FarmingMarketProvider() {

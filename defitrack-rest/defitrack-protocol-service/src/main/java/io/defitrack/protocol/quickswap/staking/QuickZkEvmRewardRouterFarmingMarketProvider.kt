@@ -5,6 +5,7 @@ import io.defitrack.claim.ClaimableRewardFetcher
 import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.architecture.conditional.ConditionalOnNetwork
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.protocol.Company
@@ -19,6 +20,7 @@ import java.math.BigInteger
 
 @Component
 @ConditionalOnCompany(Company.QUICKSWAP)
+@ConditionalOnNetwork(Network.POLYGON_ZKEVM)
 class QuickZkEvmRewardRouterFarmingMarketProvider : FarmingMarketProvider() {
 
     val rewardRouter = "0x4141b44f0e8b53adcac97d87a3c524d70e5e23b7"
