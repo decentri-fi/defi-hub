@@ -6,6 +6,7 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.map
 import io.defitrack.common.utils.refreshable
 import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.architecture.conditional.ConditionalOnNetwork
 import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.market.domain.PoolingMarket
@@ -19,6 +20,7 @@ import java.math.BigDecimal
 
 @Service
 @ConditionalOnCompany(Company.SET)
+@ConditionalOnNetwork(Network.ETHEREUM)
 class EthereumSetPoolingMarketProvider(
     private val ethereumSetProvider: EthereumSetProvider,
 ) : PoolingMarketProvider() {
@@ -32,13 +34,8 @@ class EthereumSetPoolingMarketProvider(
 
                 val token = getToken(set)
 
-                val positionsRefreshable = refreshable {
-                    tokenContract.getPositions()
-                }
-
-
-                val breakdown = positionsRefreshable.map { positions ->
-                    positions.map {
+                val breakdown = refreshable {
+                    tokenContract.getPositions().map {
                         val supply = tokenContract.totalSupply().get().asEth(tokenContract.readDecimals())
                         val underlying = getToken(it.token)
                         val reserve = it.amount.toBigDecimal()
@@ -56,7 +53,7 @@ class EthereumSetPoolingMarketProvider(
                     address = set,
                     name = token.name,
                     symbol = token.symbol,
-                    tokens = positionsRefreshable.get().map { position -> getToken(position.token) },
+                    tokens = breakdown.get().map { element -> element.token },
                     breakdown = breakdown,
                     apr = null,
                     marketSize = tokenContract.totalSupply().map {

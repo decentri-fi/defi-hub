@@ -5,6 +5,7 @@ import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.refreshable
 import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.architecture.conditional.ConditionalOnNetwork
 import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.market.domain.PoolingMarket
@@ -20,6 +21,7 @@ import java.math.BigDecimal
 
 @Component
 @ConditionalOnCompany(Company.SET)
+@ConditionalOnNetwork(Network.POLYGON)
 class PolygonSetPoolingMarketProvider(
     private val polygonSetProvider: PolygonSetProvider,
 ) : PoolingMarketProvider() {
@@ -36,7 +38,6 @@ class PolygonSetPoolingMarketProvider(
                     val token = getToken(it)
 
                     val positions = tokenContract.getPositions()
-
 
                     create(
                         identifier = it,

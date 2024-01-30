@@ -35,7 +35,7 @@ class PriceProvider(
 
     private suspend fun fromCoingecko(token: FungibleTokenInformation): BigDecimal? {
         return coingeckoSerivce.getPrice(token.address)?.also {
-            logger.info("getting price on coingecko for ${token.name} (${token.symbol}) on ${token.network.name}")
+            logger.debug("getting price on coingecko for ${token.name} (${token.symbol}) on ${token.network.name}")
         } ?: BigDecimal.ZERO
     }
 }
