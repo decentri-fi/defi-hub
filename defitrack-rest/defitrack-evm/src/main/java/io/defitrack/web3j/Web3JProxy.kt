@@ -17,6 +17,7 @@ import org.web3j.protocol.core.Response
 import org.web3j.protocol.core.methods.request.EthFilter
 import org.web3j.protocol.core.methods.request.Transaction
 import org.web3j.protocol.core.methods.response.*
+import java.lang.RuntimeException
 import java.math.BigInteger
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -58,6 +59,7 @@ class Web3JProxy(
             log.exceedsBlockLimit() -> {
                 split(getEventLogsCommand)
             }
+
             else -> {
                 log
             }
@@ -223,38 +225,45 @@ class Web3JProxy(
             try {
                 val result = request.send()
 
-                if (result.hasError() && result.error.code == 429) {
-                    observation.event(Observation.Event.of("429"))
-                    delay(100L)
-                    runWithFallback(requestProvider, anyFallback(true)!!)
+                if (result.hasError()) {
+                    handleException(result.error.message, observation, requestProvider)
                 } else {
                     observation.event(Observation.Event.of("success"))
                     result
                 }
             } catch (ex: Exception) {
-                if (ex.message?.contains("429") == true) {
-                    observation.event(
-                        Observation.Event.of(
-                            "endpoint.throttled",
-                            "thirdparty.endpoint.throttled"
-                        )
-                    )
-                    delay(100L)
-                    return runWithFallback(requestProvider, anyFallback(true)!!)
-                } else if (ex.message?.contains("limit exceeded") == true) {
-                    observation.event(
-                        Observation.Event.of(
-                            "endpoint.capacity-exceeded",
-                            "thirdparty.monthly-capacity-limit-exceeded"
-                        )
-                    )
-                    anyFallback()?.let {
-                        runWithFallback(requestProvider, it)
-                    } ?: throw ex
-                } else {
-                    throw ex
-                }
+                handleException(ex.message ?: "", observation, requestProvider)
             }
+        }
+    }
+
+    private suspend fun <T : Response<*>> handleException(
+        message: String,
+        observation: Observation,
+        requestProvider: (web3j: Web3j) -> Request<*, T>
+    ): T {
+        return if (message.contains("429")) {
+            observation.event(
+                Observation.Event.of(
+                    "endpoint.throttled",
+                    "thirdparty.endpoint.throttled"
+                )
+            )
+            delay(100L)
+            runWithFallback(requestProvider, anyFallback(true)!!)
+        } else if (message.contains("limit exceeded")) {
+            logger.debug("capacity exceeded, running with fallback")
+            observation.event(
+                Observation.Event.of(
+                    "endpoint.capacity-exceeded",
+                    "thirdparty.monthly-capacity-limit-exceeded"
+                )
+            )
+            anyFallback()?.let {
+                runWithFallback(requestProvider, it)
+            } ?: throw RuntimeException("unable to find working fallback web3j: $message")
+        } else {
+            throw throw RuntimeException("unable to find working fallback web3j: $message")
         }
     }
 
