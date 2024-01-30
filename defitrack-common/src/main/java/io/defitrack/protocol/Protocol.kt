@@ -13,6 +13,14 @@ enum class Protocol(
     val networks: List<Network>,
     val company: Company,
 ) {
+    TANGIBLE(
+        logo = "tangible.png",
+        slug = "tangible",
+        primitives = listOf(FARMING),
+        website = "https://www.tangible.store/",
+        networks = listOf(Network.POLYGON),
+        company = Company.TANGIBLE
+    ),
     MORPHO_AAVE_V3(
         logo = "morpho.png",
         slug = "morpho-aave-v3",
@@ -86,8 +94,8 @@ enum class Protocol(
         company = Company.PRISMA
     ),
     PRISMA(
-       logo = "prisma.png",
-         slug = "prisma",
+        logo = "prisma.png",
+        slug = "prisma",
         primitives = listOf(FARMING, LENDING, CLAIMABLES),
         website = "https://prismafinance.com/",
         networks = listOf(ETHEREUM),

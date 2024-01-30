@@ -4,6 +4,10 @@ enum class Company(
     val prettyName: String,
     val slug: String
 ) {
+    TANGIBLE(
+        prettyName = "Tangible",
+        slug = "tangible"
+    ),
     MORPHO(
         prettyName = "Morpho",
         slug = "morpho"
