@@ -13,6 +13,14 @@ enum class Protocol(
     val networks: List<Network>,
     val company: Company,
 ) {
+    STADER(
+        logo = "stader.png",
+        slug = "stader",
+        primitives = listOf(FARMING),
+        website = "https://www.staderlabs.com/",
+        networks = listOf(Network.POLYGON),
+        company = Company.STADER
+    ),
     TANGIBLE(
         logo = "tangible.png",
         slug = "tangible",
