@@ -29,7 +29,7 @@ class AelinRewardMarketProvider : FarmingMarketProvider() {
 
         return listOf(
             create(
-                name = "aelin-staking",
+                name = "Aelin Staking",
                 identifier = "aelin-staking",
                 stakedToken = aelin,
                 rewardToken = rewardToken,
