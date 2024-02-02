@@ -97,7 +97,7 @@ enum class Protocol(
         logo = "ondo.png",
         slug = "ondo",
         primitives = listOf(POOLING, FARMING),
-        website = "https://prismafinance.com/",
+        website = "https://ondo.finance",
         networks = listOf(ETHEREUM),
         company = Company.PRISMA
     ),
