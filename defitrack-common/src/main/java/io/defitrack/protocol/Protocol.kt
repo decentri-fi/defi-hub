@@ -240,7 +240,7 @@ enum class Protocol(
     MOONWELL(
         logo = "moonwell.png",
         slug = "moonwell",
-        primitives = listOf(LENDING),
+        primitives = listOf(LENDING, CLAIMABLES),
         website = "https://baseswap.fi",
         networks = listOf(BASE),
         company = Company.MOONWELL
@@ -256,7 +256,7 @@ enum class Protocol(
     ALIENBASE(
         logo = "alienbase.png",
         slug = "alienbase",
-        primitives = listOf(POOLING, FARMING),
+        primitives = listOf(POOLING, FARMING, CLAIMABLES),
         website = "https://alienbase.xyz",
         networks = listOf(BASE),
         company = Company.ALIENBASE
@@ -297,7 +297,7 @@ enum class Protocol(
         logo = "gmx.png",
         slug = "gmx",
         primitives = listOf(FARMING, CLAIMABLES),
-        website = "https://tornadocash.eth.link",
+        website = "https://gmx.io",
         networks = listOf(ETHEREUM, ARBITRUM),
         company = Company.GMX
     ),
