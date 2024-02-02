@@ -506,7 +506,8 @@ enum class Protocol(
             LENDING,
             BORROWING,
             FARMING,
-            POOLING
+            POOLING,
+            CLAIMABLES
         ),
         company = Company.AAVE,
         networks = listOf(ETHEREUM, Network.POLYGON, ARBITRUM, OPTIMISM)

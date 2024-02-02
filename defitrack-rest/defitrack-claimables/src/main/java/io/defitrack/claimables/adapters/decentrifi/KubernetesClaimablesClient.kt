@@ -57,7 +57,7 @@ class KubernetesClaimablesClient(
                 }
             }
 
-            requiredNodes.parMap(EmptyCoroutineContext, 12) { node ->
+            requiredNodes.parMap(concurrency = 12) { node ->
                 val timedValue: TimedValue<List<UserClaimableVO>> = measureTimedValue {
                     try {
                         val response =
