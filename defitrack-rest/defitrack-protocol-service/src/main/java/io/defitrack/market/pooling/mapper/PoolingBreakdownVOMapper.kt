@@ -25,19 +25,9 @@ class PoolingBreakdownVOMapper(private val prices: Prices) {
         }
 
         return tokenShares.map { share ->
-
-            val reserveUsd = prices.calculatePrice(
-                GetPriceCommand(
-                    address = share.token.address,
-                    network = share.token.network.toNetwork(),
-                    amount = share.reserve.asEth(share.token.decimals)
-                )
-            )
-
             PoolingMarketTokenShareVO(
                 token = share.token,
                 reserve = share.reserve,
-                reserveUSD = reserveUsd.toBigDecimal(),
                 reserveDecimal = share.reserve.asEth(share.token.decimals)
             )
         }
@@ -57,11 +47,20 @@ class PoolingBreakdownVOMapper(private val prices: Prices) {
         val ratio = userSupply.dividePrecisely(poolingMarket.totalSupply.get())
 
         return toVO.map {
+
+            val reserveUsd = prices.calculatePrice(
+                GetPriceCommand(
+                    address = it.token.address,
+                    network = it.token.network.toNetwork(),
+                    amount = it.reserve.asEth(it.token.decimals)
+                )
+            ).toBigDecimal()
+
             PoolingPositionTokenshareVO(
                 token = it.token,
                 reserve = it.reserve.toBigDecimal().times(ratio).toBigInteger(),
                 reserveDecimal = it.reserveDecimal.times(ratio),
-                reserveUSD = (it.reserveUSD ?: BigDecimal.ZERO).times(ratio)
+                reserveUSD = reserveUsd.times(ratio)
             )
         }
     }

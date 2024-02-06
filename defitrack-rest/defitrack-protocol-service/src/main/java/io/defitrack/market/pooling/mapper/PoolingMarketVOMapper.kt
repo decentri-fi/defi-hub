@@ -1,5 +1,7 @@
 package io.defitrack.market.pooling.mapper
 
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.common.utils.map
 import io.defitrack.networkinfo.toNetworkInformation
 import io.defitrack.market.adapter.`in`.mapper.MarketVOMapper
 import io.defitrack.market.domain.PoolingMarket
@@ -15,6 +17,7 @@ import java.util.*
 class PoolingMarketVOMapper(
     private val poolingBreakdownVOMapper: PoolingBreakdownVOMapper,
     private val protocolVOMapper: ProtocolVOMapper,
+    private val prices: Prices
 ) : MarketVOMapper<PoolingMarket> {
 
     override suspend fun map(market: PoolingMarket): PoolingMarketVO {
@@ -29,7 +32,6 @@ class PoolingMarketVOMapper(
                 decimals = decimals,
                 address = address,
                 apr = apr,
-                marketSize = marketSize?.get(),
                 prepareInvestmentSupported = investmentPreparer != null,
                 erc20Compatible = erc20Compatible,
                 exitPositionSupported = exitPositionPreparer != null,

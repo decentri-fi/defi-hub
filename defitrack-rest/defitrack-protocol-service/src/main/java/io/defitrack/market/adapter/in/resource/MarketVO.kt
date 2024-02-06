@@ -11,7 +11,6 @@ abstract class MarketVO(
     val name: String,
     val prepareInvestmentSupported: Boolean,
     val exitPositionSupported: Boolean,
-    val marketSize: BigDecimal?,
     val marketType: String,
     val updatedAt: Long,
     val deprecated: Boolean

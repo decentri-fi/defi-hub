@@ -13,7 +13,6 @@ class FarmingMarketVO(
     name: String,
     val stakedToken: FungibleTokenInformation,
     val reward: List<FungibleTokenInformation>,
-    marketSize: BigDecimal?,
     val apr: BigDecimal?,
     prepareInvestmentSupported: Boolean,
     exitPositionSupported: Boolean,
@@ -27,7 +26,6 @@ class FarmingMarketVO(
     name,
     prepareInvestmentSupported,
     exitPositionSupported,
-    marketSize,
     "farming",
     updatedAt.time,
     deprecated

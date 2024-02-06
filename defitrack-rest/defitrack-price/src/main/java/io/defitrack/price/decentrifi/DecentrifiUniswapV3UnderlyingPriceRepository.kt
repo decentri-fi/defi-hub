@@ -36,7 +36,7 @@ class DecentrifiUniswapV3UnderlyingPriceRepository(
     private val logger = LoggerFactory.getLogger(this::class.java)
     val prices = Cache.Builder<String, ExternalPrice>().build()
 
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 1) // every 24 hours
+    @Scheduled(fixedDelay = 1000 * 60 * 60 * 3) // every 3 hours
     fun populatePrices() {
         Executors.newSingleThreadExecutor().submit {
             runBlocking {
@@ -177,6 +177,7 @@ class DecentrifiUniswapV3UnderlyingPriceRepository(
                         if (stablesForNetwork.contains(token0.address.lowercase())) {
                             val normalized = getNormalizedPrice(token0, token1, priceInOtherToken)
                             val price = BigDecimal.ONE.dividePrecisely(normalized)
+                            logger.info("found price for ${token1.name} on network ${pool.network} with price $price")
                             prices.put(
                                 toIndex(pool.network.toNetwork(), token1.address), ExternalPrice(
                                     token1.address, pool.network.toNetwork(), price, "uniswap-v3"
@@ -184,8 +185,9 @@ class DecentrifiUniswapV3UnderlyingPriceRepository(
                             )
                         } else if (stablesForNetwork.contains(token1.address.lowercase())) {
                             val normalized = getNormalizedPrice(token0, token1, priceInOtherToken)
+                            logger.info("found price for ${token0.address} on network ${pool.network} with price $normalized")
                             prices.put(
-                                toIndex(pool.network.toNetwork(), token0.address), ExternalPrice(
+                                toIndex(pool.network.toNetwork(), token0.name), ExternalPrice(
                                     token0.address, pool.network.toNetwork(), normalized, "uniswap-v3"
                                 )
                             )

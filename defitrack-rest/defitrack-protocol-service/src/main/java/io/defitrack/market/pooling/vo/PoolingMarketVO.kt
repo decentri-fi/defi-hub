@@ -16,7 +16,6 @@ class PoolingMarketVO(
     val apr: BigDecimal?,
     val address: String,
     val decimals: Int = 18,
-    marketSize: BigDecimal?,
     prepareInvestmentSupported: Boolean,
     exitPositionSupported: Boolean,
     val erc20Compatible: Boolean,
@@ -32,7 +31,6 @@ class PoolingMarketVO(
     name,
     prepareInvestmentSupported,
     exitPositionSupported,
-    marketSize,
     "pooling",
     updatedAt,
     deprecated

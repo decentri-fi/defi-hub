@@ -71,7 +71,6 @@ class MultiCallV2Caller(val address: String) : MultiCallCaller {
                 )
             }
         }
-
     }
 
     data class AggregateResult(val success: Boolean, val data: ByteArray) : DynamicStruct(

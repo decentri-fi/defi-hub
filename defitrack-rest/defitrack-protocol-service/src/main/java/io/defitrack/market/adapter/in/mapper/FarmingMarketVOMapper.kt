@@ -22,7 +22,6 @@ class FarmingMarketVOMapper(
                 name = this.name,
                 stakedToken = this.stakedToken,
                 reward = this.rewardTokens,
-                marketSize = this.marketSize?.get(),
                 apr = this.apr,
                 prepareInvestmentSupported = this.investmentPreparer != null,
                 exitPositionSupported = this.exitPositionPreparer != null,
@@ -32,5 +31,4 @@ class FarmingMarketVOMapper(
             )
         }
     }
-
 }

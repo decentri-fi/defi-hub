@@ -29,7 +29,6 @@ class LendingMarketVO(
     name,
     prepareInvestmentSupported,
     exitPositionSupported,
-    marketSize,
     "lending",
     updatedAt,
     deprecated
