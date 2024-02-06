@@ -30,7 +30,7 @@ class PoolingMarketListener(
     @Bean
     @Qualifier("pricePoolingMarket")
     fun pricePoolingMarketsQueue(): Queue {
-        return Queue("price-pooling-markets", false)
+        return Queue("price-pooling-markets-updated", false)
     }
 
     @Bean

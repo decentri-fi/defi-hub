@@ -57,8 +57,10 @@ class DecentrifiPoolingPriceRepository(
                 getPools(proto).filter {
                     it.hasBreakdown()
                 }.parMap(concurrency = 12) { pool ->
+                    val price = pool.calculatePrice()
+                    logger.debug("Price for {} ({})  ({}) is {}", pool.name, pool.address, pool.protocol.slug, price)
                     toIndex(pool.network, pool.address) to ExternalPrice(
-                        pool.address, pool.network.toNetwork(), pool.calculatePrice(), "decentrifi-pooling"
+                        pool.address, pool.network.toNetwork(), price, "decentrifi-pooling"
                     )
                 }.forEach { pool ->
                     cache.put(
