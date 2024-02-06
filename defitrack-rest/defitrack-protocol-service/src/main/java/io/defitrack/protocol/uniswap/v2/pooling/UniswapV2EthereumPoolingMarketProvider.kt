@@ -16,6 +16,7 @@ import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.uniswap.v2.pooling.prefetch.UniswapV2Prefetcher
 import io.defitrack.uniswap.v2.PairFactoryContract
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -39,7 +40,7 @@ class UniswapV2EthereumPoolingMarketProvider(
         )
     }
 
-    override suspend fun produceMarkets() = channelFlow {
+    override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
         val allPairs = contract.await().allPairs()
         logger.info("Found ${allPairs.size} Uniswap V2 Pools")
         allPairs.parMap(concurrency = 12) {
@@ -72,7 +73,7 @@ class UniswapV2EthereumPoolingMarketProvider(
                         }
                     )
                 } else {
-                    IllegalArgumentException("marketsize too low")
+                   throw IllegalArgumentException("marketsize too low")
                 }
             }
         }.forEach {
