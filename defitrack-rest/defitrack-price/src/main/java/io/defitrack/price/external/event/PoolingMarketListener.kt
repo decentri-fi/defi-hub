@@ -46,27 +46,33 @@ class PoolingMarketListener(
         val market = jacksonObjectMapper().readValue<PoolMarketUpdatedEvent>(msg.body)
         logger.info("we should now calculate the price for ${market.id} and update it in the cache")
 
-        if (market.totalSupply.isZero()) {
-            logger.info("Skipping market ${market.id} because total supply is zero")
-        } else {
-            val marketSize = market.breakdown.sumOf {
-                priceCalculator.calculatePrice(
-                    GetPriceCommand(
-                        it.token.address,
-                        it.token.network.toNetwork(),
-                        it.reserve.asEth(it.token.decimals)
+        when {
+            market.totalSupply.isZero() -> {
+                logger.info("Skipping market ${market.id} (${market.protocol}) because total supply is zero")
+            }
+            market.breakdown.isEmpty() -> {
+                logger.info("Skipping market ${market.id} (${market.protocol}) because breakdown is empty")
+            }
+            else -> {
+                val marketSize = market.breakdown.sumOf {
+                    priceCalculator.calculatePrice(
+                        GetPriceCommand(
+                            it.token.address,
+                            it.token.network.toNetwork(),
+                            it.reserve.asEth(it.token.decimals)
+                        )
                     )
+                }.toBigDecimal()
+
+                val price = marketSize.dividePrecisely(market.totalSupply)
+                logger.info("new price for ${market.id} is $price")
+
+                decentrifiPoolingPriceRepository.putInCache(
+                    market.network,
+                    market.address,
+                    price
                 )
-            }.toBigDecimal()
-
-            val price = marketSize.dividePrecisely(market.totalSupply)
-            logger.info("new price for ${market.id} is $price")
-
-            decentrifiPoolingPriceRepository.putInCache(
-                market.network,
-                market.address,
-                price
-            )
+            }
         }
     }
 }
