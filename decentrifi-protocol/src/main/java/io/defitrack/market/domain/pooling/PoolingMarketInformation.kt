@@ -37,4 +37,9 @@ class PoolingMarketInformation(
     "pooling",
     updatedAt,
     deprecated
-)
+) {
+
+    fun hasBreakdown(): Boolean {
+        return !breakdown.isNullOrEmpty()
+    }
+}
