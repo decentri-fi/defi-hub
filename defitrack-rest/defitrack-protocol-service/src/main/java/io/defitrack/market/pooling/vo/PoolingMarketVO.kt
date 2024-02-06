@@ -20,7 +20,6 @@ class PoolingMarketVO(
     prepareInvestmentSupported: Boolean,
     exitPositionSupported: Boolean,
     val erc20Compatible: Boolean,
-    val price: BigDecimal? = BigDecimal.ZERO,
     val totalSupply: BigDecimal = BigDecimal.ZERO,
     val metadata: Map<String, Any>,
     updatedAt: Long,

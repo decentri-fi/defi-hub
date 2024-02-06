@@ -5,6 +5,8 @@ import io.defitrack.erc20.port.`in`.ERC20Resource
 import io.defitrack.networkinfo.toNetworkInformation
 import io.defitrack.market.domain.pooling.PoolingPosition
 import io.defitrack.market.pooling.vo.PoolingPositionVO
+import io.defitrack.price.domain.GetPriceCommand
+import io.defitrack.price.port.out.Prices
 import io.defitrack.protocol.mapper.ProtocolVOMapper
 import org.springframework.stereotype.Component
 
@@ -13,14 +15,24 @@ class PoolingPositionVOMapper(
     private val erC20Resource: ERC20Resource,
     private val protocolVOMapper: ProtocolVOMapper,
     private val breakdownMapper: PoolingBreakdownVOMapper,
-    private val poolingMarketVOMapper: PoolingMarketVOMapper
+    private val poolingMarketVOMapper: PoolingMarketVOMapper,
+    private val prices: Prices
 ) {
 
     suspend fun map(poolingPosition: PoolingPosition): PoolingPositionVO {
         return with(poolingPosition) {
             val lpToken = erC20Resource.getTokenInformation(market.network, market.address)
             val amount = tokenAmount.asEth(lpToken.decimals)
-            val dollarValue = customPriceCalculator?.calculate() ?: amount.times(market.price.get()).toDouble()
+
+            val dollarValue = customPriceCalculator?.calculate() ?: run {
+                prices.calculatePrice(
+                    GetPriceCommand(
+                        lpToken.address,
+                        poolingPosition.market.network,
+                        amount
+                    )
+                )
+            }
 
             PoolingPositionVO(
                 lpAddress = market.address,

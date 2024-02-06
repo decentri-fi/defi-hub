@@ -1,18 +1,21 @@
 package io.defitrack.protocol.magpiexyz
 
 import arrow.fx.coroutines.parMap
+import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.claim.ClaimableRewardFetcher
 import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.market.port.out.FarmingMarketProvider
+import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import org.springframework.stereotype.Component
 
 @Component
-class MagpieMasterpenFarmProvider : FarmingMarketProvider() {
+@ConditionalOnCompany(Company.MAGPIE_XYZ)
+class MagpieMasterpenArbitrumFarmProvider : FarmingMarketProvider() {
 
     val magpieAddress = "0x0776c06907ce6ff3d9dbf84ba9b3422d7225942d"
 

@@ -51,7 +51,6 @@ class DfynPoolingMarketProvider(
                     symbol = token.symbol,
                     tokens = listOf(token0, token1),
                     apr = dfynAPRService.getAPR(it.id),
-                    marketSize = refreshable(it.reserveUSD),
                     positionFetcher = defaultPositionFetcher(token.address),
                     totalSupply = refreshable {
                         getToken(it.id).totalDecimalSupply()

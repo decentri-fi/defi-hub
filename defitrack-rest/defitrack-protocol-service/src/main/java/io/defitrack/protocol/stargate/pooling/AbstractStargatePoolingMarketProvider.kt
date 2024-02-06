@@ -55,6 +55,7 @@ abstract class AbstractStargatePoolingMarketProvider(
                             totalSupply = pool.totalSupply().map {
                                 it.asEth(pool.readDecimals())
                             },
+                            /*
                             marketSize = refreshable {
                                 getPriceResource().calculatePrice(
                                     GetPriceCommand(
@@ -63,7 +64,7 @@ abstract class AbstractStargatePoolingMarketProvider(
                                         pool.totalLiquidity().asEth(underlying.decimals),
                                     )
                                 ).toBigDecimal()
-                            }
+                            } */
                         )
                     )
                 }

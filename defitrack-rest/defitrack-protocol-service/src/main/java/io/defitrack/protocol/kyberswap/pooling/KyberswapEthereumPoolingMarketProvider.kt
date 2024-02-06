@@ -44,7 +44,6 @@ class KyberswapEthereumPoolingMarketProvider(
             symbol = token.symbol,
             tokens = listOf(token0, token1),
             apr = kyberswapAPRService.getAPR(it.pair.id, getNetwork()),
-            marketSize = refreshable(it.reserveUSD),
             positionFetcher = defaultPositionFetcher(token.address),
             totalSupply = refreshable {
                 getToken(it.id).totalDecimalSupply()

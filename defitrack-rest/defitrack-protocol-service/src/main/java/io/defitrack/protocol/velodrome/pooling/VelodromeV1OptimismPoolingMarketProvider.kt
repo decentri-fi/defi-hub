@@ -3,14 +3,11 @@ package io.defitrack.protocol.velodrome.pooling
 import arrow.core.Either
 import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMap
-import io.defitrack.common.network.Network
-import io.defitrack.common.utils.map
-import io.defitrack.common.utils.refreshable
 import io.defitrack.architecture.conditional.ConditionalOnCompany
-import io.defitrack.market.port.out.PoolingMarketProvider
+import io.defitrack.common.network.Network
+import io.defitrack.common.utils.refreshable
 import io.defitrack.market.domain.PoolingMarket
-import io.defitrack.market.domain.PoolingMarketTokenShare
-import io.defitrack.market.domain.marketSize
+import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.velodrome.VelodromeOptimismService
@@ -35,7 +32,7 @@ class VelodromeV1OptimismPoolingMarketProvider(
             contractAddress = velodromeOptimismService.getV1PoolFactory()
         )
 
-        pairFactoryContract.allPairs().parMap(EmptyCoroutineContext, 12) {
+        pairFactoryContract.allPairs().parMap(concurrency = 12) {
             createMarket(it)
         }.forEach {
             it.fold(
@@ -56,7 +53,6 @@ class VelodromeV1OptimismPoolingMarketProvider(
 
             create(
                 identifier = "v1-$it",
-                marketSize = breakdown.map(List<PoolingMarketTokenShare>::marketSize),
                 positionFetcher = defaultPositionFetcher(poolingToken.address),
                 address = it,
                 name = poolingToken.name,

@@ -23,15 +23,6 @@ abstract class AbstractSGethTokenProvider(
             create(
                 name = "SGETH Token",
                 identifier = "sgeth",
-                marketSize = refreshable {
-                    getPriceResource().calculatePrice(
-                        GetPriceCommand(
-                            "0x0",
-                            getNetwork(),
-                            getBlockchainGateway().getNativeBalance(address)
-                        )
-                    ).toBigDecimal()
-                },
                 address = address,
                 symbol = "sgeth",
                 tokens = listOf(underlying),

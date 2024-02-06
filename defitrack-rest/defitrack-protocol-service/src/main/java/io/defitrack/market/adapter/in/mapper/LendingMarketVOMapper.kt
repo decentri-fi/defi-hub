@@ -13,7 +13,7 @@ class LendingMarketVOMapper(
     private val protocolVOMapper: ProtocolVOMapper
 ) : MarketVOMapper<LendingMarket> {
 
-    override fun map(market: LendingMarket): LendingMarketVO {
+    override suspend fun map(market: LendingMarket): LendingMarketVO {
         return with(market) {
             LendingMarketVO(
                 id = id,

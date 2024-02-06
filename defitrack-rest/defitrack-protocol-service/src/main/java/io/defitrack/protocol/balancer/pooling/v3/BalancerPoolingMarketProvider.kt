@@ -79,13 +79,6 @@ abstract class BalancerPoolingMarketProvider(
                     PoolingMarketTokenShare(
                         it.token,
                         it.balance,
-                        getPriceResource().calculatePrice(
-                            GetPriceCommand(
-                                it.token.address,
-                                getNetwork(),
-                                it.balance.asEth(it.token.decimals)
-                            )
-                        ).toBigDecimal()
                     )
                 }
             }

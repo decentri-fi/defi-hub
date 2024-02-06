@@ -1,14 +1,12 @@
 package io.defitrack.protocol.uniswap.v2.pooling
 
+import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
-import io.defitrack.common.utils.map
 import io.defitrack.common.utils.refreshable
-import io.defitrack.architecture.conditional.ConditionalOnCompany
-import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.market.domain.PoolingMarketTokenShare
-import io.defitrack.market.domain.marketSize
+import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.uniswap.v2.pooling.prefetch.UniswapV2Prefetcher
@@ -49,8 +47,7 @@ class UniswapV2EthereumPoolingMarketProvider(
                             prefetch.breakdown?.map {
                                 PoolingMarketTokenShare(
                                     it.token,
-                                    it.reserve,
-                                    it.reserveUSD
+                                    it.reserve
                                 )
                             } ?: fiftyFiftyBreakdown(
                                 prefetch.tokens[0],
@@ -66,17 +63,9 @@ class UniswapV2EthereumPoolingMarketProvider(
                         }
 
 
-                        val refreshableMarketSize = breakdown.map {
-                            it.marketSize()
-                        }
-
                         val refreshableTotalSupply = refreshable(prefetch.totalSupply) {
                             getToken(prefetch.address).totalDecimalSupply()
                         }
-
-                        val refreshablePrice = calculatePrice(
-                            refreshableMarketSize, refreshableTotalSupply
-                        )
 
                         send(
                             PoolingMarket(
@@ -90,11 +79,9 @@ class UniswapV2EthereumPoolingMarketProvider(
                                 totalSupply = refreshableTotalSupply,
                                 tokens = prefetch.tokens,
                                 breakdown = breakdown,
-                                marketSize = refreshableMarketSize,
                                 deprecated = false,
                                 internalMetadata = emptyMap(),
-                                metadata = emptyMap(),
-                                price = refreshablePrice,
+                                metadata = emptyMap()
                             )
                         )
                     } catch (ex: Exception) {

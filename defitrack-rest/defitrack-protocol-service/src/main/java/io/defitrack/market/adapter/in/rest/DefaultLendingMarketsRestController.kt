@@ -24,12 +24,14 @@ class DefaultLendingMarketsRestController(
 ) {
 
     @GetMapping(value = ["/markets"], params = ["token"])
-    fun searchByToken(
+    suspend fun searchByToken(
         @PathVariable("protocol") protocol: String,
         @RequestParam("token") token: String,
         @RequestParam("network") network: Network
     ): List<LendingMarketVO> {
-        return lendingMarkets.searchByToken(protocol, token, network).map(lendingMarketVOMapper::map)
+        return lendingMarkets.searchByToken(protocol, token, network).map {
+            lendingMarketVOMapper.map(it)
+        }
     }
 
 

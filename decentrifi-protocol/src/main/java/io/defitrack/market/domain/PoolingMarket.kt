@@ -27,7 +27,6 @@ data class PoolingMarket(
     val exitPositionPreparer: ExitPositionCommand? = null,
     val breakdown: Refreshable<List<PoolingMarketTokenShare>>? = null,
     val erc20Compatible: Boolean = true,
-    val price: Refreshable<BigDecimal>,
     val metadata: Map<String, Any>,
     val internalMetadata: Map<String, Any>,
     override val deprecated: Boolean,
@@ -37,6 +36,5 @@ data class PoolingMarket(
         addRefetchableValue(breakdown)
         addRefetchableValue(totalSupply)
         addRefetchableValue(marketSize)
-        addRefetchableValue(price)
     }
 }

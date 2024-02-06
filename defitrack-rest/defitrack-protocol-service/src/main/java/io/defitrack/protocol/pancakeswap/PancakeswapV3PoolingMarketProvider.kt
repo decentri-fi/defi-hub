@@ -76,8 +76,7 @@ class PancakeswapV3PoolingMarketProvider(
                 prefetch?.breakdown?.map {
                     PoolingMarketTokenShare(
                         it.token,
-                        it.reserve,
-                        it.reserveUSD
+                        it.reserve
                     )
                 } ?: fiftyFiftyBreakdown(token0, token1, address)
             ) {

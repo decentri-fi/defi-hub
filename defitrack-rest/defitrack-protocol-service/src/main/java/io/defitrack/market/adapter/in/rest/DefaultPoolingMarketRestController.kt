@@ -7,6 +7,7 @@ import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.market.pooling.mapper.PoolingMarketVOMapper
 import io.defitrack.market.pooling.vo.PoolingMarketVO
 import io.defitrack.market.port.`in`.PoolingMarkets
+import kotlinx.coroutines.coroutineScope
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -42,11 +43,13 @@ class DefaultPoolingMarketRestController(
         @RequestParam("network") network: Network
     ): List<PoolingMarketVO> {
         return poolingMarkets.searchByToken(protocol, tokenAddress, network)
-            .map(poolingMarketVOMapper::map)
+            .map {
+                poolingMarketVOMapper.map(it)
+            }
     }
 
     @GetMapping(value = ["/markets/{id}"])
-    fun getById(
+    suspend fun getById(
         @PathVariable("protocol") protocol: String,
         @PathVariable("id") id: String,
     ): ResponseEntity<PoolingMarketVO> {
@@ -69,6 +72,8 @@ class DefaultPoolingMarketRestController(
         @RequestParam("network") network: Network
     ): List<PoolingMarketVO> {
         return poolingMarkets.findAlternatives(protocol, tokenAddress, network)
-            .map(poolingMarketVOMapper::map)
+            .map {
+                poolingMarketVOMapper.map(it)
+            }
     }
 }

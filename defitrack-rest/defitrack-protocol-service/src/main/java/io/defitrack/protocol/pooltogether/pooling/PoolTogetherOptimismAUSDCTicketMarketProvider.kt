@@ -33,13 +33,6 @@ class PoolTogetherOptimismAUSDCTicketMarketProvider(
             tokens = listOf(
                 token
             ),
-            marketSize = refreshable {
-                priceResource.calculatePrice(
-                    GetPriceCommand(
-                        usdcAddress, getNetwork(), supply
-                    )
-                ).toBigDecimal()
-            },
             positionFetcher = defaultPositionFetcher(token.address),
             totalSupply = refreshable(supply) {
                 getToken(usdcTicketAddress).totalDecimalSupply()

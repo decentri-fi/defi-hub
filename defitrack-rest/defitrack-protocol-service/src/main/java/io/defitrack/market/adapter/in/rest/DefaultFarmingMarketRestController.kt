@@ -31,11 +31,13 @@ class DefaultFarmingMarketRestController(
         @RequestParam("token") tokenAddress: String,
         @RequestParam("network") network: Network
     ): List<FarmingMarketVO> = runBlocking {
-        markets.searchByToken(protocol, tokenAddress, network).map(farmingMarketVOMapper::map)
+        markets.searchByToken(protocol, tokenAddress, network).map {
+            farmingMarketVOMapper.map(it)
+        }
     }
 
     @GetMapping(value = ["/markets/{marketId}"])
-    fun getById(
+    suspend fun getById(
         @PathVariable("marketId") id: String,
     ): ResponseEntity<FarmingMarketVO> {
         return markets.getStakingMarketById(id)?.let {

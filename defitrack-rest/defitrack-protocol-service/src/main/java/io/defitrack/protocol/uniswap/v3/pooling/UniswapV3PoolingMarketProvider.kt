@@ -12,7 +12,6 @@ import io.defitrack.common.utils.refreshable
 import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.market.domain.PoolingMarketTokenShare
-import io.defitrack.market.domain.marketSize
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.uniswap.v3.prefetch.UniswapV3Prefetcher
 import io.defitrack.uniswap.v3.UniswapV3PoolContract
@@ -84,19 +83,13 @@ abstract class UniswapV3PoolingMarketProvider(
                 prefetch?.breakdown?.map {
                     PoolingMarketTokenShare(
                         it.token,
-                        it.reserve,
-                        it.reserveUSD
+                        it.reserve
                     )
                 } ?: fiftyFiftyBreakdown(token0, token1, market.address)
             ) {
                 fiftyFiftyBreakdown(token0, token1, market.address)
             }
 
-            val marketSize = breakdown.map {
-                it.marketSize()
-            }
-
-            if (marketSize.get() > BigDecimal.valueOf(10000)) {
                 val totalSupply = prefetch?.totalSupply ?: market.liquidity.await().asEth()
                 create(
                     identifier = identifier,
@@ -105,7 +98,6 @@ abstract class UniswapV3PoolingMarketProvider(
                     symbol = "${token0.symbol}-${token1.symbol}",
                     breakdown = breakdown,
                     tokens = listOf(token0, token1),
-                    marketSize = marketSize,
                     positionFetcher = null,
                     totalSupply = refreshable(totalSupply) {
                         market.refreshLiquidity().asEth()
@@ -113,9 +105,6 @@ abstract class UniswapV3PoolingMarketProvider(
                     erc20Compatible = false,
                     internalMetadata = mapOf("contract" to market),
                 )
-            } else {
-                throw MarketTooLowException("market size is ${marketSize.get()} for ${market.address}")
-            }
         }
     }
 

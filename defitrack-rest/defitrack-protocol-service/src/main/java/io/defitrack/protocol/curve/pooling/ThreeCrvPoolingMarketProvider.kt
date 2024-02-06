@@ -47,11 +47,6 @@ class ThreeCrvPoolingMarketProvider : PoolingMarketProvider() {
                 price = refreshable {
                     poolContract.virtualPrice.await().asEth(token.decimals)
                 },
-                marketSize = refreshable {
-                    getMarketSize(
-                        underlyingTokens, pool
-                    )
-                },
                 tokens = underlyingTokens,
                 erc20Compatible = true,
                 totalSupply = refreshable(token.totalDecimalSupply()) {

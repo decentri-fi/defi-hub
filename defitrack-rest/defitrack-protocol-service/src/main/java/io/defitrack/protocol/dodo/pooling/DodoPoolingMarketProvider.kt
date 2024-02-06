@@ -1,9 +1,9 @@
 package io.defitrack.protocol.dodo.pooling
 
 import io.defitrack.common.utils.refreshable
-import io.defitrack.price.domain.GetPriceCommand
-import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.market.domain.PoolingMarket
+import io.defitrack.market.domain.PoolingMarketTokenShare
+import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.protocol.dodo.DodoGraphProvider
 import java.math.BigDecimal
 
@@ -23,25 +23,20 @@ abstract class DodoPoolingMarketProvider(
                 symbol = baseToken.symbol + "/" + quoteToken.symbol,
                 tokens = listOf(baseToken, quoteToken),
                 totalSupply = refreshable(BigDecimal.ZERO),
-                marketSize = refreshable {
-                    getPriceResource().calculatePrice(
-                        GetPriceCommand(
-                            baseToken.address,
-                            getNetwork(),
-                            pool.baseReserve,
-                            baseToken.type
+                breakdown = refreshable {
+                    listOf(
+                        PoolingMarketTokenShare(
+                            baseToken,
+                            //TODO: doesn't update, comes from a graph
+                            pool.baseReserve.times(BigDecimal.TEN.pow(baseToken.decimals)).toBigInteger()
+                        ),
+                        PoolingMarketTokenShare(
+                            quoteToken,
+                            pool.quoteReserve.times(BigDecimal.TEN.pow(baseToken.decimals)).toBigInteger()
                         )
-                    ).toBigDecimal().plus(
-                        getPriceResource().calculatePrice(
-                            GetPriceCommand(
-                                quoteToken.address,
-                                getNetwork(),
-                                pool.quoteReserve,
-                                baseToken.type
-                            )
-                        ).toBigDecimal()
                     )
-                })
+                }
+            )
         }
     }
 }

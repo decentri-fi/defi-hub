@@ -26,11 +26,6 @@ class PoolTogetherEthereumAUSDCTicketMarketProvider : PoolingMarketProvider() {
             name = "PoolTogether aUSDC Ticket",
             symbol = "PTaUSDC",
             tokens = listOf(token),
-            marketSize = refreshable {
-                getPriceResource().calculatePrice(
-                    GetPriceCommand(usdcAddress, getNetwork(), token.totalDecimalSupply())
-                ).toBigDecimal()
-            },
             positionFetcher = defaultPositionFetcher(token.address),
             totalSupply = refreshable(token.totalDecimalSupply()) {
                 getToken(usdcTicketAddress).totalDecimalSupply()

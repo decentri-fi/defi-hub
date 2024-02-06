@@ -10,6 +10,7 @@ import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.market.domain.PoolingMarket
+import io.defitrack.market.domain.PoolingMarketTokenShare
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.hop.HopService
 import io.defitrack.protocol.hop.contract.HopLpTokenContract
@@ -25,8 +26,7 @@ abstract class HopPoolingMarketProvider(
 
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
         hopService.getLps(getNetwork()).parMapNotNull(concurrency = 12) { hopLpToken ->
-            toPoolingMarketElement(getBlockchainGateway(), hopLpToken)
-                .mapLeft {
+            toPoolingMarketElement(getBlockchainGateway(), hopLpToken).mapLeft {
                     logger.error("Unable to get pooling market: {}", it.message)
                 }.getOrNull()
         }.forEach {
@@ -35,60 +35,45 @@ abstract class HopPoolingMarketProvider(
     }
 
     private suspend fun toPoolingMarketElement(
-        gateway: BlockchainGateway,
-        hopLpToken: HopLpToken
+        gateway: BlockchainGateway, hopLpToken: HopLpToken
     ): Either<Throwable, PoolingMarket> {
         return Either.catch {
             val contract = HopLpTokenContract(
-                blockchainGateway = gateway,
-                hopLpToken.lpToken
+                blockchainGateway = gateway, hopLpToken.lpToken
             )
 
             val lp = getToken(hopLpToken.lpToken)
 
             val swapContract = HopSwapContract(
-                blockchainGateway = gateway,
-                contract.swap()
+                blockchainGateway = gateway, contract.swap()
             )
 
             val htoken = getToken(hopLpToken.hToken)
             val canonical = getToken(hopLpToken.canonicalToken)
 
-            create(
-                identifier = hopLpToken.canonicalToken,
+            create(identifier = hopLpToken.canonicalToken,
                 address = hopLpToken.lpToken,
                 symbol = htoken.symbol + "-" + canonical.symbol,
                 name = lp.name,
                 tokens = nonEmptyListOf(htoken, canonical),
-                marketSize = refreshable {
-                    getPrice(canonical.address, contract, swapContract).toBigDecimal()
+                breakdown = refreshable {
+                    val tokenAmount = contract.totalSupply().map {
+                        it.toBigDecimal().times(swapContract.virtualPrice().toBigDecimal())
+                            .divide(BigDecimal.TEN.pow(36))
+                    }
+
+                    listOf(
+                        PoolingMarketTokenShare(
+                            canonical, tokenAmount.map {
+                                it.times(BigDecimal.TEN.pow(canonical.decimals)).toBigInteger()
+                            }.get()
+                        )
+                    )
                 },
                 positionFetcher = defaultPositionFetcher(hopLpToken.lpToken),
-                totalSupply = contract.totalSupply()
-                    .map { it.asEth(lp.decimals) }
-            )
+                totalSupply = contract.totalSupply().map { it.asEth(lp.decimals) })
         }
     }
-
-    private suspend fun getPrice(
-        canonicalTokenAddress: String,
-        contract: HopLpTokenContract,
-        swapContract: HopSwapContract
-    ): Double {
-
-        val tokenAmount = contract.totalSupply().map {
-            it.toBigDecimal().times(swapContract.virtualPrice().toBigDecimal()).divide(BigDecimal.TEN.pow(36))
-        }
-
-        return getPriceResource().calculatePrice(
-            GetPriceCommand(
-                address = canonicalTokenAddress,
-                network = getNetwork(),
-                amount = tokenAmount.get(),
-            )
-        )
-    }
-
 
     override fun getProtocol(): Protocol {
         return Protocol.HOP

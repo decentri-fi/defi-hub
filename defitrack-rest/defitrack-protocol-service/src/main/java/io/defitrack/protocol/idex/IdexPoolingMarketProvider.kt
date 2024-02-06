@@ -39,7 +39,6 @@ class IdexPoolingMarketProvider(
             identifier = it.liquidityToken,
             name = "IDEX ${token0.symbol}-${token1.symbol}",
             tokens = listOf(token0, token1),
-            marketSize = refreshable(it.reserveUsd),
             positionFetcher = defaultPositionFetcher(token.address),
             totalSupply = refreshable {
                 getToken(it.liquidityToken).totalDecimalSupply()

@@ -64,9 +64,6 @@ class VelodromeV2OptimismPoolingMarketProvider(
                     PoolingMarketTokenShare(
                         token0,
                         amount0,
-                        getPriceResource().calculatePrice(
-                            GetPriceCommand(token0.address, getNetwork(), amount0.asEth(token0.decimals))
-                        ).toBigDecimal()
                     )
                 },
                 async {
@@ -75,9 +72,6 @@ class VelodromeV2OptimismPoolingMarketProvider(
                     PoolingMarketTokenShare(
                         token1,
                         amount1,
-                        getPriceResource().calculatePrice(
-                            GetPriceCommand(token1.address, getNetwork(), amount1.asEth(token1.decimals))
-                        ).toBigDecimal()
                     )
                 }
             ).awaitAll()

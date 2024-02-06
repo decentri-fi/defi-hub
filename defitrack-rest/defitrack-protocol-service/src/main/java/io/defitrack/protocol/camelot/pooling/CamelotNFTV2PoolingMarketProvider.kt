@@ -59,14 +59,7 @@ class CamelotNFTV2PoolingMarketProvider(
             erc20Compatible = false,
             totalSupply = refreshable {
                 pool.liquidity.await().asEth()
-            },
-            marketSize = refreshable {
-                getMarketSize(
-                    listOf(token0, token1),
-                    pool.address
-                )
-            },
-            price = refreshable(BigDecimal.ZERO)
+            }
         )
     }
 

@@ -11,10 +11,12 @@ import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.market.domain.PoolingMarket
+import io.defitrack.market.domain.PoolingMarketTokenShare
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
+import java.math.BigDecimal.TEN
 
 @Component
 @ConditionalOnCompany(Company.BLUR)
@@ -34,11 +36,14 @@ class BlurDepositPoolingMarketProvider : PoolingMarketProvider() {
 
         val ether = getToken("0x0")
         return create(
+            breakdown = refreshable {
+                PoolingMarketTokenShare(
+                    ether,
+                    getBlockchainGateway().getNativeBalance(blurEthDeposit).times(TEN.pow(18)).toBigInteger()
+                ).nel()
+            },
             name = "BlurEth",
             identifier = blurEthDeposit,
-            marketSize = refreshable {
-                calculateMarketSize()
-            },
             address = blurEthDeposit,
             symbol = "blurEth",
             tokens = listOf(ether),
@@ -51,17 +56,6 @@ class BlurDepositPoolingMarketProvider : PoolingMarketProvider() {
 
     override fun getProtocol(): Protocol {
         return Protocol.BLUR
-    }
-
-    private suspend fun calculateMarketSize(): BigDecimal {
-        val balance = getBlockchainGateway().getNativeBalance(blurEthDeposit)
-        return getPriceResource().calculatePrice(
-            GetPriceCommand(
-                "0x0",
-                getNetwork(),
-                balance
-            )
-        ).toBigDecimal()
     }
 
     override fun getNetwork(): Network {

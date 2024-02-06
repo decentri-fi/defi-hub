@@ -7,32 +7,43 @@ import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.market.domain.PoolingMarketTokenShare
 import io.defitrack.market.pooling.vo.PoolingMarketTokenShareVO
 import io.defitrack.market.pooling.vo.PoolingPositionTokenshareVO
+import io.defitrack.price.domain.GetPriceCommand
+import io.defitrack.price.port.out.Prices
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigInteger
 
 @Service
-class PoolingBreakdownVOMapper {
+class PoolingBreakdownVOMapper(private val prices: Prices) {
 
     val logger = LoggerFactory.getLogger(this::class.java)
 
-    fun toVO(tokenShares: List<PoolingMarketTokenShare>?): List<PoolingMarketTokenShareVO> {
+    suspend fun toVO(tokenShares: List<PoolingMarketTokenShare>?): List<PoolingMarketTokenShareVO> {
         if (tokenShares.isNullOrEmpty()) {
             return emptyList()
         }
 
-        return tokenShares.map {
+        return tokenShares.map { share ->
+
+            val reserveUsd = prices.calculatePrice(
+                GetPriceCommand(
+                    address = share.token.address,
+                    network = share.token.network.toNetwork(),
+                    amount = share.reserve.asEth(share.token.decimals)
+                )
+            )
+
             PoolingMarketTokenShareVO(
-                token = it.token,
-                reserve = it.reserve,
-                reserveUSD = it.reserveUSD,
-                reserveDecimal = it.reserve.asEth(it.token.decimals)
+                token = share.token,
+                reserve = share.reserve,
+                reserveUSD = reserveUsd.toBigDecimal(),
+                reserveDecimal = share.reserve.asEth(share.token.decimals)
             )
         }
     }
 
-    fun toPositionVO(poolingMarket: PoolingMarket, userSupply: BigDecimal): List<PoolingPositionTokenshareVO> {
+    suspend fun toPositionVO(poolingMarket: PoolingMarket, userSupply: BigDecimal): List<PoolingPositionTokenshareVO> {
         val toVO = toVO(poolingMarket.breakdown?.get())
         if (poolingMarket.totalSupply == BigInteger.ZERO) {
             logger.warn("totalSupply is zero for ${poolingMarket.name}")

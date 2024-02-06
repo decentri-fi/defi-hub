@@ -13,7 +13,7 @@ class FarmingMarketVOMapper(
     private val protocolVOMapper: ProtocolVOMapper
 ) : MarketVOMapper<FarmingMarket> {
 
-    override fun map(market: FarmingMarket): FarmingMarketVO {
+    override suspend fun map(market: FarmingMarket): FarmingMarketVO {
         return with(market) {
             FarmingMarketVO(
                 id = this.id,

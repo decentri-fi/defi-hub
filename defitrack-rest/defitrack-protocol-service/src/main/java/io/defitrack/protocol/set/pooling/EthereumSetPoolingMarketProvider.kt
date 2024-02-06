@@ -44,7 +44,6 @@ class EthereumSetPoolingMarketProvider(
                         PoolingMarketTokenShare(
                             token = underlying,
                             reserve = reserve,
-                            reserveUSD = getPrice(it.token, reserve.asEth(underlying.decimals))
                         )
                     }
                 }
@@ -56,11 +55,6 @@ class EthereumSetPoolingMarketProvider(
                     tokens = breakdown.get().map { element -> element.token },
                     breakdown = breakdown,
                     apr = null,
-                    marketSize = tokenContract.totalSupply().map {
-                        it.asEth(token.decimals).times(
-                            getPrice(tokenContract.getPositions())
-                        )
-                    },
                     positionFetcher = defaultPositionFetcher(set),
                     investmentPreparer = null,
                     totalSupply = refreshable(token.totalDecimalSupply()) {
