@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import java.math.BigDecimal
 
 @Configuration
 @ConditionalOnProperty(name = ["rabbitmq.enabled"], havingValue = "true", matchIfMissing = false)
@@ -50,11 +51,11 @@ class PoolingMarketListener(
             market.totalSupply.isZero() -> {
                 logger.info("Skipping market ${market.id} (${market.protocol}) because total supply is zero")
             }
-            market.breakdown.isEmpty() -> {
+            market.breakdown.isNullOrEmpty() -> {
                 logger.info("Skipping market ${market.id} (${market.protocol}) because breakdown is empty")
             }
             else -> {
-                val marketSize = market.breakdown.sumOf {
+                val marketSize = market.breakdown?.sumOf {
                     priceCalculator.calculatePrice(
                         GetPriceCommand(
                             it.token.address,
@@ -62,7 +63,7 @@ class PoolingMarketListener(
                             it.reserve.asEth(it.token.decimals)
                         )
                     )
-                }.toBigDecimal()
+                }?.toBigDecimal() ?: BigDecimal.ZERO
 
                 val price = marketSize.dividePrecisely(market.totalSupply)
                 logger.info("new price for ${market.id} is $price")

@@ -9,7 +9,7 @@ import java.math.BigDecimal
 import java.math.BigInteger
 
 data class PoolMarketUpdatedEvent(
-    val breakdown: List<PoolingMarketTokenShare>,
+    val breakdown: List<PoolingMarketTokenShare>?,
     val protocol: String,
     val id: String,
     val address: String,
