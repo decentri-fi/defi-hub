@@ -15,7 +15,8 @@ data class PoolMarketUpdatedEvent(
     val address: String,
     val totalSupply: BigDecimal,
     val network: NetworkInformation,
-    val erc20Compatible: Boolean?
+    val erc20Compatible: Boolean?,
+    val name: String,
 ) : MarketUpdatedEvent("pooling")
 
 fun PoolingMarket.createPoolMarketUpdatedEvent(): PoolMarketUpdatedEvent = PoolMarketUpdatedEvent(
@@ -25,5 +26,6 @@ fun PoolingMarket.createPoolMarketUpdatedEvent(): PoolMarketUpdatedEvent = PoolM
     network = network.toNetworkInformation(),
     breakdown = breakdown?.get() ?: emptyList(),
     totalSupply = totalSupply.get(),
-    erc20Compatible = erc20Compatible
+    erc20Compatible = erc20Compatible,
+    name = name
 )

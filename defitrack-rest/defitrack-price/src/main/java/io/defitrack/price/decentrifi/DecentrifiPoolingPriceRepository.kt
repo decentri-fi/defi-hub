@@ -1,10 +1,13 @@
 package io.defitrack.price.decentrifi
 
 import arrow.fx.coroutines.parMap
+import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.erc20.domain.FungibleTokenInformation
+import io.defitrack.market.domain.PoolingMarketTokenShare
 import io.defitrack.networkinfo.NetworkInformation
 import io.defitrack.protocol.ProtocolInformation
 import io.defitrack.market.domain.pooling.PoolingMarketInformation
+import io.defitrack.market.domain.pooling.PoolingMarketTokenShareInformation
 import io.defitrack.price.PriceCalculator
 import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.price.external.ExternalPrice
@@ -32,11 +35,11 @@ class DecentrifiPoolingPriceRepository(
     val cache = Cache.Builder<String, ExternalPrice>().build()
 
 
-    suspend fun PoolingMarketInformation.calculatePrice() : BigDecimal {
-        return if(!hasBreakdown() || totalSupply == BigDecimal.ZERO) {
+    suspend fun AddMarketCommand.calculatePrice(): BigDecimal {
+        return if (!hasBreakdown() || liquidity == BigDecimal.ZERO) {
             BigDecimal.ZERO
         } else {
-            breakdown?.sumOf {
+            val marketSize = breakdown?.sumOf {
                 prices.calculatePrice(
                     GetPriceCommand(
                         it.token.address,
@@ -45,27 +48,27 @@ class DecentrifiPoolingPriceRepository(
                     )
                 )
             }?.toBigDecimal() ?: BigDecimal.ZERO
+            marketSize.dividePrecisely(liquidity)
         }
     }
 
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 6)
+    @Scheduled(fixedDelay = 1000 * 60 * 60 * 1)
     fun populatePoolPrices() = runBlocking {
         logger.info("fetching prices from decentrifi pools")
         val protocols = getProtocols()
         protocols.map { proto ->
             try {
-                getPools(proto).filter {
-                    it.hasBreakdown()
-                }.parMap(concurrency = 12) { pool ->
-                    val price = pool.calculatePrice()
-                    logger.debug("Price for {} ({})  ({}) is {}", pool.name, pool.address, pool.protocol.slug, price)
-                    toIndex(pool.network, pool.address) to ExternalPrice(
-                        pool.address, pool.network.toNetwork(), price, "decentrifi-pooling"
+                getPools(proto).parMap(concurrency = 8) { pool ->
+                    AddMarketCommand(
+                        breakdown = pool.breakdown,
+                        liquidity = pool.totalSupply,
+                        name = pool.name,
+                        address = pool.address,
+                        protocol = proto.slug,
+                        network = pool.network
                     )
-                }.forEach { pool ->
-                    cache.put(
-                        pool.first, pool.second
-                    )
+                }.forEach {
+                    addMarket(it)
                 }
             } catch (ex: Exception) {
                 logger.error("Unable to import price for proto ${proto.slug}", ex)
@@ -75,7 +78,13 @@ class DecentrifiPoolingPriceRepository(
         logger.info("Decentrifi Pooling Price Repository populated with ${cache.asMap().entries.size} prices")
     }
 
-    fun putInCache(network: NetworkInformation, address: String, price: BigDecimal) =
+    suspend fun addMarket(addMarket: AddMarketCommand) {
+        val price = addMarket.calculatePrice()
+        logger.info("Price for {} ({})  ({}) is {}", addMarket.name, addMarket.address, addMarket.protocol, price)
+        putInCache(addMarket.network, addMarket.address, price)
+    }
+
+    private fun putInCache(network: NetworkInformation, address: String, price: BigDecimal) =
         cache.put(
             toIndex(network, address), ExternalPrice(
                 address, network.toNetwork(), price, "decentrifi-pooling"
@@ -106,5 +115,19 @@ class DecentrifiPoolingPriceRepository(
 
     suspend fun getPrice(token: FungibleTokenInformation): BigDecimal {
         return cache.get(toIndex(token.network, token.address))?.price ?: BigDecimal.ZERO
+    }
+
+    class AddMarketCommand(
+        val breakdown: List<PoolingMarketTokenShareInformation>?,
+        val liquidity: BigDecimal,
+        val name: String,
+        val address: String,
+        val protocol: String,
+        val network: NetworkInformation
+    ) {
+
+        fun hasBreakdown(): Boolean {
+            return !breakdown.isNullOrEmpty()
+        }
     }
 }

@@ -6,9 +6,11 @@ import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.BigDecimalExtensions.isZero
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.event.event.PoolMarketUpdatedEvent
+import io.defitrack.market.domain.pooling.PoolingMarketTokenShareInformation
 import io.defitrack.price.PriceCalculator
 import io.defitrack.price.decentrifi.DecentrifiPoolingPriceRepository
 import io.defitrack.price.domain.GetPriceCommand
+import io.ktor.util.Identity.decode
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.amqp.core.*
@@ -56,27 +58,27 @@ class PoolingMarketListener(
                 market.breakdown.isNullOrEmpty() -> {
                     logger.info("Skipping market ${market.id} (${market.protocol}) because breakdown is empty")
                 }
+
                 market.erc20Compatible != true -> {
                     logger.info("Skipping market ${market.id} (${market.protocol}) because it is not erc20 compatible")
                 }
+
                 else -> {
-                    val marketSize = market.breakdown?.sumOf {
-                        priceCalculator.calculatePrice(
-                            GetPriceCommand(
-                                it.token.address,
-                                it.token.network.toNetwork(),
-                                it.reserve.asEth(it.token.decimals)
-                            )
+                    decentrifiPoolingPriceRepository.addMarket(
+                        DecentrifiPoolingPriceRepository.AddMarketCommand(
+                            breakdown = market.breakdown?.map {
+                                PoolingMarketTokenShareInformation(
+                                    token = it.token,
+                                    reserve = it.reserve,
+                                    reserveDecimal = it.reserve.asEth(it.token.decimals)
+                                )
+                            },
+                            address = market.address,
+                            liquidity = market.totalSupply,
+                            name = market.name ?: "unknown",
+                            protocol = market.protocol,
+                            network = market.network
                         )
-                    }?.toBigDecimal() ?: BigDecimal.ZERO
-
-                    val price = marketSize.dividePrecisely(market.totalSupply)
-                    logger.info("new price for ${market.id} is $price")
-
-                    decentrifiPoolingPriceRepository.putInCache(
-                        market.network,
-                        market.address,
-                        price
                     )
                 }
             }
