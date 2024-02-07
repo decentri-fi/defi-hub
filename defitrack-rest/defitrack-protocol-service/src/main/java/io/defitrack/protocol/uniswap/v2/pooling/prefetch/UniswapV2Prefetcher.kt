@@ -25,14 +25,14 @@ class UniswapV2Prefetcher(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    val fetches: Deferred<List<PoolingMarketVO>> = lazyAsync {
+    val fetches: Deferred<List<PoolingMarketInformation>> = lazyAsync {
         val asString: String =
             httpClient.get("https://raw.githubusercontent.com/decentri-fi/data/master/pre-fetches/uniswap/uniswap_v2.json")
                 .body()
-        objectMapper.readValue(asString, object : TypeReference<List<PoolingMarketVO>>() {})
+        objectMapper.readValue(asString, object : TypeReference<List<PoolingMarketInformation>>() {})
     }
 
-    suspend fun getPrefetches(network: Network): List<PoolingMarketVO> = withContext(Dispatchers.IO) {
+    suspend fun getPrefetches(network: Network): List<PoolingMarketInformation> = withContext(Dispatchers.IO) {
         try {
             val prefetched = fetches.await().filter {
                 it.network.name == network.name

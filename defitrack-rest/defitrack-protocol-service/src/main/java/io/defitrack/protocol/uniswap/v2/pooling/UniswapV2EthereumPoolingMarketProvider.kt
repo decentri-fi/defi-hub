@@ -3,6 +3,7 @@ package io.defitrack.protocol.uniswap.v2.pooling
 import arrow.core.Either
 import arrow.fx.coroutines.parMap
 import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.architecture.conditional.ConditionalOnNetwork
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
@@ -24,15 +25,14 @@ import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
 @Component
+@ConditionalOnNetwork(Network.ETHEREUM)
 @ConditionalOnCompany(Company.UNISWAP)
-@ConditionalOnProperty(value = ["ethereum.enabled", "uniswapv2.enabled"], havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(value = ["uniswapv2.fresh.enabled"], havingValue = "true", matchIfMissing = false)
 class UniswapV2EthereumPoolingMarketProvider(
-    private val uniswapV2Prefetcher: UniswapV2Prefetcher,
     private val prices: Prices
 ) : PoolingMarketProvider() {
 
     val factoryAddress = "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f"
-
 
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
         val contract = PairFactoryContract(
