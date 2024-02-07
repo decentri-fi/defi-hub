@@ -3,10 +3,8 @@ package io.defitrack.price.decentrifi
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.market.domain.pooling.PoolingMarketInformation
-import io.defitrack.market.domain.pooling.PoolingMarketTokenShareInformation
 import io.defitrack.marketinfo.port.out.Markets
 import io.defitrack.price.external.StablecoinPriceProvider
-import io.defitrack.price.port.`in`.PricePort
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
@@ -17,22 +15,22 @@ import java.math.BigInteger
 import java.util.concurrent.Executors
 
 @Component
-class DecentriUniswapV2UnderlyingPriceRepository(
+class DecentriAlienbaseUnderlyingPriceRepository(
     private val markets: Markets,
-    private val stablecoinPriceProvider: StablecoinPriceProvider,
+    private val stablecoinPriceProvider: StablecoinPriceProvider
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     val prices = Cache.Builder<String, BigDecimal>().build()
 
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 1) // every 24 hours
+    @Scheduled(fixedDelay = 1000 * 60 * 60 * 1)
     fun populatePrices() {
         Executors.newSingleThreadExecutor().submit {
             runBlocking {
-                val pools = getUniswapV2Pools()
+                val pools = getAlienbasePools()
 
                 importUsdPairs(pools)
-                logger.info("Decentri Uniswap V2 Underlying Price Repository populated with ${prices.asMap().entries.size} prices")
+                logger.info("Decentri Alienbase V2 Underlying Price Repository populated with ${prices.asMap().entries.size} prices")
             }
         }
     }
@@ -43,7 +41,6 @@ class DecentriUniswapV2UnderlyingPriceRepository(
                 stablecoinPriceProvider.isStable(pool.network.toNetwork()).invoke(share.token.address)
             } ?: false
         }
-
 
         usdPairs.forEach { pool ->
             val usdShare = pool.breakdown?.find {
@@ -67,6 +64,7 @@ class DecentriUniswapV2UnderlyingPriceRepository(
         }
     }
 
+
     fun toIndex(address: String): String {
         return address.lowercase()
     }
@@ -79,7 +77,7 @@ class DecentriUniswapV2UnderlyingPriceRepository(
         return prices.asMap().containsKey(toIndex(address))
     }
 
-    suspend fun getUniswapV2Pools(): List<PoolingMarketInformation> {
-        return markets.getPoolingMarkets("uniswap_v2")
+    suspend fun getAlienbasePools(): List<PoolingMarketInformation> {
+        return markets.getPoolingMarkets("alienbase")
     }
 }

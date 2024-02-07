@@ -14,6 +14,15 @@ class StablecoinPriceProvider(private val erC20Resource: ERC20Resource) : Extern
         return 3
     }
 
+
+    fun isStable(network: Network): suspend (String) -> Boolean {
+        return {
+            stableCoins.await().getOrDefault(network, emptyList()).map {
+                it.address.lowercase()
+            }.contains(it)
+        }
+    }
+
     val stableCoins = AsyncUtils.lazyAsync {
         mapOf(
             Network.OPTIMISM to listOf(
