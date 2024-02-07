@@ -9,23 +9,23 @@ import java.math.BigDecimal
 
 @Component
 class DecentrifiUniswapV2PriceService(
-    private val decentriUniswapV2UnderlyingPriceRepository: DecentriUniswapV2UnderlyingPriceRepository
+    private val repository: DecentriUniswapV2UnderlyingPriceRepository
 ) : ExternalPriceService {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override suspend fun appliesTo(token: FungibleTokenInformation): Boolean {
-        return decentriUniswapV2UnderlyingPriceRepository.contains(token.address)
+        return repository.contains(token.address)
     }
 
     override suspend fun getAllPrices(): List<ExternalPrice> {
-        return decentriUniswapV2UnderlyingPriceRepository.prices.asMap().entries.map {
+        return repository.prices.asMap().entries.map {
             ExternalPrice(it.key.toString(), Network.ETHEREUM, it.value, "uniswap-v2")
         }
     }
 
     override suspend fun getPrice(fungibleToken: FungibleTokenInformation): BigDecimal {
-        return decentriUniswapV2UnderlyingPriceRepository.getPrice(fungibleToken.address)?.also {
+        return repository.getPrice(fungibleToken.address)?.also {
             logger.info("getting logging price on decentrifi uniswapv2 for ${fungibleToken.name} (${fungibleToken.symbol}) on ${fungibleToken.network.name}")
         } ?: BigDecimal.ZERO
     }
