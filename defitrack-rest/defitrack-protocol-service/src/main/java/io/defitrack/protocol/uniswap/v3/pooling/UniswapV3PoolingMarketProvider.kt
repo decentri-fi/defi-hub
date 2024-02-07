@@ -75,13 +75,13 @@ abstract class UniswapV3PoolingMarketProvider(
             }
 
 
-            val token0 = prefetch?.tokens?.get(0) ?: getToken(market.token0.await())
-            val token1 = prefetch?.tokens?.get(1) ?: getToken(market.token1.await())
+            val token0 = prefetch?.tokens?.get(0)?.toFungibleToken(getNetwork()) ?: getToken(market.token0.await())
+            val token1 = prefetch?.tokens?.get(1)?.toFungibleToken(getNetwork()) ?: getToken(market.token1.await())
 
             val breakdown = refreshable(
                 prefetch?.breakdown?.map {
                     PoolingMarketTokenShare(
-                        it.token,
+                        it.token.toFungibleToken(getNetwork()),
                         it.reserve
                     )
                 } ?: fiftyFiftyBreakdown(token0, token1, market.address)

@@ -1,5 +1,7 @@
 package io.defitrack.protocol.uniswap.v3.prefetch
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.architecture.conditional.ConditionalOnCompany
@@ -16,21 +18,24 @@ import org.springframework.stereotype.Component
 @Component
 @ConditionalOnCompany(Company.UNISWAP)
 class UniswapV3Prefetcher(
-    private val httpClient: HttpClient
+    private val httpClient: HttpClient,
+    private val objectMapper: ObjectMapper
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     val fetches = lazyAsync {
-        httpClient.get("https://api.decentri.fi/uniswap_v3/pooling/all-markets")
-            .body<List<PoolingMarketVO>>()
+        httpClient.get("https://raw.githubusercontent.com/decentri-fi/data/master/pre-fetches/uniswap/uniswap_v3.json")
+            .body<String>()
     }
 
-    suspend fun getPrefetches(network: Network): List<PoolingMarketVO> = withContext(Dispatchers.IO) {
+    suspend fun getPrefetches(network: Network): List<PoolingMarketInformation> = withContext(Dispatchers.IO) {
         try {
-            val prefetches = fetches.await().filter {
-                it.network.name == network.name
-            }
+            val prefetchesAsString = fetches.await()
+            val prefetches = objectMapper.readValue(prefetchesAsString, Array<PoolingMarketInformation>::class.java)
+                .filter {
+                    it.network.name == network.name
+                }
             logger.info("Prefetched ${prefetches.size} Uniswap V3 markets for network $network")
             prefetches
         } catch (ex: Exception) {
