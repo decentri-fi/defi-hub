@@ -33,15 +33,14 @@ class UniswapV2EthereumPoolingMarketProvider(
 
     val factoryAddress = "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f"
 
-    val contract = lazyAsync {
-        PairFactoryContract(
-            getBlockchainGateway(),
-            factoryAddress
-        )
-    }
 
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
-        val allPairs = contract.await().allPairs()
+        val contract = PairFactoryContract(
+                getBlockchainGateway(),
+                factoryAddress
+            )
+
+        val allPairs = contract.allPairs()
         logger.info("Found ${allPairs.size} Uniswap V2 Pools")
         allPairs.parMap(concurrency = 12) {
             Either.catch {
@@ -73,11 +72,9 @@ class UniswapV2EthereumPoolingMarketProvider(
                         }
                     )
                 } else {
-                   throw IllegalArgumentException("marketsize too low")
+                    throw IllegalArgumentException("marketsize too low")
                 }
-            }
-        }.forEach {
-            it.mapLeft {
+            }.mapLeft {
                 logger.debug("Error creating Uniswap V2 Pool: {}", it.message)
             }.map {
                 send(it)

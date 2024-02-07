@@ -56,7 +56,9 @@ class PoolingMarketListener(
                 market.breakdown.isNullOrEmpty() -> {
                     logger.info("Skipping market ${market.id} (${market.protocol}) because breakdown is empty")
                 }
-
+                market.erc20Compatible != true -> {
+                    logger.info("Skipping market ${market.id} (${market.protocol}) because it is not erc20 compatible")
+                }
                 else -> {
                     val marketSize = market.breakdown?.sumOf {
                         priceCalculator.calculatePrice(

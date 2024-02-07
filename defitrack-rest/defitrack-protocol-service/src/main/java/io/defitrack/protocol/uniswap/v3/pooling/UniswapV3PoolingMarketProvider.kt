@@ -45,16 +45,15 @@ abstract class UniswapV3PoolingMarketProvider(
 
 
         pools.parMapNotNull(concurrency = 12) {
-            it.address to getMarket(it).mapLeft {
+            val pair = it.address to getMarket(it).mapLeft {
                 when (it) {
                     is MarketTooLowException -> logger.trace("market too low for ${it.message}")
                     else -> logger.error("error getting market for ${it.message}")
                 }
             }.getOrNone()
-        }.forEach {
-            poolCache.put(it.first.lowercase(), it.second)
+            poolCache.put(pair.first.lowercase(), pair.second)
 
-            it.second.onSome {
+            pair.second.onSome {
                 send(it)
             }
         }
@@ -90,21 +89,21 @@ abstract class UniswapV3PoolingMarketProvider(
                 fiftyFiftyBreakdown(token0, token1, market.address)
             }
 
-                val totalSupply = prefetch?.totalSupply ?: market.liquidity.await().asEth()
-                create(
-                    identifier = identifier,
-                    name = "${token0.symbol}/${token1.symbol}",
-                    address = market.address,
-                    symbol = "${token0.symbol}-${token1.symbol}",
-                    breakdown = breakdown,
-                    tokens = listOf(token0, token1),
-                    positionFetcher = null,
-                    totalSupply = refreshable(totalSupply) {
-                        market.refreshLiquidity().asEth()
-                    },
-                    erc20Compatible = false,
-                    internalMetadata = mapOf("contract" to market),
-                )
+            val totalSupply = prefetch?.totalSupply ?: market.liquidity.await().asEth()
+            create(
+                identifier = identifier,
+                name = "${token0.symbol}/${token1.symbol}",
+                address = market.address,
+                symbol = "${token0.symbol}-${token1.symbol}",
+                breakdown = breakdown,
+                tokens = listOf(token0, token1),
+                positionFetcher = null,
+                totalSupply = refreshable(totalSupply) {
+                    market.refreshLiquidity().asEth()
+                },
+                erc20Compatible = false,
+                internalMetadata = mapOf("contract" to market),
+            )
         }
     }
 
