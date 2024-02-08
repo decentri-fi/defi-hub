@@ -4,6 +4,7 @@ import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.market.domain.pooling.PoolingMarketInformation
 import io.defitrack.marketinfo.port.out.Markets
+import io.defitrack.price.external.ExternalPrice
 import io.defitrack.price.external.StablecoinPriceProvider
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.runBlocking
@@ -16,35 +17,38 @@ import java.math.BigInteger
 import java.util.concurrent.Executors
 
 @Component
-@ConditionalOnProperty("oracles.alienbase.enabled", havingValue = "true", matchIfMissing = true)
-class DecentriAlienbaseUnderlyingPriceRepository(
+@ConditionalOnProperty("oracles.velodrome_v2.enabled", havingValue = "true", matchIfMissing = true)
+class DecentriVelodromeV2UnderlyingPriceRepository(
     private val markets: Markets,
-    private val stablecoinPriceProvider: StablecoinPriceProvider
+    private val stablecoinPriceProvider: StablecoinPriceProvider,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    val prices = Cache.Builder<String, BigDecimal>().build()
+    val prices = Cache.Builder<String, ExternalPrice>().build()
 
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 1)
+    @Scheduled(fixedDelay = 1000 * 60 * 60 * 1) // every 24 hours
     fun populatePrices() {
         Executors.newSingleThreadExecutor().submit {
             runBlocking {
-                val pools = getAlienbasePools()
+                val pools = getUniswapV2Pools()
 
-                importUsdPairs(pools)
-                logger.info("Decentri Alienbase V2 Underlying Price Repository populated with ${prices.asMap().entries.size} prices")
+                importNonStableUsdPairs(pools)
+                logger.info("Decentri Velodrome V2 Underlying Price Repository populated with ${prices.asMap().entries.size} prices")
             }
         }
     }
 
-    private suspend fun importUsdPairs(pools: List<PoolingMarketInformation>) {
+    private suspend fun importNonStableUsdPairs(pools: List<PoolingMarketInformation>) {
         val usdPairs = pools.filter { pool ->
             pool.breakdown?.any { share ->
                 stablecoinPriceProvider.isStable(pool.network.toNetwork()).invoke(share.token.address)
             } ?: false
         }
 
-        usdPairs.forEach { pool ->
+
+        usdPairs.filter {
+            it.metadata.getOrDefault("stable", "false") == "false"
+        }.forEach { pool ->
             val usdShare = pool.breakdown?.find {
                 stablecoinPriceProvider.isStable(pool.network.toNetwork()).invoke(it.token.address)
             }
@@ -54,24 +58,38 @@ class DecentriAlienbaseUnderlyingPriceRepository(
             }
 
             if (usdShare != null && otherShare != null) {
-                prices.put(toIndex(usdShare.token.address.lowercase()), BigDecimal.valueOf(1.0))
+                prices.put(
+                    toIndex(usdShare.token.address.lowercase()),
+                    ExternalPrice(
+                        usdShare.token.address.lowercase(),
+                        pool.network.toNetwork(),
+                        BigDecimal.ONE,
+                        "velodrome-v2"
+                    )
+                )
 
                 if (otherShare.reserve > BigInteger.ZERO) {
                     val otherprice = usdShare.reserve.asEth(usdShare.token.decimals).dividePrecisely(
                         otherShare.reserve.asEth(otherShare.token.decimals)
                     )
-                    prices.put(toIndex(otherShare.token.address), otherprice)
+                    prices.put(
+                        toIndex(otherShare.token.address), ExternalPrice(
+                            otherShare.token.address,
+                            pool.network.toNetwork(),
+                            otherprice,
+                            "velodrome-v2"
+                        )
+                    )
                 }
             }
         }
     }
 
-
     fun toIndex(address: String): String {
         return address.lowercase()
     }
 
-    fun getPrice(address: String): BigDecimal? {
+    fun getPrice(address: String): ExternalPrice? {
         return prices.get(toIndex(address))
     }
 
@@ -79,7 +97,7 @@ class DecentriAlienbaseUnderlyingPriceRepository(
         return prices.asMap().containsKey(toIndex(address))
     }
 
-    suspend fun getAlienbasePools(): List<PoolingMarketInformation> {
-        return markets.getPoolingMarkets("alienbase")
+    suspend fun getUniswapV2Pools(): List<PoolingMarketInformation> {
+        return markets.getPoolingMarkets("velodrome_v2")
     }
 }

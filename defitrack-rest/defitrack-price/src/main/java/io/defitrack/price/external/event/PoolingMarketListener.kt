@@ -8,6 +8,7 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.event.event.PoolMarketUpdatedEvent
 import io.defitrack.market.domain.pooling.PoolingMarketTokenShareInformation
 import io.defitrack.price.PriceCalculator
+import io.defitrack.price.decentrifi.DecentrifiLendingPriceRepository
 import io.defitrack.price.decentrifi.DecentrifiPoolingPriceRepository
 import io.defitrack.price.domain.GetPriceCommand
 import io.ktor.util.Identity.decode
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.amqp.core.*
 import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -23,9 +25,9 @@ import java.math.BigDecimal
 
 @Configuration
 @ConditionalOnProperty(name = ["rabbitmq.enabled"], havingValue = "true", matchIfMissing = false)
+@ConditionalOnBean(DecentrifiPoolingPriceRepository::class)
 class PoolingMarketListener(
     private val decentrifiPoolingPriceRepository: DecentrifiPoolingPriceRepository,
-    private val priceCalculator: PriceCalculator
 ) {
 
     val logger = LoggerFactory.getLogger(this::class.java)

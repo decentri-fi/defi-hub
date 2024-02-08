@@ -1,14 +1,18 @@
 package io.defitrack.price.external
 
 import io.defitrack.erc20.domain.FungibleTokenInformation
+import io.defitrack.price.decentrifi.DecentrifiLendingPriceRepository
+import io.defitrack.price.decentrifi.DecentrifiPancakeswapV3UnderlyingPriceRepository
 import io.defitrack.price.decentrifi.DecentrifiUniswapV3UnderlyingPriceRepository
 import org.slf4j.LoggerFactory
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
 @Component
+@ConditionalOnBean(DecentrifiPancakeswapV3UnderlyingPriceRepository::class)
 class DecentrifiPancakeswapV3PriceService(
-    private val repository: DecentrifiUniswapV3UnderlyingPriceRepository
+    private val repository: DecentrifiPancakeswapV3UnderlyingPriceRepository
 ) : ExternalPriceService {
 
     override fun order(): Int = 2

@@ -11,11 +11,13 @@ import io.defitrack.protocol.port.`in`.ProtocolResource
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
 @Component
+@ConditionalOnProperty("oracles.farming_markets.enabled", havingValue = "true", matchIfMissing = true)
 class DecentrifiFarmingPriceRepository(
     private val marketResource: Markets,
     private val protocolResource: ProtocolResource

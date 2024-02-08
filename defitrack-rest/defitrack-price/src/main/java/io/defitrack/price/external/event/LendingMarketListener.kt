@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.amqp.core.*
 import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -17,6 +18,7 @@ import java.math.BigDecimal
 
 @Configuration
 @ConditionalOnProperty(name = ["rabbitmq.enabled"], havingValue = "true", matchIfMissing = false)
+@ConditionalOnBean(DecentrifiLendingPriceRepository::class)
 class LendingMarketListener(
     private val decentrifiLendingPriceRepository: DecentrifiLendingPriceRepository
 ) {

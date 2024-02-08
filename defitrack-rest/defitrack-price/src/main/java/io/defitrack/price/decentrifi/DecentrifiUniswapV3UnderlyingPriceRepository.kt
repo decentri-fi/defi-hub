@@ -18,6 +18,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import org.slf4j.LoggerFactory
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
@@ -26,6 +27,7 @@ import java.util.concurrent.Executors
 import kotlin.time.measureTime
 
 @Component
+@ConditionalOnProperty("oracles.uniswap_v3.enabled", havingValue = "true", matchIfMissing = true)
 class DecentrifiUniswapV3UnderlyingPriceRepository(
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val erC20Resource: ERC20Resource,

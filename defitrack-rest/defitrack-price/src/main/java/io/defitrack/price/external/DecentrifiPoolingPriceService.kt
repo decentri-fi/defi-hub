@@ -1,12 +1,15 @@
 package io.defitrack.price.external
 
 import io.defitrack.erc20.domain.FungibleTokenInformation
+import io.defitrack.price.decentrifi.DecentrifiLendingPriceRepository
 import io.defitrack.price.decentrifi.DecentrifiPoolingPriceRepository
 import org.slf4j.LoggerFactory
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
 @Component
+@ConditionalOnBean(DecentrifiPoolingPriceRepository::class)
 class DecentrifiPoolingPriceService(
     private val decentrifiPoolingPriceRepository: DecentrifiPoolingPriceRepository
 ) : ExternalPriceService {

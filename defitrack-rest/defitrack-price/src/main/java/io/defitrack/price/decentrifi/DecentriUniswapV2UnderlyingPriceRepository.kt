@@ -10,6 +10,7 @@ import io.defitrack.price.port.`in`.PricePort
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
@@ -17,6 +18,7 @@ import java.math.BigInteger
 import java.util.concurrent.Executors
 
 @Component
+@ConditionalOnProperty("oracles.uniswap_v2.enabled", havingValue = "true", matchIfMissing = true)
 class DecentriUniswapV2UnderlyingPriceRepository(
     private val markets: Markets,
     private val stablecoinPriceProvider: StablecoinPriceProvider,

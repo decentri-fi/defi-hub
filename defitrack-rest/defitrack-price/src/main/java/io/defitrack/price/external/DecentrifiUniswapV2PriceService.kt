@@ -4,10 +4,12 @@ import io.defitrack.common.network.Network
 import io.defitrack.erc20.domain.FungibleTokenInformation
 import io.defitrack.price.decentrifi.DecentriUniswapV2UnderlyingPriceRepository
 import org.slf4j.LoggerFactory
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
 @Component
+@ConditionalOnBean(DecentriUniswapV2UnderlyingPriceRepository::class)
 class DecentrifiUniswapV2PriceService(
     private val repository: DecentriUniswapV2UnderlyingPriceRepository
 ) : ExternalPriceService {

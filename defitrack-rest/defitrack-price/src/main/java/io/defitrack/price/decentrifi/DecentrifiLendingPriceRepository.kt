@@ -13,11 +13,13 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
 @Component
+@ConditionalOnProperty("oracles.lending_markets.enabled", havingValue = "true", matchIfMissing = true)
 class DecentrifiLendingPriceRepository(
     private val httpClient: HttpClient
 ) {
