@@ -14,6 +14,7 @@ import org.web3j.abi.FunctionEncoder
 import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.datatypes.*
 import org.web3j.abi.datatypes.Function
+import kotlin.math.log
 
 class MultiCallV2Caller(val address: String) : MultiCallCaller {
 
@@ -65,10 +66,19 @@ class MultiCallV2Caller(val address: String) : MultiCallCaller {
             val results = executedCall[0].value as List<AggregateResult>
             results.mapIndexed { index, result ->
                 val element = elements[index]
-                MultiCallResult(
-                    result.success,
-                    FunctionReturnDecoder.decode(Hex.encodeHexString(result.data), element.function.outputParameters)
-                )
+                try {
+                    MultiCallResult(
+                        result.success,
+                        FunctionReturnDecoder.decode(
+                            Hex.encodeHexString(result.data),
+                            element.function.outputParameters
+                        )
+                    )
+                } catch (ex: Exception) {
+                    logger.error("unexpected exception during multicall: {}", ex.message)
+                    MultiCallResult(false, emptyList())
+                }
+
             }
         }
     }
