@@ -61,29 +61,30 @@ abstract class EvmContract(
 
     inline fun <reified T : Any> constant(
         method: String,
-        output: TypeReference<out Type<*>>
+        output: TypeReference<out Type<*>>,
+       noinline extractor: ((List<Type<*>>) -> T)? = null
     ): Deferred<T> {
         val function = addConstant(createFunction(method, output))
-        return constant(function)
+        return createConstant(function, extractor)
     }
-
 
     inline fun <reified T : Any> constant(
         method: String,
-        inputs: List<Type<*>> = emptyList(),
-        outputs: List<TypeReference<out Type<*>>>? = emptyList()
+        outputs: List<TypeReference<out Type<*>>>,
+        noinline extractor: ((List<Type<*>>) -> T)? = null
     ): Deferred<T> {
-        val function = addConstant(createFunction(method, inputs, outputs))
-        return constant(function)
+        val function = addConstant(createFunction(method, emptyList(), outputs))
+        return createConstant(function, extractor)
     }
 
-    inline fun <reified T : Any> constant(
+    inline fun <reified T : Any> createConstant(
         function: ContractCall,
+        noinline extractor: ((List<Type<*>>) -> T)?
     ): Deferred<T> {
         return lazyAsync {
             val get = resolvedConstants.await().get(function)!!
             if (get.success) {
-                get.data[0].value as T
+                extractor?.invoke(get.data) ?: get.data[0].value as T
             } else {
                 throw RuntimeException("Unable to read constant ${function.function.name} on $address")
             }
