@@ -1,5 +1,6 @@
 package io.defitrack.protocol.velodrome.contract
 
+import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
@@ -12,6 +13,7 @@ class VelodromePoolContract(
 
     val token0 = constant<String>("token0", address())
     val token1 = constant<String>("token1", address())
+    val stable = constant<String>("stable", TypeUtils.bool())
 
     suspend fun getReserves(): Reserves {
         val response = read(

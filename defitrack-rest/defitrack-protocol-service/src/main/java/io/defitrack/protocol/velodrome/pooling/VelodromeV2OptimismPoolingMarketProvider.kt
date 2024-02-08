@@ -89,6 +89,9 @@ class VelodromeV2OptimismPoolingMarketProvider(
                 getToken(it).totalDecimalSupply()
             },
             deprecated = false,
+            metadata = mapOf(
+                "stable" to contract.stable.await(),
+            )
         )
     }
 
