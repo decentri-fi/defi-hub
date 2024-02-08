@@ -1,13 +1,12 @@
 package io.defitrack.protocol.velodrome.pooling
 
 import arrow.core.Either
+import arrow.core.Either.Companion.catch
 import arrow.core.nonEmptyListOf
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.refreshable
 import io.defitrack.architecture.conditional.ConditionalOnCompany
-import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.market.domain.PoolingMarketTokenShare
@@ -37,24 +36,27 @@ class VelodromeV2OptimismPoolingMarketProvider(
             contractAddress = velodromeOptimismService.getV2PoolFactory()
         )
 
-        pairFactoryContract.allPools().parMapNotNull(concurrency = 12) {
-            Either.catch {
+        resolve(pairFactoryContract.allPools()
+            .map {
+                VelodromePoolContract(
+                    getBlockchainGateway(), it
+                )
+            }
+        ).parMapNotNull(concurrency = 12) {
+            catch {
                 createMarket(it)
-            }.mapLeft { _ ->
-                logger.error("Error creating market for address {}", it)
+            }.mapLeft { exc ->
+                logger.error("Error creating market for address {}: {}  ", it, exc.message)
             }.getOrNull()
         }.forEach {
             send(it)
         }
     }
 
-    private suspend fun createMarket(it: String): PoolingMarket = coroutineScope {
-        val poolingToken = getToken(it)
-        val contract = VelodromePoolContract(
-            getBlockchainGateway(), it
-        )
+    private suspend fun createMarket(contract: VelodromePoolContract): PoolingMarket = coroutineScope {
+        val poolingToken = getToken(contract.address)
 
-        val reserves = contract.getReserves()
+        val reserves = contract.reserves.await()
 
         val breakdown = refreshable {
             nonEmptyListOf(
@@ -78,15 +80,15 @@ class VelodromeV2OptimismPoolingMarketProvider(
         }
 
         create(
-            identifier = "v2-$it",
+            identifier = "v2-$contract",
             positionFetcher = defaultPositionFetcher(poolingToken.address),
-            address = it,
+            address = contract.address,
             name = poolingToken.name,
             breakdown = breakdown,
             symbol = poolingToken.symbol,
             tokens = poolingToken.underlyingTokens,
             totalSupply = refreshable {
-                getToken(it).totalDecimalSupply()
+                getToken(contract.address).totalDecimalSupply()
             },
             deprecated = false,
             metadata = mapOf(
