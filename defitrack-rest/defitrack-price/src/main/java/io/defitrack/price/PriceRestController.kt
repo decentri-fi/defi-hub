@@ -31,9 +31,16 @@ class PriceRestController(
     }
 
     @GetMapping
-    suspend fun getAllPrices(): List<ExternalPrice> {
+    suspend fun getAllPrices(
+        @RequestParam("network", required = false) networkName: String? = null,
+        @RequestParam("type", required = false) type: String? = null,
+    ): List<ExternalPrice> {
         return externalPriceServices.flatMap {
             it.getAllPrices()
+        }.filter {
+            networkName != null && networkName.lowercase() == it.network.slug
+        }.filter {
+            type != null && type.lowercase() == it.source
         }
     }
 
