@@ -50,19 +50,17 @@ class PoolingMarketListener(
     fun onPoolingMarketAdded(msg: Message) = runBlocking {
         try {
             val market = jacksonObjectMapper().readValue<PoolMarketUpdatedEvent>(msg.body)
-            logger.info("we should now calculate the price for ${market.id} and update it in the cache")
-
             when {
                 market.totalSupply.isZero() -> {
-                    logger.info("Skipping market ${market.id} (${market.protocol}) because total supply is zero")
+                    logger.debug("Skipping market ${market.id} (${market.protocol}) because total supply is zero")
                 }
 
                 market.breakdown.isNullOrEmpty() -> {
-                    logger.info("Skipping market ${market.id} (${market.protocol}) because breakdown is empty")
+                    logger.debug("Skipping market ${market.id} (${market.protocol}) because breakdown is empty")
                 }
 
                 market.erc20Compatible != true -> {
-                    logger.info("Skipping market ${market.id} (${market.protocol}) because it is not erc20 compatible")
+                    logger.debug("Skipping market ${market.id} (${market.protocol}) because it is not erc20 compatible")
                 }
 
                 else -> {
