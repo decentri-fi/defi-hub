@@ -56,7 +56,7 @@ class HopStakingDecoder(
             log.address
         )
 
-        val token = "token" to getToken(contract.stakingTokenAddress(), network)
+        val token = "token" to getToken(contract.stakingToken.await(), network)
 
         return create(
             log = log,

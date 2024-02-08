@@ -1,7 +1,9 @@
-package io.defitrack.erc20.application.repository
+package io.defitrack.erc20.adapter.tokens
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.common.network.Network
+import io.defitrack.erc20.application.repository.ERC20TokenListResource
+import io.defitrack.erc20.application.repository.TokenListResponse
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -10,24 +12,26 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
 @Component
-class ERC20Repository(
+class ERC20TokenExternalListResource (
     private val objectMapper: ObjectMapper,
     private val client: HttpClient
-) {
+) : ERC20TokenListResource {
+
+    val logger: Logger = LoggerFactory.getLogger(ERC20TokenListResource::class.java)
 
     private var tokenList: Map<Network, List<String>> = emptyMap()
 
     suspend fun populateTokens() {
         tokenList = listOf(
-            "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/polygon/quickswap-default.tokenlist.json",
-            "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/polygon/polygon.vetted.tokenlist.json",
-            "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/polygon/polygon.listed.tokenlist.json",
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/ethereum/uniswap-default.tokenlist.json",
-            "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/ethereum/extendedtokens.uniswap.json",
-            "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/arbitrum/tokenlist.json",
-            "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/optimism/optimism.tokenlist.json",
-            "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/polygon-zkevm/tokenlist.json",
-            "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/base/tokenlist.json",
+            //         "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/polygon/quickswap-default.tokenlist.json",
+            //         "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/polygon/polygon.vetted.tokenlist.json",
+            //         "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/polygon/polygon.listed.tokenlist.json",
+            //         "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/ethereum/extendedtokens.uniswap.json",
+            //         "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/arbitrum/tokenlist.json",
+            //         "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/optimism/optimism.tokenlist.json",
+            //         "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/polygon-zkevm/tokenlist.json",
+            //         "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/base/tokenlist.json",
         ).flatMap {
             try {
                 fetchFromTokenList(it)
@@ -54,14 +58,14 @@ class ERC20Repository(
 
         logger.info("imported $url")
 
-        return tokens.tokens.mapNotNull { entry ->
-            Network.fromChainId(entry.chainId)?.let { network ->
-                network to entry.address
+        return tokens.tokens.flatMap { entry ->
+            entry.getAddressesToNetworks().map {
+                it.key to it.value
             }
         }
     }
 
-    fun allTokens(network: Network): List<String> {
+    override fun allTokens(network: Network): List<String> {
         val addresses = tokenList[network] ?: emptyList()
         return addresses.distinctBy {
             it.lowercase()
@@ -69,7 +73,6 @@ class ERC20Repository(
     }
 }
 
-val logger: Logger = LoggerFactory.getLogger(ERC20Repository::class.java)
 
 
 val NATIVE_WRAP_MAPPING = mapOf(

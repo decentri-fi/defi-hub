@@ -6,7 +6,7 @@ import io.defitrack.erc20.domain.FungibleTokenInformation
 import io.defitrack.erc20.adapter.rest.vo.UserBalanceVO
 import io.defitrack.erc20.adapter.rest.vo.WrappedTokenVO
 import io.defitrack.erc20.application.ERC20BalanceService
-import io.defitrack.erc20.application.repository.NATIVE_WRAP_MAPPING
+import io.defitrack.erc20.adapter.tokens.NATIVE_WRAP_MAPPING
 import io.defitrack.erc20.domain.toVO
 import io.defitrack.erc20.port.input.AllowanceUseCase
 import io.defitrack.erc20.port.input.TokenInformationUseCase

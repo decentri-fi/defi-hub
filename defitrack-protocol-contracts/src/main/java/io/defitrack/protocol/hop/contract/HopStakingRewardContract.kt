@@ -15,13 +15,8 @@ class HopStakingRewardContract(
     address
 ) {
 
-
-    suspend fun rewardsTokenAddress(): String {
-        return readSingle(
-            "rewardsToken",
-            address()
-        )
-    }
+    val rewardsToken = constant<String>("rewardsToken", address())
+    val stakingToken = constant<String>("stakingToken", address())
 
     fun earnedFn(address: String): ContractCall {
         return createFunction(
@@ -39,7 +34,5 @@ class HopStakingRewardContract(
         return createFunction("getReward")
     }
 
-    suspend fun stakingTokenAddress(): String {
-        return readSingle("stakingToken", address())
-    }
+
 }

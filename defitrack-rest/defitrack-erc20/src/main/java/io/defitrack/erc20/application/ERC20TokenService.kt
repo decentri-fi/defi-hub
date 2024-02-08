@@ -8,9 +8,9 @@ import arrow.fx.coroutines.parMap
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.ERC20
 import io.defitrack.erc20.domain.TokenInformation
-import io.defitrack.erc20.application.repository.ERC20Repository
 import io.defitrack.erc20.application.repository.NativeTokenRepository
 import io.defitrack.erc20.application.protocolspecific.TokenIdentifier
+import io.defitrack.erc20.application.repository.ERC20TokenListResource
 import io.defitrack.erc20.port.input.AllowanceUseCase
 import io.defitrack.erc20.port.input.TokenInformationUseCase
 import io.defitrack.erc20.port.output.ReadERC20Port
@@ -25,7 +25,7 @@ import kotlin.time.measureTimedValue
 @Service
 class ERC20TokenService(
     private val readERC20Port: ReadERC20Port,
-    private val erC20Repository: ERC20Repository,
+    private val erC20Repository: ERC20TokenListResource,
     private val nativeTokenRepository: NativeTokenRepository,
     private val logoGenerator: LogoGenerator
 ) : TokenInformationUseCase {

@@ -31,10 +31,4 @@ data class PoolingMarket(
     val internalMetadata: Map<String, Any>,
     override val deprecated: Boolean,
     val historicEventExtractor: HistoricEventExtractor? = null,
-) : DefiMarket(id, "pooling", protocol, network, deprecated) {
-    init {
-        addRefetchableValue(breakdown)
-        addRefetchableValue(totalSupply)
-        addRefetchableValue(marketSize)
-    }
-}
+) : DefiMarket(id, "pooling", protocol, network, deprecated)

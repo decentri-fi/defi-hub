@@ -34,8 +34,8 @@ abstract class HopFarmingMarketProvider(
             stakingReward
         )
 
-        val stakedToken = getToken(contract.stakingTokenAddress())
-        val rewardToken = getToken(contract.rewardsTokenAddress())
+        val stakedToken = getToken(contract.stakingToken.await())
+        val rewardToken = getToken(contract.rewardsToken.await())
 
         return create(
             identifier = contract.address,

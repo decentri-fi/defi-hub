@@ -31,11 +31,4 @@ data class LendingMarket(
     val internalMetaData: Map<String, Any> = emptyMap(),
 ) : DefiMarket(
     id, "lending", protocol, network, deprecated
-) {
-
-    init {
-        addRefetchableValue(totalSupply)
-        addRefetchableValue(marketSize)
-        addRefetchableValue(price)
-    }
-}
+)

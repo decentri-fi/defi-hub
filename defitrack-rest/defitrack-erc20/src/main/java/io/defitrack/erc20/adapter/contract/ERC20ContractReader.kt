@@ -5,8 +5,7 @@ import arrow.core.Option
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.refreshable
 import io.defitrack.erc20.ERC20
-import io.defitrack.erc20.application.repository.ERC20Repository
-import io.defitrack.erc20.application.repository.NATIVE_WRAP_MAPPING
+import io.defitrack.erc20.adapter.tokens.NATIVE_WRAP_MAPPING
 import io.defitrack.erc20.port.output.ReadAllowancePort
 import io.defitrack.erc20.port.output.ReadBalancePort
 import io.defitrack.erc20.port.output.ReadERC20Port
@@ -15,7 +14,6 @@ import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.contract.MultiCallResult
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigInteger
 
