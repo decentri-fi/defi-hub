@@ -1,10 +1,13 @@
 package io.defitrack.market.domain
 
+import arrow.core.Either
+import arrow.core.Either.Companion.catch
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.refreshable
 import io.defitrack.protocol.Protocol
 import org.slf4j.LoggerFactory
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties.Lettuce.Cluster.Refresh
 import java.time.LocalDateTime
 import kotlin.reflect.full.declaredMemberProperties
 
@@ -13,49 +16,28 @@ abstract class DefiMarket(
     val type: String,
     open val protocol: Protocol,
     open val network: Network,
-    open val deprecated: Boolean
+    open val deprecated: Boolean,
+    val updatedAt: Refreshable<LocalDateTime> = refreshable(LocalDateTime.now()) {
+        LocalDateTime.now()
+    }
 ) {
 
     val logger = LoggerFactory.getLogger(this::class.java)
 
-    val updatedAt = refreshable(LocalDateTime.now()) {
-        LocalDateTime.now()
-    }
-
-    val refreshables = mutableListOf<Refreshable<*>>()
-
-    init {
+    suspend fun refresh(): DefiMarket {
         this::class.declaredMemberProperties
             .filter {
                 it.returnType.classifier == Refreshable::class
             }
-            .forEach {
-                val call = it.getter.call(this)
-                if (call != null) {
-                    addRefetchableValue(call as Refreshable<*>)
+            .map {
+                it.getter.call(this) as Refreshable<*>
+            }.forEach {
+                catch {
+                    it.refresh()
+                }.mapLeft {
+                    logger.error("Unable to refresh $id", it)
                 }
             }
-    }
-
-    init {
-        addRefetchableValue(updatedAt)
-    }
-
-    fun addRefetchableValue(refreshable: Refreshable<*>?) {
-        if (refreshable != null) {
-            refreshables.add(refreshable)
-        }
-    }
-
-    suspend fun refresh(): DefiMarket {
-        refreshables.forEach {
-            try {
-                it.refresh()
-            } catch (ex: Exception) {
-                logger.error("Unable to refresh $id", ex)
-                ex.printStackTrace()
-            }
-        }
         return this
     }
 }
