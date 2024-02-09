@@ -17,10 +17,10 @@ import org.web3j.protocol.core.Response
 import org.web3j.protocol.core.methods.request.EthFilter
 import org.web3j.protocol.core.methods.request.Transaction
 import org.web3j.protocol.core.methods.response.*
-import java.lang.RuntimeException
 import java.math.BigInteger
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import kotlin.RuntimeException
 
 @Component
 class Web3JProxy(
@@ -41,28 +41,35 @@ class Web3JProxy(
         _web3j: Web3j = primaryWeb3j
     ): EthLog {
         val ethFilter = getEthFilter(getEventLogsCommand)
-        val log = runWithFallback({
-            _web3j.ethGetLogs(ethFilter)
-        })
+
+        return try {
+            val log = runWithFallback({
+                _web3j.ethGetLogs(ethFilter)
+            })
 
 
-        return when {
-            log.exceedsSize() -> {
-                val splitMatcher = log.exceededPattern.matcher(log.error.message)
-                if (splitMatcher.find()) {
-                    fromSplitMatcher(splitMatcher, getEventLogsCommand)
-                } else {
+            when {
+                log.exceedsSize() -> {
+                    val splitMatcher = log.exceededPattern.matcher(log.error.message)
+                    if (splitMatcher.find()) {
+                        fromSplitMatcher(splitMatcher, getEventLogsCommand)
+                    } else {
+                        log
+                    }
+                }
+
+                log.exceedsBlockLimit() -> {
+                    split(getEventLogsCommand)
+                }
+
+                else -> {
                     log
                 }
             }
-
-            log.exceedsBlockLimit() -> {
-                split(getEventLogsCommand)
-            }
-
-            else -> {
-                log
-            }
+        } catch (needssplit: NeedsSplitException) {
+            split(getEventLogsCommand)
+        } catch (ex: Exception) {
+            throw ex
         }
     }
 
@@ -226,13 +233,15 @@ class Web3JProxy(
                 val result = request.send()
 
                 if (result.hasError()) {
-                    handleException(result.error.message, observation, requestProvider)
+                    handleException(result.error.message, observation, request, requestProvider)
                 } else {
                     observation.event(Observation.Event.of("success"))
                     result
                 }
+            } catch (needsSplitException: NeedsSplitException) {
+                throw needsSplitException
             } catch (ex: Exception) {
-                handleException(ex.message ?: "", observation, requestProvider)
+                handleException(ex.message ?: "", observation, request, requestProvider)
             }
         }
     }
@@ -240,6 +249,7 @@ class Web3JProxy(
     private suspend fun <T : Response<*>> handleException(
         message: String,
         observation: Observation,
+        request: Request<*, T>,
         requestProvider: (web3j: Web3j) -> Request<*, T>
     ): T {
         return if (message.contains("429")) {
@@ -262,10 +272,14 @@ class Web3JProxy(
             anyFallback()?.let {
                 runWithFallback(requestProvider, it)
             } ?: throw RuntimeException("unable to find working fallback web3j: $message")
+        } else if (message.contains("logs are limited to a 10000 block range")) {
+            throw NeedsSplitException()
         } else {
-            throw throw RuntimeException("unable to find working fallback web3j: $message")
+            throw RuntimeException("unable to find working fallback web3j: $message")
         }
     }
+
+    class NeedsSplitException : RuntimeException()
 
     private fun anyFallback(includesDefault: Boolean = false): Web3j? {
         return fallbacks.shuffled().firstOrNull() ?: if (includesDefault) primaryWeb3j else null

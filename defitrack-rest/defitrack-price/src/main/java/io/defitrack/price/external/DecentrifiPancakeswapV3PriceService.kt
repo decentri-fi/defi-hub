@@ -31,7 +31,7 @@ class DecentrifiPancakeswapV3PriceService(
 
     override suspend fun getPrice(fungibleToken: FungibleTokenInformation): BigDecimal {
         return repository.getPrice(fungibleToken)?.also {
-            logger.info("getting logging price on decentrifi uniswapv3 for ${fungibleToken.name} (${fungibleToken.symbol}) on ${fungibleToken.network.name}")
-        } ?: BigDecimal.ZERO
+            logger.info("getting logging price on decentrifi pancakeswap for ${fungibleToken.name} (${fungibleToken.symbol}) on ${fungibleToken.network.name}")
+        }?.price ?: BigDecimal.ZERO
     }
 }

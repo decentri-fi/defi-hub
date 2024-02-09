@@ -162,7 +162,7 @@ enum class Protocol(
         slug = "pancakeswap",
         primitives = listOf(POOLING, FARMING, CLAIMABLES),
         website = "https://pancakeswap.finance",
-        networks = listOf(Network.POLYGON_ZKEVM),
+        networks = listOf(POLYGON_ZKEVM),
         company = Company.PANCAKESWAP
     ),
     BASESWAP(
