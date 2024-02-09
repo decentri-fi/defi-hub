@@ -80,7 +80,7 @@ class VelodromeV2OptimismPoolingMarketProvider(
         }
 
         create(
-            identifier = "v2-$contract",
+            identifier = "v2-${contract.address}",
             positionFetcher = defaultPositionFetcher(poolingToken.address),
             address = contract.address,
             name = poolingToken.name,
