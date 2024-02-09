@@ -22,7 +22,7 @@ class DecentrifiAlienbaseV2PriceService(
 
     override suspend fun getAllPrices(): List<ExternalPrice> {
         return repository.prices.asMap().entries.map {
-            ExternalPrice(it.key.toString(), Network.BASE, it.value, "alienbase-v2")
+            ExternalPrice(it.key.toString(), Network.BASE, it.value, "alienbase-v2", "unknown")
         }
     }
 

@@ -46,7 +46,8 @@ class LendingMarketListener(
             decentrifiLendingPriceRepository.putInCache(
                 market.network,
                 market.marketToken!!.address,
-                market.price
+                market.price,
+                "unknown"
             )
             logger.info(
                 "Price for {} on {} updated to {}",

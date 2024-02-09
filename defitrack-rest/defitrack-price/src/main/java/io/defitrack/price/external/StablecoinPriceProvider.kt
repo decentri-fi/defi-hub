@@ -81,6 +81,7 @@ class StablecoinPriceProvider(private val erC20Resource: ERC20Resource) : Extern
                 it.address.lowercase(),
                 it.network.toNetwork(),
                 BigDecimal.ONE,
+                "hardcoded",
                 "hardcoded"
             )
         }

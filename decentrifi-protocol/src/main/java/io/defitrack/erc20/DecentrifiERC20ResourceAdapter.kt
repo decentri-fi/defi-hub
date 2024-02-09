@@ -24,7 +24,7 @@ internal class DecentrifiERC20ResourceAdapter(
     val wrappedCache = Cache.Builder<Network, WrappedToken>().build()
 
     override suspend fun getAllTokens(network: Network, verified: Boolean?): List<FungibleTokenInformation> {
-        return tokensCache.get("tokens-${network}") {
+        return tokensCache.get("tokens-${network}-$verified") {
             erC20s.getAllTokens(network, verified)
         }
     }

@@ -38,9 +38,9 @@ class PriceRestController(
         return externalPriceServices.flatMap {
             it.getAllPrices()
         }.filter {
-            networkName != null && networkName.lowercase() == it.network.slug
+            networkName == null || networkName.lowercase() == it.network.slug
         }.filter {
-            type != null && type.lowercase() == it.source
+            type == null || type.lowercase() == it.source
         }
     }
 

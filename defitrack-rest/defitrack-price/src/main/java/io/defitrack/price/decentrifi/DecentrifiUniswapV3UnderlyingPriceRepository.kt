@@ -8,15 +8,13 @@ import io.defitrack.erc20.domain.FungibleTokenInformation
 import io.defitrack.erc20.port.`in`.ERC20Resource
 import io.defitrack.market.domain.pooling.PoolingMarketInformation
 import io.defitrack.evm.contract.BlockchainGatewayProvider
+import io.defitrack.evm.contract.BulkConstantResolver
 import io.defitrack.marketinfo.port.out.Markets
 import io.defitrack.price.external.ExternalPrice
 import io.defitrack.price.external.StablecoinPriceProvider
 import io.defitrack.uniswap.v3.UniswapV3PoolContract
 import io.github.reactivecircus.cache4k.Cache
-import io.ktor.client.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.sync.Semaphore
-import kotlinx.coroutines.sync.withPermit
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.scheduling.annotation.Scheduled
@@ -32,7 +30,8 @@ class DecentrifiUniswapV3UnderlyingPriceRepository(
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val erC20Resource: ERC20Resource,
     private val marketResource: Markets,
-    private val stablecoinPriceProvider: StablecoinPriceProvider
+    private val stablecoinPriceProvider: StablecoinPriceProvider,
+    private val bulkConstantResolver: BulkConstantResolver
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -75,66 +74,75 @@ class DecentrifiUniswapV3UnderlyingPriceRepository(
         }
 
 
-        val ethPairs = pools.filter(containsEth).filter(containsNoStables)
+        val ethPairs = pools.filter(containsEth).filter(containsNoStables).filter { market ->
+            market.tokens.all {
+                erC20Resource.getAllTokens(market.network.toNetwork(), true).map {
+                    it.address.lowercase()
+                }.contains(it.address.lowercase())
+            }
+        }
 
-        ethPairs.parMap(concurrency = 12) { pool ->
-            try {
-
-                val ethForNetwork = eths[pool.network.toNetwork()]?.address?.lowercase()
-
-                if (ethForNetwork == null) {
-                    logger.error("no known eth address found for network ${pool.network.name}")
-                } else {
-
-                    val ethPriceForNetwork =
-                        prices.get(toIndex(pool.network.toNetwork(), ethForNetwork))?.price ?: BigDecimal.ZERO
-
-                    if (ethPriceForNetwork == BigDecimal.ZERO) {
-                        logger.error("price for eth was not prepopulated for network ${pool.network}")
-                    }
-
-                    val contract = UniswapV3PoolContract(
+        ethPairs.zip(
+            bulkConstantResolver.resolve(ethPairs
+                .map { pool ->
+                    UniswapV3PoolContract(
                         blockchainGatewayProvider.getGateway(pool.network.toNetwork()),
                         pool.address
                     )
+                })
+        )
+            .parMap(concurrency = 12) { (pool, contract) ->
+                try {
 
-                    val sqrtPriceX96 = contract.slot0().sqrtPriceX96
-                    val token0 = erC20Resource.getTokenInformation(pool.network.toNetwork(), contract.token0.await())
-                    val token1 = erC20Resource.getTokenInformation(pool.network.toNetwork(), contract.token1.await())
+                    val eth = eths[pool.network.toNetwork()]?.address?.lowercase()
 
-                    val priceInOtherToken = (sqrtPriceX96.toBigDecimal().dividePrecisely(
-                        BigInteger.TWO.pow(96).toBigDecimal()
-                    )).pow(2)
+                    if (eth == null) {
+                        logger.error("no known eth address found for network ${pool.network.name}")
+                    } else {
 
-                    if (ethForNetwork == token0.address.lowercase()) {
-                        val normalized = getNormalizedPrice(token0, token1, priceInOtherToken)
-                        val price = ethPriceForNetwork.dividePrecisely(normalized)
+                        val ethPriceForNetwork =
+                            prices.get(toIndex(pool.network.toNetwork(), eth))?.price ?: BigDecimal.ZERO
 
-
-                        val index = toIndex(pool.network.toNetwork(), token1.address)
-                        if (prices.get(index) == null) {
-                            prices.put(
-                                index, ExternalPrice(
-                                    token1.address, pool.network.toNetwork(), price, "uniswap-v3"
-                                )
-                            )
+                        if (ethPriceForNetwork == BigDecimal.ZERO) {
+                            logger.error("price for eth was not prepopulated for network ${pool.network}")
                         }
-                    } else if (ethForNetwork == token1.address.lowercase()) {
-                        val normalized = ethPriceForNetwork.times(getNormalizedPrice(token0, token1, priceInOtherToken))
-                        val index = toIndex(pool.network.toNetwork(), token0.address)
-                        if (prices.get(index) == null) {
-                            prices.put(
-                                index, ExternalPrice(
-                                    token0.address, pool.network.toNetwork(), normalized, "uniswap-v3"
-                                )
-                            )
+
+
+                        val sqrtPriceX96 = contract.slot0.await().sqrtPriceX96
+                        val token0 =
+                            erC20Resource.getTokenInformation(pool.network.toNetwork(), contract.token0.await())
+                        val token1 =
+                            erC20Resource.getTokenInformation(pool.network.toNetwork(), contract.token1.await())
+
+                        val priceInOtherToken = (sqrtPriceX96.toBigDecimal().dividePrecisely(
+                            BigInteger.TWO.pow(96).toBigDecimal()
+                        )).pow(2)
+
+                        if (eth == token0.address.lowercase()) {
+                            val normalized = getNormalizedPrice(token0, token1, priceInOtherToken)
+                            val price = when {
+                                normalized > BigDecimal.ZERO -> ethPriceForNetwork.dividePrecisely(normalized)
+                                else -> BigDecimal.ZERO
+                            }
+
+
+                            val index = toIndex(pool.network.toNetwork(), token1.address)
+                            if (prices.get(index) == null) {
+                                addPrice(pool, token1, price)
+                            }
+                        } else if (eth == token1.address.lowercase()) {
+                            val normalized =
+                                ethPriceForNetwork.times(getNormalizedPrice(token0, token1, priceInOtherToken))
+                            val index = toIndex(pool.network.toNetwork(), token0.address)
+                            if (prices.get(index) == null) {
+                                addPrice(pool, token0, normalized)
+                            }
                         }
                     }
+                } catch (ex: Exception) {
+                    logger.error("Unable to fetch price for pool ${pool.address} on network ${pool.network}, result was ${ex.message}")
                 }
-            } catch (ex: Exception) {
-                logger.error("Unable to fetch price for pool ${pool.address} on network ${pool.network}, result was ${ex.message}")
             }
-        }
     }
 
 
@@ -148,58 +156,83 @@ class DecentrifiUniswapV3UnderlyingPriceRepository(
             } ?: false
         }
 
-        val usdPairs = pools.filter(containsStableCoin)
-
-        val semaphore = Semaphore(12)
-
-        usdPairs.forEach { pool ->
-            launch {
-                semaphore.withPermit {
-                    try {
-
-                        val stablesForNetwork = stables.getOrDefault(pool.network.toNetwork(), emptyList()).map {
-                            it.address.lowercase()
-                        }
-
-                        val contract = UniswapV3PoolContract(
-                            blockchainGatewayProvider.getGateway(pool.network.toNetwork()),
-                            pool.address
-                        )
-
-                        val sqrtPriceX96 = contract.slot0().sqrtPriceX96
-                        val token0 =
-                            erC20Resource.getTokenInformation(pool.network.toNetwork(), contract.token0.await())
-                        val token1 =
-                            erC20Resource.getTokenInformation(pool.network.toNetwork(), contract.token1.await())
-
-                        val priceInOtherToken = (sqrtPriceX96.toBigDecimal().dividePrecisely(
-                            BigInteger.TWO.pow(96).toBigDecimal()
-                        )).pow(2)
-
-                        if (stablesForNetwork.contains(token0.address.lowercase())) {
-                            val normalized = getNormalizedPrice(token0, token1, priceInOtherToken)
-                            val price = BigDecimal.ONE.dividePrecisely(normalized)
-                            logger.info("found price for ${token1.name} on network ${pool.network} with price $price")
-                            prices.put(
-                                toIndex(pool.network.toNetwork(), token1.address), ExternalPrice(
-                                    token1.address, pool.network.toNetwork(), price, "uniswap-v3"
-                                )
-                            )
-                        } else if (stablesForNetwork.contains(token1.address.lowercase())) {
-                            val normalized = getNormalizedPrice(token0, token1, priceInOtherToken)
-                            logger.info("found price for ${token0.address} on network ${pool.network} with price $normalized")
-                            prices.put(
-                                toIndex(pool.network.toNetwork(), token0.name), ExternalPrice(
-                                    token0.address, pool.network.toNetwork(), normalized, "uniswap-v3"
-                                )
-                            )
-                        }
-                    } catch (ex: Exception) {
-                        logger.error("Unable to fetch price for pool ${pool.address} on network ${pool.network}, result was ${ex.message}")
-                    }
-                }
+        val usdPairs = pools.filter(containsStableCoin).filter { market ->
+            market.tokens.all {
+                erC20Resource.getAllTokens(market.network.toNetwork(), true).map {
+                    it.address.lowercase()
+                }.contains(it.address.lowercase())
             }
         }
+
+
+        usdPairs.zip(
+            bulkConstantResolver.resolve(
+                usdPairs.map { pool ->
+                    UniswapV3PoolContract(
+                        blockchainGatewayProvider.getGateway(pool.network.toNetwork()),
+                        pool.address
+                    )
+                }
+            )
+        ).filter { (_, contract) ->
+            contract.liquidity.await() > BigInteger.ZERO
+        }.parMap(concurrency = 8) { (pool, contract) ->
+            try {
+                val stablesForNetwork = stables.getOrDefault(pool.network.toNetwork(), emptyList()).map {
+                    it.address.lowercase()
+                }
+
+
+                val sqrtPriceX96 = contract.slot0.await().sqrtPriceX96
+                val token0 =
+                    erC20Resource.getTokenInformation(pool.network.toNetwork(), contract.token0.await())
+                val token1 =
+                    erC20Resource.getTokenInformation(pool.network.toNetwork(), contract.token1.await())
+
+                val priceInOtherToken = (sqrtPriceX96.toBigDecimal().dividePrecisely(
+                    BigInteger.TWO.pow(96).toBigDecimal()
+                )).pow(2)
+
+                if (stablesForNetwork.contains(token0.address.lowercase())) {
+                    val normalized = getNormalizedPrice(token0, token1, priceInOtherToken)
+
+                    val price = when {
+                        normalized > BigDecimal.ZERO -> BigDecimal.ONE.dividePrecisely(normalized)
+                        else -> BigDecimal.ZERO
+                    }
+                    logger.trace(
+                        "found price for {} on network {} with price {}",
+                        token1.symbol,
+                        pool.network.name,
+                        price
+                    )
+                    addPrice(pool, token1, price)
+                } else if (stablesForNetwork.contains(token1.address.lowercase())) {
+                    val normalized = getNormalizedPrice(token0, token1, priceInOtherToken)
+                    logger.trace(
+                        "found price for {} on network {} with price {}",
+                        token0.symbol,
+                        pool.network.name,
+                        normalized
+                    )
+                    addPrice(pool, token0, normalized)
+                }
+            } catch (ex: Exception) {
+                logger.error("Unable to fetch price for pool ${pool.address} on network ${pool.network}, result was ${ex.message}")
+            }
+        }
+    }
+
+    private fun addPrice(
+        pool: PoolingMarketInformation,
+        token: FungibleTokenInformation,
+        price: BigDecimal
+    ) {
+        prices.put(
+            toIndex(pool.network.toNetwork(), token.address), ExternalPrice(
+                token.address, pool.network.toNetwork(), price, "uniswap-v3", pool.name
+            )
+        )
     }
 
     private fun getNormalizedPrice(
@@ -216,8 +249,8 @@ class DecentrifiUniswapV3UnderlyingPriceRepository(
         )
     }
 
-    fun getPrice(fungibleToken: FungibleTokenInformation): BigDecimal? {
-        return prices.get(toIndex(fungibleToken.network.toNetwork(), fungibleToken.address))?.price
+    fun getPrice(fungibleToken: FungibleTokenInformation): ExternalPrice? {
+        return prices.get(toIndex(fungibleToken.network.toNetwork(), fungibleToken.address))
     }
 
     fun contains(fungibleToken: FungibleTokenInformation): Boolean {

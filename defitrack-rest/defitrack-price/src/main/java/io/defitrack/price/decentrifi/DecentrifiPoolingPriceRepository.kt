@@ -82,14 +82,14 @@ class DecentrifiPoolingPriceRepository(
 
     suspend fun addMarket(addMarket: AddMarketCommand) {
         val price = addMarket.calculatePrice()
-        logger.info("Price for {} ({})  ({}) is {}", addMarket.name, addMarket.address, addMarket.protocol, price)
-        putInCache(addMarket.network, addMarket.address, price)
+        logger.debug("Price for {} ({})  ({}) is {}", addMarket.name, addMarket.address, addMarket.protocol, price)
+        putInCache(addMarket.network, addMarket.address, price, addMarket.name)
     }
 
-    private fun putInCache(network: NetworkInformation, address: String, price: BigDecimal) =
+    private fun putInCache(network: NetworkInformation, address: String, price: BigDecimal, name: String) =
         cache.put(
             toIndex(network, address), ExternalPrice(
-                address, network.toNetwork(), price, "decentrifi-pooling"
+                address, network.toNetwork(), price, "decentrifi-pooling", name
             )
         )
 

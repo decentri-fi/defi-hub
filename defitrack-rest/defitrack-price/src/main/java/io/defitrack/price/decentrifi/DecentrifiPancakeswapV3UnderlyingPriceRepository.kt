@@ -99,7 +99,7 @@ class DecentrifiPancakeswapV3UnderlyingPriceRepository(
                         pool.address
                     )
 
-                    val sqrtPriceX96 = contract.slot0().sqrtPriceX96
+                    val sqrtPriceX96 = contract.slot0.await().sqrtPriceX96
                     val token0 = erC20Resource.getTokenInformation(pool.network.toNetwork(), contract.token0.await())
                     val token1 = erC20Resource.getTokenInformation(pool.network.toNetwork(), contract.token1.await())
 
@@ -116,7 +116,7 @@ class DecentrifiPancakeswapV3UnderlyingPriceRepository(
                         if (prices.get(index) == null) {
                             prices.put(
                                 index, ExternalPrice(
-                                    token1.address, pool.network.toNetwork(), price, "pancakeswap-v3"
+                                    token1.address, pool.network.toNetwork(), price, "pancakeswap-v3", pool.name
                                 )
                             )
                         }
@@ -126,7 +126,7 @@ class DecentrifiPancakeswapV3UnderlyingPriceRepository(
                         if (prices.get(index) == null) {
                             prices.put(
                                 index, ExternalPrice(
-                                    token0.address, pool.network.toNetwork(), normalized, "pancakeswap-v3"
+                                    token0.address, pool.network.toNetwork(), normalized, "pancakeswap-v3", pool.name
                                 )
                             )
                         }
@@ -167,7 +167,7 @@ class DecentrifiPancakeswapV3UnderlyingPriceRepository(
                             pool.address
                         )
 
-                        val sqrtPriceX96 = contract.slot0().sqrtPriceX96
+                        val sqrtPriceX96 = contract.slot0.await().sqrtPriceX96
                         val token0 =
                             erC20Resource.getTokenInformation(pool.network.toNetwork(), contract.token0.await())
                         val token1 =
@@ -182,14 +182,14 @@ class DecentrifiPancakeswapV3UnderlyingPriceRepository(
                             val price = BigDecimal.ONE.dividePrecisely(normalized)
                             prices.put(
                                 toIndex(pool.network.toNetwork(), token1.address), ExternalPrice(
-                                    token1.address, pool.network.toNetwork(), price, "uniswap-v3"
+                                    token1.address, pool.network.toNetwork(), price, "uniswap-v3", pool.name
                                 )
                             )
                         } else if (stablesForNetwork.contains(token1.address.lowercase())) {
                             val normalized = getNormalizedPrice(token0, token1, priceInOtherToken)
                             prices.put(
                                 toIndex(pool.network.toNetwork(), token0.address), ExternalPrice(
-                                    token0.address, pool.network.toNetwork(), normalized, "uniswap-v3"
+                                    token0.address, pool.network.toNetwork(), normalized, "uniswap-v3", pool.name
                                 )
                             )
                         }

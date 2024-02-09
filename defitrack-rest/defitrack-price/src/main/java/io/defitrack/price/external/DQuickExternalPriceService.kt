@@ -49,6 +49,7 @@ class DQuickExternalPriceService(
                 dquickAddress,
                 Network.POLYGON,
                 it,
+                "dquick",
                 "dquick"
             )
         }?.let {

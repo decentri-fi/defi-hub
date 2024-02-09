@@ -25,43 +25,36 @@ class UniswapV3PoolContract(
     blockchaingateway, address
 ) {
 
-    val liquidity: Deferred<BigInteger> = constant("liquidity", uint128())
+    val liquidity = constant<BigInteger>("liquidity", uint128())
+
+    val slot0 = constant<Slot0>(
+        "slot0", listOf(
+            uint160(),
+            int24(),
+            uint16(),
+            uint16(),
+            uint16(),
+            uint8(),
+            bool()
+        )
+    ) {
+        Slot0(
+            tick = it[1].value as BigInteger,
+            sqrtPriceX96 = it[0].value as BigInteger
+        )
+    }
+
     suspend fun refreshLiquidity(): BigInteger {
         return readSingle("liquidity", uint128())
     }
 
-    suspend fun slot0(): Slot0 {
-        val retVal = read(
-            "slot0",
-            listOf(),
-            listOf(
-                uint160(),
-                int24(),
-                uint16(),
-                uint16(),
-                uint16(),
-                uint8(),
-                bool(),
-            )
-        )
-
-        return Slot0(
-            tick = retVal[1].value as BigInteger,
-            sqrtPriceX96 = retVal[0].value as BigInteger
-        )
-    }
-
-    val token0: Deferred<String> = constant("token0", TypeUtils.address())
-    val token1: Deferred<String> = constant("token1", TypeUtils.address())
+    val token0: Deferred<String> = constant<String>("token0", TypeUtils.address())
+    val token1: Deferred<String> = constant<String>("token1", TypeUtils.address())
 
 
-    val feeGrowthGlobal0X128: Deferred<BigInteger> = lazyAsync {
-        readSingle("feeGrowthGlobal0X128", uint256())
-    }
+    val feeGrowthGlobal0X128 = constant<BigInteger>("feeGrowthGlobal0X128", uint256())
 
-    val feeGrowthGlobal1X128: Deferred<BigInteger> = lazyAsync {
-        readSingle("feeGrowthGlobal1X128", uint256())
-    }
+    val feeGrowthGlobal1X128 = constant<BigInteger>("feeGrowthGlobal1X128", uint256())
 
     suspend fun ticks(tick: BigInteger): Ticks {
         val retVal = read(

@@ -22,7 +22,7 @@ class DecentrifiUniswapV2PriceService(
 
     override suspend fun getAllPrices(): List<ExternalPrice> {
         return repository.prices.asMap().entries.map {
-            ExternalPrice(it.key.toString(), Network.ETHEREUM, it.value, "uniswap-v2")
+            ExternalPrice(it.key.toString(), Network.ETHEREUM, it.value, "uniswap-v2", "unknown")
         }
     }
 

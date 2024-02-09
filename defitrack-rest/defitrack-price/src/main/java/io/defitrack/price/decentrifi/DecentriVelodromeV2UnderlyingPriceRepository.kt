@@ -64,7 +64,8 @@ class DecentriVelodromeV2UnderlyingPriceRepository(
                         usdShare.token.address.lowercase(),
                         pool.network.toNetwork(),
                         BigDecimal.ONE,
-                        "velodrome-v2"
+                        "velodrome-v2",
+                        pool.name
                     )
                 )
 
@@ -77,7 +78,8 @@ class DecentriVelodromeV2UnderlyingPriceRepository(
                             otherShare.token.address,
                             pool.network.toNetwork(),
                             otherprice,
-                            "velodrome-v2"
+                            "velodrome-v2",
+                            pool.name
                         )
                     )
                 }

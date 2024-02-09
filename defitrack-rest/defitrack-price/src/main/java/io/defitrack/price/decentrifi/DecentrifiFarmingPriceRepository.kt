@@ -44,7 +44,8 @@ class DecentrifiFarmingPriceRepository(
                             farm.token!!.address,
                             farm.network.toNetwork(),
                             pricePerToken,
-                            "decentrifi-farming"
+                            "decentrifi-farming",
+                            farm.name
                         )
                     }.forEach { farm ->
                         cache.put(

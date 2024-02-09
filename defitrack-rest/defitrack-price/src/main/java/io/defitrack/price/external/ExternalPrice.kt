@@ -7,5 +7,6 @@ data class ExternalPrice(
     val address: String,
     val network: Network,
     val price: BigDecimal,
-    val source: String
+    val source: String,
+    val pair: String
 )
