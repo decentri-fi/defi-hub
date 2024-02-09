@@ -58,7 +58,7 @@ abstract class UniswapV3PoolingPositionProvider(
                     val token0 = uniswapV3PoolingMarketProvider.getToken(poolContract.token0.await())
                     val token1 = uniswapV3PoolingMarketProvider.getToken(poolContract.token1.await())
 
-                    val slot0 = poolContract.slot0()
+                    val slot0 = poolContract.slot0.await()
                     val userTokens0 = calculateAmount(
                         position.tickLower,
                         position.liquidity,
