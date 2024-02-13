@@ -280,7 +280,7 @@ enum class Protocol(
     BLUR(
         logo = "blur.png",
         slug = "blur",
-        primitives = listOf(POOLING),
+        primitives = listOf(POOLING, FARMING),
         website = "https://blur.io",
         networks = listOf(ETHEREUM),
         company = Company.BLUR
