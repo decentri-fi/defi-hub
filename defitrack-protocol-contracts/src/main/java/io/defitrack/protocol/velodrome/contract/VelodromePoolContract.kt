@@ -14,15 +14,30 @@ class VelodromePoolContract(
     val token0 = constant<String>("token0", address())
     val token1 = constant<String>("token1", address())
     val stable = constant<Boolean>("stable", TypeUtils.bool())
-    val reserves = constant<Reserves>("getReserves", listOf(
-        uint256(), //reserve 0
-        uint256(), //reserve 1
-        uint256(), //blockTimestampLast
-    )) {
-        Reserves(
-            amount0 = it[0].value as BigInteger,
-            amount1 = it[1].value as BigInteger,
+    suspend fun reserves(): Reserves {
+        val retVal = read(
+            "getReserves",
+            emptyList(),
+            listOf(
+                uint256(), //reserve 0
+                uint256(), //reserve 1
+                uint256(), //blockTimestampLast
+            )
         )
+        return Reserves(
+            amount0 = retVal[0].value as BigInteger,
+            amount1 = retVal[1].value as BigInteger,
+        )
+    }
+
+    suspend fun totalSupply(): BigInteger {
+        return read(
+            "totalSupply",
+            emptyList(),
+            listOf(
+                uint256()
+            )
+        )[0].value as BigInteger
     }
 
     data class Reserves(
