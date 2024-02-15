@@ -27,7 +27,7 @@ class DecentrifiVelodromeV2PriceService(
 
     override suspend fun getPrice(fungibleToken: FungibleTokenInformation): BigDecimal {
         return repository.getPrice(fungibleToken.address)?.price?.also {
-            logger.info("getting logging price on decentrifi velodromev2 for ${fungibleToken.name} (${fungibleToken.symbol}) on ${fungibleToken.network.name}")
+            logger.debug("getting logging price on decentrifi velodromev2 for ${fungibleToken.name} (${fungibleToken.symbol}) on ${fungibleToken.network.name}")
         } ?: BigDecimal.ZERO
     }
 }

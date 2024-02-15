@@ -1,5 +1,6 @@
 package io.defitrack.claimables.adapters.decentrifi
 
+import arrow.fx.coroutines.parMap
 import io.defitrack.claimable.vo.ClaimableMarketVO
 import io.defitrack.claimable.vo.UserClaimableVO
 import io.defitrack.claimables.ports.outputs.ClaimablesClient
@@ -29,7 +30,7 @@ class RemoteClaimablesClient(
 
     override suspend fun getClaimables(address: String, protocols: List<Protocol>): List<UserClaimableVO> =
         withContext(Dispatchers.IO) {
-            protocols.flatMap { protocol ->
+            protocols.parMap(concurrency = 12) { protocol ->
                 val timedValue: TimedValue<List<UserClaimableVO>> = measureTimedValue {
                     try {
                         val response = httpClient.get("$baseUrl/${protocol.slug}/$address/claimables")
@@ -49,7 +50,7 @@ class RemoteClaimablesClient(
 
                 logger.info("took ${timedValue.duration} to get claimables for $address on ${protocol.slug}")
                 timedValue.value
-            }
+            }.flatten()
         }
 
     val cache = Cache.Builder<String, List<ClaimableMarketVO>>().expireAfterWrite(1.hours).build()

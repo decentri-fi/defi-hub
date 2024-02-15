@@ -28,7 +28,7 @@ class DecentrifiUniswapV2PriceService(
 
     override suspend fun getPrice(fungibleToken: FungibleTokenInformation): BigDecimal {
         return repository.getPrice(fungibleToken.address)?.also {
-            logger.info("getting logging price on decentrifi uniswapv2 for ${fungibleToken.name} (${fungibleToken.symbol}) on ${fungibleToken.network.name}")
+            logger.debug("getting logging price on decentrifi uniswapv2 for ${fungibleToken.name} (${fungibleToken.symbol}) on ${fungibleToken.network.name}")
         } ?: BigDecimal.ZERO
     }
 }
