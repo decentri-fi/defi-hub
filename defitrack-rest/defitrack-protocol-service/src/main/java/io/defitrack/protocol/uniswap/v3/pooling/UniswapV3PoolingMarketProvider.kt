@@ -48,6 +48,7 @@ abstract class UniswapV3PoolingMarketProvider(
             val pair = it.address to getMarket(it).mapLeft {
                 when (it) {
                     is MarketTooLowException -> logger.trace("market too low for ${it.message}")
+                    is UnverifiedTokensException -> logger.debug("unverified tokens for ${it.message}")
                     else -> logger.error("error getting market for ${it.message}")
                 }
             }.getOrNone()
@@ -78,6 +79,18 @@ abstract class UniswapV3PoolingMarketProvider(
             val token0 = prefetch?.tokens?.get(0)?.toFungibleToken(getNetwork()) ?: getToken(market.token0.await())
             val token1 = prefetch?.tokens?.get(1)?.toFungibleToken(getNetwork()) ?: getToken(market.token1.await())
 
+
+
+            listOf(token0, token1).map {
+                it.address.lowercase()
+            }.any {
+                !allVerifiedTokens.await().contains(it)
+            }.let {
+                if (it) {
+                    throw UnverifiedTokensException("Unverified tokens in market $identifier")
+                }
+            }
+
             val breakdown = refreshable(
                 prefetch?.breakdown?.map {
                     PoolingMarketTokenShare(
@@ -88,6 +101,7 @@ abstract class UniswapV3PoolingMarketProvider(
             ) {
                 fiftyFiftyBreakdown(token0, token1, market.address)
             }
+
 
             val totalSupply = prefetch?.totalSupply ?: market.liquidity.await().asEth()
             create(
@@ -111,5 +125,12 @@ abstract class UniswapV3PoolingMarketProvider(
         return Protocol.UNISWAP_V3
     }
 
+    val allVerifiedTokens = lazyAsync {
+        getERC20Resource().getAllTokens(getNetwork(), true).map {
+            it.address.lowercase()
+        }
+    }
+
     class MarketTooLowException(msg: String) : RuntimeException(msg)
+    class UnverifiedTokensException(msg: String) : RuntimeException(msg)
 }

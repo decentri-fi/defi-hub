@@ -8,6 +8,7 @@ import io.defitrack.common.utils.refreshable
 import io.defitrack.protocol.Protocol
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties.Lettuce.Cluster.Refresh
+import java.time.Duration
 import java.time.LocalDateTime
 import kotlin.reflect.full.declaredMemberProperties
 
@@ -19,7 +20,8 @@ abstract class DefiMarket(
     open val deprecated: Boolean,
     val updatedAt: Refreshable<LocalDateTime> = refreshable(LocalDateTime.now()) {
         LocalDateTime.now()
-    }
+    },
+    val refreshRate: Duration = Duration.ofMinutes(59)
 ) {
 
     val logger = LoggerFactory.getLogger(this::class.java)

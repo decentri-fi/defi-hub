@@ -1,6 +1,7 @@
 package io.defitrack.protocol.uniswap.v2.pooling
 
 import arrow.core.Either
+import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMap
 import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.architecture.conditional.ConditionalOnNetwork
@@ -43,7 +44,7 @@ class UniswapV2EthereumPoolingMarketProvider(
         val allPairs = contract.allPairs()
         logger.info("Found ${allPairs.size} Uniswap V2 Pools")
         allPairs.parMap(concurrency = 12) {
-            Either.catch {
+            catch {
                 val token = getToken(it)
                 val breakdown = fiftyFiftyBreakdown(
                     token.underlyingTokens[0],

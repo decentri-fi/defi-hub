@@ -60,7 +60,7 @@ class MarketCacheRefresher(
             return@runBlocking
         }
 
-        logger.info("Refreshing all caches. No full population.")
+        logger.info("Refreshing all caches.")
         poolingMarketProviders.map {
             it.refreshMarkets()
         }
