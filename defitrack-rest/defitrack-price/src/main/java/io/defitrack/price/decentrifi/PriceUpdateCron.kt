@@ -14,7 +14,9 @@ class PriceUpdateCron(
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 1)
     fun updatePrices() {
         logger.info("Updating prices from decentrifi")
-        priceRepos.forEach {
+        priceRepos.sortedBy {
+            it.order()
+        }.forEach {
             logger.info("Updating prices from ${it::class.simpleName}")
             it.populate()
         }
