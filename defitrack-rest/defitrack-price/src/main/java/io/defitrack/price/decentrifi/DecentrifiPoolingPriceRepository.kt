@@ -4,15 +4,13 @@ import arrow.fx.coroutines.parMap
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.BigDecimalExtensions.isZero
 import io.defitrack.erc20.domain.FungibleTokenInformation
-import io.defitrack.market.domain.PoolingMarketTokenShare
-import io.defitrack.networkinfo.NetworkInformation
-import io.defitrack.protocol.ProtocolInformation
 import io.defitrack.market.domain.pooling.PoolingMarketInformation
 import io.defitrack.market.domain.pooling.PoolingMarketTokenShareInformation
-import io.defitrack.price.PriceCalculator
+import io.defitrack.networkinfo.NetworkInformation
 import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.price.external.ExternalPrice
 import io.defitrack.price.port.out.Prices
+import io.defitrack.protocol.ProtocolInformation
 import io.github.reactivecircus.cache4k.Cache
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -21,7 +19,6 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
@@ -75,9 +72,7 @@ class DecentrifiPoolingPriceRepository(
                         network = pool.network
                     )
                 }
-                parMap.filter {
-                    it.address == "0xd25711edfbf747efce181442cc1d8f5f8fc8a0d3"
-                }.forEach {
+                parMap.forEach {
                     addMarket(it)
                 }
             } catch (ex: Exception) {
@@ -114,7 +109,7 @@ class DecentrifiPoolingPriceRepository(
 
     suspend fun getPools(protocol: ProtocolInformation): List<PoolingMarketInformation> {
         val result =
-            httpClient.get("https://api.decentri.fi/velodrome_v2/pooling/all-markets")
+            httpClient.get("https://api.decentri.fi/${protocol.slug}/pooling/all-markets")
         return if (result.status.isSuccess())
             result.body()
         else {
