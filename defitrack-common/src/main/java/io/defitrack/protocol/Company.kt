@@ -336,10 +336,6 @@ enum class Company(
         prettyName = "MakerDAO",
         slug = "makerdao"
     ),
-    MAPLEFINANCE(
-        prettyName = "Maple Finance",
-        slug = "maplefinance"
-    ),
     KWENTA(
         prettyName = "Kwenta",
         slug = "kwenta"

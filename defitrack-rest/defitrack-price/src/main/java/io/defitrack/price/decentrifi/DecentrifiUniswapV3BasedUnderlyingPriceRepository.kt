@@ -103,9 +103,8 @@ abstract class DecentrifiUniswapV3BasedUnderlyingPriceRepository(
                         prices.get(toIndex(pool.network.toNetwork(), eth))?.price ?: BigDecimal.ZERO
 
                     if (ethPriceForNetwork == BigDecimal.ZERO) {
-                        logger.error("price for eth was not prepopulated for network ${pool.network}")
+                        logger.error("price for eth was not prepopulated for network ${pool.network.name}")
                     }
-
 
                     val sqrtPriceX96 = contract.slot0.await().sqrtPriceX96
                     val token0 =

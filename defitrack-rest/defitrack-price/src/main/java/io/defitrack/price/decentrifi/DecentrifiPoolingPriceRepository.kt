@@ -2,6 +2,7 @@ package io.defitrack.price.decentrifi
 
 import arrow.fx.coroutines.parMap
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
+import io.defitrack.common.utils.BigDecimalExtensions.isZero
 import io.defitrack.erc20.domain.FungibleTokenInformation
 import io.defitrack.market.domain.PoolingMarketTokenShare
 import io.defitrack.networkinfo.NetworkInformation
@@ -38,37 +39,44 @@ class DecentrifiPoolingPriceRepository(
 
 
     suspend fun AddMarketCommand.calculatePrice(): BigDecimal {
-        return if (!hasBreakdown() || liquidity == BigDecimal.ZERO) {
-            BigDecimal.ZERO
-        } else {
-            val marketSize = breakdown?.sumOf {
-                prices.calculatePrice(
-                    GetPriceCommand(
-                        it.token.address,
-                        it.token.network.toNetwork(),
-                        it.reserveDecimal
+        return try {
+            if (!hasBreakdown() || liquidity.isZero()) {
+                BigDecimal.ZERO
+            } else {
+                val marketSize = breakdown?.sumOf {
+                    prices.calculatePrice(
+                        GetPriceCommand(
+                            it.token.address,
+                            it.token.network.toNetwork(),
+                            it.reserveDecimal
+                        )
                     )
-                )
-            }?.toBigDecimal() ?: BigDecimal.ZERO
-            marketSize.dividePrecisely(liquidity)
+                }?.toBigDecimal() ?: BigDecimal.ZERO
+                marketSize.dividePrecisely(liquidity)
+            }
+        } catch (ex: Exception) {
+            logger.debug("Unable to calculate price for {}, liquidity {}", name, liquidity)
+            BigDecimal.ZERO
         }
     }
 
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 1)
     fun populatePoolPrices() = runBlocking {
         logger.info("fetching prices from decentrifi pools")
-        val protocols = getProtocols()
-        protocols.map { proto ->
+        getProtocols().map { proto ->
             try {
-                getPools(proto).parMap(concurrency = 8) { pool ->
+                val parMap = getPools(proto).parMap(concurrency = 12) { pool ->
                     AddMarketCommand(
                         breakdown = pool.breakdown,
                         liquidity = pool.totalSupply,
                         name = pool.name,
                         address = pool.address,
-                        protocol = proto.slug,
+                        protocol = pool.protocol.slug,
                         network = pool.network
                     )
+                }
+                parMap.filter {
+                    it.address == "0xd25711edfbf747efce181442cc1d8f5f8fc8a0d3"
                 }.forEach {
                     addMarket(it)
                 }
@@ -106,7 +114,7 @@ class DecentrifiPoolingPriceRepository(
 
     suspend fun getPools(protocol: ProtocolInformation): List<PoolingMarketInformation> {
         val result =
-            httpClient.get("https://api.decentri.fi/${protocol.slug}/pooling/all-markets")
+            httpClient.get("https://api.decentri.fi/velodrome_v2/pooling/all-markets")
         return if (result.status.isSuccess())
             result.body()
         else {

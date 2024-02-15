@@ -707,14 +707,6 @@ enum class Protocol(
         networks = listOf(ETHEREUM),
         company = Company.MAKERDAO
     ),
-    MAPLEFINANCE(
-        logo = "maple-finance.png",
-        slug = "maplefinance",
-        website = "https://maple.finance/",
-        primitives = listOf(LENDING),
-        networks = listOf(ETHEREUM),
-        company = Company.MAPLEFINANCE
-    ),
     KWENTA(
         logo = "kwenta.png",
         slug = "kwenta",
