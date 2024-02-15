@@ -20,8 +20,7 @@ abstract class DefiMarket(
     open val deprecated: Boolean,
     val updatedAt: Refreshable<LocalDateTime> = refreshable(LocalDateTime.now()) {
         LocalDateTime.now()
-    },
-    val refreshRate: Duration = Duration.ofMinutes(59)
+    }
 ) {
 
     val logger = LoggerFactory.getLogger(this::class.java)
@@ -32,12 +31,17 @@ abstract class DefiMarket(
                 it.returnType.classifier == Refreshable::class
             }
             .map {
-                it.getter.call(this) as Refreshable<*>
+                it.getter.call(this)
+            }.mapNotNull {
+                if (it is Refreshable<*>)
+                    it
+                else
+                    null
             }.forEach {
                 catch {
                     it.refresh()
                 }.mapLeft {
-                    logger.error("Unable to refresh $id", it)
+                    logger.error("Unable to refresh $id: {}", it.message)
                 }
             }
         return this
