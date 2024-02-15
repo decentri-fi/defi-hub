@@ -21,13 +21,12 @@ import java.util.concurrent.Executors
 class DecentriVelodromeV2UnderlyingPriceRepository(
     private val markets: Markets,
     private val stablecoinPriceProvider: StablecoinPriceProvider,
-) {
+) : PriceRepository() {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     val prices = Cache.Builder<String, ExternalPrice>().build()
 
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 1) // every 24 hours
-    fun populatePrices() {
+    override fun populate() {
         Executors.newSingleThreadExecutor().submit {
             runBlocking {
                 val pools = getUniswapV2Pools()

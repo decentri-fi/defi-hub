@@ -21,14 +21,12 @@ import java.math.BigDecimal
 class DecentrifiFarmingPriceRepository(
     private val marketResource: Markets,
     private val protocolResource: ProtocolResource
-) {
+) : PriceRepository() {
 
     val logger = LoggerFactory.getLogger(this::class.java)
     val cache = Cache.Builder<String, ExternalPrice>().build()
 
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 6)
-    fun populateFarmPrices() = runBlocking {
-        logger.info("fetching prices from decentrifi farms")
+    override fun populate() = runBlocking {
         protocolResource.getProtocols().map { proto ->
             try {
                 marketResource.getFarmingMarkets(proto.slug)

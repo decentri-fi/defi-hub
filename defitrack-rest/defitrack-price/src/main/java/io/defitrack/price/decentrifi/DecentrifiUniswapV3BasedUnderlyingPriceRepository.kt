@@ -32,27 +32,24 @@ abstract class DecentrifiUniswapV3BasedUnderlyingPriceRepository(
     private val stablecoinPriceProvider: StablecoinPriceProvider,
     private val bulkConstantResolver: BulkConstantResolver,
     private val protocol: Protocol
-) {
+) : PriceRepository() {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
     val prices = Cache.Builder<String, ExternalPrice>().build()
 
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 3) // every 3 hours
-    fun populatePrices() {
-        Executors.newSingleThreadExecutor().submit {
-            runBlocking {
-                val duration = measureTime {
-                    val pools = getUniswapV3Pools()
+    override fun populate() {
+        runBlocking {
+            val duration = measureTime {
+                val pools = getUniswapV3Pools()
 
-                    try {
-                        importUsdPairs(pools)
-                        importEthPairs(pools)
-                    } catch (e: Exception) {
-                        logger.error("Unable to fetch pools for ${protocol.name}, result was ${e.message}")
-                    }
+                try {
+                    importUsdPairs(pools)
+                    importEthPairs(pools)
+                } catch (e: Exception) {
+                    logger.error("Unable to fetch pools for ${protocol.name}, result was ${e.message}")
                 }
-                logger.info("[took ${duration.inWholeSeconds} seconds] ${protocol.name} Underlying Price Repository populated with ${prices.asMap().entries.size} prices")
             }
+            logger.info("[took ${duration.inWholeSeconds} seconds] ${protocol.name} Underlying Price Repository populated with ${prices.asMap().entries.size} prices")
         }
     }
 
@@ -284,4 +281,6 @@ abstract class DecentrifiUniswapV3BasedUnderlyingPriceRepository(
             )
         )
     }
+
+    override fun order() = 10
 }

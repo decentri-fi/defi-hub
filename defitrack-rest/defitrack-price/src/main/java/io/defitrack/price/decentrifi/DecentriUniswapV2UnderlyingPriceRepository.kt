@@ -22,20 +22,17 @@ import java.util.concurrent.Executors
 class DecentriUniswapV2UnderlyingPriceRepository(
     private val markets: Markets,
     private val stablecoinPriceProvider: StablecoinPriceProvider,
-) {
+) : PriceRepository() {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     val prices = Cache.Builder<String, BigDecimal>().build()
 
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 1) // every 24 hours
-    fun populatePrices() {
-        Executors.newSingleThreadExecutor().submit {
-            runBlocking {
-                val pools = getUniswapV2Pools()
+    override fun populate() {
+        runBlocking {
+            val pools = getUniswapV2Pools()
 
-                importUsdPairs(pools)
-                logger.info("Decentri Uniswap V2 Underlying Price Repository populated with ${prices.asMap().entries.size} prices")
-            }
+            importUsdPairs(pools)
+            logger.info("Decentri Uniswap V2 Underlying Price Repository populated with ${prices.asMap().entries.size} prices")
         }
     }
 
@@ -83,5 +80,9 @@ class DecentriUniswapV2UnderlyingPriceRepository(
 
     suspend fun getUniswapV2Pools(): List<PoolingMarketInformation> {
         return markets.getPoolingMarkets("uniswap_v2")
+    }
+
+    override fun order(): Int {
+        return 50
     }
 }

@@ -22,14 +22,14 @@ import java.math.BigDecimal
 @ConditionalOnProperty("oracles.lending_markets.enabled", havingValue = "true", matchIfMissing = true)
 class DecentrifiLendingPriceRepository(
     private val httpClient: HttpClient
-) {
+) : PriceRepository(){
 
     val logger = LoggerFactory.getLogger(this::class.java)
 
     val cache = Cache.Builder<String, ExternalPrice>().build()
 
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 6)
-    fun populatePoolPrices() = runBlocking {
+    override fun populate() = runBlocking {
         logger.info("fetching prices from decentrifi lending pools")
         val protocols = getProtocols()
         protocols.map { protocol ->

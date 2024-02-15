@@ -20,20 +20,17 @@ import java.util.concurrent.Executors
 class DecentriAlienbaseUnderlyingPriceRepository(
     private val markets: Markets,
     private val stablecoinPriceProvider: StablecoinPriceProvider
-) {
+) : PriceRepository() {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     val prices = Cache.Builder<String, BigDecimal>().build()
 
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 1)
-    fun populatePrices() {
-        Executors.newSingleThreadExecutor().submit {
-            runBlocking {
-                val pools = getAlienbasePools()
+    override fun populate() {
+        runBlocking {
+            val pools = getAlienbasePools()
 
-                importUsdPairs(pools)
-                logger.info("Decentri Alienbase V2 Underlying Price Repository populated with ${prices.asMap().entries.size} prices")
-            }
+            importUsdPairs(pools)
+            logger.info("Decentri Alienbase V2 Underlying Price Repository populated with ${prices.asMap().entries.size} prices")
         }
     }
 
@@ -82,4 +79,6 @@ class DecentriAlienbaseUnderlyingPriceRepository(
     suspend fun getAlienbasePools(): List<PoolingMarketInformation> {
         return markets.getPoolingMarkets("alienbase")
     }
+
+    override fun order(): Int = 30
 }

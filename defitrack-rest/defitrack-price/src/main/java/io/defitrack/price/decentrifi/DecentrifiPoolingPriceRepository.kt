@@ -29,11 +29,10 @@ import java.math.BigDecimal
 class DecentrifiPoolingPriceRepository(
     private val httpClient: HttpClient,
     private val prices: Prices
-) {
+) : PriceRepository() {
 
     val logger = LoggerFactory.getLogger(this::class.java)
     val cache = Cache.Builder<String, ExternalPrice>().build()
-
 
     suspend fun AddMarketCommand.calculatePrice(): BigDecimal {
         return try {
@@ -57,8 +56,7 @@ class DecentrifiPoolingPriceRepository(
         }
     }
 
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 1)
-    fun populatePoolPrices() = runBlocking {
+    override fun populate() = runBlocking {
         logger.info("fetching prices from decentrifi pools")
         getProtocols().map { proto ->
             try {
