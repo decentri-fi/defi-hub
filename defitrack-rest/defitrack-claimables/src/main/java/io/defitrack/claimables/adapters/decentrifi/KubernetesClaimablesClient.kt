@@ -62,7 +62,7 @@ class KubernetesClaimablesClient(
                     try {
                         val response =
                             httpClient.get("http://defitrack-group-${node.name}.default.svc.cluster.local:8080/claimables/$address") {
-                                parameter("include", protocols.map(Protocol::slug))
+                                parameter("include", protocols.map(Protocol::slug).joinToString(","))
                             }
                         if (response.status.isSuccess()) {
                             response.body()
