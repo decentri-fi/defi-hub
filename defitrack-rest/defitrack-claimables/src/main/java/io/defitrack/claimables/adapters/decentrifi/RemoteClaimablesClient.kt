@@ -20,7 +20,7 @@ import kotlin.time.TimedValue
 import kotlin.time.measureTimedValue
 
 @Component
-@Profile("!grouped-fetchers")
+@Profile("!kubernetes")
 class RemoteClaimablesClient(
     private val httpClient: HttpClient
 ) : ClaimablesClient {

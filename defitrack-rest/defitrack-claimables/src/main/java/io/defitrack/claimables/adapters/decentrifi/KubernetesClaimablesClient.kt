@@ -23,7 +23,7 @@ import kotlin.time.TimedValue
 import kotlin.time.measureTimedValue
 
 @Component
-@Profile("grouped-fetchers")
+@Profile("kubernetes")
 class KubernetesClaimablesClient(
     private val httpClient: HttpClient
 ) : ClaimablesClient {
@@ -61,7 +61,9 @@ class KubernetesClaimablesClient(
                 val timedValue: TimedValue<List<UserClaimableVO>> = measureTimedValue {
                     try {
                         val response =
-                            httpClient.get("http://defitrack-group-${node.name}.default.svc.cluster.local:8080/claimables/$address")
+                            httpClient.get("http://defitrack-group-${node.name}.default.svc.cluster.local:8080/claimables/$address") {
+                                parameter("include", protocols.map(Protocol::slug))
+                            }
                         if (response.status.isSuccess()) {
                             response.body()
                         } else {

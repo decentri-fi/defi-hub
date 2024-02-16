@@ -10,6 +10,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.web3j.crypto.WalletUtils
 
@@ -23,6 +24,7 @@ class NodeAggregatedClaimableRestController(
     @GetMapping(value = ["/claimables/{address}"])
     suspend fun claimables(
         @PathVariable("address") address: String,
+        @RequestParam("include", required = false) include: List<String> = emptyList(),
     ): List<UserClaimableVO> = coroutineScope {
 
         if (!WalletUtils.isValidAddress(address)) {
@@ -30,24 +32,24 @@ class NodeAggregatedClaimableRestController(
         }
 
         val fromProviders = async {
-            getFromProviders(null, address).map { toVO(it) }
+            getFromProviders(include, address).map { toVO(it) }
         }
 
         val fromDefaultProvider = async {
-            getFromDefaultProvider(address, null).map { toVO(it) }
+            getFromDefaultProvider(address, include).map { toVO(it) }
         }
 
 
         awaitAll(fromProviders, fromDefaultProvider).flatten().filterNotNull()
     }
 
-    private suspend fun getFromDefaultProvider(user: String, protocol: String? = null): List<UserClaimable> {
-        return defaultUserClaimableProvider.claimables(user, protocol)
+    private suspend fun getFromDefaultProvider(user: String, protocols: List<String>): List<UserClaimable> {
+        return defaultUserClaimableProvider.claimables(user, protocols)
     }
 
-    private suspend fun getFromProviders(protocol: String? = null, address: String) = userClaimableProviders
+    private suspend fun getFromProviders(include: List<String>, address: String) = userClaimableProviders
         .filter {
-            protocol == null || it.getProtocol().slug == protocol
+            include.isEmpty() || include.contains(it.getProtocol().slug)
         }.flatMap {
             try {
                 it.claimables(address)

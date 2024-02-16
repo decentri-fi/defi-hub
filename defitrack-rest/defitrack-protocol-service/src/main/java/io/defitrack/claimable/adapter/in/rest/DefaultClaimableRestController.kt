@@ -88,7 +88,7 @@ class DefaultClaimableRestController(
     }
 
     private suspend fun getFromDefaultProvider(user: String, protocol: String): List<UserClaimable> {
-        return defaultUserClaimableProvider.claimables(user, protocol)
+        return defaultUserClaimableProvider.claimables(user, listOf(protocol))
     }
 
     private suspend fun getFromProviders(protocol: String, address: String) = userClaimableProviders
