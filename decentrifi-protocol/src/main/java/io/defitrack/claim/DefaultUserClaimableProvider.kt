@@ -2,6 +2,7 @@ package io.defitrack.claim
 
 import arrow.core.*
 import arrow.core.Either.Companion.catch
+import arrow.fx.coroutines.parMap
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -37,8 +38,7 @@ class DefaultUserClaimableProvider(
             val claimableRewardFetcher: ClaimableRewardFetcher
         )
 
-        return@coroutineScope fetchersByNetwork.map { marketsByNetwork ->
-            async {
+        return@coroutineScope fetchersByNetwork.entries.parMap(concurrency = 8) { marketsByNetwork ->
                 try {
                     val rewards = marketsByNetwork.value.flatMap { claimable ->
                         claimable.claimableRewardFetchers.flatMap { fetcher ->
@@ -86,7 +86,6 @@ class DefaultUserClaimableProvider(
                     logger.info("Unable to fetch claimables for ${marketsByNetwork.key}", ex)
                     emptyList()
                 }
-            }
-        }.awaitAll().flatten()
+        }.flatten()
     }
 }
