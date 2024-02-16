@@ -1,5 +1,6 @@
 package io.defitrack.starknet
 
+import arrow.core.nel
 import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.architecture.conditional.ConditionalOnNetwork
 import io.defitrack.claim.*
@@ -36,33 +37,31 @@ class StarknetAirdropProvider(
     }
 
 
+    val stark = lazyAsync {
+        erC20Resource.getTokenInformation(getNetwork(), "0xca14007eff0db1f8135f4c25b34de49ab0d42766")
+    }
+
     val entries = lazyAsync {
         val result: String =
             httpClient.get("https://raw.githubusercontent.com/decentri-fi/data/master/csv/starknet.csv").bodyAsText()
         result.lines().drop(1).filter {
             it.isNotBlank()
-        }.map {
-            StarknetAirdropEntry(
-                it.split(",")[0],
-                it.split(",")[1],
-            )
+        }.associate {
+            it.split(",")[0].lowercase() to it.split(",")[1]
         }
     }
 
     override suspend fun claimables(address: String): List<UserClaimable> {
-        val strk = erC20Resource.getTokenInformation(getNetwork(), "0xca14007eff0db1f8135f4c25b34de49ab0d42766")
-        return entries.await().find { it.address.lowercase() == address.lowercase() }?.let {
-            return listOf(
-                UserClaimable(
-                    id = "starknet-airdrop",
-                    name = "Starknet Airdrop",
-                    protocol = getProtocol(),
-                    network = getNetwork(),
-                    amount = BigDecimal.valueOf(it.amount.toDouble()).times(BigDecimal.valueOf(10).pow(18))
-                        .toBigInteger(),
-                    claimableToken = strk
-                )
-            )
+        return entries.await().get(address.lowercase())?.let {
+            UserClaimable(
+                id = "starknet-airdrop",
+                name = "Starknet Airdrop",
+                protocol = getProtocol(),
+                network = getNetwork(),
+                amount = BigDecimal.valueOf(it.toDouble()).times(BigDecimal.valueOf(10).pow(18))
+                    .toBigInteger(),
+                claimableToken = stark.await()
+            ).nel()
         } ?: emptyList()
     }
 

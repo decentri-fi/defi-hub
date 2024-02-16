@@ -1,5 +1,6 @@
 package io.defitrack.claimable.adapter.`in`.rest
 
+import arrow.fx.coroutines.parZip
 import io.defitrack.claim.AbstractUserClaimableProvider
 import io.defitrack.claim.DefaultUserClaimableProvider
 import io.defitrack.claim.UserClaimable
@@ -31,16 +32,17 @@ class NodeAggregatedClaimableRestController(
             return@coroutineScope emptyList()
         }
 
-        val fromProviders = async {
+        val fromProviders =
             getFromProviders(include, address).map { toVO(it) }
-        }
 
-        val fromDefaultProvider = async {
+        val fromDefaultProvider =
             getFromDefaultProvider(address, include).map { toVO(it) }
-        }
 
-
-        awaitAll(fromProviders, fromDefaultProvider).flatten().filterNotNull()
+        parZip({
+            fromProviders
+        }, {
+            fromDefaultProvider
+        }) { l1, l2 -> l1 + l2 }.filterNotNull()
     }
 
     private suspend fun getFromDefaultProvider(user: String, protocols: List<String>): List<UserClaimable> {
