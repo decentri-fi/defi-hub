@@ -23,7 +23,7 @@ import kotlin.time.TimedValue
 import kotlin.time.measureTimedValue
 
 @Component
-@Profile("kubernetes")
+@Profile("grouped-fetchers")
 class KubernetesClaimablesClient(
     private val httpClient: HttpClient
 ) : ClaimablesClient {
