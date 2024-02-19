@@ -1,13 +1,11 @@
 package io.defitrack.web3j
 
+import io.defitrack.config.Web3JEndpoints
 import io.defitrack.evm.EvmContractInteractionCommand
 import io.defitrack.evm.GetEventLogsCommand
 import io.defitrack.multicall.MulticallService
-import io.micrometer.observation.Observation
-import io.micrometer.observation.ObservationRegistry
 import kotlinx.coroutines.delay
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.DefaultBlockParameterName
@@ -20,46 +18,59 @@ import org.web3j.protocol.core.methods.response.*
 import java.math.BigInteger
 import java.util.regex.Matcher
 import java.util.regex.Pattern
-import kotlin.RuntimeException
 
 @Component
 class Web3JProxy(
-    private val primaryWeb3j: Web3j,
-    @Qualifier("fallbackWeb3js") private val fallbacks: List<Web3j>,
+    private val web3JEndpoints: Web3JEndpoints,
     private val multicallService: MulticallService,
-    private val observationRegistry: ObservationRegistry
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    suspend fun call(calls: List<EvmContractInteractionCommand>): List<EthCall> {
-        return multicallService.call(calls) { call(it) }
+    suspend fun call(calls: List<EvmContractInteractionCommand>, _web3j: Web3j): List<EthCall> {
+        return multicallService.call(calls) { call(it, _web3j) }
     }
+
+    data class RunWithFallbackContext<T : Response<*>>(
+        val requestProvider: (web3j: Web3j) -> Request<*, T>,
+        val _web3j: Web3j,
+        val maxTries: Int = 3,
+        val tries: Int = 0,
+    ) {
+        fun increment(): RunWithFallbackContext<T> {
+            return this.copy(tries = this.tries + 1)
+        }
+    }
+
 
     suspend fun getLogs(
         getEventLogsCommand: GetEventLogsCommand,
-        _web3j: Web3j = primaryWeb3j
+        _web3j: Web3j
     ): EthLog {
         val ethFilter = getEthFilter(getEventLogsCommand)
 
         return try {
-            val log = runWithFallback({
-                _web3j.ethGetLogs(ethFilter)
-            })
-
+            val log = runWithFallback(
+                RunWithFallbackContext(
+                    {
+                        _web3j.ethGetLogs(ethFilter)
+                    },
+                    _web3j
+                )
+            )
 
             when {
                 log.exceedsSize() -> {
                     val splitMatcher = log.exceededPattern.matcher(log.error.message)
                     if (splitMatcher.find()) {
-                        fromSplitMatcher(splitMatcher, getEventLogsCommand)
+                        fromSplitMatcher(splitMatcher, getEventLogsCommand, _web3j)
                     } else {
                         log
                     }
                 }
 
                 log.exceedsBlockLimit() -> {
-                    split(getEventLogsCommand)
+                    split(getEventLogsCommand, _web3j)
                 }
 
                 else -> {
@@ -67,13 +78,13 @@ class Web3JProxy(
                 }
             }
         } catch (needssplit: NeedsSplitException) {
-            split(getEventLogsCommand)
+            split(getEventLogsCommand, _web3j)
         } catch (ex: Exception) {
             throw ex
         }
     }
 
-    private suspend fun split(getEventLogsCommand: GetEventLogsCommand): EthLog {
+    private suspend fun split(getEventLogsCommand: GetEventLogsCommand, _web3j: Web3j): EthLog {
         val startBlock = getEventLogsCommand.fromBlock ?: BigInteger.ZERO
         val endBlock = startBlock + BigInteger.valueOf(10000)
         logger.info("too many results, splitting into two calls: {} - {}", startBlock, endBlock)
@@ -85,7 +96,8 @@ class Web3JProxy(
                     getEventLogsCommand.optionalTopics,
                     startBlock,
                     endBlock
-                )
+                ),
+                _web3j
             ),
             getLogs(
                 GetEventLogsCommand(
@@ -94,7 +106,8 @@ class Web3JProxy(
                     getEventLogsCommand.optionalTopics,
                     endBlock.plus(BigInteger.ONE),
                     getEventLogsCommand.toBlock
-                )
+                ),
+                _web3j
             )
         ).reduce { acc, ethLog ->
             return EthLog().apply {
@@ -106,7 +119,8 @@ class Web3JProxy(
 
     private suspend fun fromSplitMatcher(
         matcher: Matcher,
-        getEventLogsCommand: GetEventLogsCommand
+        getEventLogsCommand: GetEventLogsCommand,
+        _web3j: Web3j
     ): EthLog {
         val start = matcher.group(1).removePrefix("0x")
         val end = matcher.group(2).removePrefix("0x")
@@ -121,7 +135,8 @@ class Web3JProxy(
                     getEventLogsCommand.optionalTopics,
                     startBlock,
                     endBlock
-                )
+                ),
+                _web3j
             ),
             getLogs(
                 GetEventLogsCommand(
@@ -130,7 +145,8 @@ class Web3JProxy(
                     getEventLogsCommand.optionalTopics,
                     endBlock.plus(BigInteger.ONE),
                     getEventLogsCommand.toBlock
-                )
+                ),
+                _web3j
             )
         ).reduce { acc, ethLog ->
             return EthLog().apply {
@@ -179,98 +195,114 @@ class Web3JProxy(
         return this.hasError() && this.error.message.contains("logs are limited to a 10000 block range")
     }
 
-    suspend fun getBlockByHash(hash: String, _web3j: Web3j = primaryWeb3j): EthBlock? {
+    suspend fun getBlockByHash(hash: String, _web3j: Web3j): EthBlock? {
         return runWithFallback(
-            {
-                it.ethGetBlockByHash(hash, false)
-            }
+            RunWithFallbackContext(
+                {
+                    it.ethGetBlockByHash(hash, false)
+                }, _web3j
+            )
         )
     }
 
     suspend fun ethGetBalance(
         address: String,
-        _web3j: Web3j = primaryWeb3j
+        _web3j: Web3j
     ): EthGetBalance {
         return runWithFallback(
-            {
-                it.ethGetBalance(address, DefaultBlockParameterName.PENDING)
-            }
+            RunWithFallbackContext(
+                {
+                    it.ethGetBalance(address, DefaultBlockParameterName.PENDING)
+                },
+                _web3j
+            )
         )
     }
 
-    suspend fun getTransactionByHash(txId: String, _web3j: Web3j = primaryWeb3j): EthTransaction {
+    suspend fun getTransactionByHash(
+        txId: String,
+        _web3j: Web3j
+    ): EthTransaction {
         return runWithFallback(
-            {
-                it.ethGetTransactionByHash(txId)
-            }
+            RunWithFallbackContext(
+                {
+                    it.ethGetTransactionByHash(txId)
+                },
+                _web3j
+            )
         )
     }
 
 
-    suspend fun getTransactionReceipt(txId: String, _web3j: Web3j = primaryWeb3j): EthGetTransactionReceipt {
-        return runWithFallback({ it.ethGetTransactionReceipt(txId) })
+    suspend fun getTransactionReceipt(
+        txId: String,
+        _web3j: Web3j
+    ): EthGetTransactionReceipt {
+        return runWithFallback(
+            RunWithFallbackContext(
+                { it.ethGetTransactionReceipt(txId) }, _web3j
+            )
+        )
     }
 
     suspend fun call(
         evmContractInteractionCommand: EvmContractInteractionCommand,
+        _web3j: Web3j
     ): EthCall {
         return runWithFallback(
-            {
-                ethCall(evmContractInteractionCommand, it)
-            }, primaryWeb3j
+            RunWithFallbackContext(
+                {
+                    ethCall(evmContractInteractionCommand, it)
+                },
+                _web3j
+            )
         )
     }
 
-    suspend fun <T : Response<*>> runWithFallback(
-        requestProvider: (web3j: Web3j) -> Request<*, T>,
-        _web3j: Web3j = primaryWeb3j
-    ): T {
-        val request = requestProvider.invoke(_web3j)
+    suspend fun <T : Response<*>> runWithFallback(previousContext: RunWithFallbackContext<T>): T {
 
-        val observation = Observation.start("web3j-" + request.method, observationRegistry)
-        return observation.openScope().use {
-            try {
-                val result = request.send()
+        val runWithFallbackContext = previousContext.increment()
+        if (runWithFallbackContext.tries > runWithFallbackContext.maxTries) {
+            logger.info("exhausted retries, returning exception")
+            throw ExchaustedRetriesException()
+        }
 
-                if (result.hasError()) {
-                    handleException(result.error.message, observation, request, requestProvider)
-                } else {
-                    observation.event(Observation.Event.of("success"))
-                    result
-                }
-            } catch (needsSplitException: NeedsSplitException) {
-                throw needsSplitException
-            } catch (ex: Exception) {
-                handleException(ex.message ?: "", observation, request, requestProvider)
+        logger.info("invoking with web3j: {}", runWithFallbackContext._web3j)
+        val request = runWithFallbackContext.requestProvider.invoke(runWithFallbackContext._web3j)
+
+        return try {
+            val result = request.send()
+
+            if (result.hasError()) {
+                handleException(result.error.message, runWithFallbackContext)
+            } else {
+                result
             }
+        } catch (needsSplitException: NeedsSplitException) {
+            throw needsSplitException
+        } catch (ex: Exception) {
+            logger.info("got exception using web3j {}", runWithFallbackContext._web3j)
+            handleException(ex.message ?: "", runWithFallbackContext)
         }
     }
 
     private suspend fun <T : Response<*>> handleException(
         message: String,
-        observation: Observation,
-        request: Request<*, T>,
-        requestProvider: (web3j: Web3j) -> Request<*, T>
+        runWithFallbackContext: RunWithFallbackContext<T>,
     ): T {
         return if (message.contains("429")) {
-            observation.event(
-                Observation.Event.of(
-                    "endpoint.throttled",
-                    "thirdparty.endpoint.throttled"
-                )
-            )
+            logger.info("throttled, waiting and running with fallback")
             delay(100L)
-            runWithFallback(requestProvider, anyFallback(true)!!)
-        } else if (message.contains("limit exceeded")) {
-            logger.debug("capacity exceeded, running with fallback")
-            observation.event(
-                Observation.Event.of(
-                    "endpoint.capacity-exceeded",
-                    "thirdparty.monthly-capacity-limit-exceeded"
+            runWithFallback(
+                runWithFallbackContext.copy(
+                    _web3j = web3JEndpoints.getFallback(true)!!
                 )
             )
-            anyFallback()?.let {
-                runWithFallback(requestProvider, it)
+        } else if (message.contains("limit exceeded")) {
+            logger.info("capacity exceeded, running with fallback")
+            web3JEndpoints.observePrimaryDown()
+            web3JEndpoints.getFallback()?.let {
+                runWithFallback(runWithFallbackContext.copy(_web3j = it))
             } ?: throw RuntimeException("unable to find working fallback web3j: $message")
         } else if (message.contains("logs are limited to a 10000 block range")) {
             throw NeedsSplitException()
@@ -280,10 +312,7 @@ class Web3JProxy(
     }
 
     class NeedsSplitException : RuntimeException()
-
-    private fun anyFallback(includesDefault: Boolean = false): Web3j? {
-        return fallbacks.shuffled().firstOrNull() ?: if (includesDefault) primaryWeb3j else null
-    }
+    class ExchaustedRetriesException : RuntimeException()
 
     private fun ethCall(
         evmContractInteractionCommand: EvmContractInteractionCommand,

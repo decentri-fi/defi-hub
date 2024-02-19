@@ -1,5 +1,6 @@
 package io.defitrack.rest
 
+import io.defitrack.config.Web3JEndpoints
 import io.defitrack.evm.EvmContractInteractionCommand
 import io.defitrack.web3j.Web3JProxy
 import io.github.reactivecircus.cache4k.Cache
@@ -22,6 +23,7 @@ import kotlin.time.Duration.Companion.seconds
 @RequestMapping("/contract")
 class EVMContractInteractionRestController(
     private val web3JProxy: Web3JProxy,
+    private val web3JEndpoints: Web3JEndpoints
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -33,7 +35,7 @@ class EVMContractInteractionRestController(
 
     @PostMapping("/call")
     suspend fun call(@RequestBody evmContractInteractionCommand: EvmContractInteractionCommand): EthCall {
-        return web3JProxy.call(evmContractInteractionCommand)
+        return web3JProxy.call(evmContractInteractionCommand, web3JEndpoints.getPrimaryWeb3j())
     }
 
     @PostMapping("/call/async")
@@ -83,7 +85,10 @@ class EVMContractInteractionRestController(
                     try {
                         val requests = getInputs()
                         if (requests.size > 1) {
-                            val multicallResults = web3JProxy.call(requests.map { it.evmContractInteractionCommand })
+                            val multicallResults = web3JProxy.call(
+                                requests.map { it.evmContractInteractionCommand },
+                                web3JEndpoints.getPrimaryWeb3j()
+                            )
                             multicallResults.mapIndexed { index, ethCall ->
                                 val uuid = requests[index].uuid
                                 outputs.put(uuid, ethCall)
@@ -91,7 +96,10 @@ class EVMContractInteractionRestController(
                         } else {
                             try {
                                 requests.forEach {
-                                    val value = web3JProxy.call(it.evmContractInteractionCommand)
+                                    val value = web3JProxy.call(
+                                        it.evmContractInteractionCommand,
+                                        web3JEndpoints.getPrimaryWeb3j()
+                                    )
                                     outputs.put(it.uuid, value)
                                 }
                             } catch (ex: Exception) {

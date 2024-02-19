@@ -3,6 +3,7 @@ package io.defitrack.rest
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.toOption
+import io.defitrack.config.Web3JEndpoints
 import io.defitrack.vo.TransactionVO
 import io.defitrack.web3j.Web3JProxy
 import io.github.reactivecircus.cache4k.Cache
@@ -24,7 +25,8 @@ import kotlin.time.Duration.Companion.days
 @RestController
 @RequestMapping("/tx")
 class TransactionRestController(
-    private val web3JProxy: Web3JProxy
+    private val web3JProxy: Web3JProxy,
+    private val web3JEndpoints: Web3JEndpoints
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -34,17 +36,21 @@ class TransactionRestController(
     @GetMapping("/{txId}")
     suspend fun getTransaction(@PathVariable("txId") txId: String): TransactionVO? {
         return txCache.get(txId.lowercase()) {
-            web3JProxy.getTransactionByHash(txId).transaction.getOrNull()?.let {
-                val possibleSpam = web3JProxy.getTransactionReceipt(txId).transactionReceipt.map {
-                    it.logs.size > 400
-                }.orElse(false)
+            web3JProxy.getTransactionByHash(txId, web3JEndpoints.getPrimaryWeb3j()).transaction.getOrNull()?.let {
+                val possibleSpam =
+                    web3JProxy.getTransactionReceipt(txId, web3JEndpoints.getPrimaryWeb3j()).transactionReceipt.map {
+                        it.logs.size > 400
+                    }.orElse(false)
 
                 TransactionVO(
                     hash = it.hash,
                     blockNumber = it.blockNumber,
                     from = it.from,
                     to = it.to,
-                    time = web3JProxy.getBlockByHash(it.blockHash)!!.block.timestamp.longValueExact(),
+                    time = web3JProxy.getBlockByHash(
+                        it.blockHash,
+                        web3JEndpoints.getPrimaryWeb3j()
+                    )!!.block.timestamp.longValueExact(),
                     value = it.value,
                     possibleSpam = possibleSpam
                 ).toOption()
@@ -57,7 +63,7 @@ class TransactionRestController(
     @GetMapping("/{txId}/logs")
     suspend fun getLogs(@PathVariable("txId") txId: String): List<Log> {
         return logCache.get(txId.lowercase()) {
-            web3JProxy.getTransactionReceipt(txId).transactionReceipt.map {
+            web3JProxy.getTransactionReceipt(txId, web3JEndpoints.getPrimaryWeb3j()).transactionReceipt.map {
                 it.logs
             }.orElse(emptyList())
         }
