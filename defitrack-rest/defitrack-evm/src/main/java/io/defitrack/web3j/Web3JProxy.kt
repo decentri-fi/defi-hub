@@ -26,7 +26,6 @@ class Web3JProxy(
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
-
     suspend fun call(calls: List<EvmContractInteractionCommand>, _web3j: Web3j): List<EthCall> {
         return multicallService.call(calls) { call(it, _web3j) }
     }
@@ -267,7 +266,7 @@ class Web3JProxy(
             throw ExchaustedRetriesException()
         }
 
-        logger.info("invoking with web3j: {}", runWithFallbackContext._web3j)
+        logger.debug("invoking with web3j: {}", runWithFallbackContext._web3j)
         val request = runWithFallbackContext.requestProvider.invoke(runWithFallbackContext._web3j)
 
         return try {
