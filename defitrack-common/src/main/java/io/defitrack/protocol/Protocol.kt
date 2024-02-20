@@ -13,6 +13,14 @@ enum class Protocol(
     val networks: List<Network>,
     val company: Company,
 ) {
+    PENDLE(
+        logo = "pendle.png",
+        slug = "pendle",
+        primitives = listOf(POOLING, FARMING, CLAIMABLES),
+        website = "https://pendle.finance",
+        networks = listOf(ETHEREUM),
+        company = Company.PENDLE
+    ),
     STARKNET(
         logo = "starknet.png",
         slug = "starknet",

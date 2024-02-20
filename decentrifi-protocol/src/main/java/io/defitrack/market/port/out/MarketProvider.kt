@@ -45,7 +45,7 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
     val semaphore = Semaphore(16)
 
     @Autowired
-    private lateinit var erC20Resource: ERC20Resource
+    lateinit var erC20Resource: ERC20Resource
 
     @Autowired
     private lateinit var bulkConstantResolver: BulkConstantResolver
