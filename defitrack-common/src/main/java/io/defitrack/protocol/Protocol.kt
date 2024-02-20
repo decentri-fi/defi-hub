@@ -18,7 +18,7 @@ enum class Protocol(
         slug = "pendle",
         primitives = listOf(POOLING, FARMING, CLAIMABLES),
         website = "https://pendle.finance",
-        networks = listOf(ETHEREUM),
+        networks = listOf(ETHEREUM, ARBITRUM),
         company = Company.PENDLE
     ),
     STARKNET(

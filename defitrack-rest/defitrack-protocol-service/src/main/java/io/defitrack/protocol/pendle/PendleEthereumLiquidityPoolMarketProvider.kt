@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component
 @ConditionalOnNetwork(Network.ETHEREUM)
 @ConditionalOnCompany(Company.PENDLE)
 @Component
-class PendleLiquitityPoolMarketProvider : PoolingMarketProvider() {
+class PendleEthereumLiquidityPoolMarketProvider : PoolingMarketProvider() {
 
     val liquidityMarkets = listOf(
         "0xf32e58f92e60f4b0a37a69b95d642a471365eae8"
@@ -57,7 +57,7 @@ class PendleLiquitityPoolMarketProvider : PoolingMarketProvider() {
                         )
                     )
                 },
-                positionFetcher = PositionFetcher(contract::activeBalanceFn),
+                positionFetcher = defaultPositionFetcher(contract.address),
                 name = contract.readName(),
                 identifier = marketConfig.market,
                 address = contract.address,

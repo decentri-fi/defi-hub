@@ -31,7 +31,7 @@ class CoinGeckoPriceService(
 
     val tokenCache = Cache.Builder<String, Set<CoingeckoToken>>().build()
 
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 4) // every 4 days
+    @Scheduled(fixedDelay = 1000 * 60 * 60 * 4) // every 4 hours
     fun init() = runBlocking {
         logger.info("initializing coingecko token cache")
         val tokens = getCoingeckoTokens()

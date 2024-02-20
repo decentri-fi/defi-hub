@@ -21,6 +21,10 @@ class TypeUtils {
             return Uint256(this.toBigInteger())
         }
 
+        fun Int.toUint32(): Uint32 {
+            return Uint32(this.toBigInteger())
+        }
+
         fun BigInteger.toUint8(): Uint8 {
             return Uint8(this)
         }
@@ -52,6 +56,10 @@ class TypeUtils {
 
         fun uint256(indexed: Boolean = false): TypeReference<Uint256> {
             return TypeReference.create(Uint256::class.java, indexed)
+        }
+
+        fun int256(indexed: Boolean = false): TypeReference<Int256> {
+            return TypeReference.create(Int256::class.java, indexed)
         }
 
 

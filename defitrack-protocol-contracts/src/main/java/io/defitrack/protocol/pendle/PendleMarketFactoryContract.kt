@@ -1,6 +1,7 @@
 package io.defitrack.protocol.pendle
 
 import io.defitrack.abi.TypeUtils
+import io.defitrack.abi.TypeUtils.Companion.int256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.GetEventLogsCommand
 import io.defitrack.evm.contract.BlockchainGateway
@@ -19,8 +20,8 @@ class PendleMarketFactoryContract(
         listOf(
             TypeUtils.address(true), //market
             TypeUtils.address(true), //PT
-            uint256(false), //scalarRoot
-            uint256(false), //initialAnchor
+            int256(false), //scalarRoot
+            int256(false), //initialAnchor
             uint256(false), //InFeeRateRot
         ),
     )
