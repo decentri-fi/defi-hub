@@ -60,21 +60,22 @@ class Web3JProxy(
 
             when {
                 log.exceedsSize() -> {
-                    val splitMatcher = log.exceededPattern.matcher(log.error.message)
-                    if (splitMatcher.find()) {
-                        fromSplitMatcher(splitMatcher, getEventLogsCommand, _web3j)
-                    } else {
-                        log
-                    }
+                    throw SuggestedSplitException(log.error.message)
                 }
 
                 log.exceedsBlockLimit() -> {
-                    split(getEventLogsCommand, _web3j)
+                    throw NeedsSplitException()
                 }
-
                 else -> {
                     log
                 }
+            }
+        } catch (suggestedSplitException: SuggestedSplitException) {
+            val splitMatcher = exceededPattern.matcher(suggestedSplitException.message!!)
+            if (splitMatcher.find()) {
+                fromSplitMatcher(splitMatcher, getEventLogsCommand, _web3j)
+            } else {
+                throw RuntimeException("size too big and unable to split up the blocks")
             }
         } catch (needssplit: NeedsSplitException) {
             split(getEventLogsCommand, _web3j)
@@ -179,7 +180,7 @@ class Web3JProxy(
         }
     }
 
-    val EthLog.exceededPattern: Pattern
+    val exceededPattern: Pattern
         get() {
             val regex = "Log response size exceeded.[\\s\\S]*?range should work: \\[([\\w]*?), ([\\w]*?)\\]"
             return Pattern.compile(regex)
@@ -277,6 +278,8 @@ class Web3JProxy(
             } else {
                 result
             }
+        } catch (suggestedSplitException: SuggestedSplitException) {
+            throw suggestedSplitException
         } catch (needsSplitException: NeedsSplitException) {
             throw needsSplitException
         } catch (ex: Exception) {
@@ -304,6 +307,8 @@ class Web3JProxy(
                 runWithFallback(runWithFallbackContext.copy(_web3j = it))
             } ?: throw RuntimeException("unable to find working fallback web3j: $message")
         } else if (message.contains("logs are limited to a 10000 block range")) {
+            throw SuggestedSplitException(message)
+        } else if (message.contains("Log response size exceeded")) {
             throw NeedsSplitException()
         } else {
             throw RuntimeException("unable to find working fallback web3j: $message")
@@ -311,6 +316,7 @@ class Web3JProxy(
     }
 
     class NeedsSplitException : RuntimeException()
+    class SuggestedSplitException(message: String) : RuntimeException(message)
     class ExchaustedRetriesException : RuntimeException()
 
     private fun ethCall(

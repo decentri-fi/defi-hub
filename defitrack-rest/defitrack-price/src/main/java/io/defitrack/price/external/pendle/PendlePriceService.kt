@@ -1,15 +1,13 @@
-package io.defitrack.price.external
+package io.defitrack.price.external.pendle
 
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.domain.FungibleTokenInformation
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.price.PriceCalculator
 import io.defitrack.price.domain.GetPriceCommand
+import io.defitrack.price.external.ExternalPrice
+import io.defitrack.price.external.ExternalPriceService
 import io.defitrack.price.port.PriceResource
-import io.defitrack.protocol.pendle.PendleMarketContract
-import io.defitrack.protocol.pendle.PendleMarketFactoryContract
-import io.defitrack.protocol.pendle.PendleOracleContract
-import io.defitrack.protocol.pendle.PendleSyContract
+import io.defitrack.protocol.pendle.*
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,15 +15,14 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
-@Component
-class PendleArbitrumPriceService(
-    private val blockchainGatewayProvider: BlockchainGatewayProvider
+abstract class PendlePriceService(
+    private val blockchainGatewayProvider: BlockchainGatewayProvider,
+    private val pendleAddressBook: PendleAddressBook,
+    private val priceResource: PriceResource,
+    private val startBlock: String
 ) : ExternalPriceService {
 
     val logger = LoggerFactory.getLogger(this::class.java)
-
-    @Autowired
-    private lateinit var priceCalculator: PriceResource
 
     data class PendlePrice(
         val ptAddress: String,
@@ -36,16 +33,16 @@ class PendleArbitrumPriceService(
     val cache = mutableMapOf<String, PendlePrice>()
 
     @Scheduled(fixedDelay = 1000 * 60 * 60) // every hour
-    fun getPts() = runBlocking {
-        val gateway = blockchainGatewayProvider.getGateway(Network.ARBITRUM)
+    fun importPrices() = runBlocking {
+        val gateway = blockchainGatewayProvider.getGateway(getNetwork())
 
         val pendlePtOracleContract = PendleOracleContract(
-            gateway, "0x7e16e4253CE4a1C96422a9567B23b4b5Ebc207F1"
+            gateway,getAddress().ptOracleContract
         )
 
         val factory = PendleMarketFactoryContract(
             gateway,
-            "0x2FCb47B58350cD377f94d3821e7373Df60bD9Ced"
+            getAddress().marketFactoryV3
         )
 
         factory.getMarkets("154873897").forEach {
@@ -79,10 +76,10 @@ class PendleArbitrumPriceService(
 
     override suspend fun getPrice(fungibleToken: FungibleTokenInformation): BigDecimal {
         return cache[fungibleToken.address.lowercase()]?.let {
-            priceCalculator.calculatePrice(
+            priceResource.calculatePrice(
                 GetPriceCommand(
                     it.underlying,
-                    Network.ARBITRUM,
+                    getNetwork(),
                     it.ratio
                 )
             ).toBigDecimal()
@@ -91,20 +88,26 @@ class PendleArbitrumPriceService(
 
     override suspend fun getAllPrices(): List<ExternalPrice> {
         return cache.values.map {
-            val price = priceCalculator.calculatePrice(
+            val price = priceResource.calculatePrice(
                 GetPriceCommand(
                     it.underlying,
-                    Network.ARBITRUM,
+                    getNetwork(),
                     it.ratio
                 )
             ).toBigDecimal()
             ExternalPrice(
                 it.ptAddress,
-                Network.ARBITRUM,
+                getNetwork(),
                 price,
                 "pendle-arbitrum",
                 "pendle-arbitrum"
             )
         }
     }
+
+    fun getAddress(): PendleAddressBook.PendleAddresses {
+        return pendleAddressBook.addresses[getNetwork()] ?: throw RuntimeException("No addresses found for pendle")
+    }
+
+    abstract fun getNetwork(): Network
 }
