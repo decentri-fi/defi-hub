@@ -48,7 +48,7 @@ class PriceRestController(
         @RequestParam("network") networkName: String
     ): ExternalPrice {
         val network = Network.fromString(networkName) ?: return NO_EXTERNAL_PRICE
-        try {
+        return try {
             priceAggregator.getAllPrices().find {
                 it.address == address && it.network == network
             } ?: return NO_EXTERNAL_PRICE
