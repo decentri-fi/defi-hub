@@ -13,8 +13,8 @@ abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>() {
 
     /**
      * todo: all market types should also have a type, so we can give an overview of what is implemented
-     *
      * todo: move all specific markets to correct layer
+     * todo frontend: don't show tokens that are represented as staking markets as well
      */
     fun create(
         name: String,
