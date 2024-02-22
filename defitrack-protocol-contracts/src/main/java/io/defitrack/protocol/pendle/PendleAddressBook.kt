@@ -12,7 +12,6 @@ class PendleAddressBook {
         val marketFactoryV3: String
     )
 
-
     val addresses: Map<Network, PendleAddresses>
         get() {
             return mapOf(
@@ -23,6 +22,10 @@ class PendleAddressBook {
                 Network.ETHEREUM to PendleAddresses(
                     ptOracleContract = "0xbbd487268A295531d299c125F3e5f749884A3e30",
                     marketFactoryV3 = "0x1A6fCc85557BC4fB7B534ed835a03EF056552D52"
+                ),
+                Network.OPTIMISM to PendleAddresses(
+                    ptOracleContract = "0x0b692f06CA82e3075dC537224450885Fd138e655",
+                    marketFactoryV3 = "0x4A2B38b9cBd83c86F261a4d64c243795D4d44aBC"
                 )
             )
         }
