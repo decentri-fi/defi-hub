@@ -23,19 +23,6 @@ abstract class DodoPoolingMarketProvider(
                 symbol = baseToken.symbol + "/" + quoteToken.symbol,
                 tokens = listOf(baseToken, quoteToken),
                 totalSupply = refreshable(BigDecimal.ZERO),
-                breakdown = refreshable {
-                    listOf(
-                        PoolingMarketTokenShare(
-                            baseToken,
-                            //TODO: doesn't update, comes from a graph
-                            pool.baseReserve.times(BigDecimal.TEN.pow(baseToken.decimals)).toBigInteger()
-                        ),
-                        PoolingMarketTokenShare(
-                            quoteToken,
-                            pool.quoteReserve.times(BigDecimal.TEN.pow(baseToken.decimals)).toBigInteger()
-                        )
-                    )
-                }
             )
         }
     }

@@ -4,6 +4,10 @@ enum class Company(
     val prettyName: String,
     val slug: String
 ) {
+    ETHER_FI(
+        prettyName = "Ether.Fi",
+        slug = "ether-fi"
+    ),
     PENDLE(
         prettyName = "Pendle",
         slug = "pendle"

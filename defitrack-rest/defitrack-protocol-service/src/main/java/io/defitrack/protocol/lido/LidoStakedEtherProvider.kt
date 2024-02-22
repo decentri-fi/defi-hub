@@ -17,7 +17,7 @@ private const val WETH = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
 
 @Component
 @ConditionalOnCompany(Company.LIDO)
-class StethMarketProvider(
+class LidoStakedEtherProvider(
     private val lidoService: LidoService,
     private val priceResource: PricePort,
 ) : FarmingMarketProvider() {

@@ -13,6 +13,14 @@ enum class Protocol(
     val networks: List<Network>,
     val company: Company,
 ) {
+    ETHER_FI(
+        logo = "etherfi.png",
+        slug = "ether-fi",
+        primitives = listOf(FARMING, CLAIMABLES),
+        website = "https://ether.fi",
+        networks = listOf(ETHEREUM),
+        company = Company.ETHER_FI
+    ),
     PENDLE(
         logo = "pendle.png",
         slug = "pendle",

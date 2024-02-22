@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service
 
 @Service
 @ConditionalOnCompany(Company.DODO)
+//TODO: comes from graph. Need remove this
 class DodoArbitrumPoolingMarketProvider(
     dodoGraphProvider: DodoArbitrumGraphProvider,
 ) : DodoPoolingMarketProvider(dodoGraphProvider) {
