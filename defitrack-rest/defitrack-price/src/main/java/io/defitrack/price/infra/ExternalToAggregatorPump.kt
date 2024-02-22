@@ -1,5 +1,6 @@
 package io.defitrack.price.infra
 
+import arrow.core.Either
 import io.defitrack.price.application.PriceAggregator
 import io.defitrack.price.external.domain.ExternalPrice
 import io.defitrack.price.port.out.ExternalPriceService
@@ -23,10 +24,14 @@ class ExternalToAggregatorPump(
         externalPriceServices.sortedBy {
             it.order()
         }.forEach {
-            val allPrices = it.getAllPrices()
-            logger.info("found ${allPrices.size} prices from ${it.javaClass.simpleName}")
-            allPrices.forEach { externalPrice ->
-                priceAggregator.addPrice(externalPrice)
+            Either.catch {
+                val allPrices = it.getAllPrices()
+                logger.info("found ${allPrices.size} prices from ${it.javaClass.simpleName}")
+                allPrices.forEach { externalPrice ->
+                    priceAggregator.addPrice(externalPrice)
+                }
+            }.mapLeft {
+                logger.error("Error fetching prices from ${it.javaClass.simpleName}", it)
             }
         }
         logger.info("External prices fetched with ${priceAggregator.getAllPrices().size} prices.")
