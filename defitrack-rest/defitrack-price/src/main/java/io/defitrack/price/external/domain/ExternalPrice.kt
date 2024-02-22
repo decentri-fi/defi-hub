@@ -11,3 +11,12 @@ data class ExternalPrice(
     val pair: String,
     val order: Int
 )
+
+val NO_EXTERNAL_PRICE = ExternalPrice(
+    address = "",
+    network = Network.ETHEREUM,
+    price = BigDecimal.ZERO,
+    source = "none",
+    pair = "none",
+    order = 0
+)

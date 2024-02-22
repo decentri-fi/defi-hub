@@ -5,6 +5,7 @@ import io.defitrack.price.application.DefaultPriceCalculator
 import io.defitrack.price.application.PriceAggregator
 import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.price.external.domain.ExternalPrice
+import io.defitrack.price.external.domain.NO_EXTERNAL_PRICE
 import io.defitrack.price.port.`in`.PriceCalculator
 import io.defitrack.price.port.out.ExternalPriceService
 import io.micrometer.observation.Observation
@@ -45,27 +46,15 @@ class PriceRestController(
     suspend fun getPricePerToken(
         @PathVariable("address") address: String,
         @RequestParam("network") networkName: String
-    ): Map<String, Any> {
-
-        val network = Network.fromString(networkName) ?: return mapOf(
-            "price" to BigDecimal.ZERO
-        )
-
+    ): ExternalPrice {
+        val network = Network.fromString(networkName) ?: return NO_EXTERNAL_PRICE
         try {
-            return mapOf(
-                "price" to priceCalculator.calculatePrice(
-                    GetPriceCommand(
-                        address,
-                        network,
-                        BigDecimal.ONE
-                    )
-                )
-            )
+            priceAggregator.getAllPrices().find {
+                it.address == address && it.network == network
+            } ?: return NO_EXTERNAL_PRICE
         } catch (ex: Exception) {
             logger.error("Error calculating price for $address on $networkName", ex)
-            return mapOf(
-                "price" to BigDecimal.ZERO
-            )
+            return NO_EXTERNAL_PRICE
         }
     }
 }
