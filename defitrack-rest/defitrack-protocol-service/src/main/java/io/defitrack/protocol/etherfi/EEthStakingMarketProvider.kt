@@ -1,5 +1,6 @@
 package io.defitrack.protocol.etherfi
 
+import arrow.core.nel
 import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.common.network.Network
 import io.defitrack.market.domain.farming.FarmingMarket
@@ -23,19 +24,17 @@ class EEthStakingMarketProvider : FarmingMarketProvider() {
             "0x35fa164735182de50811e8e2e824cfb9b6118ac2"
         )
 
-        return listOf(
-            create(
-                name = "ether.fi ETH",
-                identifier = "eeth",
-                stakedToken = eth,
-                rewardToken = eth,
-                positionFetcher = defaultPositionFetcher(eeth.address),
-            )
-        )
+        return create(
+            name = "ether.fi ETH",
+            identifier = "eeth",
+            stakedToken = eth,
+            rewardToken = eth,
+            positionFetcher = defaultPositionFetcher(eeth.address),
+        ).nel()
     }
 
     override fun getProtocol(): Protocol {
-        return Protocol.LIDO
+        return Protocol.ETHER_FI
     }
 
     override fun getNetwork(): Network {
