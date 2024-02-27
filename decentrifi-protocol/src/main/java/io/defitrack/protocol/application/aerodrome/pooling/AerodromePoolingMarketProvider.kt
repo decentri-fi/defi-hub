@@ -1,6 +1,6 @@
 package io.defitrack.protocol.application.aerodrome.pooling
 
-import io.defitrack.architecture.ConditionalOnCompany
+import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.refreshable

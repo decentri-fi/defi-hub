@@ -2,7 +2,7 @@ package io.defitrack.protocol.application.aave.v2.farming
 
 import arrow.core.nel
 import arrow.core.nonEmptyListOf
-import io.defitrack.architecture.ConditionalOnCompany
+import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.claim.AbstractClaimableMarketProvider
 import io.defitrack.claim.ClaimableMarket
 import io.defitrack.claim.ClaimableRewardFetcher

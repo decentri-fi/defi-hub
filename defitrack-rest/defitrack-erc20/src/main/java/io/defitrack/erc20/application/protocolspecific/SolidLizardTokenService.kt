@@ -11,12 +11,13 @@ import org.springframework.stereotype.Service
 class SolidLizardTokenService : DefaultLpIdentifier(Protocol.SOLIDLIZARD) {
 
     val arbitrumPools = LazyValue {
-        val pairFactoryContract = PairFactoryContract(
-            blockchainGateway = blockchainGatewayProvider.getGateway(Network.ARBITRUM),
-            contractAddress = "0x734d84631f00dc0d3fcd18b04b6cf42bfd407074"
-        )
-        pairFactoryContract.allPairs()
+        with(getBlockchainProvider()) {
+            PairFactoryContract("0x734d84631f00dc0d3fcd18b04b6cf42bfd407074")
+        }.allPairs()
     }
+
+    private fun SolidLizardTokenService.getBlockchainProvider() =
+        blockchainGatewayProvider.getGateway(Network.ARBITRUM)
 
     override suspend fun isProtocolToken(token: ERC20): Boolean {
         return when (token.network) {

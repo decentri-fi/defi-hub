@@ -1,6 +1,6 @@
 package io.defitrack.protocol.application.aave.v3.lending.market
 
-import io.defitrack.architecture.ConditionalOnCompany
+import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.aave.v3.OptimismV3AaveV3DataProvider

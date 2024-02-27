@@ -1,6 +1,6 @@
 package io.defitrack.protocol.application.aave.v2.borrowing
 
-import io.defitrack.architecture.ConditionalOnCompany
+import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.port.`in`.ERC20Resource
 import io.defitrack.market.domain.borrow.BorrowMarket

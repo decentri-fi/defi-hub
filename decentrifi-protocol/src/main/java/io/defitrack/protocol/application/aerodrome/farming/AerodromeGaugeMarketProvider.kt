@@ -5,7 +5,7 @@ import arrow.core.None
 import arrow.core.Option
 import arrow.core.some
 import arrow.fx.coroutines.parMap
-import io.defitrack.architecture.ConditionalOnCompany
+import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.claim.ClaimableRewardFetcher
 import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
