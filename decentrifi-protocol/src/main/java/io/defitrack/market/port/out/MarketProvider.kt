@@ -71,7 +71,7 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
     @Autowired
     private lateinit var blockchainGatewayProvider: BlockchainGatewayProvider
 
-    suspend fun <T : EvmContract> resolve(contracts: List<T>): List<T> {
+    suspend fun <T : DeprecatedEvmContract> resolve(contracts: List<T>): List<T> {
         return bulkConstantResolver.resolve(contracts)
     }
 

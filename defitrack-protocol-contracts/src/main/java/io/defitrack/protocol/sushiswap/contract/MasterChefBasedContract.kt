@@ -7,7 +7,7 @@ import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import kotlinx.coroutines.Deferred
 import java.math.BigInteger
 
@@ -16,7 +16,7 @@ open class MasterChefBasedContract(
     private val pendingName: String,
     blockchainGateway: BlockchainGateway,
     address: String
-) : EvmContract(
+) : DeprecatedEvmContract(
     blockchainGateway, address
 ) {
 

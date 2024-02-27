@@ -8,7 +8,7 @@ class BulkConstantResolver(
     private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) {
 
-    suspend fun <T : EvmContract> resolve(contracts: List<T>): List<T> {
+    suspend fun <T : DeprecatedEvmContract> resolve(contracts: List<T>): List<T> {
         val evmContracts = contracts.groupBy {
             it.blockchainGateway.network
         }
@@ -20,7 +20,7 @@ class BulkConstantResolver(
         return contracts
     }
 
-    private suspend fun resolveForNetwork(contracts: List<EvmContract>, network: Network) {
+    private suspend fun resolveForNetwork(contracts: List<DeprecatedEvmContract>, network: Network) {
         val gateway = blockchainGatewayProvider.getGateway(network)
         val functionByContracts = contracts.flatMap { contract ->
             contract.constantFunctions.map { function ->
@@ -55,7 +55,7 @@ class BulkConstantResolver(
     data class ConstantResult(
         val function: ContractCall,
         val result: MultiCallResult,
-        val contract: EvmContract
+        val contract: DeprecatedEvmContract
     )
 
 }

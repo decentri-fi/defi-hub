@@ -6,7 +6,7 @@ import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import kotlinx.coroutines.Deferred
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
@@ -16,7 +16,7 @@ import java.math.BigInteger
 
 class CurveFactoryContract(
     blockchainGateway: BlockchainGateway, address: String
-): EvmContract(blockchainGateway, address) {
+): DeprecatedEvmContract(blockchainGateway, address) {
 
     val poolCount: Deferred<BigInteger> = constant("pool_count", uint256())
 

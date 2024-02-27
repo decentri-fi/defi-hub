@@ -9,14 +9,14 @@ import io.defitrack.abi.TypeUtils.Companion.uint64
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import kotlinx.coroutines.Deferred
 import java.math.BigInteger
 
 class MiniChefV2Contract(
     blockchainGateway: BlockchainGateway,
     address: String
-) : EvmContract(blockchainGateway, address) {
+) : DeprecatedEvmContract(blockchainGateway, address) {
 
     fun userInfoFunction(poolId: Int): (String) -> ContractCall {
         return { user: String ->

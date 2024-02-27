@@ -9,7 +9,7 @@ open class ERC721Contract(
     blockchainGateway: BlockchainGateway,
     address: String
 ) :
-    EvmContract(blockchainGateway, address) {
+    DeprecatedEvmContract(blockchainGateway, address) {
 
     suspend fun balanceOf(address: String): BigInteger {
         return read(

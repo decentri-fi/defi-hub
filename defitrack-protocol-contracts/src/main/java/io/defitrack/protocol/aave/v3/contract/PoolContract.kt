@@ -6,14 +6,14 @@ import io.defitrack.abi.TypeUtils.Companion.toUint16
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import org.web3j.abi.datatypes.Address
 import java.math.BigInteger
 
 class PoolContract(
     blockchainGateway: BlockchainGateway,
     address: String
-) : EvmContract(blockchainGateway, address) {
+) : DeprecatedEvmContract(blockchainGateway, address) {
 
     fun getSupplyFunction(asset: String, amount: BigInteger, onBehalfOf: String): ContractCall {
         return createFunction(

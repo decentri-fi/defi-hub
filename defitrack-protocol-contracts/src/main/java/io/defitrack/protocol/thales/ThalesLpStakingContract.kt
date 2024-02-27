@@ -5,11 +5,11 @@ import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 
 class ThalesLpStakingContract(
     blockchainGateway: BlockchainGateway, address: String
-) : EvmContract(blockchainGateway, address) {
+) : DeprecatedEvmContract(blockchainGateway, address) {
 
     val stakingToken = constant<String>("stakingToken", TypeUtils.address())
     val rewardsToken = constant<String>("rewardsToken", TypeUtils.address())

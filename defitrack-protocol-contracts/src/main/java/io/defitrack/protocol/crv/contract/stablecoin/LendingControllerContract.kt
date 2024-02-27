@@ -6,7 +6,7 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import io.defitrack.evm.position.Position
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Type
@@ -16,7 +16,7 @@ import java.math.BigInteger
 
 class LendingControllerContract(
     blockchainGateway: BlockchainGateway, address: String
-) : EvmContract(
+) : DeprecatedEvmContract(
     blockchainGateway, address
 ) {
 

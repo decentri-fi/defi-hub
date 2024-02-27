@@ -4,11 +4,11 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 
 class LiquidatorRewardsContract(
     blockchainGateway: BlockchainGateway, address: String
-) : EvmContract(blockchainGateway, address) {
+) : DeprecatedEvmContract(blockchainGateway, address) {
 
     fun earnedFn(user: String): ContractCall {
         return createFunction(

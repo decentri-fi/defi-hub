@@ -3,22 +3,18 @@ package io.defitrack.protocol.magpiexyz
 import arrow.core.nel
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.bool
-import io.defitrack.abi.TypeUtils.Companion.dynamicArray
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.EvmContract
-import org.web3j.abi.datatypes.Address
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import org.web3j.abi.datatypes.DynamicArray
-import org.web3j.abi.datatypes.Utf8String
-import org.web3j.tx.Contract
 import java.math.BigInteger
 
 class MasterPenPieContract(
     blockchainGateway: BlockchainGateway, address: String
-) : EvmContract(
+) : DeprecatedEvmContract(
     blockchainGateway, address
 ) {
 
@@ -91,7 +87,7 @@ class MasterPenPieContract(
      */
 
     class MasterPenPieRewarder(blockchainGateway: BlockchainGateway, address: String) :
-        EvmContract(blockchainGateway, address) {
+        DeprecatedEvmContract(blockchainGateway, address) {
 
         fun earnedFn(token: String): (String) -> ContractCall {
             return {

@@ -3,7 +3,7 @@ package io.defitrack.protocol.balancer.contract
 import io.defitrack.abi.TypeUtils.Companion.toBytes32
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import io.github.reactivecircus.cache4k.Cache
 import org.bouncycastle.util.encoders.Hex
 import org.web3j.abi.TypeReference
@@ -15,7 +15,7 @@ import java.math.BigInteger
 class BalancerVaultContract(
     blockchainGateway: BlockchainGateway,
     address: String
-) : EvmContract(
+) : DeprecatedEvmContract(
     blockchainGateway, address
 ) {
 

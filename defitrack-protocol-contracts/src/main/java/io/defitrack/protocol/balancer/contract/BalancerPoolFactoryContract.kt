@@ -2,12 +2,12 @@ package io.defitrack.protocol.balancer.contract
 
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import org.web3j.abi.datatypes.Event
 
 class BalancerPoolFactoryContract(
     blockchainGateway: BlockchainGateway, address: String
-) : EvmContract(
+) : DeprecatedEvmContract(
     blockchainGateway, address
 ) {
 

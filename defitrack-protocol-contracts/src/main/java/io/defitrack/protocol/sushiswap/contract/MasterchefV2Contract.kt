@@ -9,14 +9,14 @@ import io.defitrack.abi.TypeUtils.Companion.uint64
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import kotlinx.coroutines.Deferred
 import java.math.BigInteger
 
 class MasterchefV2Contract(
     blockchainGateway: BlockchainGateway,
     address: String
-) : EvmContract(
+) : DeprecatedEvmContract(
     blockchainGateway, address
 ) {
 
@@ -118,7 +118,7 @@ class MasterchefV2Contract(
 
     class Rewarder(
         blockchainGateway: BlockchainGateway, address: String
-    ) : EvmContract(
+    ) : DeprecatedEvmContract(
         blockchainGateway, address
     ) {
 

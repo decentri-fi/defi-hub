@@ -6,7 +6,7 @@ import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import java.math.BigInteger
 
 class PikaStakingContract(
@@ -57,7 +57,7 @@ class PikaStakingContract(
     class PikaRewardPoolContract(
         blockchainGateway: BlockchainGateway,
         address: String
-    ) : EvmContract(blockchainGateway, address), PikaRewards {
+    ) : DeprecatedEvmContract(blockchainGateway, address), PikaRewards {
         val rewardToken = constant<String>("rewardToken", TypeUtils.address())
         val precision = constant<BigInteger>("PRECISION", TypeUtils.uint256())
 
@@ -94,7 +94,7 @@ class PikaStakingContract(
     class PikaTokenRewardsPoolContract(
         blockchainGateway: BlockchainGateway,
         address: String
-    ) : EvmContract(blockchainGateway, address), PikaRewards {
+    ) : DeprecatedEvmContract(blockchainGateway, address), PikaRewards {
         val rewardToken = constant<String>("rewardToken", TypeUtils.address())
 
         override fun claimRewardFn(user: String): ContractCall {

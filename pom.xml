@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.2</version>
+        <version>3.2.3</version>
         <relativePath/>
     </parent>
 
@@ -30,7 +30,6 @@
         <spring-cloud-dependencies.version>2023.0.0</spring-cloud-dependencies.version>
         <commons-collections.version>4.4</commons-collections.version>
         <commons-lang3.version>3.13.0</commons-lang3.version>
-        <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
         <commons-io.version>2.15.0</commons-io.version>
         <okhttp.version>4.12.0</okhttp.version>
         <kotlin.version>1.9.22</kotlin.version>
@@ -218,34 +217,6 @@
                         <id>attach-sources</id>
                         <goals>
                             <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco-maven-plugin.version}</version>
-                <configuration>
-                    <excludes>
-                        <exclude>**/*Config.*</exclude>
-                        <exclude>**/*Configuration.*</exclude>
-                        <exclude>**/*Dto.*</exclude>
-                        <exclude>**/*Event.*</exclude>
-                        <exclude>**/*Exception.*</exclude>
-                    </excludes>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>report</goal>
                         </goals>
                     </execution>
                 </executions>

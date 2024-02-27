@@ -3,11 +3,11 @@ package io.defitrack.protocol.algebra
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 
 class AlgebraFactoryContract(
     blockchainGateway: BlockchainGateway, abi: String
-) : EvmContract(
+) : DeprecatedEvmContract(
     blockchainGateway, abi
 ) {
 

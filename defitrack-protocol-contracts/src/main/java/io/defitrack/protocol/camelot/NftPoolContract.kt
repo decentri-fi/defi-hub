@@ -2,11 +2,10 @@ package io.defitrack.protocol.camelot
 
 import io.defitrack.abi.TypeUtils
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.EvmContract
-import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties.Pool
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import java.math.BigInteger
 
-class NftPoolContract(blockchainGateway: BlockchainGateway, address: String) : EvmContract(
+class NftPoolContract(blockchainGateway: BlockchainGateway, address: String) : DeprecatedEvmContract(
     blockchainGateway, address
 ) {
 

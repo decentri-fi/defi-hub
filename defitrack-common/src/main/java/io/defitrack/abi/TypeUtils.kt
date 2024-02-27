@@ -58,6 +58,15 @@ class TypeUtils {
             return TypeReference.create(Uint256::class.java, indexed)
         }
 
+
+        fun uint152(indexed: Boolean = false): TypeReference<Uint152> {
+            return TypeReference.create(Uint152::class.java, indexed)
+        }
+
+        fun uint104(indexed: Boolean = false): TypeReference<Uint104> {
+            return TypeReference.create(Uint104::class.java, indexed)
+        }
+
         fun int256(indexed: Boolean = false): TypeReference<Int256> {
             return TypeReference.create(Int256::class.java, indexed)
         }

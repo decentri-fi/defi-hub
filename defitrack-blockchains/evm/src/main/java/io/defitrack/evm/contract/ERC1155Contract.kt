@@ -1,6 +1,5 @@
 package io.defitrack.evm.contract
 
-import arrow.core.nel
 import io.defitrack.abi.TypeUtils.Companion.string
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
@@ -11,7 +10,7 @@ open class ERC1155Contract(
     blockchainGateway: BlockchainGateway,
     address: String
 ) :
-    EvmContract(blockchainGateway, address) {
+    DeprecatedEvmContract(blockchainGateway, address) {
 
     suspend fun balanceOf(user: String, tokenId: BigInteger): BigInteger {
         return readSingle(

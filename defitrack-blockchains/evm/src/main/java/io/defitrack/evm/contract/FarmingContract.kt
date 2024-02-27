@@ -11,7 +11,7 @@ open class FarmingContract(
     rewardTokenName: String = "rewardToken",
     val rewardFunctionName: String = "earned",
     val claimFunctionName: String = "getReward"
-) : EvmContract(
+) : DeprecatedEvmContract(
     blockchainGateway, address
 ) {
 

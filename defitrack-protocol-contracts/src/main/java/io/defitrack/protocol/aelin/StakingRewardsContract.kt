@@ -4,12 +4,12 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import java.math.BigInteger
 
 class StakingRewardsContract(
     blockchainGateway: BlockchainGateway,
-) : EvmContract(
+) : DeprecatedEvmContract(
     blockchainGateway, "0xfe757a40f3eda520845b339c698b321663986a4d"
 ) {
 

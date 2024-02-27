@@ -3,12 +3,12 @@ package io.defitrack.protocol.aura
 import io.defitrack.abi.TypeUtils
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EventUtils.extract
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import org.web3j.abi.datatypes.Event
 
 class RewardPoolFactoryContract(
     blockchainGateway: BlockchainGateway, address: String
-) : EvmContract(
+) : DeprecatedEvmContract(
     blockchainGateway, address
 ) {
 

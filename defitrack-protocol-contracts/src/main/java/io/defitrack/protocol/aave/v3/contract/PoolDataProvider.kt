@@ -4,7 +4,7 @@ import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.abi.TypeUtils.Companion.uint40
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import io.defitrack.protocol.aave.v3.domain.ReserveData
 import io.defitrack.protocol.aave.v3.domain.ReserveTokenAddresses
 import java.math.BigInteger
@@ -13,7 +13,7 @@ import io.defitrack.abi.TypeUtils.Companion.address
 class PoolDataProvider(
     blockchainGateway: BlockchainGateway,
     address: String
-) : EvmContract(blockchainGateway, address) {
+) : DeprecatedEvmContract(blockchainGateway, address) {
 
     suspend fun getReserveTokensAddresses(asset: String): ReserveTokenAddresses {
         val retVal = read(

@@ -1,6 +1,6 @@
 package io.defitrack.protocol.ironbank
 
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import io.defitrack.evm.contract.BlockchainGateway
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
@@ -9,7 +9,7 @@ import org.web3j.abi.datatypes.DynamicArray
 class IronBankComptrollerContract(
     blockchainGateway: BlockchainGateway,
     address: String
-) : EvmContract(
+) : DeprecatedEvmContract(
     blockchainGateway, address
 ) {
 

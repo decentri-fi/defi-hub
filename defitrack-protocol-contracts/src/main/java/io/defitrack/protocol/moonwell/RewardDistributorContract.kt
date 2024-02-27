@@ -3,14 +3,14 @@ package io.defitrack.protocol.moonwell
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.*
 import org.web3j.abi.datatypes.generated.Uint256
 
 class RewardDistributorContract(
     blockchainGateway: BlockchainGateway, address: String
-) : EvmContract(
+) : DeprecatedEvmContract(
     blockchainGateway, address
 ) {
 

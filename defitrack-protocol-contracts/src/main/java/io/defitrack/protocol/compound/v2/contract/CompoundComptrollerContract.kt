@@ -1,13 +1,13 @@
 package io.defitrack.protocol.compound.v2.contract
 
 import io.defitrack.abi.TypeUtils.Companion.dynamicArray
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import io.defitrack.evm.contract.BlockchainGateway
 import org.web3j.abi.datatypes.Address
 
 open class CompoundComptrollerContract(
     ethereumContractAccessor: BlockchainGateway, address: String
-) : EvmContract(ethereumContractAccessor, address) {
+) : DeprecatedEvmContract(ethereumContractAccessor, address) {
 
     suspend fun getMarkets(): List<String> {
         return (read(

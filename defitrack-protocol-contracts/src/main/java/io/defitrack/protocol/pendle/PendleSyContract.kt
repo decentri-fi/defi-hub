@@ -5,9 +5,9 @@ import arrow.core.getOrElse
 import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.uint8
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 
-class PendleSyContract(blockchainGateway: BlockchainGateway, address: String) : EvmContract(
+class PendleSyContract(blockchainGateway: BlockchainGateway, address: String) : DeprecatedEvmContract(
     blockchainGateway, address
 ) {
     suspend fun asset(): String {

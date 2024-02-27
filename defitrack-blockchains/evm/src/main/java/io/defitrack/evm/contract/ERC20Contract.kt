@@ -15,7 +15,7 @@ open class ERC20Contract(
     blockchainGateway: BlockchainGateway,
     address: String
 ) :
-    EvmContract(blockchainGateway, address) {
+    DeprecatedEvmContract(blockchainGateway, address) {
 
     companion object {
         fun balanceOf(address: String): Function {

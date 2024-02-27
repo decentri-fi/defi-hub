@@ -3,9 +3,9 @@ package io.defitrack.protocol.mycelium
 import io.defitrack.abi.TypeUtils
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 
-class TcrStakingRewards(blockchainGateway: BlockchainGateway, address: String) : EvmContract(
+class TcrStakingRewards(blockchainGateway: BlockchainGateway, address: String) : DeprecatedEvmContract(
     blockchainGateway, address
 ) {
 

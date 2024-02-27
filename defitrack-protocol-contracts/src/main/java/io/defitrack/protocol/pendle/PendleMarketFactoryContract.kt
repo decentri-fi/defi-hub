@@ -6,14 +6,14 @@ import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.GetEventLogsCommand
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EventUtils.extract
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import org.web3j.abi.EventEncoder
 import org.web3j.abi.datatypes.Event
 import java.math.BigInteger
 
 class PendleMarketFactoryContract(
     blockchainGateway: BlockchainGateway, address: String
-) : EvmContract(blockchainGateway, address) {
+) : DeprecatedEvmContract(blockchainGateway, address) {
 
     val createNewMarketEvent = Event(
         "CreateNewMarket",

@@ -2,12 +2,12 @@ package io.defitrack.protocol.algebra
 
 import io.defitrack.abi.TypeUtils.Companion.uint128
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import java.math.BigInteger
 
 class AlgebraPoolContract(
     blockchainGateway: BlockchainGateway, abi: String
-) : EvmContract(
+) : DeprecatedEvmContract(
     blockchainGateway, abi
 ) {
 
