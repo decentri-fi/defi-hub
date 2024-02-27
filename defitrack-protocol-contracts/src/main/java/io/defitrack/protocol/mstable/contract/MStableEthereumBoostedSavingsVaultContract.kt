@@ -7,10 +7,10 @@ import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
 
+context(BlockchainGateway)
 class MStableEthereumBoostedSavingsVaultContract(
-    ethereumContractAccessor: BlockchainGateway,
     address: String,
-) : ERC20Contract(ethereumContractAccessor, address) {
+) : ERC20Contract(address) {
 
 
     fun rawBalanceOfFunction(address: String): ContractCall {

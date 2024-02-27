@@ -27,8 +27,8 @@ abstract class HopPoolingMarketProvider(
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
         hopService.getLps(getNetwork()).parMapNotNull(concurrency = 12) { hopLpToken ->
             toPoolingMarketElement(getBlockchainGateway(), hopLpToken).mapLeft {
-                    logger.error("Unable to get pooling market: {}", it.message)
-                }.getOrNull()
+                logger.error("Unable to get pooling market: {}", it.message)
+            }.getOrNull()
         }.forEach {
             send(it)
         }
@@ -38,9 +38,7 @@ abstract class HopPoolingMarketProvider(
         gateway: BlockchainGateway, hopLpToken: HopLpToken
     ): Either<Throwable, PoolingMarket> {
         return Either.catch {
-            val contract = HopLpTokenContract(
-                blockchainGateway = gateway, hopLpToken.lpToken
-            )
+            val contract = getHopLpContract(hopLpToken)
 
             val lp = getToken(hopLpToken.lpToken)
 
@@ -73,6 +71,10 @@ abstract class HopPoolingMarketProvider(
                 positionFetcher = defaultPositionFetcher(hopLpToken.lpToken),
                 totalSupply = contract.totalSupply().map { it.asEth(lp.decimals) })
         }
+    }
+
+    private fun getHopLpContract(hopLpToken: HopLpToken) = with(getBlockchainGateway()) {
+        HopLpTokenContract(hopLpToken.lpToken)
     }
 
     override fun getProtocol(): Protocol {

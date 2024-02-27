@@ -9,7 +9,7 @@ import io.defitrack.evm.contract.ERC20Contract
 import java.math.BigInteger
 
 context (BlockchainGateway)
-class MarinatedUmamiContract(address: String) : ERC20Contract(this, address) {
+class MarinatedUmamiContract(address: String) : ERC20Contract(address) {
 
     //TODO: create provider
 

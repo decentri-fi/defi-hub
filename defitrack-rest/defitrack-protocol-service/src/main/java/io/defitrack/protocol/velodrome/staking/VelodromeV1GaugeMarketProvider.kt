@@ -40,10 +40,7 @@ class VelodromeV1GaugeMarketProvider(
 
             if (gauge != "0x0000000000000000000000000000000000000000") {
                 try {
-                    val contract = VelodromeV1GaugeContract(
-                        getBlockchainGateway(),
-                        gauge
-                    )
+                    val contract = with(getBlockchainGateway()) { VelodromeV1GaugeContract(gauge) }
 
                     val stakedToken = getToken(contract.stakedToken.await())
 

@@ -28,10 +28,7 @@ class EthereumSetPoolingMarketProvider(
     override suspend fun fetchMarkets(): List<PoolingMarket> {
         return ethereumSetProvider.getSets().mapNotNull { set ->
             try {
-                val tokenContract = SetTokenContract(
-                    getBlockchainGateway(), set
-                )
-
+                val tokenContract = with(getBlockchainGateway()) { SetTokenContract(set) }
                 val token = getToken(set)
 
                 val breakdown = refreshable {

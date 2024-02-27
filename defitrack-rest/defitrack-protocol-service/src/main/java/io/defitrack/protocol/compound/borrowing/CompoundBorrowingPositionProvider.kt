@@ -39,14 +39,12 @@ class CompoundBorrowingPositionProvider(
             .divide(BigDecimal.TEN.pow(4), 4, RoundingMode.HALF_UP).times(BigDecimal(100))
     }
 
-    private suspend fun getTokenContracts() = CompoundComptrollerContract(
-        gateway,
-        compoundAddressesProvider.CONFIG[getNetwork()]!!.v2Controller!!
-    ).getMarkets().map {
-        CompoundTokenContract(
-            gateway,
-            it
-        )
+    private suspend fun getTokenContracts(): List<CompoundTokenContract> = with(gateway) {
+        return CompoundComptrollerContract(
+            compoundAddressesProvider.CONFIG[getNetwork()]!!.v2Controller!!
+        ).getMarkets().map {
+            CompoundTokenContract(it)
+        }
     }
 
     override suspend fun getPositions(address: String): List<BorrowPosition> {

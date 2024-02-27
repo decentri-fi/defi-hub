@@ -6,13 +6,11 @@ import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
 import java.math.BigInteger
-import java.util.logging.Logger
 
+context(BlockchainGateway)
 class PufferEthContract(
-    blockchainGateway: BlockchainGateway, address: String,
-) : ERC20Contract(
-    blockchainGateway, address
-) {
+    address: String,
+) : ERC20Contract(address) {
 
     //TODO: create a provider for this
 
@@ -24,7 +22,7 @@ class PufferEthContract(
         )
     }
 
-    suspend fun totalAssets() : BigInteger {
+    suspend fun totalAssets(): BigInteger {
         return readSingle(
             "totalAssets",
             emptyList(),

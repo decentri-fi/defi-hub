@@ -9,11 +9,8 @@ import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
 import java.math.BigInteger
 
-class AuraDepositContract(
-    blockchainGateway: BlockchainGateway, address: String
-) : ERC20Contract(
-    blockchainGateway, address
-) {
+context(BlockchainGateway)
+class AuraDepositContract(address: String) : ERC20Contract(address) {
 
     val extraRewardsLength = constant<BigInteger>("extraRewardsLength", uint256())
     val stakingToken = constant<String>("stakingToken", address())

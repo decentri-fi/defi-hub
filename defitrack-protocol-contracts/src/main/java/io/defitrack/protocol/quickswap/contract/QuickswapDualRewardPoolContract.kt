@@ -7,12 +7,10 @@ import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
 import java.math.BigInteger
 
+context(BlockchainGateway)
 class QuickswapDualRewardPoolContract(
-    solidityBasedContractAccessor: BlockchainGateway,
     address: String,
-) : ERC20Contract(
-    solidityBasedContractAccessor, address
-) {
+) : ERC20Contract(address) {
 
     suspend fun rewardsTokenAddressA(): String {
         return readSingle("rewardsTokenA", address())

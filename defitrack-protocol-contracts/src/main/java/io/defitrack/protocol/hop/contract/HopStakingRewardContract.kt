@@ -7,13 +7,8 @@ import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
 
-class HopStakingRewardContract(
-    solidityBasedContractAccessor: BlockchainGateway,
-    address: String,
-) : ERC20Contract(
-    solidityBasedContractAccessor,
-    address
-) {
+context(BlockchainGateway)
+class HopStakingRewardContract(address: String) : ERC20Contract(address) {
 
     val rewardsToken = constant<String>("rewardsToken", address())
     val stakingToken = constant<String>("stakingToken", address())

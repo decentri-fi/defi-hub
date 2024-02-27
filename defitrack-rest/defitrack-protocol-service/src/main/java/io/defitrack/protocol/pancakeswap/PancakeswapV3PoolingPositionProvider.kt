@@ -32,8 +32,7 @@ class PancakeswapV3PoolingPositionProvider(
 
     val poolingNftContract = lazyAsync {
         PancakePositionsV3Contract(
-            uniswapV3PoolingMarketProvider.getBlockchainGateway(),
-            "0x46a15b0b27311cedf172ab29e4f4766fbe7f4364"
+            uniswapV3PoolingMarketProvider.getBlockchainGateway(), "0x46a15b0b27311cedf172ab29e4f4766fbe7f4364"
         )
     }
 
@@ -44,15 +43,10 @@ class PancakeswapV3PoolingPositionProvider(
         }.parMapNotNull(concurrency = 8) { position ->
             try {
                 val poolAddress = uniswapV3PoolingMarketProvider.uniswapV3PoolFactoryContract.await().getPool(
-                    position.token0,
-                    position.token1,
-                    position.fee
+                    position.token0, position.token1, position.fee
                 )
 
-                val poolContract = UniswapV3PoolContract(
-                    uniswapV3PoolingMarketProvider.getBlockchainGateway(),
-                    poolAddress
-                )
+                val poolContract = uniswapV3PoolContract(poolAddress)
 
                 val market = uniswapV3PoolingMarketProvider.marketFromCache(poolAddress).getOrElse {
                     throw Exception("Market ($poolAddress) not found")
@@ -63,31 +57,18 @@ class PancakeswapV3PoolingPositionProvider(
 
                 val slot0 = poolContract.slot0.await()
                 val userTokens0 = calculateAmount(
-                    position.tickLower,
-                    position.liquidity,
-                    position.tickUpper,
-                    token0.decimals,
-                    slot0.tick.toInt(),
-                    0
+                    position.tickLower, position.liquidity, position.tickUpper, token0.decimals, slot0.tick.toInt(), 0
                 )
 
                 val userTokens1 = calculateAmount(
-                    position.tickLower,
-                    position.liquidity,
-                    position.tickUpper,
-                    token1.decimals,
-                    slot0.tick.toInt(),
-                    1
+                    position.tickLower, position.liquidity, position.tickUpper, token1.decimals, slot0.tick.toInt(), 1
                 )
 
 
                 val totalToken0Usd = if (userTokens0 > BigDecimal.ZERO) {
-                    uniswapV3PoolingMarketProvider.getPriceResource()
-                        .calculatePrice(
+                    uniswapV3PoolingMarketProvider.getPriceResource().calculatePrice(
                             GetPriceCommand(
-                                token0.address,
-                                uniswapV3PoolingMarketProvider.getNetwork(),
-                                userTokens0
+                                token0.address, uniswapV3PoolingMarketProvider.getNetwork(), userTokens0
                             )
                         )
                 } else {
@@ -97,24 +78,18 @@ class PancakeswapV3PoolingPositionProvider(
                 val totalToken1Usd = if (userTokens1 > BigDecimal.ZERO) {
                     uniswapV3PoolingMarketProvider.getPriceResource().calculatePrice(
                         GetPriceCommand(
-                            token1.address,
-                            uniswapV3PoolingMarketProvider.getNetwork(),
-                            userTokens1
+                            token1.address, uniswapV3PoolingMarketProvider.getNetwork(), userTokens1
                         )
                     )
                 } else {
                     0.0
                 }
 
-                PoolingPosition(
-                    tokenAmount = BigInteger.ZERO,
-                    market,
-                    object : PriceCalculator {
-                        override fun calculate(): Double {
-                            return totalToken0Usd + totalToken1Usd
-                        }
+                PoolingPosition(tokenAmount = BigInteger.ZERO, market, object : PriceCalculator {
+                    override fun calculate(): Double {
+                        return totalToken0Usd + totalToken1Usd
                     }
-                )
+                })
             } catch (ex: Exception) {
                 logger.info(
                     "Unable to fetch claimables for ${uniswapV3PoolingMarketProvider.getNetwork()}", ex.message
@@ -123,6 +98,11 @@ class PancakeswapV3PoolingPositionProvider(
             }
         }
     }
+
+    private fun uniswapV3PoolContract(poolAddress: String): UniswapV3PoolContract =
+        with(uniswapV3PoolingMarketProvider.getBlockchainGateway()) {
+            UniswapV3PoolContract(poolAddress)
+        }
 
     fun calculateAmount(
         tickLower: BigInteger,
@@ -134,9 +114,7 @@ class PancakeswapV3PoolingPositionProvider(
     ): BigDecimal {
 
         val sqrt = computeSqrtForAmounts(
-            tickLower.toInt(),
-            tickUpper.toInt(),
-            tick
+            tickLower.toInt(), tickUpper.toInt(), tick
         )
 
         return if (tokenPosition == 0) {
@@ -152,9 +130,7 @@ class PancakeswapV3PoolingPositionProvider(
 
 
     fun computeSqrtForAmounts(
-        tickLower: Int,
-        tickUpper: Int,
-        tick: Int
+        tickLower: Int, tickUpper: Int, tick: Int
     ): Triple<BigInteger, BigInteger, BigInteger> {
         val sqrtA = (Math.pow(LOG_PRICE.toDouble(), (tickLower / 2).toDouble())).toBigDecimal() * POW_96.toBigDecimal()
         val sqrtB = (Math.pow(LOG_PRICE.toDouble(), (tickUpper / 2).toDouble())).toBigDecimal() * POW_96.toBigDecimal()

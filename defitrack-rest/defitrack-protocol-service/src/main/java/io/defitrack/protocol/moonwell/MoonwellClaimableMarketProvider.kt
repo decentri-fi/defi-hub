@@ -26,18 +26,21 @@ class MoonwellClaimableMarketProvider(
 
 
     val deferredComptroller = lazyAsync {
-        MoonwellUnitRollerContract(
-            blockchainGatewayProvider.getGateway(Network.BASE),
-            "0xfbb21d0380bee3312b33c4353c8936a0f13ef26c"
-        )
+        with(getGateway()) {
+            MoonwellUnitRollerContract(
+                "0xfbb21d0380bee3312b33c4353c8936a0f13ef26c"
+            )
+        }
     }
 
     val deferredRewardDistributor = lazyAsync {
         RewardDistributorContract(
-            blockchainGatewayProvider.getGateway(Network.BASE),
+            getGateway(),
             deferredComptroller.await().rewardDistributor.await()
         )
     }
+
+    private fun getGateway() = blockchainGatewayProvider.getGateway(Network.BASE)
 
     override suspend fun fetchClaimables(): List<ClaimableMarket> {
         val markets = moonwellLendingMarketProvider.getMarkets()

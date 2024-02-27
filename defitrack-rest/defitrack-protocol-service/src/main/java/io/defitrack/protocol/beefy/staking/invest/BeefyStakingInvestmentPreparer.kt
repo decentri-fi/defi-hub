@@ -22,7 +22,7 @@ class BeefyStakingInvestmentPreparer(
     }
 
     override fun getNetwork(): Network {
-        return beefyVault.blockchainGateway.network
+        return beefyVault.getNetwork()
     }
 
     override suspend fun getInvestmentTransaction(user: String, amount: BigInteger): PreparedTransaction {

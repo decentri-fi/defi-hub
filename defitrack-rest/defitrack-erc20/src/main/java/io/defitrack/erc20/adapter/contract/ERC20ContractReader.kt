@@ -28,10 +28,9 @@ private class ERC20ContractReader(
         return catch {
             val correctAddress =
                 if (address == "0x0" || address == "0x0000000000000000000000000000000000000000") NATIVE_WRAP_MAPPING[network]!! else address
-            val contract = ERC20Contract(
-                blockchainGatewayProvider.getGateway(network),
-                correctAddress
-            )
+            val contract = with(blockchainGatewayProvider.getGateway(network)) {
+                ERC20Contract(correctAddress)
+            }
             val result = contract.fetchERC20Information()
             ERC20(
                 name = getValue(result.name, contract::readName),
@@ -63,18 +62,17 @@ private class ERC20ContractReader(
         }
     }
 
-    override suspend fun getBalance(network: Network, address: String, userAddress: String) = ERC20Contract(
-        blockchainGatewayProvider.getGateway(network),
-        address
-    ).balanceOf(userAddress)
+    override suspend fun getBalance(network: Network, address: String, userAddress: String) =
+        with(blockchainGatewayProvider.getGateway(network)) {
+            ERC20Contract(address).balanceOf(userAddress)
+        }
 
     override suspend fun getNativeBalance(network: Network, userAddress: String): BigDecimal {
         return blockchainGatewayProvider.getGateway(network).getNativeBalance(userAddress)
     }
 
     override suspend fun getAllowance(network: Network, address: String, userAddress: String, spenderAddress: String) =
-        ERC20Contract(
-            blockchainGatewayProvider.getGateway(network),
-            address
-        ).readAllowance(userAddress, spenderAddress)
+        with(blockchainGatewayProvider.getGateway(network)) {
+            ERC20Contract(address).readAllowance(userAddress, spenderAddress)
+        }
 }

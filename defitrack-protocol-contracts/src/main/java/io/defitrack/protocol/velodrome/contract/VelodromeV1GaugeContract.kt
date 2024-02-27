@@ -8,10 +8,11 @@ import io.defitrack.evm.contract.ERC20Contract
 import kotlinx.coroutines.Deferred
 import java.math.BigInteger
 
+context(BlockchainGateway)
 class VelodromeV1GaugeContract(
-    blockchainGateway: BlockchainGateway, address: String
+    address: String
 ) : ERC20Contract(
-    blockchainGateway, address
+    address
 ) {
 
     val stakedToken: Deferred<String> = constant("stake", TypeUtils.address())

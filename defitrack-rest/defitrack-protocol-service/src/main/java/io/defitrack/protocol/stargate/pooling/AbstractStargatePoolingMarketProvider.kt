@@ -35,10 +35,7 @@ abstract class AbstractStargatePoolingMarketProvider(
         pools.forEach {
             launch {
                 throttled {
-                    val pool = StargatePool(
-                        getBlockchainGateway(),
-                        it
-                    )
+                    val pool = with(getBlockchainGateway()) { StargatePool(it) }
 
                     val token = getToken(it)
 

@@ -80,16 +80,16 @@ class MoonwellLendingMarketProvider : LendingMarketProvider() {
 
     private suspend fun getTokenContracts(): List<CompoundTokenContract> {
         return getComptroller().getMarkets().map { market ->
-            CompoundTokenContract(
-                getBlockchainGateway(),
-                market
-            )
+            getCompoundTokenContract(market)
         }
     }
 
-    private suspend fun getComptroller(): MoonwellUnitRollerContract {
+    private fun getCompoundTokenContract(market: String) = with(getBlockchainGateway()) {
+        CompoundTokenContract(market)
+    }
+
+    private suspend fun getComptroller(): MoonwellUnitRollerContract = with(getBlockchainGateway()) {
         return MoonwellUnitRollerContract(
-            getBlockchainGateway(),
             "0xfbb21d0380bee3312b33c4353c8936a0f13ef26c"
         )
     }

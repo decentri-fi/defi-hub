@@ -2,11 +2,10 @@ package io.defitrack.protocol.shibaswap
 
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.DeprecatedEvmContract
+import io.defitrack.evm.contract.EvmContract
 
 context(BlockchainGateway)
-class ShibaMasterchefContract(
-    address: String
-) : DeprecatedEvmContract(this, address) {
+class ShibaMasterchefContract(address: String) : EvmContract(address) {
 
     //TODO: implement
 

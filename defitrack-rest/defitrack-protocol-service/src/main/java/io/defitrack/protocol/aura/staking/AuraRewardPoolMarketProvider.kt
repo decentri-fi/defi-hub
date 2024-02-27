@@ -18,14 +18,12 @@ class AuraRewardPoolMarketProvider : FarmingMarketProvider() {
 
     val rewardFactoryAddress = "0xbc8d9caf4b6bf34773976c5707ad1f2778332dca"
 
-    override suspend fun fetchMarkets(): List<FarmingMarket> {
+    override suspend fun fetchMarkets(): List<FarmingMarket> = with(getBlockchainGateway()) {
         val contract = RewardPoolFactoryContract(getBlockchainGateway(), rewardFactoryAddress)
-        return resolve(
-            contract.getCreatedPools("16176243", null)
-                .map {
-                    AuraDepositContract(getBlockchainGateway(), it)
-                })
-            .parMapNotNull {
+        return contract.getCreatedPools("16176243", null)
+            .map {
+                AuraDepositContract(it)
+            }.resolve().parMapNotNull {
                 catch {
                     createMarket(it)
                 }.mapLeft { ex ->

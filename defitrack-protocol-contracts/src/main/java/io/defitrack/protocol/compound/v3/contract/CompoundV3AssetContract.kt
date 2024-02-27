@@ -1,25 +1,21 @@
 package io.defitrack.protocol.compound.v3.contract
 
 import io.defitrack.abi.TypeUtils
-import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint8
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
-import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.StaticStruct
 import org.web3j.abi.datatypes.generated.Uint128
 import org.web3j.abi.datatypes.generated.Uint64
 import org.web3j.abi.datatypes.generated.Uint8
 import java.math.BigInteger
 
-class CompoundV3AssetContract(
-    blockchainGateway: BlockchainGateway,
-    address: String
-) : ERC20Contract(
-    blockchainGateway, address
-) {
+context(BlockchainGateway)
+class CompoundV3AssetContract(address: String) : ERC20Contract(address) {
+
+    //todo: optimize
 
     suspend fun baseToken(): String {
         return read(

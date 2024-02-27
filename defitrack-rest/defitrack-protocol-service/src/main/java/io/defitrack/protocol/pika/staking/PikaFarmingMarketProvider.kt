@@ -20,9 +20,7 @@ class PikaFarmingMarketProvider : FarmingMarketProvider() {
     val pikaStaking = "0x323c8b8306d8d10d7fb78151b6d4be6f160f240a"
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
-        val contract = PikaStakingContract(
-            getBlockchainGateway(), pikaStaking
-        )
+        val contract = with(getBlockchainGateway()) { PikaStakingContract(pikaStaking) }
 
         val rewardPools = contract.rewardPools()
         val stakingToken = getToken(contract.stakingToken.await())

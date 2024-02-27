@@ -1,6 +1,7 @@
 package io.defitrack.protocol.prisma
 
 import arrow.core.Either
+import arrow.core.Either.Companion.catch
 import arrow.core.getOrElse
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
@@ -27,34 +28,35 @@ class PrismaLendingMarketProvider : LendingMarketProvider() {
     )
 
     override suspend fun fetchMarkets(): List<LendingMarket> {
-        val contracts = troveManagers
-            .map {
-                TroveManagerContract(getBlockchainGateway(), it)
-            }
-        return resolve(contracts).parMapNotNull { troveManager ->
+        return troveManagers
+            .map(::troveManagerContract)
+            .resolve()
+            .parMapNotNull { troveManager ->
 
-            val collateral = getToken(troveManager.collateralToken.await())
-
-            create(
-                identifier = troveManager.address,
-                name = "Prisma Lending",
-                token = collateral,
-                poolType = "prisma",
-                totalSupply = refreshable {
-                    Either.catch {
-                        troveManager.totalCollateralSnapshot.await().asEth()
-                    }.mapLeft {
-                        logger.error("Error while fetching prisma market", it)
-                    }.getOrElse { BigDecimal.ZERO }
-                },
-                positionFetcher = PositionFetcher(
-                    troveManager::getTroveCollAndDebt,
-                ),
-                internalMetaData = mapOf(
-                    "contract" to troveManager
+                create(
+                    identifier = troveManager.address,
+                    name = "Prisma Lending",
+                    token = getToken(troveManager.collateralToken.await()),
+                    poolType = "prisma",
+                    totalSupply = refreshable {
+                        catch {
+                            troveManager.totalCollateralSnapshot.await().asEth()
+                        }.mapLeft {
+                            logger.error("Error while fetching prisma market", it)
+                        }.getOrElse { BigDecimal.ZERO }
+                    },
+                    positionFetcher = PositionFetcher(
+                        troveManager::getTroveCollAndDebt,
+                    ),
+                    internalMetaData = mapOf(
+                        "contract" to troveManager
+                    )
                 )
-            )
-        }
+            }
+    }
+
+    private fun troveManagerContract(it: String): TroveManagerContract = with(getBlockchainGateway()) {
+        TroveManagerContract(it)
     }
 
     override fun getProtocol(): Protocol {

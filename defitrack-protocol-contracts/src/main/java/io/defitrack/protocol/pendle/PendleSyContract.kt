@@ -6,10 +6,10 @@ import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.uint8
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.DeprecatedEvmContract
+import io.defitrack.evm.contract.EvmContract
 
-class PendleSyContract(blockchainGateway: BlockchainGateway, address: String) : DeprecatedEvmContract(
-    blockchainGateway, address
-) {
+context(BlockchainGateway)
+class PendleSyContract(address: String) : EvmContract(address) {
     suspend fun asset(): String {
         return Option.catch {
             readSingle<String>("asset", TypeUtils.address())
@@ -19,7 +19,7 @@ class PendleSyContract(blockchainGateway: BlockchainGateway, address: String) : 
         }
     }
 
-    suspend fun yieldToken() : String {
+    suspend fun yieldToken(): String {
         return readSingle("yieldToken", TypeUtils.address())
     }
 }

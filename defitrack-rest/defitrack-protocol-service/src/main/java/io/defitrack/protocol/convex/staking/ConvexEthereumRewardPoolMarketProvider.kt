@@ -21,10 +21,7 @@ class ConvexEthereumRewardPoolMarketProvider(
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         return convexService.providePools().map {
-            CvxRewardPoolContract(
-                getBlockchainGateway(),
-                it,
-            )
+            getCrvRewardContract(it)
         }.map { poolContract ->
             val stakingToken = getToken(poolContract.stakingToken.await())
             val rewardToken = getToken(poolContract.rewardToken.await())
@@ -46,6 +43,12 @@ class ConvexEthereumRewardPoolMarketProvider(
                 )
             )
         }
+    }
+
+    private fun getCrvRewardContract(it: String): CvxRewardPoolContract = with(getBlockchainGateway()){
+        return CvxRewardPoolContract(
+            it,
+        )
     }
 
     override fun getProtocol(): Protocol {

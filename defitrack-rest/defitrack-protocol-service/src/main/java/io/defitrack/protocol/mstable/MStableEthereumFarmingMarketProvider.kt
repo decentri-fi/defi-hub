@@ -20,10 +20,7 @@ class MStableEthereumFarmingMarketProvider(
 
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
         mStableEthereumService.getBoostedSavingsVaults().map {
-            MStableEthereumBoostedSavingsVaultContract(
-                getBlockchainGateway(),
-                it
-            )
+            mStableEthereumBoostedSavingsVaultContract(it)
         }.parMapNotNull(concurrency = 12) { contract ->
             try {
                 toStakingMarket(contract)
@@ -32,6 +29,10 @@ class MStableEthereumFarmingMarketProvider(
                 null
             }
         }
+    }
+
+    private fun mStableEthereumBoostedSavingsVaultContract(it: String) = with(getBlockchainGateway()) {
+        MStableEthereumBoostedSavingsVaultContract(it)
     }
 
     override fun getProtocol(): Protocol {

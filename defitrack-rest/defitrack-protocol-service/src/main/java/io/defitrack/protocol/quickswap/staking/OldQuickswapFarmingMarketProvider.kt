@@ -31,16 +31,13 @@ class OldQuickswapFarmingMarketProvider(
 ) : FarmingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
-        val contract =   RewardFactoryContract(
+        val contract = RewardFactoryContract(
             getBlockchainGateway(),
             quickswapService.getOldRewardFactory(),
         )
 
         contract.getRewardPools().map {
-            QuickswapRewardPoolContract(
-                getBlockchainGateway(),
-                it
-            )
+            quickswapRewardPoolContract(it)
         }.map { rewardPool ->
             val stakedToken = getToken(rewardPool.stakingTokenAddress.await())
             val rewardToken = getToken(rewardPool.rewardsTokenAddress.await())
@@ -68,6 +65,12 @@ class OldQuickswapFarmingMarketProvider(
                 }
             )
         }
+    }
+
+    private fun quickswapRewardPoolContract(address: String) = with(getBlockchainGateway()) {
+        QuickswapRewardPoolContract(
+            address
+        )
     }
 
     override fun getProtocol(): Protocol {

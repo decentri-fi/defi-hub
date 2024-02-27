@@ -31,9 +31,7 @@ class PolygonSetPoolingMarketProvider(
             async {
                 try {
 
-                    val tokenContract = SetTokenContract(
-                        getBlockchainGateway(), it
-                    )
+                    val tokenContract = with(getBlockchainGateway()) {  SetTokenContract(it)}
 
                     val token = getToken(it)
 

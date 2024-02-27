@@ -30,22 +30,18 @@ class BancorEthereumPoolingMarketProvider(
             getBlockchainGateway(), bancorEthreumProvider.bancorNetwork
         )
 
-        resolve(
-            bancor.liquidityPools()
-                .map {
-                    PoolTokenContract(
-                        getBlockchainGateway(),
-                        it
-                    )
-                }
-        ).parMapNotNull(concurrency = 8) { pool ->
-            craate(pool, bancor)
-        }.forEach {
-            send(it)
-        }
+        bancor.liquidityPools()
+            .map(::poolTokenContract)
+            .resolve()
+            .parMapNotNull(concurrency = 8) { pool -> create(pool, bancor) }
+            .forEach {
+                send(it)
+            }
     }
 
-    private suspend fun craate(
+    private fun poolTokenContract(it: String) = with(getBlockchainGateway()) { PoolTokenContract(it) }
+
+    private suspend fun create(
         pool: PoolTokenContract,
         bancor: BancorNetworkContract
     ) = try {

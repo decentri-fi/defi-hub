@@ -52,7 +52,7 @@ abstract class CompoundRewardProvider(
     override suspend fun fetchClaimables(): List<ClaimableMarket> {
         val markets = compoundAddressesProvider.CONFIG[network]!!.v3Tokens
         return markets.map { comet ->
-            val asset = CompoundV3AssetContract(getBlockchainGateway(), comet)
+            val asset = getAssetContract(comet)
             val basetoken = erC20Resource.getTokenInformation(network, asset.baseToken())
             val rewardToken = erC20Resource.getTokenInformation(
                 network,
@@ -74,6 +74,10 @@ abstract class CompoundRewardProvider(
                 )
             )
         }
+    }
+
+    private fun getAssetContract(comet: String): CompoundV3AssetContract = with(getBlockchainGateway()) {
+        return CompoundV3AssetContract(comet)
     }
 
     protected fun getBlockchainGateway(): BlockchainGateway {

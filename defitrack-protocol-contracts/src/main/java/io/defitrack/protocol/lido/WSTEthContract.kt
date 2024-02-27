@@ -8,10 +8,11 @@ import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
 import java.math.BigInteger
 
+context(BlockchainGateway)
 class WSTEthContract(
-    blockchainGateway: BlockchainGateway, address: String
+    address: String
 ) : ERC20Contract(
-    blockchainGateway, address
+    address
 ) {
 
     suspend fun getStethByWstethFunction(wsteth: BigInteger): BigInteger {

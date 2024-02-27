@@ -25,6 +25,7 @@ abstract class BeefyFarmingMarketProvider(
 
     @Autowired
     private lateinit var beefyAPYService: BeefyAPYService
+
     @Autowired
     private lateinit var beefyService: BeefyVaultService
 
@@ -32,16 +33,13 @@ abstract class BeefyFarmingMarketProvider(
         return Protocol.BEEFY
     }
 
-    override suspend fun fetchMarkets(): List<FarmingMarket> {
-        val contracts = resolve(
-            beefyService.getVaults(getNetwork()).map { beefyVault ->
-                BeefyVaultContract(
-                    getBlockchainGateway(),
-                    beefyVault.earnContractAddress,
-                    beefyVault
-                )
-            }
-        )
+    override suspend fun fetchMarkets(): List<FarmingMarket> = with(getBlockchainGateway()) {
+        val contracts = beefyService.getVaults(getNetwork()).map { beefyVault ->
+            BeefyVaultContract(
+                beefyVault.earnContractAddress,
+                beefyVault
+            )
+        }.resolve()
 
         return contracts.parMapNotNull(concurrency = 12) { beefy ->
             catch {

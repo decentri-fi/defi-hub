@@ -24,10 +24,7 @@ class DQuickFarmingMarketProvider(
 ) : FarmingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
-        val contract = DQuickContract(
-            getBlockchainGateway(),
-            quickswapService.getDQuickContract(),
-        )
+        val contract = with(getBlockchainGateway()) { DQuickContract(quickswapService.getDQuickContract()) }
 
         val stakedToken = getToken(contract.address)
         val quickToken = getToken(QUICK)

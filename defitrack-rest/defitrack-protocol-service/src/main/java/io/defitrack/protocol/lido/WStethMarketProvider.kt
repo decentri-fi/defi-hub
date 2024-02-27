@@ -21,20 +21,6 @@ class WStethMarketProvider(
     private val lidoService: LidoService
 ) : FarmingMarketProvider() {
 
-    val wstEthContract by lazy {
-        WSTEthContract(
-            getBlockchainGateway(),
-            lidoService.wsteth()
-        )
-    }
-
-    val stEthContract by lazy {
-        StethContract(
-            getBlockchainGateway(),
-            STETH
-        )
-    }
-
     override suspend fun fetchMarkets(): List<FarmingMarket> {
 
         val eth = getToken(WETH)
@@ -56,9 +42,17 @@ class WStethMarketProvider(
         return Protocol.LIDO
     }
 
-    suspend fun calculateMarketSize(): BigDecimal {
+    suspend fun calculateMarketSize(): BigDecimal = with(getBlockchainGateway()) {
+        val wstEthContract = WSTEthContract(
+            lidoService.wsteth()
+        )
         val totalTokens = wstEthContract.totalSupply().get()
         val wrappedStethTokens = wstEthContract.getStethByWstethFunction(totalTokens)
+
+        val stEthContract = StethContract(
+            getBlockchainGateway(),
+            STETH
+        )
         val pooledEth = stEthContract.getPooledEthByShares(wrappedStethTokens)
         return getPriceResource().calculatePrice(
             GetPriceCommand(

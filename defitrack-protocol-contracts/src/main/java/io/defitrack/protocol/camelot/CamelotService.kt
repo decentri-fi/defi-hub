@@ -26,10 +26,11 @@ class CamelotService(
     }
 
     val algebraPositionsContract = AsyncUtils.lazyAsync {
-        AlgebraPositionsV2Contract(
-            blockchainGateway = blockchainGatewayProvider.getGateway(Network.ARBITRUM),
-            address = CAMELOT_NFT
-        )
+        with(blockchainGatewayProvider.getGateway(Network.ARBITRUM)) {
+            AlgebraPositionsV2Contract(
+                address = CAMELOT_NFT
+            )
+        }
     }
 
     suspend fun getPoolByPair(token0: String, token1: String) =

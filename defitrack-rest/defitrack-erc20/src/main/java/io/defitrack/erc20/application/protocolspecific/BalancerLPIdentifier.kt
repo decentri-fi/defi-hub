@@ -24,10 +24,7 @@ class BalancerLPIdentifier(
 
     override suspend fun getTokenInfo(token: ERC20): TokenInformation {
         val gateway = blockchainGatewayProvider.getGateway(token.network)
-        val poolContract = BalancerPoolContract(
-            gateway,
-            token.address
-        )
+        val poolContract = with(gateway) { BalancerPoolContract(token.address) }
 
         val vault = BalancerVaultContract(
             gateway,
@@ -42,10 +39,8 @@ class BalancerLPIdentifier(
                 it.token.lowercase() != token.address.lowercase()
             }.map {
                 erc20TokenService.getTokenInformation(it.token, token.network)
-            }.filter {
-                it.isSome()
-            }.map {
-                it.getOrNull()!!
+            }.mapNotNull {
+                it.getOrNull()
             }
 
         return TokenInformation(

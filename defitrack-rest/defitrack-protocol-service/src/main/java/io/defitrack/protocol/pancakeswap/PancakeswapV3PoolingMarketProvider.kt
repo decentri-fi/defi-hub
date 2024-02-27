@@ -68,7 +68,7 @@ class PancakeswapV3PoolingMarketProvider(
                 it.id == createId(identifier)
             }
 
-            val pool = UniswapV3PoolContract(getBlockchainGateway(), address)
+            val pool = uniswapV3PoolContract(address)
             val token0 = prefetch?.tokens?.get(0) ?: getToken(pool.token0.await())
             val token1 = prefetch?.tokens?.get(1) ?: getToken(pool.token1.await())
 
@@ -98,6 +98,10 @@ class PancakeswapV3PoolingMarketProvider(
                 internalMetadata = mapOf("contract" to pool),
             )
         }
+    }
+
+    private fun uniswapV3PoolContract(address: String) = with(getBlockchainGateway()) {
+        UniswapV3PoolContract(address)
     }
 
 

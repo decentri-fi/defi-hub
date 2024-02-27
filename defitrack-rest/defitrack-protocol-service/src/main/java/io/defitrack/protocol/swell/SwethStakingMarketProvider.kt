@@ -16,13 +16,9 @@ class SwethStakingMarketProvider : FarmingMarketProvider() {
 
     val swethAddress = "0xf951e335afb289353dc249e82926178eac7ded78"
 
-    val deferredContract = lazyAsync {
-        SwethContract(getBlockchainGateway(), swethAddress)
-    }
-
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         val ether = getToken("0x0")
-        val contract = deferredContract.await()
+        val contract = with(getBlockchainGateway()) { SwethContract(swethAddress) }
 
         return create(
             name = "swETH",

@@ -18,10 +18,9 @@ private class LpContractReader(
     override suspend fun getLP(network: Network, address: String): LPTokenContract {
         val key = "${network.name}-${address.lowercase(Locale.getDefault())}"
         return cache.get(key) {
-            LPTokenContract(
-                blockchainGatewayProvider.getGateway(network),
-                address = address
-            )
+            with(blockchainGatewayProvider.getGateway(network)) {
+                LPTokenContract(address)
+            }
         }
     }
 }

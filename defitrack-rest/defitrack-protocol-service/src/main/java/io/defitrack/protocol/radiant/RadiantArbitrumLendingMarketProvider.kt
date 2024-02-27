@@ -42,10 +42,7 @@ class RadiantArbitrumLendingMarketProvider : LendingMarketProvider() {
 
     private suspend fun createMarket(market: String, contract: LendingPoolContract): LendingMarket {
         val reserve = contract.getReserveData(market)
-        val ctokenContract = CompoundTokenContract(
-            getBlockchainGateway(),
-            reserve.aTokenAddress
-        )
+        val ctokenContract = compoundTokenContract(reserve)
         val lendingToken = getToken(market)
         return create(
             identifier = ctokenContract.address,
@@ -66,6 +63,12 @@ class RadiantArbitrumLendingMarketProvider : LendingMarketProvider() {
                     totalDecimalSupply()
                 }
             }
+        )
+    }
+
+    private fun compoundTokenContract(reserve: LendingPoolContract.ReserveData) = with(getBlockchainGateway()) {
+        CompoundTokenContract(
+            reserve.aTokenAddress
         )
     }
 

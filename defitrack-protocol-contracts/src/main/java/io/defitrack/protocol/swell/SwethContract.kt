@@ -9,13 +9,16 @@ import io.defitrack.evm.position.PositionFetcher
 import org.web3j.abi.datatypes.Type
 import java.math.BigInteger
 
+context(BlockchainGateway)
 class SwethContract(
-    blockchainGateway: BlockchainGateway, address: String
+    address: String
 ) : ERC20Contract(
-    blockchainGateway, address
+    address
 ) {
 
     val rate = constant<BigInteger>("getRate", uint256())
+
+    //TODO use
     val totalEthDeposited = constant<BigInteger>("totalETHDeposited", uint256())
 
     suspend fun positionFetcher() = PositionFetcher(

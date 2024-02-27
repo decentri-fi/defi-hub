@@ -8,12 +8,8 @@ import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
 import java.math.BigInteger
 
-class IronbankTokenContract(
-    ethereumContractAccessor: BlockchainGateway,
-    address: String,
-) : ERC20Contract(
-    ethereumContractAccessor, address
-) {
+context(BlockchainGateway)
+class IronbankTokenContract(address: String) : ERC20Contract(address) {
 
     fun mintFunction(amount: BigInteger): ContractCall {
         return createFunction(

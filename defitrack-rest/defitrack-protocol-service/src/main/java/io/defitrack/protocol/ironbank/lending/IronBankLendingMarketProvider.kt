@@ -84,11 +84,12 @@ abstract class IronBankLendingMarketProvider(
 
     private suspend fun getTokenContracts(): List<IronbankTokenContract> {
         return getComptroller().getMarkets().map { market ->
-            IronbankTokenContract(
-                getBlockchainGateway(),
-                market
-            )
+            getIronBankTokenContract(market)
         }
+    }
+
+    private fun getIronBankTokenContract(market: String): IronbankTokenContract = with(getBlockchainGateway()) {
+        return IronbankTokenContract(market)
     }
 
     private fun getComptroller(): IronBankComptrollerContract {

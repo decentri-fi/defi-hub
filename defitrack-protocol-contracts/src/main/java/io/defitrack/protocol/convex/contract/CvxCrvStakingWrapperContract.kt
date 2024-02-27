@@ -9,10 +9,10 @@ import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
 import kotlinx.coroutines.Deferred
 
-class CvxCrvStakingWrapperContract(
-    blockchainGateway: BlockchainGateway, address: String
-) : ERC20Contract(blockchainGateway, address) {
+context(BlockchainGateway)
+class CvxCrvStakingWrapperContract( address: String) : ERC20Contract(address) {
 
+    //todo: fix
     val crv: Deferred<String> = lazyAsync {
         readSingle("crv", TypeUtils.address())
     }

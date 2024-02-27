@@ -5,9 +5,10 @@ import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.protocol.compound.v2.contract.CompoundComptrollerContract
 
+context(BlockchainGateway)
 class OvixUnitRollerContract(
-    blockchainGateway: BlockchainGateway, address: String
-) : CompoundComptrollerContract(blockchainGateway, address) {
+    address: String
+) : CompoundComptrollerContract(address) {
 
     fun claimReward(user: String): ContractCall {
         return createFunction(

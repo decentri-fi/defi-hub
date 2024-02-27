@@ -21,7 +21,7 @@ class CompoundLendingInvestmentPreparer(
     }
 
     override fun getNetwork(): Network {
-        return iToken.blockchainGateway.network
+        return iToken.getNetwork()
     }
 
     override suspend fun getInvestmentTransaction(user: String, amount: BigInteger): PreparedTransaction {

@@ -12,17 +12,16 @@ import io.defitrack.abi.TypeUtils.Companion.uint160
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.abi.TypeUtils.Companion.uint32
 import io.defitrack.abi.TypeUtils.Companion.uint8
-import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
 import kotlinx.coroutines.Deferred
 import java.math.BigInteger
 
+context(BlockchainGateway)
 class UniswapV3PoolContract(
-    blockchaingateway: BlockchainGateway,
     address: String
 ) : ERC20Contract(
-    blockchaingateway, address
+     address
 ) {
 
     val liquidity = constant<BigInteger>("liquidity", uint128())

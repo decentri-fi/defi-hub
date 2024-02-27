@@ -68,10 +68,11 @@ class CurveEthereumGaugeMarketProvider : FarmingMarketProvider() {
     }
 
     private suspend fun CurveEthereumGaugeMarketProvider.normalGauge(gauge: String): FarmingMarket {
-        val contract = CurveL2GaugeContract(
-            getBlockchainGateway(),
-            gauge
-        )
+        val contract = with(getBlockchainGateway()) {
+            CurveL2GaugeContract(
+                gauge
+            )
+        }
 
         val stakedToken = getToken(contract.lpToken())
 

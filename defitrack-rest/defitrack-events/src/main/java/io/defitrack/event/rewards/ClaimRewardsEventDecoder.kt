@@ -38,11 +38,8 @@ class ClaimRewardsEventDecoder : EventDecoder() {
 
         val amount = "amount" to claimRewardsEvent.extract<BigInteger>(log, false, 0)
 
-        val rewardToken = getToken(
-            VelodromeV2GaugeContract(
-                getGateway(network), log.address
-            ).rewardToken.await(), network
-        )
+        val gaugeContract = with(getGateway(network)) { VelodromeV2GaugeContract(log.address) }
+        val rewardToken = getToken(gaugeContract.rewardToken.await(), network)
 
         val token = "asset" to rewardToken
 

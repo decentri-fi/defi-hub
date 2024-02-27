@@ -32,10 +32,11 @@ class PendleEthereumLiquidityPoolMarketProvider : PoolingMarketProvider() {
 
         return factory.getMarkets().map { marketConfig ->
 
-            val contract = PendleMarketContract(
-                blockchainGateway = getBlockchainGateway(),
-                address = marketConfig.market
-            )
+            val contract = with(getBlockchainGateway()) {
+                PendleMarketContract(
+                    address = marketConfig.market
+                )
+            }
 
             val tokens = contract.readTokens()
 

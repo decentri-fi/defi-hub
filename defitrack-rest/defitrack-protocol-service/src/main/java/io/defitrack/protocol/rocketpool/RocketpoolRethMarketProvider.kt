@@ -22,9 +22,7 @@ class RocketpoolRethMarketProvider : FarmingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         val eth = getToken("0x0")
-        val reth = RETHContract(
-            getBlockchainGateway(), rethAddress
-        )
+        val reth = rethContract()
 
         return create(
             name = "rETH",
@@ -47,6 +45,8 @@ class RocketpoolRethMarketProvider : FarmingMarketProvider() {
             },
         ).nel()
     }
+
+    private fun rethContract() = with(getBlockchainGateway()) { RETHContract(rethAddress) }
 
     override fun getProtocol(): Protocol {
         return Protocol.ROCKETPOOL

@@ -19,10 +19,11 @@ class EEthStakingMarketProvider : FarmingMarketProvider() {
 
         val eth = getToken("0x0")
 
-        val eeth = EEthContract(
-            getBlockchainGateway(),
-            "0x35fa164735182de50811e8e2e824cfb9b6118ac2"
-        )
+        val eeth = with(getBlockchainGateway()) {
+            EEthContract(
+                "0x35fa164735182de50811e8e2e824cfb9b6118ac2"
+            )
+        }
 
         return create(
             name = "ether.fi ETH",

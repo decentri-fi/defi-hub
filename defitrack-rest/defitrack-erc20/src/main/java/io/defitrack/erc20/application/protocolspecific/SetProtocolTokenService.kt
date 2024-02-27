@@ -33,10 +33,7 @@ class SetProtocolTokenService(
     }
 
     override suspend fun getTokenInfo(token: ERC20): TokenInformation {
-        val contract = SetTokenContract(
-            blockchainGatewayProvider.getGateway(token.network),
-            token.address
-        )
+        val contract = with(blockchainGatewayProvider.getGateway(token.network)) { SetTokenContract(token.address) }
 
         val asERC20 = contractReader.getERC20(token.network, token.address).getOrElse {
             throw IllegalArgumentException("couldn't get erc20 token for ${token.address} on ${token.network.name}")

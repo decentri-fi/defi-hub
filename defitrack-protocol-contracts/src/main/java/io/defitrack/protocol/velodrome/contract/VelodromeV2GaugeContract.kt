@@ -8,15 +8,12 @@ import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
 import kotlinx.coroutines.Deferred
 
-class VelodromeV2GaugeContract(
-    blockchainGateway: BlockchainGateway, address: String
-) : ERC20Contract(
-    blockchainGateway, address
-) {
+context(BlockchainGateway)
+class VelodromeV2GaugeContract(address: String) : ERC20Contract(address) {
 
-    val stakedToken: Deferred<String> = constant("stakingToken", address())
+    val stakedToken = constant<String>("stakingToken", address())
 
-    val rewardToken: Deferred<String> = constant("rewardToken", address())
+    val rewardToken = constant<String>("rewardToken", address())
 
     fun getRewardFn(address: String): ContractCall {
         return createFunction(

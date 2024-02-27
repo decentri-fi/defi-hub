@@ -21,10 +21,7 @@ class QiDaoArbitrumVaultProvider(
     override suspend fun fetchMarkets(): List<LendingMarket> {
         return qidaoArbitrumService.provideVaults().parMap {
 
-            val vault = QidaoVaultContract(
-                getBlockchainGateway(),
-                it
-            )
+            val vault = with(getBlockchainGateway()) { QidaoVaultContract(it) }
             val collateral = getToken(vault.collateral.await())
 
             create(

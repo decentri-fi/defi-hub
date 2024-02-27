@@ -15,15 +15,9 @@ class VeVeloStakingPositionProvider(
     private val veVeloStakingMarketProvider: VeVeloStakingMarketProvider
 ) : FarmingPositionProvider() {
 
-    val deferredVeVeloContract = lazyAsync {
-        VeVeloContract(
-            veVeloStakingMarketProvider.getBlockchainGateway(),
-            veVeloStakingMarketProvider.veVelo
-        )
-    }
 
     override suspend fun getStakings(protocol: String, address: String): List<FarmingPosition> {
-        val contract = deferredVeVeloContract.await()
+        val contract = with(veVeloStakingMarketProvider.getBlockchainGateway()) { VeVeloContract(veVeloStakingMarketProvider.veVelo) }
         val tokensIds = contract.getTokenIdsForOwner(address)
         val results = veVeloStakingMarketProvider.getBlockchainGateway().readMultiCall(
             tokensIds.map { contract.lockedFn(it) }

@@ -25,14 +25,13 @@ class BlurDepositPoolingMarketProvider : PoolingMarketProvider() {
     val blurEthDeposit = "0x0000000000a39bb272e79075ade125fd351887ac"
 
     val blurEthDepositContract = lazyAsync {
-        ERC20Contract(
-            getBlockchainGateway(),
-            blurEthDeposit
-        )
+
     }
 
-    override suspend fun fetchMarkets(): List<PoolingMarket> {
-        val contract = blurEthDepositContract.await()
+    override suspend fun fetchMarkets(): List<PoolingMarket> = with(getBlockchainGateway()) {
+        val contract = ERC20Contract(
+            blurEthDeposit
+        )
 
         val ether = getToken("0x0")
         return create(

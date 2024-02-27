@@ -10,14 +10,11 @@ import io.defitrack.protocol.beefy.domain.BeefyVault
 import kotlinx.coroutines.Deferred
 import java.math.BigInteger
 
+context(BlockchainGateway)
 class BeefyVaultContract(
-    solidityBasedContractAccessor: BlockchainGateway,
     address: String,
     val beefyVault: BeefyVault
-) :
-    ERC20Contract(
-        solidityBasedContractAccessor, address
-    ) {
+) : ERC20Contract(address) {
 
     fun fullExitFunction(): ContractCall {
         return createFunction(

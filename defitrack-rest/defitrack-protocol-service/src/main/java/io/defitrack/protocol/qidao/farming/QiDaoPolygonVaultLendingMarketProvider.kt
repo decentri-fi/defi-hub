@@ -21,10 +21,11 @@ class QiDaoPolygonVaultLendingMarketProvider(
     override suspend fun fetchMarkets(): List<LendingMarket> {
         return qidaoPolygonService.provideVaults().parMap(concurrency = 12) {
 
-            val vault = QidaoVaultContract(
-                getBlockchainGateway(),
-                it
-            )
+            val vault = with(getBlockchainGateway()) {
+                QidaoVaultContract(
+                    it
+                )
+            }
 
             val collateral = getToken(vault.collateral.await())
 

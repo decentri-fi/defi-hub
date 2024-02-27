@@ -45,10 +45,7 @@ class VelodromeV2GaugeMarketProvider(
             Either.catch {
                 val gauge = voterContract.gauges(it.address)
                 if (gauge != "0x0000000000000000000000000000000000000000") {
-                    val gaugeContract = VelodromeV2GaugeContract(
-                        getBlockchainGateway(),
-                        gauge
-                    )
+                    val gaugeContract = with(getBlockchainGateway()) { VelodromeV2GaugeContract(gauge) }
 
                     val stakedToken = getToken(gaugeContract.stakedToken.await())
                     val rewardToken = getToken(gaugeContract.rewardToken.await())

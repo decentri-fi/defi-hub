@@ -22,7 +22,7 @@ class SavingsDaiMarketProvider : FarmingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         val dai = getToken(daiAddress)
-        val contract = SDAiContract(getBlockchainGateway(), sdaiContractAddress)
+        val contract = sdAiContract()
 
         return create(
             name = "sDAI",
@@ -37,6 +37,10 @@ class SavingsDaiMarketProvider : FarmingMarketProvider() {
                 )
             }
         ).nel()
+    }
+
+    private fun sdAiContract() = with(getBlockchainGateway()) {
+        SDAiContract(sdaiContractAddress)
     }
 
     override fun getProtocol(): Protocol {

@@ -8,12 +8,8 @@ import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
 
-class CurveL2GaugeContract(
-    blockchainGateway: BlockchainGateway,
-    address: String
-) : ERC20Contract(
-    blockchainGateway, address
-) {
+context(BlockchainGateway)
+class CurveL2GaugeContract(address: String) : ERC20Contract(address) {
 
     suspend fun lpToken(): String {
         return readSingle(

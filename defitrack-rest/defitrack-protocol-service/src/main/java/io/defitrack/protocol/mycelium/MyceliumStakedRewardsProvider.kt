@@ -32,7 +32,7 @@ class MyceliumStakedRewardsProvider : FarmingMarketProvider() {
             stakedMlpTracker(contract),
         )
 
-        val stakedMlpTracker = RewardTrackerContract(getBlockchainGateway(), contract.stakedMlpTracker.await())
+        val stakedMlpTracker = rewardTrackerContract(contract)
 
         send(
             create(
@@ -53,9 +53,13 @@ class MyceliumStakedRewardsProvider : FarmingMarketProvider() {
         )
     }
 
+    private suspend fun rewardTrackerContract(contract: RewardRouter02Contract) = with(getBlockchainGateway()) {
+        RewardTrackerContract(contract.stakedMlpTracker.await())
+    }
 
-    suspend fun stakedMlpTracker(contract: RewardRouter02Contract): Reward {
-        val rewardTracker = RewardTrackerContract(getBlockchainGateway(), contract.stakedMlpTracker.await())
+
+    suspend fun stakedMlpTracker(contract: RewardRouter02Contract): Reward = with(getBlockchainGateway()) {
+        val rewardTracker = RewardTrackerContract(contract.stakedMlpTracker.await())
         val rewardToken = getToken(rewardTracker.rewardToken.await())
 
         return Reward(
@@ -64,8 +68,8 @@ class MyceliumStakedRewardsProvider : FarmingMarketProvider() {
         )
     }
 
-    suspend fun feeMlpMarket(contract: RewardRouter02Contract): Reward {
-        val rewardTracker = RewardTrackerContract(getBlockchainGateway(), contract.feeMlpTracker.await())
+    suspend fun feeMlpMarket(contract: RewardRouter02Contract): Reward = with(getBlockchainGateway()) {
+        val rewardTracker = RewardTrackerContract(contract.feeMlpTracker.await())
         val rewardToken = getToken(rewardTracker.rewardToken.await())
 
         return Reward(

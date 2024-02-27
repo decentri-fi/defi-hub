@@ -37,10 +37,7 @@ class QuickswapFarmingMarketProvider(
 
 
         contract.getRewardPools().map {
-            QuickswapRewardPoolContract(
-                getBlockchainGateway(),
-                it
-            )
+            quickswapRewardPoolContract(it)
         }.parMapNotNull(EmptyCoroutineContext, 8) { rewardPool ->
             Either.catch {
                 createMarket(rewardPool)
@@ -51,6 +48,12 @@ class QuickswapFarmingMarketProvider(
         }.forEach {
             send(it)
         }
+    }
+
+    private fun quickswapRewardPoolContract(it: String) = with(getBlockchainGateway()) {
+        QuickswapRewardPoolContract(
+            it
+        )
     }
 
     private suspend fun QuickswapFarmingMarketProvider.createMarket(rewardPool: QuickswapRewardPoolContract): FarmingMarket {

@@ -8,10 +8,11 @@ import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
 
+context(BlockchainGateway)
 class PendleMarketContract(
-    blockchainGateway: BlockchainGateway, address: String
-) : ERC20Contract (
-    blockchainGateway, address
+    address: String
+) : ERC20Contract(
+    address
 ) {
 
     fun activeBalanceFn(user: String): ContractCall {
@@ -23,7 +24,7 @@ class PendleMarketContract(
     }
 
     suspend fun readTokens(): PendleMarket {
-        val retVal =  read(
+        val retVal = read(
             "readTokens",
             emptyList(),
             listOf(

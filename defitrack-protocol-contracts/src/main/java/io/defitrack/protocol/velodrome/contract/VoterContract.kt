@@ -4,12 +4,14 @@ import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.DeprecatedEvmContract
+import io.defitrack.evm.contract.EvmContract
 
 
+context(BlockchainGateway)
 class VoterContract(
-    blockchainGateway: BlockchainGateway, address: String
-) : DeprecatedEvmContract(
-    blockchainGateway, address
+    address: String
+) : EvmContract(
+    address
 ) {
 
     suspend fun gauges(poolAddress: String): String {

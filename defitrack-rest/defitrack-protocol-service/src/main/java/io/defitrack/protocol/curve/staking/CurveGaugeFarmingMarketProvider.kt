@@ -30,10 +30,13 @@ abstract class CurveGaugeFarmingMarketProvider(
         return gaugeController
             .getGaugeAddresses()
             .parMap(concurrency = 12) { gauge ->
-                val contract = CurveL2GaugeContract(
-                    getBlockchainGateway(),
-                    gauge
-                )
+                val contract = with(getBlockchainGateway()) {
+                    CurveL2GaugeContract(
+                        gauge
+                    )
+                }
+
+                //todo: move to contract
                 val rewardTokens = contract.rewardTokens()
                     .filter {
                         it != "0x0000000000000000000000000000000000000000"

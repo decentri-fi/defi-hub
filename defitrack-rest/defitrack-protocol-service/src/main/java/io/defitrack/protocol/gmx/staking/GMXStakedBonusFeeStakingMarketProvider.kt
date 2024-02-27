@@ -29,7 +29,9 @@ class GMXStakedBonusFeeStakingMarketProvider : FarmingMarketProvider() {
     private val gmx = "0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a"
 
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
-        val contract = StakedGMXContract(getBlockchainGateway(), stakedBonusandFeeGMX)
+        val contract = with(getBlockchainGateway()) {
+            StakedGMXContract(stakedBonusandFeeGMX)
+        }
         val rewardToken = getToken(contract.rewardToken.await())
 
         /*

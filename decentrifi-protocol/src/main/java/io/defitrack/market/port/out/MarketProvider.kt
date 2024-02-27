@@ -33,6 +33,9 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import java.math.BigDecimal
 import java.math.BigInteger
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.system.measureTimeMillis
 import kotlin.time.measureTime
 
@@ -71,8 +74,8 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
     @Autowired
     private lateinit var blockchainGatewayProvider: BlockchainGatewayProvider
 
-    suspend fun <T : DeprecatedEvmContract> resolve(contracts: List<T>): List<T> {
-        return bulkConstantResolver.resolve(contracts)
+    suspend fun <T : EvmContract> List<T>.resolve(): List<T> {
+        return bulkConstantResolver.resolve(this)
     }
 
     open fun order(): Int {
@@ -238,6 +241,8 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
     }
 
     fun FungibleTokenInformation.asERC20Contract(blockchainGateway: BlockchainGateway): ERC20Contract {
-        return ERC20Contract(blockchainGateway, address)
+        return with(blockchainGateway) {
+            ERC20Contract(address)
+        }
     }
 }

@@ -84,13 +84,13 @@ abstract class DecentrifiUniswapV3BasedPriceService(
         }
 
         ethPairs.zip(
-            bulkConstantResolver.resolve(ethPairs
-                .map { pool ->
-                    UniswapV3PoolContract(
-                        blockchainGatewayProvider.getGateway(pool.network.toNetwork()),
-                        pool.address
-                    )
-                })
+            bulkConstantResolver.resolve(
+                ethPairs.map { pool ->
+                    with(blockchainGatewayProvider.getGateway(pool.network.toNetwork())) {
+                        UniswapV3PoolContract(pool.address)
+                    }
+                }
+            )
         ).parMap(concurrency = 12) { (pool, contract) ->
             try {
 
@@ -163,10 +163,11 @@ abstract class DecentrifiUniswapV3BasedPriceService(
         usdPairs.zip(
             bulkConstantResolver.resolve(
                 usdPairs.map { pool ->
-                    UniswapV3PoolContract(
-                        blockchainGatewayProvider.getGateway(pool.network.toNetwork()),
-                        pool.address
-                    )
+                    with(blockchainGatewayProvider.getGateway(pool.network.toNetwork())) {
+                        UniswapV3PoolContract(
+                            pool.address
+                        )
+                    }
                 }
             )
         ).filter { (_, contract) ->

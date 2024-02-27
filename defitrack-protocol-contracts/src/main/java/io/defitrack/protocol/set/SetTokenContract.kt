@@ -12,14 +12,14 @@ import org.web3j.abi.datatypes.generated.Int256
 import org.web3j.abi.datatypes.generated.Int8
 import java.math.BigInteger
 
+context(BlockchainGateway)
 class SetTokenContract(
-    blockchainGateway: BlockchainGateway,
     address: String
 ) : ERC20Contract(
-    blockchainGateway, address
+    address
 ) {
 
-    suspend fun getPositionMultiplier() : BigInteger {
+    suspend fun getPositionMultiplier(): BigInteger {
         return readSingle("positionMultiplier", uint256())
     }
 

@@ -11,11 +11,10 @@ import io.defitrack.evm.contract.BlockchainGateway.Companion.createFunction
 import org.web3j.abi.datatypes.Function
 import java.math.BigInteger
 
+context(BlockchainGateway)
 open class ERC20Contract(
-    blockchainGateway: BlockchainGateway,
     address: String
-) :
-    DeprecatedEvmContract(blockchainGateway, address) {
+) : EvmContract(address) {
 
     companion object {
         fun balanceOf(address: String): Function {
@@ -99,7 +98,7 @@ open class ERC20Contract(
             outputs = listOf(uint256())
         )
         return if (retVal.isEmpty()) {
-            logger.debug("Unable to fetch balance of on {} for {}", blockchainGateway.network, address)
+            logger.debug("Unable to fetch balance of on {} for {}", network, address)
             BigInteger.ZERO
         } else {
             retVal[0].value as BigInteger
@@ -111,7 +110,7 @@ open class ERC20Contract(
         return try {
             readSingle("name", string())
         } catch (ex: Exception) {
-            logger.error("ERC20: Error reading name for token $address on ${blockchainGateway.network}")
+            logger.error("ERC20: Error reading name for token $address on $network")
             "unknown"
         }
     }

@@ -7,10 +7,8 @@ import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
 
-class CvxRewardPoolContract(
-    solidityBasedContractAccessor: BlockchainGateway,
-    address: String,
-) : ERC20Contract(solidityBasedContractAccessor, address) {
+context(BlockchainGateway)
+class CvxRewardPoolContract(address: String) : ERC20Contract(address) {
 
 
     val rewardToken = constant<String>("rewardToken", address())

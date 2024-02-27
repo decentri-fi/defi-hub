@@ -23,7 +23,7 @@ class DQuickStakingInvestmentPreparer(
     }
 
     override fun getNetwork(): Network {
-        return dQuickContract.blockchainGateway.network
+        return dQuickContract.getNetwork()
     }
 
     override suspend fun getInvestmentTransaction(user: String, amount: BigInteger): PreparedTransaction {

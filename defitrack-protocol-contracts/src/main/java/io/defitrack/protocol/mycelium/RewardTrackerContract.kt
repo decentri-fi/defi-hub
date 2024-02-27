@@ -7,8 +7,9 @@ import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
 
-class RewardTrackerContract(blockchainGateway: BlockchainGateway, address: String) : ERC20Contract(
-    blockchainGateway, address
+context(BlockchainGateway)
+class RewardTrackerContract(address: String) : ERC20Contract(
+    address
 ) {
 
     val rewardToken = constant<String>("rewardToken", TypeUtils.address())

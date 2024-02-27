@@ -62,11 +62,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
-            <artifactId>defitrack-protocol-contracts</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
 
     <build>

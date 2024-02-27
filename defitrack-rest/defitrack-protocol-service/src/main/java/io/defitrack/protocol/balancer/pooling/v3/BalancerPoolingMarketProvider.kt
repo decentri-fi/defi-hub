@@ -24,19 +24,17 @@ abstract class BalancerPoolingMarketProvider(
 ) : PoolingMarketProvider() {
 
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
-        val poolsPerVault = resolve(
-            balancerService.getPools(getNetwork())
-                .map {
-                    BalancerPoolContract(
-                        getBlockchainGateway(), it
-                    )
-                }
-        ).groupBy { it.vault.await() }.map {
-            BalancerVaultContract(
-                getBlockchainGateway(),
-                it.key
-            ) to it.value
-        }
+        val poolsPerVault = balancerService.getPools(getNetwork())
+            .map {
+                balancerPoolContract(it)
+            }
+            .resolve()
+            .groupBy { it.vault.await() }.map {
+                BalancerVaultContract(
+                    getBlockchainGateway(),
+                    it.key
+                ) to it.value
+            }
 
         poolsPerVault.forEach {
             val vault = it.first
@@ -54,6 +52,10 @@ abstract class BalancerPoolingMarketProvider(
                 send(it)
             }
         }
+    }
+
+    private fun balancerPoolContract(it: String) = with(getBlockchainGateway()) {
+        BalancerPoolContract(it)
     }
 
 

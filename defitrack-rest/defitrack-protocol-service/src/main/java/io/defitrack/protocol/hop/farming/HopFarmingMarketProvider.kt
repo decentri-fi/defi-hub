@@ -29,10 +29,7 @@ abstract class HopFarmingMarketProvider(
 
 
     private suspend fun toStakingMarket(stakingReward: String): FarmingMarket {
-        val contract = HopStakingRewardContract(
-            getBlockchainGateway(),
-            stakingReward
-        )
+        val contract = getStakingContract(stakingReward)
 
         val stakedToken = getToken(contract.stakingToken.await())
         val rewardToken = getToken(contract.rewardsToken.await())
@@ -53,6 +50,12 @@ abstract class HopFarmingMarketProvider(
                 ),
                 preparedTransaction = selfExecutingTransaction(contract::getRewardFn)
             ),
+        )
+    }
+
+    private fun getStakingContract(stakingReward: String) = with(getBlockchainGateway()) {
+        HopStakingRewardContract(
+            stakingReward
         )
     }
 

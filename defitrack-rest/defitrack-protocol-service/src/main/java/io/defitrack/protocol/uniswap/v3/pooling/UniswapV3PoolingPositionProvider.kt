@@ -27,7 +27,7 @@ abstract class UniswapV3PoolingPositionProvider(
 
     val poolingNftContract = lazyAsync {
         UniswapPositionsV3Contract(
-            uniswapV3PoolingMarketProvider.getBlockchainGateway(),
+            gateway(),
             "0xC36442b4a4522E871399CD717aBDD847Ab11FE88"
         )
     }
@@ -46,10 +46,12 @@ abstract class UniswapV3PoolingPositionProvider(
                         position.fee
                     )
 
-                    val poolContract = UniswapV3PoolContract(
-                        uniswapV3PoolingMarketProvider.getBlockchainGateway(),
-                        poolAddress
-                    )
+                    val poolContract =
+                        with(gateway()) {
+                            UniswapV3PoolContract(
+                                poolAddress
+                            )
+                        }
 
                     val market = uniswapV3PoolingMarketProvider.marketFromCache(poolAddress).getOrElse {
                         throw Exception("Market ($poolAddress) not found")
@@ -76,7 +78,6 @@ abstract class UniswapV3PoolingPositionProvider(
                         slot0.tick.toInt(),
                         1
                     )
-
 
                     val totalToken0Usd = if (userTokens0 > BigDecimal.ZERO) {
                         uniswapV3PoolingMarketProvider.getPriceResource()
@@ -121,6 +122,8 @@ abstract class UniswapV3PoolingPositionProvider(
             }
         }.awaitAll().filterNotNull()
     }
+
+    private fun gateway() = uniswapV3PoolingMarketProvider.getBlockchainGateway()
 
     fun calculateAmount(
         tickLower: BigInteger,

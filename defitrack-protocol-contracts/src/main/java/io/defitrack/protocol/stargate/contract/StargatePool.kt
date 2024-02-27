@@ -6,12 +6,10 @@ import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
 import java.math.BigInteger
 
+context(BlockchainGateway)
 class StargatePool(
-    blockchainGateway: BlockchainGateway,
     address: String
-) : ERC20Contract(
-    blockchainGateway, address
-) {
+) : ERC20Contract(address) {
 
     suspend fun token(): String {
         return readSingle("token", address())

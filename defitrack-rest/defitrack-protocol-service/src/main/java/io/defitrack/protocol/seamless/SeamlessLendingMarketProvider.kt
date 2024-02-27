@@ -12,7 +12,7 @@ import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.v3.contract.PoolContract
 import io.defitrack.protocol.aave.v3.contract.PoolDataProvider
-import io.defitrack.protocol.aave.v3.lending.invest.AaveV3LendingInvestmentPreparer
+import io.defitrack.protocol.application.aave.v3.lending.invest.AaveV3LendingInvestmentPreparer
 import org.springframework.stereotype.Component
 
 @Component

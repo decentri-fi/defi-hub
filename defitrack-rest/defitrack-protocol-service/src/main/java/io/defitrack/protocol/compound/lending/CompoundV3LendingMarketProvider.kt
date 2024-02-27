@@ -20,9 +20,7 @@ abstract class CompoundV3LendingMarketProvider : LendingMarketProvider() {
         val v3Tokens = compoundAddressesProvider.getV3Tokens(getNetwork())
 
         return v3Tokens.flatMap { cTokenAddress ->
-            val assetContract = CompoundV3AssetContract(
-                getBlockchainGateway(), cTokenAddress
-            )
+            val assetContract = getAssetContract(cTokenAddress)
 
             assetContract.getAssetInfos().map { assetInfo ->
                 val lendingToken = getToken(assetInfo.asset)
@@ -40,6 +38,10 @@ abstract class CompoundV3LendingMarketProvider : LendingMarketProvider() {
                 )
             }
         }
+    }
+
+    private fun getAssetContract(cTokenAddress: String): CompoundV3AssetContract = with(getBlockchainGateway()) {
+        return CompoundV3AssetContract(cTokenAddress)
     }
 
     override fun getProtocol(): Protocol {

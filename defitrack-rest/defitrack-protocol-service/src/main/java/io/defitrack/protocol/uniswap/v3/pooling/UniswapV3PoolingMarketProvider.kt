@@ -36,13 +36,11 @@ abstract class UniswapV3PoolingMarketProvider(
     }
 
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
-        val pools = resolve(
-            createPoolFactory().getPools(startBlock)
-                .map {
-                    UniswapV3PoolContract(getBlockchainGateway(), it)
-                }
-        )
-
+        val pools = createPoolFactory().getPools(startBlock)
+            .map {
+                with(getBlockchainGateway()) { UniswapV3PoolContract(it) }
+            }
+            .resolve()
 
         pools.parMapNotNull(concurrency = 12) {
             val pair = it.address to getMarket(it).mapLeft {

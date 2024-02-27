@@ -6,9 +6,9 @@ import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.protocol.compound.v2.contract.CompoundComptrollerContract
 
-class MoonwellUnitRollerContract(
-    blockchainGateway: BlockchainGateway, address: String
-) : CompoundComptrollerContract(blockchainGateway, address) {
+context(BlockchainGateway)
+class MoonwellUnitRollerContract(address: String
+) : CompoundComptrollerContract(address) {
 
 
     fun claimReward(user: String): ContractCall {

@@ -42,10 +42,9 @@ class HopAddLiquidityDecoder(
 
     override suspend fun toDefiEvent(log: Log, network: Network): DefiEvent {
 
-        val contract = HopLpTokenContract(
-            blockchainGatewayProvider.getGateway(network),
-            log.address
-        )
+        val contract = with(blockchainGatewayProvider.getGateway(network)) {
+            HopLpTokenContract(log.address)
+        }
 
         val amounts = addLiquidityEvent.getNonIndexedParameter(log, 0) as List<Uint256>
 

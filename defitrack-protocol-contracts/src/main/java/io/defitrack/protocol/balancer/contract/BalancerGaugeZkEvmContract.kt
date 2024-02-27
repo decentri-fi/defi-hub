@@ -8,10 +8,8 @@ import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
 import java.math.BigInteger
 
-class BalancerGaugeZkEvmContract(
-    blockchainGateway: BlockchainGateway,
-    address: String
-) : BalancerGaugeContract(blockchainGateway, address) {
+context(BlockchainGateway)
+class BalancerGaugeZkEvmContract(address: String) : BalancerGaugeContract( address) {
 
 
     fun integrateFractionFn(user: String): ContractCall {

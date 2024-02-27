@@ -18,15 +18,9 @@ class StakedCvxCrvMarketProvider : FarmingMarketProvider() {
 
     val stakingWrapperAddress = "0xaa0c3f5f7dfd688c6e646f66cd2a6b66acdbe434"
 
-    val deferredStakingWrapper = lazyAsync {
-        CvxCrvStakingWrapperContract(
-            getBlockchainGateway(),
-            stakingWrapperAddress
-        )
-    }
 
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
-        val contract = deferredStakingWrapper.await()
+        val contract = getCvxCrvStakingWrapperContract()
 
         val cvxCrv = getToken(contract.cvxCrv.await())
         send(
@@ -37,6 +31,12 @@ class StakedCvxCrvMarketProvider : FarmingMarketProvider() {
                 rewardTokens = emptyList(),
                 positionFetcher = defaultPositionFetcher(stakingWrapperAddress),
             )
+        )
+    }
+
+    private fun getCvxCrvStakingWrapperContract() = with(getBlockchainGateway()) {
+        CvxCrvStakingWrapperContract(
+            stakingWrapperAddress
         )
     }
 

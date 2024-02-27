@@ -45,9 +45,8 @@ class AuraDepositVaultFarmingMarketProvider : FarmingMarketProvider() {
         }
     }
 
-    private suspend fun crvRewardsContract(crvRewards: String): CrvRewardsContract {
-        return CrvRewardsContract(getBlockchainGateway(), crvRewards)
-    }
+    private suspend fun crvRewardsContract(crvRewards: String): CrvRewardsContract =
+        with(getBlockchainGateway()) { CrvRewardsContract(crvRewards) }
 
     override fun getProtocol(): Protocol {
         return Protocol.AURA

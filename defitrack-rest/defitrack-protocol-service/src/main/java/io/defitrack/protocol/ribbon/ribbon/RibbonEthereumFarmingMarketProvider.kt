@@ -38,9 +38,7 @@ class RibbonEthereumFarmingMarketProvider(
                         )
                     ).toBigDecimal()
                 },
-                positionFetcher = PositionFetcher(
-                    ERC20Contract(getBlockchainGateway(), it.id)::balanceOfFunction
-                ),
+                positionFetcher = defaultPositionFetcher(it.id),
             )
         }
     }

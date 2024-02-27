@@ -36,7 +36,7 @@ class BalancerPolygonZkEvmGaugeMarketProvider : FarmingMarketProvider() {
         "GaugeCreated", listOf(address(true))
     )
 
-    override suspend fun fetchMarkets(): List<FarmingMarket> {
+    override suspend fun fetchMarkets(): List<FarmingMarket> = with(getBlockchainGateway()) {
         val logs = getBlockchainGateway().getEventsAsEthLog(
             GetEventLogsCommand(
                 addresses = listOf(factory),
@@ -52,7 +52,6 @@ class BalancerPolygonZkEvmGaugeMarketProvider : FarmingMarketProvider() {
                 val log = it.get()
                 val gaugeAddress: String = gaugeCreatedEvent.extract(log, true, 0)
                 val gaugecontract = BalancerGaugeZkEvmContract(
-                    getBlockchainGateway(),
                     gaugeAddress
                 )
 

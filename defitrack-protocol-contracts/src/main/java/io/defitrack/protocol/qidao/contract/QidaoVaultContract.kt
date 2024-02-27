@@ -10,11 +10,11 @@ import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC721Contract
 import java.math.BigInteger
 
+context(BlockchainGateway)
 class QidaoVaultContract(
-    blockchainGateway: BlockchainGateway,
     address: String
 ) : ERC721Contract(
-    blockchainGateway, address
+    address
 ) {
 
     suspend fun vaultCount(): BigInteger {

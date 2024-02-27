@@ -24,20 +24,20 @@ class OvixZkEVMLendingMarketProvider : LendingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<LendingMarket> {
         getComptroller().getMarkets().map { market ->
-            OvixUnitRollerContract(
-                getBlockchainGateway(),
-                market
-            )
+            unitroller(market)
         }
         return getTokenContracts().parMapNotNull(concurrency = 8) {
             toLendingMarket(it)
         }
     }
 
-    private suspend fun getTokenContracts(): List<CompoundTokenContract> {
+    private fun unitroller(market: String) = with(getBlockchainGateway()) {
+        OvixUnitRollerContract(market)
+    }
+
+    private suspend fun getTokenContracts(): List<CompoundTokenContract> = with(getBlockchainGateway()) {
         return getComptroller().getMarkets().map { market ->
             object : CompoundTokenContract(
-                getBlockchainGateway(),
                 market
             ) {
                 override fun fallbackUnderlying(): String {
@@ -95,9 +95,8 @@ class OvixZkEVMLendingMarketProvider : LendingMarketProvider() {
         }
     }
 
-    private suspend fun getComptroller(): MoonwellUnitRollerContract {
+    private suspend fun getComptroller(): MoonwellUnitRollerContract = with(getBlockchainGateway()) {
         return MoonwellUnitRollerContract(
-            getBlockchainGateway(),
             "0x6ea32f626e3a5c41547235ebbdf861526e11f482"
         )
     }

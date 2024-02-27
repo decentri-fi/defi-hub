@@ -32,10 +32,11 @@ class PendleArbitrumiquidityPoolMarketProvider : PoolingMarketProvider() {
 
         factory.getMarkets("154873897").map { marketConfig ->
 
-            val contract = PendleMarketContract(
-                blockchainGateway = getBlockchainGateway(),
-                address = marketConfig.market
-            )
+            val contract = with(getBlockchainGateway()) {
+                PendleMarketContract(
+                    address = marketConfig.market
+                )
+            }
 
             val tokens = contract.readTokens()
 
@@ -43,10 +44,7 @@ class PendleArbitrumiquidityPoolMarketProvider : PoolingMarketProvider() {
             val pt = getToken(tokens.pt)
             val sy = getToken(tokens.sy)
 
-            val syContract = PendleSyContract(
-                blockchainGateway = getBlockchainGateway(),
-                address = sy.address
-            )
+            val syContract = with(getBlockchainGateway()) { PendleSyContract(address = sy.address) }
 
             val assetAddress = syContract.yieldToken()
             val asset = erC20Resource.getTokenInformation(getNetworkForToken(assetAddress), assetAddress)

@@ -45,10 +45,11 @@ class QuickswapAPRService(
     }
 
     private suspend fun calculateDualRewardPool(address: String): BigDecimal {
-        val contract = QuickswapDualRewardPoolContract(
-            blockchainGatewayProvider.getGateway(Network.POLYGON),
-            address
-        )
+        val contract = with(blockchainGatewayProvider.getGateway(Network.POLYGON)) {
+            QuickswapDualRewardPoolContract(
+                address
+            )
+        }
         val quickRewardsPerYear =
             (contract.rewardRateA().times(BigInteger.valueOf(BLOCKS_PER_YEAR))).toBigDecimal()
                 .divide(BigDecimal.TEN.pow(18))
@@ -84,10 +85,11 @@ class QuickswapAPRService(
     }
 
     private suspend fun calculateSingleRewardPool(address: String): BigDecimal {
-        val contract = QuickswapRewardPoolContract(
-            blockchainGatewayProvider.getGateway(Network.POLYGON),
-            address
-        )
+        val contract = with(blockchainGatewayProvider.getGateway(Network.POLYGON)) {
+            QuickswapRewardPoolContract(
+                address
+            )
+        }
 
         val quickRewardsPerYear =
             (contract.rewardRate.await().times(BigInteger.valueOf(BLOCKS_PER_YEAR))).toBigDecimal()

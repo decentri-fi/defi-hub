@@ -72,10 +72,7 @@ class UniswapV3ArbitrumClaimableProvider(
                 position.fee
             )
 
-            val poolContract = UniswapV3PoolContract(
-                getBlockchainGateway(),
-                poolAddress
-            )
+            val poolContract = with(getBlockchainGateway()) { UniswapV3PoolContract(poolAddress) }
 
             val token0Async = async { uniswapV3PoolingMarketProvider.getToken(poolContract.token0.await()) }
             val token1Async = async { uniswapV3PoolingMarketProvider.getToken(poolContract.token1.await()) }

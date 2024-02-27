@@ -23,18 +23,15 @@ class CamelotNFTV2PoolingMarketProvider(
 ) : PoolingMarketProvider() {
 
 
-    override suspend fun fetchMarkets(): List<PoolingMarket> {
+    override suspend fun fetchMarkets(): List<PoolingMarket> = with(getBlockchainGateway()) {
         val allPositions = camelotService.getAllPositions()
         val positions = allPositions.distinctBy {
             listOf(it.token0, it.token1).sorted().joinToString("-")
         }.map {
-            it to AlgebraPoolContract(
-                getBlockchainGateway(),
-                camelotService.getPoolByPair(it.token0, it.token1)
-            )
+            it to AlgebraPoolContract(camelotService.getPoolByPair(it.token0, it.token1))
         }
 
-        resolve(positions.map { it.second })
+        positions.map { it.second }.resolve()
 
         return positions.parMapNotNull(concurrency = 8) {
             toMarket(it.first, it.second)

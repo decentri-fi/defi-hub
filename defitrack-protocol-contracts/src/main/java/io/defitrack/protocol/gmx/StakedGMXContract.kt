@@ -8,9 +8,8 @@ import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
 
-class StakedGMXContract(
-    blockchainGateway: BlockchainGateway, address: String
-) : ERC20Contract(blockchainGateway, address) {
+context(BlockchainGateway)
+class StakedGMXContract(address: String) : ERC20Contract(address) {
 
     fun claimableFn(address: String): ContractCall {
         return createFunction(

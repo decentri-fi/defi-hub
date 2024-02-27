@@ -3,17 +3,13 @@ package io.defitrack.protocol.pika
 import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
-import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.ERC20Contract
-import io.defitrack.evm.contract.DeprecatedEvmContract
+import io.defitrack.evm.contract.*
 import java.math.BigInteger
 
+context(BlockchainGateway)
 class PikaStakingContract(
-    blockchainGateway: BlockchainGateway, address: String
-) : ERC20Contract(
-    blockchainGateway, address
-) {
+    address: String
+) : ERC20Contract(address) {
 
     val stakingToken = constant<String>("stakingToken", TypeUtils.address())
 
@@ -33,16 +29,17 @@ class PikaStakingContract(
             )
         )
 
-        return listOf(
-            PikaRewardPoolContract(
-                blockchainGateway,
-                (result[0].data[0].value as String)
-            ),
-            PikaTokenRewardsPoolContract(
-                blockchainGateway,
-                (result[1].data[0].value as String)
-            ),
-        )
+        return with(this) {
+            listOf(
+                PikaRewardPoolContract(
+
+                    (result[0].data[0].value as String)
+                ),
+                PikaTokenRewardsPoolContract(
+                    (result[1].data[0].value as String)
+                ),
+            )
+        }
     }
 
     interface PikaRewards {
@@ -54,10 +51,10 @@ class PikaStakingContract(
         fun fetchAddress(): String
     }
 
+    context(BlockchainGateway)
     class PikaRewardPoolContract(
-        blockchainGateway: BlockchainGateway,
         address: String
-    ) : DeprecatedEvmContract(blockchainGateway, address), PikaRewards {
+    ) : EvmContract(address), PikaRewards {
         val rewardToken = constant<String>("rewardToken", TypeUtils.address())
         val precision = constant<BigInteger>("PRECISION", TypeUtils.uint256())
 
@@ -91,10 +88,10 @@ class PikaStakingContract(
         }
     }
 
+    context(BlockchainGateway)
     class PikaTokenRewardsPoolContract(
-        blockchainGateway: BlockchainGateway,
         address: String
-    ) : DeprecatedEvmContract(blockchainGateway, address), PikaRewards {
+    ) : EvmContract(address), PikaRewards {
         val rewardToken = constant<String>("rewardToken", TypeUtils.address())
 
         override fun claimRewardFn(user: String): ContractCall {

@@ -11,13 +11,9 @@ import org.web3j.abi.datatypes.Type
 import java.math.BigDecimal
 import java.math.BigInteger
 
+context(BlockchainGateway)
 class StakedAaveContract(
-    blockchainGateway: BlockchainGateway,
-    address: String
-) : ERC20Contract(
-    blockchainGateway,
-    address
-) {
+    address: String) : ERC20Contract(address) {
 
     fun extractBalanceFunction(ratioProvider: suspend () -> BigDecimal): suspend (List<Type<*>>) -> Position =
         { retVal ->

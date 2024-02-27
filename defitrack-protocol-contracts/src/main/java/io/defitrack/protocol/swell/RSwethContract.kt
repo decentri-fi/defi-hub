@@ -9,11 +9,10 @@ import io.defitrack.evm.position.PositionFetcher
 import org.web3j.abi.datatypes.Type
 import java.math.BigInteger
 
+context(BlockchainGateway)
 class RSwethContract(
-    blockchainGateway: BlockchainGateway, address: String
-) : ERC20Contract(
-    blockchainGateway, address
-) {
+    address: String
+) : ERC20Contract(address) {
 
     //TODO: create provider
 

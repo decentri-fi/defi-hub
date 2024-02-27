@@ -89,19 +89,13 @@ class WepiggyLendingMarketProvider(
         return Network.POLYGON
     }
 
-    private suspend fun getTokenContracts(): List<CompoundTokenContract> {
-        return getComptroller().getMarkets().map { market ->
-            CompoundTokenContract(
-                getBlockchainGateway(),
-                market
-            )
+    private suspend fun getTokenContracts(): List<CompoundTokenContract> = with(getBlockchainGateway()) {
+        getComptroller().getMarkets().map { market ->
+            CompoundTokenContract(market)
         }
     }
 
-    private fun getComptroller(): CompoundComptrollerContract {
-        return CompoundComptrollerContract(
-            getBlockchainGateway(),
-            wepiggyPolygonService.getComptroller()
-        )
+    private fun getComptroller(): CompoundComptrollerContract = with(getBlockchainGateway()) {
+        CompoundComptrollerContract(wepiggyPolygonService.getComptroller())
     }
 }

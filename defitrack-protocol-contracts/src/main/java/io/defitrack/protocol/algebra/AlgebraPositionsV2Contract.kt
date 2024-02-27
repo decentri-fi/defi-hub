@@ -12,11 +12,8 @@ import io.defitrack.evm.contract.ERC20Contract
 import org.web3j.abi.datatypes.Type
 import java.math.BigInteger
 
-class AlgebraPositionsV2Contract(
-    blockchainGateway: BlockchainGateway, address: String
-) : ERC20Contract(
-    blockchainGateway, address
-) {
+context(BlockchainGateway)
+class AlgebraPositionsV2Contract(address: String) : ERC20Contract(address) {
     fun getPositionFunction(tokenId: Int): ContractCall {
         return createFunction(
             method = "positions",

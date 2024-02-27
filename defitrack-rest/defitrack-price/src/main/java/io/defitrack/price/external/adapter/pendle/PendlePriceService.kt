@@ -41,14 +41,13 @@ abstract class PendlePriceService(
 
         factory.getMarkets(startBlock).forEach {
             Either.catch {
-                val market = PendleMarketContract(
-                    blockchainGateway = gateway,
-                    address = it.market
-                )
+                val market = with(gateway) {
+                    PendleMarketContract(
+                        address = it.market
+                    )
+                }
 
-                val syContract = PendleSyContract(
-                    gateway, market.readTokens().sy
-                )
+                val syContract = with(gateway) { PendleSyContract(market.readTokens().sy) }
 
                 val ratio = pendlePtOracleContract.getPtToAssetRate(it.market)
                 val asset = syContract.asset()

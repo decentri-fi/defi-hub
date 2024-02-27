@@ -10,12 +10,10 @@ import io.defitrack.evm.contract.ERC20Contract
 import kotlinx.coroutines.Deferred
 import java.math.BigInteger
 
+context(BlockchainGateway)
 open class CompoundTokenContract(
-    ethereumContractAccessor: BlockchainGateway,
     address: String,
-) : ERC20Contract(
-    ethereumContractAccessor, address
-) {
+) : ERC20Contract(address) {
 
     fun scaledBalanceOfFn(address: String): ContractCall {
         return createFunction(

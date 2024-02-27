@@ -7,6 +7,7 @@ import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.DeprecatedEvmContract
+import io.defitrack.evm.contract.EvmContract
 import io.defitrack.evm.position.Position
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Type
@@ -14,11 +15,10 @@ import org.web3j.abi.datatypes.generated.StaticArray4
 import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
+context(BlockchainGateway)
 class LendingControllerContract(
-    blockchainGateway: BlockchainGateway, address: String
-) : DeprecatedEvmContract(
-    blockchainGateway, address
-) {
+    address: String
+) : EvmContract(address) {
 
     val collateral = constant<String>("collateral_token", address())
 

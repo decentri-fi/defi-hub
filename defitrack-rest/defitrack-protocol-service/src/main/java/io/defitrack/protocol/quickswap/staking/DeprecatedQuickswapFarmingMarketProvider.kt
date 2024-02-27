@@ -39,10 +39,7 @@ class DeprecatedQuickswapFarmingMarketProvider(
         )
 
         return contract.getRewardPools().map {
-            QuickswapRewardPoolContract(
-                getBlockchainGateway(),
-                it
-            )
+            quickswapRewardPoolContract(it)
         }.parMapNotNull(EmptyCoroutineContext, 12) { rewardPool ->
             catch {
                 createMarket(rewardPool)
@@ -51,6 +48,12 @@ class DeprecatedQuickswapFarmingMarketProvider(
                 null
             }.getOrNull()
         }
+    }
+
+    private fun quickswapRewardPoolContract(it: String): QuickswapRewardPoolContract = with(getBlockchainGateway()) {
+        QuickswapRewardPoolContract(
+            it
+        )
     }
 
     private suspend fun createMarket(rewardPool: QuickswapRewardPoolContract): FarmingMarket {

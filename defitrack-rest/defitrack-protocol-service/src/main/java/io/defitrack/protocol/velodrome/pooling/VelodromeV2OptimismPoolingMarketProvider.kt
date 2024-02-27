@@ -37,22 +37,21 @@ class VelodromeV2OptimismPoolingMarketProvider(
             contractAddress = velodromeOptimismService.getV2PoolFactory()
         )
 
-        resolve(pairFactoryContract.allPools()
-            .map {
-                VelodromePoolContract(
-                    getBlockchainGateway(), it
-                )
+        pairFactoryContract.allPools()
+            .map(::velodromeContract)
+            .resolve()
+            .parMapNotNull(concurrency = 12) {
+                catch {
+                    createMarket(it)
+                }.mapLeft { exc ->
+                    logger.error("Error creating market for address {}: {}  ", it, exc.message)
+                }.getOrNull()
+            }.forEach {
+                send(it)
             }
-        ).parMapNotNull(concurrency = 12) {
-            catch {
-                createMarket(it)
-            }.mapLeft { exc ->
-                logger.error("Error creating market for address {}: {}  ", it, exc.message)
-            }.getOrNull()
-        }.forEach {
-            send(it)
-        }
     }
+
+    private fun velodromeContract(it: String) = with(getBlockchainGateway()) { VelodromePoolContract(it) }
 
     private suspend fun createMarket(contract: VelodromePoolContract): PoolingMarket = coroutineScope {
         val poolingToken = getToken(contract.address)

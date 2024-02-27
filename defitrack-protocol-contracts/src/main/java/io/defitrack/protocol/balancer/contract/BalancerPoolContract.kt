@@ -7,12 +7,8 @@ import kotlinx.coroutines.Deferred
 import org.apache.commons.codec.binary.Hex
 import java.math.BigInteger
 
-class BalancerPoolContract(
-    blockchainGateway: BlockchainGateway,
-    address: String
-) : ERC20Contract(
-    blockchainGateway, address
-) {
+context(BlockchainGateway)
+class BalancerPoolContract(address: String) : ERC20Contract(address) {
 
     val poolId: Deferred<ByteArray> = constant("getPoolId", TypeUtils.bytes32())
     val vault: Deferred<String> = constant("getVault", TypeUtils.address())

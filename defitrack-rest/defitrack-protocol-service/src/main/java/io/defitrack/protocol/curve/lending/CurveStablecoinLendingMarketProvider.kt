@@ -1,6 +1,7 @@
 package io.defitrack.protocol.curve.lending
 
 import arrow.core.Either
+import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.refreshable
@@ -29,24 +30,26 @@ class CurveStablecoinLendingMarketProvider : LendingMarketProvider() {
             factoryAddress
         )
 
-        resolve(
-            factory.controllers()
-                .map {
-                    LendingControllerContract(getBlockchainGateway(), it)
-                }
-        ).parMapNotNull { controller ->
-            Either.catch {
-                createMarket(controller)
-            }.fold(
-                {
-                    logger.error("Failed to create market for $controller", it)
-                    null
-                },
-                { it }
-            )
-        }.forEach {
-            send(it)
-        }
+        factory.controllers()
+            .map(::getLendingControllerContract)
+            .resolve()
+            .parMapNotNull { controller ->
+                catch {
+                    createMarket(controller)
+                }.fold(
+                    {
+                        logger.error("Failed to create market for $controller", it)
+                        null
+                    },
+                    { it }
+                )
+            }.forEach {
+                send(it)
+            }
+    }
+
+    private fun getLendingControllerContract(address: String) = with(getBlockchainGateway()) {
+        LendingControllerContract(address)
     }
 
     suspend fun createMarket(controller: LendingControllerContract): LendingMarket {

@@ -50,54 +50,54 @@ abstract class BalancerGaugeFarmingMarketProvider(
             }
     }
 
-    private suspend fun getMarket(pool: PoolingMarket): Either<Throwable, Option<FarmingMarket>> {
-        return catch {
-            val gauge = factory.getPoolGauge(pool.address)
+    private suspend fun getMarket(pool: PoolingMarket): Either<Throwable, Option<FarmingMarket>> =
+        with(getBlockchainGateway()) {
+            return catch {
+                val gauge = factory.getPoolGauge(pool.address)
 
-            if (gauge == "0x0000000000000000000000000000000000000000") {
-                logger.debug("no gauge for ${pool.address}")
-                None
-            } else {
-                val stakedToken = getToken(pool.address)
-                val gaugecontract = BalancerGaugeContract(
-                    getBlockchainGateway(),
-                    gauge
-                )
+                if (gauge == "0x0000000000000000000000000000000000000000") {
+                    logger.debug("no gauge for ${pool.address}")
+                    None
+                } else {
+                    val stakedToken = getToken(pool.address)
+                    val gaugecontract = BalancerGaugeContract(
+                        gauge
+                    )
 
-                val rewardTokens = gaugecontract.getRewardTokens().map { reward ->
-                    getToken(reward)
-                }
-
-                create(
-                    identifier = pool.id,
-                    name = stakedToken.underlyingTokens.joinToString("/") {
-                        it.symbol
-                    } + " Gauge",
-                    stakedToken = stakedToken,
-                    rewardTokens = rewardTokens,
-                    positionFetcher = PositionFetcher(
-                        gaugecontract::balanceOfFunction
-                    ),
-                    metadata = mapOf("address" to pool.address),
-                    internalMetadata = mapOf(
-                        "contract" to gauge,
-                    ),
-                    claimableRewardFetcher = ClaimableRewardFetcher(
-                        rewards = rewardTokens.map {
-                            Reward(
-                                token = it,
-                                getRewardFunction = gaugecontract.getClaimableRewardFunction(it.address)
-                            )
-                        },
-                        preparedTransaction = selfExecutingTransaction(gaugecontract::getClaimRewardsFunction)
-                    ),
-                    exitPositionPreparer = prepareExit {
-                        gaugecontract.exitPosition(it.amount)
+                    val rewardTokens = gaugecontract.getRewardTokens().map { reward ->
+                        getToken(reward)
                     }
-                ).some()
+
+                    create(
+                        identifier = pool.id,
+                        name = stakedToken.underlyingTokens.joinToString("/") {
+                            it.symbol
+                        } + " Gauge",
+                        stakedToken = stakedToken,
+                        rewardTokens = rewardTokens,
+                        positionFetcher = PositionFetcher(
+                            gaugecontract::balanceOfFunction
+                        ),
+                        metadata = mapOf("address" to pool.address),
+                        internalMetadata = mapOf(
+                            "contract" to gauge,
+                        ),
+                        claimableRewardFetcher = ClaimableRewardFetcher(
+                            rewards = rewardTokens.map {
+                                Reward(
+                                    token = it,
+                                    getRewardFunction = gaugecontract.getClaimableRewardFunction(it.address)
+                                )
+                            },
+                            preparedTransaction = selfExecutingTransaction(gaugecontract::getClaimRewardsFunction)
+                        ),
+                        exitPositionPreparer = prepareExit {
+                            gaugecontract.exitPosition(it.amount)
+                        }
+                    ).some()
+                }
             }
         }
-    }
 
 
     override fun getNetwork(): Network {

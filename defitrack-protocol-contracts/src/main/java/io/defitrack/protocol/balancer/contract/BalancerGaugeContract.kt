@@ -10,10 +10,8 @@ import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
 import java.math.BigInteger
 
-open class BalancerGaugeContract(
-    blockchainGateway: BlockchainGateway,
-    address: String
-) : ERC20Contract(blockchainGateway, address) {
+context(BlockchainGateway)
+open class BalancerGaugeContract(address: String) : ERC20Contract(address) {
 
     val workingSupply = constant<BigInteger>("working_supply", uint256())
 

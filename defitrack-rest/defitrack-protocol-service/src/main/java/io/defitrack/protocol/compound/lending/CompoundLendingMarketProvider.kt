@@ -102,18 +102,16 @@ class CompoundLendingMarketProvider(
         return Network.ETHEREUM
     }
 
-    private suspend fun getTokenContracts(): List<CompoundTokenContract> {
+    private suspend fun getTokenContracts(): List<CompoundTokenContract> = with(getBlockchainGateway()) {
         return getComptroller().getMarkets().map { market ->
             CompoundTokenContract(
-                getBlockchainGateway(),
                 market
             )
         }
     }
 
-    private suspend fun getComptroller(): CompoundComptrollerContract {
+    private suspend fun getComptroller(): CompoundComptrollerContract = with(getBlockchainGateway()) {
         return CompoundComptrollerContract(
-            getBlockchainGateway(),
             compoundAddressesProvider.CONFIG[getNetwork()]!!.v2Controller!!
         )
     }

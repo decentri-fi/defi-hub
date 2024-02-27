@@ -51,10 +51,9 @@ class HopStakingDecoder(
         )
         val amount = "amount" to stakedEvent.extract<BigInteger>(log, false, 0)
 
-        val contract = HopStakingRewardContract(
-            blockchainGatewayProvider.getGateway(network),
-            log.address
-        )
+        val contract = with(blockchainGatewayProvider.getGateway(network)) {
+            HopStakingRewardContract(log.address)
+        }
 
         val token = "token" to getToken(contract.stakingToken.await(), network)
 
