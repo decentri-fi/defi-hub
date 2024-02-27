@@ -38,7 +38,7 @@ class AlienbasePoolingMarketProvider : PoolingMarketProvider() {
 
     private fun pairFactoryContract() = with(getBlockchainGateway()) { PairFactoryContract(poolFactoryAddress) }
 
-    private suspend fun AlienbasePoolingMarketProvider.createMarket(it: String): PoolingMarket {
+    private suspend fun createMarket(it: String): PoolingMarket {
         val poolingToken = getToken(it)
         val tokens = poolingToken.underlyingTokens
 

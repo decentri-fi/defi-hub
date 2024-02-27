@@ -16,8 +16,9 @@ import java.math.BigInteger
 class EthosStakingProvider : SingleContractFarmingMarketProvider() {
     override suspend fun single(): SingleFarmingConfig {
         return SingleFarmingConfig(
-            "Ethos Staking",
-            object : FarmingContract(
+            name = "Ethos Staking",
+            type = "ethos.staking",
+            contract = object : FarmingContract(
                 getBlockchainGateway(),
                 "0x9425b96462b1940e7563cd765464300f6a774805",
                 "lqtyToken",

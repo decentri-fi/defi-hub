@@ -32,6 +32,7 @@ class ABPTPoolingMarketProvider : PoolingMarketProvider(
                 name = "Aave Balance Pool Token",
                 symbol = "ABPT",
                 tokens = tokens,
+                type = "abpt",
                 totalSupply = refreshable {
                     getToken(abptAddress).totalDecimalSupply()
                 }

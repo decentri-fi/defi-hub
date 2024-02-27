@@ -22,13 +22,13 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
         address: String,
         decimals: Int = 18,
         symbol: String,
+        type: String = "pool",
         tokens: List<FungibleTokenInformation>? = null,
         totalSupply: Refreshable<BigDecimal>,
         positionFetcher: PositionFetcher? = null,
         investmentPreparer: InvestmentPreparer? = null,
         breakdown: Refreshable<List<PoolingMarketTokenShare>>? = null,
         erc20Compatible: Boolean = true,
-        price: Refreshable<BigDecimal>? = null,
         metadata: Map<String, Any> = emptyMap(),
         internalMetadata: Map<String, Any> = emptyMap(),
         deprecated: Boolean = false,
@@ -56,6 +56,7 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
             metadata = metadata,
             internalMetadata = internalMetadata,
             deprecated = deprecated,
+            type = type,
             historicEventExtractor = historicEventExtractor,
         )
     }

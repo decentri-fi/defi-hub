@@ -51,6 +51,7 @@ class AerodromePoolingMarketProvider : PoolingMarketProvider() {
                                 totalSupply = refreshable {
                                     getToken(it).totalDecimalSupply()
                                 },
+                                type = "pool",
                                 deprecated = false
                             )
                         )

@@ -1,13 +1,9 @@
 package io.defitrack.market.pooling.mapper
 
-import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.common.utils.map
-import io.defitrack.networkinfo.toNetworkInformation
 import io.defitrack.market.adapter.`in`.mapper.MarketVOMapper
 import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.market.pooling.vo.PoolingMarketVO
-import io.defitrack.price.domain.GetPriceCommand
-import io.defitrack.price.port.out.Prices
+import io.defitrack.networkinfo.toNetworkInformation
 import io.defitrack.protocol.mapper.ProtocolVOMapper
 import org.springframework.stereotype.Component
 import java.time.ZoneOffset
@@ -17,7 +13,6 @@ import java.util.*
 class PoolingMarketVOMapper(
     private val poolingBreakdownVOMapper: PoolingBreakdownVOMapper,
     private val protocolVOMapper: ProtocolVOMapper,
-    private val prices: Prices
 ) : MarketVOMapper<PoolingMarket> {
 
     override suspend fun map(market: PoolingMarket): PoolingMarketVO {

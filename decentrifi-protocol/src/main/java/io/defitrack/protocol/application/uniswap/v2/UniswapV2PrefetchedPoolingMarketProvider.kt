@@ -62,6 +62,7 @@ class UniswapV2PrefetchedPoolingMarketProvider(
                         breakdown = breakdown,
                         deprecated = false,
                         internalMetadata = emptyMap(),
+                        type = "uniswap.v2.pooling",
                         metadata = emptyMap()
                     )
                 )

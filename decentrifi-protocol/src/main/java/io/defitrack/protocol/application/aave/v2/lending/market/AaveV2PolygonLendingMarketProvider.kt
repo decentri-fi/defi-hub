@@ -1,5 +1,9 @@
 package io.defitrack.protocol.application.aave.v2.lending.market
 
+import arrow.core.Either
+import arrow.core.Either.Companion.catch
+import arrow.fx.coroutines.parMapNotNull
+import io.defitrack.LazyValue
 import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
@@ -40,50 +44,51 @@ class AaveV2PolygonLendingMarketProvider(
         )
     }
 
-    val lendingPoolContract = lazyAsync {
+    val lendingPoolContract = LazyValue {
         LendingPoolContract(
             blockchainGatewayProvider.getGateway(getNetwork()),
             lendingPoolAddressesProviderContract.await().lendingPoolAddress()
         )
     }
 
-    //todo parmap
     override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
         aaveV2PolygonService.getReserves()
             .filter {
                 it.totalLiquidity > BigInteger.ZERO
-            }.map {
-                async {
-                    try {
-                        val aToken = getToken(it.aToken.id)
-                        val token = getToken(it.underlyingAsset)
-
-                        create(
-                            identifier = it.id,
-                            token = token,
-                            name = "aave v2" + it.name,
-                            rate = it.lendingRate.toBigDecimal(),
-                            marketSize = calculateMarketSize(it, aToken, token),
-                            poolType = "aave.v2.lending",
-                            investmentPreparer = AaveV2LendingInvestmentPreparer(
-                                token.address,
-                                lendingPoolContract.await(),
-                                getERC20Resource()
-                            ),
-                            positionFetcher = PositionFetcher(
-                                aToken.asERC20Contract(getBlockchainGateway())::balanceOfFunction
-                            ),
-                            marketToken = aToken,
-                            totalSupply = refreshable(aToken.totalSupply.asEth(aToken.decimals)) {
-                                getToken(it.aToken.id).totalSupply.asEth(aToken.decimals)
-                            }
-                        )
-                    } catch (ex: Exception) {
-                        null
-                    }
-                }
-            }.awaitAll().filterNotNull()
+            }.parMapNotNull(concurrency = 12) { reserve ->
+                createMarket(reserve)
+            }
     }
+
+    private suspend fun createMarket(
+        reserve: AaveReserve
+    ) = catch {
+        val aToken = getToken(reserve.aToken.id)
+        val token = getToken(reserve.underlyingAsset)
+
+        create(
+            identifier = reserve.id,
+            token = token,
+            name = "aave v2 " + reserve.name,
+            rate = reserve.lendingRate.toBigDecimal(),
+            marketSize = calculateMarketSize(reserve, aToken, token),
+            poolType = "aave.v2.lending",
+            investmentPreparer = AaveV2LendingInvestmentPreparer(
+                token.address,
+                lendingPoolContract.get(),
+                getERC20Resource()
+            ),
+            positionFetcher = PositionFetcher(
+                aToken.asERC20Contract(getBlockchainGateway())::balanceOfFunction
+            ),
+            marketToken = aToken,
+            totalSupply = refreshable(aToken.totalSupply.asEth(aToken.decimals)) {
+                getToken(reserve.aToken.id).totalSupply.asEth(aToken.decimals)
+            }
+        )
+    }.mapLeft {
+        logger.error("uanble to get market: {}", reserve.id)
+    }.getOrNull()
 
     override fun getProtocol(): Protocol {
         return Protocol.AAVE_V2

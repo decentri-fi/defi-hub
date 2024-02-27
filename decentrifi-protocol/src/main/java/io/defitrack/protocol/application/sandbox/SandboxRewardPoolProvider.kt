@@ -15,8 +15,9 @@ class SandboxRewardPoolProvider : SingleContractFarmingMarketProvider() {
 
     override suspend fun single(): SingleFarmingConfig {
         return SingleFarmingConfig(
-            contract,
-            FarmingContract(
+            name = "Sandbox Reward Pool",
+            type = "sandbox.erc20-reward-pool",
+            contract = FarmingContract(
                 getBlockchainGateway(),
                 contract,
                 "stakeToken",

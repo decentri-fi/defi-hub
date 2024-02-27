@@ -43,7 +43,6 @@ class CamelotArbitrumPoolingMarketProvider : PoolingMarketProvider() {
                                     totalSupply = refreshable(poolingToken.totalDecimalSupply()) {
                                         getToken(pool).totalDecimalSupply()
                                     },
-                                    price = refreshable { BigDecimal.ZERO }
                                 )
                             )
                         } catch (ex: Exception) {

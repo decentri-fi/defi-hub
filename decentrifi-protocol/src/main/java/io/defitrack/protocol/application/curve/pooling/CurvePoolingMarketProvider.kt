@@ -57,11 +57,6 @@ abstract class CurvePoolingMarketProvider(
             tokens = underlyingTokens,
             totalSupply = refreshable {
                 getToken(pool).totalDecimalSupply()
-            },
-            price = refreshable {
-                Option.catch {
-                    poolContract.virtualPrice.await().asEth(poolAsERC20.decimals)
-                }.getOrElse { BigDecimal.ZERO }
             }
         )
     }

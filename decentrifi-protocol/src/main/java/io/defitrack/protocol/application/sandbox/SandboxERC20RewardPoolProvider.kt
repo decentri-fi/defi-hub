@@ -10,14 +10,15 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.SANDBOX)
-class SandboxERC20RewardPoolProvider: SingleContractFarmingMarketProvider() {
+class SandboxERC20RewardPoolProvider : SingleContractFarmingMarketProvider() {
 
     val contract = "0xd3a9caa25393765c05ce9f332b5e33b5e33d8b8f"
 
     override suspend fun single(): SingleFarmingConfig {
         return SingleFarmingConfig(
-            contract,
-            FarmingContract(
+            name = "Sandbox ERC20 Reward Pool",
+            type = "sandbox.erc20-reward-pool",
+            contract = FarmingContract(
                 getBlockchainGateway(),
                 contract,
                 "stakeToken",

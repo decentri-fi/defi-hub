@@ -44,9 +44,6 @@ class ThreeCrvPoolingMarketProvider : PoolingMarketProvider() {
                 address = address,
                 symbol = "3CRV",
                 positionFetcher = defaultPositionFetcher(address),
-                price = refreshable {
-                    poolContract.virtualPrice.await().asEth(token.decimals)
-                },
                 tokens = underlyingTokens,
                 erc20Compatible = true,
                 totalSupply = refreshable(token.totalDecimalSupply()) {
