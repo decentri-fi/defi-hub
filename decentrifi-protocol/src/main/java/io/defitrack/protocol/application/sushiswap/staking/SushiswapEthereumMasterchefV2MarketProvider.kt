@@ -1,14 +1,14 @@
 package io.defitrack.protocol.application.sushiswap.staking
 
 import arrow.fx.coroutines.parMapNotNull
+import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.claim.ClaimableRewardFetcher
 import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.refreshable
-import io.defitrack.architecture.conditional.ConditionalOnCompany
-import io.defitrack.market.port.out.FarmingMarketProvider
-import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.evm.position.PositionFetcher
+import io.defitrack.market.domain.farming.FarmingMarket
+import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.sushiswap.contract.MasterchefV2Contract
@@ -91,6 +91,7 @@ class SushiswapEthereumMasterchefV2MarketProvider : FarmingMarketProvider() {
                 positionFetcher = PositionFetcher(
                     { user -> chef.userInfoFunction(poolId, user) }
                 ),
+                type =  "sushiswap.masterchef.v2"
             )
         } catch (ex: Exception) {
             logger.error("Error while fetching market for poolId $poolId")

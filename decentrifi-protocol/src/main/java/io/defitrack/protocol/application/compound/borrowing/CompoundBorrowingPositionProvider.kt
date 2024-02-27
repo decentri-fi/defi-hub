@@ -70,7 +70,8 @@ class CompoundBorrowingPositionProvider(
                         rate = getBorrowRate(compoundTokenContract),
                         deprecated = false,
                         name = "Compound ${token.name} Borrow",
-                        token = token
+                        token = token,
+                        type = "compound.borrowing",
                     ),
                     tokenAmount = balance,
                     underlyingAmount = balance,

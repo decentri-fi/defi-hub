@@ -45,6 +45,7 @@ class VestaLiquidityStakingFarmingProvider : FarmingMarketProvider() {
             marketSize = refreshable {
                 getMarketSize(stakedToken, liquidityStakingAddress)
             },
+            type = "vesta.staking",
             claimableRewardFetcher = ClaimableRewardFetcher(
                 reward = Reward(
                     rewardToken,

@@ -62,7 +62,7 @@ class AaveV2MainnetLendingMarketProvider(
                                 identifier = it.id,
                                 token = token,
                                 name = "aave v2 " + it.name,
-                                poolType = "aave-v2",
+                                poolType = "aave.v2.lending",
                                 marketSize = calculateMarketSize(it, aToken, token),
                                 investmentPreparer = AaveV2LendingInvestmentPreparer(
                                     token.address,

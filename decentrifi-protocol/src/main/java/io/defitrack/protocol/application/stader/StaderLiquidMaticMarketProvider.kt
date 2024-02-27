@@ -47,7 +47,8 @@ class StaderLiquidMaticMarketProvider : FarmingMarketProvider() {
                     Position(stakingContract.convertMaticXToMatic(result), result)
                 } else Position.ZERO
             },
-            token = token
+            token = token,
+            type = "stader.staked-matic"
         ).nel()
     }
 

@@ -33,6 +33,7 @@ class QuickperpsFarmingMarketProvider : FarmingMarketProvider() {
             identifier = feeQlpTrackerAddress,
             stakedToken = getToken(depositToken),
             rewardTokens = rewardTokens,
+            type = "quickswap.quickperp-farming",
             claimableRewardFetcher = ClaimableRewardFetcher(
                 rewards = rewardTokens.map {
                     Reward(

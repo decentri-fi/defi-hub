@@ -59,7 +59,8 @@ class VelodromeV1GaugeMarketProvider(
                         },
                         stakedToken = stakedToken,
                         positionFetcher = defaultPositionFetcher(gauge),
-                        deprecated = true
+                        deprecated = true,
+                        type = "velodrome.v1.gauge",
                     )
 
                 } catch (ex: Exception) {

@@ -36,6 +36,7 @@ abstract class GainsStakingMarketProvider(
                 positionFetcher = PositionFetcher(
                     contract::totalGnsStaked
                 ),
+                type = "gains.staking",
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
                         dai,

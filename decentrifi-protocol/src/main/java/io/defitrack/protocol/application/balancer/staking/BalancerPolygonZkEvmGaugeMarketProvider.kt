@@ -90,6 +90,7 @@ class BalancerPolygonZkEvmGaugeMarketProvider : FarmingMarketProvider() {
                     exitPositionPreparer = prepareExit {
                         gaugecontract.exitPosition(it.amount)
                     },
+                    type = "balancer.gauge",
                     claimableRewardFetchers = listOf(
                         ClaimableRewardFetcher(
                             rewards = rewards.map { reward ->

@@ -29,9 +29,9 @@ abstract class CompoundV3LendingMarketProvider : LendingMarketProvider() {
                     identifier = "compoundv3-${lendingToken.symbol}",
                     name = "Compound V3 ${lendingToken.symbol}",
                     token = lendingToken,
-                    poolType = "compoundv3",
                     marketToken = cToken,
                     erc20Compatible = true,
+                    poolType = "compound.v3.lending",
                     totalSupply = refreshable {
                         getToken(cTokenAddress).totalDecimalSupply()
                     }

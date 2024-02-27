@@ -102,6 +102,7 @@ class AlienbaseFarmingMarketProvider : FarmingMarketProvider() {
                             },
                             preparedTransaction = selfExecutingTransaction(contract.claimFunction(poolId))
                         ),
+                        type = "alienbase.distributor",
                         internalMetadata = mapOf(
                             "contract" to farmingContract.await(),
                             "poolId" to poolId

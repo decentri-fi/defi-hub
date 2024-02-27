@@ -34,6 +34,7 @@ class EthereumStakedLyraFarmingMarketProvider : FarmingMarketProvider() {
             stakedToken = stakedToken,
             rewardToken = rewardToken,
             positionFetcher = defaultPositionFetcher(contract.address),
+            type = "lyra.staking",
             claimableRewardFetcher = ClaimableRewardFetcher(
                 reward = Reward(
                     rewardToken,

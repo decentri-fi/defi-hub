@@ -14,6 +14,7 @@ data class PoolingMarket(
     override val id: String,
     override val network: Network,
     override val protocol: Protocol,
+    override val type: String,
     val address: String,
     val name: String,
     val decimals: Int = 18,
@@ -31,4 +32,4 @@ data class PoolingMarket(
     val internalMetadata: Map<String, Any>,
     override val deprecated: Boolean,
     val historicEventExtractor: HistoricEventExtractor? = null,
-) : DefiMarket(id, "pooling", protocol, network, deprecated)
+) : DefiMarket(id, "pooling", type, protocol, network, deprecated)

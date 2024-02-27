@@ -60,6 +60,7 @@ class OldQuickswapFarmingMarketProvider(
                     rewardPool.address
                 ),
                 deprecated = true,
+                type = "quickswap.farming",
                 exitPositionPreparer = prepareExit {
                     rewardPool.exitFunction(it.amount)
                 }

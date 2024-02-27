@@ -82,6 +82,7 @@ class SushiswapEthereumMasterchefMarketProvider : FarmingMarketProvider() {
                 positionFetcher = PositionFetcher(
                     chef.userInfoFunction(poolId)
                 ),
+                type = "sushiswap.masterchef"
             )
         } catch (ex: Exception) {
             logger.error("Error while fetching market for poolId $poolId", ex)

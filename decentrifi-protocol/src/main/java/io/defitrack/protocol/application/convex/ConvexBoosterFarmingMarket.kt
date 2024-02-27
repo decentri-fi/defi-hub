@@ -36,6 +36,7 @@ class ConvexBoosterFarmingMarket(
                     identifier = contract.address + "-" + idx,
                     name = "Convex ${stakedToken.name} Booster",
                     stakedToken = stakedToken,
+                    type = "convex.booster",
                     rewardTokens = emptyList(),
                 )
             }

@@ -47,7 +47,8 @@ abstract class AbstractStargateLPStakingTimeMarketProvider(
                 ),
                 positionFetcher = PositionFetcher(
                     lpStakingContract.userInfo(index),
-                )
+                ),
+                type = "stargate.lp-staking-time"
             )
         }
     }

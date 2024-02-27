@@ -58,6 +58,7 @@ class IdexFarmingMarketProvider(private val idexService: IdexService) : FarmingM
             stakedToken = stakedtoken,
             rewardToken = rewardToken,
             positionFetcher = PositionFetcher(chef.userInfoFunction(poolId)),
+            type = "idex.farm"
         )
     }
 }

@@ -33,6 +33,7 @@ class AaveMainnetBorrowingPositionProvider(
                         rate = it.reserve.borrowRate.toBigDecimal(),
                         deprecated = false,
                         name = "Aave ${token.name} Borrow",
+                        type = "aave-borrowing",
                         token = token
                     ),
                     tokenAmount = (it.currentStableDebt + it.currentVariableDebt),

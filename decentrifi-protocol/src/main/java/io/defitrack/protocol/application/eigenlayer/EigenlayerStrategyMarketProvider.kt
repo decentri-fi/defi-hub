@@ -40,7 +40,8 @@ class EigenlayerStrategyMarketProvider : FarmingMarketProvider() {
                 identifier = strategy.address,
                 stakedToken = underlying,
                 rewardToken = underlying,
-                positionFetcher = PositionFetcher(strategy::userUnderlyingView)
+                positionFetcher = PositionFetcher(strategy::userUnderlyingView),
+                type = "eigenlayer.restaking-strategy"
             )
         }
     }

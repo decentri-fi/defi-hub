@@ -37,6 +37,7 @@ class StakedEsPlsFarmingMarketProvider : FarmingMarketProvider() {
             positionFetcher = PositionFetcher(
                 contract::stakedAmounts
             ),
+            type = "plutusdao.staked-esPLS",
             claimableRewardFetcher = ClaimableRewardFetcher(
                 reward = Reward(
                     esPls,

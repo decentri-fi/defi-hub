@@ -33,6 +33,7 @@ class TornadoCashStakingRewardsFarmProvider : FarmingMarketProvider() {
                 identifier = stakingRewards,
                 rewardToken = rewardToken,
                 stakedToken = stakingToken,
+                type = "tornadocash.staking-rewards",
                 apr = calculateSingleRewardPool(stakingRewardsContract),
             )
         )

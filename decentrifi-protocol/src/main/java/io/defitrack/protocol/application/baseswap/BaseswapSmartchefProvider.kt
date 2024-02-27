@@ -77,6 +77,7 @@ class BaseswapSmartchefProvider : FarmingMarketProvider() {
                 ),
                 preparedTransaction = selfExecutingTransaction(contract::withdraw)
             ),
+            type = "baseswap.smartchef",
             positionFetcher = PositionFetcher(
                 contract::userInfo,
             ),

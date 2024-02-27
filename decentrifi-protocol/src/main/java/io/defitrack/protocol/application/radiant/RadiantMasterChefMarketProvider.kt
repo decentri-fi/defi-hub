@@ -35,6 +35,7 @@ class RadiantMasterChefMarketProvider : FarmingMarketProvider() {
                 identifier = "$masterchefAddress-$index",
                 stakedToken = underlying,
                 rewardToken = reward,
+                type = "radiant.masterchef"
                 //positionFetcher = defaultPositionFetcher(it.poolAddress)
             )
 

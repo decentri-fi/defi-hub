@@ -45,6 +45,7 @@ class CamelotNftStakingProvider : FarmingMarketProvider() {
                         name = token.name + " staking rewards",
                         identifier = contract.address,
                         rewardToken = grail,
+                        type = "camelot.staking-rewards",
                         stakedToken = staked,
                     )
                 }.mapLeft {

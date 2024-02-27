@@ -44,6 +44,7 @@ class EqualizerGaugeMarketProvider(
                     identifier = gaugeContract.address,
                     rewardTokens = rewards,
                     stakedToken = stake,
+                    type = "equalizer.gauge",
                     claimableRewardFetcher = ClaimableRewardFetcher(
                         rewards.map {
                             Reward(

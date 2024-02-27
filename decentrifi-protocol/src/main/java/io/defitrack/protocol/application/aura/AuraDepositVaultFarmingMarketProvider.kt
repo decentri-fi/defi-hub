@@ -36,6 +36,7 @@ class AuraDepositVaultFarmingMarketProvider : FarmingMarketProvider() {
                     marketSize = refreshable {
                         getMarketSize(asset, crvrewards.rewardToken.await())
                     },
+                    type = "aura.deposits",
                     positionFetcher = defaultPositionFetcher(crvrewards.address)
                 )
             } catch (ex: Exception) {

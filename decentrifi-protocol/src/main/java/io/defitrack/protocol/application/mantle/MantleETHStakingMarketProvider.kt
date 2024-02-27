@@ -37,6 +37,7 @@ class MantleETHStakingMarketProvider(
             identifier = methAddress,
             stakedToken = getToken("0x0"),
             rewardToken = getToken("0x0"),
+            type = "mantle.staked-eth",
             positionFetcher = PositionFetcher(
                 { user ->
                     ContractCall(
@@ -47,8 +48,12 @@ class MantleETHStakingMarketProvider(
                 }
             ) { retVal ->
                 val result = retVal[0].value as BigInteger
-                val underlying = stakingContract.mEThToEth(result)
-                Position(underlying, result)
+                if (result > BigInteger.ZERO) {
+                    val underlying = stakingContract.mEThToEth(result)
+                    Position(underlying, result)
+                } else {
+                    Position.ZERO
+                }
             },
         ).nel()
     }

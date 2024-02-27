@@ -21,6 +21,7 @@ class BlurStakingMarketMarketProvider : FarmingMarketProvider() {
             name = "BlurEth",
             identifier = blurStakingAddress,
             positionFetcher = defaultPositionFetcher(blurStakingAddress),
+            type = "blur.staking",
             stakedToken = blur
         ).nel()
     }

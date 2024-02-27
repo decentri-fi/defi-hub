@@ -36,6 +36,7 @@ class PikaFarmingMarketProvider : FarmingMarketProvider() {
                 internalMetadata = mapOf(
                     "contract" to contract
                 ),
+                type = "pika.staking",
                 claimableRewardFetchers = rewardTokens.mapIndexed { index, rewardToken ->
                     val reward = rewardPools[index]
                     ClaimableRewardFetcher(

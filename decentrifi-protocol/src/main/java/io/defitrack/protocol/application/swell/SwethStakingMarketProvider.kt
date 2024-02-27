@@ -26,6 +26,7 @@ class SwethStakingMarketProvider : FarmingMarketProvider() {
             identifier = swethAddress,
             stakedToken = ether,
             rewardToken = ether,
+            type = "swell.sweth",
             positionFetcher = contract.positionFetcher()
         ).nel()
     }

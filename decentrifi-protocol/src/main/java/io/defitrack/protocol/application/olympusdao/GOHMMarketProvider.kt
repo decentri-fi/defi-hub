@@ -29,6 +29,7 @@ class GOHMMarketProvider(
                 identifier = "gohm",
                 stakedToken = ohm,
                 rewardToken = ohm,
+                type = "olympusdao.gohm",
                 positionFetcher = PositionFetcher(gohm::balanceOfFunction)
                 { retVal ->
                     val gohmAmount = retVal[0].value as BigInteger

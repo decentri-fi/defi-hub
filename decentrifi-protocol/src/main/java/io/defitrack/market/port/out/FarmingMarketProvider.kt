@@ -19,6 +19,7 @@ abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>() {
     fun create(
         name: String,
         identifier: String,
+        type: String,
         stakedToken: FungibleTokenInformation,
         rewardTokens: List<FungibleTokenInformation> = emptyList(),
         rewardToken: FungibleTokenInformation? = null,
@@ -38,6 +39,7 @@ abstract class FarmingMarketProvider : MarketProvider<FarmingMarket>() {
             id = "frm_${getNetwork().slug}-${getProtocol().slug}-${identifier}",
             network = getNetwork(),
             protocol = getProtocol(),
+            type = type,
             name = name,
             stakedToken = stakedToken,
             rewardTokens = if (rewardToken != null) rewardTokens + rewardToken else rewardTokens,

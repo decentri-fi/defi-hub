@@ -42,9 +42,8 @@ class MyceliumStakedRewardsProvider : FarmingMarketProvider() {
                 identifier = "staked-mlp",
                 stakedToken = mlp,
                 rewardTokens = mlpRewards.map { it.token },
-                positionFetcher = PositionFetcher(
-                    stakedMlpTracker::balanceOfFunction,
-                ),
+                positionFetcher = defaultPositionFetcher(stakedMlpTracker.address),
+                type = "mycelium.staked-mlp",
                 claimableRewardFetchers = nonEmptyListOf(
                     ClaimableRewardFetcher(
                         mlpRewards,

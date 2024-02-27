@@ -53,6 +53,7 @@ abstract class CurveGaugeFarmingMarketProvider(
                     marketSize = refreshable {
                         getMarketSize(stakedToken, gauge)
                     },
+                    type = "curve.gauge",
                     positionFetcher = PositionFetcher(
                         contract::balanceOfFunction
                     ),

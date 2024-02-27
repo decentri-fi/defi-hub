@@ -41,7 +41,8 @@ class AuraRewardPoolMarketProvider : FarmingMarketProvider() {
             stakedToken = stakingToken,
             rewardToken = reward,
             positionFetcher = defaultPositionFetcher(contract.address),
-            token = getToken(contract.address)
+            token = getToken(contract.address),
+            type = "aura.rewards"
         )
     }
 

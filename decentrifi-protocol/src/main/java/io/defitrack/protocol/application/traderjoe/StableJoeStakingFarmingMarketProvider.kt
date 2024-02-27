@@ -39,6 +39,7 @@ class StableJoeStakingFarmingMarketProvider : FarmingMarketProvider() {
                 positionFetcher = PositionFetcher(
                     { user -> contract.getUserInfofn(user, stakedToken.address) }
                 ),
+                type = "trader-joe.stablejoe-staking",
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     rewards.map { reward ->
                         Reward(

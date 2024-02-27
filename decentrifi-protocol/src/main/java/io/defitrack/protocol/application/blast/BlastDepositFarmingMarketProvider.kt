@@ -33,6 +33,7 @@ class BlastDepositFarmingMarketProvider : FarmingMarketProvider() {
             identifier = blastDepositAddress + "-dai",
             stakedToken = dai,
             rewardTokens = emptyList(),
+            type = "blast.deposits",
             positionFetcher = PositionFetcher(contract::usdShares)
         )
     }
@@ -50,6 +51,7 @@ class BlastDepositFarmingMarketProvider : FarmingMarketProvider() {
             identifier = blastDepositAddress + "-eth",
             stakedToken = eth,
             rewardTokens = emptyList(),
+            type = "blast-deposits",
             positionFetcher = PositionFetcher(contract::ethShares)
         )
     }

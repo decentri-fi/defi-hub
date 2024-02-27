@@ -40,6 +40,7 @@ class AelinRewardMarketProvider : FarmingMarketProvider() {
                     )
                 },
                 positionFetcher = defaultPositionFetcher(rewardPool.address),
+                type = "aelin.rewards",
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
                         token = rewardToken,

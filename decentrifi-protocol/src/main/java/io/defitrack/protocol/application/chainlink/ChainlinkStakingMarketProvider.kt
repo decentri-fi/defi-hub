@@ -40,6 +40,7 @@ class ChainlinkStakingMarketProvider : FarmingMarketProvider(
                     chainlinkStakingContract.address,
                 )
             },
+            type = "chainlink.staking",
             positionFetcher = PositionFetcher(chainlinkStakingContract::getStake),
         ).nel()
     }

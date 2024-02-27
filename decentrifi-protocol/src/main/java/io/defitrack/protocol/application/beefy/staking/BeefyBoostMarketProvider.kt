@@ -51,6 +51,7 @@ abstract class BeefyBoostMarketProvider(
                             ),
                             preparedTransaction = selfExecutingTransaction(contract::getRewardfn)
                         ),
+                        type = "beefy.boost",
                         exitPositionPreparer = prepareExit {
                             contract.exitPosition(it.amount)
                         }

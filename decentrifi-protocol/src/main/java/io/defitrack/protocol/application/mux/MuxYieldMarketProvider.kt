@@ -41,6 +41,7 @@ class MuxYieldMarketProvider : FarmingMarketProvider() {
             identifier = contract.address + "-0",
             stakedToken = stakedToken,
             rewardTokens = listOf(rewardToken),
+            type = "mux.vested-mlp",
             claimableRewardFetcher = ClaimableRewardFetcher(
                 Reward(
                     rewardToken,
@@ -59,6 +60,7 @@ class MuxYieldMarketProvider : FarmingMarketProvider() {
             identifier = contract.address + "-1",
             stakedToken = stakedToken,
             rewardTokens = listOf(rewardToken),
+            type = "mux.vested-mux",
             claimableRewardFetcher = ClaimableRewardFetcher(
                 Reward(
                     rewardToken,

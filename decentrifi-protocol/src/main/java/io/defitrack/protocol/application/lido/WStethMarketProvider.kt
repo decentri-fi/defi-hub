@@ -34,6 +34,7 @@ class WStethMarketProvider(
                 identifier = "wsteth",
                 stakedToken = eth,
                 rewardToken = eth,
+                type = "lido.wrapped-staked-eth",
                 marketSize = refreshable {
                     calculateMarketSize()
                 }

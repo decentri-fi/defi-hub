@@ -31,7 +31,8 @@ class AavePolygonBorrowingPositionProvider(
                         rate = it.reserve.borrowRate.toBigDecimal(),
                         deprecated = false,
                         name = "Aave ${token.name} Borrow",
-                        token = token
+                        token = token,
+                        type = "aave-borrowing",
                     ),
                     tokenAmount = (it.currentStableDebt + it.currentVariableDebt),
                     underlyingAmount = (it.currentStableDebt + it.currentVariableDebt),

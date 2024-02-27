@@ -10,10 +10,11 @@ data class BorrowMarket(
     override val id: String,
     override val protocol: Protocol,
     override val network: Network,
+    override val type: String,
     val name: String,
     val token: FungibleTokenInformation,
     val rate: BigDecimal? = null,
     override val deprecated: Boolean
 ) : DefiMarket(
-    id, "borrowing", protocol, network, deprecated
+    id, "borrowing", type, protocol, network, deprecated
 )

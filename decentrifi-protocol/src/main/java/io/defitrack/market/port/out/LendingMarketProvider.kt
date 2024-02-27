@@ -39,6 +39,7 @@ abstract class LendingMarketProvider : MarketProvider<LendingMarket>() {
             marketSize = marketSize,
             rate = rate,
             poolType = poolType,
+            type = poolType,
             positionFetcher = positionFetcher,
             investmentPreparer = investmentPreparer,
             metadata = metadata,

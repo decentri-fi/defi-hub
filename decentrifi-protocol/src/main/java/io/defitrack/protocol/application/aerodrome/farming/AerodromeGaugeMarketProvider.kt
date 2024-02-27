@@ -84,6 +84,7 @@ class AerodromeGaugeMarketProvider(
                     "address" to gauge,
                     "contract" to contract
                 ),
+                type = "aerodrome.gauge",
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
                         token = rewardToken,

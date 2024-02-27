@@ -30,6 +30,7 @@ class OUSGStakingMarketProvider : FarmingMarketProvider() {
             identifier = cashManagerAddress,
             stakedToken = collateral,
             rewardToken = collateral,
+            type = "ondo.ousg-staking",
             positionFetcher = PositionFetcher(
                 cash.asERC20Contract(getBlockchainGateway())::balanceOfFunction
             ) {

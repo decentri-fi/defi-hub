@@ -35,6 +35,7 @@ class EthosFarmingProvider : FarmingMarketProvider() {
             stakedToken = staked,
             rewardToken = reward,
             positionFetcher = PositionFetcher(contract::depositsFn),
+            type = "ethos.farming",
             claimableRewardFetcher = ClaimableRewardFetcher(
                 Reward(
                     reward,

@@ -30,6 +30,7 @@ class RocketpoolRethMarketProvider : FarmingMarketProvider() {
             stakedToken = eth,
             rewardToken = eth,
             token = getToken(reth.address),
+            type = "rocketpooling.staked-eth",
             positionFetcher = PositionFetcher(
                 reth::balanceOfFunction,
             ) {

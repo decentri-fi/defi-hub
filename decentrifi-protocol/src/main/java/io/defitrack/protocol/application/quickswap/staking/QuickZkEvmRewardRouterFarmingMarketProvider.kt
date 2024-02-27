@@ -42,6 +42,7 @@ class QuickZkEvmRewardRouterFarmingMarketProvider : FarmingMarketProvider() {
             identifier = rewardRouter,
             stakedToken = stakedToken,
             rewardTokens = rewardTokens,
+            type = "quickswap.feeQLP",
             claimableRewardFetcher = ClaimableRewardFetcher(
                 rewardTokens.map { token ->
                     Reward(

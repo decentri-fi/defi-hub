@@ -45,6 +45,7 @@ abstract class AbstractStargateLPStakingMarketProvider(
                     ),
                     preparedTransaction = selfExecutingTransaction(lpStakingContract.claimFn(index))
                 ),
+                type= "stargate.lp-staking",
                 positionFetcher = PositionFetcher(
                     lpStakingContract.userInfo(index),
                 )

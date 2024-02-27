@@ -50,7 +50,6 @@ abstract class IronBankLendingMarketProvider(
                         )
                     ).toBigDecimal()
                 },
-                poolType = "iron-bank-lendingpool",
                 positionFetcher = PositionFetcher(
                     ctokenContract::balanceOfFunction
                 ) { retVal ->
@@ -71,6 +70,7 @@ abstract class IronBankLendingMarketProvider(
                 ),
                 marketToken = ctoken,
                 erc20Compatible = true,
+                poolType = "iron-bank.lending",
                 totalSupply = ctokenContract.totalSupply().map {
                     it.asEth(ctoken.decimals)
                 }

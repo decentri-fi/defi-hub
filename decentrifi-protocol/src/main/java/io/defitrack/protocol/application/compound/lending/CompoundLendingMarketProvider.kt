@@ -59,7 +59,6 @@ class CompoundLendingMarketProvider(
                             )
                         ).toBigDecimal()
                     },
-                    poolType = "compound-lendingpool",
                     positionFetcher = PositionFetcher(ctokenContract::balanceOfFunction) { retVal ->
                         val tokenBalance = retVal[0].value as BigInteger
                         Position(
@@ -73,6 +72,7 @@ class CompoundLendingMarketProvider(
                     ),
                     marketToken = getToken(ctokenContract.address),
                     erc20Compatible = true,
+                    poolType = "compound.lending",
                     totalSupply = refreshable {
                         with(getToken(ctokenContract.address)) {
                             totalSupply.asEth(decimals)

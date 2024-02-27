@@ -33,9 +33,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import java.math.BigDecimal
 import java.math.BigInteger
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
 import kotlin.system.measureTimeMillis
 import kotlin.time.measureTime
 
@@ -96,7 +93,7 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
                 getMarkets().forEach { market ->
                     market.refresh().also {
                         eventService.publish(
-                            "markets.${it.type}.updated",
+                            "markets.${it.category}.updated",
                             it.marketUpdatedEvent()
                         )
                     }
@@ -132,11 +129,11 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
         logger.debug("adding ${it.id}")
         cache.put(it.id, it)
         eventService.publish(
-            "markets.${it.type}.updated",
+            "markets.${it.category}.updated",
             it.marketUpdatedEvent()
         )
         meterregisty.counter(
-            "markets.${it.type}.added", listOf(
+            "markets.${it.category}.added", listOf(
                 Tag.of("protocol", it.protocol.slug)
             )
         ).increment()

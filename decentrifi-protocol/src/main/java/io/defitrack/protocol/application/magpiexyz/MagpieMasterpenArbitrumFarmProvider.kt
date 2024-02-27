@@ -55,6 +55,7 @@ class MagpieMasterpenArbitrumFarmProvider : FarmingMarketProvider() {
                         contract.multiclaimFn(listOf(info.stakingToken))
                     }
                 ),
+                type = "magpiexyz.masterpenpie",
                 metadata = mapOf("rewarder" to info.rewarder)
             )
         }

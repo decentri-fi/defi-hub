@@ -60,9 +60,7 @@ class PolycatFarmingMarketProvider(
             rewardTokens = listOf(
                 rewardToken
             ),
-            marketSize = refreshable {
-                calculateMarketSize(stakedtoken, chef)
-            },
+            type = "polycat.farm",
             positionFetcher = PositionFetcher(
                 { user ->
                     chef.userInfoFunction(
@@ -73,6 +71,7 @@ class PolycatFarmingMarketProvider(
         )
     }
 
+    //todo: move to breakdown
     private suspend fun calculateMarketSize(
         stakedtoken: FungibleTokenInformation,
         chef: PolycatMasterChefContract

@@ -61,6 +61,7 @@ abstract class SushiMinichefV2FarmingMarketProvider(
                 positionFetcher = PositionFetcher(
                     chef.userInfoFunction(poolId)
                 ),
+                type = "sushiswap.minichef.v2"
             )
         } catch (ex: Exception) {
             logger.error("Error while fetching market for poolId $poolId", ex)

@@ -40,6 +40,7 @@ class DQuickFarmingMarketProvider(
             investmentPreparer = DQuickStakingInvestmentPreparer(
                 getERC20Resource(), contract
             ),
+            type = "quickswap.dragons-lair",
             exitPositionPreparer = prepareExit {
                 contract.exitFunction(it.amount)
             }

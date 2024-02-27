@@ -36,6 +36,7 @@ class RadiantMultiFeeDistributorFarmingMarketProvider : FarmingMarketProvider() 
                 identifier = address,
                 stakedToken = stakingToken,
                 rewardTokens = rewardTokens,
+                type = "radiant.staking",
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     rewards = rewardTokens.map { token ->
                         Reward(

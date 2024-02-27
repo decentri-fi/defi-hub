@@ -75,7 +75,8 @@ class DeprecatedQuickswapFarmingMarketProvider(
                 preparedTransaction = selfExecutingTransaction(rewardPool::getRewardFunction)
             ),
             positionFetcher = defaultPositionFetcher(rewardPool.address),
-            deprecated = true
+            deprecated = true,
+            type = "quickswap.farming"
         )
     }
 

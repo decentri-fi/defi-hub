@@ -37,6 +37,7 @@ class ThalesOptimismStakingMarketProvider : FarmingMarketProvider() {
                 positionFetcher = PositionFetcher(
                     stakingThalesContract::stakedBalanceOfFn,
                 ),
+                type = "thales.staking",
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
                         stakedToken,

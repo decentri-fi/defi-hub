@@ -50,6 +50,7 @@ class MStableEthereumFarmingMarketProvider(
             name = mstableSavingsVault.name,
             stakedToken = stakingToken,
             rewardToken = rewardsToken,
+            type = "mstable.farming",
             positionFetcher = PositionFetcher(
                 contract::rawBalanceOfFunction
             ),

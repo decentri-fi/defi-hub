@@ -37,6 +37,7 @@ class RibbonEthereumFarmingMarketProvider(
                     ).toBigDecimal()
                 },
                 positionFetcher = defaultPositionFetcher(it.id),
+                type = "ribbon.farming",
             )
         }
     }

@@ -30,8 +30,9 @@ class TcrRewardsProvider : FarmingMarketProvider() {
                 "Tcr Staking Rewards",
                 identifier = "tcr staking rewards",
                 stakedToken = stakingToken,
-                rewardTokens = nonEmptyListOf(rewardToken),
+                rewardToken = rewardToken,
                 positionFetcher = defaultPositionFetcher(contract.address),
+                type = "tcr.staking-rewards",
                 exitPositionPreparer = prepareExit {
                     contract.exitFn()
                 }

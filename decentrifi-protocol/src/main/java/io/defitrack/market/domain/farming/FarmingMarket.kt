@@ -15,6 +15,7 @@ data class FarmingMarket(
     override val id: String,
     override val network: Network,
     override val protocol: Protocol,
+    override val type: String,
     val name: String,
     val stakedToken: FungibleTokenInformation,
     val rewardTokens: List<FungibleTokenInformation>,
@@ -28,4 +29,4 @@ data class FarmingMarket(
     val internalMetadata: Map<String, Any> = emptyMap(),
     override val deprecated: Boolean = false,
     val token: FungibleTokenInformation? = null
-) : DefiMarket(id, "farming", protocol, network, deprecated)
+) : DefiMarket(id, "farming", type, protocol, network, deprecated)

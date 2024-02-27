@@ -36,6 +36,7 @@ class ArpaStakingMarketProvider : FarmingMarketProvider() {
             positionFetcher = PositionFetcher(
                 contract::getStakeFn
             ),
+            type = "arpa.staking",
             claimableRewardFetcher = ClaimableRewardFetcher(
                 Reward(
                     arpa,

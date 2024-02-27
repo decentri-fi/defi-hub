@@ -42,6 +42,7 @@ class XSushiStakingMarketProvider : FarmingMarketProvider() {
                         xsushi,
                     )
                 },
+                type = "sushiswap.xsushi",
                 positionFetcher = PositionFetcher(
                     xSushiContract::balanceOfFunction
                 ) { retVal ->

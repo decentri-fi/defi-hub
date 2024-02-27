@@ -46,7 +46,8 @@ class OldDQuickFarmingMarketProvider(
                 deprecated = true,
                 exitPositionPreparer = prepareExit {
                     contract.exitFunction(it.amount)
-                }
+                },
+                type = "quickswap.farming"
             )
         )
     }

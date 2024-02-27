@@ -31,6 +31,7 @@ class VoteLockedAuraProvider : FarmingMarketProvider() {
             identifier = vlauraAddress,
             stakedToken = token,
             rewardTokens = rewards,
+            type = "aura.vote-locked",
             positionFetcher = PositionFetcher(contract::balances),
         ).nel()
     }

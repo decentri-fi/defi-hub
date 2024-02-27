@@ -100,6 +100,7 @@ class PancakeV3FarmingMarketProvider : FarmingMarketProvider() {
                 name = stakedtoken.name + " Farm",
                 stakedToken = stakedtoken,
                 rewardTokens = listOf(rewardToken),
+                type = "pancakeswap.v3.farming",
                 marketSize = refreshable {
                     getMarketSize(stakedtoken, chef.address)
                 }

@@ -56,7 +56,7 @@ abstract class AaveV3LendingMarketProvider(
             identifier = aToken.address,
             name = "aave v3 " + aToken.name,
             token = underlying,
-            poolType = "aave-v3",
+            poolType = "aave.v3.lending",
             rate = reserveData.liquidityRate.asEth(27),
             investmentPreparer = AaveV3LendingInvestmentPreparer(
                 underlying.address,

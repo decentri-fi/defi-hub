@@ -79,6 +79,7 @@ class GMXStakedBonusFeeStakingMarketProvider : FarmingMarketProvider() {
                 rewardToken = rewardToken,
                 marketSize = refreshable(BigDecimal.ZERO),
                 positionFetcher = PositionFetcher(contract::balanceOfFunction),
+                type = "gmx.staking",
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
                         token = rewardToken,

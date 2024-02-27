@@ -31,6 +31,7 @@ class USonneStakingMarketProvider : FarmingMarketProvider() {
                 identifier = stakedSonne,
                 stakedToken = stakedtoken,
                 rewardTokens = rewardTokens,
+                type = "sonne.usonne",
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     rewardTokens.map { token ->
                         Reward(

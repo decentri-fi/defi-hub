@@ -32,7 +32,6 @@ class LiquityLendingMarketProvider(
             identifier = troveManagerAddress,
             name = "Liquity Lending",
             token = eth,
-            poolType = "liquity",
             marketToken = null,
             totalSupply = refreshable {
                 Either.catch {
@@ -41,6 +40,7 @@ class LiquityLendingMarketProvider(
                     logger.error("Unable to get total collateral snapshot: {}", it.message)
                 }.getOrElse { BigDecimal.ZERO }
             },
+            poolType = "liquity.lending",
             positionFetcher = PositionFetcher(
                 troveManager::getTroveColl,
             ),

@@ -32,6 +32,7 @@ class KwentaStakingRewardMarketProvider : FarmingMarketProvider() {
             stakedToken = kwenta,
             rewardToken = kwenta,
             positionFetcher = defaultPositionFetcher(address),
+            type = "kwenta.staking-rewards",
             claimableRewardFetcher = ClaimableRewardFetcher(
                 reward = Reward(
                     kwenta,

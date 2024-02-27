@@ -81,6 +81,7 @@ abstract class BeefyFarmingMarketProvider(
             exitPositionPreparer = prepareExit {
                 contract.fullExitFunction()
             },
+            type = "beefy.vault",
             metadata = mapOf(
                 "vaultAddress" to contract.address,
             )

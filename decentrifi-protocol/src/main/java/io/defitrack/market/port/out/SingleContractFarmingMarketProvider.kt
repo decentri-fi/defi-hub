@@ -19,6 +19,7 @@ abstract class SingleContractFarmingMarketProvider : FarmingMarketProvider() {
             identifier = config.contract.address,
             stakedToken = stakedToken,
             rewardToken = rewardToken,
+            type = config.type,
             claimableRewardFetcher = ClaimableRewardFetcher(
                 Reward(
                     token = rewardToken,
@@ -33,6 +34,7 @@ abstract class SingleContractFarmingMarketProvider : FarmingMarketProvider() {
 
     data class SingleFarmingConfig(
         val name: String,
-        val contract: FarmingContract
+        val contract: FarmingContract,
+        val type: String,
     )
 }

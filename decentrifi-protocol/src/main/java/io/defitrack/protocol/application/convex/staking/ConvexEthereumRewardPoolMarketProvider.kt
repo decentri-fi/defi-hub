@@ -34,6 +34,7 @@ class ConvexEthereumRewardPoolMarketProvider(
                     poolContract.address
                 ),
                 internalMetadata = mapOf("contract" to poolContract),
+                type = "convex.reward-pool",
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
                         rewardToken,

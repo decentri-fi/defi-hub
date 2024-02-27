@@ -30,17 +30,18 @@ class StakefishStakingMarketProvider : FarmingMarketProvider() {
     override suspend fun produceMarkets(): Flow<FarmingMarket> {
         return channelFlow {
 
-            val rewardToken = getToken("0x0")
+            val eth = getToken("0x0")
 
             send(
                 create(
                     name = "Stakefish ETH",
                     identifier = "stakefish-eth",
-                    stakedToken = rewardToken,
-                    rewardTokens = listOf(rewardToken),
+                    stakedToken = eth,
+                    rewardToken = eth,
+                    type = "stakefish.staked-eth",
                     claimableRewardFetcher = ClaimableRewardFetcher(
                         reward = Reward(
-                            token = rewardToken,
+                            token = eth,
                             getRewardFunction = stakefishStakingContract::getPendingRewardFunction,
                         ),
                         preparedTransaction = selfExecutingTransaction(stakefishStakingContract::claimFunction)

@@ -38,6 +38,7 @@ class LooksrareStakingMarketProvider : FarmingMarketProvider() {
                 positionFetcher = PositionFetcher(
                     contract::calculateSharesValueInLooks
                 ),
+                type = "looksrare.fee-sharing",
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
                         reward,

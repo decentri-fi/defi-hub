@@ -58,6 +58,7 @@ class PolygonValidatorShareProxyMarketProvider : FarmingMarketProvider() {
             positionFetcher = PositionFetcher(
                 shareContract::getTotalStake
             ),
+            type = "polygon.staking",
             claimableRewardFetcher = ClaimableRewardFetcher(
                 Reward(
                     matic,

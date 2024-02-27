@@ -29,6 +29,7 @@ class StakedCvxCrvMarketProvider : FarmingMarketProvider() {
                 identifier = stakingWrapperAddress,
                 stakedToken = cvxCrv,
                 rewardTokens = emptyList(),
+                type = "convex.staked-cvxcrv",
                 positionFetcher = defaultPositionFetcher(stakingWrapperAddress),
             )
         )

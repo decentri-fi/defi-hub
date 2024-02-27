@@ -22,7 +22,8 @@ class FraxStakedEthMarketProvider : FarmingMarketProvider() {
             name = "Staked Frax Ether",
             identifier = sfrxEthAddress,
             stakedToken = fraxEther,
-            rewardToken = fraxEther
+            rewardToken = fraxEther,
+            type = "frax.staked-eth"
         ).nel()
     }
 

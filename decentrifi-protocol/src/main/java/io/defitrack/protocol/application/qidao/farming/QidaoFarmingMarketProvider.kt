@@ -62,6 +62,7 @@ class QidaoFarmingMarketProvider(
             positionFetcher = PositionFetcher(
                 functionCreator = chef.userInfoFunction(poolId)
             ),
+            type = "qidao.farming",
             marketSize = refreshable {
                 marketSizeService.getMarketSize(
                     stakedtoken,

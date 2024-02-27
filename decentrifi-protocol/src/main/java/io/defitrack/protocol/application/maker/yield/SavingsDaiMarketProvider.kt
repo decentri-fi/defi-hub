@@ -29,12 +29,17 @@ class SavingsDaiMarketProvider : FarmingMarketProvider() {
             identifier = sdaiContractAddress,
             stakedToken = dai,
             rewardToken = dai,
+            type = "makerdao.savings-dai",
             positionFetcher = PositionFetcher(contract::balanceOfFunction) {
                 val shares = it[0].value as BigInteger
-                Position(
-                    contract.convertToAssets(shares),
-                    shares
-                )
+                if (shares > BigInteger.ONE) {
+                    Position(
+                        contract.convertToAssets(shares),
+                        shares
+                    )
+                } else {
+                    Position.ZERO
+                }
             }
         ).nel()
     }

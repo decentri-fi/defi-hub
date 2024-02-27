@@ -4,6 +4,7 @@ import arrow.core.Either
 import arrow.core.None
 import arrow.core.some
 import arrow.fx.coroutines.parMap
+import io.defitrack.LazyValue
 import io.defitrack.claim.ClaimableRewardFetcher
 import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
@@ -32,7 +33,7 @@ class VelodromeV2GaugeMarketProvider(
 
     val voter = "0x41c914ee0c7e1a5edcd0295623e6dc557b5abf3c"
 
-    val deferredVoterContract = lazyAsync {
+    val deferredVoterContract = LazyValue {
         with(getBlockchainGateway()) {
             VoterContract(
                 voter
@@ -41,7 +42,7 @@ class VelodromeV2GaugeMarketProvider(
     }
 
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
-        val voterContract = deferredVoterContract.await()
+        val voterContract = deferredVoterContract.get()
         poolingMarketProvider.getMarkets().parMap(concurrency = 12) {
             Either.catch {
                 val gauge = voterContract.gauges(it.address)
@@ -67,6 +68,7 @@ class VelodromeV2GaugeMarketProvider(
                         metadata = mapOf(
                             "address" to gauge,
                         ),
+                        type = "velodrome.v2.gauge",
                         claimableRewardFetcher = ClaimableRewardFetcher(
                             Reward(
                                 token = rewardToken,

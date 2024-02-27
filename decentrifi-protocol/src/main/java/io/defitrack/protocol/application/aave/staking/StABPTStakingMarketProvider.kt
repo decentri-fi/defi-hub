@@ -46,6 +46,7 @@ class StABPTStakingMarketProvider : FarmingMarketProvider() {
                     getRatio(stakingContract)
                 },
             ),
+            type = "stABPT",
             claimableRewardFetcher = ClaimableRewardFetcher(
                 Reward(
                     token = aaveToken,

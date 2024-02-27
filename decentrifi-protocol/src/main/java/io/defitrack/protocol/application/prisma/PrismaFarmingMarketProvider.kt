@@ -35,6 +35,7 @@ class PrismaFarmingMarketProvider : FarmingMarketProvider() {
             stakedToken = getToken(mkUsdAddress),
             rewardToken = prisma,
             positionFetcher = PositionFetcher(contract::accountDeposits),
+            type = "prisma.farming",
             claimableRewardFetcher = ClaimableRewardFetcher(
                 reward = Reward(
                     prisma,

@@ -24,6 +24,7 @@ class CamelotXGrailFarmingMarketProvider : FarmingMarketProvider() {
                 identifier = xGrail,
                 stakedToken = staked,
                 rewardToken = staked,
+                type = "camelot.farming",
                 positionFetcher = defaultPositionFetcher(xGrail)
             )
         )

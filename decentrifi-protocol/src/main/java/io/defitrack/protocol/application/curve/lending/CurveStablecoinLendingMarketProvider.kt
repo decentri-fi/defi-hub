@@ -58,10 +58,10 @@ class CurveStablecoinLendingMarketProvider : LendingMarketProvider() {
         return create(
             identifier = controller.address,
             name = collateral.name + " Lending",
-            poolType = "crv",
             marketToken = null,
             token = collateral,
             totalSupply = refreshable(BigDecimal.ZERO),
+            poolType = "curve.stable-lending",
             positionFetcher = PositionFetcher(
                 controller::userState,
                 controller::positionFromUserState

@@ -25,6 +25,7 @@ class VoteLockedConvexMarketProvider : FarmingMarketProvider() {
                 identifier = vICVXAddress,
                 stakedToken = cvx,
                 rewardToken = cvx,
+                type = "convex.vote-locked",
                 positionFetcher = defaultPositionFetcher(vICVXAddress)
             )
         )

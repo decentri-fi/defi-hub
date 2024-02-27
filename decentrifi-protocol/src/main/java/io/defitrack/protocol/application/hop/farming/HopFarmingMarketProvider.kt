@@ -43,6 +43,7 @@ abstract class HopFarmingMarketProvider(
                 getMarketSize(stakedToken, contract.address)
             },
             positionFetcher = PositionFetcher(contract::balanceOfFunction),
+            type = "hop.staking",
             claimableRewardFetcher = ClaimableRewardFetcher(
                 Reward(
                     rewardToken,

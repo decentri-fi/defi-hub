@@ -45,6 +45,7 @@ class AutoEarnBaseFarmingMarketProvider : FarmingMarketProvider() {
                     positionFetcher = PositionFetcher(
                         vault.autoEarnUserInfoFunction(index)
                     ),
+                    type = "autoearn.vault",
                     claimableRewardFetcher = ClaimableRewardFetcher(
                         Reward(
                             rewardToken,

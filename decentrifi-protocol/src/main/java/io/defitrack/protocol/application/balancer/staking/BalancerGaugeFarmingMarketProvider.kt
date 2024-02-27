@@ -91,6 +91,7 @@ abstract class BalancerGaugeFarmingMarketProvider(
                             },
                             preparedTransaction = selfExecutingTransaction(gaugecontract::getClaimRewardsFunction)
                         ),
+                        type = "balancer.gauge",
                         exitPositionPreparer = prepareExit {
                             gaugecontract.exitPosition(it.amount)
                         }

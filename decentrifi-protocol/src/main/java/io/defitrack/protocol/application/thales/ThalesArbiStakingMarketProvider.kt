@@ -33,10 +33,11 @@ class ThalesArbiStakingMarketProvider : FarmingMarketProvider() {
                 name = "Thales Staking",
                 identifier = stakingThales,
                 stakedToken = stakedToken,
-                rewardTokens = listOf(stakedToken),
+                rewardToken = stakedToken,
                 positionFetcher = PositionFetcher(
                     stakingThalesContract::stakedBalanceOfFn,
                 ),
+                type = "thales.staking",
                 claimableRewardFetcher = ClaimableRewardFetcher(
                     Reward(
                         stakedToken,

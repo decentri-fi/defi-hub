@@ -44,6 +44,8 @@ class LidoStakedEtherProvider(
                 positionFetcher = PositionFetcher(
                     functionCreator = steth::sharesOfFunction,
                 ),
+                type = "lido.staked-eth",
+                //todo: use breakdown
                 marketSize = refreshable {
                     priceResource.calculatePrice(
                         GetPriceCommand(

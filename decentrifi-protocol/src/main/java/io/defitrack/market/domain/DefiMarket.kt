@@ -1,20 +1,18 @@
 package io.defitrack.market.domain
 
-import arrow.core.Either
 import arrow.core.Either.Companion.catch
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.refreshable
 import io.defitrack.protocol.Protocol
 import org.slf4j.LoggerFactory
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties.Lettuce.Cluster.Refresh
-import java.time.Duration
 import java.time.LocalDateTime
 import kotlin.reflect.full.declaredMemberProperties
 
 abstract class DefiMarket(
     open val id: String,
-    val type: String,
+    val category: String,
+    open val type: String,
     open val protocol: Protocol,
     open val network: Network,
     open val deprecated: Boolean,

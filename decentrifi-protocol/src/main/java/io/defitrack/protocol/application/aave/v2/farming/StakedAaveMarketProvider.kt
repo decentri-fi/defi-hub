@@ -31,6 +31,7 @@ class StakedAaveMarketProvider : FarmingMarketProvider() {
             stakedToken = aave,
             rewardTokens = aave.nel(),
             positionFetcher = defaultPositionFetcher(stakedAaveAddress),
+            type = "staked-aave",
             claimableRewardFetcher = ClaimableRewardFetcher(
                 Reward(
                     aave,

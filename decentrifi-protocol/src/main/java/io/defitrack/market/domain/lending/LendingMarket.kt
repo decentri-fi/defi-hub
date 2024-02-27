@@ -14,6 +14,7 @@ data class LendingMarket(
     override val id: String,
     override val network: Network,
     override val protocol: Protocol,
+    override val type: String,
     val name: String,
     val marketToken: FungibleTokenInformation?,
     val token: FungibleTokenInformation,
@@ -30,5 +31,5 @@ data class LendingMarket(
     val price: Refreshable<BigDecimal>,
     val internalMetaData: Map<String, Any> = emptyMap(),
 ) : DefiMarket(
-    id, "lending", protocol, network, deprecated
+    id, "lending", type, protocol, network, deprecated
 )

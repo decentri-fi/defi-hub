@@ -23,6 +23,7 @@ class VeVeloStakingMarketProvider : FarmingMarketProvider() {
                 identifier = "veVELO",
                 stakedToken = veloToken,
                 rewardToken = getToken(veVelo),
+                type = "velodrome.v1.vevelo",
                 marketSize = refreshable {
                     getMarketSize(veloToken, veVelo)
                 },

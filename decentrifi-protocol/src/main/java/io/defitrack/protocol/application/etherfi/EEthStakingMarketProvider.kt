@@ -31,6 +31,7 @@ class EEthStakingMarketProvider : FarmingMarketProvider() {
             identifier = "eeth",
             stakedToken = eth,
             rewardToken = eth,
+            type = "etherfi.restaking",
             positionFetcher = defaultPositionFetcher(eeth.address),
         ).nel()
     }

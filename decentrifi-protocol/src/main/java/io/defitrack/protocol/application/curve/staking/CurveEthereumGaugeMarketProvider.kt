@@ -67,7 +67,7 @@ class CurveEthereumGaugeMarketProvider : FarmingMarketProvider() {
         }
     }
 
-    private suspend fun CurveEthereumGaugeMarketProvider.normalGauge(gauge: String): FarmingMarket {
+    private suspend fun normalGauge(gauge: String): FarmingMarket {
         val contract = with(getBlockchainGateway()) {
             CurveL2GaugeContract(
                 gauge
@@ -84,6 +84,7 @@ class CurveEthereumGaugeMarketProvider : FarmingMarketProvider() {
             marketSize = refreshable {
                 getMarketSize(stakedToken, gauge)
             },
+            type = "curve.gauge",
             positionFetcher = PositionFetcher(
                 contract::balanceOfFunction
             ),

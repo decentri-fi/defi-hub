@@ -63,7 +63,8 @@ class DinoswapFarmingMarketProvider(
             marketSize = refreshable {
                 getMarketSize(stakedtoken, chef.address)
             },
-            deprecated = true
+            deprecated = true,
+            type = "dinoswap.fossil-farms",
         )
     }
 

@@ -17,6 +17,7 @@ import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerGaugeZkEvmContract
 import io.defitrack.transaction.PreparedTransaction
+import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 import org.web3j.abi.datatypes.Event
@@ -75,6 +76,7 @@ class BalancerBaseGaugeMarketProvider : FarmingMarketProvider() {
                     exitPositionPreparer = prepareExit {
                         gaugecontract.exitPosition(it.amount)
                     },
+                    type = "balancer.gauge",
                     claimableRewardFetcher = ClaimableRewardFetcher(
                         rewards = rewards.map { token ->
                             Reward(
@@ -82,7 +84,7 @@ class BalancerBaseGaugeMarketProvider : FarmingMarketProvider() {
                                 gaugecontract.getClaimableRewardFunction(token.address)
                             )
                         },
-                        preparedTransaction = PreparedTransaction.selfExecutingTransaction(gaugecontract::getClaimRewardsFunction)
+                        preparedTransaction = selfExecutingTransaction(gaugecontract::getClaimRewardsFunction)
                     ),
                 )
             } catch (ex: Exception) {
