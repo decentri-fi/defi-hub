@@ -24,7 +24,7 @@ class AuraDepositVaultFarmingMarketProvider : FarmingMarketProvider() {
         booster.poolInfos().parMapNotNull(concurrency = 12) {
             try {
                 val crvrewards = crvRewardsContract(it.crvRewards)
-                val asset = getToken(crvrewards.asset())
+                val asset = getToken(crvrewards.asset.await())
 
                 val crvRewardsToken = getToken(it.crvRewards)
 

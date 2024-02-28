@@ -24,9 +24,7 @@ class CurveL2GaugeContract(address: String) : ERC20Contract(address) {
     fun getClaimableRewardFunction(token: String): (String) -> ContractCall {
         return { user ->
             createFunction(
-                "claimable_reward",
-                listOf(user.toAddress(), token.toAddress()),
-                listOf(uint256())
+                "claimable_reward", listOf(user.toAddress(), token.toAddress()), listOf(uint256())
             )
         }
     }
@@ -35,12 +33,13 @@ class CurveL2GaugeContract(address: String) : ERC20Contract(address) {
     suspend fun rewardTokens(): List<String> {
         return readMultiCall((0..5).mapNotNull {
             createFunction(
-                "reward_tokens",
-                listOf(it.toBigInteger().toUint256()),
-                listOf(address())
+                "reward_tokens", listOf(it.toBigInteger().toUint256()), listOf(address())
             )
         }).filter {
             it.success
         }.map { it.data[0].value as String }
+            .filter {
+                it != "0x0000000000000000000000000000000000000000"
+            }
     }
 }

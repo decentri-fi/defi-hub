@@ -36,13 +36,7 @@ abstract class CurveGaugeFarmingMarketProvider(
                     )
                 }
 
-                //todo: move to contract
-                val rewardTokens = contract.rewardTokens()
-                    .filter {
-                        it != "0x0000000000000000000000000000000000000000"
-                    }
-                    .map { getToken(it) }
-
+                val rewardTokens = contract.rewardTokens().map { getToken(it) }
                 val stakedToken = getToken(contract.lpToken())
 
                 create(

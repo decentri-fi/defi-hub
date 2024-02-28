@@ -26,7 +26,7 @@ import java.util.concurrent.Flow
 class PendleArbitrumiquidityPoolMarketProvider : PoolingMarketProvider() {
 
     //TODO: create for ethereum
-    override suspend fun produceMarkets() = channelFlow<PoolingMarket> {
+    override suspend fun produceMarkets() = channelFlow {
 
         val factory = PendleMarketFactoryContract(
             getBlockchainGateway(),
