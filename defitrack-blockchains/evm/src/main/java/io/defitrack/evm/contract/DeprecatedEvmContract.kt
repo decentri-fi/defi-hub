@@ -12,6 +12,7 @@ import org.web3j.abi.datatypes.Type
 import org.web3j.protocol.core.methods.response.EthLog
 import java.math.BigInteger
 
+@Deprecated("use EvmContract instead")
 abstract class DeprecatedEvmContract(
     val blockchainGateway: BlockchainGateway,
     val address: String
