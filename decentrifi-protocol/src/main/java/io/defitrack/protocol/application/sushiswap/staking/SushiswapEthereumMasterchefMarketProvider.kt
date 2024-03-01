@@ -1,14 +1,13 @@
 package io.defitrack.protocol.application.sushiswap.staking
 
+import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.claim.ClaimableRewardFetcher
 import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.refreshable
-import io.defitrack.architecture.conditional.ConditionalOnCompany
-import io.defitrack.market.port.out.FarmingMarketProvider
-import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.evm.position.PositionFetcher
+import io.defitrack.market.domain.farming.FarmingMarket
+import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.sushiswap.contract.MasterChefBasedContract
@@ -26,17 +25,15 @@ class SushiswapEthereumMasterchefMarketProvider : FarmingMarketProvider() {
 
     private val masterchefContractAddress = "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd"
 
-    val deferredContract = lazyAsync {
-        MasterChefBasedContract(
-            "sushi",
-            "pendingSushi",
-            getBlockchainGateway(),
-            masterchefContractAddress
-        )
-    }
-
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
-        val contract = deferredContract.await()
+        val contract = with(getBlockchainGateway()) {
+            MasterChefBasedContract(
+                "sushi",
+                "pendingSushi",
+                masterchefContractAddress
+            )
+        }
+
         contract.defaultPoolInfos.await().forEachIndexed { poolIndex, poolInfo ->
             launch {
                 throttled {

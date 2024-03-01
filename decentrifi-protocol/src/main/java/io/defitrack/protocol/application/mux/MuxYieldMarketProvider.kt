@@ -4,6 +4,7 @@ import io.defitrack.claim.ClaimableRewardFetcher
 import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.protocol.Company
@@ -21,11 +22,9 @@ class MuxYieldMarketProvider : FarmingMarketProvider() {
 
     private val yieldContractAddress = "0xaf9c4f6a0ceb02d4217ff73f3c95bbc8c7320cee"
 
+    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
-        val contract = MuxYieldContract(
-            getBlockchainGateway(),
-            yieldContractAddress
-        )
+        val contract = MuxYieldContract(yieldContractAddress)
 
         listOf(
             async { vestedMlp(contract) },

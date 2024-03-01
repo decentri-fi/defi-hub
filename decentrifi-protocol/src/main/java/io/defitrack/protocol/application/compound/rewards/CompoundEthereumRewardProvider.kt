@@ -15,9 +15,9 @@ class CompoundEthereumRewardProvider(
     private val compoundAddressesProvider: CompoundAddressesProvider
 ) : CompoundRewardProvider(Network.ETHEREUM) {
 
-    override fun getContract(): CompoundRewardContract {
+    override fun getContract(): CompoundRewardContract = with(getBlockchainGateway()) {
         return object :
-            CompoundRewardContract(getBlockchainGateway(), compoundAddressesProvider.CONFIG[network]!!.rewards) {
+            CompoundRewardContract(compoundAddressesProvider.CONFIG[network]!!.rewards) {
             override suspend fun getRewardConfig(comet: String): RewardConfig {
                 return (read(
                     "rewardConfig",

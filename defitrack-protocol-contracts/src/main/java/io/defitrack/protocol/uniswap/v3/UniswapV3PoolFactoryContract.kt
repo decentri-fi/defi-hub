@@ -7,15 +7,15 @@ import io.defitrack.abi.TypeUtils.Companion.toUint24
 import io.defitrack.evm.GetEventLogsCommand
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EventUtils.extract
-import io.defitrack.evm.contract.DeprecatedEvmContract
+import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Event
 import java.math.BigInteger
 
+context(BlockchainGateway)
 class UniswapV3PoolFactoryContract(
-    blockchainGateway: BlockchainGateway,
     address: String
-) : DeprecatedEvmContract(
-    blockchainGateway, address
+) : EvmContract(
+    address
 ) {
 
     val poolCreatedEvent = Event(
@@ -29,7 +29,7 @@ class UniswapV3PoolFactoryContract(
     )
 
     suspend fun getPools(fromBlock: String): List<String> {
-        val logs = blockchainGateway.getEventsAsEthLog(
+        val logs = getEventsAsEthLog(
             GetEventLogsCommand(
                 addresses = listOf(this.address),
                 topic = "0x783cca1c0412dd0d695e784568c96da2e9c22ff989357a2e8b1d9b2b4e6b7118",

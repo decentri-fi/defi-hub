@@ -4,15 +4,15 @@ import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 
+context(BlockchainGateway)
 open class FarmingContract(
-    blockchainGateway: BlockchainGateway,
     address: String,
     stakedTokenName: String = "stakedToken",
     rewardTokenName: String = "rewardToken",
     val rewardFunctionName: String = "earned",
     val claimFunctionName: String = "getReward"
-) : DeprecatedEvmContract(
-    blockchainGateway, address
+) : EvmContract(
+    address
 ) {
 
     val stakedToken = constant<String>(stakedTokenName, TypeUtils.address())

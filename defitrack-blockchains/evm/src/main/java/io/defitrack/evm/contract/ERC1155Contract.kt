@@ -6,11 +6,10 @@ import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import java.math.BigInteger
 
+context(BlockchainGateway)
 open class ERC1155Contract(
-    blockchainGateway: BlockchainGateway,
     address: String
-) :
-    DeprecatedEvmContract(blockchainGateway, address) {
+) : EvmContract(address) {
 
     suspend fun balanceOf(user: String, tokenId: BigInteger): BigInteger {
         return readSingle(

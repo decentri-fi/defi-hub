@@ -3,7 +3,7 @@ package io.defitrack.protocol.balancer.contract
 import io.defitrack.abi.TypeUtils.Companion.toBytes32
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.DeprecatedEvmContract
+import io.defitrack.evm.contract.EvmContract
 import io.github.reactivecircus.cache4k.Cache
 import org.bouncycastle.util.encoders.Hex
 import org.web3j.abi.TypeReference
@@ -12,11 +12,11 @@ import org.web3j.abi.datatypes.DynamicArray
 import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
+context(BlockchainGateway)
 class BalancerVaultContract(
-    blockchainGateway: BlockchainGateway,
     address: String
-) : DeprecatedEvmContract(
-    blockchainGateway, address
+) : EvmContract(
+    address
 ) {
 
     val cache = Cache.Builder<String, List<PoolTokenResult>>().build()

@@ -4,11 +4,12 @@ import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.DeprecatedEvmContract
+import io.defitrack.evm.contract.EvmContract
 
+context(BlockchainGateway)
 class RewardRouterContract(
-    blockchainGateway: BlockchainGateway, address: String
-) : DeprecatedEvmContract(blockchainGateway, address) {
+    address: String
+) : EvmContract(address) {
 
     val feeQlpTracker = constant<String>("feeQlpTracker", TypeUtils.address())
     val qlp = constant<String>("qlp", TypeUtils.address())

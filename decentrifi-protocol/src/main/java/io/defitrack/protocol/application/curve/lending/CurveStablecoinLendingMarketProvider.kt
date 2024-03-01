@@ -6,6 +6,7 @@ import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.refreshable
 import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.LendingMarketProvider
 import io.defitrack.market.domain.lending.LendingMarket
 import io.defitrack.evm.position.PositionFetcher
@@ -24,9 +25,9 @@ class CurveStablecoinLendingMarketProvider : LendingMarketProvider() {
 
     val factoryAddress = "0xC9332fdCB1C491Dcc683bAe86Fe3cb70360738BC"
 
+    context(BlockchainGateway)
     override suspend fun produceMarkets(): Flow<LendingMarket> = channelFlow {
         val factory = CurveControllerFactoryContract(
-            getBlockchainGateway(),
             factoryAddress
         )
 

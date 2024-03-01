@@ -25,29 +25,22 @@ abstract class PendlePriceService(
 
     val logger = LoggerFactory.getLogger(this::class.java)
 
-    suspend fun getPrices(): MutableList<ExternalPrice> {
+    suspend fun getPrices(): MutableList<ExternalPrice> = with(blockchainGatewayProvider.getGateway(getNetwork())) {
         val prices = mutableListOf<ExternalPrice>()
 
-        val gateway = blockchainGatewayProvider.getGateway(getNetwork())
-
-        val pendlePtOracleContract = PendleOracleContract(
-            gateway, getAddress().ptOracleContract
-        )
+        val pendlePtOracleContract = PendleOracleContract(getAddress().ptOracleContract)
 
         val factory = PendleMarketFactoryContract(
-            gateway,
             getAddress().marketFactoryV3
         )
 
         factory.getMarkets(startBlock).forEach {
             Either.catch {
-                val market = with(gateway) {
-                    PendleMarketContract(
-                        address = it.market
-                    )
-                }
+                val market = PendleMarketContract(
+                    address = it.market
+                )
 
-                val syContract = with(gateway) { PendleSyContract(market.readTokens().sy) }
+                val syContract = PendleSyContract(market.readTokens().sy)
 
                 val ratio = pendlePtOracleContract.getPtToAssetRate(it.market)
                 val asset = syContract.asset()
@@ -91,7 +84,7 @@ abstract class PendlePriceService(
         }
 
         logger.info("Pendle prices loaded with ${prices.size} entries")
-        return prices
+        return@with prices
     }
 
     fun getNetworkForToken(address: String): Network {

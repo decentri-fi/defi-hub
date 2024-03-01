@@ -3,6 +3,7 @@ package io.defitrack.protocol.application.radiant
 import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.architecture.conditional.ConditionalOnNetwork
 import io.defitrack.common.network.Network
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.protocol.Company
@@ -10,6 +11,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.radiant.MasterChefContract
 import io.defitrack.protocol.sushiswap.contract.MasterChefBasedContract
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
 import org.springframework.stereotype.Component
 
 @Component
@@ -20,11 +22,10 @@ class RadiantMasterChefMarketProvider : FarmingMarketProvider() {
     val masterchefAddress = "0xc963ef7d977ecb0ab71d835c4cb1bf737f28d010"
     val rdntAddress = "0x0c4681e6c0235179ec3d4f4fc4df3d14fdd96017"
 
-    override suspend fun produceMarkets(): Flow<FarmingMarket> {
+    context(BlockchainGateway)
+    override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
         val reward = getToken(rdntAddress)
-        val contract = MasterChefContract(
-            getBlockchainGateway(), masterchefAddress
-        )
+        val contract = MasterChefContract(masterchefAddress)
 
         contract.getPoolInfo().mapIndexed { index, it ->
 
@@ -39,8 +40,9 @@ class RadiantMasterChefMarketProvider : FarmingMarketProvider() {
                 //positionFetcher = defaultPositionFetcher(it.poolAddress)
             )
 
+        }.forEach {
+            send(it)
         }
-        return super.produceMarkets()
     }
 
     override fun getProtocol(): Protocol {

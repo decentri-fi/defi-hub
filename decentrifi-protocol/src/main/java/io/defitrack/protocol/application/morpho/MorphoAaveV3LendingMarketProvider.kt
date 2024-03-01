@@ -3,6 +3,7 @@ package io.defitrack.protocol.application.morpho
 import arrow.core.Either
 import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.common.network.Network
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.market.domain.lending.LendingMarket
 import io.defitrack.market.port.out.LendingMarketProvider
@@ -18,8 +19,9 @@ class MorphoAaveV3LendingMarketProvider : LendingMarketProvider() {
     val morphoAddress = "0x33333aea097c193e66081e930c33020272b33333"
 
 
+    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<LendingMarket> {
-        val contract = MorphoContract(getBlockchainGateway(), morphoAddress)
+        val contract = MorphoContract(morphoAddress)
         return contract.marketsCreated().mapNotNull { market ->
             Either.catch {
                 val underlying = getToken(market)

@@ -6,6 +6,7 @@ import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.refreshable
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.domain.lending.LendingMarket
 import io.defitrack.market.port.out.LendingMarketProvider
 import io.defitrack.protocol.Company
@@ -18,19 +19,18 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.SEAMLESS)
- class SeamlessLendingMarketProvider(
-     private val dataProvider: SeamlessAaveV3DataProvider
+class SeamlessLendingMarketProvider(
+    private val dataProvider: SeamlessAaveV3DataProvider
 ) : LendingMarketProvider() {
 
+    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<LendingMarket> {
 
         val poolDataProvider = PoolDataProvider(
-            getBlockchainGateway(),
             dataProvider.poolDataProvider()
         )
 
         val poolContract = PoolContract(
-            getBlockchainGateway(),
             dataProvider.poolAddress()
         )
 

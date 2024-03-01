@@ -8,6 +8,7 @@ import io.defitrack.common.utils.map
 import io.defitrack.common.utils.refreshable
 import io.defitrack.common.utils.toRefreshable
 import io.defitrack.erc20.domain.FungibleTokenInformation
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.market.domain.PoolingMarketTokenShare
 import io.defitrack.market.port.out.PoolingMarketProvider
@@ -26,20 +27,16 @@ import java.util.concurrent.Flow
 class PendleArbitrumiquidityPoolMarketProvider : PoolingMarketProvider() {
 
     //TODO: create for ethereum
+    context(BlockchainGateway)
     override suspend fun produceMarkets() = channelFlow {
 
         val factory = PendleMarketFactoryContract(
-            getBlockchainGateway(),
             "0x2FCb47B58350cD377f94d3821e7373Df60bD9Ced"
         )
 
         factory.getMarkets("154873897").map { marketConfig ->
 
-            val contract = with(getBlockchainGateway()) {
-                PendleMarketContract(
-                    address = marketConfig.market
-                )
-            }
+            val contract = PendleMarketContract(marketConfig.market)
 
             val tokens = contract.readTokens()
 

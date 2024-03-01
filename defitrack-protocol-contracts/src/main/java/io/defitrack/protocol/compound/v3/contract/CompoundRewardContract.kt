@@ -8,13 +8,13 @@ import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.abi.TypeUtils.Companion.uint64
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.DeprecatedEvmContract
+import io.defitrack.evm.contract.EvmContract
 
+context(BlockchainGateway)
 open class CompoundRewardContract(
-    blockchainGateway: BlockchainGateway,
     address: String
-) : DeprecatedEvmContract(
-    blockchainGateway, address
+) : EvmContract(
+    address
 ) {
 
     fun getRewardOwedFn(comet: String): (String) -> ContractCall {

@@ -33,22 +33,23 @@ import java.math.BigInteger
 @Component
 @ConditionalOnCompany(Company.AAVE)
 class AaveV2PolygonLendingMarketProvider(
-    blockchainGatewayProvider: BlockchainGatewayProvider,
     private val aaveV2PolygonService: AaveV2PolygonService,
 ) : LendingMarketProvider() {
 
     val lendingPoolAddressesProviderContract = lazyAsync {
-        LendingPoolAddressProviderContract(
-            blockchainGatewayProvider.getGateway(getNetwork()),
-            aaveV2PolygonService.getLendingPoolAddressesProvider()
-        )
+        with(getBlockchainGateway()) {
+            LendingPoolAddressProviderContract(
+                aaveV2PolygonService.getLendingPoolAddressesProvider()
+            )
+        }
     }
 
     val lendingPoolContract = LazyValue {
-        LendingPoolContract(
-            blockchainGatewayProvider.getGateway(getNetwork()),
-            lendingPoolAddressesProviderContract.await().lendingPoolAddress()
-        )
+        with(getBlockchainGateway()) {
+            LendingPoolContract(
+                lendingPoolAddressesProviderContract.await().lendingPoolAddress()
+            )
+        }
     }
 
     override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {

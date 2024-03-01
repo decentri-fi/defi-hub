@@ -1,16 +1,19 @@
 package io.defitrack.protocol.application.pancakeswap
 
 import arrow.core.nel
+import arrow.fx.coroutines.parMap
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint24
 import io.defitrack.abi.TypeUtils.Companion.uint256
+import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.refreshable
-import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
+import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.sushiswap.contract.MasterChefBasedContract
@@ -25,65 +28,25 @@ import java.math.BigInteger
 class PancakeV3FarmingMarketProvider : FarmingMarketProvider() {
 
     private val masterchefContractAddress = "0xe9c7f3196ab8c09f6616365e8873daeb207c0391"
-    private fun getContract() = object : MasterChefBasedContract(
-        "CAKE",
-        "pendingCake",
-        getBlockchainGateway(),
-        masterchefContractAddress
-    ) {
-        fun pendingCake(tokenId: Long): ContractCall {
-            return createFunction(
-                "pendingCake",
-                tokenId.toBigInteger().toUint256().nel(),
-                uint256().nel()
-            )
-        }
 
-        suspend fun customPoolInfos(): List<PancakePoolInfo> {
-            val multicalls = (0 until poolLength.await().toInt()).map { poolIndex ->
-                createFunction(
-                    "poolInfo",
-                    inputs = listOf(poolIndex.toBigInteger().toUint256()),
-                    outputs = listOf(
-                        uint256(),
-                        TypeUtils.address(),
-                        TypeUtils.address(),
-                        TypeUtils.address(),
-                        uint24(),
-                        uint256(),
-                        uint256(),
-                    )
-                )
-            }
-
-            val results = blockchainGateway.readMultiCall(
-                multicalls
-            )
-            return results.map { retVal ->
-                PancakePoolInfo(
-                    retVal.data[1].value as String,
-                    retVal.data[2].value as String,
-                    retVal.data[3].value as String,
-                    retVal.data[5].value as BigInteger,
-                )
-            }
-        }
+    private fun getContract(): PancakeMasterchef = with(getBlockchainGateway()) {
+        return PancakeMasterchef(
+            "CAKE",
+            "pendingCake",
+            masterchefContractAddress
+        )
     }
 
 
-
-    //todo: arrowkt
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
         val contract = getContract()
 
-        contract.customPoolInfos().forEachIndexed { poolIndex, poolInfo ->
-            launch {
-                throttled {
-                    toStakingMarketElement(poolInfo, contract, poolIndex)?.let {
-                        send(it)
-                    }
-                }
-            }
+        contract.customPoolInfos().mapIndexed { poolIndex, poolInfo ->
+            poolIndex to poolInfo
+        }.parMapNotNull(concurrency = 12) { (poolIndex, poolInfo) ->
+            toStakingMarketElement(poolInfo, contract, poolIndex)
+        }.forEach {
+            send(it)
         }
     }
 
@@ -125,4 +88,52 @@ class PancakeV3FarmingMarketProvider : FarmingMarketProvider() {
         val token1: String,
         val totalLiquidity: BigInteger
     )
+
+    context(BlockchainGateway)
+    class PancakeMasterchef(
+        rewardTokenName: String,
+        pendingName: String,
+        address: String
+    ) : MasterChefBasedContract(
+        rewardTokenName, pendingName, address
+    ) {
+
+        fun pendingCake(tokenId: Long): ContractCall {
+            return createFunction(
+                "pendingCake",
+                tokenId.toBigInteger().toUint256().nel(),
+                uint256().nel()
+            )
+        }
+
+        suspend fun customPoolInfos(): List<PancakePoolInfo> {
+            val multicalls = (0 until poolLength.await().toInt()).map { poolIndex ->
+                createFunction(
+                    "poolInfo",
+                    inputs = listOf(poolIndex.toBigInteger().toUint256()),
+                    outputs = listOf(
+                        uint256(),
+                        TypeUtils.address(),
+                        TypeUtils.address(),
+                        TypeUtils.address(),
+                        uint24(),
+                        uint256(),
+                        uint256(),
+                    )
+                )
+            }
+
+            val results = readMultiCall(
+                multicalls
+            )
+            return results.map { retVal ->
+                PancakePoolInfo(
+                    retVal.data[1].value as String,
+                    retVal.data[2].value as String,
+                    retVal.data[3].value as String,
+                    retVal.data[5].value as BigInteger,
+                )
+            }
+        }
+    }
 }

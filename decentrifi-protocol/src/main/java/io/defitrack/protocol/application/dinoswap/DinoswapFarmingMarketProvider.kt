@@ -24,10 +24,7 @@ class DinoswapFarmingMarketProvider(
 
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
         return@coroutineScope dinoswapService.getDinoFossilFarms().map {
-            DinoswapFossilFarmsContract(
-                getBlockchainGateway(),
-                it
-            )
+            with(getBlockchainGateway()) { DinoswapFossilFarmsContract(it) }
         }.flatMap { chef ->
             (0 until chef.poolLength.await().toInt()).parMap(EmptyCoroutineContext, 12) { poolId ->
                 catch {

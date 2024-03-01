@@ -3,11 +3,13 @@ package io.defitrack.protocol.application.pancakeswap
 import arrow.core.Either
 import arrow.core.Option
 import arrow.fx.coroutines.parMapNotNull
+import io.defitrack.LazyValue
 import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.refreshable
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.market.domain.PoolingMarketTokenShare
 import io.defitrack.market.port.out.PoolingMarketProvider
@@ -36,21 +38,19 @@ class PancakeswapV3PoolingMarketProvider(
 
     val poolFactoryAddress = "0x0bfbcf9fa4f9c56b0f40a671ad40e0805a091865"
 
+    val uniswapV3FactoryContract = LazyValue {
+        with(getBlockchainGateway()) { UniswapV3PoolFactoryContract(poolFactoryAddress) }
+    }
+
+    context(BlockchainGateway)
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
-        uniswapV3PoolFactoryContract.await().getPools(startBlock).parMapNotNull(EmptyCoroutineContext, 12) {
+        uniswapV3FactoryContract.get().getPools(startBlock).parMapNotNull(EmptyCoroutineContext, 12) {
             marketFromCache(it)
         }.forEach {
             it.getOrNull()?.let {
                 send(it)
             }
         }
-    }
-
-    val uniswapV3PoolFactoryContract = lazyAsync {
-        UniswapV3PoolFactoryContract(
-            getBlockchainGateway(),
-            poolFactoryAddress
-        )
     }
 
     val poolCache = Cache.Builder<String, Option<PoolingMarket>>().build()

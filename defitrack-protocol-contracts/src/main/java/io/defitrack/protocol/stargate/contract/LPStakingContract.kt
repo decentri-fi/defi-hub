@@ -6,17 +6,15 @@ import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.DeprecatedEvmContract
+import io.defitrack.evm.contract.EvmContract
 import java.math.BigInteger
 
+context(BlockchainGateway)
 class LPStakingContract(
-    blockchainGateway: BlockchainGateway,
     address: String,
     private val pendingFunctionName: String,
     private val emissionTokenName: String
-) : DeprecatedEvmContract(
-    blockchainGateway, address
-) {
+) : EvmContract(address) {
 
     suspend fun emissionToken(): String {
         return readSingle(emissionTokenName, address())

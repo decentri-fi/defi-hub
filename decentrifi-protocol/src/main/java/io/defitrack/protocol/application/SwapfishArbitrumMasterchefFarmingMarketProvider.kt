@@ -19,18 +19,23 @@ import org.springframework.stereotype.Component
 class SwapfishArbitrumMasterchefFarmingMarketProvider(
     private val swapfishArbitrumService: SwapfishArbitrumService
 ) : FarmingMarketProvider() {
-    override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
-        swapfishArbitrumService.provideMasterchefs().flatMap { masterChefAddr ->
-            val masterchef = MasterChefBasedContract(
-                rewardTokenName = "cake",
-                pendingName = "pendingCake",
-                getBlockchainGateway(),
-                masterChefAddr
-            )
-            (0 until masterchef.poolLength.await().toInt()).parMap(concurrency = 12) { poolId ->
-                toStakingMarketElement(masterchef, poolId)
-            }
+    override suspend fun fetchMarkets(): List<FarmingMarket> {
+        return swapfishArbitrumService.provideMasterchefs().flatMap { masterChefAddr ->
+            val masterchef = masterchefContract(masterChefAddr)
+
+            (0 until masterchef.poolLength.await().toInt())
+                .parMap(concurrency = 12) { poolId ->
+                    toStakingMarketElement(masterchef, poolId)
+                }
         }.filterNotNull()
+    }
+
+    private fun masterchefContract(masterChefAddr: String): MasterChefBasedContract = with(getBlockchainGateway()) {
+        MasterChefBasedContract(
+            rewardTokenName = "cake",
+            pendingName = "pendingCake",
+            masterChefAddr
+        )
     }
 
     override fun getProtocol(): Protocol {

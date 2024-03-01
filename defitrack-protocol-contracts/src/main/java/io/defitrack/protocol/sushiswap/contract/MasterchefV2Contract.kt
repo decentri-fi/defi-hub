@@ -9,15 +9,15 @@ import io.defitrack.abi.TypeUtils.Companion.uint64
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.DeprecatedEvmContract
+import io.defitrack.evm.contract.EvmContract
 import kotlinx.coroutines.Deferred
 import java.math.BigInteger
 
+context(BlockchainGateway)
 class MasterchefV2Contract(
-    blockchainGateway: BlockchainGateway,
     address: String
-) : DeprecatedEvmContract(
-    blockchainGateway, address
+) : EvmContract(
+    address
 ) {
 
     val poolLength = constant<BigInteger>("poolLength", uint256())
@@ -116,10 +116,11 @@ class MasterchefV2Contract(
         )
     }
 
+    context(BlockchainGateway)
     class Rewarder(
-        blockchainGateway: BlockchainGateway, address: String
-    ) : DeprecatedEvmContract(
-        blockchainGateway, address
+        address: String
+    ) : EvmContract(
+        address
     ) {
 
         val rewardToken = constant<String>("rewardToken", address())

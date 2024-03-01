@@ -1,9 +1,11 @@
 package io.defitrack.protocol.application.chainlink
 
 import arrow.core.nel
+import io.defitrack.LazyValue
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.refreshable
 import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.evm.position.PositionFetcher
@@ -20,14 +22,12 @@ class ChainlinkStakingMarketProvider : FarmingMarketProvider(
 
     val link = "0x514910771AF9Ca656af840dff83E8264EcF986CA"
 
-    val chainlinkStakingContract by lazy {
-        ChainlinkStakingContract(
-            getBlockchainGateway(),
+    context(BlockchainGateway)
+    override suspend fun fetchMarkets(): List<FarmingMarket> {
+        val stakingContract = ChainlinkStakingContract(
             "0x3feb1e09b4bb0e7f0387cee092a52e85797ab889"
         )
-    }
 
-    override suspend fun fetchMarkets(): List<FarmingMarket> {
         val chainlinkToken = getToken(link)
         return create(
             name = "Chainlink Staking",
@@ -37,11 +37,11 @@ class ChainlinkStakingMarketProvider : FarmingMarketProvider(
             marketSize = refreshable {
                 getMarketSize(
                     chainlinkToken,
-                    chainlinkStakingContract.address,
+                    stakingContract.address,
                 )
             },
             type = "chainlink.staking",
-            positionFetcher = PositionFetcher(chainlinkStakingContract::getStake),
+            positionFetcher = PositionFetcher(stakingContract::getStake),
         ).nel()
     }
 

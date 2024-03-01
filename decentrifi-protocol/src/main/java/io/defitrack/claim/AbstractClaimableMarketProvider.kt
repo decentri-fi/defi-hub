@@ -3,6 +3,7 @@ package io.defitrack.claim
 import arrow.core.Either.Companion.catch
 import arrow.core.getOrElse
 import io.defitrack.erc20.port.`in`.ERC20Resource
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.github.reactivecircus.cache4k.Cache
 import org.slf4j.LoggerFactory

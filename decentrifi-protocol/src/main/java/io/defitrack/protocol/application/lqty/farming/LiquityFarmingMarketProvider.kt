@@ -5,6 +5,7 @@ import io.defitrack.claim.ClaimableRewardFetcher
 import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.evm.position.PositionFetcher
@@ -24,8 +25,9 @@ class LiquityFarmingMarketProvider : FarmingMarketProvider() {
     val liquityAddress = "0x6dea81c8171d0ba574754ef6f8b412f2ed88c54d"
 
 
+    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
-        val contract = LiquityStabilityPoolContract(getBlockchainGateway(), address)
+        val contract = LiquityStabilityPoolContract(address)
 
         val lusd = getToken(lusdAddress)
         val liquity = getToken(liquityAddress)

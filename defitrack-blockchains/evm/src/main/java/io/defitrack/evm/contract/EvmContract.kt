@@ -147,5 +147,9 @@ abstract class EvmContract(
     fun getNetwork(): Network {
         return this@BlockchainGateway.network
     }
+
+    fun getBlockchainGateway(): BlockchainGateway {
+        return this@BlockchainGateway
+    }
 }
 

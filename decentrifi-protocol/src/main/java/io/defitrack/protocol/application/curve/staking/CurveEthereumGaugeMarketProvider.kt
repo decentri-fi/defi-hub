@@ -6,6 +6,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.refreshable
 import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.evm.position.PositionFetcher
@@ -31,29 +32,21 @@ class CurveEthereumGaugeMarketProvider : FarmingMarketProvider() {
         return Protocol.CURVE
     }
 
+    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
 
-        val gaugeController = CurveEthereumGaugeControllerContract(
-            blockchainGateway = getBlockchainGateway(),
-            address = gaugeControllerAddress
-        )
+        val gaugeController = CurveEthereumGaugeControllerContract(gaugeControllerAddress)
 
-        val gaugeAddresses = gaugeController
-            .getGaugeAddresses()
+        val gaugeAddresses = gaugeController.getGaugeAddresses()
         val gaugeTypes = gaugeController.getGaugeTypes(gaugeAddresses)
 
-        return gaugeAddresses
-            .zip(gaugeTypes)
-            .parMapNotNull(concurrency = 12) { (gauge, gaugeType) ->
+        return gaugeAddresses.zip(gaugeTypes).parMapNotNull(concurrency = 12) { (gauge, gaugeType) ->
                 Either.catch {
                     farmingMarket(gauge, gaugeType)
-                }.fold(
-                    { error ->
-                        logger.error("Error fetching gauge $gauge", error)
-                        null
-                    },
-                    { it }
-                )
+                }.fold({ error ->
+                    logger.error("Error fetching gauge $gauge", error)
+                    null
+                }, { it })
             }
     }
 

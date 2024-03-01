@@ -6,14 +6,15 @@ import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.GetEventLogsCommand
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.EventUtils.extract
-import io.defitrack.evm.contract.DeprecatedEvmContract
+import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.EventEncoder
 import org.web3j.abi.datatypes.Event
 import java.math.BigInteger
 
+context(BlockchainGateway)
 class PendleMarketFactoryContract(
-    blockchainGateway: BlockchainGateway, address: String
-) : DeprecatedEvmContract(blockchainGateway, address) {
+    address: String
+) : EvmContract(address) {
 
     val createNewMarketEvent = Event(
         "CreateNewMarket",
@@ -27,7 +28,7 @@ class PendleMarketFactoryContract(
     )
 
     suspend fun getMarkets(fromBlock: String = "18669498"): List<Market> {
-        val logs = blockchainGateway.getEventsAsEthLog(
+        val logs = getEventsAsEthLog(
             GetEventLogsCommand(
                 addresses = listOf(this.address),
                 topic = EventEncoder.encode(createNewMarketEvent),

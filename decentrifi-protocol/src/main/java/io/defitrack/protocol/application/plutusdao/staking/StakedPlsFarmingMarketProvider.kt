@@ -5,6 +5,7 @@ import io.defitrack.claim.ClaimableRewardFetcher
 import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.evm.position.PositionFetcher
@@ -24,13 +25,14 @@ class StakedPlsFarmingMarketProvider : FarmingMarketProvider() {
     val plsAddress = "0x51318b7d00db7acc4026c88c3952b66278b6a67f"
     val esPlsAddress = "0xc636c1f678df0a834ad103196338cb7dd1d194ff"
 
+    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
 
         val pls = getToken(plsAddress)
         val esPls = getToken(esPlsAddress)
 
-        val contract = StakedPLSContract(getBlockchainGateway(), stakedPls)
-        val router = PlutusRouterContract(getBlockchainGateway(), routerAddress)
+        val contract = StakedPLSContract(stakedPls)
+        val router = PlutusRouterContract(routerAddress)
 
         return create(
             name = "Staked PLS",

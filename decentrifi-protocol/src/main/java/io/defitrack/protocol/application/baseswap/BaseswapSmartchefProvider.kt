@@ -10,6 +10,7 @@ import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.event.EventDecoder.Companion.extract
 import io.defitrack.evm.GetEventLogsCommand
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.evm.position.PositionFetcher
@@ -46,6 +47,7 @@ class BaseswapSmartchefProvider : FarmingMarketProvider() {
         }
     }
 
+    context(BlockchainGateway)
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
         getSmartchefAddresses().await().parMapNotNull(concurrency = 8) {
             catch {
@@ -58,10 +60,11 @@ class BaseswapSmartchefProvider : FarmingMarketProvider() {
         }
     }
 
+    context(BlockchainGateway)
     private suspend fun createMarket(
         it: String,
     ): FarmingMarket {
-        val contract = SmartChefContract(getBlockchainGateway(), it)
+        val contract = SmartChefContract(it)
         val stakedToken = getToken(contract.stakedToken.await())
         val rewardToken = getToken(contract.rewardToken.await())
 

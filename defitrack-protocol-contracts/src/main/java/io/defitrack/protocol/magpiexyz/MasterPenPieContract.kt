@@ -8,14 +8,15 @@ import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.DeprecatedEvmContract
+import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.DynamicArray
 import java.math.BigInteger
 
+context(BlockchainGateway)
 class MasterPenPieContract(
-    blockchainGateway: BlockchainGateway, address: String
-) : DeprecatedEvmContract(
-    blockchainGateway, address
+    address: String
+) : EvmContract(
+    address
 ) {
 
     val poolLength = constant<BigInteger>("poolLength", uint256())
@@ -60,7 +61,7 @@ class MasterPenPieContract(
             response[0].value as String,
             response[1].value as String,
             response[5].value as BigInteger,
-            MasterPenPieRewarder(blockchainGateway, response[6].value as String),
+            MasterPenPieRewarder(response[6].value as String),
             response[7].value as Boolean
         )
     }
@@ -86,8 +87,9 @@ class MasterPenPieContract(
      *         returns (uint256);
      */
 
-    class MasterPenPieRewarder(blockchainGateway: BlockchainGateway, address: String) :
-        DeprecatedEvmContract(blockchainGateway, address) {
+    context(BlockchainGateway)
+    class MasterPenPieRewarder(address: String) :
+        EvmContract(address) {
 
         fun earnedFn(token: String): (String) -> ContractCall {
             return {

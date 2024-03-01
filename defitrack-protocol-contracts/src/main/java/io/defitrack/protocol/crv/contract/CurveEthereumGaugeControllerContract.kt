@@ -6,14 +6,11 @@ import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint128
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.DeprecatedEvmContract
+import io.defitrack.evm.contract.EvmContract
 import java.math.BigInteger
 
-class CurveEthereumGaugeControllerContract(
-    blockchainGateway: BlockchainGateway, address: String
-) : DeprecatedEvmContract(
-    blockchainGateway, address
-) {
+context(BlockchainGateway)
+class CurveEthereumGaugeControllerContract(address: String) : EvmContract(address) {
 
     suspend fun getGaugeCount(): BigInteger {
         return readSingle("n_gauges", uint256())

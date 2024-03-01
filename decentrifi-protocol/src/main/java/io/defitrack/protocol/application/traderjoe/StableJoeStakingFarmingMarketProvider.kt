@@ -4,6 +4,7 @@ import io.defitrack.claim.ClaimableRewardFetcher
 import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.evm.position.PositionFetcher
@@ -21,9 +22,9 @@ class StableJoeStakingFarmingMarketProvider : FarmingMarketProvider() {
 
     val stableJoeStakingAddress = "0x43646a8e839b2f2766392c1bf8f60f6e587b6960"
 
+    context(BlockchainGateway)
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
         val contract = StableJoeStakingContract(
-            blockchainGateway = getBlockchainGateway(),
             address = stableJoeStakingAddress
         )
         val stakedToken = getToken(contract.joe.await())

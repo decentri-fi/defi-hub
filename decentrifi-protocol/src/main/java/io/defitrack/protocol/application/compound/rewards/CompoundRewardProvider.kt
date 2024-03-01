@@ -27,12 +27,9 @@ abstract class CompoundRewardProvider(
         getContract()
     }
 
-    open fun getContract(): CompoundRewardContract {
+    open fun getContract(): CompoundRewardContract = with(getBlockchainGateway()) {
         return object :
-            CompoundRewardContract(
-                blockchainGatewayProvider.getGateway(network),
-                compoundAddressesProvider.CONFIG[network]!!.rewards
-            ) {
+            CompoundRewardContract(compoundAddressesProvider.CONFIG[network]!!.rewards) {
             override suspend fun getRewardConfig(comet: String): RewardConfig {
                 return (read(
                     "rewardConfig",

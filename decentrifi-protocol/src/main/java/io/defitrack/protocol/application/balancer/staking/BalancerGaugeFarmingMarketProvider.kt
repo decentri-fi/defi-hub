@@ -6,6 +6,7 @@ import arrow.core.None
 import arrow.core.Option
 import arrow.core.some
 import arrow.fx.coroutines.parMapNotNull
+import io.defitrack.LazyValue
 import io.defitrack.claim.ClaimableRewardFetcher
 import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
@@ -30,11 +31,12 @@ abstract class BalancerGaugeFarmingMarketProvider(
         return Protocol.BALANCER
     }
 
-    val factory by lazy {
-        BalancerLiquidityGaugeFactoryContract(
-            getBlockchainGateway(),
-            gaugeFactory
-        )
+    val factory = LazyValue {
+        with(getBlockchainGateway()) {
+            BalancerLiquidityGaugeFactoryContract(
+                gaugeFactory
+            )
+        }
     }
 
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
@@ -53,7 +55,7 @@ abstract class BalancerGaugeFarmingMarketProvider(
     private suspend fun getMarket(pool: PoolingMarket): Either<Throwable, Option<FarmingMarket>> =
         with(getBlockchainGateway()) {
             return catch {
-                val gauge = factory.getPoolGauge(pool.address)
+                val gauge = factory.get().getPoolGauge(pool.address)
 
                 if (gauge == "0x0000000000000000000000000000000000000000") {
                     logger.debug("no gauge for ${pool.address}")

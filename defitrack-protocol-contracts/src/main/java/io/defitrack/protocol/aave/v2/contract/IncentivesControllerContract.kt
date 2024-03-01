@@ -5,15 +5,14 @@ import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.BlockchainGateway.Companion.MAX_UINT256
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.DeprecatedEvmContract
+import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.DynamicArray
 
+context(BlockchainGateway)
 class IncentivesControllerContract(
-    blockchainGateway: BlockchainGateway,
     address: String
-) : DeprecatedEvmContract(
-    blockchainGateway, address
+) : EvmContract( address
 ) {
 
     fun claimRewardsFn(user: String): ContractCall {

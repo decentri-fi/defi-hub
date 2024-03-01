@@ -3,6 +3,7 @@ package io.defitrack.protocol.application.stargate.pooling
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.map
 import io.defitrack.common.utils.refreshable
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.market.domain.PoolingMarket
@@ -23,9 +24,9 @@ abstract class AbstractStargatePoolingMarketProvider(
         return Protocol.STARGATE
     }
 
+    context(BlockchainGateway)
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
         val pools = StargatePoolFactory(
-            getBlockchainGateway(),
             stargateService.getPoolFactory()
         ).getPools().filter {
             it != "0x0000000000000000000000000000000000000000"

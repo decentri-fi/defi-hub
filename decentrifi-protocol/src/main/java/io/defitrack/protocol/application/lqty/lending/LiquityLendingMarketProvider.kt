@@ -7,6 +7,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.refreshable
 import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.market.port.out.LendingMarketProvider
 import io.defitrack.market.domain.lending.LendingMarket
@@ -23,9 +24,10 @@ class LiquityLendingMarketProvider(
 
     val troveManagerAddress = "0xa39739ef8b0231dbfa0dcda07d7e29faabcf4bb2"
 
+    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<LendingMarket> {
 
-        val troveManager = TroveManagerContract(getBlockchainGateway(), troveManagerAddress)
+        val troveManager = TroveManagerContract(troveManagerAddress)
         val eth = getToken("0x0")
 
         return create(

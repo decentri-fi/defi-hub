@@ -5,12 +5,13 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.DeprecatedEvmContract
+import io.defitrack.evm.contract.EvmContract
 
+context(BlockchainGateway)
 class DualRewardFactoryContract(
-    blockchainGateway: BlockchainGateway, address: String
-) : DeprecatedEvmContract(
-    blockchainGateway, address
+    address: String
+) : EvmContract(
+    address
 ) {
 
     suspend fun getStakingTokens(): List<String> {

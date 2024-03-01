@@ -4,6 +4,7 @@ import io.defitrack.claim.ClaimableRewardFetcher
 import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.protocol.Company
@@ -20,15 +21,14 @@ class StakefishStakingMarketProvider : FarmingMarketProvider() {
 
     private val stakefishFeeRecipient = "0xffee087852cb4898e6c3532e776e68bc68b1143b"
 
-    val stakefishStakingContract by lazy {
-        StakefishFeeRecipientContract(
-            getBlockchainGateway(),
-            stakefishFeeRecipient
-        )
-    }
 
+    context(BlockchainGateway)
     override suspend fun produceMarkets(): Flow<FarmingMarket> {
         return channelFlow {
+
+            val stakefishStakingContract = StakefishFeeRecipientContract(
+                stakefishFeeRecipient
+            )
 
             val eth = getToken("0x0")
 

@@ -6,6 +6,7 @@ import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.refreshable
 import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
@@ -23,9 +24,9 @@ class VestaLiquidityStakingFarmingProvider : FarmingMarketProvider() {
 
     val liquidityStakingAddress = "0x65207da01293c692a37f59d1d9b1624f0f21177c"
 
+    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         val contract = VestaLiquidityStakingContract(
-            getBlockchainGateway(),
             liquidityStakingAddress
         )
 

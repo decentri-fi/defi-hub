@@ -2,6 +2,7 @@ package io.defitrack.protocol.application.olympusdao
 
 import io.defitrack.common.network.Network
 import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.evm.position.Position
@@ -19,6 +20,8 @@ class GOHMMarketProvider(
 ) : FarmingMarketProvider() {
 
     val ohmAddress = "0x64aa3364F17a4D01c6f1751Fd97C2BD3D7e7f1D5"
+
+    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         val ohm = getToken(ohmAddress)
         val gohm = olympusEthereumService.getGOHMContract()

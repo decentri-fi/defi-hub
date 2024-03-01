@@ -3,13 +3,13 @@ package io.defitrack.protocol.algebra
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.DeprecatedEvmContract
+import io.defitrack.evm.contract.EvmContract
+import org.springframework.cglib.core.Block
 
+context(BlockchainGateway)
 class AlgebraFactoryContract(
-    blockchainGateway: BlockchainGateway, abi: String
-) : DeprecatedEvmContract(
-    blockchainGateway, abi
-) {
+    address: String
+) : EvmContract(address) {
 
     suspend fun getPoolByPair(token0: String, token1: String): String {
         return readSingle(

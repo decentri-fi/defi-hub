@@ -18,15 +18,17 @@ import io.defitrack.protocol.hop.contract.HopSwapContract
 import io.defitrack.protocol.hop.domain.HopLpToken
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
+import org.springframework.cglib.core.Block
 import java.math.BigDecimal
 
 abstract class HopPoolingMarketProvider(
     private val hopService: HopService,
 ) : PoolingMarketProvider() {
 
+    context(BlockchainGateway)
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
         hopService.getLps(getNetwork()).parMapNotNull(concurrency = 12) { hopLpToken ->
-            toPoolingMarketElement(getBlockchainGateway(), hopLpToken).mapLeft {
+            toPoolingMarketElement(hopLpToken).mapLeft {
                 logger.error("Unable to get pooling market: {}", it.message)
             }.getOrNull()
         }.forEach {
@@ -34,17 +36,16 @@ abstract class HopPoolingMarketProvider(
         }
     }
 
+    context(BlockchainGateway)
     private suspend fun toPoolingMarketElement(
-        gateway: BlockchainGateway, hopLpToken: HopLpToken
+        hopLpToken: HopLpToken
     ): Either<Throwable, PoolingMarket> {
         return Either.catch {
             val contract = getHopLpContract(hopLpToken)
 
             val lp = getToken(hopLpToken.lpToken)
 
-            val swapContract = HopSwapContract(
-                blockchainGateway = gateway, contract.swap()
-            )
+            val swapContract = HopSwapContract(contract.swap())
 
             val htoken = getToken(hopLpToken.hToken)
             val canonical = getToken(hopLpToken.canonicalToken)

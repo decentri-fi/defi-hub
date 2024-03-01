@@ -5,18 +5,14 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.DeprecatedEvmContract
+import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.DynamicArray
 import java.math.BigInteger
 
-class BancorNetworkContract(
-    blockchainGateway: BlockchainGateway,
-    address: String
-) : DeprecatedEvmContract(
-    blockchainGateway, address
-) {
+context(BlockchainGateway)
+class BancorNetworkContract(address: String) : EvmContract(address) {
 
     suspend fun liquidityPools(): List<String> {
         val underlyings = (read(
@@ -40,7 +36,6 @@ class BancorNetworkContract(
             it.lowercase()
         }.map {
             BancorPoolCollectionContract(
-                blockchainGateway,
                 it
             ).allPools()
         }.flatten()

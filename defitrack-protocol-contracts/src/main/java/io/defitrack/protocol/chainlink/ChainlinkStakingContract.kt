@@ -4,13 +4,11 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.DeprecatedEvmContract
+import io.defitrack.evm.contract.EvmContract
 
-class ChainlinkStakingContract(
-    blockchainGateway: BlockchainGateway,
-    address: String
-) : DeprecatedEvmContract(
-    blockchainGateway, address
+context(BlockchainGateway)
+class ChainlinkStakingContract(address: String) : EvmContract(
+    address
 ) {
 
     fun getStake(user: String): ContractCall {

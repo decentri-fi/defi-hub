@@ -5,14 +5,11 @@ import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.DeprecatedEvmContract
+import io.defitrack.evm.contract.EvmContract
 import java.math.BigInteger
 
-class L2BalancerPseudoMinterContract(
-    blockchainGateway: BlockchainGateway, address: String
-) : DeprecatedEvmContract(
-    blockchainGateway, address
-) {
+context(BlockchainGateway)
+class L2BalancerPseudoMinterContract(address: String) : EvmContract(address) {
 
     suspend fun minted(user: String, gauge: String): BigInteger {
         return readSingle(

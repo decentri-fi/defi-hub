@@ -20,14 +20,17 @@ import java.math.BigInteger
 class CamelotAdvisorVestingClaimableMarketProvider : AbstractClaimableMarketProvider() {
 
     val deferredContract = lazyAsync {
-        CamelotAdvisorVestingContract(
-            blockchainGatewayProvider.getGateway(Network.ARBITRUM),
-            "0x8b4ee9a030c50fd02c845a171064f8fca90cb155"
-        )
+
     }
 
     override suspend fun fetchClaimables(): List<ClaimableMarket> {
-        val contract = deferredContract.await()
+        val contract = with(blockchainGatewayProvider.getGateway(Network.ARBITRUM)) {
+            CamelotAdvisorVestingContract(
+
+                "0x8b4ee9a030c50fd02c845a171064f8fca90cb155"
+            )
+        }
+
         val xgrail = erC20Resource.getTokenInformation(Network.ARBITRUM, contract.xGrailToken.await())
 
         return listOf(

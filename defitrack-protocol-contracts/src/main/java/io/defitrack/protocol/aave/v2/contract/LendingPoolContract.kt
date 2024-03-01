@@ -11,14 +11,12 @@ import io.defitrack.abi.TypeUtils.Companion.uint40
 import io.defitrack.abi.TypeUtils.Companion.uint8
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.DeprecatedEvmContract
+import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.datatypes.Address
 import java.math.BigInteger
 
-class LendingPoolContract(blockchainGateway: BlockchainGateway, address: String) :
-    DeprecatedEvmContract(
-        blockchainGateway, address
-    ) {
+context(BlockchainGateway)
+class LendingPoolContract(address: String) : EvmContract(address) {
     suspend fun getReservesList(): List<String> {
         return (read(
             "getReservesList",

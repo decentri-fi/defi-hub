@@ -4,6 +4,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.refreshable
 import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.protocol.Company
@@ -26,10 +27,11 @@ class ThreeCrvPoolingMarketProvider : PoolingMarketProvider() {
 
     val pool = "0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7"
 
+    context(BlockchainGateway)
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
 
         val token = getToken(address)
-        val poolContract = CurvePoolContract(getBlockchainGateway(), pool)
+        val poolContract = CurvePoolContract(pool)
 
         val underlyingTokens = listOf(
             getToken(usdt),

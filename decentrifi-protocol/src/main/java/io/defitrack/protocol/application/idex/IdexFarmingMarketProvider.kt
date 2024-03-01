@@ -4,6 +4,7 @@ import arrow.core.Either
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.evm.position.PositionFetcher
@@ -12,6 +13,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.idex.IdexFarmContract
 import io.defitrack.protocol.idex.IdexService
 import kotlinx.coroutines.coroutineScope
+import org.springframework.cglib.core.Block
 import org.springframework.stereotype.Component
 import kotlin.coroutines.EmptyCoroutineContext
 
@@ -19,12 +21,10 @@ import kotlin.coroutines.EmptyCoroutineContext
 @ConditionalOnCompany(Company.IDEX)
 class IdexFarmingMarketProvider(private val idexService: IdexService) : FarmingMarketProvider() {
 
+    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
         idexService.idexFarm().map {
-            IdexFarmContract(
-                getBlockchainGateway(),
-                it
-            )
+            IdexFarmContract(it)
         }.flatMap { chef ->
             (0 until chef.poolLength().toInt()).parMapNotNull(EmptyCoroutineContext, 12) { poolId ->
                 Either.catch {

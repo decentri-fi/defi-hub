@@ -34,17 +34,19 @@ class AaveV2MainnetLendingMarketProvider(
 ) : LendingMarketProvider() {
 
     val lendingPoolAddressesProviderContract = lazyAsync {
-        LendingPoolAddressProviderContract(
-            blockchainGatewayProvider.getGateway(getNetwork()),
-            aaveV2MainnetService.getLendingPoolAddressesProvider()
-        )
+        with(getBlockchainGateway()) {
+            LendingPoolAddressProviderContract(
+                aaveV2MainnetService.getLendingPoolAddressesProvider()
+            )
+        }
     }
 
     val lendingPoolContract = lazyAsync {
-        LendingPoolContract(
-            blockchainGatewayProvider.getGateway(getNetwork()),
-            lendingPoolAddressesProviderContract.await().lendingPoolAddress()
-        )
+        with(getBlockchainGateway()) {
+            LendingPoolContract(
+                lendingPoolAddressesProviderContract.await().lendingPoolAddress()
+            )
+        }
     }
 
     override suspend fun produceMarkets(): Flow<LendingMarket> = channelFlow {

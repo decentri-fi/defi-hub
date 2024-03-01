@@ -4,6 +4,7 @@ import io.defitrack.claim.ClaimableRewardFetcher
 import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.protocol.Company
@@ -21,9 +22,9 @@ class RadiantMultiFeeDistributorFarmingMarketProvider : FarmingMarketProvider() 
 
     val address = "0xc2054a8c33bfce28de8af4af548c48915c455c13"
 
+    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         val contract = RadiantMultiFeeDistributor(
-            getBlockchainGateway(),
             address
         )
 

@@ -2,6 +2,7 @@ package io.defitrack.protocol.stargate.farming
 
 import io.defitrack.claim.ClaimableRewardFetcher
 import io.defitrack.claim.Reward
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.evm.position.PositionFetcher
@@ -21,9 +22,9 @@ abstract class AbstractStargateLPStakingTimeMarketProvider(
         return Protocol.STARGATE
     }
 
+    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         val lpStakingContract = LPStakingContract(
-            getBlockchainGateway(),
             stargateService.getLpStakingTimeFarm(),
             pendingFunctionName,
             emissionTokenName

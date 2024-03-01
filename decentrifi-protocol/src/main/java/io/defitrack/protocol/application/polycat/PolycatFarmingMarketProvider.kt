@@ -7,6 +7,7 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.refreshable
 import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.erc20.domain.FungibleTokenInformation
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.market.port.out.FarmingMarketProvider
@@ -25,12 +26,10 @@ class PolycatFarmingMarketProvider(
     private val polycatService: PolycatService,
 ) : FarmingMarketProvider() {
 
+    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         return polycatService.getPolycatFarms().map {
-            PolycatMasterChefContract(
-                getBlockchainGateway(),
-                it
-            )
+            PolycatMasterChefContract(it)
         }.flatMap { chef ->
             (0 until chef.poolLength.await().toInt()).parMapNotNull(EmptyCoroutineContext, 12) { poolId ->
                 catch {

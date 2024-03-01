@@ -3,14 +3,15 @@ package io.defitrack.ens.infrastructure.adapter.out.blockchain
 import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.DeprecatedEvmContract
+import io.defitrack.evm.contract.EvmContract
 import org.web3j.crypto.Hash
 import java.math.BigInteger
 
+context(BlockchainGateway)
+
 class EnsRegistrarContract(
-    blockchainGateway: BlockchainGateway,
     address: String
-) : DeprecatedEvmContract(blockchainGateway, address) {
+) : EvmContract( address) {
 
     suspend fun getExpires(ensName: String): BigInteger {
         val splitted = ensName.split(".")

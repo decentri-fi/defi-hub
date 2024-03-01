@@ -4,6 +4,7 @@ import io.defitrack.claim.ClaimableRewardFetcher
 import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.evm.position.PositionFetcher
@@ -20,9 +21,9 @@ class ThalesOptimismStakingLpMarketProvider : FarmingMarketProvider() {
 
     val stakingThales = "0x31a20e5b7b1b067705419d57ab4f72e81cc1f6bf"
 
+    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         val stakingThalesContract = ThalesLpStakingContract(
-            getBlockchainGateway(),
             stakingThales
         )
 

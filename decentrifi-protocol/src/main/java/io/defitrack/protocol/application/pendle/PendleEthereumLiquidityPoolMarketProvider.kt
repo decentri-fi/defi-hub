@@ -6,6 +6,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.map
 import io.defitrack.common.utils.refreshable
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.market.domain.PoolingMarketTokenShare
@@ -25,12 +26,10 @@ class PendleEthereumLiquidityPoolMarketProvider : PoolingMarketProvider() {
         "0xf32e58f92e60f4b0a37a69b95d642a471365eae8"
     )
 
+    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<PoolingMarket> {
 
-        val factory = PendleMarketFactoryContract(
-            getBlockchainGateway(),
-            "0x1A6fCc85557BC4fB7B534ed835a03EF056552D52"
-        )
+        val factory = PendleMarketFactoryContract("0x1A6fCc85557BC4fB7B534ed835a03EF056552D52")
 
         return factory.getMarkets().map { marketConfig ->
 

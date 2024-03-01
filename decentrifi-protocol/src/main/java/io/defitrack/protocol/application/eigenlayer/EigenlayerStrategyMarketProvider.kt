@@ -2,6 +2,7 @@ package io.defitrack.protocol.application.eigenlayer
 
 import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.common.network.Network
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.position.Position
 import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.market.domain.farming.FarmingMarket
@@ -27,10 +28,10 @@ class EigenlayerStrategyMarketProvider : FarmingMarketProvider() {
         "0x13760f50a9d7377e4f20cb8cf9e4c26586c658ff"
     )
 
+    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         return strategies.map {
             StrategyContract(
-                getBlockchainGateway(),
                 it
             )
         }.map { strategy ->

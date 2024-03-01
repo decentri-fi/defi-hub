@@ -3,16 +3,13 @@ package io.defitrack.protocol.bancor.contract
 import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.DeprecatedEvmContract
+import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.DynamicArray
 
-class BancorPoolCollectionContract(
-    blockchainGateway: BlockchainGateway, address: String
-) : DeprecatedEvmContract(
-    blockchainGateway, address
-) {
+context(BlockchainGateway)
+class BancorPoolCollectionContract(address: String) : EvmContract(address) {
 
     suspend fun allTokens(): List<String> {
         val result = read(

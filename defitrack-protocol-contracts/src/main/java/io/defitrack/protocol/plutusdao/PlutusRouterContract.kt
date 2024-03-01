@@ -2,12 +2,13 @@ package io.defitrack.protocol.plutusdao
 
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.DeprecatedEvmContract
+import io.defitrack.evm.contract.EvmContract
 
+context(BlockchainGateway)
 class PlutusRouterContract(
-    blockchainGateway: BlockchainGateway, address: String
-) : DeprecatedEvmContract(
-    blockchainGateway, address
+    address: String
+) : EvmContract(
+    address
 ) {
 
 

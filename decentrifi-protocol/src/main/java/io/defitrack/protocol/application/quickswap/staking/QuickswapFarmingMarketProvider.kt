@@ -8,6 +8,7 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.refreshable
 import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.architecture.conditional.ConditionalOnNetwork
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.protocol.Company
@@ -29,12 +30,11 @@ class QuickswapFarmingMarketProvider(
     private val quickswapService: QuickswapService,
 ) : FarmingMarketProvider() {
 
+    context(BlockchainGateway)
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
         val contract = RewardFactoryContract(
-            getBlockchainGateway(),
             quickswapService.getRewardFactory(),
         )
-
 
         contract.getRewardPools().map {
             quickswapRewardPoolContract(it)

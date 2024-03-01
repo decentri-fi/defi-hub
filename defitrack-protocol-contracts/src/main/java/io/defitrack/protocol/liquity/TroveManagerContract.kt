@@ -5,12 +5,11 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.DeprecatedEvmContract
+import io.defitrack.evm.contract.EvmContract
 import java.math.BigInteger
 
-class TroveManagerContract(blockchainGateway: BlockchainGateway, address: String) : DeprecatedEvmContract(
-    blockchainGateway, address
-) {
+context(BlockchainGateway)
+class TroveManagerContract(address: String) : EvmContract(address) {
 
     val totalCollateralSnapshot = constant<BigInteger>("totalCollateralSnapshot", uint256())
 

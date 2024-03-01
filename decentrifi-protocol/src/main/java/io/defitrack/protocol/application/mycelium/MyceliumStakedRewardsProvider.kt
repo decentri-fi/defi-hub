@@ -5,6 +5,7 @@ import io.defitrack.claim.ClaimableRewardFetcher
 import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.evm.position.PositionFetcher
@@ -22,10 +23,9 @@ import org.springframework.stereotype.Component
 class MyceliumStakedRewardsProvider : FarmingMarketProvider() {
     val myCeliumStakingContractAddress = "0xd98d8e458f7ad22dd3c1d7a8b35c74005eb52b0b"
 
+    context(BlockchainGateway)
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
-        val contract = RewardRouter02Contract(
-            getBlockchainGateway(), myCeliumStakingContractAddress
-        )
+        val contract = RewardRouter02Contract(myCeliumStakingContractAddress)
 
         val mlp = getToken(contract.mlp.await())
 

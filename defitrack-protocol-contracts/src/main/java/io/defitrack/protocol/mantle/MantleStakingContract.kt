@@ -5,13 +5,13 @@ import arrow.core.getOrElse
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.DeprecatedEvmContract
+import io.defitrack.evm.contract.EvmContract
 import java.math.BigInteger
 
+context(BlockchainGateway)
 class MantleStakingContract(
-    blockchainGateway: BlockchainGateway,
     address: String
-) : DeprecatedEvmContract(blockchainGateway, address) {
+) : EvmContract(address) {
 
     suspend fun mEThToEth(amount: BigInteger): BigInteger {
         return Either.catch<BigInteger> {

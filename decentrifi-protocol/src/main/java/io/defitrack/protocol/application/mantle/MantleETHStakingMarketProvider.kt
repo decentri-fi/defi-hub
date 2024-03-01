@@ -3,6 +3,7 @@ package io.defitrack.protocol.application.mantle
 import arrow.core.nel
 import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.common.network.Network
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.position.Position
@@ -25,12 +26,9 @@ class MantleETHStakingMarketProvider(
     val methAddress = "0xd5f7838f5c461feff7fe49ea5ebaf7728bb0adfa"
     val stakingContract = "0xe3cBd06D7dadB3F4e6557bAb7EdD924CD1489E8f"
 
+    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
-        val stakingContract = MantleStakingContract(
-            getBlockchainGateway(),
-            stakingContract
-        )
-        val token = getToken(methAddress)
+        val stakingContract = MantleStakingContract(stakingContract)
 
         return create(
             name = "mantleETH",

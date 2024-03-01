@@ -3,6 +3,7 @@ package io.defitrack.protocol.application.ethos
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.common.network.Network
 import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.FarmingContract
 import io.defitrack.market.port.out.SingleContractFarmingMarketProvider
@@ -14,12 +15,13 @@ import java.math.BigInteger
 @Component
 @ConditionalOnCompany(Company.ETHOS)
 class EthosStakingProvider : SingleContractFarmingMarketProvider() {
+
+    context(BlockchainGateway)
     override suspend fun single(): SingleFarmingConfig {
         return SingleFarmingConfig(
             name = "Ethos Staking",
             type = "ethos.staking",
             contract = object : FarmingContract(
-                getBlockchainGateway(),
                 "0x9425b96462b1940e7563cd765464300f6a774805",
                 "lqtyToken",
                 "lusdToken",

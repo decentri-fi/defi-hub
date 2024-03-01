@@ -8,12 +8,13 @@ import io.defitrack.evm.contract.ContractCall
 import io.defitrack.protocol.sushiswap.contract.MasterChefBasedContract
 import java.math.BigInteger
 
+context(BlockchainGateway)
 class AutoEarnVaultContract(
-    blockchainGateway: BlockchainGateway, address: String
+    address: String
 ) : MasterChefBasedContract(
     "sushi",
     "pendingToken",
-    blockchainGateway, address
+    address
 ) {
 
     fun getRewardFn(pid: Int): (String) -> ContractCall {

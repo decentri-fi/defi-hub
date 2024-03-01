@@ -11,10 +11,11 @@ class EqualizerService(
 ) {
 
     val voter = lazyAsync {
-        EqualizerVoter(
-            blockchainGatewayProvider.getGateway(Network.BASE),
-            "0x46abb88ae1f2a35ea559925d99fdc5441b592687"
-        )
+        with(blockchainGatewayProvider.getGateway(Network.BASE)) {
+            EqualizerVoter(
+                "0x46abb88ae1f2a35ea559925d99fdc5441b592687"
+            )
+        }
     }
 
     val pools = lazyAsync {

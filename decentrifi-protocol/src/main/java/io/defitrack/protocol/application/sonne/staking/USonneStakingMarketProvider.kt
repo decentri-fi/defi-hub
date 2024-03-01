@@ -4,6 +4,7 @@ import io.defitrack.claim.ClaimableRewardFetcher
 import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.protocol.Company
@@ -19,8 +20,9 @@ class USonneStakingMarketProvider : FarmingMarketProvider() {
     val stakedSonne = "0x41279e29586eb20f9a4f65e031af09fced171166"
 
 
+    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
-        val contract = StakedSonneContract(getBlockchainGateway(), stakedSonne)
+        val contract = StakedSonneContract(stakedSonne)
         val stakedtoken = getToken(contract.sonne.await())
 
         val rewardTokens = contract.tokens().map { this.getToken(it) }

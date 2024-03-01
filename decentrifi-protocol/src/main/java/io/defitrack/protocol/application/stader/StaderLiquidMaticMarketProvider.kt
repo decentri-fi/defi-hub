@@ -4,6 +4,7 @@ import arrow.core.nel
 import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.architecture.conditional.ConditionalOnNetwork
 import io.defitrack.common.network.Network
+import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.position.Position
@@ -24,9 +25,10 @@ class StaderLiquidMaticMarketProvider : FarmingMarketProvider() {
     val staderLiquidMaticAddress = "0xfa68fb4628dff1028cfec22b4162fccd0d45efb6"
     val stakerAddress = "0xfd225c9e6601c9d38d8f98d8731bf59efcf8c0e3"
 
+    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         val token = getToken(staderLiquidMaticAddress)
-        val stakingContract = MaticXStakingContract(getBlockchainGateway(), stakerAddress)
+        val stakingContract = MaticXStakingContract(stakerAddress)
 
         return create(
             name = token.name,

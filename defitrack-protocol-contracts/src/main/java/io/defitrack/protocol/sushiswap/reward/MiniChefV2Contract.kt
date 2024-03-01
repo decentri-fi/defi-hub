@@ -9,14 +9,14 @@ import io.defitrack.abi.TypeUtils.Companion.uint64
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.DeprecatedEvmContract
+import io.defitrack.evm.contract.EvmContract
 import kotlinx.coroutines.Deferred
 import java.math.BigInteger
 
+context(BlockchainGateway)
 class MiniChefV2Contract(
-    blockchainGateway: BlockchainGateway,
     address: String
-) : DeprecatedEvmContract(blockchainGateway, address) {
+) : EvmContract(address) {
 
     fun userInfoFunction(poolId: Int): (String) -> ContractCall {
         return { user: String ->
@@ -60,7 +60,7 @@ class MiniChefV2Contract(
             )
         }
 
-        val results = this.blockchainGateway.readMultiCall(
+        val results = readMultiCall(
             multicalls
         )
         return results.map { retVal ->
@@ -85,7 +85,7 @@ class MiniChefV2Contract(
                 outputs = listOf(address())
             )
         }
-        val results = blockchainGateway.readMultiCall(multicalls)
+        val results = readMultiCall(multicalls)
         results.map { retVal ->
             retVal.data[0].value as String
         }
