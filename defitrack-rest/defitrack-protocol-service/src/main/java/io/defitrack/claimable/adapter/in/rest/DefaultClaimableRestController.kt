@@ -5,6 +5,7 @@ import io.defitrack.claim.AbstractUserClaimableProvider
 import io.defitrack.claim.DefaultUserClaimableProvider
 import io.defitrack.claim.UserClaimable
 import io.defitrack.claimable.adapter.`in`.ClaimableVOMapper
+import io.defitrack.claimable.adapter.`in`.rest.mapper.ClaimableMarketVOMapper
 import io.defitrack.claimable.vo.ClaimableMarketVO
 import io.defitrack.claimable.vo.UserClaimableVO
 import io.defitrack.networkinfo.toNetworkInformation
@@ -27,7 +28,7 @@ class DefaultClaimableRestController(
     private val claimableMarketProviders: List<AbstractClaimableMarketProvider>,
     private val defaultUserClaimableProvider: DefaultUserClaimableProvider,
     private val claimableVOMapper: ClaimableVOMapper,
-    private val protocolVOMapper: ProtocolVOMapper,
+    private val claimableMarketVOMapper: ClaimableMarketVOMapper
 ) {
 
     companion object {
@@ -43,18 +44,7 @@ class DefaultClaimableRestController(
         }.filter {
             it.protocol.slug == protocol
         }.map {
-            //TODO: mapper class
-            ClaimableMarketVO(
-                it.id,
-                it.name,
-                it.network.toNetworkInformation(),
-                protocolVOMapper.map(it.protocol),
-                rewards = it.claimableRewardFetchers.flatMap { fetcher ->
-                    fetcher.rewards.map { reward ->
-                        ClaimableMarketVO.Reward(reward.token)
-                    }
-                }
-            )
+            claimableMarketVOMapper.map(it)
         }
     }
 
