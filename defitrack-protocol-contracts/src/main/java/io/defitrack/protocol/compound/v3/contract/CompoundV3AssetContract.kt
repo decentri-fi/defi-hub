@@ -2,6 +2,7 @@ package io.defitrack.protocol.compound.v3.contract
 
 import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.toUint8
+import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
 import org.web3j.abi.TypeReference
@@ -15,14 +16,8 @@ import java.math.BigInteger
 context(BlockchainGateway)
 class CompoundV3AssetContract(address: String) : ERC20Contract(address) {
 
-    //todo: optimize
-
-    suspend fun baseToken(): String {
-        return read(
-            "baseToken",
-            outputs = listOf(TypeUtils.address())
-        )[0].value as String
-    }
+    val baseToken = constant<String>("baseToken", TypeUtils.address())
+    val numAssets = constant<BigInteger>("numAssets", uint256())
 
     suspend fun borrowBalanceOf(): BigInteger {
         return read(
@@ -31,15 +26,8 @@ class CompoundV3AssetContract(address: String) : ERC20Contract(address) {
         )[0].value as BigInteger
     }
 
-    suspend fun numAssets(): BigInteger {
-        return read(
-            "numAssets",
-            outputs = listOf(TypeUtils.uint256())
-        )[0].value as BigInteger
-    }
-
     suspend fun getAssetInfos(): List<AssetInfo> {
-        val functions = (0 until numAssets().toInt()).map { assetIndex ->
+        val functions = (0 until numAssets.await().toInt()).map { assetIndex ->
             createFunction(
                 "getAssetInfo",
                 inputs = listOf(assetIndex.toBigInteger().toUint8()),

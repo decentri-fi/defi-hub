@@ -50,7 +50,7 @@ abstract class CompoundRewardProvider(
         val markets = compoundAddressesProvider.CONFIG[network]!!.v3Tokens
         return markets.map { comet ->
             val asset = getAssetContract(comet)
-            val basetoken = erC20Resource.getTokenInformation(network, asset.baseToken())
+            val basetoken = erC20Resource.getTokenInformation(network, asset.baseToken.await())
             val rewardToken = erC20Resource.getTokenInformation(
                 network,
                 deferredContract.await().getRewardConfig(asset.address).token
