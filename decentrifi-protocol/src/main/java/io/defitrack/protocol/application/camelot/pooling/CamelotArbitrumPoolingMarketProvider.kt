@@ -1,16 +1,17 @@
 package io.defitrack.protocol.application.camelot.pooling
 
+import arrow.core.Either
+import arrow.core.Either.Companion.catch
+import arrow.fx.coroutines.parMap
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.refreshable
-import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.market.domain.PoolingMarket
+import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.uniswap.v2.PairFactoryContract
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.launch
-import java.math.BigDecimal
 
 //@Component
 class CamelotArbitrumPoolingMarketProvider : PoolingMarketProvider() {
@@ -21,36 +22,40 @@ class CamelotArbitrumPoolingMarketProvider : PoolingMarketProvider() {
         return channelFlow {
             pairFactoryContract()
                 .allPairs()
-                .forEach { pool ->
-                    launch {
-                        try {
-                            val poolingToken = getToken(pool)
-                            val underlyingTokens = poolingToken.underlyingTokens
-
-
-                            val breakdown = refreshable {
-                                fiftyFiftyBreakdown(underlyingTokens[0], underlyingTokens[1], poolingToken.address)
-                            }
-
-                            send(
-                                create(
-                                    identifier = pool,
-                                    address = pool,
-                                    name = poolingToken.name,
-                                    symbol = poolingToken.symbol,
-                                    breakdown = breakdown,
-                                    positionFetcher = defaultPositionFetcher(poolingToken.address),
-                                    totalSupply = refreshable(poolingToken.totalDecimalSupply()) {
-                                        getToken(pool).totalDecimalSupply()
-                                    },
-                                )
-                            )
-                        } catch (ex: Exception) {
-                            logger.error("Error while fetching pooling market $pool", ex)
-                        }
+                .parMapNotNull(concurrency = 12) { pool ->
+                    catch {
+                        createPoolingMarket(pool)
                     }
+                        .mapLeft { logger.error("unable to create market: {}", it.message) }
+                        .getOrNull()
+                }.forEach {
+                    send(it)
                 }
         }
+    }
+
+    private suspend fun createPoolingMarket(
+        pool: String
+    ): PoolingMarket {
+        val poolingToken = getToken(pool)
+        val underlyingTokens = poolingToken.underlyingTokens
+
+
+        val breakdown = refreshable {
+            fiftyFiftyBreakdown(underlyingTokens[0], underlyingTokens[1], poolingToken.address)
+        }
+
+        return create(
+            identifier = pool,
+            address = pool,
+            name = poolingToken.name,
+            symbol = poolingToken.symbol,
+            breakdown = breakdown,
+            positionFetcher = defaultPositionFetcher(poolingToken.address),
+            totalSupply = refreshable(poolingToken.totalDecimalSupply()) {
+                getToken(pool).totalDecimalSupply()
+            },
+        )
     }
 
     private fun pairFactoryContract() = with(getBlockchainGateway()) {
