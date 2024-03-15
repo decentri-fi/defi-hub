@@ -5,13 +5,25 @@ pipeline {
     agent any
     stages {
         stage('compile') {
+           agent {
+                docker {
+                    image 'maven:3.9.6-amazoncorretto-21'
+                    args '-u root -v /var/jenkins_home:/root'
+                }
+            }
             steps {
-                sh './mvnw clean compile -U'
+                sh 'mvn clean compile -U'
             }
         }
         stage('Test') {
+           agent {
+                docker {
+                    image 'maven:3.9.6-amazoncorretto-21'
+                    args '-u root -v /var/jenkins_home:/root'
+                }
+            }
             steps {
-                sh './mvnw test'
+                sh 'mvn test'
              }
          }
         stage('Package') {
