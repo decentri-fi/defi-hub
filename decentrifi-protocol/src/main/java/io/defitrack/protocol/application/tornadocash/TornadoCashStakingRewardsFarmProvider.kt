@@ -2,7 +2,6 @@ package io.defitrack.protocol.application.tornadocash
 
 import io.defitrack.common.network.Network
 import io.defitrack.architecture.conditional.ConditionalOnCompany
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
@@ -20,10 +19,9 @@ class TornadoCashStakingRewardsFarmProvider : FarmingMarketProvider() {
 
     val stakingRewards = "0x720ffb58b4965d2c0bd2b827fa8316c2002a98aa"
 
-    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
 
-        val stakingRewardsContract = StakingRewardsContract(stakingRewards)
+        val stakingRewardsContract = StakingRewardsContract(getBlockchainGateway(), stakingRewards)
 
 
         val rewardToken = getToken(stakingRewardsContract.rewardsToken())

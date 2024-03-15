@@ -5,13 +5,12 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 
-context(BlockchainGateway)
 class StakedSonneContract(
-    address: String
-) : EvmContract(
-    address
+    blockchainGateway: BlockchainGateway, address: String
+) : DeprecatedEvmContract(
+    blockchainGateway, address
 ) {
 
     val sonne = constant<String>("sonne", TypeUtils.address())

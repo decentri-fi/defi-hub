@@ -4,7 +4,6 @@ import arrow.core.nel
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.refreshable
 import io.defitrack.architecture.conditional.ConditionalOnCompany
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.evm.position.PositionFetcher
@@ -22,10 +21,12 @@ class StargateOptimismVestedFarmProvider : FarmingMarketProvider() {
     val veSTGAddress = "0x43d2761ed16c89a2c4342e2b16a3c61ccf88f05b"
     val stgAddress = "0x296f55f8fb28e498b858d0bcda06d955b2cb3f97"
 
-    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
 
-        val contract = VeSTGContract(veSTGAddress)
+        val contract = VeSTGContract(
+            getBlockchainGateway(),
+            veSTGAddress,
+        )
 
         val stg = getToken(stgAddress)
 

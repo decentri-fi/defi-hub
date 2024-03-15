@@ -4,7 +4,6 @@ import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.architecture.conditional.ConditionalOnCompany
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.protocol.Company
@@ -23,14 +22,13 @@ class CamelotNftStakingProvider : FarmingMarketProvider() {
     val nftPoolFactoryAddress = "0x6db1ef0df42e30acf139a70c1ed0b7e6c51dbf6d"
     val grailAddress = "0x3d9907f9a368ad0a51be60f7da3b97cf940982d8"
 
-    context(BlockchainGateway)
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
         val grail = getToken(grailAddress)
-        val factory = PoolFactoryContract(nftPoolFactoryAddress)
+        val factory = PoolFactoryContract(getBlockchainGateway(), nftPoolFactoryAddress)
 
         factory.getStakingPools()
             .map { poolAddress ->
-                NftPoolContract(poolAddress)
+                NftPoolContract(getBlockchainGateway(), poolAddress)
             }
             .parMapNotNull(concurrency = 12) { contract ->
                 catch {

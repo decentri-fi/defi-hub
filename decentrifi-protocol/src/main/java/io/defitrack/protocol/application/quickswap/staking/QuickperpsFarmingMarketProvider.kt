@@ -6,7 +6,6 @@ import io.defitrack.architecture.conditional.ConditionalOnNetwork
 import io.defitrack.claim.ClaimableRewardFetcher
 import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.protocol.Company
@@ -23,9 +22,8 @@ class QuickperpsFarmingMarketProvider : FarmingMarketProvider() {
     val feeQlpTrackerAddress = "0xd3ee28cb8ed02a5641dfa02624df399b01f1e131"
     val depositToken = "0xc8e48fd037d1c4232f294b635e74d33a0573265a"
 
-    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
-        val contract = FQLPContract(feeQlpTrackerAddress)
+        val contract = FQLPContract(getBlockchainGateway(), feeQlpTrackerAddress)
         val rewardTokens = contract.getAllRewardTokens().map {
             getToken(it)
         }

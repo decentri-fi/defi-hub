@@ -2,14 +2,12 @@ package io.defitrack.protocol.application.blast
 
 import io.defitrack.common.network.Network
 import io.defitrack.architecture.conditional.ConditionalOnCompany
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.blast.BlastDepositContract
-import org.springframework.cglib.core.Block
 import org.springframework.stereotype.Component
 
 @Component
@@ -18,22 +16,21 @@ class BlastDepositFarmingMarketProvider : FarmingMarketProvider() {
 
     val blastDepositAddress = "0x5f6ae08b8aeb7078cf2f96afb089d7c9f51da47d"
 
-    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         return listOf(ethMarket(), usdMarket())
     }
 
-    context(BlockchainGateway)
     private suspend fun usdMarket(): FarmingMarket {
         val dai = getToken("0x6B175474E89094C44Da98b954EedeAC495271d0F")
 
         val contract = BlastDepositContract(
+            blockchainGateway = getBlockchainGateway(),
             address = blastDepositAddress
         )
 
         return create(
             name = "Blast Deposit",
-            identifier = "$blastDepositAddress-dai",
+            identifier = blastDepositAddress + "-dai",
             stakedToken = dai,
             rewardTokens = emptyList(),
             type = "blast.deposits",
@@ -41,15 +38,17 @@ class BlastDepositFarmingMarketProvider : FarmingMarketProvider() {
         )
     }
 
-    context(BlockchainGateway)
     private suspend fun ethMarket(): FarmingMarket {
         val eth = getToken("0x0")
 
-        val contract = BlastDepositContract(blastDepositAddress)
+        val contract = BlastDepositContract(
+            blockchainGateway = getBlockchainGateway(),
+            address = blastDepositAddress
+        )
 
         return create(
             name = "Blast Deposit",
-            identifier = "$blastDepositAddress-eth",
+            identifier = blastDepositAddress + "-eth",
             stakedToken = eth,
             rewardTokens = emptyList(),
             type = "blast-deposits",

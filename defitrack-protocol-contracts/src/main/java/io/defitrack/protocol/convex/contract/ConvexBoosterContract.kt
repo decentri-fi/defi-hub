@@ -5,13 +5,13 @@ import io.defitrack.abi.TypeUtils.Companion.bool
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import java.math.BigInteger
 
-context(BlockchainGateway)
 class ConvexBoosterContract(
+    blockchainGateway: BlockchainGateway,
     address: String
-) : EvmContract( address) {
+) : DeprecatedEvmContract(blockchainGateway, address) {
 
     suspend fun poolLength(): Int {
         return readSingle<BigInteger>("poolLength", uint256()).toInt()

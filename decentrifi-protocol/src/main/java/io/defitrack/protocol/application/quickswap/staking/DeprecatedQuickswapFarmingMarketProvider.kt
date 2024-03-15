@@ -9,7 +9,6 @@ import io.defitrack.common.utils.refreshable
 import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.architecture.conditional.ConditionalOnNetwork
 import io.defitrack.erc20.domain.FungibleTokenInformation
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
@@ -33,9 +32,9 @@ class DeprecatedQuickswapFarmingMarketProvider(
     private val priceResource: PricePort,
 ) : FarmingMarketProvider() {
 
-    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         val contract = RewardFactoryContract(
+            getBlockchainGateway(),
             quickswapService.getDeprecatedRewardFactory(),
         )
 

@@ -6,11 +6,12 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import java.math.BigInteger
 
-context(BlockchainGateway)
-class MasterChefContract(address: String) : EvmContract(address) {
+class MasterChefContract(blockchainGateway: BlockchainGateway, address: String) : DeprecatedEvmContract(
+    blockchainGateway, address
+) {
 
     val poolLength = constant<BigInteger>("poolLength", uint256())
     suspend fun getPoolInfo(): List<PoolInfo> {

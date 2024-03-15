@@ -4,7 +4,6 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.refreshable
 import io.defitrack.architecture.conditional.ConditionalOnCompany
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.market.port.out.FarmingMarketProvider
@@ -25,11 +24,15 @@ class LidoStakedEtherProvider(
     private val priceResource: PricePort,
 ) : FarmingMarketProvider() {
 
-    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
 
         val eth = getToken(WETH)
-        val steth = StethContract(lidoService.steth())
+
+        val steth = StethContract(
+            getBlockchainGateway(),
+            lidoService.steth()
+        )
+
         val pooledEth = steth.getPooledEthByShares(steth.getTotalShares())
 
         return listOf(

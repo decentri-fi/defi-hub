@@ -53,8 +53,10 @@ class WStethMarketProvider(
         val totalTokens = wstEthContract.totalSupply().get()
         val wrappedStethTokens = wstEthContract.getStethByWstethFunction(totalTokens)
 
-        val stEthContract = StethContract(STETH)
-
+        val stEthContract = StethContract(
+            getBlockchainGateway(),
+            STETH
+        )
         val pooledEth = stEthContract.getPooledEthByShares(wrappedStethTokens)
         return getPriceResource().calculatePrice(
             GetPriceCommand(

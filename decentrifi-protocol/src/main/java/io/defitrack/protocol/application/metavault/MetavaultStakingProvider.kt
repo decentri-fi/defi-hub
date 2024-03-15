@@ -4,7 +4,6 @@ import io.defitrack.claim.ClaimableRewardFetcher
 import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.architecture.conditional.ConditionalOnCompany
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.evm.position.PositionFetcher
@@ -20,9 +19,8 @@ class MetavaultStakingProvider : FarmingMarketProvider() {
 
     val address = "0xe8e2e78d8ca52f238caf69f020fa961f8a7632e9"
 
-    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
-        val contract = StakedMVXContract(address)
+        val contract = StakedMVXContract(getBlockchainGateway(), address)
 
         val mvx = getToken("0x2760e46d9bb43dafcbecaad1f64b93207f9f0ed7")
         val rewardToken = getToken(contract.rewardtoken.await())

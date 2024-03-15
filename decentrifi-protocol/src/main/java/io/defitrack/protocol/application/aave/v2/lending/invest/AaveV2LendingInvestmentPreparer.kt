@@ -27,6 +27,6 @@ class AaveV2LendingInvestmentPreparer(
     }
 
     override fun getNetwork(): Network {
-        return lendingPoolContract.getNetwork()
+        return lendingPoolContract.blockchainGateway.network
     }
 }

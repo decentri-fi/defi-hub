@@ -26,7 +26,10 @@ class BalancerLPIdentifier(
         val gateway = blockchainGatewayProvider.getGateway(token.network)
         val poolContract = with(gateway) { BalancerPoolContract(token.address) }
 
-        val vault = with(gateway) { BalancerVaultContract(poolContract.vault.await()) }
+        val vault = BalancerVaultContract(
+            gateway,
+            poolContract.vault.await()
+        )
 
         val poolId = poolContract.getPoolId()
 

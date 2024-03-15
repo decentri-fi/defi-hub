@@ -6,7 +6,6 @@ import arrow.core.getOrElse
 import arrow.fx.coroutines.parMap
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.refreshable
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -20,9 +19,9 @@ abstract class CurvePoolingMarketProvider(
     private val factoryAddress: String
 ) : PoolingMarketProvider() {
 
-    context(BlockchainGateway)
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
         val contract = CurveFactoryContract(
+            getBlockchainGateway(),
             factoryAddress
         )
 
@@ -40,7 +39,6 @@ abstract class CurvePoolingMarketProvider(
         }
     }
 
-    context(BlockchainGateway)
     private suspend fun createMarket(it: Map.Entry<String, List<String>>): PoolingMarket {
         val pool = it.key
 
@@ -48,7 +46,7 @@ abstract class CurvePoolingMarketProvider(
             getToken(it)
         }
 
-        val poolContract = CurvePoolContract(pool)
+        val poolContract = CurvePoolContract(getBlockchainGateway(), pool)
         val poolAsERC20 = getToken(pool)
 
         return create(

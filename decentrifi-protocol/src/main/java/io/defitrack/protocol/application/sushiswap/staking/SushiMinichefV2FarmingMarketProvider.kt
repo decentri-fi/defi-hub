@@ -3,7 +3,6 @@ package io.defitrack.protocol.application.sushiswap.staking
 import io.defitrack.claim.ClaimableRewardFetcher
 import io.defitrack.claim.Reward
 import io.defitrack.common.utils.refreshable
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
@@ -18,14 +17,13 @@ abstract class SushiMinichefV2FarmingMarketProvider(
     val addresses: List<String>
 ) : FarmingMarketProvider() {
 
-    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
         addresses.map {
             MiniChefV2Contract(
+                getBlockchainGateway(),
                 it
             )
         }.flatMap { chef ->
-            //todo: nono to async
             (0 until chef.poolLength()).map { poolId ->
                 async {
                     toStakingMarketElement(chef, poolId)

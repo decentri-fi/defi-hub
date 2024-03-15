@@ -16,7 +16,6 @@ abstract class AbstractUserClaimableProvider : ProtocolService {
     @Autowired
     private lateinit var blockchainGatewayProvider: BlockchainGatewayProvider
 
-    context(BlockchainGateway)
     abstract suspend fun claimables(address: String): List<UserClaimable>
 
     fun getBlockchainGateway(): BlockchainGateway {

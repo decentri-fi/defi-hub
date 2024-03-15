@@ -4,7 +4,6 @@ import arrow.fx.coroutines.parMap
 import io.defitrack.claim.ClaimableRewardFetcher
 import io.defitrack.claim.Reward
 import io.defitrack.common.utils.refreshable
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.evm.position.PositionFetcher
@@ -21,10 +20,12 @@ abstract class CurveGaugeFarmingMarketProvider(
         return Protocol.CURVE
     }
 
-    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
 
-        val gaugeController = CurvePolygonGaugeControllerContract(gaugeControllerAddress)
+        val gaugeController = CurvePolygonGaugeControllerContract(
+            blockchainGateway = getBlockchainGateway(),
+            address = gaugeControllerAddress
+        )
 
         return gaugeController
             .getGaugeAddresses()

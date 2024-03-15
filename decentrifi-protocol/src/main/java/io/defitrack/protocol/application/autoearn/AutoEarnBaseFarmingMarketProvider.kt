@@ -24,7 +24,10 @@ class AutoEarnBaseFarmingMarketProvider : FarmingMarketProvider() {
     final val vaultAddress = "0x04888afae97dc01e337582a2c8d3d232e27273fe"
 
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
-        val vault = with(getBlockchainGateway()) { AutoEarnVaultContract(vaultAddress)}
+        val vault = AutoEarnVaultContract(
+            getBlockchainGateway(),
+            vaultAddress
+        )
 
         val poolInfos = vault.poolInfos2()
 

@@ -3,7 +3,6 @@ package io.defitrack.protocol.application.convex
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.architecture.conditional.ConditionalOnCompany
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.protocol.Company
@@ -11,21 +10,23 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.convex.ConvexEthereumService
 import io.defitrack.protocol.convex.contract.ConvexBoosterContract
 import kotlinx.coroutines.coroutineScope
-import org.springframework.cglib.core.Block
 import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.CONVEX)
 class ConvexBoosterFarmingMarket(
-    private val convexService: ConvexEthereumService,
+    convexService: ConvexEthereumService,
 ) : FarmingMarketProvider() {
 
-
-    context(BlockchainGateway)
-    override suspend fun fetchMarkets(): List<FarmingMarket> {
-        val contract = ConvexBoosterContract(
+    val booster = lazyAsync {
+        ConvexBoosterContract(
+            getBlockchainGateway(),
             convexService.provideBooster()
         )
+    }
+
+    override suspend fun fetchMarkets(): List<FarmingMarket> {
+        val contract = booster.await()
         return coroutineScope {
             val poolInfos = contract.poolInfos()
 

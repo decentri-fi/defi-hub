@@ -2,14 +2,14 @@ package io.defitrack.ens.infrastructure.adapter.out.blockchain
 
 import io.defitrack.abi.TypeUtils
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import org.web3j.abi.datatypes.generated.Bytes32
 import org.web3j.ens.NameHash
 
-context(BlockchainGateway)
 class EnsRegistryContract(
+    blockchainGateway: BlockchainGateway,
     address: String
-) : EvmContract(address) {
+) : DeprecatedEvmContract(blockchainGateway, address) {
 
     suspend fun getResolver(name: String): String {
         val nameHash = NameHash.nameHashAsBytes(name)

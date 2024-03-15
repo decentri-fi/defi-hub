@@ -20,17 +20,12 @@ class ERC1155Service(
         network: Network
     ): BigInteger {
         return try {
-            erc1155(network, contract).balanceOf(user, tokenId)
+            ERC1155Contract(
+                blockchainGatewayProvider.getGateway(network), contract
+            ).balanceOf(user, tokenId)
         } catch (ex: Exception) {
             logger.error("Error while getting balance of $user for token $tokenId on $network", ex)
             return BigInteger.ZERO
         }
-    }
-
-    private fun erc1155(
-        network: Network,
-        contract: String
-    ): ERC1155Contract = with(blockchainGatewayProvider.getGateway(network)) {
-        return ERC1155Contract(contract)
     }
 }

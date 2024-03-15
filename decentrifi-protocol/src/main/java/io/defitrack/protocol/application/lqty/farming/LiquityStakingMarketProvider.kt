@@ -3,7 +3,6 @@ package io.defitrack.protocol.application.lqty.farming
 import arrow.core.nel
 import io.defitrack.common.network.Network
 import io.defitrack.architecture.conditional.ConditionalOnCompany
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.evm.position.PositionFetcher
@@ -20,13 +19,12 @@ class LiquityStakingMarketProvider : FarmingMarketProvider() {
     val lqtyAddress = "0x6dea81c8171d0ba574754ef6f8b412f2ed88c54d"
     val lusdAddress = "0x5f98805A4E8be255a32880FDeC7F6728C6568bA0"
 
-    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         //TODO: 2 type of rewards eth and lusd
         val stakedToken = getToken(lqtyAddress)
         val rewardToken = getToken(lusdAddress)
 
-        val stakingContract = LiquityStakingContract(stakingContractAddress)
+        val stakingContract = LiquityStakingContract(getBlockchainGateway(), stakingContractAddress)
 
         return create(
             name = "LQTY Staking",

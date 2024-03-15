@@ -8,17 +8,17 @@ import io.defitrack.abi.TypeUtils.Companion.uint16
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Utf8String
 import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 
-context(BlockchainGateway)
 class BasedDistributorV2Contract(
+    blockchainGateway: BlockchainGateway,
     contractAddress: String
-) : EvmContract(
-    contractAddress
+) : DeprecatedEvmContract(
+    blockchainGateway, contractAddress
 ) {
 
 

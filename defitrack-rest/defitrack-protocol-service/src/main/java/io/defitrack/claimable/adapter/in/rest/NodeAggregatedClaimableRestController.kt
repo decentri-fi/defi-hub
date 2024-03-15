@@ -54,7 +54,7 @@ class NodeAggregatedClaimableRestController(
             include.isEmpty() || include.contains(it.getProtocol().slug)
         }.flatMap {
             try {
-                with(it.getBlockchainGateway()) { it.claimables(address) }
+                it.claimables(address)
             } catch (ex: Exception) {
                 ex.printStackTrace()
                 DefaultClaimableRestController.logger.error("Unable to fetch claimables for provider ${it.getProtocol().slug}")

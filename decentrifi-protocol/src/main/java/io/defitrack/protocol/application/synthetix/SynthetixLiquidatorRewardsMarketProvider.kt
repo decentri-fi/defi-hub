@@ -5,7 +5,6 @@ import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.architecture.conditional.ConditionalOnNetwork
 import io.defitrack.claim.*
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.synthetix.LiquidatorRewardsContract
@@ -20,11 +19,9 @@ class SynthetixLiquidatorRewardsMarketProvider : AbstractClaimableMarketProvider
 
     val liquidqtorContractAddress = "0xf4eebdd0704021ef2a6bbe993fdf93030cd784b4"
     val snxAddress = "0x8700daec35af8ff88c16bdf0418774cb3d7599b4"
-
     override suspend fun fetchClaimables(): List<ClaimableMarket> {
-        val contract = with(blockchainGatewayProvider.getGateway(Network.OPTIMISM)) {
-            LiquidatorRewardsContract( liquidqtorContractAddress)
-        }
+        val contract =
+            LiquidatorRewardsContract(blockchainGatewayProvider.getGateway(Network.OPTIMISM), liquidqtorContractAddress)
 
         val rewardToken = erC20Resource.getTokenInformation(Network.OPTIMISM, snxAddress)
 

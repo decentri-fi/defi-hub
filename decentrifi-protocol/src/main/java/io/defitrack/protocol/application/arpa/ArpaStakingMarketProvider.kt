@@ -5,7 +5,6 @@ import io.defitrack.claim.ClaimableRewardFetcher
 import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.architecture.conditional.ConditionalOnCompany
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.evm.position.PositionFetcher
@@ -21,9 +20,11 @@ class ArpaStakingMarketProvider : FarmingMarketProvider() {
 
     val arpaStakingAddress = "0xEe710f79aA85099e200be4d40Cdf1Bfb2B467a01"
 
-    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
-        val contract = ArpaStakingContract(arpaStakingAddress)
+        val contract = ArpaStakingContract(
+            getBlockchainGateway(),
+            arpaStakingAddress
+        )
 
         val arpa = getToken(contract.arpaToken.await())
 

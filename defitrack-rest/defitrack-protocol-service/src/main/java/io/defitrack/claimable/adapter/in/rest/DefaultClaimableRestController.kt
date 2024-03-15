@@ -86,9 +86,7 @@ class DefaultClaimableRestController(
             it.getProtocol().slug == protocol
         }.flatMap {
             try {
-                with(it.getBlockchainGateway()) {
-                    it.claimables(address)
-                }
+                it.claimables(address)
             } catch (ex: Exception) {
                 ex.printStackTrace()
                 logger.error("Unable to fetch claimables for provider ${it.getProtocol().slug}")

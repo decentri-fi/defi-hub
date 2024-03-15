@@ -6,23 +6,30 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import org.web3j.abi.datatypes.Address
 
-context(BlockchainGateway)
-class FQLPContract(address: String) : EvmContract(address) {
+class FQLPContract(
+    blockchainGateway: BlockchainGateway, address: String
+) : DeprecatedEvmContract(
+    blockchainGateway, address
+) {
 
     suspend fun getAllRewardTokens(): List<String> {
         val result = read(
-            "getAllRewardTokens", emptyList(), listOf(dynamicArray<Address>())
+            "getAllRewardTokens",
+            emptyList(),
+            listOf(dynamicArray<Address>())
         )
-        return (result.first().value as List<Address>).map { it.value as String }
+        return (result.first() .value as List<Address>).map { it.value as String }
     }
 
     fun claimableReward(reward: String): (String) -> ContractCall {
         return { user ->
             createFunction(
-                "claimableReward", listOf(user.toAddress(), reward.toAddress()), uint256().nel()
+                "claimableReward",
+                listOf(user.toAddress(), reward.toAddress()),
+                uint256().nel()
             )
         }
     }

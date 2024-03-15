@@ -4,14 +4,13 @@ import io.defitrack.abi.TypeUtils.Companion.dynamicArray
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.generated.Uint256
 
-context(BlockchainGateway)
 class FeeQlpTrackerContract(
-    address: String
-) : EvmContract(address) {
+    blockchainGateway: BlockchainGateway, address: String
+) : DeprecatedEvmContract(blockchainGateway, address) {
 
     suspend fun getAllRewardTokens(): List<String> {
         return (read(

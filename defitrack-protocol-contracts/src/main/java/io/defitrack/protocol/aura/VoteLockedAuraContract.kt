@@ -7,13 +7,12 @@ import io.defitrack.abi.TypeUtils.Companion.uint112
 import io.defitrack.abi.TypeUtils.Companion.uint32
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 
-context(BlockchainGateway)
 class VoteLockedAuraContract(
-    address: String
-) : EvmContract(
-    address
+    blockchainGateway: BlockchainGateway, address: String
+) : DeprecatedEvmContract(
+    blockchainGateway, address
 ) {
 
     fun balances(user: String): ContractCall {

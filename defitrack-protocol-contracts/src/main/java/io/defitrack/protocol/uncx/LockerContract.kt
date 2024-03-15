@@ -1,10 +1,10 @@
 package io.defitrack.protocol.uncx
 
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 
 context(BlockchainGateway)
-class LockerContract(address: String) : EvmContract(address) {
+class LockerContract(address: String) : DeprecatedEvmContract(this, address) {
 
     /*
     addresses:

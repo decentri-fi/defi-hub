@@ -5,7 +5,6 @@ import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.refreshable
 import io.defitrack.erc20.domain.FungibleTokenInformation
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.market.domain.PoolingMarket
@@ -17,7 +16,6 @@ import io.defitrack.protocol.balancer.contract.BalancerVaultContract
 import io.defitrack.protocol.application.balancer.pooling.history.BalancerPoolingHistoryProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import org.springframework.cglib.core.Block
 import java.math.BigInteger
 
 abstract class BalancerPoolingMarketProvider(
@@ -25,7 +23,6 @@ abstract class BalancerPoolingMarketProvider(
     private val balancerPoolingHistoryProvider: BalancerPoolingHistoryProvider
 ) : PoolingMarketProvider() {
 
-    context(BlockchainGateway)
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
         val poolsPerVault = balancerService.getPools(getNetwork())
             .map {
@@ -34,6 +31,7 @@ abstract class BalancerPoolingMarketProvider(
             .resolve()
             .groupBy { it.vault.await() }.map {
                 BalancerVaultContract(
+                    getBlockchainGateway(),
                     it.key
                 ) to it.value
             }

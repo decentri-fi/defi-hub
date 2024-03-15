@@ -6,7 +6,6 @@ import io.defitrack.claim.ClaimableRewardFetcher
 import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.market.port.out.FarmingMarketProvider
@@ -17,7 +16,6 @@ import io.defitrack.protocol.alienbase.ComplexRewarderPerSecV4Contract
 import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import org.springframework.cglib.core.Block
 import org.springframework.stereotype.Component
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.generated.Uint256
@@ -30,11 +28,15 @@ class AlienbaseFarmingMarketProvider : FarmingMarketProvider() {
 
     val farmingContractAddress = "0x52eaecac2402633d98b95213d0b473e069d86590"
 
-    context(BlockchainGateway)
-    override suspend fun produceMarkets(): Flow<FarmingMarket> {
-        val contract = BasedDistributorV2Contract(
+    val farmingContract = lazyAsync {
+        BasedDistributorV2Contract(
+            blockchainGateway = getBlockchainGateway(),
             contractAddress = farmingContractAddress
         )
+    }
+
+    override suspend fun produceMarkets(): Flow<FarmingMarket> {
+        val contract = getFarmingContract()
         return channelFlow {
 
             contract.poolInfos().forEachIndexed { poolId, poolInfo ->
@@ -44,6 +46,7 @@ class AlienbaseFarmingMarketProvider : FarmingMarketProvider() {
                 val poolRewarders = contract.poolRewarders(poolId)
                 val extraRewards = poolRewarders.map {
                     ComplexRewarderPerSecV4Contract(
+                        getBlockchainGateway(),
                         it
                     )
                 }.map {
@@ -101,7 +104,7 @@ class AlienbaseFarmingMarketProvider : FarmingMarketProvider() {
                         ),
                         type = "alienbase.distributor",
                         internalMetadata = mapOf(
-                            "contract" to contract,
+                            "contract" to farmingContract.await(),
                             "poolId" to poolId
                         ),
                     )
@@ -109,6 +112,8 @@ class AlienbaseFarmingMarketProvider : FarmingMarketProvider() {
             }
         }
     }
+
+    private suspend fun getFarmingContract() = farmingContract.await()
 
     override fun getProtocol(): Protocol {
         return Protocol.ALIENBASE

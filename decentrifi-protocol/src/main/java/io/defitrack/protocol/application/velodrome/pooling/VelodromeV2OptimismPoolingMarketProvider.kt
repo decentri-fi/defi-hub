@@ -8,7 +8,6 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.refreshable
 import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.market.domain.PoolingMarketTokenShare
@@ -32,9 +31,9 @@ class VelodromeV2OptimismPoolingMarketProvider(
     private val velodromeOptimismService: VelodromeOptimismService
 ) : PoolingMarketProvider() {
 
-    context(BlockchainGateway)
-    override suspend fun produceMarkets() = channelFlow {
+    override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
         val pairFactoryContract = PoolFactoryContract(
+            blockchainGateway = getBlockchainGateway(),
             contractAddress = velodromeOptimismService.getV2PoolFactory()
         )
 

@@ -6,13 +6,12 @@ import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import java.math.BigInteger
 
-context(BlockchainGateway)
 class StableJoeStakingContract(
-    address: String
-) : EvmContract(address) {
+    blockchainGateway: BlockchainGateway, address: String
+) : DeprecatedEvmContract(blockchainGateway, address) {
 
     val joe = constant<String>("joe", TypeUtils.address())
     val rewardTokensLength = constant<BigInteger>("rewardTokensLength", uint256())

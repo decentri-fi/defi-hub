@@ -4,7 +4,6 @@ import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.refreshable
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.protocol.Company
@@ -21,9 +20,15 @@ class AerodromePoolingMarketProvider : PoolingMarketProvider() {
 
     private val poolFactoryAddress: String = "0x420DD381b31aEf6683db6B902084cB0FFECe40Da"
 
-    context(BlockchainGateway)
+    private val poolFactoryContract = lazyAsync {
+        PoolFactoryContract(
+            blockchainGateway = getBlockchainGateway(),
+            contractAddress = poolFactoryAddress
+        )
+    }
+
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
-        PoolFactoryContract(poolFactoryAddress).allPools().forEach {
+        poolFactoryContract.await().allPools().forEach {
             launch {
                 throttled {
                     val poolingToken = getToken(it)

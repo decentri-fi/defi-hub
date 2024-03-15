@@ -1,17 +1,16 @@
 package io.defitrack.protocol.ironbank
 
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.EvmContract
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.DynamicArray
 
-
-context(BlockchainGateway)
 class IronBankComptrollerContract(
+    blockchainGateway: BlockchainGateway,
     address: String
-) : EvmContract(
-    address
+) : DeprecatedEvmContract(
+    blockchainGateway, address
 ) {
 
     suspend fun getMarkets(): List<String> {

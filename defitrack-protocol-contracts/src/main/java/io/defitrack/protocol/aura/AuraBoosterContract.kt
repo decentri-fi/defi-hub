@@ -5,11 +5,14 @@ import io.defitrack.abi.TypeUtils.Companion.bool
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import java.math.BigInteger
 
-context(BlockchainGateway)
-class AuraBoosterContract : EvmContract("0xa57b8d98dae62b26ec3bcc4a365338157060b234") {
+class AuraBoosterContract(
+    blockchainGateway: BlockchainGateway
+) : DeprecatedEvmContract(
+    blockchainGateway, "0xa57b8d98dae62b26ec3bcc4a365338157060b234"
+) {
 
     suspend fun poolLength(): Int {
         return readSingle<BigInteger>("poolLength", uint256()).toInt()

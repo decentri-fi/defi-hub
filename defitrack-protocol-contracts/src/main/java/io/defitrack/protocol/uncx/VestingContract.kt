@@ -1,10 +1,10 @@
 package io.defitrack.protocol.uncx
 
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 
 context(BlockchainGateway)
-class VestingContract(address: String) : EvmContract(address) {
+class VestingContract(address: String) : DeprecatedEvmContract(this, address) {
 
     /*
     addresses:
@@ -39,6 +39,7 @@ class VestingContract(address: String) : EvmContract(address) {
 
 
     //convertSharesToTokens: (String: token, uint256) -> uint256
+
 
 
 }

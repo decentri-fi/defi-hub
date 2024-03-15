@@ -4,11 +4,10 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 
-context(BlockchainGateway)
-class SynthetixContract(address: String) : EvmContract(
-    address
+class SynthetixContract(blockchainGateway: BlockchainGateway, address: String) : DeprecatedEvmContract(
+    blockchainGateway, address
 ) {
 
     fun collateralFn(user: String): ContractCall {

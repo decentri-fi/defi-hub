@@ -2,7 +2,6 @@ package io.defitrack.protocol.camelot
 
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils
-import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.protocol.algebra.AlgebraFactoryContract
 import io.defitrack.protocol.algebra.AlgebraPositionsV2Contract
@@ -19,15 +18,14 @@ class CamelotService(
 
     val logger = LoggerFactory.getLogger(this::class.java)
 
-    val algebraFactoryContract = lazyAsync {
-        with(blockchainGatewayProvider.getGateway(Network.ARBITRUM)) {
-            AlgebraFactoryContract(
-                CAMELOT_FACTORY
-            )
-        }
+    val algebraFactoryContract = AsyncUtils.lazyAsync {
+        AlgebraFactoryContract(
+            blockchainGateway = blockchainGatewayProvider.getGateway(Network.ARBITRUM),
+            CAMELOT_FACTORY
+        )
     }
 
-    val algebraPositionsContract = lazyAsync {
+    val algebraPositionsContract = AsyncUtils.lazyAsync {
         with(blockchainGatewayProvider.getGateway(Network.ARBITRUM)) {
             AlgebraPositionsV2Contract(
                 address = CAMELOT_NFT

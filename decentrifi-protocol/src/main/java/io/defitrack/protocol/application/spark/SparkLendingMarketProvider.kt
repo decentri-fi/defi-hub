@@ -4,7 +4,6 @@ import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.refreshable
 import io.defitrack.architecture.conditional.ConditionalOnCompany
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.LendingMarketProvider
 import io.defitrack.market.domain.lending.LendingMarket
 import io.defitrack.protocol.Company
@@ -16,10 +15,10 @@ import org.springframework.stereotype.Component
 @ConditionalOnCompany(Company.SPARK)
 class SparkLendingMarketProvider : LendingMarketProvider() {
 
-    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<LendingMarket> {
 
         val poolContract = PoolContract(
+            getBlockchainGateway(),
             "0xC13e21B648A5Ee794902342038FF3aDAB66BE987"
         )
 

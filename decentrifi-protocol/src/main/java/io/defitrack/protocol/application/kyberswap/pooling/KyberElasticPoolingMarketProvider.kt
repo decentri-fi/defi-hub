@@ -5,7 +5,6 @@ import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.refreshable
 import io.defitrack.architecture.conditional.ConditionalOnCompany
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.protocol.Company
@@ -17,9 +16,11 @@ import org.springframework.stereotype.Component
 @ConditionalOnCompany(Company.KYBER_SWAP)
 class KyberElasticPoolingMarketProvider : PoolingMarketProvider() {
 
-    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<PoolingMarket> {
-        val contract = KyberswapElasticContract("0xb85ebe2e4ea27526f817ff33fb55fb240057c03f")
+        val contract = KyberswapElasticContract(
+            getBlockchainGateway(),
+            "0xb85ebe2e4ea27526f817ff33fb55fb240057c03f"
+        )
 
         return contract.allPairs().parMapNotNull(concurrency = 12) { poolInfo ->
             catch {

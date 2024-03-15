@@ -5,7 +5,6 @@ import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.architecture.conditional.ConditionalOnCompany
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.market.port.out.PoolingPositionProvider
 import io.defitrack.market.domain.pooling.PoolingPosition
@@ -31,16 +30,19 @@ class PancakeswapV3PoolingPositionProvider(
     val LOG_PRICE = BigDecimal.valueOf(1.0001)
     val POW_96 = BigInteger.valueOf(2).pow(96)
 
+    val poolingNftContract = lazyAsync {
+        PancakePositionsV3Contract(
+            uniswapV3PoolingMarketProvider.getBlockchainGateway(), "0x46a15b0b27311cedf172ab29e4f4766fbe7f4364"
+        )
+    }
+
     override suspend fun fetchUserPoolings(protocol: String, address: String): List<PoolingPosition> = coroutineScope {
-        val contract =
-            with(blockchainGateway()) { PancakePositionsV3Contract("0x46a15b0b27311cedf172ab29e4f4766fbe7f4364") }
-        val positionsForUser =
-            contract.getUserPositions(address)
+        val positionsForUser = poolingNftContract.await().getUserPositions(address)
         positionsForUser.filter {
             it.liquidity > BigInteger.ZERO
         }.parMapNotNull(concurrency = 8) { position ->
             try {
-                val poolAddress = uniswapV3PoolingMarketProvider.uniswapV3FactoryContract.get().getPool(
+                val poolAddress = uniswapV3PoolingMarketProvider.uniswapV3PoolFactoryContract.await().getPool(
                     position.token0, position.token1, position.fee
                 )
 
@@ -65,10 +67,10 @@ class PancakeswapV3PoolingPositionProvider(
 
                 val totalToken0Usd = if (userTokens0 > BigDecimal.ZERO) {
                     uniswapV3PoolingMarketProvider.getPriceResource().calculatePrice(
-                        GetPriceCommand(
-                            token0.address, uniswapV3PoolingMarketProvider.getNetwork(), userTokens0
+                            GetPriceCommand(
+                                token0.address, uniswapV3PoolingMarketProvider.getNetwork(), userTokens0
+                            )
                         )
-                    )
                 } else {
                     0.0
                 }
@@ -98,11 +100,9 @@ class PancakeswapV3PoolingPositionProvider(
     }
 
     private fun uniswapV3PoolContract(poolAddress: String): UniswapV3PoolContract =
-        with(blockchainGateway()) {
+        with(uniswapV3PoolingMarketProvider.getBlockchainGateway()) {
             UniswapV3PoolContract(poolAddress)
         }
-
-    private fun blockchainGateway() = uniswapV3PoolingMarketProvider.getBlockchainGateway()
 
     fun calculateAmount(
         tickLower: BigInteger,

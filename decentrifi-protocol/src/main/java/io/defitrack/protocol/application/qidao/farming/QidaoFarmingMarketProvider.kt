@@ -7,7 +7,6 @@ import io.defitrack.common.network.Network
 import io.defitrack.common.utils.refreshable
 import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.erc20.port.`in`.ERC20Resource
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
@@ -24,16 +23,17 @@ class QidaoFarmingMarketProvider(
     private val erc20Resource: ERC20Resource,
 ) : FarmingMarketProvider() {
 
-    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         return qidaoPolygonService.farms().parMap(concurrency = 12) { farm ->
             importPoolsFromFarm(farm)
         }.flatten()
     }
 
-    context(BlockchainGateway)
     private suspend fun importPoolsFromFarm(farm: String): List<FarmingMarket> {
-        val contract = QidaoFarmV2Contract(farm)
+        val contract = QidaoFarmV2Contract(
+            getBlockchainGateway(),
+            farm
+        )
 
         return (0 until contract.poolLength()).parMapNotNull(concurrency = 8) { poolId ->
             catch {

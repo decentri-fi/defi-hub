@@ -1,6 +1,7 @@
 package io.defitrack.protocol.shibaswap
 
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import io.defitrack.evm.contract.EvmContract
 
 context(BlockchainGateway)

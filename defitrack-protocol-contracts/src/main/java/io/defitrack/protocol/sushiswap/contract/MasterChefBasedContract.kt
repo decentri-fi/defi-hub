@@ -7,17 +7,17 @@ import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import kotlinx.coroutines.Deferred
 import java.math.BigInteger
 
-context(BlockchainGateway)
 open class MasterChefBasedContract(
     private val rewardTokenName: String,
     private val pendingName: String,
+    blockchainGateway: BlockchainGateway,
     address: String
-) : EvmContract(
-    address
+) : DeprecatedEvmContract(
+    blockchainGateway, address
 ) {
 
     fun harvestFunction(poolId: Int): (String) -> ContractCall {
@@ -63,7 +63,7 @@ open class MasterChefBasedContract(
             )
         }
 
-        val results = readMultiCall(
+        val results = blockchainGateway.readMultiCall(
             multicalls
         )
         results.map { retVal ->

@@ -1,13 +1,12 @@
 package io.defitrack.protocol.application.kwenta
 
 import arrow.core.nel
-import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.claim.ClaimableRewardFetcher
 import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.market.domain.farming.FarmingMarket
+import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.market.port.out.FarmingMarketProvider
+import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.kwenta.StakingRewardsContract
@@ -19,9 +18,9 @@ import org.springframework.stereotype.Component
 class KwentaStakingRewardMarketProvider : FarmingMarketProvider() {
 
     val address = "0x6e56a5d49f775ba08041e28030bc7826b13489e0"
-    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         val contract = StakingRewardsContract(
+            getBlockchainGateway(),
             address
         )
 

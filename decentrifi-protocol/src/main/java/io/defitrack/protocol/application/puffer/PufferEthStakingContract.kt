@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component
 @Component
 class PufferEthStakingContract : FarmingMarketProvider() {
 
-    context(BlockchainGateway) override suspend fun fetchMarkets(): List<FarmingMarket> {
+    override suspend fun fetchMarkets(): List<FarmingMarket> {
         return listOf(
         )
     }

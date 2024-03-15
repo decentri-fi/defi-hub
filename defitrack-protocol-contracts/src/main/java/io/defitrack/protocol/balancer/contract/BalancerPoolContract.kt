@@ -1,10 +1,12 @@
 package io.defitrack.protocol.balancer.contract
 
+import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.bytes32
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ERC20Contract
+import kotlinx.coroutines.Deferred
 import org.apache.commons.codec.binary.Hex
 import java.math.BigInteger
 

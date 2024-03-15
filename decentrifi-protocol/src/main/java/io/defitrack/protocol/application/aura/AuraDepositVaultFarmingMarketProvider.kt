@@ -18,7 +18,9 @@ import org.springframework.stereotype.Component
 class AuraDepositVaultFarmingMarketProvider : FarmingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<FarmingMarket> = coroutineScope {
-        val booster = with(getBlockchainGateway()) { AuraBoosterContract() }
+        val booster = AuraBoosterContract(
+            getBlockchainGateway()
+        )
         booster.poolInfos().parMapNotNull(concurrency = 12) {
             try {
                 val crvrewards = crvRewardsContract(it.crvRewards)

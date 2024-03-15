@@ -6,7 +6,6 @@ import io.defitrack.claim.ClaimableRewardFetcher
 import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.refreshable
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.market.port.out.FarmingMarketProvider
@@ -24,9 +23,9 @@ class SushiswapEthereumMasterchefV2MarketProvider : FarmingMarketProvider() {
 
     private val masterchefV2ContractAddress = "0xef0881ec094552b2e128cf945ef17a6752b4ec5d"
 
-    context(BlockchainGateway)
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
         val contract = MasterchefV2Contract(
+            getBlockchainGateway(),
             masterchefV2ContractAddress
         )
 
@@ -45,7 +44,6 @@ class SushiswapEthereumMasterchefV2MarketProvider : FarmingMarketProvider() {
         return Network.ETHEREUM
     }
 
-    context(BlockchainGateway)
     private suspend fun toStakingMarketElement(
         chef: MasterchefV2Contract,
         poolId: Int
@@ -54,7 +52,7 @@ class SushiswapEthereumMasterchefV2MarketProvider : FarmingMarketProvider() {
             val stakedtoken = getToken(chef.lpToken(poolId))
             val rewarder = chef.rewarder(poolId)
             val rewarderContract = when (rewarder != "0x0000000000000000000000000000000000000000") {
-                true -> MasterchefV2Contract.Rewarder(rewarder)
+                true -> MasterchefV2Contract.Rewarder(getBlockchainGateway(), rewarder)
                 false -> null
             }
 
@@ -93,7 +91,7 @@ class SushiswapEthereumMasterchefV2MarketProvider : FarmingMarketProvider() {
                 positionFetcher = PositionFetcher(
                     { user -> chef.userInfoFunction(poolId, user) }
                 ),
-                type = "sushiswap.masterchef.v2"
+                type =  "sushiswap.masterchef.v2"
             )
         } catch (ex: Exception) {
             logger.error("Error while fetching market for poolId $poolId")

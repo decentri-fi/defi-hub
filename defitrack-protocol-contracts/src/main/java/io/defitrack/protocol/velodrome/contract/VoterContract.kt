@@ -3,6 +3,7 @@ package io.defitrack.protocol.velodrome.contract
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.evm.contract.BlockchainGateway
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import io.defitrack.evm.contract.EvmContract
 
 

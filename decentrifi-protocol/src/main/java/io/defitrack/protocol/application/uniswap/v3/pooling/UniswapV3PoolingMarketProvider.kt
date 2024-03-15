@@ -9,7 +9,6 @@ import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.map
 import io.defitrack.common.utils.refreshable
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.market.domain.PoolingMarketTokenShare
@@ -32,8 +31,10 @@ abstract class UniswapV3PoolingMarketProvider(
         uniswapV3Prefetcher.getPrefetches(getNetwork())
     }
 
+    val poolFactory by lazy {
+        createPoolFactory()
+    }
 
-    context(BlockchainGateway)
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
         val pools = createPoolFactory().getPools(startBlock)
             .map {
@@ -57,9 +58,8 @@ abstract class UniswapV3PoolingMarketProvider(
         }
     }
 
-    context(BlockchainGateway)
-     fun createPoolFactory() = UniswapV3PoolFactoryContract(
-        poolFactoryAddress
+    private fun createPoolFactory() = UniswapV3PoolFactoryContract(
+        getBlockchainGateway(), poolFactoryAddress
     )
 
     val poolCache = Cache.Builder<String, Option<PoolingMarket>>().build()

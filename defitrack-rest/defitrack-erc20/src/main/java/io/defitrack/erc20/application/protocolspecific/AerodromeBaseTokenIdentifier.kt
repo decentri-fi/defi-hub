@@ -16,11 +16,10 @@ class AerodromeBaseTokenIdentifier : DefaultLpIdentifier(Protocol.AERODROME) {
     val cache = Cache.Builder<String, List<String>>().expireAfterWrite(1.days).build()
 
     suspend fun getPools() = cache.get("all") {
-        with(blockchainGatewayProvider.getGateway(Network.BASE)) {
-            PoolFactoryContract(
-                contractAddress = poolFactoryAddress
-            ).allPools().map(String::lowercase)
-        }
+        PoolFactoryContract(
+            blockchainGateway = blockchainGatewayProvider.getGateway(Network.BASE),
+            contractAddress = poolFactoryAddress
+        ).allPools().map(String::lowercase)
     }
 
     override suspend fun isProtocolToken(token: ERC20): Boolean {

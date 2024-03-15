@@ -29,14 +29,11 @@ class EnsNameService(
     val cache = Cache.Builder<String, String>().expireAfterWrite(24.hours).build()
 
     val ensRegistryContract = AsyncUtils.lazyAsync {
-        with(ethereumProvider) { EnsRegistryContract(ENS_REGISTRY) }
-
+        EnsRegistryContract(ethereumProvider, ENS_REGISTRY)
     }
 
     val ensRegistrarContract = AsyncUtils.lazyAsync {
-        with(ethereumProvider) {
-            EnsRegistrarContract(ENS_REGISTRAR)
-        }
+        EnsRegistrarContract(ethereumProvider, ENS_REGISTRAR)
     }
 
     override suspend fun getAvatar(name: String): String {
@@ -92,11 +89,10 @@ class EnsNameService(
     private suspend fun getResolverContract(name: String): EnsResolverContract {
         return resolverCache.get(name) {
             val resolverAddress = ensRegistryContract.await().getResolver(name)
-            with(ethereumProvider) {
-                EnsResolverContract(
-                    resolverAddress
-                )
-            }
+            EnsResolverContract(
+                ethereumProvider,
+                resolverAddress
+            )
         }
     }
 }

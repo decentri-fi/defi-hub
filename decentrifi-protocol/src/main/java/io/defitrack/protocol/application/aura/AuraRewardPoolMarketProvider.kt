@@ -4,7 +4,6 @@ import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.architecture.conditional.ConditionalOnCompany
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.protocol.Company
@@ -19,9 +18,8 @@ class AuraRewardPoolMarketProvider : FarmingMarketProvider() {
 
     val rewardFactoryAddress = "0xbc8d9caf4b6bf34773976c5707ad1f2778332dca"
 
-    context(BlockchainGateway)
-    override suspend fun fetchMarkets(): List<FarmingMarket> {
-        val contract = RewardPoolFactoryContract(rewardFactoryAddress)
+    override suspend fun fetchMarkets(): List<FarmingMarket> = with(getBlockchainGateway()) {
+        val contract = RewardPoolFactoryContract(getBlockchainGateway(), rewardFactoryAddress)
         return contract.getCreatedPools("16176243", null)
             .map {
                 AuraDepositContract(it)

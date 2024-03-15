@@ -6,19 +6,17 @@ import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import org.web3j.abi.datatypes.Address
 
-context(BlockchainGateway)
 class MorphoContract(
-    address: String
-) : EvmContract(
-    address
+    blockchainGateway: BlockchainGateway, address: String
+): DeprecatedEvmContract(
+    blockchainGateway, address
 ) {
 
     suspend fun marketsCreated(): List<String> {
-        val result = read(
-            "marketsCreated",
+        val result =  read("marketsCreated",
             emptyList(),
             dynamicArray<Address>().nel()
         )
@@ -26,14 +24,12 @@ class MorphoContract(
     }
 
     fun collateralBalance(underlying: String): (String) -> ContractCall {
-        return { user: String ->
-            createFunction(
-                "supplyBalance",
-                listOf(
-                    underlying.toAddress(),
-                    user.toAddress()
-                ), uint256().nel()
-            )
+        return  { user: String ->
+            createFunction("supplyBalance",
+            listOf(
+                underlying.toAddress(),
+                user.toAddress()
+            ) , uint256().nel())
         }
     }
 }

@@ -10,12 +10,13 @@ import io.defitrack.evm.contract.ContractCall
 import io.defitrack.protocol.sushiswap.contract.MasterChefBasedContract
 import kotlinx.coroutines.Deferred
 
-context(BlockchainGateway)
 class DinoswapFossilFarmsContract(
+    blockchainGateway: BlockchainGateway,
     address: String,
 ) : MasterChefBasedContract(
     "DINO",
     "pendingDino",
+    blockchainGateway = blockchainGateway,
     address
 ) {
 

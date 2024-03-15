@@ -3,7 +3,6 @@ package io.defitrack.protocol.application.aura
 import arrow.core.nel
 import io.defitrack.common.network.Network
 import io.defitrack.architecture.conditional.ConditionalOnCompany
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.evm.position.PositionFetcher
@@ -18,10 +17,9 @@ class VoteLockedAuraProvider : FarmingMarketProvider() {
 
     val vlauraAddress = "0x3fa73f1e5d8a792c80f426fc8f84fbf7ce9bbcac"
 
-    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         val token = getToken(vlauraAddress)
-        val contract = VoteLockedAuraContract(vlauraAddress)
+        val contract = VoteLockedAuraContract(getBlockchainGateway(), vlauraAddress)
 
         val rewards = contract.rewardTokens().map {
             getToken(it)

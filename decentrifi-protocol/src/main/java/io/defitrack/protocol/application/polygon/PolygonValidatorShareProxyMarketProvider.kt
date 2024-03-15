@@ -7,7 +7,6 @@ import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.erc20.domain.FungibleTokenInformation
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
@@ -25,9 +24,11 @@ class PolygonValidatorShareProxyMarketProvider : FarmingMarketProvider() {
     val polygonStakingMarket = "0x5e3ef299fddf15eaa0432e6e66473ace8c13d908"
     val maticAddress = "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0"
 
-    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
-        val polygonStakingContract = PolygonStakingContract(polygonStakingMarket)
+        val polygonStakingContract = PolygonStakingContract(
+            getBlockchainGateway(),
+            polygonStakingMarket
+        )
 
         val matic = getToken(maticAddress)
 
@@ -40,12 +41,14 @@ class PolygonValidatorShareProxyMarketProvider : FarmingMarketProvider() {
         }
     }
 
-    context(BlockchainGateway)
     private suspend fun createMarket(
         share: String,
         matic: FungibleTokenInformation
     ): FarmingMarket {
-        val shareContract = ValidatorShareProxyContract(share)
+        val shareContract = ValidatorShareProxyContract(
+            getBlockchainGateway(),
+            share
+        )
 
         return create(
             name = "Polygon Staking",

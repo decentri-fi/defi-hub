@@ -6,7 +6,6 @@ import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.architecture.conditional.ConditionalOnNetwork
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.protocol.Company
@@ -26,14 +25,13 @@ class QuickZkEvmRewardRouterFarmingMarketProvider : FarmingMarketProvider() {
 
     val rewardRouter = "0x4141b44f0e8b53adcac97d87a3c524d70e5e23b7"
 
-    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         val contract = RewardRouterContract(
-            rewardRouter
+            getBlockchainGateway(), rewardRouter
         )
 
         val feeTrackerContract = FeeQlpTrackerContract(
-            contract.feeQlpTracker.await()
+            getBlockchainGateway(), contract.feeQlpTracker.await()
         )
 
         val rewardTokens = feeTrackerContract.getAllRewardTokens().map { getToken(it) }

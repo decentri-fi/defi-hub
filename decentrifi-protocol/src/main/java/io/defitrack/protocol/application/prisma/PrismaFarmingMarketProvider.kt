@@ -6,7 +6,6 @@ import io.defitrack.architecture.conditional.ConditionalOnNetwork
 import io.defitrack.claim.ClaimableRewardFetcher
 import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.market.port.out.FarmingMarketProvider
@@ -25,9 +24,8 @@ class PrismaFarmingMarketProvider : FarmingMarketProvider() {
     val mkUsdAddress = "0x4591dbff62656e7859afe5e45f6f47d3669fbb28"
     val prismaAddress = "0xda47862a83dac0c112ba89c6abc2159b95afd71c"
 
-    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
-        val contract = StabilityPoolContract(stabilityPoolAddress)
+        val contract = StabilityPoolContract(getBlockchainGateway(), stabilityPoolAddress)
 
         val prisma = getToken(prismaAddress)
 

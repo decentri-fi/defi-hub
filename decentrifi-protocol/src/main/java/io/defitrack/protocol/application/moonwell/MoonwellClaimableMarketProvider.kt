@@ -8,7 +8,6 @@ import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.architecture.conditional.ConditionalOnCompany
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.moonwell.MoonwellUnitRollerContract
@@ -28,33 +27,46 @@ class MoonwellClaimableMarketProvider(
     }
 
 
-    override suspend fun fetchClaimables(): List<ClaimableMarket> =
-        with(blockchainGatewayProvider.getGateway(Network.BASE)) {
-            val markets = moonwellLendingMarketProvider.getMarkets()
-            val comptroller = MoonwellUnitRollerContract(
+    val deferredComptroller = lazyAsync {
+        with(getGateway()) {
+            MoonwellUnitRollerContract(
                 "0xfbb21d0380bee3312b33c4353c8936a0f13ef26c"
             )
-            val contract = RewardDistributorContract(comptroller.rewardDistributor.await())
-            return markets.parMap(concurrency = 8) {
-                ClaimableMarket(
-                    id = "rwrd_${it.id}",
-                    name = "${it.name} reward",
-                    network = Network.BASE,
-                    protocol = Protocol.MOONWELL,
-                    claimableRewardFetchers = listOf(ClaimableRewardFetcher(
-                        Reward(
-                            well.await(),
-                            contract.getOutstandingRewardsForUserFn(it.metadata["mToken"].toString()),
-                            extractAmountFromRewardFunction = { results, _ ->
-                                val rewards = results[0].value as List<RewardDistributorContract.Reward>
-                                rewards.firstOrNull { r ->
-                                    r.emissionToken.value as String != "0x0000000000000000000000000000000000000000"
-                                }?.amount?.value ?: BigInteger.ZERO
-                            }
-                        ),
-                        preparedTransaction = selfExecutingTransaction(comptroller::claimReward)
-                    ))
-                )
-            }
         }
+    }
+
+    val deferredRewardDistributor = lazyAsync {
+        RewardDistributorContract(
+            getGateway(),
+            deferredComptroller.await().rewardDistributor.await()
+        )
+    }
+
+    private fun getGateway() = blockchainGatewayProvider.getGateway(Network.BASE)
+
+    override suspend fun fetchClaimables(): List<ClaimableMarket> {
+        val markets = moonwellLendingMarketProvider.getMarkets()
+        val contract = deferredRewardDistributor.await()
+        return markets.parMap(concurrency = 8) {
+            ClaimableMarket(
+                id = "rwrd_${it.id}",
+                name = "${it.name} reward",
+                network = Network.BASE,
+                protocol = Protocol.MOONWELL,
+                claimableRewardFetchers = listOf(ClaimableRewardFetcher(
+                    Reward(
+                        well.await(),
+                        contract.getOutstandingRewardsForUserFn(it.metadata["mToken"].toString()),
+                        extractAmountFromRewardFunction = { results, _ ->
+                            val rewards = results[0].value as List<RewardDistributorContract.Reward>
+                            rewards.firstOrNull { r ->
+                                r.emissionToken.value as String != "0x0000000000000000000000000000000000000000"
+                            }?.amount?.value ?: BigInteger.ZERO
+                        }
+                    ),
+                    preparedTransaction = selfExecutingTransaction(deferredComptroller.await()::claimReward)
+                ))
+            )
+        }
+    }
 }

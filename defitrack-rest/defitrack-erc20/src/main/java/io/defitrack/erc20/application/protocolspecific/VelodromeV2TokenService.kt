@@ -14,12 +14,11 @@ class VelodromeV2TokenService(
 ) : DefaultLpIdentifier(Protocol.VELODROME_V2) {
 
     val optimismPools = lazyAsync {
-        with(blockchainGatewayProvider.getGateway(Network.OPTIMISM)) {
-            val pairFactoryContract = PoolFactoryContract(
-                contractAddress = velodromeOptimismService.getV2PoolFactory()
-            )
-            pairFactoryContract.allPools()
-        }
+        val pairFactoryContract = PoolFactoryContract(
+            blockchainGateway = blockchainGatewayProvider.getGateway(Network.OPTIMISM),
+            contractAddress = velodromeOptimismService.getV2PoolFactory()
+        )
+        pairFactoryContract.allPools()
     }
 
     override suspend fun isProtocolToken(token: ERC20): Boolean {

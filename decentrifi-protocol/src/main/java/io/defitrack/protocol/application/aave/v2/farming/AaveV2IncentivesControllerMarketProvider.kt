@@ -24,11 +24,10 @@ class AaveV2IncentivesControllerMarketProvider : AbstractClaimableMarketProvider
     override suspend fun fetchClaimables(): List<ClaimableMarket> {
         val stakedAave = erC20Resource.getTokenInformation(Network.ETHEREUM, stkAave)
 
-        val incentivesContract = with(blockchainGatewayProvider.getGateway(Network.ETHEREUM)) {
-            IncentivesControllerContract(
-                incentivesController
-            )
-        }
+        val incentivesContract = IncentivesControllerContract(
+            blockchainGatewayProvider.getGateway(Network.ETHEREUM),
+            incentivesController
+        )
 
         return ClaimableMarket(
             id = incentivesController,
@@ -38,8 +37,10 @@ class AaveV2IncentivesControllerMarketProvider : AbstractClaimableMarketProvider
             claimableRewardFetchers = nonEmptyListOf(
                 ClaimableRewardFetcher(
                     Reward(
-                        stakedAave, incentivesContract::getUserUnclaimedRewardsFn
-                    ), preparedTransaction = selfExecutingTransaction(incentivesContract::claimRewardsFn)
+                        stakedAave,
+                        incentivesContract::getUserUnclaimedRewardsFn
+                    ),
+                    preparedTransaction = selfExecutingTransaction(incentivesContract::claimRewardsFn)
                 )
             )
         ).nel()

@@ -7,10 +7,10 @@ import io.defitrack.abi.TypeUtils.Companion.uint152
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 
 context(BlockchainGateway)
-class EthenaStakingContract(address: String) : EvmContract(address) {
+class EthenaStakingContract(address: String) : DeprecatedEvmContract(this, address) {
 
     //contract: 0x8707f238936c12c309bfc2b9959c35828acfc512
 

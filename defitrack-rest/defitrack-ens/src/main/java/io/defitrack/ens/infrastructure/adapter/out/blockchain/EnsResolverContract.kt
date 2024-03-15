@@ -4,14 +4,14 @@ import io.defitrack.abi.TypeUtils
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.abi.TypeUtils.Companion.toUtf8String
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import org.web3j.abi.datatypes.generated.Bytes32
 import org.web3j.ens.NameHash
 
-context(BlockchainGateway)
 class EnsResolverContract(
+    blockchainGateway: BlockchainGateway,
     address: String
-) : EvmContract(address) {
+) : DeprecatedEvmContract(blockchainGateway, address) {
 
     suspend fun getText(ensName: String, textName: String): String {
         return readSingle(
@@ -30,7 +30,7 @@ class EnsResolverContract(
     }
 
     suspend fun getName(name: String): String {
-        val result: String = readSingle(
+        val result: String =  readSingle(
             "name",
             listOf(Bytes32(NameHash.nameHashAsBytes(name))),
             TypeUtils.string(),

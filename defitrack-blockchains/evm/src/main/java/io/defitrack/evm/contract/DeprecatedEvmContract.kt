@@ -1,6 +1,5 @@
 package io.defitrack.evm.contract
 
-import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.evm.GetEventLogsCommand
 import kotlinx.coroutines.Deferred
@@ -13,15 +12,16 @@ import org.web3j.abi.datatypes.Type
 import org.web3j.protocol.core.methods.response.EthLog
 import java.math.BigInteger
 
-context(BlockchainGateway)
-abstract class EvmContract(
+@Deprecated("use EvmContract instead")
+abstract class DeprecatedEvmContract(
+    val blockchainGateway: BlockchainGateway,
     val address: String
 ) {
 
     val logger = LoggerFactory.getLogger(this::class.java)
 
     suspend fun getLogs(event: Event, fromBlock: String, toBlock: String?): List<EthLog.LogObject> {
-        return getEventsAsEthLog(
+        return blockchainGateway.getEventsAsEthLog(
             GetEventLogsCommand(
                 addresses = listOf(this.address),
                 topic = EventEncoder.encode(event),
@@ -63,7 +63,7 @@ abstract class EvmContract(
     inline fun <reified T : Any> constant(
         method: String,
         output: TypeReference<out Type<*>>,
-        noinline extractor: ((List<Type<*>>) -> T)? = null
+       noinline extractor: ((List<Type<*>>) -> T)? = null
     ): Deferred<T> {
         val function = addConstant(createFunction(method, output))
         return createConstant(function, extractor)
@@ -93,7 +93,7 @@ abstract class EvmContract(
     }
 
     suspend fun readMultiCall(functions: List<ContractCall>): List<MultiCallResult> {
-        return readMultiCall(functions)
+        return blockchainGateway.readMultiCall(functions)
     }
 
     suspend fun read(
@@ -101,7 +101,7 @@ abstract class EvmContract(
         inputs: List<Type<*>> = emptyList(),
         outputs: List<TypeReference<out Type<*>>>? = null
     ): List<Type<*>> {
-        return readFunction(
+        return blockchainGateway.readFunction(
             address = address,
             inputs = inputs,
             outputs = outputs,
@@ -114,7 +114,7 @@ abstract class EvmContract(
         inputs: List<Type<*>>,
         output: TypeReference<out Type<*>>
     ): T {
-        return readFunction(
+        return blockchainGateway.readFunction(
             address = address,
             inputs = inputs,
             outputs = listOf(output),
@@ -132,8 +132,8 @@ abstract class EvmContract(
     fun Function.toContractCall(): ContractCall {
         return ContractCall(
             this,
-            network,
-            this@EvmContract.address
+            blockchainGateway.network,
+            this@DeprecatedEvmContract.address
         )
     }
 
@@ -142,10 +142,6 @@ abstract class EvmContract(
         this.resolvedConstants = lazyAsync {
             resolved
         }
-    }
-
-    fun getNetwork(): Network {
-        return this@BlockchainGateway.network
     }
 }
 

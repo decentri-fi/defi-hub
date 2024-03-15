@@ -4,7 +4,6 @@ import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.claim.ClaimableRewardFetcher
 import io.defitrack.claim.Reward
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.protocol.Protocol
@@ -24,12 +23,11 @@ abstract class BeefyBoostMarketProvider(
     @Autowired
     private lateinit var beefyBoostService: BeefyBoostService
 
-    context(BlockchainGateway)
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
         beefyBoostService.getBoosts(getNetwork())
             .parMapNotNull(concurrency = 8) {
                 catch {
-                    val contract = BeefyLaunchPoolContract(it.earnContractAddress)
+                    val contract = BeefyLaunchPoolContract(getBlockchainGateway(), it.earnContractAddress)
 
                     /*     val underlyingMarket = beefyFarmingMarketProvider.getMarkets().find {
                              it.metadata["vaultAddress"]?.toString()?.lowercase() == contract.stakedToken.await().lowercase()

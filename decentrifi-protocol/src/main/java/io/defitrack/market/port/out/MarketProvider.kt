@@ -139,15 +139,13 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
         ).increment()
     }
 
-    private suspend fun populate(): List<T> = with(getBlockchainGateway()) {
-        return try {
-            logger.debug("Cache expired, fetching fresh elements")
-            fetchMarkets()
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            logger.error("Unable to fetch pooling markets: {}", ex.message)
-            emptyList()
-        }
+    private suspend fun populate() = try {
+        logger.debug("Cache expired, fetching fresh elements")
+        fetchMarkets()
+    } catch (ex: Exception) {
+        ex.printStackTrace()
+        logger.error("Unable to fetch pooling markets: {}", ex.message)
+        emptyList()
     }
 
     fun getMarkets(): List<T> {

@@ -5,7 +5,6 @@ import io.defitrack.claim.ClaimableRewardFetcher
 import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.architecture.conditional.ConditionalOnCompany
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.protocol.Company
@@ -24,7 +23,6 @@ class EqualizerGaugeMarketProvider(
     private val equalizerService: EqualizerService
 ) : FarmingMarketProvider() {
 
-    context(BlockchainGateway)
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
 
         val poolToGauges = equalizerService.gauges.await()
@@ -36,7 +34,7 @@ class EqualizerGaugeMarketProvider(
                     throw IllegalArgumentException("Gauge not found for ${poolingMarket.address}")
                 }
 
-                val gaugeContract = EqualizerGaugeContract(gauge.getOrNull()!!)
+                val gaugeContract = EqualizerGaugeContract(getBlockchainGateway(), gauge.getOrNull()!!)
 
                 val rewards = gaugeContract.getRewards().map { getToken(it) }
                 val stake = getToken(gaugeContract.stake.await())

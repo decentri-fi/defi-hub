@@ -5,7 +5,6 @@ import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.claim.ClaimableRewardFetcher
 import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.position.PositionFetcher
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.market.port.out.FarmingMarketProvider
@@ -21,9 +20,8 @@ class MagpieMasterpenArbitrumFarmProvider : FarmingMarketProvider() {
 
     val magpieAddress = "0x0776c06907ce6ff3d9dbf84ba9b3422d7225942d"
 
-    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
-        val contract = MasterPenPieContract(magpieAddress)
+        val contract = MasterPenPieContract(getBlockchainGateway(), magpieAddress)
         val poolLength = contract.poolLength.await()
         return (0 until poolLength.toInt()).parMap(concurrency = 8) { index ->
             val stakingTokenAddress = contract.registeredToken(index.toBigInteger())

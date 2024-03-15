@@ -5,7 +5,6 @@ import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.map
 import io.defitrack.common.utils.refreshable
-import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.market.port.out.LendingMarketProvider
 import io.defitrack.market.domain.lending.LendingMarket
@@ -16,14 +15,12 @@ import io.defitrack.protocol.ironbank.IronBankComptrollerContract
 import io.defitrack.protocol.ironbank.IronBankService
 import io.defitrack.protocol.ironbank.IronbankTokenContract
 import io.defitrack.protocol.application.ironbank.lending.invest.CompoundLendingInvestmentPreparer
-import org.springframework.cglib.core.Block
 import java.math.BigInteger
 
 abstract class IronBankLendingMarketProvider(
     private val ironBankService: IronBankService,
 ) : LendingMarketProvider() {
 
-    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<LendingMarket> {
         return getTokenContracts().parMapNotNull(concurrency = 8) { contract ->
             catch {
@@ -85,7 +82,6 @@ abstract class IronBankLendingMarketProvider(
         return Protocol.IRON_BANK
     }
 
-    context(BlockchainGateway)
     private suspend fun getTokenContracts(): List<IronbankTokenContract> {
         return getComptroller().getMarkets().map { market ->
             getIronBankTokenContract(market)
@@ -96,9 +92,9 @@ abstract class IronBankLendingMarketProvider(
         return IronbankTokenContract(market)
     }
 
-    context(BlockchainGateway)
     private fun getComptroller(): IronBankComptrollerContract {
         return IronBankComptrollerContract(
+            getBlockchainGateway(),
             ironBankService.getComptroller()
         )
     }

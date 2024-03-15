@@ -10,15 +10,15 @@ import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.protocol.sushiswap.contract.MasterChefBasedContract
 import kotlinx.coroutines.Deferred
-import org.springframework.cglib.core.Block
 import java.math.BigInteger
 
-context(BlockchainGateway)
 class PolycatMasterChefContract(
+    contractAccessor: BlockchainGateway,
     address: String,
 ) : MasterChefBasedContract(
     "fish",
     "pendingFish",
+    contractAccessor,
     address
 ) {
 

@@ -3,12 +3,12 @@ package io.defitrack.protocol.mycelium
 import io.defitrack.abi.TypeUtils.Companion.address
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 
-context(BlockchainGateway)
 class RewardRouter02Contract(
+    blockchainGateway: BlockchainGateway,
     address: String
-) : EvmContract(address) {
+) : DeprecatedEvmContract(blockchainGateway, address) {
 
     val stakedMlpTracker = constant<String>("stakedMlpTracker", address())
     val feeMlpTracker = constant<String>("feeMlpTracker", address())

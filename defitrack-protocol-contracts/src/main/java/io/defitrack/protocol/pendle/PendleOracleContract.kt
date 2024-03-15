@@ -6,13 +6,12 @@ import io.defitrack.abi.TypeUtils.Companion.toUint32
 import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.evm.contract.BlockchainGateway
-import io.defitrack.evm.contract.EvmContract
+import io.defitrack.evm.contract.DeprecatedEvmContract
 import java.math.BigDecimal
 import java.math.BigInteger
 
-context(BlockchainGateway)
-class PendleOracleContract(address: String) : EvmContract(
-    address
+class PendleOracleContract(blockchainGateway: BlockchainGateway, address: String) : DeprecatedEvmContract(
+    blockchainGateway, address
 ) {
 
     suspend fun getPtToAssetRate(market: String, duration: Int = 1): BigDecimal {
