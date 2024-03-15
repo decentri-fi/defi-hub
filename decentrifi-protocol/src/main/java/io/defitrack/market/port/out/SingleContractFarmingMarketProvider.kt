@@ -10,7 +10,6 @@ import io.defitrack.transaction.PreparedTransaction.Companion.selfExecutingTrans
 
 abstract class SingleContractFarmingMarketProvider : FarmingMarketProvider() {
 
-    context(BlockchainGateway)
     override suspend fun fetchMarkets(): List<FarmingMarket> {
         val config = single()
         val stakedToken = getToken(config.contract.stakedToken.await())
@@ -32,7 +31,6 @@ abstract class SingleContractFarmingMarketProvider : FarmingMarketProvider() {
         ).nel()
     }
 
-    context(BlockchainGateway)
     abstract suspend fun single(): SingleFarmingConfig
 
     data class SingleFarmingConfig(

@@ -79,12 +79,10 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
         return 1
     }
 
-    context(BlockchainGateway)
     protected open suspend fun produceMarkets(): Flow<T> {
         return emptyFlow()
     }
 
-    context(BlockchainGateway)
     protected open suspend fun fetchMarkets(): List<T> {
         return emptyList()
     }
@@ -116,10 +114,8 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
                     putInCache(it)
                 }
 
-                with(getBlockchainGateway()) {
-                    produceMarkets().collect {
-                        putInCache(it)
-                    }
+                produceMarkets().collect {
+                    putInCache(it)
                 }
             } catch (ex: Exception) {
                 logger.error("something went wrong trying to populate the cache", ex)
@@ -247,5 +243,9 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
         return with(blockchainGateway) {
             ERC20Contract(address)
         }
+    }
+
+    fun <T : EvmContract> createContract(creator: context(BlockchainGateway) () -> T): T {
+        return creator(getBlockchainGateway())
     }
 }

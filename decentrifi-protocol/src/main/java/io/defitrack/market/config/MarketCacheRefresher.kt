@@ -41,9 +41,15 @@ class MarketCacheRefresher(
             }
             logger.info("Initial population of all caches.")
             val fullMeasurement = measureTime {
-                poolingMarketProviders.sortedBy { it.order() }.forEach { it.populateCaches() }
-                lendingMarketProviders.sortedBy { it.order() }.forEach { it.populateCaches() }
-                farmingMarketProviders.sortedBy { it.order() }.forEach { it.populateCaches() }
+                poolingMarketProviders.sortedBy { it.order() }.forEach {
+                    it.populateCaches()
+                }
+                lendingMarketProviders.sortedBy { it.order() }.forEach {
+                    it.populateCaches()
+                }
+                farmingMarketProviders.sortedBy { it.order() }.forEach {
+                    it.populateCaches()
+                }
                 claimableMarketProviders.forEach { it.populateCaches() }
             }
             logger.info("done with initial population of all caches. (took ${fullMeasurement.inWholeSeconds} seconds)")

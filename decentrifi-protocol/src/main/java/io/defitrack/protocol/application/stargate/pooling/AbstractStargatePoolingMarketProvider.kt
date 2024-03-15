@@ -24,11 +24,12 @@ abstract class AbstractStargatePoolingMarketProvider(
         return Protocol.STARGATE
     }
 
-    context(BlockchainGateway)
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
-        val pools = StargatePoolFactory(
-            stargateService.getPoolFactory()
-        ).getPools().filter {
+        val pools = createContract {
+            StargatePoolFactory(
+                stargateService.getPoolFactory()
+            )
+        }.getPools().filter {
             it != "0x0000000000000000000000000000000000000000"
         }
 
