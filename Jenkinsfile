@@ -12,7 +12,7 @@ pipeline {
                 }
             }
             steps {
-                sh 'mvn clean package -U'
+                sh 'mvn clean verify -U'
             }
         }
     }
