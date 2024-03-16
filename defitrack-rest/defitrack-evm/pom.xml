@@ -7,7 +7,7 @@
 
     <parent>
         <groupId>io.defitrack</groupId>
-        <artifactId>defitrack-parent</artifactId>
+        <artifactId>defitrack-rest</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
@@ -15,11 +15,6 @@
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.defitrack</groupId>
-            <artifactId>defitrack-common</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>io.defitrack</groupId>

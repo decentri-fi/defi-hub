@@ -1,6 +1,7 @@
 package io.defitrack.price.external.adapter.pendle
 
 import arrow.core.Either
+import arrow.core.Either.Companion.catch
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.price.domain.GetPriceCommand
@@ -34,13 +35,14 @@ abstract class PendlePriceService(
             gateway, getAddress().ptOracleContract
         )
 
-        val factory = PendleMarketFactoryContract(
-            gateway,
-            getAddress().marketFactoryV3
-        )
+        val factory = with(gateway) {
+            PendleMarketFactoryContract(
+                getAddress().marketFactoryV3
+            )
+        }
 
         factory.getMarkets(startBlock).forEach {
-            Either.catch {
+            catch {
                 val market = with(gateway) {
                     PendleMarketContract(
                         address = it.market
