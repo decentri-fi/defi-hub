@@ -4,7 +4,7 @@ pipeline {
     }
     agent any
     stages {
-        stage('compile') {
+        stage('package') {
            agent {
                 docker {
                     image 'maven:3.9.6-amazoncorretto-21'
@@ -12,30 +12,8 @@ pipeline {
                 }
             }
             steps {
-                sh 'mvn clean compile -U'
+                sh 'mvn clean package -U'
             }
-        }
-        stage('Test') {
-           agent {
-                docker {
-                    image 'maven:3.9.6-amazoncorretto-21'
-                    args '-u root -v /var/jenkins_home:/root'
-                }
-            }
-            steps {
-                sh 'mvn test'
-             }
-         }
-        stage('Package') {
-          agent {
-                docker {
-                    image 'maven:3.9.6-amazoncorretto-21'
-                    args '-u root -v /var/jenkins_home:/root'
-                }
-            }
-             steps {
-                 sh "mvn package -DskipTests"
-             }
         }
     }
 }
