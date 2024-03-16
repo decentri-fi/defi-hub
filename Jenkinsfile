@@ -10,12 +10,6 @@ pipeline {
                 }
     stages {
         stage('package') {
-           agent {
-                docker {
-                    image 'maven:3.9.6-amazoncorretto-21'
-                    args '-v /var/jenkins_home:/root'
-                }
-            }
             steps {
                 sh 'mvn clean verify -U'
             }
