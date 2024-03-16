@@ -53,7 +53,7 @@ class LendingMarketListener(
                     30
                 )
             )
-            logger.info(
+            logger.debug(
                 "Price for {} on {} updated to {}",
                 market.marketToken!!.address,
                 market.network.name,
