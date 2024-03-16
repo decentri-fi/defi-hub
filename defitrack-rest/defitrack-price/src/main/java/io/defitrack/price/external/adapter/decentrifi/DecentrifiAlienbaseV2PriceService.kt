@@ -31,7 +31,7 @@ class DecentrifiAlienbaseV2PriceService(
     override suspend fun getAllPrices() = runBlocking {
         val pools = getAlienbasePools()
         importUsdPairs(pools)
-        importEthPairs(pools)
+      //  importEthPairs(pools)
         logger.info("Decentri Alienbase V2 Underlying Price Repository populated with ${prices.size} prices")
         prices
     }
