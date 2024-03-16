@@ -25,18 +25,18 @@ import kotlin.coroutines.EmptyCoroutineContext
 
 @Component
 @ConditionalOnCompany(Company.PANCAKESWAP)
-@ConditionalOnNetwork(Network.POLYGON_ZKEVM)
-class PancakeswapV3PoolingMarketProvider(
+@ConditionalOnNetwork(Network.BASE)
+class PancakeswapV3BasePoolingMarketProvider(
     private val pancakeswapV3Prefetcher: PancakeswapV3Prefetcher
 ) : PoolingMarketProvider() {
 
-    val startBlock = "750149"
+    val startBlock = "2912007"
 
     val prefetches = lazyAsync {
         pancakeswapV3Prefetcher.getPrefetches(getNetwork())
     }
 
-    val poolFactoryAddress = "0x0bfbcf9fa4f9c56b0f40a671ad40e0805a091865"
+    val poolFactoryAddress = "0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865"
 
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
         uniswapV3PoolFactoryContract.await().getPools(startBlock).parMapNotNull(EmptyCoroutineContext, 12) {
@@ -113,6 +113,6 @@ class PancakeswapV3PoolingMarketProvider(
     }
 
     override fun getNetwork(): Network {
-        return Network.POLYGON_ZKEVM
+        return Network.BASE
     }
 }
