@@ -34,7 +34,7 @@ pipeline {
                 }
             }
              steps {
-                 sh "./mvnw package -DskipTests"
+                 sh "mvn package -DskipTests"
              }
         }
     }
