@@ -19,7 +19,7 @@ import java.math.BigDecimal
 import java.math.BigInteger
 
 
-@Component
+//@Component
 @ConditionalOnCompany(Company.PANCAKESWAP)
 class PancakeswapV3PoolingPositionProvider(
     private val uniswapV3PoolingMarketProvider: PancakeswapV3PoolingMarketProvider,

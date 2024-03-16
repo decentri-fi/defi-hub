@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.channelFlow
 import org.springframework.stereotype.Component
 import kotlin.coroutines.EmptyCoroutineContext
 
-@Component
+//@Component
 @ConditionalOnCompany(Company.PANCAKESWAP)
 @ConditionalOnNetwork(Network.POLYGON_ZKEVM)
 class PancakeswapV3PoolingMarketProvider(
