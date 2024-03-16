@@ -19,7 +19,7 @@ import java.math.BigDecimal
 import java.nio.charset.Charset
 
 @Service
-class CoinGeckoPriceService(
+class   CoinGeckoPriceService(
     private val httpClient: HttpClient,
     private val objectMapper: ObjectMapper
 ) {

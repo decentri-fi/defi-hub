@@ -50,6 +50,7 @@ class StablecoinPriceProvider(private val erC20Resource: ERC20Resource) : Extern
                 erC20Resource.getTokenInformation(Network.BASE, "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"),
                 erC20Resource.getTokenInformation(Network.BASE, "0x50c5725949a6f0c72e6c4a641f24049a917db0cb"),
                 erC20Resource.getTokenInformation(Network.BASE, "0xda3de145054ed30ee937865d31b500505c4bdfe7"),
+                erC20Resource.getTokenInformation(Network.BASE, "0xd9aaec86b65d86f6a7b5b1b0c42ffa531710b6ca"),
             ),
             Network.POLYGON_ZKEVM to listOf(
                 erC20Resource.getTokenInformation(Network.POLYGON_ZKEVM, "0x1e4a5963abfd975d8c9021ce480b42188849d41d"),

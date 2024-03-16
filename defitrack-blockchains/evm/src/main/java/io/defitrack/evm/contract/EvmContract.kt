@@ -93,7 +93,7 @@ abstract class EvmContract(
     }
 
     suspend fun readMultiCall(functions: List<ContractCall>): List<MultiCallResult> {
-        return readMultiCall(functions)
+        return (this@BlockchainGateway).readMultiCall(functions)
     }
 
     suspend fun read(

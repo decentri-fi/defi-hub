@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 @ConditionalOnProperty(name = ["rabbitmq.enabled"], havingValue = "true", matchIfMissing = false)
+@ConditionalOnBean(DecentrifiPoolingPriceService::class)
 class PoolingMarketListener(
     private val priceAggregator: PriceAggregator,
     private val decentrifiPoolingPriceService: DecentrifiPoolingPriceService,
