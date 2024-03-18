@@ -58,7 +58,7 @@ class BlockchainGateway(
     suspend fun readMultiCall(
         elements: List<ContractCall>,
     ): List<MultiCallResult> {
-        Either.catch {
+        return Either.catch {
             multicallCaller.readMultiCall(elements) { address, function ->
                 executeCall(address, function)
             }
