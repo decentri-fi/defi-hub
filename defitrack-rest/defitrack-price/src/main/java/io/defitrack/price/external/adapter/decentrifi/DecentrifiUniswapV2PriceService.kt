@@ -27,16 +27,11 @@ class DecentrifiUniswapV2PriceService(
         return getPrices()
     }
 
-    private val logger = LoggerFactory.getLogger(this::class.java)
-
     private val prices: MutableList<ExternalPrice> = mutableListOf()
 
     fun getPrices(): List<ExternalPrice> = runBlocking {
-        logger.info("fetching prices for uniswap v2")
         val pools = getUniswapV2Pools()
-
         importUsdPairs(pools)
-        logger.info("Decentri Uniswap V2 Underlying Price Repository populated with ${prices.size} prices")
         prices
     }
 
