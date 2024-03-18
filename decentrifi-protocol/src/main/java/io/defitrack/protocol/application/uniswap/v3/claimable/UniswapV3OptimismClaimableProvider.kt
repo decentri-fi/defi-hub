@@ -1,12 +1,12 @@
-package io.defitrack.protocol.uniswap.v3.claimable
+package io.defitrack.protocol.application.uniswap.v3.claimable
 
+import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.claim.AbstractUserClaimableProvider
 import io.defitrack.claim.UserClaimable
 import io.defitrack.common.network.Network
-import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.uniswap.v3.pooling.UniswapV3OptimismPoolingMarketProvider
+import io.defitrack.protocol.application.uniswap.v3.pooling.UniswapV3OptimismPoolingMarketProvider
 import io.defitrack.uniswap.v3.UniswapPosition
 import io.defitrack.uniswap.v3.UniswapPositionsV3Contract
 import io.defitrack.uniswap.v3.UniswapV3PoolContract

@@ -33,8 +33,7 @@ class PoolingMarketVOMapper(
                 totalSupply = totalSupply.get(),
                 metadata = metadata,
                 updatedAt = Date.from(updatedAt.get().toInstant(ZoneOffset.UTC)).time,
-                deprecated = deprecated,
-                historySupported = historicEventExtractor != null
+                deprecated = deprecated
             )
         }
     }

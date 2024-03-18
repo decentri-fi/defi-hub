@@ -1,12 +1,12 @@
-package io.defitrack.protocol.application
+package io.defitrack.protocol.application.swapfish
 
 import arrow.fx.coroutines.parMap
+import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.refreshable
-import io.defitrack.architecture.conditional.ConditionalOnCompany
-import io.defitrack.market.port.out.FarmingMarketProvider
-import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.evm.position.PositionFetcher
+import io.defitrack.market.domain.farming.FarmingMarket
+import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.sushiswap.contract.MasterChefBasedContract

@@ -30,6 +30,5 @@ data class PoolingMarket(
     val erc20Compatible: Boolean = true,
     val metadata: Map<String, Any>,
     val internalMetadata: Map<String, Any>,
-    override val deprecated: Boolean,
-    val historicEventExtractor: HistoricEventExtractor? = null,
+    override val deprecated: Boolean
 ) : DefiMarket(id, "pooling", type, protocol, network, deprecated)

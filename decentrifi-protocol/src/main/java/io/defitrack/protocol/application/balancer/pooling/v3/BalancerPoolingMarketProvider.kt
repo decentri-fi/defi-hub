@@ -5,22 +5,19 @@ import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.refreshable
 import io.defitrack.erc20.domain.FungibleTokenInformation
-import io.defitrack.price.domain.GetPriceCommand
-import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.market.domain.PoolingMarketTokenShare
+import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.balancer.contract.BalancerPoolContract
 import io.defitrack.protocol.balancer.contract.BalancerService
 import io.defitrack.protocol.balancer.contract.BalancerVaultContract
-import io.defitrack.protocol.application.balancer.pooling.history.BalancerPoolingHistoryProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import java.math.BigInteger
 
 abstract class BalancerPoolingMarketProvider(
     private val balancerService: BalancerService,
-    private val balancerPoolingHistoryProvider: BalancerPoolingHistoryProvider
 ) : PoolingMarketProvider() {
 
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
@@ -107,10 +104,7 @@ abstract class BalancerPoolingMarketProvider(
                     }.getOrElse {
                         getToken(poolContract.address).totalDecimalSupply()
                     }
-                },
-                historicEventExtractor = balancerPoolingHistoryProvider.historicEventExtractor(
-                    poolId, getNetwork()
-                )
+                }
             ).some()
         } catch (e: Exception) {
             logger.error("Error creating market for pool ${poolContract.address}:  ex: {}", e.message)

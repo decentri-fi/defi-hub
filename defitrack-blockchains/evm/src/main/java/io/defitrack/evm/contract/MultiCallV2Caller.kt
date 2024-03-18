@@ -1,41 +1,30 @@
 package io.defitrack.evm.contract
 
+import arrow.fx.coroutines.parMap
 import io.defitrack.abi.TypeUtils.Companion.dynamicArray
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toBool
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.sync.Semaphore
-import kotlinx.coroutines.sync.withPermit
 import org.apache.commons.codec.binary.Hex
 import org.slf4j.LoggerFactory
 import org.web3j.abi.FunctionEncoder
 import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.datatypes.*
 import org.web3j.abi.datatypes.Function
-import kotlin.math.log
 
 class MultiCallV2Caller(val address: String) : MultiCallCaller {
 
     val logger = LoggerFactory.getLogger(this::class.java)
 
-    val semaphore = Semaphore(10)
-
     override suspend fun readMultiCall(
         elements: List<ContractCall>,
         executeCall: suspend (address: String, function: Function) -> List<Type<*>>
-    ): List<MultiCallResult> = coroutineScope {
+    ): List<MultiCallResult> {
         if (elements.isEmpty()) {
-            return@coroutineScope emptyList()
+            return emptyList()
         } else if (elements.size > 200) {
-            return@coroutineScope elements.chunked(200).map {
-                async {
-                    semaphore.withPermit {
-                        readMultiCall(it, executeCall)
-                    }
-                }
-            }.awaitAll().flatten()
+            return elements.chunked(200).parMap(concurrency = 8) {
+                readMultiCall(it, executeCall)
+            }.flatten()
         }
 
         val encodedFunctions = elements.map {
@@ -59,7 +48,7 @@ class MultiCallV2Caller(val address: String) : MultiCallCaller {
         )
 
         val executedCall = executeCall(address, aggregateFunction)
-        return@coroutineScope if (executedCall.isEmpty()) {
+        return if (executedCall.isEmpty()) {
             logger.info("empty multicall, it failed")
             throw MulticallFailedException()
         } else {

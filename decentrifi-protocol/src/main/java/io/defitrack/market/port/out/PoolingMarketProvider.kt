@@ -31,8 +31,7 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
         erc20Compatible: Boolean = true,
         metadata: Map<String, Any> = emptyMap(),
         internalMetadata: Map<String, Any> = emptyMap(),
-        deprecated: Boolean = false,
-        historicEventExtractor: HistoricEventExtractor? = null,
+        deprecated: Boolean = false
     ): PoolingMarket {
         val actualTokens = tokens ?: breakdown?.get()?.map {
             it.token
@@ -57,7 +56,6 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
             internalMetadata = internalMetadata,
             deprecated = deprecated,
             type = type,
-            historicEventExtractor = historicEventExtractor,
         )
     }
 

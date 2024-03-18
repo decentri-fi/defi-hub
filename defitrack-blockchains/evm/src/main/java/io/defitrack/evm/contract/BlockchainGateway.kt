@@ -1,5 +1,7 @@
 package io.defitrack.evm.contract
 
+import arrow.core.Either
+import arrow.core.getOrElse
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.michaelbull.retry.policy.binaryExponentialBackoff
@@ -56,10 +58,16 @@ class BlockchainGateway(
     suspend fun readMultiCall(
         elements: List<ContractCall>,
     ): List<MultiCallResult> {
-        return multicallCaller.readMultiCall(elements) { address, function ->
-            executeCall(address, function)
-        }
+        Either.catch {
+            multicallCaller.readMultiCall(elements) { address, function ->
+                executeCall(address, function)
+            }
+        }.mapLeft {
+            logger.error("Error reading multicall for network $network (${it.message})")
+            emptyList<MultiCallResult>()
+        }.getOrElse { emptyList() }
     }
+
     suspend fun getEventsAsEthLog(getEventsLog: GetEventLogsCommand): List<LogObject> {
         val result = httpClient.post("$endpoint/events/logs") {
             contentType(ContentType.Application.Json)
