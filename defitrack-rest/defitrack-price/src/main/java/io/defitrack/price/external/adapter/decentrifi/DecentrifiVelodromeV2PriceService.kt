@@ -21,6 +21,9 @@ class DecentrifiVelodromeV2PriceService(
     private val stablecoinPriceProvider: StablecoinPriceProvider,
 ) : ExternalPriceService {
 
+
+    val weth = "0x4200000000000000000000000000000000000006"
+
     override suspend fun getAllPrices(): List<ExternalPrice> {
         return getPrices()
     }
@@ -33,6 +36,7 @@ class DecentrifiVelodromeV2PriceService(
         val pools = getUniswapV2Pools()
 
         importNonStableUsdPairs(pools)
+        importEthPairs(pools)
         logger.info("Decentri Velodrome V2 Underlying Price Repository populated with ${prices.size} prices")
         prices
     }
@@ -86,6 +90,50 @@ class DecentrifiVelodromeV2PriceService(
             }
         }
     }
+
+    private suspend fun importEthPairs(pools: List<PoolingMarketInformation>) {
+        val usdPairs = pools.filter { pool ->
+            pool.breakdown?.any { share ->
+                share.token.address.lowercase() == weth
+            } ?: false
+        }
+
+
+        usdPairs.filter {
+            it.metadata.getOrDefault("stable", "false").toString() == "false"
+        }.forEach { pool ->
+            val ethShare = pool.breakdown?.find { share ->
+                share.token.address.lowercase() == weth
+            }
+
+            val otherShare = pool.breakdown?.find { share ->
+                share.token.address.lowercase() != weth
+            }
+
+            val ethPrice = prices.find {
+                it.address.lowercase() == weth
+            } ?: throw IllegalStateException("ETH price not found")
+
+            if (ethShare != null && otherShare != null && otherShare.reserve > BigInteger.ZERO) {
+                val otherprice = ethShare.reserve.asEth(ethShare.token.decimals)
+                    .times(ethPrice.price)
+                    .dividePrecisely(
+                        otherShare.reserve.asEth(otherShare.token.decimals)
+                    )
+                prices.add(
+                    ExternalPrice(
+                        otherShare.token.address,
+                        pool.network.toNetwork(),
+                        otherprice,
+                        "velodrome-v2",
+                        pool.name,
+                        order()
+                    )
+                )
+            }
+        }
+    }
+
 
     suspend fun getUniswapV2Pools(): List<PoolingMarketInformation> {
         return markets.getPoolingMarkets("velodrome_v2")
