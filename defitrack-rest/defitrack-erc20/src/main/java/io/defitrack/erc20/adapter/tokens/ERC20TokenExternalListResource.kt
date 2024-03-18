@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
 @Component
-class ERC20TokenExternalListResource (
+class ERC20TokenExternalListResource(
     private val objectMapper: ObjectMapper,
     private val client: HttpClient
 ) : ERC20TokenListResource {
@@ -24,14 +24,14 @@ class ERC20TokenExternalListResource (
     suspend fun populateTokens() {
         tokenList = listOf(
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/ethereum/uniswap-default.tokenlist.json",
-            //         "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/polygon/quickswap-default.tokenlist.json",
-            //         "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/polygon/polygon.vetted.tokenlist.json",
-            //         "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/polygon/polygon.listed.tokenlist.json",
-            //         "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/ethereum/extendedtokens.uniswap.json",
-            //         "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/arbitrum/tokenlist.json",
-            //         "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/optimism/optimism.tokenlist.json",
-            //         "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/polygon-zkevm/tokenlist.json",
-            //         "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/base/tokenlist.json",
+            "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/polygon/quickswap-default.tokenlist.json",
+            "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/polygon/polygon.vetted.tokenlist.json",
+            "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/polygon/polygon.listed.tokenlist.json",
+            "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/ethereum/extendedtokens.uniswap.json",
+            "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/arbitrum/tokenlist.json",
+            "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/optimism/optimism.tokenlist.json",
+            "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/polygon-zkevm/tokenlist.json",
+            "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/base/tokenlist.json",
         ).flatMap {
             try {
                 fetchFromTokenList(it)
@@ -72,7 +72,6 @@ class ERC20TokenExternalListResource (
         }
     }
 }
-
 
 
 val NATIVE_WRAP_MAPPING = mapOf(
