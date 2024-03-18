@@ -15,7 +15,7 @@ class PendleEthereumPriceService(
     pendleAddressBook: PendleAddressBook,
     priceResource: PriceCalculator
 ) : PendlePriceService(
-    blockchainGatewayProvider, pendleAddressBook, priceResource, "154873897"
+    blockchainGatewayProvider, pendleAddressBook, priceResource, "18669498"
 ) {
 
     override fun getNetwork() = Network.ETHEREUM
