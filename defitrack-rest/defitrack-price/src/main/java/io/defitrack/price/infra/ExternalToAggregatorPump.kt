@@ -21,19 +21,19 @@ class ExternalToAggregatorPump(
     @Scheduled(fixedRate = 1000 * 60 * 60) //every hour
     fun init() = runBlocking {
         logger.info("found ${externalPriceServices.size} external price services")
-        externalPriceServices.sortedBy {
-            it.order()
-        }.forEach {
-            Either.catch {
-                val allPrices = it.getAllPrices()
-                logger.info("found ${allPrices.size} prices from ${it.javaClass.simpleName}")
-                allPrices.forEach { externalPrice ->
-                    priceAggregator.addPrice(externalPrice)
+        externalPriceServices
+            .sortedBy(ExternalPriceService::order)
+            .forEach {
+                Either.catch {
+                    val allPrices = it.getAllPrices()
+                    logger.info("found ${allPrices.size} prices from ${it.javaClass.simpleName}")
+                    allPrices.forEach { externalPrice ->
+                        priceAggregator.addPrice(externalPrice)
+                    }
+                }.mapLeft {
+                    logger.error("Error fetching prices from ${it.javaClass.simpleName}", it)
                 }
-            }.mapLeft {
-                logger.error("Error fetching prices from ${it.javaClass.simpleName}", it)
             }
-        }
         logger.info("External prices fetched with ${priceAggregator.getAllPrices().size} prices.")
     }
 }

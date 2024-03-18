@@ -1,6 +1,7 @@
 package io.defitrack.price.external.adapter.decentrifi
 
 import arrow.fx.coroutines.parMap
+import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.marketinfo.port.out.Markets
@@ -33,10 +34,16 @@ class DecentrifiFarmingPriceService(
                 marketResource.getFarmingMarkets(proto.slug)
                     .filter {
                         it.token != null && (it.marketSize ?: BigDecimal.ZERO) > BigDecimal.ONE
-                    }.parMap(concurrency = 12) { farm ->
+                    }.parMapNotNull(concurrency = 12) { farm ->
+
+                        val supply = farm.token!!.totalSupply.asEth(farm.token!!.decimals)
+
+                        if (supply == BigDecimal.ZERO) {
+                            return@parMapNotNull null
+                        }
 
                         val pricePerToken = (farm.marketSize ?: BigDecimal.ZERO).dividePrecisely(
-                            farm.token!!.totalSupply.asEth(farm.token!!.decimals)
+                            supply
                         )
 
                         ExternalPrice(
