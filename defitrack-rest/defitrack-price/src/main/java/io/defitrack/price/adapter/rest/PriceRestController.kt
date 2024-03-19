@@ -56,7 +56,7 @@ class PriceRestController(
 
     fun getAlternatives(address: String, network: Network): List<String> {
         val entries = alternatives[network]
-        return entries?.values?.first { all ->
+            return entries?.values?.firstOrNull { all ->
             all.contains(address.lowercase())
         } ?: listOf(address.lowercase())
     }

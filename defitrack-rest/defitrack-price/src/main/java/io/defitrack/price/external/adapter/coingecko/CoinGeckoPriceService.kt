@@ -1,5 +1,7 @@
 package io.defitrack.price.external.adapter.coingecko
 
+import arrow.core.Either
+import arrow.core.getOrElse
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.JsonParser
@@ -19,7 +21,7 @@ import java.math.BigDecimal
 import java.nio.charset.Charset
 
 @Service
-class   CoinGeckoPriceService(
+class CoinGeckoPriceService(
     private val httpClient: HttpClient,
     private val objectMapper: ObjectMapper
 ) {
@@ -40,10 +42,14 @@ class   CoinGeckoPriceService(
 
     suspend fun getCoingeckoTokens(): Set<CoingeckoToken> {
         return tokenCache.get("all") {
-            val result = withContext(Dispatchers.IO) {
-                httpClient.get(coinlistLocation).bodyAsText(Charset.defaultCharset())
-            }
-            objectMapper.readValue(result, object : TypeReference<Set<CoingeckoToken>>() {})
+            Either.catch {
+                val result = withContext(Dispatchers.IO) {
+                    httpClient.get(coinlistLocation).bodyAsText(Charset.defaultCharset())
+                }
+                objectMapper.readValue(result, object : TypeReference<Set<CoingeckoToken>>() {})
+            }.mapLeft {
+                logger.info("error fetching coingecko tokens: {}", it.message)
+            }.getOrElse { emptySet() }
         }
     }
 
