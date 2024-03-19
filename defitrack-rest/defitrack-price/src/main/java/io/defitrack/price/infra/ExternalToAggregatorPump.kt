@@ -1,6 +1,7 @@
 package io.defitrack.price.infra
 
 import arrow.core.Either
+import arrow.core.Either.Companion.catch
 import io.defitrack.price.application.PriceAggregator
 import io.defitrack.price.external.domain.ExternalPrice
 import io.defitrack.price.port.out.ExternalPriceService
@@ -25,7 +26,7 @@ class ExternalToAggregatorPump(
         externalPriceServices
             .sortedBy(ExternalPriceService::order)
             .forEach {
-                Either.catch {
+                catch {
                     val allPrices = it.getAllPrices()
                     logger.info("collecting prices from ${it.javaClass.simpleName}")
                     allPrices.collect { externalPrice ->

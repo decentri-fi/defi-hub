@@ -31,10 +31,18 @@ class CoinGeckoPriceService(
 
     val tokenCache = Cache.Builder<String, Set<CoingeckoToken>>().build()
 
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 4) // every 4 hours
+    @PostConstruct// every 4 hours
     fun init() = runBlocking {
         val tokens = getCoingeckoTokens()
         logger.info("coingecko token cache initialized with ${tokens.size} tokens")
+        if (tokens.isEmpty()) {
+            throw IllegalStateException("coingecko token cache is empty, we should try again")
+        }
+    }
+
+    @Scheduled(fixedDelay = 1000 * 60 * 60 * 4, initialDelay = 1000 * 60 * 60 * 4)
+    fun scheduledRefresh() = runBlocking {
+        getCoingeckoTokens()
     }
 
     suspend fun getCoingeckoTokens(): Set<CoingeckoToken> {
