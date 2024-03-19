@@ -83,7 +83,7 @@ class CoinGeckoPriceService(
                 }
             }
         } catch (ex: Exception) {
-            logger.debug("error trying to fetch price for $address", ex)
+            logger.info("error trying to fetch price for $address", ex)
             null
         }
     }

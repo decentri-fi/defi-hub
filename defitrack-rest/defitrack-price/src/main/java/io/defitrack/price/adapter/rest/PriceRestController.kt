@@ -8,6 +8,7 @@ import io.defitrack.price.external.domain.NO_EXTERNAL_PRICE
 import io.defitrack.price.port.`in`.PriceCalculator
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
+import java.math.BigDecimal
 
 @RestController
 @RequestMapping("/")
@@ -47,7 +48,15 @@ class PriceRestController(
         return try {
             priceAggregator.getAllPrices().find {
                 alternatives.contains(it.address.lowercase())
-            } ?: return NO_EXTERNAL_PRICE
+            } ?: priceCalculator.calculatePrice(
+                GetPriceCommand(
+                    address, network, BigDecimal.ONE
+                )
+            ).let {
+                ExternalPrice(
+                    address, network, it.toBigDecimal(), "unknown", "unknown", 0
+                )
+            }
         } catch (ex: Exception) {
             logger.error("Error calculating price for $address on $networkName", ex)
             return NO_EXTERNAL_PRICE
@@ -56,7 +65,7 @@ class PriceRestController(
 
     fun getAlternatives(address: String, network: Network): List<String> {
         val entries = alternatives[network]
-            return entries?.values?.firstOrNull { all ->
+        return entries?.values?.firstOrNull { all ->
             all.contains(address.lowercase())
         } ?: listOf(address.lowercase())
     }

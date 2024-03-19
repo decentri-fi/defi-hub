@@ -16,7 +16,7 @@ class AggregatedPriceProvider(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    val priceCache = Cache.Builder<String, BigDecimal>().expireAfterWrite(2.minutes).build()
+    val priceCache = Cache.Builder<String, BigDecimal>().expireAfterWrite(5.minutes).build()
 
     suspend fun getPrice(token: FungibleTokenInformation): BigDecimal {
         return priceCache.get("${token.address.lowercase()}-${token.network.toNetwork().slug}") {
