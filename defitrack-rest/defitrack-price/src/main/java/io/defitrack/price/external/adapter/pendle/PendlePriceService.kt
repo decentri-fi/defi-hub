@@ -1,13 +1,11 @@
 package io.defitrack.price.external.adapter.pendle
 
-import arrow.core.Either
 import arrow.core.Either.Companion.catch
 import io.defitrack.common.network.Network
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.price.external.domain.ExternalPrice
 import io.defitrack.price.port.out.ExternalPriceService
-import io.defitrack.price.port.PriceResource
 import io.defitrack.price.port.`in`.PriceCalculator
 import io.defitrack.protocol.pendle.*
 import org.slf4j.LoggerFactory
@@ -16,7 +14,7 @@ import java.math.BigDecimal
 abstract class PendlePriceService(
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
     private val pendleAddressBook: PendleAddressBook,
-    private val priceResource: PriceCalculator,
+    private val priceCalculator: PriceCalculator,
     private val startBlock: String
 ) : ExternalPriceService {
 
@@ -58,7 +56,7 @@ abstract class PendlePriceService(
                     ExternalPrice(
                         it.pt,
                         getNetwork(),
-                        priceResource.calculatePrice(
+                        priceCalculator.calculatePrice(
                             GetPriceCommand(
                                 asset,
                                 getNetworkForToken(asset),
@@ -75,7 +73,7 @@ abstract class PendlePriceService(
                     ExternalPrice(
                         syContract.address.lowercase(),
                         getNetwork(),
-                        priceResource.calculatePrice(
+                        priceCalculator.calculatePrice(
                             GetPriceCommand(
                                 asset,
                                 getNetworkForToken(asset),

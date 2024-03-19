@@ -26,22 +26,20 @@ class CoinGeckoPriceService(
     private val objectMapper: ObjectMapper
 ) {
 
-    companion object {
-        val coinlistLocation = "https://api.coingecko.com/api/v3/coins/list?include_platform=true"
-        val logger: Logger = LoggerFactory.getLogger(this::class.java)
-    }
+    val logger: Logger = LoggerFactory.getLogger(this::class.java)
+    val coinlistLocation = "https://api.coingecko.com/api/v3/coins/list?include_platform=true"
 
     val tokenCache = Cache.Builder<String, Set<CoingeckoToken>>().build()
 
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 4) // every 4 hours
     fun init() = runBlocking {
-        logger.info("initializing coingecko token cache")
         val tokens = getCoingeckoTokens()
         logger.info("coingecko token cache initialized with ${tokens.size} tokens")
     }
 
     suspend fun getCoingeckoTokens(): Set<CoingeckoToken> {
         return tokenCache.get("all") {
+            logger.info("fetching all coingecko tokens")
             Either.catch {
                 val result = withContext(Dispatchers.IO) {
                     httpClient.get(coinlistLocation).bodyAsText(Charset.defaultCharset())
@@ -72,7 +70,7 @@ class CoinGeckoPriceService(
                             .bodyAsText()
                     val jsonObject = JsonParser.parseString(response)
                     jsonObject.asJsonObject[token.id].asJsonObject["usd"].asBigDecimal.also {
-                        logger.info("had to get ${token.name} on coingecko")
+                        logger.info("had to get ${token.name} on coingecko: {}", it)
                     }
                 }
             }
