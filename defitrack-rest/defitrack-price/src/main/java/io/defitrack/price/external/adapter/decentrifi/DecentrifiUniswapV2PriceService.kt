@@ -23,7 +23,7 @@ class DecentrifiUniswapV2PriceService(
     private val stablecoinPriceProvider: StablecoinPriceProvider,
 ) : ExternalPriceService {
 
-    override fun order(): Int = 50
+    override fun order(): Int = 40
 
     override suspend fun getAllPrices(): Flow<ExternalPrice> = channelFlow {
         getPrices().forEach {

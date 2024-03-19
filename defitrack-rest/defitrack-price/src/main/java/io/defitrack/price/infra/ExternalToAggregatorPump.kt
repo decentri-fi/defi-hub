@@ -27,8 +27,8 @@ class ExternalToAggregatorPump(
             .sortedBy(ExternalPriceService::order)
             .forEach {
                 catch {
-                    val allPrices = it.getAllPrices()
                     logger.info("collecting prices from ${it.javaClass.simpleName}")
+                    val allPrices = it.getAllPrices()
                     allPrices.collect { externalPrice ->
                         priceAggregator.addPrice(externalPrice)
                     }
