@@ -89,7 +89,7 @@ class ERC20TokenService(
             return nativeTokenRepository.getNativeToken(network).some()
         }
         return tokenInformationCache.get(createIndex(address, network)) {
-            fetchTokenInfo(network, address)
+            fetchTokenInfo(network, address, verified)
         }
     }
 

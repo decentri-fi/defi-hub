@@ -1,4 +1,4 @@
-package io.defitrack.price.external.stargate
+package io.defitrack.price.external.adapter.stargate
 
 import io.defitrack.erc20.domain.FungibleTokenInformation
 import io.defitrack.price.domain.GetPriceCommand
