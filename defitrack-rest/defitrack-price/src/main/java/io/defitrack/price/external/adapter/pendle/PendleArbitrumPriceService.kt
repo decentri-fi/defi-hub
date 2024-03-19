@@ -7,7 +7,7 @@ import io.defitrack.protocol.pendle.PendleAddressBook
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 
-//@Component
+@Component
 @ConditionalOnProperty("oracles.pendle.enabled", havingValue = "true", matchIfMissing = true)
 class PendleArbitrumPriceService(
     blockchainGatewayProvider: BlockchainGatewayProvider,
