@@ -19,67 +19,7 @@ import org.springframework.stereotype.Component
 @ConditionalOnNetwork(Network.ETHEREUM)
 @ConditionalOnCompany(Company.PENDLE)
 @Component
-class PendleEthereumLiquidityPoolMarketProvider : PoolingMarketProvider() {
+class PendleEthereumLiquidityPoolMarketProvider : PendleLiquidityPoolMarketProvider(
+    "0x1A6fCc85557BC4fB7B534ed835a03EF056552D52", "18669498", Network.ETHEREUM
 
-    val liquidityMarkets = listOf(
-        "0xf32e58f92e60f4b0a37a69b95d642a471365eae8"
-    )
-
-    override suspend fun fetchMarkets(): List<PoolingMarket> {
-
-        val factory = createContract {
-            PendleMarketFactoryContract(
-                "0x1A6fCc85557BC4fB7B534ed835a03EF056552D52"
-            )
-        }
-
-        return factory.getMarkets().map { marketConfig ->
-
-            val contract = with(getBlockchainGateway()) {
-                PendleMarketContract(
-                    address = marketConfig.market
-                )
-            }
-
-            val tokens = contract.readTokens()
-
-            val yt = getToken(tokens.yt)
-            val pt = getToken(tokens.pt)
-            val sy = getToken(tokens.sy)
-
-            create(
-                tokens = listOf(
-                    pt, sy
-                ),
-                breakdown = refreshable {
-                    listOf(
-                        PoolingMarketTokenShare(
-                            pt, erC20Resource.getBalance(getNetwork(), pt.address, contract.address)
-                        ),
-                        PoolingMarketTokenShare(
-                            sy, erC20Resource.getBalance(getNetwork(), sy.address, contract.address)
-                        )
-                    )
-                },
-                positionFetcher = defaultPositionFetcher(contract.address),
-                name = contract.readName(),
-                identifier = marketConfig.market,
-                address = contract.address,
-                symbol = "PENDLE-LPT",
-                totalSupply = refreshable {
-                    contract.readTotalSupply()
-                }.map {
-                    it.asEth()
-                }
-            )
-        }
-    }
-
-    override fun getProtocol(): Protocol {
-        return Protocol.PENDLE
-    }
-
-    override fun getNetwork(): Network {
-        return Network.ETHEREUM
-    }
-}
+)
