@@ -8,6 +8,8 @@ import io.defitrack.price.external.domain.ExternalPrice
 import io.defitrack.price.port.out.ExternalPriceService
 import io.defitrack.price.port.`in`.PriceCalculator
 import io.defitrack.protocol.pendle.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
 import org.slf4j.LoggerFactory
 import java.math.BigDecimal
 
@@ -104,8 +106,10 @@ abstract class PendlePriceService(
     }
 
 
-    override suspend fun getAllPrices(): List<ExternalPrice> {
-        return getPrices()
+    override suspend fun getAllPrices(): Flow<ExternalPrice> = channelFlow {
+        getPrices().forEach {
+            send(it)
+        }
     }
 
     private fun getAddress(): PendleAddressBook.PendleAddresses {

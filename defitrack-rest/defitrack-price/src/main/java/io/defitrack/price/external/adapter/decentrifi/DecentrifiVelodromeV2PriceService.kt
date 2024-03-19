@@ -7,6 +7,8 @@ import io.defitrack.marketinfo.port.out.Markets
 import io.defitrack.price.external.adapter.stable.StablecoinPriceProvider
 import io.defitrack.price.external.domain.ExternalPrice
 import io.defitrack.price.port.out.ExternalPriceService
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -24,8 +26,10 @@ class DecentrifiVelodromeV2PriceService(
 
     val weth = "0x4200000000000000000000000000000000000006"
 
-    override suspend fun getAllPrices(): List<ExternalPrice> {
-        return getPrices()
+    override suspend fun getAllPrices(): Flow<ExternalPrice> = channelFlow {
+        getPrices().forEach {
+            send(it)
+        }
     }
 
     private val logger = LoggerFactory.getLogger(this::class.java)

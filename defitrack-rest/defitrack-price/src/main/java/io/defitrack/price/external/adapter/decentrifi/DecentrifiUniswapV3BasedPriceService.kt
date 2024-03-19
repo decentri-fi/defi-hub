@@ -16,6 +16,8 @@ import io.defitrack.price.port.out.ExternalPriceService
 import io.defitrack.protocol.Protocol
 import io.defitrack.uniswap.v3.UniswapV3PoolContract
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import java.math.BigDecimal
@@ -33,8 +35,10 @@ abstract class DecentrifiUniswapV3BasedPriceService(
 
     override fun order(): Int = 10
 
-    override suspend fun getAllPrices(): List<ExternalPrice> {
-        return getPrices()
+    override suspend fun getAllPrices(): Flow<ExternalPrice> = channelFlow {
+        getPrices().forEach {
+            send(it)
+        }
     }
 
     private val logger = LoggerFactory.getLogger(this::class.java)

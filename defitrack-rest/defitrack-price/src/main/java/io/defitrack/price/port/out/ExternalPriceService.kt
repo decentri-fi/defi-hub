@@ -2,6 +2,7 @@ package io.defitrack.price.port.out
 
 import io.defitrack.erc20.domain.FungibleTokenInformation
 import io.defitrack.price.external.domain.ExternalPrice
+import kotlinx.coroutines.flow.Flow
 
 interface ExternalPriceService {
 
@@ -12,5 +13,5 @@ interface ExternalPriceService {
         return getOracleName() == token.name.lowercase()
     }
 
-    suspend fun getAllPrices(): List<ExternalPrice>
+    suspend fun getAllPrices(): Flow<ExternalPrice>
 }

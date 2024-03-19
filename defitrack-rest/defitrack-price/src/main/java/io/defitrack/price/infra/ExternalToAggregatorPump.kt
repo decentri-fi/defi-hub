@@ -5,6 +5,7 @@ import io.defitrack.price.application.PriceAggregator
 import io.defitrack.price.external.domain.ExternalPrice
 import io.defitrack.price.port.out.ExternalPriceService
 import jakarta.annotation.PostConstruct
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
@@ -26,8 +27,8 @@ class ExternalToAggregatorPump(
             .forEach {
                 Either.catch {
                     val allPrices = it.getAllPrices()
-                    logger.info("found ${allPrices.size} prices from ${it.javaClass.simpleName}")
-                    allPrices.forEach { externalPrice ->
+                    logger.info("collecting prices from ${it.javaClass.simpleName}")
+                    allPrices.collect { externalPrice ->
                         priceAggregator.addPrice(externalPrice)
                     }
                 }.mapLeft {

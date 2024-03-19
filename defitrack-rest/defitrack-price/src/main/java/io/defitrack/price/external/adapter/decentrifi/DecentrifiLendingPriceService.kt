@@ -10,6 +10,8 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -22,8 +24,10 @@ class DecentrifiLendingPriceService(
     private val httpClient: HttpClient
 ) : ExternalPriceService {
 
-    override suspend fun getAllPrices(): List<ExternalPrice> {
-        return getPrices()
+    override suspend fun getAllPrices(): Flow<ExternalPrice> = channelFlow {
+        getPrices().forEach {
+            send(it)
+        }
     }
 
     private val logger = LoggerFactory.getLogger(this::class.java)

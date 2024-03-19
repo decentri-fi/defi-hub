@@ -3,12 +3,12 @@ package io.defitrack.price.external.adapter.decentrifi
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.market.domain.pooling.PoolingMarketInformation
-import io.defitrack.market.domain.pooling.PoolingMarketTokenShareInformation
 import io.defitrack.marketinfo.port.out.Markets
 import io.defitrack.price.external.adapter.stable.StablecoinPriceProvider
 import io.defitrack.price.external.domain.ExternalPrice
 import io.defitrack.price.port.out.ExternalPriceService
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
@@ -28,12 +28,14 @@ class DecentrifiAlienbaseV2PriceService(
 
     val weth = "0x4200000000000000000000000000000000000006"
 
-    override suspend fun getAllPrices(): List<ExternalPrice> {
+    override suspend fun getAllPrices(): Flow<ExternalPrice> = channelFlow {
         val pools = getAlienbasePools()
         importUsdPairs(pools)
         //  importEthPairs(pools)
         logger.info("Decentri Alienbase V2 Underlying Price Repository populated with ${prices.size} prices")
-        return prices
+        prices.forEach {
+            send(it)
+        }
     }
 
     private suspend fun importEthPairs(pools: List<PoolingMarketInformation>) {

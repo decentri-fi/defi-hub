@@ -6,6 +6,8 @@ import io.defitrack.erc20.domain.FungibleTokenInformation
 import io.defitrack.erc20.port.`in`.ERC20Resource
 import io.defitrack.price.external.domain.ExternalPrice
 import io.defitrack.price.port.out.ExternalPriceService
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
@@ -75,7 +77,7 @@ class StablecoinPriceProvider(private val erC20Resource: ERC20Resource) : Extern
         } ?: false
     }
 
-    override suspend fun getAllPrices(): List<ExternalPrice> {
+    override suspend fun getAllPrices(): Flow<ExternalPrice> {
         return stableCoins.await().flatMap {
             it.value
         }.map {
@@ -87,6 +89,6 @@ class StablecoinPriceProvider(private val erC20Resource: ERC20Resource) : Extern
                 "hardcoded",
                 order()
             )
-        }
+        }.asFlow()
     }
 }
