@@ -1,6 +1,7 @@
 package io.defitrack.protocol.application
 
 import arrow.core.nel
+import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.refreshable
@@ -9,11 +10,13 @@ import io.defitrack.market.domain.PoolingMarketTokenShare
 import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.market.port.out.FarmingMarketProvider
 import io.defitrack.market.port.out.PoolingMarketProvider
+import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.set.SetTokenContract
 import org.springframework.stereotype.Component
 
 @Component
+@ConditionalOnCompany(Company.SET)
 class IndexCoopMarketProvider : PoolingMarketProvider() {
 
     val ethx2 = "0x65c4c0517025ec0843c9146af266a2c5a2d148a2"
