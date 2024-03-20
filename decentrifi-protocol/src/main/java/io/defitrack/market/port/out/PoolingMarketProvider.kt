@@ -76,6 +76,19 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
         }
     }
 
+    suspend fun breakdownOf(
+        poolAddress: String,
+        vararg args: FungibleTokenInformation
+    ): List<PoolingMarketTokenShare> {
+        return args.map { token ->
+            PoolingMarketTokenShare(
+                token = token,
+                reserve = getBalance(token.address, poolAddress),
+            )
+        }
+    }
+
+    @Deprecated("use breakdownOf")
     suspend fun fiftyFiftyBreakdown(
         token0: FungibleTokenInformation,
         token1: FungibleTokenInformation,

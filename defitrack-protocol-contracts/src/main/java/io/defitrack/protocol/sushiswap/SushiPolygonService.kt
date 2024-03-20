@@ -22,10 +22,6 @@ class SushiPolygonService(
 
     override suspend fun getPairs(): List<SushiswapPair> = sushiswapService.getPairs()
 
-    override suspend fun getPairDayData(pairId: String): List<PairDayData> = sushiswapService.getPairDayData(pairId)
-
-    override suspend fun getUserPoolings(user: String) = sushiswapService.getUserPoolings(user)
-
     override fun getNetwork(): Network {
         return Network.POLYGON
     }

@@ -7,7 +7,5 @@ import io.defitrack.protocol.sushiswap.domain.SushiswapPair
 
 interface SushiswapService {
     suspend fun getPairs(): List<SushiswapPair>
-    suspend fun getPairDayData(pairId: String): List<PairDayData>
-    suspend fun getUserPoolings(user: String): List<SushiUser>
     fun getNetwork(): Network
 }

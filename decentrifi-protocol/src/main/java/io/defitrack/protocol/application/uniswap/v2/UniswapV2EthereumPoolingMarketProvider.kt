@@ -37,10 +37,10 @@ class UniswapV2EthereumPoolingMarketProvider(
         allPairs.parMap(concurrency = 12) {
             catch {
                 val token = getToken(it)
-                val breakdown = fiftyFiftyBreakdown(
+                val breakdown = breakdownOf(
+                    token.address,
                     token.underlyingTokens[0],
                     token.underlyingTokens[1],
-                    token.address
                 )
 
                 val marketsize = breakdown.sumOf {

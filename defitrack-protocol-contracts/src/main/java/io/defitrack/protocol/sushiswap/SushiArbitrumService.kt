@@ -31,10 +31,6 @@ class SushiArbitrumService(
         }
     }
 
-    override suspend fun getPairDayData(pairId: String): List<PairDayData> = sushiswapService.getPairDayData(pairId)
-
-    override suspend fun getUserPoolings(user: String) = sushiswapService.getUserPoolings(user)
-
     override fun getNetwork(): Network {
         return Network.ARBITRUM
     }

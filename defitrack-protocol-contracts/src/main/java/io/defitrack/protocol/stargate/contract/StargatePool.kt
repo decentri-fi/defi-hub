@@ -11,11 +11,6 @@ class StargatePool(
     address: String
 ) : ERC20Contract(address) {
 
-    suspend fun token(): String {
-        return readSingle("token", address())
-    }
-
-    suspend fun totalLiquidity(): BigInteger {
-        return readSingle("totalLiquidity", output = uint256())
-    }
+    val token = constant<String>("token", address())
+    val totalLiquidity = constant<BigInteger>("totalLiquidity", uint256())
 }

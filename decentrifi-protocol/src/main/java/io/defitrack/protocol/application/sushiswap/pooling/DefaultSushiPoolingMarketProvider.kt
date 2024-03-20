@@ -4,6 +4,7 @@ import arrow.core.Either
 import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMap
 import io.defitrack.common.utils.refreshable
+import io.defitrack.common.utils.toRefreshable
 import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
@@ -38,11 +39,17 @@ abstract class DefaultSushiPoolingMarketProvider(
             val token0 = getToken(it.token0.id)
             val token1 = getToken(it.token1.id)
 
+            val breakdown = breakdownOf(
+                token.address,
+                token0, token1
+            )
+
             create(
                 address = it.id,
                 name = token.name,
                 symbol = token.symbol,
                 tokens = listOf(token0, token1),
+                breakdown = refreshable { breakdown },
                 identifier = it.id,
                 positionFetcher = defaultPositionFetcher(token.address),
                 totalSupply = refreshable(token.totalDecimalSupply()) {

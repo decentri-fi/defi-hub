@@ -1,11 +1,15 @@
 package io.defitrack.protocol.application.stargate.pooling
 
+import arrow.core.nel
+import arrow.core.nonEmptyListOf
+import arrow.fx.coroutines.parMap
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.map
 import io.defitrack.common.utils.refreshable
 import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.market.domain.PoolingMarket
+import io.defitrack.market.domain.PoolingMarketTokenShare
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.stargate.StargateService
 import io.defitrack.protocol.stargate.contract.StargatePool
@@ -31,41 +35,30 @@ abstract class AbstractStargatePoolingMarketProvider(
             it != "0x0000000000000000000000000000000000000000"
         }
 
-        //TODO
-        pools.forEach {
-            launch {
-                throttled {
-                    val pool = with(getBlockchainGateway()) { StargatePool(it) }
+        pools.parMap(concurrency = 12) {
+            with(getBlockchainGateway()) { StargatePool(it) }
+        }.resolve().map { pool ->
 
-                    val token = getToken(it)
+            val token = getToken(pool.address)
+            val underlying = getToken(pool.token.await())
 
-                    val underlying = getToken(pool.token())
-
-                    send(
-                        create(
-                            name = token.name,
-                            identifier = pool.address,
-                            address = pool.address,
-                            symbol = token.symbol,
-                            tokens = listOf(underlying),
-                            decimals = token.decimals,
-                            totalSupply = pool.totalSupply().map {
-                                it.asEth(pool.readDecimals())
-                            },
-                            /*
-                            marketSize = refreshable {
-                                getPriceResource().calculatePrice(
-                                    GetPriceCommand(
-                                        underlying.address,
-                                        getNetwork(),
-                                        pool.totalLiquidity().asEth(underlying.decimals),
-                                    )
-                                ).toBigDecimal()
-                            } */
-                        )
-                    )
+            create(
+                name = token.name,
+                identifier = pool.address,
+                address = pool.address,
+                symbol = token.symbol,
+                tokens = listOf(underlying),
+                decimals = token.decimals,
+                totalSupply = pool.totalSupply().map {
+                    it.asEth(pool.readDecimals())
+                },
+                breakdown = refreshable {
+                    PoolingMarketTokenShare(
+                        underlying,
+                        pool.totalLiquidity.await()
+                    ).nel()
                 }
-            }
-        }
+            )
+        }.forEach { send(it) }
     }
 }
