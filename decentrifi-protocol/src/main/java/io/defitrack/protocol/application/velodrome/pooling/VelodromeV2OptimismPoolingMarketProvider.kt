@@ -59,25 +59,21 @@ class VelodromeV2OptimismPoolingMarketProvider(
 
         val breakdown = refreshable {
             val reserves = contract.reserves()
+            val token0 = getToken(contract.token0.await())
+            val token1 = getToken(contract.token1.await())
+            val amount0 = reserves.amount0
+            val amount1 = reserves.amount1
 
-            nonEmptyListOf(
-                async {
-                    val token0 = getToken(contract.token0.await())
-                    val amount0 = reserves.amount0
-                    PoolingMarketTokenShare(
-                        token0,
-                        amount0,
-                    )
-                },
-                async {
-                    val token1 = getToken(contract.token1.await())
-                    val amount1 = reserves.amount1
-                    PoolingMarketTokenShare(
-                        token1,
-                        amount1,
-                    )
-                }
-            ).awaitAll()
+            listOf(
+                PoolingMarketTokenShare(
+                    token0,
+                    amount0,
+                ),
+                PoolingMarketTokenShare(
+                    token1,
+                    amount1,
+                )
+            )
         }
 
         create(
