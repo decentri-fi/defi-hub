@@ -19,6 +19,8 @@ abstract class DefaultSushiPoolingMarketProvider(
         return Protocol.SUSHISWAP
     }
 
+    //TODO: don't refetch all uniswap/sushiswap data every few days, just refresh it once a day
+
     override suspend fun produceMarkets() = channelFlow {
 
         val factory = createContract {
