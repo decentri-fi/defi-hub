@@ -49,8 +49,8 @@ abstract class AbstractStargatePoolingMarketProvider(
                 symbol = token.symbol,
                 tokens = listOf(underlying),
                 decimals = token.decimals,
-                totalSupply = pool.totalSupply().map {
-                    it.asEth(pool.readDecimals())
+                totalSupply = refreshable(token.totalDecimalSupply()) {
+                    getToken(pool.address).totalDecimalSupply()
                 },
                 breakdown = refreshable {
                     PoolingMarketTokenShare(

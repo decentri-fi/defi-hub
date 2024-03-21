@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 @ConditionalOnCompany(Company.STARGATE)
 @ConditionalOnProperty(value = ["ethereum.enabled"], havingValue = "true", matchIfMissing = true)
 class SGethEthereumTokenProvider : AbstractSGethTokenProvider(
-    address = "0x82cbecf39bee528b5476fe6d1550af59a9db6fc0",
+    address = "0x72e2f4830b9e45d52f80ac08cb2bec0fef72ed9c",
 ) {
     override fun getNetwork(): Network {
         return Network.ETHEREUM
