@@ -4,56 +4,58 @@ import arrow.core.Either
 import arrow.core.Either.Companion.catch
 import arrow.fx.coroutines.parMap
 import io.defitrack.common.utils.refreshable
-import io.defitrack.common.utils.toRefreshable
 import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.sushiswap.SushiswapService
-import io.defitrack.protocol.sushiswap.domain.SushiswapPair
+import io.defitrack.protocol.sushiswap.contract.SushiV2FactoryContract
+import kotlinx.coroutines.flow.channelFlow
+import java.util.concurrent.Flow
 
 abstract class DefaultSushiPoolingMarketProvider(
-    private val sushiServices: List<SushiswapService>,
+    private val factoryAddress: String
 ) : PoolingMarketProvider() {
+
     override fun getProtocol(): Protocol {
         return Protocol.SUSHISWAP
     }
 
-    override suspend fun fetchMarkets(): List<PoolingMarket> {
-        return sushiServices.filter { sushiswapService ->
-            sushiswapService.getNetwork() == getNetwork()
-        }.flatMap { service ->
-            service.getPairs()
-                .parMap(concurrency = 12) {
-                    createMarket(it)
-                }
-        }.mapNotNull {
-            it.mapLeft {
-                logger.error("Failed to create market: {}", it.message)
-            }.getOrNull()
+    override suspend fun produceMarkets() = channelFlow {
+
+        val factory = createContract {
+            SushiV2FactoryContract(factoryAddress)
         }
+
+        factory.allPairs()
+            .parMap(concurrency = 12) {
+                createMarket(it)
+            }.mapNotNull {
+                it.mapLeft {
+                    logger.error("Failed to create market: {}", it.message)
+                }.getOrNull()
+            }.forEach {
+                send(it)
+            }
     }
 
-    private suspend fun createMarket(it: SushiswapPair): Either<Throwable, PoolingMarket> {
+    private suspend fun createMarket(lpAddress: String): Either<Throwable, PoolingMarket> {
         return catch {
-            val token = getToken(it.id)
-            val token0 = getToken(it.token0.id)
-            val token1 = getToken(it.token1.id)
+            val token = getToken(lpAddress)
 
             val breakdown = breakdownOf(
                 token.address,
-                token0, token1
+                *token.underlyingTokens.toTypedArray()
             )
 
             create(
-                address = it.id,
+                address = lpAddress,
                 name = token.name,
                 symbol = token.symbol,
-                tokens = listOf(token0, token1),
+                tokens = token.underlyingTokens,
                 breakdown = refreshable { breakdown },
-                identifier = it.id,
+                identifier = lpAddress,
                 positionFetcher = defaultPositionFetcher(token.address),
                 totalSupply = refreshable(token.totalDecimalSupply()) {
-                    getToken(it.id).totalDecimalSupply()
+                    getToken(lpAddress).totalDecimalSupply()
                 }
             )
         }

@@ -9,9 +9,8 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.SUSHISWAP)
-class SushiswapArbitrumPoolingMarketProvider(
-    sushiServices: List<SushiswapService>,
-) : DefaultSushiPoolingMarketProvider(sushiServices) {
+class SushiswapArbitrumPoolingMarketProvider :
+    DefaultSushiPoolingMarketProvider("0xc35dadb65012ec5796536bd9864ed8773abc74c4") {
 
 
     override fun getNetwork(): Network {

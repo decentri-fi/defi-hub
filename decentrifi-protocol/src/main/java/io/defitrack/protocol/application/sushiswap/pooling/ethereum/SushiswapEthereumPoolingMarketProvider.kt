@@ -9,9 +9,8 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.SUSHISWAP)
-class SushiswapEthereumPoolingMarketProvider(
-    sushiServices: List<SushiswapService>,
-) : DefaultSushiPoolingMarketProvider(sushiServices) {
+class SushiswapEthereumPoolingMarketProvider :
+    DefaultSushiPoolingMarketProvider("0xC0AEe478e3658e2610c5F7A4A2E1777cE9e4f2Ac") {
     override fun getNetwork(): Network {
         return Network.ETHEREUM
     }
