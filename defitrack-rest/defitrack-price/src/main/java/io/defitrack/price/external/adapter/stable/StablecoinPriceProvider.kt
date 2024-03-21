@@ -14,7 +14,7 @@ import java.math.BigDecimal
 @Component
 class StablecoinPriceProvider(private val erC20Resource: ERC20Resource) : ExternalPriceService {
 
-    override fun order(): Int {
+    override fun importOrder(): Int {
         return 2
     }
 
@@ -87,7 +87,7 @@ class StablecoinPriceProvider(private val erC20Resource: ERC20Resource) : Extern
                 BigDecimal.ONE,
                 "hardcoded",
                 "hardcoded",
-                order()
+                importOrder()
             )
         }.asFlow()
     }

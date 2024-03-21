@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface ExternalPriceService {
 
-    fun order() = 50
+    fun importOrder() = 10
 
     fun getOracleName(): String = "unknown oracle"
     suspend fun appliesTo(token: FungibleTokenInformation): Boolean {

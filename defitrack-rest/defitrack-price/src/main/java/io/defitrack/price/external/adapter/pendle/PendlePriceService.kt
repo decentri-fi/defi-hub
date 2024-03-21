@@ -20,7 +20,7 @@ abstract class PendlePriceService(
     private val startBlock: String
 ) : ExternalPriceService {
 
-    override fun order(): Int {
+    override fun importOrder(): Int {
         return 40
     }
 
@@ -67,7 +67,7 @@ abstract class PendlePriceService(
                         ).toBigDecimal(),
                         "pendle-${getNetwork().slug}",
                         "oracle",
-                        order()
+                        importOrder()
                     )
                 )
 
@@ -84,7 +84,7 @@ abstract class PendlePriceService(
                         ).toBigDecimal(),
                         "pendle-${getNetwork().slug}",
                         "oracle",
-                        order()
+                        importOrder()
                     )
                 )
             }.mapLeft {

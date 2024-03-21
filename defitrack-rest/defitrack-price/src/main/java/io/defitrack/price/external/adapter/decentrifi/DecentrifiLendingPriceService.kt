@@ -24,6 +24,8 @@ class DecentrifiLendingPriceService(
     private val httpClient: HttpClient
 ) : ExternalPriceService {
 
+
+
     override suspend fun getAllPrices(): Flow<ExternalPrice> = channelFlow {
         getPrices().forEach {
             send(it)
@@ -63,7 +65,7 @@ class DecentrifiLendingPriceService(
     fun putInCache(network: NetworkInformation, address: String, price: BigDecimal, name: String) {
         prices.add(
             ExternalPrice(
-                address.lowercase(), network.toNetwork(), price, "decentrifi-lending", name, order()
+                address.lowercase(), network.toNetwork(), price, "decentrifi-lending", name, importOrder()
             )
         )
     }

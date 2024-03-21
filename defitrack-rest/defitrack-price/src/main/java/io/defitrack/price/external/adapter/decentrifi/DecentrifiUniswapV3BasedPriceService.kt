@@ -33,7 +33,7 @@ abstract class DecentrifiUniswapV3BasedPriceService(
     private val protocol: Protocol
 ) : ExternalPriceService {
 
-    override fun order(): Int = 10
+    override fun importOrder(): Int = 10
 
     override suspend fun getAllPrices(): Flow<ExternalPrice> = channelFlow {
         getPrices().forEach {
@@ -230,7 +230,7 @@ abstract class DecentrifiUniswapV3BasedPriceService(
     ) {
         prices.add(
             ExternalPrice(
-                token.address, pool.network.toNetwork(), price, protocol.slug, pool.name, order()
+                token.address, pool.network.toNetwork(), price, protocol.slug, pool.name, importOrder()
             )
         )
     }

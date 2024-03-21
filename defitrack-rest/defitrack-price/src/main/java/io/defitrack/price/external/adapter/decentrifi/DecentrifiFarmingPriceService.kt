@@ -1,6 +1,5 @@
 package io.defitrack.price.external.adapter.decentrifi
 
-import arrow.fx.coroutines.parMap
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
@@ -56,7 +55,7 @@ class DecentrifiFarmingPriceService(
                             pricePerToken,
                             "decentrifi-farming",
                             farm.name,
-                            order()
+                            importOrder()
                         )
                     }.forEach { price ->
                         prices.add(

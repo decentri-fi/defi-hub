@@ -72,7 +72,7 @@ class DecentrifiVelodromeV2PriceService(
                         BigDecimal.ONE,
                         "velodrome-v2",
                         pool.name,
-                        order()
+                        importOrder()
                     )
                 )
 
@@ -87,7 +87,7 @@ class DecentrifiVelodromeV2PriceService(
                             otherprice,
                             "velodrome-v2",
                             pool.name,
-                            order()
+                            importOrder()
                         )
                     )
                 }
@@ -131,7 +131,7 @@ class DecentrifiVelodromeV2PriceService(
                         otherprice,
                         "velodrome-v2",
                         pool.name,
-                        order()
+                        importOrder()
                     )
                 )
             }

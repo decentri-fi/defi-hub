@@ -1,6 +1,5 @@
 package io.defitrack.price.external.adapter.coingecko
 
-import arrow.core.Either
 import arrow.core.Either.Companion.catch
 import arrow.core.getOrElse
 import com.fasterxml.jackson.core.type.TypeReference
@@ -30,7 +29,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
-import java.math.BigDecimal
 import java.nio.charset.Charset
 
 @Service

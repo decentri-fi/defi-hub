@@ -79,7 +79,7 @@ class DecentrifiAlienbaseV2PriceService(
                             otherprice,
                             "decentrifi-alienbase",
                             pool.name,
-                            order()
+                            importOrder()
                         )
                     )
                 }
@@ -112,7 +112,7 @@ class DecentrifiAlienbaseV2PriceService(
                         BigDecimal.valueOf(1.0),
                         "decentrifi-alienbase",
                         pool.name,
-                        order()
+                        importOrder()
                     )
                 )
 
@@ -127,7 +127,7 @@ class DecentrifiAlienbaseV2PriceService(
                             otherprice,
                             "decentrifi-alienbase",
                             pool.name,
-                            order()
+                            importOrder()
                         )
                     )
                 }
@@ -139,5 +139,5 @@ class DecentrifiAlienbaseV2PriceService(
         return markets.getPoolingMarkets("alienbase")
     }
 
-    override fun order(): Int = 30
+    override fun importOrder(): Int = 30
 }

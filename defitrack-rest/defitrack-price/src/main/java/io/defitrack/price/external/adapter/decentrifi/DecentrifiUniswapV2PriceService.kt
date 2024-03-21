@@ -10,7 +10,6 @@ import io.defitrack.price.port.out.ExternalPriceService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.runBlocking
-import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
@@ -23,7 +22,7 @@ class DecentrifiUniswapV2PriceService(
     private val stablecoinPriceProvider: StablecoinPriceProvider,
 ) : ExternalPriceService {
 
-    override fun order(): Int = 40
+    override fun importOrder(): Int = 40
 
     override suspend fun getAllPrices(): Flow<ExternalPrice> = channelFlow {
         getPrices().forEach {
@@ -65,7 +64,7 @@ class DecentrifiUniswapV2PriceService(
                         BigDecimal.valueOf(1.0),
                         "uniswap_v2",
                         pool.name,
-                        order()
+                        importOrder()
                     )
                 )
 
@@ -81,7 +80,7 @@ class DecentrifiUniswapV2PriceService(
                             otherprice,
                             "uniswap_v2",
                             pool.name,
-                            order()
+                            importOrder()
                         )
                     )
                 }

@@ -103,7 +103,7 @@ class DecentrifiPoolingPriceService(
         logger.debug("Price for {} ({})  ({}) is {}", addMarket.name, addMarket.address, addMarket.protocol, price)
         putInCache(addMarket.network, addMarket.address, price, addMarket.name)
         return ExternalPrice(
-            addMarket.address, addMarket.network.toNetwork(), price, "decentrifi-pooling", addMarket.name, order()
+            addMarket.address, addMarket.network.toNetwork(), price, "decentrifi-pooling", addMarket.name, importOrder()
         )
     }
 
@@ -114,7 +114,7 @@ class DecentrifiPoolingPriceService(
         name: String
     ): ExternalPrice {
         val externalPrice = ExternalPrice(
-            address, network.toNetwork(), price, "decentrifi-pooling", name, order()
+            address, network.toNetwork(), price, "decentrifi-pooling", name, importOrder()
         )
         prices.add(
             externalPrice
