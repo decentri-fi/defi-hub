@@ -8,12 +8,12 @@ import org.web3j.crypto.Keys
 class LogoGenerator {
 
     fun generateLogoUrl(network: Network, address: String): String = if (address == "0x0") {
-        "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/${network.slug}/info/logo.png"
+        "https://github.com/defitrack/data/raw/master/logo/network/${network.logo}"
     } else {
-           "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/${network.slug}/assets/${
-                Keys.toChecksumAddress(
-                    address
-                )
-            }/logo.png"
+        "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/${network.slug}/assets/${
+            Keys.toChecksumAddress(
+                address
+            )
+        }/logo.png"
     }
 }

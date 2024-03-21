@@ -24,6 +24,8 @@ class StablecoinPriceProvider(private val erC20Resource: ERC20Resource) : Extern
                 it.address.lowercase()
             }.contains(it)
         }
+
+
     }
 
     val stableCoins = AsyncUtils.lazyAsync {
