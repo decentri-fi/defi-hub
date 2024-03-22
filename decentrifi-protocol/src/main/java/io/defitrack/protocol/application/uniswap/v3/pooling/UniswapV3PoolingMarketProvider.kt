@@ -5,6 +5,7 @@ import arrow.core.Either.Companion.catch
 import arrow.core.None
 import arrow.core.Option
 import arrow.fx.coroutines.parMapNotNull
+import io.defitrack.LazyValue
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.map
@@ -27,7 +28,7 @@ abstract class UniswapV3PoolingMarketProvider(
     private val uniswapV3Prefetcher: UniswapV3Prefetcher
 ) : PoolingMarketProvider() {
 
-    val prefetches = lazyAsync {
+    val prefetches = LazyValue {
         uniswapV3Prefetcher.getPrefetches(getNetwork())
     }
 
@@ -69,7 +70,7 @@ abstract class UniswapV3PoolingMarketProvider(
         return catch {
             val identifier = "v3-${market.address}"
 
-            val prefetch = prefetches.await().find {
+            val prefetch = prefetches.get().find {
                 it.id == createId(identifier)
             }
 

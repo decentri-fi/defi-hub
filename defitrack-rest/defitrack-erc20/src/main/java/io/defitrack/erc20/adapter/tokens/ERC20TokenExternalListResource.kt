@@ -29,6 +29,7 @@ class ERC20TokenExternalListResource(
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/polygon/polygon.listed.tokenlist.json",
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/ethereum/extendedtokens.uniswap.json",
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/arbitrum/tokenlist.json",
+            "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/arbitrum/camelot-tokens.json",
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/optimism/optimism.tokenlist.json",
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/polygon-zkevm/tokenlist.json",
             "https://raw.githubusercontent.com/decentri-fi/data/master/tokens/base/tokenlist.json",
