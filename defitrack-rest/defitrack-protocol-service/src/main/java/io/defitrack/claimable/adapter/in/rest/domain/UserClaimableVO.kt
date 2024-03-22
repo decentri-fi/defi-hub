@@ -1,4 +1,4 @@
-package io.defitrack.claimable.vo
+package io.defitrack.claimable.adapter.`in`.rest.domain
 
 import io.defitrack.erc20.domain.FungibleTokenInformation
 import io.defitrack.networkinfo.NetworkInformation

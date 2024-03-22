@@ -1,8 +1,7 @@
 package io.defitrack.claimables.adapters.decentrifi
 
 import arrow.fx.coroutines.parMap
-import io.defitrack.claimable.vo.ClaimableMarketVO
-import io.defitrack.claimable.vo.UserClaimableVO
+import io.defitrack.claimables.domain.ClaimableMarketDTO
 import io.defitrack.claimables.domain.UserClaimableDTO
 import io.defitrack.claimables.ports.outputs.ClaimablesClient
 import io.defitrack.node.Node
@@ -18,7 +17,6 @@ import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
-import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.TimedValue
 import kotlin.time.measureTimedValue
@@ -88,8 +86,8 @@ class KubernetesClaimablesClient(
             }
         }
 
-    val cache = Cache.Builder<String, List<ClaimableMarketVO>>().expireAfterWrite(1.hours).build()
-    override suspend fun getClaimableMarkets(protocol: Protocol): List<ClaimableMarketVO> {
+    val cache = Cache.Builder<String, List<ClaimableMarketDTO>>().expireAfterWrite(1.hours).build()
+    override suspend fun getClaimableMarkets(protocol: Protocol): List<ClaimableMarketDTO> {
         return cache.get(protocol.slug) {
             withContext(Dispatchers.IO) {
                 try {

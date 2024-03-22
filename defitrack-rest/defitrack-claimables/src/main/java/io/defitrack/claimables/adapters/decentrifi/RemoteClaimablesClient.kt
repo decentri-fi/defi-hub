@@ -1,7 +1,7 @@
 package io.defitrack.claimables.adapters.decentrifi
 
 import arrow.fx.coroutines.parMap
-import io.defitrack.claimable.vo.ClaimableMarketVO
+import io.defitrack.claimables.domain.ClaimableMarketDTO
 import io.defitrack.claimables.domain.UserClaimableDTO
 import io.defitrack.claimables.ports.outputs.ClaimablesClient
 import io.defitrack.node.Node
@@ -86,8 +86,8 @@ class RemoteClaimablesClient(
             }
         }
 
-    val cache = Cache.Builder<String, List<ClaimableMarketVO>>().expireAfterWrite(1.hours).build()
-    override suspend fun getClaimableMarkets(protocol: Protocol): List<ClaimableMarketVO> {
+    val cache = Cache.Builder<String, List<ClaimableMarketDTO>>().expireAfterWrite(1.hours).build()
+    override suspend fun getClaimableMarkets(protocol: Protocol): List<ClaimableMarketDTO> {
         return cache.get(protocol.slug) {
             withContext(Dispatchers.IO) {
                 try {

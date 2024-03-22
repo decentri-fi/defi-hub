@@ -101,34 +101,4 @@ class ClaimableAggregateRestController(
             !excludes.contains(it.name) && !excludes.contains(it.slug)
         } else true
     }
-
-    val executor = Executors.newSingleThreadExecutor()
-
-
-    override fun getAggregateAsSSE(
-        @PathVariable("address") address: String,
-        httpServletResponse: HttpServletResponse
-    ): SseEmitter {
-        val observation = start("requests.get.claimables.aggregate.sse", observationRegistry)
-        val emitter = SseEmitter()
-        executor.submit {
-            runBlocking {
-                launch {
-                    Protocol.entries.filter {
-                        it.primitives.contains(DefiPrimitive.CLAIMABLES)
-                    }.map {
-                        launch {
-                            claimablesClient.getClaimables(address, listOf(it)).forEach {
-                                emitter.send(it)
-                            }
-                        }
-                    }.joinAll()
-                    emitter.complete()
-                    observation.stop()
-                }
-            }
-        }
-        httpServletResponse.addHeader("X-Accel-Buffering", "no")
-        return emitter
-    }
 }

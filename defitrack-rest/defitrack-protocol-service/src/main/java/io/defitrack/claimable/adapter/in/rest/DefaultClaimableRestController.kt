@@ -5,11 +5,9 @@ import io.defitrack.claim.AbstractUserClaimableProvider
 import io.defitrack.claim.DefaultUserClaimableProvider
 import io.defitrack.claim.UserClaimable
 import io.defitrack.claimable.adapter.`in`.ClaimableVOMapper
+import io.defitrack.claimable.adapter.`in`.rest.domain.ClaimableMarketVO
+import io.defitrack.claimable.adapter.`in`.rest.domain.UserClaimableVO
 import io.defitrack.claimable.adapter.`in`.rest.mapper.ClaimableMarketVOMapper
-import io.defitrack.claimable.vo.ClaimableMarketVO
-import io.defitrack.claimable.vo.UserClaimableVO
-import io.defitrack.networkinfo.toNetworkInformation
-import io.defitrack.protocol.mapper.ProtocolVOMapper
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope

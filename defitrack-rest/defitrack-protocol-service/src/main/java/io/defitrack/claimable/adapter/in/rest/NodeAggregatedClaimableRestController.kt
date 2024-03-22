@@ -5,9 +5,7 @@ import io.defitrack.claim.AbstractUserClaimableProvider
 import io.defitrack.claim.DefaultUserClaimableProvider
 import io.defitrack.claim.UserClaimable
 import io.defitrack.claimable.adapter.`in`.ClaimableVOMapper
-import io.defitrack.claimable.vo.UserClaimableVO
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
+import io.defitrack.claimable.adapter.`in`.rest.domain.UserClaimableVO
 import kotlinx.coroutines.coroutineScope
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

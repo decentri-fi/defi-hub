@@ -1,11 +1,10 @@
 package io.defitrack.claimable.adapter.`in`
 
 import io.defitrack.claim.UserClaimable
-import io.defitrack.claimable.vo.UserClaimableVO
+import io.defitrack.claimable.adapter.`in`.rest.domain.UserClaimableVO
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.networkinfo.toNetworkInformation
-import io.defitrack.price.port.PriceResource
+import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.price.port.`in`.PricePort
 import io.defitrack.protocol.mapper.ProtocolVOMapper
 import io.defitrack.transaction.PreparedTransactionVOMapper

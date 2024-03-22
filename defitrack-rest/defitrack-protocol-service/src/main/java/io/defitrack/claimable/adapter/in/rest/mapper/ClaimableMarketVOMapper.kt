@@ -1,7 +1,7 @@
 package io.defitrack.claimable.adapter.`in`.rest.mapper
 
 import io.defitrack.claim.ClaimableMarket
-import io.defitrack.claimable.vo.ClaimableMarketVO
+import io.defitrack.claimable.adapter.`in`.rest.domain.ClaimableMarketVO
 import io.defitrack.networkinfo.toNetworkInformation
 import io.defitrack.protocol.mapper.ProtocolVOMapper
 import org.springframework.stereotype.Component

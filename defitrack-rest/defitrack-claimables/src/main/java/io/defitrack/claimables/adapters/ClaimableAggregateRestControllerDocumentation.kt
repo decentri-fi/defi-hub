@@ -1,10 +1,8 @@
 package io.defitrack.claimables.adapters
 
-import io.defitrack.claimable.vo.UserClaimableVO
 import io.defitrack.claimables.adapters.rest.resource.ExceptionResult
 import io.defitrack.claimables.domain.ClaimableMarketDTO
 import io.defitrack.claimables.domain.UserClaimableDTO
-import io.swagger.v3.oas.annotations.Hidden
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.ArraySchema
@@ -13,11 +11,9 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
-import jakarta.servlet.http.HttpServletResponse
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 
 @Tag(
     name = "Claimables",
@@ -108,9 +104,4 @@ interface ClaimableAggregateRestControllerDocumentation {
         includes: List<String> = emptyList(),
         excludes: List<String> = emptyList()
     ): ResponseEntity<Any>
-
-
-    @GetMapping("/{address}", params = ["sse"])
-    @Hidden
-    fun getAggregateAsSSE(address: String, httpServletResponse: HttpServletResponse): SseEmitter
 }
