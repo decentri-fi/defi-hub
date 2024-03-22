@@ -3,6 +3,7 @@ package io.defitrack.claimables.adapters.decentrifi
 import arrow.fx.coroutines.parMap
 import io.defitrack.claimable.vo.ClaimableMarketVO
 import io.defitrack.claimable.vo.UserClaimableVO
+import io.defitrack.claimables.domain.UserClaimableDTO
 import io.defitrack.claimables.ports.outputs.ClaimablesClient
 import io.defitrack.node.Node
 import io.defitrack.protocol.Protocol
@@ -47,7 +48,7 @@ class KubernetesClaimablesClient(
     }
 
 
-    override suspend fun getClaimables(address: String, protocols: List<Protocol>): List<UserClaimableVO> =
+    override suspend fun getClaimables(address: String, protocols: List<Protocol>): List<UserClaimableDTO> =
         withContext(Dispatchers.IO) {
 
             val requiredCompanies = protocols.map(Protocol::company)
@@ -58,7 +59,7 @@ class KubernetesClaimablesClient(
             }
 
             requiredNodes.parMap(concurrency = 12) { node ->
-                val timedValue: TimedValue<List<UserClaimableVO>> = measureTimedValue {
+                val timedValue: TimedValue<List<UserClaimableDTO>> = measureTimedValue {
                     try {
                         val response =
                             httpClient.get("http://defitrack-group-${node.name}.default.svc.cluster.local:8080/claimables/$address") {

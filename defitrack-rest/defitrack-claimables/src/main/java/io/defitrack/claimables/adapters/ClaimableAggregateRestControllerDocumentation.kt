@@ -1,8 +1,9 @@
 package io.defitrack.claimables.adapters
 
-import io.defitrack.claimable.vo.ClaimableMarketVO
 import io.defitrack.claimable.vo.UserClaimableVO
 import io.defitrack.claimables.adapters.rest.resource.ExceptionResult
+import io.defitrack.claimables.domain.ClaimableMarketDTO
+import io.defitrack.claimables.domain.UserClaimableDTO
 import io.swagger.v3.oas.annotations.Hidden
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -35,7 +36,7 @@ interface ClaimableAggregateRestControllerDocumentation {
                 content = [
                     Content(
                         mediaType = "application/json",
-                        array = (ArraySchema(schema = Schema(implementation = ClaimableMarketVO::class)))
+                        array = (ArraySchema(schema = Schema(implementation = ClaimableMarketDTO::class)))
                     )
                 ]
             ),
@@ -87,7 +88,7 @@ interface ClaimableAggregateRestControllerDocumentation {
                 content = [
                     Content(
                         mediaType = "application/json",
-                        array = (ArraySchema(schema = Schema(implementation = UserClaimableVO::class)))
+                        array = (ArraySchema(schema = Schema(implementation = UserClaimableDTO::class)))
                     )
                 ]
             ),
