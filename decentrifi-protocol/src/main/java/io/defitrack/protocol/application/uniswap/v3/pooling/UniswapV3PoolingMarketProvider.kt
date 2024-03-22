@@ -96,9 +96,9 @@ abstract class UniswapV3PoolingMarketProvider(
                         it.token.toFungibleToken(getNetwork()),
                         it.reserve
                     )
-                } ?: fiftyFiftyBreakdown(token0, token1, market.address)
+                } ?: breakdownOf(market.address, token0, token1)
             ) {
-                fiftyFiftyBreakdown(token0, token1, market.address)
+                breakdownOf(market.address, token0, token1)
             }
 
 
@@ -109,7 +109,6 @@ abstract class UniswapV3PoolingMarketProvider(
                 address = market.address,
                 symbol = "${token0.symbol}-${token1.symbol}",
                 breakdown = breakdown,
-                tokens = listOf(token0, token1),
                 positionFetcher = null,
                 totalSupply = refreshable(totalSupply) {
                     market.refreshLiquidity().asEth()

@@ -59,8 +59,8 @@ class PoolingMarketService(
             .flatMap {
                 it.getMarkets()
             }.filter {
-                it.tokens.any { t ->
-                    t.address.lowercase() == tokenAddress.lowercase()
+                it.breakdown.get().any { share ->
+                    share.token.address.lowercase() == tokenAddress.lowercase()
                 } || it.address.lowercase() == tokenAddress.lowercase()
             }
     }
@@ -85,8 +85,8 @@ class PoolingMarketService(
             }.filter { poolingMarketElement ->
                 when {
                     (token.type) != TokenType.SINGLE -> {
-                        poolingMarketElement.tokens.map { pt ->
-                            pt.address.lowercase()
+                        poolingMarketElement.breakdown.get().map { share ->
+                            share.token.address.lowercase()
                         }.containsAll(
                             token.underlyingTokens.map {
                                 it.address.lowercase()

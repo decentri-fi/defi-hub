@@ -47,7 +47,6 @@ class CamelotNFTV2PoolingMarketProvider(
         val token1 = getToken(it.token1)
 
         return create(
-            tokens = listOf(token0, token1),
             identifier = pool.address,
             address = pool.address,
             name = "Camelot V3 ${token0.symbol}/${token1.symbol}",

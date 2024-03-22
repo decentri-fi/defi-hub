@@ -72,8 +72,8 @@ class PancakeswapV3BasePoolingMarketProvider(
             }
 
             val pool = uniswapV3PoolContract(address)
-            val token0 = prefetch?.tokens?.get(0)?.toFungibleToken(getNetwork()) ?: getToken(pool.token0.await())
-            val token1 = prefetch?.tokens?.get(1)?.toFungibleToken(getNetwork()) ?: getToken(pool.token1.await())
+            val token0 = prefetch?.breakdown?.get(0)?.token?.toFungibleToken(getNetwork()) ?: getToken(pool.token0.await())
+            val token1 = prefetch?.breakdown?.get(1)?.token?.toFungibleToken(getNetwork()) ?: getToken(pool.token1.await())
 
             val breakdown = refreshable(
                 prefetch?.breakdown?.map {

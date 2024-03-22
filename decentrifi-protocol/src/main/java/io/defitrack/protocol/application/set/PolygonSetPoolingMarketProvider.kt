@@ -5,9 +5,11 @@ import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.refreshable
 import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.architecture.conditional.ConditionalOnNetwork
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.market.domain.PoolingMarket
+import io.defitrack.market.domain.PoolingMarketTokenShare
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.set.PolygonSetProvider
@@ -30,23 +32,31 @@ class PolygonSetPoolingMarketProvider(
             async {
                 try {
 
-                    val tokenContract = with(getBlockchainGateway()) {  SetTokenContract(it) }
+                    val tokenContract = with(getBlockchainGateway()) { SetTokenContract(it) }
 
                     val token = getToken(it)
 
-                    val positions = tokenContract.getPositions()
+                    val breakdown = refreshable {
+                        tokenContract.getPositions().map {
+                            val supply = tokenContract.totalSupply().get().asEth(tokenContract.readDecimals())
+                            val underlying = getToken(it.token)
+                            val reserve = it.amount.toBigDecimal()
+                                .times(tokenContract.getPositionMultiplier().asEth())
+                                .times(supply).toBigInteger()
+                            PoolingMarketTokenShare(
+                                token = underlying,
+                                reserve = reserve,
+                            )
+                        }
+                    }
 
                     create(
                         identifier = it,
                         address = it,
                         name = token.name,
                         symbol = token.symbol,
-                        tokens = positions.map {
-                            getToken(it.token)
-                        },
-                        apr = null,
+                        breakdown = breakdown,
                         positionFetcher = defaultPositionFetcher(it),
-                        investmentPreparer = null,
                         totalSupply = refreshable(token.totalDecimalSupply()) {
                             getToken(it).totalDecimalSupply()
                         }

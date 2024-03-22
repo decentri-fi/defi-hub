@@ -43,7 +43,7 @@ class AlienbasePoolingMarketProvider : PoolingMarketProvider() {
         val tokens = poolingToken.underlyingTokens
 
         val breakdown = refreshable {
-            fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address)
+            breakdownOf(poolingToken.address, tokens[0], tokens[1])
         }
 
         return create(
@@ -53,7 +53,6 @@ class AlienbasePoolingMarketProvider : PoolingMarketProvider() {
             name = poolingToken.name,
             breakdown = breakdown,
             symbol = poolingToken.symbol,
-            tokens = poolingToken.underlyingTokens,
             totalSupply = refreshable {
                 getToken(it).totalDecimalSupply()
             },

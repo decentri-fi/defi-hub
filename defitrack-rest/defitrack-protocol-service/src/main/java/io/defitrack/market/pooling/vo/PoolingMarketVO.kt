@@ -1,8 +1,7 @@
 package io.defitrack.market.pooling.vo
 
-import io.defitrack.erc20.domain.FungibleTokenInformation
-import io.defitrack.networkinfo.NetworkInformation
 import io.defitrack.market.adapter.`in`.resource.MarketVO
+import io.defitrack.networkinfo.NetworkInformation
 import io.defitrack.protocol.ProtocolVO
 import java.math.BigDecimal
 
@@ -11,8 +10,7 @@ class PoolingMarketVO(
     name: String,
     protocol: ProtocolVO,
     network: NetworkInformation,
-    val tokens: List<FungibleTokenInformation>,
-    val breakdown: List<PoolingMarketTokenShareVO>?,
+    val breakdown: List<PoolingMarketTokenShareVO>,
     val apr: BigDecimal?,
     val address: String,
     val decimals: Int = 18,

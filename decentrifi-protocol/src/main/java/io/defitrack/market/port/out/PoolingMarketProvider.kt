@@ -11,6 +11,7 @@ import io.defitrack.invest.InvestmentPreparer
 import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.market.domain.PoolingMarketTokenShare
 import io.defitrack.event.HistoricEventExtractor
+import io.defitrack.market.domain.asShare
 import java.math.BigDecimal
 
 abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
@@ -23,20 +24,15 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
         decimals: Int = 18,
         symbol: String,
         type: String = "pool",
-        tokens: List<FungibleTokenInformation>? = null,
         totalSupply: Refreshable<BigDecimal>,
         positionFetcher: PositionFetcher? = null,
         investmentPreparer: InvestmentPreparer? = null,
-        breakdown: Refreshable<List<PoolingMarketTokenShare>>? = null,
+        breakdown: Refreshable<List<PoolingMarketTokenShare>>,
         erc20Compatible: Boolean = true,
         metadata: Map<String, Any> = emptyMap(),
         internalMetadata: Map<String, Any> = emptyMap(),
         deprecated: Boolean = false
     ): PoolingMarket {
-        val actualTokens = tokens ?: breakdown?.get()?.map {
-            it.token
-        } ?: emptyList()
-
         return PoolingMarket(
             id = createId(identifier),
             network = getNetwork(),
@@ -46,7 +42,6 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
             address = address,
             decimals = decimals,
             symbol = symbol,
-            tokens = actualTokens,
             positionFetcher = positionFetcher,
             investmentPreparer = investmentPreparer,
             breakdown = breakdown,
@@ -76,15 +71,13 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
         }
     }
 
+    //TODO: make refreshable
     suspend fun breakdownOf(
         poolAddress: String,
         vararg args: FungibleTokenInformation
     ): List<PoolingMarketTokenShare> {
         return args.map { token ->
-            PoolingMarketTokenShare(
-                token = token,
-                reserve = getBalance(token.address, poolAddress),
-            )
+            token.asShare(getBalance(token.address, poolAddress))
         }
     }
 

@@ -1,5 +1,6 @@
 package io.defitrack.protocol.application.pendle
 
+import arrow.core.nel
 import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.architecture.conditional.ConditionalOnNetwork
 import io.defitrack.common.network.Network
@@ -9,6 +10,7 @@ import io.defitrack.common.utils.refreshable
 import io.defitrack.common.utils.toRefreshable
 import io.defitrack.erc20.domain.FungibleTokenInformation
 import io.defitrack.market.domain.PoolingMarketTokenShare
+import io.defitrack.market.domain.asShare
 import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
@@ -55,20 +57,17 @@ abstract class PendleLiquidityPoolMarketProvider(
 
             send(
                 create(
-                    tokens = listOf(sy),
                     breakdown = refreshable {
-                        listOf(
-                            PoolingMarketTokenShare(
-                                sy, erC20Resource.getBalance(getNetwork(), sy.address, contract.address)
-                            )
-                        )
+                        sy.asShare(getBalance(sy.address, contract.address)).nel()
                     },
                     name = "YT " + asset.name,
                     address = yt.address,
                     positionFetcher = defaultPositionFetcher(yt.address),
                     identifier = yt.address,
                     symbol = yt.symbol,
-                    totalSupply = yt.totalDecimalSupply().toRefreshable(),
+                    totalSupply = refreshable(yt.totalDecimalSupply()) {
+                        getToken(tokens.yt).totalDecimalSupply()
+                    },
                 )
             )
         }
@@ -81,17 +80,10 @@ abstract class PendleLiquidityPoolMarketProvider(
         asset: FungibleTokenInformation,
         marketConfig: PendleMarketFactoryContract.Market
     ) = create(
-        tokens = listOf(
-            pt, sy
-        ),
         breakdown = refreshable {
             listOf(
-                PoolingMarketTokenShare(
-                    pt, erC20Resource.getBalance(getNetwork(), pt.address, contract.address)
-                ),
-                PoolingMarketTokenShare(
-                    sy, erC20Resource.getBalance(getNetwork(), sy.address, contract.address)
-                )
+                pt.asShare(getBalance(pt.address, contract.address)),
+                sy.asShare(getBalance(sy.address, contract.address))
             )
         },
         positionFetcher = defaultPositionFetcher(contract.address),

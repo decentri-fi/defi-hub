@@ -37,7 +37,7 @@ class KyberElasticPoolingMarketProvider : PoolingMarketProvider() {
         val tokens = poolingToken.underlyingTokens
 
         val breakdown = refreshable {
-            fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address)
+            breakdownOf(poolingToken.address, tokens[0], tokens[1])
         }
         return create(
             identifier = poolInfo.address,
@@ -45,7 +45,6 @@ class KyberElasticPoolingMarketProvider : PoolingMarketProvider() {
             name = poolingToken.name,
             breakdown = breakdown,
             symbol = poolingToken.symbol,
-            tokens = poolingToken.underlyingTokens,
             totalSupply = refreshable {
                 getToken(poolInfo.address).totalDecimalSupply()
             },

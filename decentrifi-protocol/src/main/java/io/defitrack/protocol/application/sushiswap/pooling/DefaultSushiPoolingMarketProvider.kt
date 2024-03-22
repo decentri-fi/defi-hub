@@ -52,7 +52,6 @@ abstract class DefaultSushiPoolingMarketProvider(
                 address = lpAddress,
                 name = token.name,
                 symbol = token.symbol,
-                tokens = token.underlyingTokens,
                 breakdown = refreshable { breakdown },
                 identifier = lpAddress,
                 positionFetcher = defaultPositionFetcher(token.address),

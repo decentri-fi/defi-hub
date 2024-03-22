@@ -30,13 +30,13 @@ class VelodromeV1OptimismPoolingMarketProvider(
         getPairFactoryContract()
             .allPairs()
             .parMap(concurrency = 12) {
-            createMarket(it)
-        }.forEach {
-            it.fold(
-                { throwable -> logger.error("Error creating market", throwable) },
-                { poolingMarket -> send(poolingMarket) }
-            )
-        }
+                createMarket(it)
+            }.forEach {
+                it.fold(
+                    { throwable -> logger.error("Error creating market", throwable) },
+                    { poolingMarket -> send(poolingMarket) }
+                )
+            }
     }
 
     private fun getPairFactoryContract() =
@@ -48,7 +48,7 @@ class VelodromeV1OptimismPoolingMarketProvider(
             val tokens = poolingToken.underlyingTokens
 
             val breakdown = refreshable {
-                fiftyFiftyBreakdown(tokens[0], tokens[1], poolingToken.address)
+                breakdownOf(poolingToken.address, tokens[0], tokens[1])
             }
 
             create(
@@ -58,7 +58,6 @@ class VelodromeV1OptimismPoolingMarketProvider(
                 name = poolingToken.name,
                 breakdown = breakdown,
                 symbol = poolingToken.symbol,
-                tokens = poolingToken.underlyingTokens,
                 totalSupply = refreshable {
                     getToken(it).totalDecimalSupply()
                 },

@@ -7,6 +7,7 @@ import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.market.domain.PoolingMarket
+import io.defitrack.market.domain.PoolingMarketTokenShare
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import org.springframework.stereotype.Component
@@ -19,13 +20,19 @@ class PoolTogetherEthereumAUSDCTicketMarketProvider : PoolingMarketProvider() {
     val usdcAddress = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
     override suspend fun fetchMarkets(): List<PoolingMarket> {
         val token = getToken(usdcTicketAddress)
+        val usdc = getToken(usdcAddress)
 
         return create(
             identifier = "aUSDC-ticket",
             address = usdcTicketAddress,
             name = "PoolTogether aUSDC Ticket",
             symbol = "PTaUSDC",
-            tokens = listOf(token),
+            breakdown = refreshable {
+                PoolingMarketTokenShare(
+                    usdc,
+                    token.totalSupply
+                ).nel()
+            },
             positionFetcher = defaultPositionFetcher(token.address),
             totalSupply = refreshable(token.totalDecimalSupply()) {
                 getToken(usdcTicketAddress).totalDecimalSupply()

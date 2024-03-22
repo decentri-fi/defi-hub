@@ -6,6 +6,7 @@ import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.market.domain.PoolingMarketTokenShare
+import io.defitrack.market.domain.asShare
 import io.defitrack.protocol.Protocol
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
@@ -27,12 +28,8 @@ abstract class AbstractSGethTokenProvider(
                 identifier = "sgeth",
                 address = address,
                 symbol = "sgeth",
-                tokens = listOf(underlying),
                 breakdown = refreshable {
-                    PoolingMarketTokenShare(
-                        underlying,
-                        getToken(address).totalSupply
-                    ).nel()
+                    underlying.asShare(getToken(address).totalSupply).nel()
                 },
                 totalSupply = refreshable {
                     getToken(address).totalDecimalSupply()

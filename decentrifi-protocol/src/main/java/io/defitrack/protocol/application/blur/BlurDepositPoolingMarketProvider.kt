@@ -11,6 +11,7 @@ import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.market.domain.PoolingMarketTokenShare
+import io.defitrack.market.domain.asShare
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import org.springframework.stereotype.Component
@@ -22,30 +23,20 @@ class BlurDepositPoolingMarketProvider : PoolingMarketProvider() {
 
     val blurEthDeposit = "0x0000000000a39bb272e79075ade125fd351887ac"
 
-    val blurEthDepositContract = lazyAsync {
-
-    }
-
     override suspend fun fetchMarkets(): List<PoolingMarket> = with(getBlockchainGateway()) {
-        val contract = ERC20Contract(
-            blurEthDeposit
-        )
-
         val ether = getToken("0x0")
         return create(
             breakdown = refreshable {
-                PoolingMarketTokenShare(
-                    ether,
-                    getBlockchainGateway().getNativeBalance(blurEthDeposit).times(TEN.pow(18)).toBigInteger()
-                ).nel()
+                //TODO: probably could use native balance thingy
+                ether.asShare(getBlockchainGateway().getNativeBalance(blurEthDeposit).times(TEN.pow(18)).toBigInteger())
+                    .nel()
             },
             name = "BlurEth",
             identifier = blurEthDeposit,
             address = blurEthDeposit,
             symbol = "blurEth",
-            tokens = listOf(ether),
-            totalSupply = contract.totalSupply().map {
-                it.asEth(contract.readDecimals().toInt())
+            totalSupply = refreshable {
+                getToken(blurEthDeposit).totalDecimalSupply()
             },
             positionFetcher = defaultPositionFetcher(blurEthDeposit),
         ).nel()

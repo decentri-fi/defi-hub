@@ -35,7 +35,7 @@ class ApeswapPolygonPoolingMarketProvider(
                     val underlyingTokens = poolingToken.underlyingTokens
 
                     val breakdown = refreshable {
-                        fiftyFiftyBreakdown(underlyingTokens[0], underlyingTokens[1], poolingToken.address)
+                        breakdownOf(poolingToken.address, underlyingTokens[0], underlyingTokens[1])
                     }
                     create(
                         identifier = pool,
@@ -43,7 +43,6 @@ class ApeswapPolygonPoolingMarketProvider(
                         name = poolingToken.name,
                         symbol = poolingToken.symbol,
                         breakdown = breakdown,
-                        tokens = underlyingTokens,
                         positionFetcher = defaultPositionFetcher(poolingToken.address),
                         totalSupply = refreshable {
                             getToken(pool).totalDecimalSupply()

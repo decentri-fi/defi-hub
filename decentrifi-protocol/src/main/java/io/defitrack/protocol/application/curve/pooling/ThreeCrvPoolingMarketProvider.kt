@@ -44,8 +44,15 @@ class ThreeCrvPoolingMarketProvider : PoolingMarketProvider() {
                 address = address,
                 symbol = "3CRV",
                 positionFetcher = defaultPositionFetcher(address),
-                tokens = underlyingTokens,
                 erc20Compatible = true,
+
+                //TODO: test new breakdown
+                breakdown = refreshable {
+                    breakdownOf(
+                        poolContract.address,
+                        *underlyingTokens.toTypedArray()
+                    )
+                },
                 totalSupply = refreshable(token.totalDecimalSupply()) {
                     getToken(address).totalDecimalSupply()
                 },

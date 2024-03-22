@@ -7,6 +7,7 @@ import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.market.domain.PoolingMarket
+import io.defitrack.market.domain.PoolingMarketTokenShare
 import io.defitrack.price.port.`in`.PricePort
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
@@ -23,6 +24,7 @@ class PoolTogetherOptimismAUSDCTicketMarketProvider(
     override suspend fun fetchMarkets(): List<PoolingMarket> {
 
         val token = getToken(usdcTicketAddress)
+        val usdc = getToken(usdcAddress)
         val supply = token.totalDecimalSupply()
 
         return create(
@@ -30,9 +32,12 @@ class PoolTogetherOptimismAUSDCTicketMarketProvider(
             address = usdcTicketAddress,
             name = "PoolTogether aOptUSDC Ticket",
             symbol = "PTaOptUSDC",
-            tokens = listOf(
-                token
-            ),
+            breakdown = refreshable {
+                PoolingMarketTokenShare(
+                    usdc,
+                    token.totalSupply
+                ).nel()
+            },
             positionFetcher = defaultPositionFetcher(token.address),
             totalSupply = refreshable(supply) {
                 getToken(usdcTicketAddress).totalDecimalSupply()

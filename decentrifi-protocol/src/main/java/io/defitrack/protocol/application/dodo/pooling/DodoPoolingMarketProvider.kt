@@ -21,7 +21,13 @@ abstract class DodoPoolingMarketProvider(
                 address = pool.id,
                 name = baseToken.symbol + "/" + quoteToken.symbol + " LP",
                 symbol = baseToken.symbol + "/" + quoteToken.symbol,
-                tokens = listOf(baseToken, quoteToken),
+                breakdown = refreshable {
+                    breakdownOf(
+                        pool.id,
+                        baseToken,
+                        quoteToken
+                    )
+                },
                 totalSupply = refreshable(BigDecimal.ZERO),
             )
         }

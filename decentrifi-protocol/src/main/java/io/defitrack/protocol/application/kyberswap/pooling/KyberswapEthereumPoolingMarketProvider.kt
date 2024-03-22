@@ -42,7 +42,13 @@ class KyberswapEthereumPoolingMarketProvider(
             address = it.id,
             name = token.name,
             symbol = token.symbol,
-            tokens = listOf(token0, token1),
+            breakdown = refreshable {
+                breakdownOf(
+                    token.address,
+                    token0,
+                    token1
+                )
+            },
             apr = kyberswapAPRService.getAPR(it.pair.id, getNetwork()),
             positionFetcher = defaultPositionFetcher(token.address),
             totalSupply = refreshable {

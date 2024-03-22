@@ -37,13 +37,15 @@ class UniswapV2EthereumPoolingMarketProvider(
         allPairs.parMap(concurrency = 12) {
             catch {
                 val token = getToken(it)
-                val breakdown = breakdownOf(
-                    token.address,
-                    token.underlyingTokens[0],
-                    token.underlyingTokens[1],
-                )
+                val breakdown = refreshable {
+                    breakdownOf(
+                        token.address,
+                        token.underlyingTokens[0],
+                        token.underlyingTokens[1],
+                    )
+                }
 
-                val marketsize = breakdown.sumOf {
+                val marketsize = breakdown.get().sumOf {
                     prices.calculatePrice(
                         GetPriceCommand(
                             it.token.address,
@@ -58,6 +60,7 @@ class UniswapV2EthereumPoolingMarketProvider(
                         name = "Uniswap V2 ${token.symbol} Pool",
                         identifier = it,
                         address = it,
+                        breakdown = breakdown,
                         symbol = token.underlyingTokens[0].symbol + "/" + token.underlyingTokens[1].symbol,
                         totalSupply = refreshable {
                             token.totalSupply.asEth(18)

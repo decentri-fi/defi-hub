@@ -1,12 +1,16 @@
 package io.defitrack.protocol.application.aave.pooling
 
+import arrow.core.nel
 import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.refreshable
-import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.market.domain.PoolingMarket
+import io.defitrack.market.domain.PoolingMarketTokenShare
+import io.defitrack.market.domain.asShare
+import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
+import io.defitrack.protocol.balancer.contract.BalancerPoolTokenContract
 import org.springframework.stereotype.Component
 
 @Component
@@ -19,25 +23,31 @@ class ABPTPoolingMarketProvider : PoolingMarketProvider(
     val wethAddress = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
     val bPool = "0xC697051d1C6296C24aE3bceF39acA743861D9A81"
 
+    //TODO: test this
     override suspend fun fetchMarkets(): List<PoolingMarket> {
         val aave = getToken(aaveAddress)
         val weth = getToken(wethAddress)
 
-        val tokens = listOf(aave, weth)
+        val balancerPoolToken = createContract {
+            BalancerPoolTokenContract(bPool)
+        }
 
-        return listOf(
-            create(
-                identifier = "abpt",
-                address = abptAddress,
-                name = "Aave Balance Pool Token",
-                symbol = "ABPT",
-                tokens = tokens,
-                type = "abpt",
-                totalSupply = refreshable {
-                    getToken(abptAddress).totalDecimalSupply()
-                }
-            )
-        )
+        return create(
+            identifier = "abpt",
+            address = abptAddress,
+            name = "Aave Balance Pool Token",
+            symbol = "ABPT",
+            type = "abpt",
+            breakdown = refreshable {
+                listOf(
+                    aave.asShare(balancerPoolToken.getBalance(aaveAddress)),
+                    weth.asShare(balancerPoolToken.getBalance(wethAddress))
+                )
+            },
+            totalSupply = refreshable {
+                getToken(abptAddress).totalDecimalSupply()
+            }
+        ).nel()
     }
 
     override fun getProtocol(): Protocol {

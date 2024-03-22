@@ -6,6 +6,7 @@ import io.defitrack.common.utils.refreshable
 import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.market.domain.PoolingMarket
+import io.defitrack.market.domain.PoolingMarketTokenShare
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.bancor.BancorEthereumProvider
@@ -33,7 +34,7 @@ class BancorEthereumPoolingMarketProvider(
         bancor.liquidityPools()
             .map(::poolTokenContract)
             .resolve()
-            .parMapNotNull(concurrency = 8) { pool -> create(pool, bancor) }
+            .parMapNotNull(concurrency = 8) { pool -> createMarket(pool, bancor) }
             .forEach {
                 send(it)
             }
@@ -41,29 +42,32 @@ class BancorEthereumPoolingMarketProvider(
 
     private fun poolTokenContract(it: String) = with(getBlockchainGateway()) { PoolTokenContract(it) }
 
-    private suspend fun create(
+    private suspend fun createMarket(
         pool: PoolTokenContract,
         bancor: BancorNetworkContract
-    ) = try {
-        val token = getToken(pool.address)
-        val underlying = getToken(pool.reserveToken.await())
-        create(
-            identifier = pool.address,
-            address = pool.address,
-            name = token.name,
-            symbol = token.symbol,
-            tokens = listOf(underlying),
-            investmentPreparer = BancorPoolInvestmentPreparer(
-                getERC20Resource(), bancor, underlying.address
-            ),
-            positionFetcher = defaultPositionFetcher(token.address),
-            totalSupply = refreshable {
-                getToken(pool.address).totalDecimalSupply()
-            }
-        )
-    } catch (ex: Exception) {
-        ex.printStackTrace()
-        null
+    ): PoolingMarket? {
+        return try {
+            val token = getToken(pool.address)
+            val underlying = getToken(pool.reserveToken.await())
+
+            create(
+                identifier = pool.address,
+                breakdown = refreshable { emptyList() },
+                address = pool.address,
+                name = token.name,
+                symbol = token.symbol,
+                investmentPreparer = BancorPoolInvestmentPreparer(
+                    getERC20Resource(), bancor, underlying.address
+                ),
+                positionFetcher = defaultPositionFetcher(token.address),
+                totalSupply = refreshable {
+                    getToken(pool.address).totalDecimalSupply()
+                }
+            )
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            null
+        }
     }
 
     override fun getNetwork(): Network {

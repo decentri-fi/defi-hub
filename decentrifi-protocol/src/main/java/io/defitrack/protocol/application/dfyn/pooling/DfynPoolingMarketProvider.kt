@@ -37,7 +37,8 @@ class DfynPoolingMarketProvider(
         return Protocol.DFYN
     }
 
-    private suspend fun DfynPoolingMarketProvider.createMarket(it: Pair): PoolingMarket? {
+    //TODO: test new breakdown
+    private suspend fun createMarket(it: Pair): PoolingMarket? {
         return try {
             if (it.reserveUSD > BigDecimal.valueOf(100000)) {
                 val token = getToken(it.id)
@@ -49,8 +50,14 @@ class DfynPoolingMarketProvider(
                     identifier = it.id,
                     name = token.name,
                     symbol = token.symbol,
-                    tokens = listOf(token0, token1),
                     apr = dfynAPRService.getAPR(it.id),
+                    breakdown = refreshable {
+                        breakdownOf(
+                            it.id,
+                            token0,
+                            token1
+                        )
+                    },
                     positionFetcher = defaultPositionFetcher(token.address),
                     totalSupply = refreshable {
                         getToken(it.id).totalDecimalSupply()

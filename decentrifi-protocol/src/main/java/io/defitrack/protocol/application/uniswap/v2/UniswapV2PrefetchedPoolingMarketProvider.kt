@@ -27,20 +27,14 @@ class UniswapV2PrefetchedPoolingMarketProvider(
         val prefetches = prefetcher.getPrefetches(getNetwork())
         prefetches.parMap(concurrency = 8) { prefetch ->
             try {
-                val breakdown = refreshable(
-                    fiftyFiftyBreakdown(
-                        prefetch.tokens[0].toFungibleToken(getNetwork()),
-                        prefetch.tokens[1].toFungibleToken(getNetwork()),
-                        prefetch.address
-                    )
-                ) {
-                    fiftyFiftyBreakdown(
-                        getToken(prefetch.tokens[0].address),
-                        getToken(prefetch.tokens[1].address),
-                        prefetch.address
+                val breakdown = refreshable {
+                    breakdownOf(
+                        prefetch.address,
+                        *prefetch.breakdown?.map {
+                            it.token.toFungibleToken(getNetwork())
+                        }!!.toTypedArray()
                     )
                 }
-
 
                 val refreshableTotalSupply = refreshable(prefetch.totalSupply) {
                     getToken(prefetch.address).totalDecimalSupply()
@@ -54,11 +48,8 @@ class UniswapV2PrefetchedPoolingMarketProvider(
                         address = prefetch.address,
                         name = prefetch.name,
                         decimals = prefetch.decimals,
-                        symbol = prefetch.tokens.joinToString("-") { it.symbol },
+                        symbol = breakdown.get().joinToString("/") { it.token.symbol },
                         totalSupply = refreshableTotalSupply,
-                        tokens = prefetch.tokens.map {
-                            it.toFungibleToken(getNetwork())
-                        },
                         breakdown = breakdown,
                         deprecated = false,
                         internalMetadata = emptyMap(),

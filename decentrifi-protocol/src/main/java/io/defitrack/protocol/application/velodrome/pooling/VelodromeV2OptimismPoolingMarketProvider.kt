@@ -11,6 +11,7 @@ import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.market.domain.PoolingMarketTokenShare
+import io.defitrack.market.domain.asShare
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.velodrome.VelodromeOptimismService
@@ -55,24 +56,17 @@ class VelodromeV2OptimismPoolingMarketProvider(
 
     private suspend fun createMarket(contract: VelodromePoolContract): PoolingMarket = coroutineScope {
         val poolingToken = getToken(contract.address)
-
+        val token0 = getToken(contract.token0.await())
+        val token1 = getToken(contract.token1.await())
 
         val breakdown = refreshable {
             val reserves = contract.reserves()
-            val token0 = getToken(contract.token0.await())
-            val token1 = getToken(contract.token1.await())
             val amount0 = reserves.amount0
             val amount1 = reserves.amount1
 
             listOf(
-                PoolingMarketTokenShare(
-                    token0,
-                    amount0,
-                ),
-                PoolingMarketTokenShare(
-                    token1,
-                    amount1,
-                )
+                token0.asShare(amount0),
+                token1.asShare(amount1)
             )
         }
 
@@ -83,7 +77,6 @@ class VelodromeV2OptimismPoolingMarketProvider(
             name = poolingToken.name,
             breakdown = breakdown,
             symbol = poolingToken.symbol,
-            tokens = poolingToken.underlyingTokens,
             totalSupply = refreshable {
                 contract.totalSupply().asEth(poolingToken.decimals)
             },

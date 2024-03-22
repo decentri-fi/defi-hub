@@ -42,7 +42,7 @@ class CamelotArbitrumPoolingMarketProvider : PoolingMarketProvider() {
 
 
         val breakdown = refreshable {
-            fiftyFiftyBreakdown(underlyingTokens[0], underlyingTokens[1], poolingToken.address)
+            breakdownOf(poolingToken.address, underlyingTokens[0], underlyingTokens[1])
         }
 
         return create(

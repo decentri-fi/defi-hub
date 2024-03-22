@@ -27,16 +27,14 @@ class SolidLizardPoolingMarketProvider : PoolingMarketProvider() {
                 val tokens = token.underlyingTokens
 
                 try {
-                    val breakdown = refreshable {
-                        fiftyFiftyBreakdown(tokens[0], tokens[1], token.address)
-                    }
                     create(
                         name = token.name,
                         identifier = token.address,
                         positionFetcher = defaultPositionFetcher(token.address),
-                        tokens = token.underlyingTokens,
                         symbol = token.symbol,
-                        breakdown = breakdown,
+                        breakdown = refreshable {
+                            breakdownOf(token.address, tokens[0], tokens[1])
+                        },
                         address = token.address,
                         totalSupply = refreshable {
                             getToken(it).totalDecimalSupply()

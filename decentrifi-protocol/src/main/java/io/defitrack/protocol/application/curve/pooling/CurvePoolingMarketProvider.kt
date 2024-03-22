@@ -49,20 +49,17 @@ abstract class CurvePoolingMarketProvider(
 
         val poolAsERC20 = getToken(pool)
 
-        val breakdown = refreshable {
-            breakdownOf(
-                pool,
-                *underlyingTokens.toTypedArray()
-            )
-        }
-
         return create(
             name = poolAsERC20.name,
             address = pool,
             identifier = createId(pool),
             symbol = poolAsERC20.symbol,
-            tokens = underlyingTokens,
-            breakdown = breakdown,
+            breakdown = refreshable {
+                breakdownOf(
+                    pool,
+                    *underlyingTokens.toTypedArray()
+                )
+            },
             totalSupply = refreshable {
                 getToken(pool).totalDecimalSupply()
             }

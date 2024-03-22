@@ -34,10 +34,10 @@ class EqualizerPoolingMarketProvider : PoolingMarketProvider() {
                 }
 
                 val breakdown = refreshable {
-                    fiftyFiftyBreakdown(
+                    breakdownOf(
+                        lp.address,
                         lp.underlyingTokens[0],
                         lp.underlyingTokens[1],
-                        lp.address
                     )
                 }
 
@@ -49,7 +49,6 @@ class EqualizerPoolingMarketProvider : PoolingMarketProvider() {
                     breakdown = breakdown,
                     erc20Compatible = true,
                     symbol = lp.symbol,
-                    tokens = lp.underlyingTokens,
                     totalSupply = refreshable {
                         getToken(lp.address).totalDecimalSupply()
                     }

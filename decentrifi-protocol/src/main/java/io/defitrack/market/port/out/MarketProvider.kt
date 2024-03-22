@@ -252,7 +252,7 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
         }
     }
 
-    fun <T : EvmContract> createContract(creator: context(BlockchainGateway) () -> T): T {
+    suspend fun <T : EvmContract> createContract(creator: suspend context(BlockchainGateway) () -> T): T {
         return creator(getBlockchainGateway())
     }
 }

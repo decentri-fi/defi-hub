@@ -21,7 +21,6 @@ class PoolingMarketVOMapper(
                 name = name,
                 protocol = protocolVOMapper.map(protocol),
                 network = network.toNetworkInformation(),
-                tokens = tokens,
                 id = id,
                 breakdown = poolingBreakdownVOMapper.toVO(breakdown?.get()),
                 decimals = decimals,

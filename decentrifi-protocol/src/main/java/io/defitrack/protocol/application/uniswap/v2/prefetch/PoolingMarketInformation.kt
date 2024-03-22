@@ -10,7 +10,6 @@ class PoolingMarketInformation(
     name: String,
     protocol: ProtocolInformation,
     network: NetworkInformation,
-    val tokens: List<FungibleTokenInformation>,
     val breakdown: List<PoolingMarketTokenShareInformation>?,
     val apr: BigDecimal?,
     val address: String,

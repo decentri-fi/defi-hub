@@ -48,11 +48,8 @@ class EthereumSetPoolingMarketProvider(
                     address = set,
                     name = token.name,
                     symbol = token.symbol,
-                    tokens = breakdown.get().map { element -> element.token },
                     breakdown = breakdown,
-                    apr = null,
                     positionFetcher = defaultPositionFetcher(set),
-                    investmentPreparer = null,
                     totalSupply = refreshable(token.totalDecimalSupply()) {
                         getToken(set).totalDecimalSupply()
                     })

@@ -10,6 +10,7 @@ import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.market.domain.PoolingMarketTokenShare
+import io.defitrack.market.domain.asShare
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.stargate.StargateService
 import io.defitrack.protocol.stargate.contract.StargatePool
@@ -47,16 +48,12 @@ abstract class AbstractStargatePoolingMarketProvider(
                 identifier = pool.address,
                 address = pool.address,
                 symbol = token.symbol,
-                tokens = listOf(underlying),
                 decimals = token.decimals,
                 totalSupply = refreshable(token.totalDecimalSupply()) {
                     getToken(pool.address).totalDecimalSupply()
                 },
                 breakdown = refreshable {
-                    PoolingMarketTokenShare(
-                        underlying,
-                        pool.totalLiquidity.await()
-                    ).nel()
+                    underlying.asShare(pool.totalLiquidity()).nel()
                 }
             )
         }.forEach { send(it) }

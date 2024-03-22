@@ -40,11 +40,8 @@ class IndexCoopMarketProvider : PoolingMarketProvider() {
             address = ethx2,
             name = token.name,
             symbol = token.symbol,
-            tokens = breakdown.get().map { element -> element.token },
             breakdown = breakdown,
-            apr = null,
             positionFetcher = defaultPositionFetcher(ethx2),
-            investmentPreparer = null,
             totalSupply = refreshable(token.totalDecimalSupply()) {
                 getToken(ethx2).totalDecimalSupply()
             }
