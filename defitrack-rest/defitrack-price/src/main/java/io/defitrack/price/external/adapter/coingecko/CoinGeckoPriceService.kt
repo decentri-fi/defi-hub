@@ -27,7 +27,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.nio.charset.Charset
 
@@ -53,14 +52,9 @@ class CoinGeckoPriceService(
         }
     }
 
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 4, initialDelay = 1000 * 60 * 60 * 4)
-    fun scheduledRefresh() = runBlocking {
-        getCoingeckoTokens()
-    }
-
     suspend fun getCoingeckoTokens(): Set<CoingeckoToken> {
         return tokenCache.get("all") {
-            logger.info("fetching all coingecko tokens")
+            logger.info("refetching all coingecko tokens")
             catch {
                 val result = withContext(Dispatchers.IO) {
                     httpClient.get(coinlistLocation).bodyAsText(Charset.defaultCharset())
@@ -109,7 +103,7 @@ class CoinGeckoPriceService(
                 val response =
                     httpClient.get("https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&x_cg_demo_api_key=${apiKey}") { }
                 if (response.status.value == 429) {
-                    logger.info("problem fetching prices, retrying: {}", response.bodyAsText())
+                    logger.debug("problem fetching prices, retrying: {}", response.bodyAsText())
                     throw ThrottledException()
                 }
                 response

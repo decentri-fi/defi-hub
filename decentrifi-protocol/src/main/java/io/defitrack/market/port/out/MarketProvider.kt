@@ -1,5 +1,6 @@
 package io.defitrack.market.port.out
 
+import io.defitrack.balance.BalanceResource
 import io.defitrack.company.CompaniesProvider
 import io.defitrack.erc20.domain.FungibleTokenInformation
 import io.defitrack.erc20.port.`in`.ERC20Resource
@@ -46,6 +47,9 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
 
     @Autowired
     lateinit var erC20Resource: ERC20Resource
+
+    @Autowired
+    lateinit var balanceResource: BalanceResource
 
     @Autowired
     private lateinit var bulkConstantResolver: BulkConstantResolver
@@ -186,7 +190,12 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
     }
 
     suspend fun getBalance(token: String, user: String): BigInteger {
-        return erC20Resource.getBalance(getNetwork(), token, user)
+        return if (token == "0x0") {
+            balanceResource.getNativeBalance(getNetwork(), user).amount.toBigDecimal()
+                .times(BigDecimal.TEN.pow(18)).toBigInteger()
+        } else {
+            erC20Resource.getBalance(getNetwork(), token, user)
+        }
     }
 
     suspend fun getMarketSize(token: FungibleTokenInformation, location: String): BigDecimal {

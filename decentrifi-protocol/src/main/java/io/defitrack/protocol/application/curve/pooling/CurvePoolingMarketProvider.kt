@@ -1,6 +1,7 @@
 package io.defitrack.protocol.application.curve.pooling
 
 import arrow.core.Either
+import arrow.core.Either.Companion.catch
 import arrow.core.Option
 import arrow.core.getOrElse
 import arrow.fx.coroutines.parMap
@@ -27,7 +28,7 @@ abstract class CurvePoolingMarketProvider(
 
         val coinsPerPool = contract.getCoins()
         coinsPerPool.entries.parMap(concurrency = 12) {
-            Either.catch {
+            catch {
                 createMarket(it)
             }
         }.mapNotNull {
@@ -46,8 +47,14 @@ abstract class CurvePoolingMarketProvider(
             getToken(it)
         }
 
-        val poolContract = CurvePoolContract(getBlockchainGateway(), pool)
         val poolAsERC20 = getToken(pool)
+
+        val breakdown = refreshable {
+            breakdownOf(
+                pool,
+                *underlyingTokens.toTypedArray()
+            )
+        }
 
         return create(
             name = poolAsERC20.name,
@@ -55,6 +62,7 @@ abstract class CurvePoolingMarketProvider(
             identifier = createId(pool),
             symbol = poolAsERC20.symbol,
             tokens = underlyingTokens,
+            breakdown = breakdown,
             totalSupply = refreshable {
                 getToken(pool).totalDecimalSupply()
             }

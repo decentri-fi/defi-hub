@@ -7,9 +7,13 @@ import io.defitrack.abi.TypeUtils.Companion.uint256
 import io.defitrack.evm.contract.BlockchainGateway
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
+import java.math.BigInteger
 
 context(BlockchainGateway)
 class CurveL2GaugeContract(address: String) : ERC20Contract(address) {
+
+
+    val chainId = constant<BigInteger>("chain_id", uint256())
 
     suspend fun lpToken(): String {
         return readSingle(

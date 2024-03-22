@@ -23,10 +23,6 @@ import java.math.BigInteger
 class CurveEthereumGaugeMarketProvider : FarmingMarketProvider() {
     val gaugeControllerAddress = "0x2F50D538606Fa9EDD2B11E2446BEb18C9D5846bB"
 
-    val crvToken = lazyAsync {
-        getToken("0xD533a949740bb3306d119CC777fa900bA034cd52")
-    }
-
     override fun getProtocol(): Protocol {
         return Protocol.CURVE
     }

@@ -45,8 +45,6 @@ abstract class DecentrifiUniswapV3BasedPriceService(
     private val prices = mutableListOf<ExternalPrice>()
 
     fun getPrices() = runBlocking {
-        logger.info("fetching prices for uniswap v3")
-
         val duration = measureTime {
             val pools = getUniswapV3Pools()
 
@@ -57,7 +55,7 @@ abstract class DecentrifiUniswapV3BasedPriceService(
                 logger.error("Unable to fetch pools for ${protocol.name}, result was ${e.message}")
             }
         }
-        logger.info("[took ${duration.inWholeSeconds} seconds] ${protocol.name} Underlying Price Repository populated with ${prices.size} prices")
+        logger.debug("[took ${duration.inWholeSeconds} seconds] ${protocol.name} Underlying Price Repository populated with ${prices.size} prices")
         prices
     }
 
