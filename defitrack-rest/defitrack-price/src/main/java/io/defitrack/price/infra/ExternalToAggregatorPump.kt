@@ -31,7 +31,7 @@ class ExternalToAggregatorPump(
                             priceAggregator.addPrice(externalPrice)
                         }
                     }
-                    logger.info("Fetched ${priceAggregator.getAllPrices().size} prices from ${it.javaClass.simpleName} in ${time.inWholeSeconds}s")
+                    logger.info("Fetched prices from ${it.javaClass.simpleName} in ${time.inWholeSeconds}s")
                 }.mapLeft {
                     logger.error("Error fetching prices from ${it.javaClass.simpleName}", it)
                 }
