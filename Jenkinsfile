@@ -1,6 +1,6 @@
 pipeline {
     environment {
-      JAVA_TOOL_OPTIONS = '-Duser.home=/root'
+ //     JAVA_TOOL_OPTIONS = '-Duser.home=/root'
     }
   agent {
         docker {
