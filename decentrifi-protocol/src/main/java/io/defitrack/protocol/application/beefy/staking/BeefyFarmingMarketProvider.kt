@@ -55,7 +55,7 @@ abstract class BeefyFarmingMarketProvider(
         val token = getToken(contract.address)
         return create(
             identifier = contract.beefyVault.id,
-            name = "${want.name} Beefy Vault",
+            name = "${want.name} Vault",
             apr = getAPY(contract),
             stakedToken = want,
             rewardToken = want,

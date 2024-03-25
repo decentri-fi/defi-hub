@@ -1,4 +1,4 @@
-package io.defitrack.protocol.application.sonne
+package io.defitrack.protocol.application.sonne.staking
 
 import io.defitrack.claim.ClaimableRewardFetcher
 import io.defitrack.claim.Reward
