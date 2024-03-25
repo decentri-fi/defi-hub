@@ -37,7 +37,7 @@ class ERC20TokenService(
     val tokenInformationCache = Cache.Builder<String, Option<TokenInformation>>().build()
 
     override fun getAllSingleTokens(network: Network, verified: Boolean): List<TokenInformation> {
-        return tokenInformationCache.asMap().filter {
+        return HashMap(tokenInformationCache.asMap()).asSequence().filter {
             it.value.isSome()
         }.filter {
             network == it.value.getOrNull()?.network
@@ -49,7 +49,7 @@ class ERC20TokenService(
             it.verified == verified
         }.filter {
             it.type == TokenType.SINGLE
-        }
+        }.toList()
     }
 
     suspend fun refreshCache() {
