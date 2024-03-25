@@ -5,8 +5,8 @@ import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.refreshable
-import io.defitrack.market.port.out.LendingMarketProvider
 import io.defitrack.market.domain.lending.LendingMarket
+import io.defitrack.market.port.out.LendingMarketProvider
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.aave.v3.AaveV3DataProvider
 import io.defitrack.protocol.aave.v3.contract.PoolContract
@@ -22,12 +22,12 @@ abstract class AaveV3LendingMarketProvider(
 
         val poolDataProvider = PoolDataProvider(
             getBlockchainGateway(),
-            dataProvider.poolDataProvider()
+            dataProvider.configs[network]!!.poolDataProvider
         )
 
         val poolContract = PoolContract(
             getBlockchainGateway(),
-            dataProvider.poolAddress()
+            dataProvider.configs[network]!!.poolAddress
         )
 
 

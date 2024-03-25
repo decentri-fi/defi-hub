@@ -24,7 +24,7 @@ class MoonwellLendingMarketProvider : LendingMarketProvider() {
 
 
     override suspend fun fetchMarkets(): List<LendingMarket> = coroutineScope {
-        getTokenContracts().parMap {
+        getTokenContracts().parMap(concurrency = 12) {
             toLendingMarket(it)
         }.filterNotNull()
     }

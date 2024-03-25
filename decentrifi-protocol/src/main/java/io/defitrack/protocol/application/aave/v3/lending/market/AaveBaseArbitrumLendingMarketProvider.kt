@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.AAVE)
-class AaveV3OptimismLendingMarketProvider(
-    dataProvider: AaveV3DataProvider,
+class AaveBaseArbitrumLendingMarketProvider(
+    arbitrumV3AaveV3DataProvider: AaveV3DataProvider,
 ) : AaveV3LendingMarketProvider(
-    Network.OPTIMISM, dataProvider
+    Network.BASE, arbitrumV3AaveV3DataProvider
 )

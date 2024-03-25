@@ -18,20 +18,20 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.SEAMLESS)
- class SeamlessLendingMarketProvider(
-     private val dataProvider: SeamlessAaveV3DataProvider
+class SeamlessLendingMarketProvider(
+    private val dataProvider: SeamlessAaveV3DataProvider
 ) : LendingMarketProvider() {
 
     override suspend fun fetchMarkets(): List<LendingMarket> {
 
         val poolDataProvider = PoolDataProvider(
             getBlockchainGateway(),
-            dataProvider.poolDataProvider()
+            dataProvider.configs[getNetwork()]!!.poolDataProvider
         )
 
         val poolContract = PoolContract(
             getBlockchainGateway(),
-            dataProvider.poolAddress()
+            dataProvider.configs[getNetwork()]!!.poolAddress
         )
 
         return poolContract
