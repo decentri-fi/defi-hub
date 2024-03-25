@@ -1,6 +1,7 @@
 package io.defitrack.protocol.application.aerodrome.farming
 
 import arrow.core.Either
+import arrow.core.Either.Companion.catch
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.some
@@ -32,33 +33,37 @@ class AerodromeGaugeMarketProvider(
 
     val voter = "0x16613524e02ad97edfef371bc883f2f5d6c480a5"
 
-    val voterContract = lazyAsync {
-        with(getBlockchainGateway()) {
+    override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
+        val markets = poolingMarketProvider.getMarkets()
+
+        val voter = createContract {
             VoterContract(
                 voter
             )
         }
+
+        voter.gaugesFor(markets.map { it.address })
+            .filter { gauge ->
+                gauge.isSome()
+            }.map { gauge ->
+                gauge.orNull()!!
+            }
+            .parMap(concurrency = 12) { gauge ->
+                catch {
+                    createGauge(gauge)
+                }
+            }.mapNotNull {
+                it.mapLeft { throwable ->
+                    logger.error("Error creating gauge market: {}", throwable.message)
+                }.getOrNull()
+            }.forEach {
+                it.onSome {
+                    send(it)
+                }
+            }
     }
 
-    override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
-        poolingMarketProvider.getMarkets().parMap(concurrency = 12) { poolingMarket ->
-            Either.catch {
-                createGauge(poolingMarket)
-            }
-        }.mapNotNull {
-            it.mapLeft { throwable ->
-                logger.error("Error creating gauge market: {}", throwable.message)
-            }.getOrNull()
-        }.forEach {
-            it.onSome {
-                send(it)
-            }
-        }
-    }
-
-    private suspend fun AerodromeGaugeMarketProvider.createGauge(it: PoolingMarket): Option<FarmingMarket> {
-        val gauge = voterContract.await().gauges(it.address)
-
+    private suspend fun createGauge(gauge: String): Option<FarmingMarket> {
         return if (gauge != "0x0000000000000000000000000000000000000000") {
             val contract = with(getBlockchainGateway()) {
                 VelodromeV2GaugeContract(gauge)

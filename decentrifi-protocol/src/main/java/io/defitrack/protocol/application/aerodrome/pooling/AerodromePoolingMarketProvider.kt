@@ -1,5 +1,6 @@
 package io.defitrack.protocol.application.aerodrome.pooling
 
+import arrow.fx.coroutines.parMap
 import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
@@ -20,50 +21,44 @@ class AerodromePoolingMarketProvider : PoolingMarketProvider() {
 
     private val poolFactoryAddress: String = "0x420DD381b31aEf6683db6B902084cB0FFECe40Da"
 
-    private val poolFactoryContract = lazyAsync {
+    override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
         PoolFactoryContract(
             blockchainGateway = getBlockchainGateway(),
             contractAddress = poolFactoryAddress
-        )
-    }
+        ).allPools().parMap(concurrency = 12) {
+            val poolingToken = getToken(it)
+            val tokens = poolingToken.underlyingTokens
 
-    override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
-        poolFactoryContract.await().allPools().forEach {
-            launch {
-                throttled {
-                    val poolingToken = getToken(it)
-                    val tokens = poolingToken.underlyingTokens
-
-                    try {
-                        val breakdown = refreshable {
-                            breakdownOf(poolingToken.address, tokens[0], tokens[1])
-                        }
-
-                        send(
-                            create(
-                                identifier = it,
-                                positionFetcher = defaultPositionFetcher(poolingToken.address),
-                                address = it,
-                                name = poolingToken.name,
-                                breakdown = breakdown,
-                                symbol = poolingToken.symbol,
-                                totalSupply = refreshable {
-                                    getToken(it).totalDecimalSupply()
-                                },
-                                type = "pool",
-                                deprecated = false
-                            )
-                        )
-                    } catch (ex: Exception) {
-                        logger.error("Error while fetching pooling market $it: {}", ex.message)
-                    }
+            try {
+                val breakdown = refreshable {
+                    breakdownOf(poolingToken.address, tokens[0], tokens[1])
                 }
+
+                create(
+                    identifier = it,
+                    positionFetcher = defaultPositionFetcher(poolingToken.address),
+                    address = it,
+                    name = poolingToken.name,
+                    breakdown = breakdown,
+                    symbol = poolingToken.symbol,
+                    totalSupply = refreshable {
+                        getToken(it).totalDecimalSupply()
+                    },
+                    type = "pool",
+                    deprecated = false
+                )
+            } catch (ex: Exception) {
+                logger.error("Error while fetching pooling market $it: {}", ex.message)
+                null
             }
-        }
+        }.filterNotNull()
+            .forEach {
+                send(it)
+            }
     }
 
     override fun getProtocol(): Protocol {
-        return Protocol.ALIENBASE
+        return Protocol.AERODROME
     }
 
     override fun getNetwork(): Network {
