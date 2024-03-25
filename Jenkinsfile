@@ -1,7 +1,7 @@
 pipeline {
-    environment {
+   // environment {
  //     JAVA_TOOL_OPTIONS = '-Duser.home=/root'
-    }
+    //}
   agent {
         docker {
             image 'maven:3.9.6-amazoncorretto-21'
