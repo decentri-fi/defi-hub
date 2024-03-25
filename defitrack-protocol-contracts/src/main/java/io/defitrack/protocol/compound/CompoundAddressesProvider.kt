@@ -30,6 +30,7 @@ class CompoundAddressesProvider {
         Network.BASE to CompoundAddresses(
             v3Tokens = listOf(
                 "0x9c4ec768c28520B50860ea7a15bd7213a9fF58bf",
+                "0xb125E6687d4313864e53df431d5425969c15Eb2F",
                 "0x46e6b214b524310239732D51387075E0e70970bf"
             ),
             rewards = "0x123964802e6ABabBE1Bc9547D72Ef1B69B00A6b1"
