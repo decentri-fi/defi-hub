@@ -31,7 +31,7 @@ data class TokenListEntry(
 }
 
 data class Extensions(
-    val bridgeInfo: Map<String, BridgeInfo>
+    val bridgeInfo: Map<String, BridgeInfo>?
 )
 
 data class BridgeInfo(
