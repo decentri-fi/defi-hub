@@ -311,7 +311,7 @@ class Web3JProxy(
         } else if (message.contains("Log response size exceeded")) {
             throw NeedsSplitException()
         } else {
-            throw RuntimeException("unable to find working fallback web3j: $message")
+            throw RuntimeException("unknown exception: $message")
         }
     }
 
