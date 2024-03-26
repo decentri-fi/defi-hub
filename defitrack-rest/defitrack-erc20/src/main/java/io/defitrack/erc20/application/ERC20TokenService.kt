@@ -56,11 +56,11 @@ class ERC20TokenService(
                     fetchTokenInfo(network, it, true)
                 }.filter {
                     it.isSome()
-                }.forEach {
+                }.map {
                     tokenCache.put(it.getOrNull()!!.address, network, it)
-                }
+                }.filter { it.isSome() }
             }
-            logger.info("refreshing token cache for $network took ${timedvalue.duration.inWholeSeconds}s (${tokenCache.getAll().size}) tokens)")
+            logger.info("populating token cache for $network took ${timedvalue.duration.inWholeSeconds}s (${timedvalue.value.size}) tokens)")
         }
     }
 

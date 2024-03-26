@@ -19,8 +19,9 @@ class TokenCache {
         return "${address.lowercase()}-$network"
     }
 
-    fun put(address: String, network: Network, tokenInformation: Option<TokenInformation>) {
+    fun put(address: String, network: Network, tokenInformation: Option<TokenInformation>): Option<TokenInformation> {
         cache[createIndex(address, network)] = tokenInformation
+        return tokenInformation
     }
 
     fun get(address: String, network: Network): Option<TokenInformation>? {
@@ -41,7 +42,7 @@ class TokenCache {
         }.distinctBy {
             it.address.lowercase() + "-" + it.network.name
         }.filter {
-            it.verified == verified
+            verified && it.verified == verified
         }.filter {
             it.type == TokenType.SINGLE
         }.toList()
