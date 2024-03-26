@@ -33,7 +33,6 @@ class TokenPopulationCron(
             resource.populateTokens()
             erc20TokenService.initialPopulation()
             logger.info("end of token population")
-            AvailabilityChangeEvent.publish(applicationContext, ReadinessState.ACCEPTING_TRAFFIC)
         }
     }
 

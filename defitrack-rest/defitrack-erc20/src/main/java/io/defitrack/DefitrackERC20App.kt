@@ -7,11 +7,7 @@ import org.springframework.boot.runApplication
 import org.springframework.context.ApplicationContext
 
 @SpringBootApplication
-class DefitrackERC20App(applicationContext: ApplicationContext) {
-    init {
-        AvailabilityChangeEvent.publish(applicationContext, ReadinessState.REFUSING_TRAFFIC)
-    }
-}
+class DefitrackERC20App
 
 fun main(args: Array<String>) {
     runApplication<DefitrackERC20App>(*args)
