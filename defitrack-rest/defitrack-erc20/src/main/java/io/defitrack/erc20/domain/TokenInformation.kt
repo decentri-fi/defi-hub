@@ -41,5 +41,6 @@ fun TokenInformation.toVO(): FungibleTokenInformation {
         type = type,
         totalSupply = totalSupply.get(),
         underlyingTokens = underlyingTokens.map { it.toVO() },
+        verified = verified
     )
 }

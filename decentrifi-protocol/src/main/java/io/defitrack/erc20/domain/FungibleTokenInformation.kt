@@ -17,7 +17,8 @@ class FungibleTokenInformation(
     val type: TokenType,
     val totalSupply: BigInteger = BigInteger.ZERO,
     val underlyingTokens: List<FungibleTokenInformation> = emptyList(),
-    val protocol: ProtocolInformation? = null
+    val protocol: ProtocolInformation? = null,
+    val verified: Boolean,
 ) {
 
     fun totalDecimalSupply(): BigDecimal {

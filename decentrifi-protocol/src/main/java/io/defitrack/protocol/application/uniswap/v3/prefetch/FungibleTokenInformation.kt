@@ -16,7 +16,8 @@ class FungibleTokenInformation(
     val decimals: Int,
     val totalSupply: BigInteger = BigInteger.ZERO,
     val underlyingTokens: List<FungibleTokenInformation> = emptyList(),
-    val protocol: ProtocolInformation? = null
+    val protocol: ProtocolInformation? = null,
+    val verified: Boolean? = false
 ) {
 
     fun totalDecimalSupply(): BigDecimal {
@@ -36,7 +37,8 @@ class FungibleTokenInformation(
                 it.toFungibleToken(network)
             },
             protocol = protocol,
-            network = network.toNetworkInformation()
+            network = network.toNetworkInformation(),
+            verified = verified ?: false
         )
     }
 }

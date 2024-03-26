@@ -14,9 +14,6 @@ import io.defitrack.erc20.application.repository.ERC20TokenListResource
 import io.defitrack.erc20.port.input.TokenInformationUseCase
 import io.defitrack.erc20.port.output.ReadERC20Port
 import io.defitrack.token.TokenType
-import io.github.reactivecircus.cache4k.Cache
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,39 +25,21 @@ class ERC20TokenService(
     private val readERC20Port: ReadERC20Port,
     private val erC20Repository: ERC20TokenListResource,
     private val nativeTokenRepository: NativeTokenRepository,
-    private val logoGenerator: LogoGenerator
+    private val logoGenerator: LogoGenerator,
+    private val tokenCache: TokenCache,
 ) : TokenInformationUseCase {
 
     @Autowired
     private lateinit var tokenIdentifiers: List<TokenIdentifier>
 
     val logger = LoggerFactory.getLogger(this.javaClass)
-    val tokenInformationCache = Cache.Builder<String, Option<TokenInformation>>().build()
-
-    val mutex: Mutex = Mutex()
 
     override suspend fun getAllSingleTokens(network: Network, verified: Boolean): List<TokenInformation> =
-        coroutineScope {
-            mutex.withLock {
-                HashMap(tokenInformationCache.asMap()).asSequence().filter {
-                    it.value.isSome()
-                }.filter {
-                    network == it.value.getOrNull()?.network
-                }.mapNotNull {
-                    it.value.getOrNull()
-                }.distinctBy {
-                    it.address.lowercase() + "-" + it.network.name
-                }.filter {
-                    it.verified == verified
-                }.filter {
-                    it.type == TokenType.SINGLE
-                }.toList()
-            }
-        }
+        tokenCache.find(network, verified)
 
     suspend fun refreshCache() {
         logger.info("refreshing token caches")
-        tokenInformationCache.asMap().entries.forEach { entry ->
+        tokenCache.getAll().forEach { entry ->
             entry.value.onSome { tokenInfo ->
                 tokenInfo.refresh()
             }
@@ -73,17 +52,15 @@ class ERC20TokenService(
             val timedvalue = measureTimedValue {
                 val allTokens = erC20Repository.allTokens(network)
                 logger.info("found ${allTokens.size} tokens for network ${network.name}. Importing.")
-                allTokens.parMap(concurrency = 12) {
+                allTokens.parMap(concurrency = 8) {
                     fetchTokenInfo(network, it, true)
                 }.filter {
                     it.isSome()
                 }.forEach {
-                    mutex.withLock {
-                        tokenInformationCache.put(createIndex(it.getOrNull()!!.address, network), it)
-                    }
+                    tokenCache.put(it.getOrNull()!!.address, network, it)
                 }
             }
-            logger.info("refreshing token cache for $network took ${timedvalue.duration.inWholeSeconds}s (${tokenInformationCache.asMap().size}) tokens)")
+            logger.info("refreshing token cache for $network took ${timedvalue.duration.inWholeSeconds}s (${tokenCache.getAll().size}) tokens)")
         }
     }
 
@@ -97,12 +74,9 @@ class ERC20TokenService(
             return nativeTokenRepository.getNativeToken(network).some()
         }
 
-        val index = createIndex(address, network)
-        return tokenInformationCache.get(index)
-            ?: mutex.withLock {
-                fetchTokenInfo(network, address, verified).also {
-                    tokenInformationCache.put(index, it)
-                }
+        return tokenCache.get(address, network)
+            ?: fetchTokenInfo(network, address, verified).also {
+                tokenCache.put(address, network, it)
             }
     }
 
@@ -119,10 +93,6 @@ class ERC20TokenService(
     }.mapLeft {
         logger.error("Error getting token information for $address on $network: {}", it.message)
     }.getOrNone().flatten()
-
-    fun createIndex(address: String, network: Network): String {
-        return "${address.lowercase()}-$network"
-    }
 
     private fun singleERC20(token: ERC20) = TokenInformation(
         logo = logoGenerator.generateLogoUrl(token.network, token.address),

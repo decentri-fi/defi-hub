@@ -20,7 +20,6 @@ import java.util.concurrent.Executors
 class TokenPopulationCron(
     private val resource: ERC20TokenExternalListResource,
     private val erc20TokenService: ERC20TokenService,
-    private val applicationContext: ApplicationContext
 ) {
 
     val logger = LoggerFactory.getLogger(this::class.java)
@@ -28,11 +27,13 @@ class TokenPopulationCron(
 
     @PostConstruct
     fun run() {
-        runBlocking {
-            logger.info("Starting token population")
-            resource.populateTokens()
-            erc20TokenService.initialPopulation()
-            logger.info("end of token population")
+        Executors.newSingleThreadExecutor().submit {
+            runBlocking {
+                logger.info("Starting token population")
+                resource.populateTokens()
+                erc20TokenService.initialPopulation()
+                logger.info("end of token population")
+            }
         }
     }
 
