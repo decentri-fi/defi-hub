@@ -42,7 +42,7 @@ class TokenCache {
         }.distinctBy {
             it.address.lowercase() + "-" + it.network.name
         }.filter {
-            verified && it.verified == verified
+            !verified || (it.verified == verified)
         }.filter {
             it.type == TokenType.SINGLE
         }.toList()
