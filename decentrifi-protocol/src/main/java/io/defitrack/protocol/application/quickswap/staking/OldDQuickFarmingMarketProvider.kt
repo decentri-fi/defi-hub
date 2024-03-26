@@ -41,7 +41,7 @@ class OldDQuickFarmingMarketProvider(
                     stakedToken.asERC20Contract(getBlockchainGateway())::balanceOfFunction
                 ),
                 investmentPreparer = DQuickStakingInvestmentPreparer(
-                    getERC20Resource(), contract
+                    getERC20Resource(), balanceResource, contract
                 ),
                 deprecated = true,
                 exitPositionPreparer = prepareExit {

@@ -36,19 +36,6 @@ internal class DecentrifiERC20RestClient(
     }
 
 
-
-    override suspend fun getBalance(network: Network, tokenAddress: String, user: String): BigInteger {
-        return withContext(Dispatchers.IO) {
-            val get = client.get("$erc20ResourceLocation/${network.name}/$tokenAddress/$user")
-            if (get.status.isSuccess()) {
-                get.body()
-            } else {
-                logger.debug("Failed to get balance for $tokenAddress and $user")
-                BigInteger.ZERO
-            }
-        }
-    }
-
     override suspend fun getTokenInformation(network: Network, address: String): FungibleTokenInformation {
         return withContext(Dispatchers.IO) {
             val result = client.get("$erc20ResourceLocation/${network.name}/$address/token")

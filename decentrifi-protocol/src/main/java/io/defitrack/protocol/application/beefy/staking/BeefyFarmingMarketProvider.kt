@@ -77,7 +77,7 @@ abstract class BeefyFarmingMarketProvider(
                     } else Position.ZERO
                 }
             ),
-            investmentPreparer = BeefyStakingInvestmentPreparer(contract, getERC20Resource()),
+            investmentPreparer = BeefyStakingInvestmentPreparer(contract, getERC20Resource(), balanceResource),
             exitPositionPreparer = prepareExit {
                 contract.fullExitFunction()
             },

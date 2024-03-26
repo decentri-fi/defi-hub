@@ -76,7 +76,8 @@ class AaveV2PolygonLendingMarketProvider(
             investmentPreparer = AaveV2LendingInvestmentPreparer(
                 token.address,
                 lendingPoolContract.get(),
-                getERC20Resource()
+                erC20Resource,
+                balanceResource
             ),
             positionFetcher = PositionFetcher(
                 aToken.asERC20Contract(getBlockchainGateway())::balanceOfFunction

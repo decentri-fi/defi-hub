@@ -38,7 +38,7 @@ class DQuickFarmingMarketProvider(
             rewardToken = stakedToken,
             positionFetcher = PositionFetcher(contract::balanceOfFunction),
             investmentPreparer = DQuickStakingInvestmentPreparer(
-                getERC20Resource(), contract
+                getERC20Resource(), balanceResource, contract
             ),
             type = "quickswap.dragons-lair",
             exitPositionPreparer = prepareExit {

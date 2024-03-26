@@ -190,12 +190,7 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
     }
 
     suspend fun getBalance(token: String, user: String): BigInteger {
-        return if (token == "0x0") {
-            balanceResource.getNativeBalance(getNetwork(), user).amount.toBigDecimal()
-                .times(BigDecimal.TEN.pow(18)).toBigInteger()
-        } else {
-            erC20Resource.getBalance(getNetwork(), token, user)
-        }
+        return balanceResource.getTokenBalance(getNetwork(), user, token).amount
     }
 
     suspend fun getMarketSize(token: FungibleTokenInformation, location: String): BigDecimal {

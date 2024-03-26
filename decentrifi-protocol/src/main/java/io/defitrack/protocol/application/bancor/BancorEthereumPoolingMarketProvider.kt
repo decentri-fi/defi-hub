@@ -57,7 +57,7 @@ class BancorEthereumPoolingMarketProvider(
                 name = token.name,
                 symbol = token.symbol,
                 investmentPreparer = BancorPoolInvestmentPreparer(
-                    getERC20Resource(), bancor, underlying.address
+                    getERC20Resource(), balanceResource, bancor, underlying.address
                 ),
                 positionFetcher = defaultPositionFetcher(token.address),
                 totalSupply = refreshable {

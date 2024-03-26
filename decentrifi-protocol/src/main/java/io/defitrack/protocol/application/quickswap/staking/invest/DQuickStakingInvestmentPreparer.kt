@@ -1,5 +1,6 @@
 package io.defitrack.protocol.quickswap.staking.invest
 
+import io.defitrack.balance.BalanceResource
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.port.`in`.ERC20Resource
 import io.defitrack.invest.InvestmentPreparer
@@ -9,8 +10,9 @@ import java.math.BigInteger
 
 class DQuickStakingInvestmentPreparer(
     erC20Resource: ERC20Resource,
+    balanceResource: BalanceResource,
     val dQuickContract: DQuickContract,
-) : InvestmentPreparer(erC20Resource) {
+) : InvestmentPreparer(erC20Resource, balanceResource) {
 
     val quick = "0x831753dd7087cac61ab5644b308642cc1c33dc13"
 

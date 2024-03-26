@@ -1,5 +1,6 @@
 package io.defitrack.protocol.application.ironbank.lending.invest
 
+import io.defitrack.balance.BalanceResource
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.port.`in`.ERC20Resource
 import io.defitrack.invest.InvestmentPreparer
@@ -9,8 +10,9 @@ import java.math.BigInteger
 
 class CompoundLendingInvestmentPreparer(
     private val iToken: IronbankTokenContract,
-    erC20Resource: ERC20Resource
-) : InvestmentPreparer(erC20Resource) {
+    erC20Resource: ERC20Resource,
+    balanceResource: BalanceResource
+) : InvestmentPreparer(erC20Resource, balanceResource) {
 
     override suspend fun getWant(): String {
         return iToken.underlyingAddress()

@@ -1,6 +1,8 @@
 package io.defitrack.invest
 
+import io.defitrack.balance.BalanceResource
 import io.defitrack.common.network.Network
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.erc20.port.`in`.ERC20Resource
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.networkinfo.toNetworkInformation
@@ -12,7 +14,8 @@ import kotlinx.coroutines.coroutineScope
 import java.math.BigInteger
 
 abstract class InvestmentPreparer(
-    private val erC20Resource: ERC20Resource
+    private val erC20Resource: ERC20Resource,
+    private val balanceResource: BalanceResource
 ) {
     suspend fun prepare(prepareInvestmentCommand: PrepareInvestmentCommand): List<PreparedTransaction> =
         coroutineScope {
@@ -43,17 +46,17 @@ abstract class InvestmentPreparer(
 
 
     private suspend fun getInvestmentAmount(prepareInvestmentCommand: PrepareInvestmentCommand): BigInteger {
-        return prepareInvestmentCommand.amount ?: erC20Resource.getBalance(
+        return prepareInvestmentCommand.amount ?: balanceResource.getTokenBalance(
             getNetwork(),
+            prepareInvestmentCommand.user,
             getWant(),
-            prepareInvestmentCommand.user
-        )
+        ).amount
     }
 
     suspend fun getAllowanceTransaction(prepareInvestmentCommand: PrepareInvestmentCommand): PreparedTransaction? {
         val allowance = getAllowance(prepareInvestmentCommand)
         val investmentAmount = getInvestmentAmount(prepareInvestmentCommand)
-        val balance = erC20Resource.getBalance(
+        val balance = balanceResource.getTokenBalance(
             getNetwork(),
             getWant(),
             prepareInvestmentCommand.user
@@ -64,7 +67,7 @@ abstract class InvestmentPreparer(
             throw TransactionPreparationException("${prepareInvestmentCommand.user} doesn't own any of the required assets")
         }
 
-        if (balance < investmentAmount) {
+        if (balance.amount < investmentAmount) {
             throw TransactionPreparationException("${prepareInvestmentCommand.user} doesn't own enough of the required assets")
         }
 

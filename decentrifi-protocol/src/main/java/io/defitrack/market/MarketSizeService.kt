@@ -1,5 +1,6 @@
 package io.defitrack.market
 
+import io.defitrack.balance.BalanceResource
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.erc20.domain.FungibleTokenInformation
@@ -14,6 +15,7 @@ import java.math.BigInteger
 @Service
 class MarketSizeService(
     private val erC20Resource: ERC20Resource,
+    private val balanceResource: BalanceResource,
     private val priceResource: PricePort,
     private val blockchainGatewayProvider: BlockchainGatewayProvider
 ) {
@@ -33,22 +35,11 @@ class MarketSizeService(
         location: String,
         network: Network
     ): MarketSize {
-        val balance = if (token.address == "0x0") {
-            val gateway = blockchainGatewayProvider.getGateway(network)
-            gateway.getNativeBalance(location).times(BigDecimal.TEN.pow(18)).toBigInteger()
-        } else {
-            erC20Resource.getBalance(network, token.address, location)
-        }
+        val balance = balanceResource.getTokenBalance(network, location, token.address)
 
         return MarketSize(
-            tokenAmount = balance,
-            usdAmount = priceResource.calculatePrice(
-                GetPriceCommand(
-                    address = token.address,
-                    network = network,
-                    amount = balance.asEth(token.decimals),
-                )
-            ).toBigDecimal()
+            tokenAmount = balance.amount,
+            usdAmount = balance.dollarValue.toBigDecimal()
         )
     }
 

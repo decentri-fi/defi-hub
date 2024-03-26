@@ -2,6 +2,7 @@ package io.defitrack.price.application
 
 import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.retry
+import io.defitrack.balance.BalanceResource
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.erc20.domain.FungibleTokenInformation
@@ -18,8 +19,9 @@ import java.math.BigInteger
 @Component
 class DefaultPriceCalculator(
     private val erc20Service: ERC20Resource,
+    private val balanceResource: BalanceResource,
     private val aggregatedPriceProvider: AggregatedPriceProvider
-) : PriceCalculator{
+) : PriceCalculator {
 
     val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -54,6 +56,7 @@ class DefaultPriceCalculator(
                     TokenType.STANDARD_LP -> {
                         calculateLpHolding(getPriceCommand, token)
                     }
+
                     else -> {
                         BigDecimal.ZERO
                     }
@@ -81,7 +84,7 @@ class DefaultPriceCalculator(
         }
     }
 
-   private suspend fun calculateSingleLpHolding(
+    private suspend fun calculateSingleLpHolding(
         network: Network,
         lpAddress: String,
         userLPAmount: BigDecimal,
@@ -94,8 +97,8 @@ class DefaultPriceCalculator(
 
         return underlyingTokens.map { underlyingToken ->
             val price = aggregatedPriceProvider.getPrice(underlyingToken)
-            val underlyingTokenBalance = erc20Service.getBalance(network, underlyingToken.address, lpAddress)
-            val userTokenAmount = underlyingTokenBalance.toBigDecimal().times(userShare)
+            val underlyingTokenBalance = balanceResource.getTokenBalance(network, lpAddress, underlyingToken.address)
+            val userTokenAmount = underlyingTokenBalance.amount.toBigDecimal().times(userShare)
 
             userTokenAmount.dividePrecisely(
                 BigDecimal.TEN.pow(underlyingToken.decimals)

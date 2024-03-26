@@ -25,10 +25,13 @@ class XSushiStakingMarketProvider : FarmingMarketProvider() {
 
         val xSushiContract = with(getBlockchainGateway()) { XSushiContract(xsushi) }
         val sushiToken = getToken(sushi)
-        val totalStakedSushi = getERC20Resource().getBalance(getNetwork(), sushi, xsushi)
+        val totalStakedSushi = balanceResource.getTokenBalance(
+            getNetwork(),
+            sushiToken.address,
+            xsushi
+        ).amount
 
         val ratio = totalStakedSushi.toBigDecimal().dividePrecisely(xSushiContract.totalSupply().get().toBigDecimal())
-
 
         return listOf(
             create(

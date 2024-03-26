@@ -5,6 +5,7 @@ import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.balance.service.BalanceService
 import io.defitrack.balance.service.dto.BalanceElement
 import io.defitrack.balance.service.dto.TokenBalance
+import io.defitrack.balance.service.token.ERC20BalanceService
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.erc20.port.`in`.ERC20Resource
@@ -15,7 +16,9 @@ import kotlinx.coroutines.coroutineScope
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.web3j.crypto.WalletUtils
 import java.math.BigDecimal
+import java.math.BigInteger
 
 @RestController
 @RequestMapping
@@ -23,30 +26,29 @@ class BalanceRestController(
     private val balanceServices: List<BalanceService>,
     private val priceResource: PricePort,
     private val erC20Resource: ERC20Resource,
+    private val erC20BalanceService: ERC20BalanceService
 ) {
 
     private val log = LoggerFactory.getLogger(this::class.java)
 
-    @Deprecated("use the network-specific call")
-    @GetMapping("/{address}/native-balance")
-    suspend fun getBalance(@PathVariable("address") address: String): List<BalanceElement> {
-        return balanceServices.parMapNotNull {
+    @GetMapping("/{user}/native-balance")
+    suspend fun getBalance(@PathVariable("user") address: String): List<BalanceElement> {
+        return balanceServices.parMapNotNull(concurrency = 8) {
             try {
                 val balance = it.getNativeBalance(address)
 
-                if (balance > BigDecimal.ZERO) {
+                if (balance > BigInteger.ZERO) {
                     val price = priceResource.calculatePrice(
                         GetPriceCommand(
                             "0x0", it.getNetwork(), 1.0.toBigDecimal()
                         )
                     )
                     BalanceElement(
-                        amount = balance.toDouble(),
+                        amount = balance,
                         network = it.getNetwork().toNetworkInformation(),
                         token = erC20Resource.getTokenInformation(
                             it.getNetwork(), "0x0"
                         ),
-                        dollarValue = price.times(balance.toDouble()),
                         price = price
                     )
                 } else {
@@ -56,13 +58,13 @@ class BalanceRestController(
                 log.error("Unable to fetch balance for ${it.getNetwork()}", ex)
                 null
             }
-
         }
     }
 
-    @GetMapping(value = ["/{address}/native-balance"], params = ["network"])
-    suspend fun getBalanceByNetwork(
-        @PathVariable("address") address: String, @RequestParam("network") networkName: String
+    @GetMapping(value = ["/{user}/native-balance"], params = ["network"])
+    suspend fun getNativeBalanceByNetwork(
+        @PathVariable("user") address: String,
+        @RequestParam("network") networkName: String
     ): ResponseEntity<BalanceElement> {
 
         val network = Network.fromString(networkName) ?: return ResponseEntity.notFound().build()
@@ -82,15 +84,56 @@ class BalanceRestController(
 
         return ResponseEntity.ok(
             BalanceElement(
-                amount = balance.toDouble(), network = network.toNetworkInformation(), token = erC20Resource.getTokenInformation(
+                amount = balance,
+                network = network.toNetworkInformation(),
+                token = erC20Resource.getTokenInformation(
                     network, "0x0"
-                ), dollarValue = price.times(balance.toDouble()), price = price
+                ),
+                price = price
             )
         )
     }
 
+
+    @GetMapping("/{user}/{token}")
+    suspend fun getTokenBalance(
+        @PathVariable("user") user: String,
+        @RequestParam("network") networkName: String,
+        @PathVariable("token") token: String
+    ): ResponseEntity<BalanceElement> {
+
+        val network = Network.fromString(networkName) ?: return ResponseEntity.badRequest().build()
+
+        if (!WalletUtils.isValidAddress(user)) {
+            return ResponseEntity.badRequest().build()
+        }
+        if (!WalletUtils.isValidAddress(token)) {
+            return ResponseEntity.badRequest().build()
+        }
+
+        return if (token == "0x0" || token == "0x0000000000000000000000000000000000000000") {
+            return getNativeBalanceByNetwork(user, networkName)
+        } else {
+            val balance = erC20BalanceService.getBalance(network, token, user)
+            val tokenInfo = erC20Resource.getTokenInformation(network, token)
+            val price = priceResource.calculatePrice(
+                GetPriceCommand(
+                    tokenInfo.address, network, 1.0.toBigDecimal()
+                )
+            )
+            ResponseEntity.ok(
+                BalanceElement(
+                    amount = balance,
+                    network = network.toNetworkInformation(),
+                    token = tokenInfo,
+                    price = price
+                )
+            )
+        }
+    }
+
     @GetMapping("/{address}/token-balances")
-    suspend fun getTokenBalance(@PathVariable("address") address: String): List<BalanceElement> = coroutineScope {
+    suspend fun getTokenBalances(@PathVariable("address") address: String): List<BalanceElement> = coroutineScope {
         balanceServices.parMap {
             try {
                 it.getTokenBalances(address)
@@ -117,17 +160,15 @@ class BalanceRestController(
     }
 
     suspend fun TokenBalance.toBalanceElement(): BalanceElement {
-        val normalizedAmount = amount.asEth(token.decimals).toDouble()
         val price = priceResource.calculatePrice(
             GetPriceCommand(
                 token.address, network, 1.0.toBigDecimal()
             )
         )
         return BalanceElement(
-            amount = normalizedAmount,
+            amount = amount,
             network = network.toNetworkInformation(),
             token = token,
-            dollarValue = price.times(normalizedAmount),
             price = price
         )
     }

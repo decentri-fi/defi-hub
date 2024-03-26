@@ -1,7 +1,7 @@
 package io.defitrack.balance
 
+import io.defitrack.balance.domain.BalanceElement
 import io.defitrack.common.network.Network
-import io.defitrack.erc20.domain.FungibleTokenInformation
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -10,7 +10,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
-import java.math.BigInteger
 
 @Component
 class DecentrifiBalanceResource(
@@ -22,14 +21,34 @@ class DecentrifiBalanceResource(
         return withContext(Dispatchers.IO) {
             val get = client.get("$balanceResourceLocation/$user/native-balance?network=$network")
             if (!get.status.isSuccess()) {
-                BalanceElement(0.0)
+                throw IllegalArgumentException("Unable to get balance")
             } else {
                 get.body<BalanceElement>()
             }
         }
     }
 
-    class BalanceElement(
-        val amount: Double
-    )
+    override suspend fun getNativeBalances(user: String): List<BalanceElement> {
+        return withContext(Dispatchers.IO) {
+            val get = client.get("$balanceResourceLocation/$user/native-balance")
+            if (!get.status.isSuccess()) {
+                emptyList()
+            } else {
+                get.body<List<BalanceElement>>()
+            }
+        }
+    }
+
+    override suspend fun getTokenBalance(network: Network, user: String, token: String): BalanceElement {
+        return withContext(Dispatchers.IO) {
+            val get = client.get("$balanceResourceLocation/$user/$token?network=$network")
+            if (!get.status.isSuccess()) {
+                throw IllegalArgumentException("unable to fetch balance")
+            } else {
+                get.body<BalanceElement>()
+            }
+        }
+    }
+
+
 }

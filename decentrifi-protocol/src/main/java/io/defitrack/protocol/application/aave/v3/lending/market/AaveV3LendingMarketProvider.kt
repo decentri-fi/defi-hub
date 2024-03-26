@@ -61,7 +61,8 @@ abstract class AaveV3LendingMarketProvider(
             investmentPreparer = AaveV3LendingInvestmentPreparer(
                 underlying.address,
                 poolContract,
-                getERC20Resource()
+                erC20Resource,
+                balanceResource
             ),
             marketSize = refreshable {
                 getPrice(

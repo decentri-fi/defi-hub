@@ -1,5 +1,6 @@
 package io.defitrack.protocol.application.aave.v3.lending.invest
 
+import io.defitrack.balance.BalanceResource
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.port.`in`.ERC20Resource
 import io.defitrack.invest.InvestmentPreparer
@@ -11,8 +12,9 @@ import java.math.BigInteger
 class AaveV3LendingInvestmentPreparer(
     private val underlying: String,
     private val poolContract: PoolContract,
-    erC20Resource: ERC20Resource
-) : InvestmentPreparer(erC20Resource) {
+    erC20Resource: ERC20Resource,
+    balanceResource: BalanceResource
+) : InvestmentPreparer(erC20Resource, balanceResource) {
 
     override suspend fun getInvestmentTransaction(user: String, amount: BigInteger): PreparedTransaction {
         return PreparedTransaction(poolContract.getSupplyFunction(underlying, amount, user))

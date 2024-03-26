@@ -66,7 +66,7 @@ abstract class IronBankLendingMarketProvider(
                 },
                 investmentPreparer = CompoundLendingInvestmentPreparer(
                     ctokenContract,
-                    getERC20Resource()
+                    getERC20Resource(), balanceResource
                 ),
                 marketToken = ctoken,
                 erc20Compatible = true,

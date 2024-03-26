@@ -29,10 +29,6 @@ internal class DecentrifiERC20ResourceAdapter(
         }
     }
 
-    override suspend fun getBalance(network: Network, tokenAddress: String, user: String): BigInteger {
-        return erC20s.getBalance(network, tokenAddress, user)
-    }
-
     override suspend fun getTokenInformation(network: Network, address: String): FungibleTokenInformation {
         return tokenCache.get("token-${network}-${address}") {
             erC20s.getTokenInformation(network, address)

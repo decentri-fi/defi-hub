@@ -23,13 +23,11 @@ class BlurDepositPoolingMarketProvider : PoolingMarketProvider() {
 
     val blurEthDeposit = "0x0000000000a39bb272e79075ade125fd351887ac"
 
-    override suspend fun fetchMarkets(): List<PoolingMarket> = with(getBlockchainGateway()) {
+    override suspend fun fetchMarkets(): List<PoolingMarket> {
         val ether = getToken("0x0")
         return create(
             breakdown = refreshable {
-                //TODO: probably could use native balance thingy
-                ether.asShare(getBlockchainGateway().getNativeBalance(blurEthDeposit).times(TEN.pow(18)).toBigInteger())
-                    .nel()
+                ether.asShare(balanceResource.getNativeBalance(getNetwork(), blurEthDeposit).amount).nel()
             },
             name = "BlurEth",
             identifier = blurEthDeposit,

@@ -7,20 +7,18 @@ import io.defitrack.common.utils.refreshable
 import io.defitrack.erc20.ERC20
 import io.defitrack.erc20.adapter.tokens.NATIVE_WRAP_MAPPING
 import io.defitrack.erc20.port.output.ReadAllowancePort
-import io.defitrack.erc20.port.output.ReadBalancePort
 import io.defitrack.erc20.port.output.ReadERC20Port
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.ERC20Contract
 import io.defitrack.evm.contract.MultiCallResult
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import java.math.BigDecimal
 import java.math.BigInteger
 
 @Component
 private class ERC20ContractReader(
     private val blockchainGatewayProvider: BlockchainGatewayProvider
-) : ReadERC20Port, ReadBalancePort, ReadAllowancePort {
+) : ReadERC20Port, ReadAllowancePort {
 
     val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -60,15 +58,6 @@ private class ERC20ContractReader(
         } else {
             default()
         }
-    }
-
-    override suspend fun getBalance(network: Network, address: String, userAddress: String) =
-        with(blockchainGatewayProvider.getGateway(network)) {
-            ERC20Contract(address).balanceOf(userAddress)
-        }
-
-    override suspend fun getNativeBalance(network: Network, userAddress: String): BigDecimal {
-        return blockchainGatewayProvider.getGateway(network).getNativeBalance(userAddress)
     }
 
     override suspend fun getAllowance(network: Network, address: String, userAddress: String, spenderAddress: String) =

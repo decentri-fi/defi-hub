@@ -64,7 +64,8 @@ class SeamlessLendingMarketProvider(
             investmentPreparer = AaveV3LendingInvestmentPreparer(
                 underlying.address,
                 poolContract,
-                getERC20Resource()
+                getERC20Resource(),
+                balanceResource
             ),
             marketSize = refreshable {
                 getPrice(

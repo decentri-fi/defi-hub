@@ -58,7 +58,8 @@ class SonneBaseLendingMarketProvider : LendingMarketProvider() {
                     },
                     investmentPreparer = CompoundLendingInvestmentPreparer(
                         ctokenContract,
-                        getERC20Resource()
+                        getERC20Resource(),
+                        balanceResource
                     ),
                     marketToken = getToken(ctokenContract.address),
                     erc20Compatible = true,

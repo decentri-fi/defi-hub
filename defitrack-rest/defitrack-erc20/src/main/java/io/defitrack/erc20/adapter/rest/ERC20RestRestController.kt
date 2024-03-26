@@ -3,10 +3,8 @@ package io.defitrack.erc20.adapter.rest
 import arrow.core.getOrElse
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils
-import io.defitrack.erc20.adapter.rest.vo.UserBalanceVO
 import io.defitrack.erc20.adapter.rest.vo.WrappedTokenVO
 import io.defitrack.erc20.adapter.tokens.NATIVE_WRAP_MAPPING
-import io.defitrack.erc20.application.ERC20BalanceService
 import io.defitrack.erc20.domain.FungibleTokenInformation
 import io.defitrack.erc20.domain.toVO
 import io.defitrack.erc20.port.input.AllowanceUseCase
@@ -26,7 +24,6 @@ import java.math.BigInteger
 @RestController
 class ERC20RestRestController(
     private val allowanceUseCase: AllowanceUseCase,
-    private val erC20BalanceService: ERC20BalanceService,
     private val tokenInformationUseCase: TokenInformationUseCase,
     private val observationRegistry: ObservationRegistry,
 ) : ERC20RestDocumentation {
@@ -218,48 +215,6 @@ class ERC20RestRestController(
         } finally {
             observation.stop()
         }
-    }
-
-    @GetMapping("/{network}/{address}/{userAddress}", params = ["v2"])
-    override suspend fun getBalanceV2(
-        @PathVariable("network") networkName: String,
-        @PathVariable("address") address: String,
-        @PathVariable("userAddress") userAddress: String
-    ): ResponseEntity<UserBalanceVO> {
-
-        val network = Network.fromString(networkName) ?: return ResponseEntity.badRequest().build()
-
-        if (!WalletUtils.isValidAddress(address)) {
-            return ResponseEntity.badRequest().build()
-        }
-        if (!WalletUtils.isValidAddress(userAddress)) {
-            return ResponseEntity.badRequest().build()
-        }
-
-        return ResponseEntity.ok(
-            UserBalanceVO(erC20BalanceService.getBalance(network, address, userAddress).toString())
-        )
-    }
-
-    @GetMapping("/{network}/{address}/{userAddress}")
-    override suspend fun getBalance(
-        @PathVariable("network") networkName: String,
-        @PathVariable("address") address: String,
-        @PathVariable("userAddress") userAddress: String
-    ): ResponseEntity<BigInteger> {
-
-        val network = Network.fromString(networkName) ?: return ResponseEntity.badRequest().build()
-
-        if (!WalletUtils.isValidAddress(address)) {
-            return ResponseEntity.badRequest().build()
-        }
-        if (!WalletUtils.isValidAddress(userAddress)) {
-            return ResponseEntity.badRequest().build()
-        }
-
-        return ResponseEntity.ok(
-            erC20BalanceService.getBalance(network, address, userAddress)
-        )
     }
 
     @GetMapping("/{network}/allowance/{token}/{userAddress}/{spenderAddress}")

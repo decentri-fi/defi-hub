@@ -19,12 +19,12 @@ abstract class BalanceService(
     abstract fun getNetwork(): Network
     abstract fun nativeTokenName(): String
 
-    suspend fun getNativeBalance(address: String): BigDecimal {
+    suspend fun getNativeBalance(address: String): BigInteger {
         return try {
             return blockchainGatewayProvider.getGateway(getNetwork()).getNativeBalance(address)
         } catch (ex: Exception) {
             logger.error(ex.message)
-            BigDecimal.ZERO
+            BigInteger.ZERO
         }
     }
 

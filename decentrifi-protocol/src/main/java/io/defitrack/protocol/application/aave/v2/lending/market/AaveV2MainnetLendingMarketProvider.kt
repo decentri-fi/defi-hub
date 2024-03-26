@@ -67,7 +67,8 @@ class AaveV2MainnetLendingMarketProvider(
                                 investmentPreparer = AaveV2LendingInvestmentPreparer(
                                     token.address,
                                     lendingPoolContract.await(),
-                                    getERC20Resource()
+                                    erC20Resource,
+                                    balanceResource
                                 ),
                                 rate = it.lendingRate.toBigDecimal(),
                                 positionFetcher = PositionFetcher(

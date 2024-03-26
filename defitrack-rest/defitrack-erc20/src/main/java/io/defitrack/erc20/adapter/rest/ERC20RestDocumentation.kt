@@ -117,43 +117,6 @@ interface ERC20RestDocumentation {
     )
     suspend fun getTokenInformation(networkName: String, address: String): ResponseEntity<FungibleTokenInformation>
 
-    @GetMapping("/{network}/{address}/{userAddress}")
-    @Operation(
-        summary = "Get the balance of a specific token for a specific user",
-        parameters = [
-            Parameter(
-                name = "network",
-                description = "the network the token resides on",
-                example = "base"
-            ),
-            Parameter(
-                name = "address",
-                description = "the token we want to fetch the balance for",
-                example = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"
-            ),
-            Parameter(
-                name = "userAddress",
-                description = "the user we want to fetch the balance for",
-                example = "0xf18adf71266411FF39FfC268843c9A64b3292d86"
-            ),
-        ]
-    )
-    @ApiResponses(
-        ApiResponse(
-            description = "The balance of a specific token for a specific user",
-            responseCode = "200",
-            content = [
-                Content(
-                    mediaType = "application/json",
-                    schema = Schema(
-                        implementation = BigInteger::class
-                    )
-                )
-            ]
-        )
-    )
-    suspend fun getBalance(networkName: String, address: String, userAddress: String): ResponseEntity<BigInteger>
-
     @GetMapping("/{network}/allowance/{token}/{userAddress}/{spenderAddress}")
     @Operation(
         summary = "Get the allowance of a specific token for a specific user for a specific spender",
@@ -198,10 +161,4 @@ interface ERC20RestDocumentation {
         spenderAddress: String
     ): ResponseEntity<BigInteger>
 
-    @GetMapping("/{network}/{address}/{userAddress}", params = ["v2"])
-    suspend fun getBalanceV2(
-        networkName: String,
-        address: String,
-        userAddress: String
-    ): ResponseEntity<UserBalanceVO>
 }

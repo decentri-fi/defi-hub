@@ -71,30 +71,6 @@ class PolycatFarmingMarketProvider(
         )
     }
 
-    //todo: move to breakdown
-    private suspend fun calculateMarketSize(
-        stakedtoken: FungibleTokenInformation,
-        chef: PolycatMasterChefContract
-    ): BigDecimal {
-
-        val balance = getERC20Resource().getBalance(
-            getNetwork(),
-            stakedtoken.address,
-            chef.address
-        )
-
-        return BigDecimal(
-            getPriceResource().calculatePrice(
-                GetPriceCommand(
-                    stakedtoken.address,
-                    getNetwork(),
-                    balance.asEth(stakedtoken.decimals),
-                    stakedtoken.type
-                )
-            )
-        )
-    }
-
     override fun getNetwork(): Network {
         return Network.POLYGON
     }

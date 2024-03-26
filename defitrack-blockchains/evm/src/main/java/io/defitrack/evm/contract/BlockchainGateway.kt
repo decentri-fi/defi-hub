@@ -48,11 +48,8 @@ class BlockchainGateway(
         DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false
     )
 
-    suspend fun getNativeBalance(address: String): BigDecimal = withContext(Dispatchers.IO) {
-        val balance: BigInteger = httpClient.get("$endpoint/balance/$address").body()
-        balance.toBigDecimal().dividePrecisely(
-            BigDecimal.TEN.pow(18)
-        )
+    suspend fun getNativeBalance(address: String): BigInteger = withContext(Dispatchers.IO) {
+        httpClient.get("$endpoint/balance/$address").body()
     }
 
     suspend fun readMultiCall(
