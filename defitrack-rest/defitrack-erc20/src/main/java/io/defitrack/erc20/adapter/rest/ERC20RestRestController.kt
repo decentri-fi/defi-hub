@@ -173,12 +173,17 @@ class ERC20RestRestController(
         @RequestParam("verified", defaultValue = "false") verified: Boolean
     ): ResponseEntity<List<FungibleTokenInformation>> {
         val network = Network.fromString(networkName) ?: return ResponseEntity.badRequest().build()
-        return ResponseEntity.ok(
-            tokenInformationUseCase.getAllSingleTokens(network, verified)
-                .map {
-                    it.toVO()
-                }
-        )
+        try {
+            return ResponseEntity.ok(
+                tokenInformationUseCase.getAllSingleTokens(network, verified)
+                    .map {
+                        it.toVO()
+                    }
+            )
+        } catch (ex: Exception) {
+            logger.debug("Error while getting token information", ex)
+            return ResponseEntity.internalServerError().build()
+        }
     }
 
     @GetMapping("/{network}/wrapped")
