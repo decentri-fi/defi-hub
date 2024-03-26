@@ -11,12 +11,13 @@ import io.defitrack.erc20.domain.TokenInformation
 import io.defitrack.erc20.application.repository.NativeTokenRepository
 import io.defitrack.erc20.application.protocolspecific.TokenIdentifier
 import io.defitrack.erc20.application.repository.ERC20TokenListResource
-import io.defitrack.erc20.port.input.AllowanceUseCase
 import io.defitrack.erc20.port.input.TokenInformationUseCase
 import io.defitrack.erc20.port.output.ReadERC20Port
 import io.defitrack.token.TokenType
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -36,21 +37,26 @@ class ERC20TokenService(
     val logger = LoggerFactory.getLogger(this.javaClass)
     val tokenInformationCache = Cache.Builder<String, Option<TokenInformation>>().build()
 
-    override fun getAllSingleTokens(network: Network, verified: Boolean): List<TokenInformation> {
-        return HashMap(tokenInformationCache.asMap()).asSequence().filter {
-            it.value.isSome()
-        }.filter {
-            network == it.value.getOrNull()?.network
-        }.mapNotNull {
-            it.value.getOrNull()
-        }.distinctBy {
-            it.address.lowercase() + "-" + it.network.name
-        }.filter {
-            it.verified == verified
-        }.filter {
-            it.type == TokenType.SINGLE
-        }.toList()
-    }
+    val mutex: Mutex = Mutex()
+
+    override suspend fun getAllSingleTokens(network: Network, verified: Boolean): List<TokenInformation> =
+        coroutineScope {
+            mutex.withLock {
+                HashMap(tokenInformationCache.asMap()).asSequence().filter {
+                    it.value.isSome()
+                }.filter {
+                    network == it.value.getOrNull()?.network
+                }.mapNotNull {
+                    it.value.getOrNull()
+                }.distinctBy {
+                    it.address.lowercase() + "-" + it.network.name
+                }.filter {
+                    it.verified == verified
+                }.filter {
+                    it.type == TokenType.SINGLE
+                }.toList()
+            }
+        }
 
     suspend fun refreshCache() {
         logger.info("refreshing token caches")
@@ -62,7 +68,7 @@ class ERC20TokenService(
         logger.info("done refreshing token caches")
     }
 
-    suspend fun initialPopulation() = coroutineScope {
+    suspend fun initialPopulation() {
         Network.entries.map { network ->
             val timedvalue = measureTimedValue {
                 val allTokens = erC20Repository.allTokens(network)
@@ -72,7 +78,9 @@ class ERC20TokenService(
                 }.filter {
                     it.isSome()
                 }.forEach {
-                    tokenInformationCache.put(createIndex(it.getOrNull()!!.address, network), it)
+                    mutex.withLock {
+                        tokenInformationCache.put(createIndex(it.getOrNull()!!.address, network), it)
+                    }
                 }
             }
             logger.info("refreshing token cache for $network took ${timedvalue.duration.inWholeSeconds}s (${tokenInformationCache.asMap().size}) tokens)")
@@ -88,9 +96,14 @@ class ERC20TokenService(
         if (address == "0x0" || address.lowercase() == "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") {
             return nativeTokenRepository.getNativeToken(network).some()
         }
-        return tokenInformationCache.get(createIndex(address, network)) {
-            fetchTokenInfo(network, address, verified)
-        }
+
+        val index = createIndex(address, network)
+        return tokenInformationCache.get(index)
+            ?: mutex.withLock {
+                fetchTokenInfo(network, address, verified).also {
+                    tokenInformationCache.put(index, it)
+                }
+            }
     }
 
     private suspend fun fetchTokenInfo(
