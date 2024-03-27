@@ -5,10 +5,12 @@ import io.defitrack.abi.TypeUtils.Companion.string
 import io.defitrack.abi.TypeUtils.Companion.toAddress
 import io.defitrack.abi.TypeUtils.Companion.toUint256
 import io.defitrack.abi.TypeUtils.Companion.uint256
+import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.refreshable
 import io.defitrack.evm.contract.BlockchainGateway.Companion.createFunction
 import org.web3j.abi.datatypes.Function
+import java.math.BigDecimal
 import java.math.BigInteger
 
 context(BlockchainGateway)
@@ -138,6 +140,16 @@ open class ERC20Contract(
             } catch (ex: Exception) {
                 BigInteger.ZERO
             }
+        }
+    }
+
+    suspend fun totalDecimalSupply(): Refreshable<BigDecimal> {
+        return refreshable {
+            try {
+                readSingle("totalSupply", uint256())
+            } catch (ex: Exception) {
+                BigInteger.ZERO
+            }.asEth(readDecimals())
         }
     }
 
