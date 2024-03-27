@@ -9,6 +9,7 @@ import io.defitrack.erc20.application.ERC20TokenService
 import io.defitrack.erc20.application.TokenCache
 import io.defitrack.erc20.domain.TokenInformation
 import io.defitrack.event.event.PoolMarketUpdatedEvent
+import io.defitrack.protocol.Protocol
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
@@ -82,6 +83,7 @@ class PoolingMarketListener(
                     name = market.name ?: underlying.joinToString("/") { it.name },
                     symbol = underlying.joinToString("/") { it.symbol },
                     address = market.address,
+                    protocol = Protocol.fromString(market.protocol),
                     decimals = asToken.map { it.decimals }.getOrElse { 18 },
                     type = TokenType.CUSTOM_LP,
                     underlyingTokens = underlying,
