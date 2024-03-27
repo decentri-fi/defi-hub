@@ -20,4 +20,22 @@ class BalancerLiquidityGaugeFactoryContract(
         )[0].value as String
     }
 
+    suspend fun getPoolGauges(poolAddresses: List<String>): List<String> {
+       return readMultiCall(
+            poolAddresses.map {
+                createFunction(
+                    "getPoolGauge",
+                    listOf(it.toAddress()),
+                    listOf(TypeUtils.address())
+                )
+            }
+        ).map {
+            if (it.success) {
+                it.data[0].value as String
+            } else {
+                "0x0000000000000000000000000000000000000000"
+            }
+        }
+    }
+
 }

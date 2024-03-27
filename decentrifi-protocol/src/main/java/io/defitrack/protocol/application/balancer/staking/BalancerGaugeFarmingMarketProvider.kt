@@ -38,9 +38,28 @@ abstract class BalancerGaugeFarmingMarketProvider(
     }
 
     override suspend fun produceMarkets(): Flow<FarmingMarket> = channelFlow {
-        poolingMarketProvider.getMarkets()
-            .parMapNotNull(concurrency = 12) { pool ->
-                getMarket(pool).mapLeft {
+        val pools = poolingMarketProvider.getMarkets()
+        val poolsWithGauges = pools.zip(
+            factory.getPoolGauges(pools.map { it.address }).map { gauge ->
+                if (gauge == "0x0000000000000000000000000000000000000000") {
+                    null
+                } else {
+                    createContract {
+                        BalancerGaugeContract(gauge)
+                    }
+                }
+            }
+        ).filter {
+            it.second != null
+        }
+
+        poolsWithGauges.map {
+            it.second!!
+        }.resolve()
+
+        poolsWithGauges
+            .parMapNotNull(concurrency = 12) { (pool, gauge) ->
+                getMarket(pool, gauge!!).mapLeft {
                     logger.error("error getting market for ${pool.address}", it)
                 }.map {
                     it.getOrNull()
@@ -50,53 +69,47 @@ abstract class BalancerGaugeFarmingMarketProvider(
             }
     }
 
-    private suspend fun getMarket(pool: PoolingMarket): Either<Throwable, Option<FarmingMarket>> =
+    private suspend fun getMarket(
+        pool: PoolingMarket,
+        gauge: BalancerGaugeContract
+    ): Either<Throwable, Option<FarmingMarket>> =
         with(getBlockchainGateway()) {
             return catch {
-                val gauge = factory.getPoolGauge(pool.address)
 
-                if (gauge == "0x0000000000000000000000000000000000000000") {
-                    logger.debug("no gauge for ${pool.address}")
-                    None
-                } else {
-                    val stakedToken = getToken(pool.address)
-                    val gaugecontract = BalancerGaugeContract(
-                        gauge
-                    )
+                val stakedToken = getToken(pool.address)
 
-                    val rewardTokens = gaugecontract.getRewardTokens().map { reward ->
-                        getToken(reward)
-                    }
-
-                    create(
-                        identifier = pool.id,
-                        name = stakedToken.underlyingTokens.joinToString("/") {
-                            it.symbol
-                        } + " Gauge",
-                        stakedToken = stakedToken,
-                        rewardTokens = rewardTokens,
-                        positionFetcher = PositionFetcher(
-                            gaugecontract::balanceOfFunction
-                        ),
-                        metadata = mapOf("address" to pool.address),
-                        internalMetadata = mapOf(
-                            "contract" to gauge,
-                        ),
-                        claimableRewardFetcher = ClaimableRewardFetcher(
-                            rewards = rewardTokens.map {
-                                Reward(
-                                    token = it,
-                                    getRewardFunction = gaugecontract.getClaimableRewardFunction(it.address)
-                                )
-                            },
-                            preparedTransaction = selfExecutingTransaction(gaugecontract::getClaimRewardsFunction)
-                        ),
-                        type = "balancer.gauge",
-                        exitPositionPreparer = prepareExit {
-                            gaugecontract.exitPosition(it.amount)
-                        }
-                    ).some()
+                val rewardTokens = gauge.getRewardTokens().map { reward ->
+                    getToken(reward)
                 }
+
+                create(
+                    identifier = pool.id,
+                    name =   "${pool.breakdown.get().joinToString("/") { 
+                        it.token.symbol
+                    }} Gauge",
+                    stakedToken = stakedToken,
+                    rewardTokens = rewardTokens,
+                    positionFetcher = PositionFetcher(
+                        gauge::balanceOfFunction
+                    ),
+                    metadata = mapOf("address" to pool.address),
+                    internalMetadata = mapOf(
+                        "contract" to gauge,
+                    ),
+                    claimableRewardFetcher = ClaimableRewardFetcher(
+                        rewards = rewardTokens.map {
+                            Reward(
+                                token = it,
+                                getRewardFunction = gauge.getClaimableRewardFunction(it.address)
+                            )
+                        },
+                        preparedTransaction = selfExecutingTransaction(gauge::getClaimRewardsFunction)
+                    ),
+                    type = "balancer.gauge",
+                    exitPositionPreparer = prepareExit {
+                        gauge.exitPosition(it.amount)
+                    }
+                ).some()
             }
         }
 

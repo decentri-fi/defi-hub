@@ -1,6 +1,7 @@
 package io.defitrack.protocol.application.balancer.pooling.v3
 
 import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.architecture.conditional.ConditionalOnNetwork
 import io.defitrack.common.network.Network
 import io.defitrack.protocol.Company
 import io.defitrack.protocol.balancer.contract.BalancerService
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnCompany(Company.BALANCER)
-@ConditionalOnProperty(value = ["polygon.enabled"], havingValue = "true", matchIfMissing = true)
+@ConditionalOnNetwork(Network.POLYGON)
 class BalancerPolygonPoolingMarketProvider(
     balancerService: BalancerService,
 ) : BalancerPoolingMarketProvider(balancerService) {

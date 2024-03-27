@@ -7,6 +7,7 @@ import io.defitrack.claim.Reward
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.architecture.conditional.ConditionalOnCompany
+import io.defitrack.architecture.conditional.ConditionalOnNetwork
 import io.defitrack.event.EventDecoder.Companion.extract
 import io.defitrack.evm.GetEventLogsCommand
 import io.defitrack.market.port.out.FarmingMarketProvider
@@ -25,7 +26,7 @@ import java.math.BigInteger
 
 @Component
 @ConditionalOnCompany(Company.BALANCER)
-@ConditionalOnProperty(value = ["base.enabled"], havingValue = "true", matchIfMissing = true)
+@ConditionalOnNetwork(Network.BASE)
 class BalancerBaseGaugeMarketProvider : FarmingMarketProvider() {
 
     val factory = "0xb1a4FE1C6d25a0DDAb47431A92A723dd71d9021f"

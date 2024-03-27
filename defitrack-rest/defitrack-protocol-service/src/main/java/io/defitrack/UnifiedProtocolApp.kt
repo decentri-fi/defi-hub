@@ -1,8 +1,15 @@
 package io.defitrack
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.defitrack.company.CompaniesProvider
+import io.defitrack.market.pooling.vo.PoolingMarketVO
 import io.defitrack.protocol.Company
+import io.ktor.client.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import jakarta.annotation.PostConstruct
+import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -21,6 +28,7 @@ import org.springframework.scheduling.annotation.EnableScheduling
 @EnableAsync
 class UnifiedProtocolApp(
     @Value("\${decentrifi.companies}") private val companies: List<String>,
+    private val objectMapper: ObjectMapper,
     applicationContext: ApplicationContext
 ) {
 
