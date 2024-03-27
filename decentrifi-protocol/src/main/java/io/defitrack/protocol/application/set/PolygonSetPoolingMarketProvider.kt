@@ -31,8 +31,7 @@ class PolygonSetPoolingMarketProvider(
         return@coroutineScope polygonSetProvider.getSets().map {
             async {
                 try {
-
-                    val tokenContract = with(getBlockchainGateway()) { SetTokenContract(it) }
+                    val tokenContract = createContract { SetTokenContract(it) }
 
                     val token = getToken(it)
 

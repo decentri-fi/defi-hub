@@ -143,7 +143,7 @@ open class ERC20Contract(
         }
     }
 
-    suspend fun totalDecimalSupply(): Refreshable<BigDecimal> {
+    open suspend fun totalDecimalSupply(): Refreshable<BigDecimal> {
         return refreshable {
             try {
                 readSingle("totalSupply", uint256())

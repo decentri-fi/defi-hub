@@ -1,5 +1,7 @@
 package io.defitrack.market.port.out
 
+import arrow.core.Either
+import arrow.fx.coroutines.parMap
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.BigDecimalExtensions.isZero
 import io.defitrack.common.utils.Refreshable
@@ -11,6 +13,7 @@ import io.defitrack.invest.InvestmentPreparer
 import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.market.domain.PoolingMarketTokenShare
 import io.defitrack.event.HistoricEventExtractor
+import io.defitrack.evm.contract.LPTokenContract
 import io.defitrack.market.domain.asShare
 import java.math.BigDecimal
 
@@ -52,6 +55,47 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
             deprecated = deprecated,
             type = type,
         )
+    }
+
+
+    suspend fun List<String>.pairsToMarkets(): List<PoolingMarket> {
+        return this.map {
+            createContract {
+                LPTokenContract(it)
+            }
+        }.resolve()
+            .parMap(concurrency = 12) { lpContract ->
+                create(lpContract)
+            }.mapNotNull {
+                it.mapLeft {
+                    logger.error("Failed to create market: {}", it.message)
+                }.getOrNull()
+            }
+    }
+
+    protected suspend fun create(lpToken: LPTokenContract): Either<Throwable, PoolingMarket> {
+        return Either.catch {
+
+            val token0 = getToken(lpToken.token0.await())
+            val token1 = getToken(lpToken.token1.await())
+
+            val breakdown = refreshable {
+                breakdownOf(
+                    lpToken.address,
+                    token0, token1
+                )
+            }
+
+            create(
+                address = lpToken.address,
+                name = breakdown.get().joinToString("/") { it.token.name },
+                symbol = breakdown.get().joinToString("/") { it.token.symbol },
+                breakdown = breakdown,
+                identifier = lpToken.address,
+                positionFetcher = defaultPositionFetcher(lpToken.address),
+                totalSupply = lpToken.totalDecimalSupply()
+            )
+        }
     }
 
     fun createId(identifier: String) = "lp_${getNetwork().slug}-${getProtocol().slug}-${identifier}"

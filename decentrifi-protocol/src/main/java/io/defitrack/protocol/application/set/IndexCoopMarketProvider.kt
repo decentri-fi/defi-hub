@@ -20,7 +20,7 @@ class IndexCoopMarketProvider : PoolingMarketProvider() {
     val ethx2 = "0x65c4c0517025ec0843c9146af266a2c5a2d148a2"
 
     override suspend fun fetchMarkets(): List<PoolingMarket> {
-        val tokenContract = with(getBlockchainGateway()) { SetTokenContract(ethx2) }
+        val tokenContract = createContract { SetTokenContract(ethx2) }
         val token = getToken(ethx2)
 
         val breakdown = refreshable {
