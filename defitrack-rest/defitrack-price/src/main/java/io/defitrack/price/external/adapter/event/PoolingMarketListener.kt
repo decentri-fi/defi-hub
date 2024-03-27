@@ -42,7 +42,7 @@ class PoolingMarketListener(
         return BindingBuilder.bind(pricePoolingMarketsQueue).to(domainEventsExchange).with("markets.pooling.updated")
     }
 
-    @RabbitListener(queues = ["price-pooling-markets"])
+    @RabbitListener(queues = ["price-pooling-market-updated"])
     fun onPoolingMarketAdded(msg: Message) = runBlocking {
         try {
             val market = jacksonObjectMapper().readValue<PoolMarketUpdatedEvent>(msg.body)

@@ -10,7 +10,8 @@ import io.defitrack.erc20.domain.TokenInformation
 import io.defitrack.token.TokenType
 import org.springframework.stereotype.Component
 
-@Component
+//@Component
+//TODO: remove, balancer tokens should come from decentrifi pools
 class BalancerLPIdentifier(
     private val balancerService: BalancerService,
     private val blockchainGatewayProvider: BlockchainGatewayProvider

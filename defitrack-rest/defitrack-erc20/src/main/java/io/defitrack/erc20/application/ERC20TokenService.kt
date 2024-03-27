@@ -80,7 +80,7 @@ class ERC20TokenService(
             }
     }
 
-    private suspend fun fetchTokenInfo(
+    suspend fun fetchTokenInfo(
         network: Network,
         address: String,
         verified: Boolean = false
