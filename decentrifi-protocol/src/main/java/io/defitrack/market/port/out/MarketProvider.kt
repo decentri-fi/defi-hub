@@ -34,6 +34,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import java.math.BigDecimal
 import java.math.BigInteger
+import java.time.Duration
+import java.time.LocalDateTime
 import kotlin.system.measureTimeMillis
 import kotlin.time.measureTime
 
@@ -94,14 +96,18 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
     suspend fun refreshMarkets() {
         val millis = measureTimeMillis {
             try {
-                getMarkets().forEach { market ->
-                    market.refresh().also {
-                        eventService.publish(
-                            "markets.${it.category}.updated",
-                            it.marketUpdatedEvent()
-                        )
+                getMarkets()
+                    .filter {
+                        it.updatedAt.get().isBefore(LocalDateTime.now().minus(updateDelta()))
                     }
-                }
+                    .forEach { market ->
+                        market.refresh().also {
+                            eventService.publish(
+                                "markets.${it.category}.updated",
+                                it.marketUpdatedEvent()
+                            )
+                        }
+                    }
             } catch (ex: Exception) {
                 ex.printStackTrace()
                 logger.error("something went wrong trying to refresh the cache", ex)
@@ -249,5 +255,10 @@ abstract class MarketProvider<T : DefiMarket> : ProtocolService {
 
     suspend fun <T : EvmContract> createContract(creator: suspend context(BlockchainGateway) () -> T): T {
         return creator(getBlockchainGateway())
+    }
+
+
+    open fun updateDelta(): Duration {
+        return Duration.ofHours(4)
     }
 }

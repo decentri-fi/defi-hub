@@ -9,6 +9,7 @@ import io.defitrack.invest.InvestmentPreparer
 import io.defitrack.market.domain.position.ExitPositionCommand
 import io.defitrack.protocol.Protocol
 import java.math.BigDecimal
+import java.time.LocalDateTime
 
 data class PoolingMarket(
     override val id: String,
@@ -29,5 +30,5 @@ data class PoolingMarket(
     val erc20Compatible: Boolean = true,
     val metadata: Map<String, Any>,
     val internalMetadata: Map<String, Any>,
-    override val deprecated: Boolean
+    override val deprecated: Boolean,
 ) : DefiMarket(id, "pooling", type, protocol, network, deprecated)

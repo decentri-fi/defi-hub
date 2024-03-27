@@ -21,6 +21,7 @@ import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import java.math.BigDecimal
+import java.time.Duration
 
 abstract class UniswapV3PoolingMarketProvider(
     private val startBlock: String,
@@ -131,4 +132,8 @@ abstract class UniswapV3PoolingMarketProvider(
 
     class MarketTooLowException(msg: String) : RuntimeException(msg)
     class UnverifiedTokensException(msg: String) : RuntimeException(msg)
+
+    override fun updateDelta(): Duration {
+        return Duration.ofDays(5)
+    }
 }

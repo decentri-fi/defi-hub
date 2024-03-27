@@ -30,8 +30,8 @@ class MarketCacheRefresher(
     val logger = LoggerFactory.getLogger(this::class.java)
 
     @Scheduled(
-        fixedDelay = 1000 * 60 * 60 * 24 * 3, //every 3 days,
-        initialDelay = 1000 * 60 * 60 * 24 * 3
+        fixedDelay = 1000 * 60 * 60 * 24 * 15, //every 15 days,
+        initialDelay = 1000 * 60 * 60 * 24 * 15
     )
     fun populateCaches() {
         runBlocking(Dispatchers.Default) {
@@ -58,8 +58,8 @@ class MarketCacheRefresher(
     }
 
     @Scheduled(
-        fixedDelay = 1000 * 60 * 60 * 4,
-        initialDelay = 1000 * 60 * 60 * 4
+        fixedDelay = 1000 * 60 * 60 * 1,
+        initialDelay = 1000 * 60 * 60 * 1
     )
     fun refreshCaches() = runBlocking(Dispatchers.Default) {
         if (poolingMarketProviders.isEmpty() && lendingMarketProviders.isEmpty() && farmingMarketProviders.isEmpty()) {
