@@ -13,6 +13,7 @@ import io.defitrack.protocol.dfyn.domain.Pair
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
@@ -20,56 +21,17 @@ import java.math.BigDecimal
 @ConditionalOnCompany(Company.DFYN)
 class DfynPoolingMarketProvider(
     private val dfynService: DfynService,
-    private val dfynAPRService: DfynAPRService,
 ) : PoolingMarketProvider() {
 
-    override suspend fun fetchMarkets(): List<PoolingMarket> = coroutineScope {
-        dfynService.getPairs().map {
-            async {
-                throttled {
-                    createMarket(it)
-                }
-            }
-        }.awaitAll().filterNotNull()
+    //TODO: stop using graph
+    override suspend fun produceMarkets(): Flow<PoolingMarket> {
+        return dfynService.getPairs().map {
+            it.id
+        }.pairsToMarkets()
     }
 
     override fun getProtocol(): Protocol {
         return Protocol.DFYN
-    }
-
-    //TODO: test new breakdown
-    private suspend fun createMarket(it: Pair): PoolingMarket? {
-        return try {
-            if (it.reserveUSD > BigDecimal.valueOf(100000)) {
-                val token = getToken(it.id)
-                val token0 = getToken(it.token0.id)
-                val token1 = getToken(it.token1.id)
-
-                create(
-                    address = it.id,
-                    identifier = it.id,
-                    name = token.name,
-                    symbol = token.symbol,
-                    apr = dfynAPRService.getAPR(it.id),
-                    breakdown = refreshable {
-                        breakdownOf(
-                            it.id,
-                            token0,
-                            token1
-                        )
-                    },
-                    positionFetcher = defaultPositionFetcher(token.address),
-                    totalSupply = refreshable {
-                        getToken(it.id).totalDecimalSupply()
-                    }
-                )
-            } else {
-                null
-            }
-        } catch (e: Exception) {
-            logger.error("Error fetching market", e)
-            null
-        }
     }
 
     override fun getNetwork(): Network {

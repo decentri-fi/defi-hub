@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component
 import kotlin.time.Duration.Companion.days
 
 @Component
+@Deprecated("don't use graph anymore")
 class DfynService(
     graphGatewayProvider: TheGraphGatewayProvider
 ) : GraphProvider(
@@ -26,9 +27,6 @@ class DfynService(
 
         return query(query, "pairDayDatas")
     }
-
-    private val pairCache =
-        Cache.Builder<String, List<Pair>>().expireAfterWrite(1.days).build()
 
     suspend fun getPairs(): List<Pair> {
         val query = """
