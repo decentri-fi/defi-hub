@@ -19,13 +19,10 @@ class AlienbasePoolingMarketProvider : PoolingMarketProvider() {
 
     private val poolFactoryAddress: String = "0x3e84d913803b02a4a7f027165e8ca42c14c0fde7"
 
-    override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
-        pairFactoryContract()
+    override suspend fun produceMarkets(): Flow<PoolingMarket> {
+        return pairFactoryContract()
             .allPairs()
             .pairsToMarkets()
-            .forEach {
-                send(it)
-            }
     }
 
     private suspend fun pairFactoryContract() = createContract { PairFactoryContract(poolFactoryAddress) }

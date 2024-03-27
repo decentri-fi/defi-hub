@@ -15,6 +15,8 @@ import io.defitrack.market.domain.PoolingMarketTokenShare
 import io.defitrack.event.HistoricEventExtractor
 import io.defitrack.evm.contract.LPTokenContract
 import io.defitrack.market.domain.asShare
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
 import java.math.BigDecimal
 
 abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
@@ -58,18 +60,17 @@ abstract class PoolingMarketProvider : MarketProvider<PoolingMarket>() {
     }
 
 
-    suspend fun List<String>.pairsToMarkets(): List<PoolingMarket> {
-        return this.map {
+    suspend fun List<String>.pairsToMarkets(): Flow<PoolingMarket> = channelFlow {
+        this@pairsToMarkets.map {
             createContract {
                 LPTokenContract(it)
             }
         }.resolve()
             .parMap(concurrency = 12) { lpContract ->
-                create(lpContract)
-            }.mapNotNull {
-                it.mapLeft {
-                    logger.error("Failed to create market: {}", it.message)
-                }.getOrNull()
+                create(lpContract).fold(
+                    { throwable -> logger.error("Error creating market", throwable) },
+                    { poolingMarket -> send(poolingMarket) }
+                )
             }
     }
 

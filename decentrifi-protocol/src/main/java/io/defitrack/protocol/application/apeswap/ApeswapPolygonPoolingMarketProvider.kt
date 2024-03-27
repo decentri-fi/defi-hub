@@ -27,16 +27,13 @@ class ApeswapPolygonPoolingMarketProvider(
         return Protocol.APESWAP
     }
 
-    private fun pairFactoryContract() =
-        with(getBlockchainGateway()) { PairFactoryContract(apeswapPolygonService.provideFactory()) }
+    private suspend fun pairFactoryContract() =
+        createContract { PairFactoryContract(apeswapPolygonService.provideFactory()) }
 
-    override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
-        pairFactoryContract()
+    override suspend fun produceMarkets(): Flow<PoolingMarket> {
+        return pairFactoryContract()
             .allPairs()
             .pairsToMarkets()
-            .forEach {
-                send(it)
-            }
     }
 
     override fun getNetwork(): Network {

@@ -26,46 +26,14 @@ class VelodromeV1OptimismPoolingMarketProvider(
 ) : PoolingMarketProvider() {
 
 
-    override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
-        getPairFactoryContract()
+    override suspend fun produceMarkets(): Flow<PoolingMarket> {
+        return getPairFactoryContract()
             .allPairs()
-            .parMap(concurrency = 12) {
-                createMarket(it)
-            }.forEach {
-                it.fold(
-                    { throwable -> logger.error("Error creating market", throwable) },
-                    { poolingMarket -> send(poolingMarket) }
-                )
-            }
+            .pairsToMarkets()
     }
 
-    private fun getPairFactoryContract() =
-        with(getBlockchainGateway()) { PairFactoryContract(velodromeOptimismService.getV1PoolFactory()) }
-
-    private suspend fun createMarket(it: String): Either<Throwable, PoolingMarket> {
-        return catch {
-            val poolingToken = getToken(it)
-            val tokens = poolingToken.underlyingTokens
-
-            val breakdown = refreshable {
-                breakdownOf(poolingToken.address, tokens[0], tokens[1])
-            }
-
-            create(
-                identifier = "v1-$it",
-                positionFetcher = defaultPositionFetcher(poolingToken.address),
-                address = it,
-                name = poolingToken.name,
-                breakdown = breakdown,
-                symbol = poolingToken.symbol,
-                totalSupply = refreshable {
-                    getToken(it).totalDecimalSupply()
-                },
-                deprecated = true
-            )
-        }
-    }
-
+    private suspend fun getPairFactoryContract() =
+        createContract { PairFactoryContract(velodromeOptimismService.getV1PoolFactory()) }
 
     override fun getProtocol(): Protocol {
         return Protocol.VELODROME_V1
