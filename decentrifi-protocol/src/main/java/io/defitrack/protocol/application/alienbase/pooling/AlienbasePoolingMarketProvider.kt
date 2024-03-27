@@ -1,11 +1,8 @@
 package io.defitrack.protocol.application.alienbase.pooling
 
-import arrow.core.Either.Companion.catch
-import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.architecture.conditional.ConditionalOnNetwork
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.refreshable
 import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.protocol.Company
@@ -25,40 +22,13 @@ class AlienbasePoolingMarketProvider : PoolingMarketProvider() {
     override suspend fun produceMarkets(): Flow<PoolingMarket> = channelFlow {
         pairFactoryContract()
             .allPairs()
-            .parMapNotNull(concurrency = 12) { pair ->
-                catch {
-                    createMarket(pair)
-                }.mapLeft {
-                    logger.info("Unable to create market {}", pair)
-                }.getOrNull()
-            }.forEach {
+            .pairsToMarkets()
+            .forEach {
                 send(it)
             }
     }
 
-    private fun pairFactoryContract() = with(getBlockchainGateway()) { PairFactoryContract(poolFactoryAddress) }
-
-    private suspend fun createMarket(it: String): PoolingMarket {
-        val poolingToken = getToken(it)
-        val tokens = poolingToken.underlyingTokens
-
-        val breakdown = refreshable {
-            breakdownOf(poolingToken.address, tokens[0], tokens[1])
-        }
-
-        return create(
-            identifier = it,
-            positionFetcher = defaultPositionFetcher(poolingToken.address),
-            address = it,
-            name = poolingToken.name,
-            breakdown = breakdown,
-            symbol = poolingToken.symbol,
-            totalSupply = refreshable {
-                getToken(it).totalDecimalSupply()
-            },
-            deprecated = false
-        )
-    }
+    private suspend fun pairFactoryContract() = createContract { PairFactoryContract(poolFactoryAddress) }
 
     override fun getProtocol(): Protocol {
         return Protocol.ALIENBASE
