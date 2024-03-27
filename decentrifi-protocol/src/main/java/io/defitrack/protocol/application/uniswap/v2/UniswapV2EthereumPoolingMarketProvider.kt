@@ -7,6 +7,7 @@ import io.defitrack.architecture.conditional.ConditionalOnNetwork
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.common.utils.refreshable
+import io.defitrack.evm.contract.LPTokenContract
 import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.price.domain.GetPriceCommand
@@ -33,15 +34,22 @@ class UniswapV2EthereumPoolingMarketProvider(
         val contract = with(getBlockchainGateway()) { PairFactoryContract(factoryAddress) }
 
         val allPairs = contract.allPairs()
+            .map {
+                createContract {
+                    LPTokenContract(it)
+                }
+            }.resolve()
         logger.info("Found ${allPairs.size} Uniswap V2 Pools")
         allPairs.parMap(concurrency = 12) {
             catch {
-                val token = getToken(it)
+                val token = getToken(it.address)
+                val token0 = getToken(it.token0.await())
+                val token1 = getToken(it.token1.await())
                 val breakdown = refreshable {
                     breakdownOf(
                         token.address,
-                        token.underlyingTokens[0],
-                        token.underlyingTokens[1],
+                        token0,
+                        token1,
                     )
                 }
 
@@ -57,11 +65,11 @@ class UniswapV2EthereumPoolingMarketProvider(
 
                 if (marketsize > 0) {
                     create(
-                        name = "Uniswap V2 ${token.symbol} Pool",
-                        identifier = it,
-                        address = it,
+                        symbol = breakdown.get().joinToString("/") { it.token.symbol },
+                        name = breakdown.get().joinToString("/") { it.token.name },
+                        identifier = it.address,
+                        address = it.address,
                         breakdown = breakdown,
-                        symbol = token.underlyingTokens[0].symbol + "/" + token.underlyingTokens[1].symbol,
                         totalSupply = refreshable {
                             token.totalSupply.asEth(18)
                         }
