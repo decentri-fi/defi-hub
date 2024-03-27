@@ -46,7 +46,7 @@ class AerodromeGaugeMarketProvider(
             .filter { gauge ->
                 gauge.isSome()
             }.map { gauge ->
-                gauge.orNull()!!
+                gauge.getOrNull()!!
             }
             .parMap(concurrency = 12) { gauge ->
                 catch {

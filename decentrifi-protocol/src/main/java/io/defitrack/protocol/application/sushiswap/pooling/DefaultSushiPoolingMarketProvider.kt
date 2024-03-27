@@ -50,16 +50,18 @@ abstract class DefaultSushiPoolingMarketProvider(
             val token0 = getToken(lpToken.token0.await())
             val token1 = getToken(lpToken.token1.await())
 
-            val breakdown = breakdownOf(
-                lpToken.address,
-                token0, token1
-            )
+            val breakdown = refreshable {
+                breakdownOf(
+                    lpToken.address,
+                    token0, token1
+                )
+            }
 
             create(
                 address = lpToken.address,
-                name = breakdown.joinToString("/") { it.token.name },
-                symbol = breakdown.joinToString("/") { it.token.symbol },
-                breakdown = refreshable { breakdown },
+                name = breakdown.get().joinToString("/") { it.token.name },
+                symbol = breakdown.get().joinToString("/") { it.token.symbol },
+                breakdown = breakdown,
                 identifier = lpToken.address,
                 positionFetcher = defaultPositionFetcher(lpToken.address),
                 totalSupply = lpToken.totalDecimalSupply()

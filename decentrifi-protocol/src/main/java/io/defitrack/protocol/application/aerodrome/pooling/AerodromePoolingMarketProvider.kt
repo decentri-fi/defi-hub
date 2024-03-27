@@ -5,6 +5,7 @@ import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils.lazyAsync
 import io.defitrack.common.utils.refreshable
+import io.defitrack.evm.contract.LPTokenContract
 import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.market.port.out.PoolingMarketProvider
 import io.defitrack.protocol.Company
@@ -25,33 +26,35 @@ class AerodromePoolingMarketProvider : PoolingMarketProvider() {
         PoolFactoryContract(
             blockchainGateway = getBlockchainGateway(),
             contractAddress = poolFactoryAddress
-        ).allPools().parMap(concurrency = 12) {
-            val poolingToken = getToken(it)
-            val tokens = poolingToken.underlyingTokens
-
-            try {
-                val breakdown = refreshable {
-                    breakdownOf(poolingToken.address, tokens[0], tokens[1])
+        ).allPools()
+            .map {
+                createContract {
+                    LPTokenContract(it)
                 }
+            }.resolve()
+            .parMap(concurrency = 12) { contract ->
+                val token0 = getToken(contract.token0.await())
+                val token1 = getToken(contract.token1.await())
+                try {
+                    val breakdown = refreshable {
+                        breakdownOf(contract.address, token0, token1)
+                    }
 
-                create(
-                    identifier = it,
-                    positionFetcher = defaultPositionFetcher(poolingToken.address),
-                    address = it,
-                    name = poolingToken.name,
-                    breakdown = breakdown,
-                    symbol = poolingToken.symbol,
-                    totalSupply = refreshable {
-                        getToken(it).totalDecimalSupply()
-                    },
-                    type = "pool",
-                    deprecated = false
-                )
-            } catch (ex: Exception) {
-                logger.error("Error while fetching pooling market $it: {}", ex.message)
-                null
-            }
-        }.filterNotNull()
+                    create(
+                        identifier = contract.address,
+                        positionFetcher = defaultPositionFetcher(contract.address),
+                        address = contract.address,
+                        name = breakdown.get().joinToString("/") { it.token.name },
+                        symbol = breakdown.get().joinToString("/") { it.token.symbol },
+                        breakdown = breakdown,
+                        totalSupply = contract.totalDecimalSupply(),
+                        deprecated = false
+                    )
+                } catch (ex: Exception) {
+                    logger.error("Error while fetching pooling market ${contract.address}: {}", ex.message)
+                    null
+                }
+            }.filterNotNull()
             .forEach {
                 send(it)
             }
