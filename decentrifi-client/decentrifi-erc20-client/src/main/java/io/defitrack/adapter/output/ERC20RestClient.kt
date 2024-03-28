@@ -3,7 +3,6 @@ package io.defitrack.adapter.output
 import io.defitrack.adapter.output.domain.erc20.FungibleTokenInformation
 import io.defitrack.adapter.output.domain.erc20.WrappedTokenDTO
 import io.defitrack.common.network.Network
-import io.defitrack.port.output.ERC20Client
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -19,10 +18,10 @@ import java.math.BigInteger
 class ERC20RestClient(
     private val client: HttpClient,
     @Value("\${erc20ResourceLocation:http://defitrack-erc20.default.svc.cluster.local:8080}") private val erc20ResourceLocation: String
-) : ERC20Client {
+) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
-    override suspend fun getAllTokens(network: Network, verified: Boolean?): List<FungibleTokenInformation> {
+     suspend fun getAllTokens(network: Network, verified: Boolean?): List<FungibleTokenInformation> {
         return withContext(Dispatchers.IO) {
             val get = client.get("$erc20ResourceLocation/${network.name}") {
                 parameter("verified", verified)
@@ -36,7 +35,7 @@ class ERC20RestClient(
     }
 
 
-    override suspend fun getTokenInformation(network: Network, address: String): FungibleTokenInformation {
+    suspend fun getTokenInformation(network: Network, address: String): FungibleTokenInformation {
         return withContext(Dispatchers.IO) {
             val result = client.get("$erc20ResourceLocation/${network.name}/$address/token")
             if (!result.status.isSuccess()) {
@@ -46,7 +45,7 @@ class ERC20RestClient(
         }
     }
 
-    override suspend fun getWrappedToken(network: Network): WrappedTokenDTO = withContext(Dispatchers.IO) {
+    suspend fun getWrappedToken(network: Network): WrappedTokenDTO = withContext(Dispatchers.IO) {
         val response = client.get("$erc20ResourceLocation/${network.name}/wrapped")
         if (!response.status.isSuccess()) {
             throw RuntimeException("Failed to get wrapped token for $network")
@@ -54,7 +53,7 @@ class ERC20RestClient(
         response.body()
     }
 
-    override suspend fun getAllowance(network: Network, token: String, owner: String, spender: String): BigInteger {
+    suspend fun getAllowance(network: Network, token: String, owner: String, spender: String): BigInteger {
         return withContext(Dispatchers.IO) {
             val get = client.get("$erc20ResourceLocation/${network.name}/allowance/$token/$owner/$spender")
             if (get.status.isSuccess()) {
