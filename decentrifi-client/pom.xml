@@ -5,7 +5,7 @@
 
     <artifactId>decentrifi-client</artifactId>
 
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
     <parent>
         <groupId>io.defitrack</groupId>
@@ -13,10 +13,19 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
+    <modules>
+        <module>decentrifi-client-domain</module>
+        <module>decentrifi-event-domain</module>
+        <module>decentrifi-erc20-client</module>
+        <module>decentrifi-balance-client</module>
+        <module>decentrifi-price-client</module>
+        <module>decentrifi-protocol-client</module>
+    </modules>
+
     <dependencies>
         <dependency>
             <groupId>io.defitrack</groupId>
-            <artifactId>decentrifi-protocol</artifactId>
+            <artifactId>defitrack-common</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

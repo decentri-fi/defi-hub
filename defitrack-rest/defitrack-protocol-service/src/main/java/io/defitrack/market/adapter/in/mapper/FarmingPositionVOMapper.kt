@@ -1,17 +1,18 @@
 package io.defitrack.market.adapter.`in`.mapper
 
+import io.defitrack.adapter.output.domain.market.GetPriceCommand
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.price.domain.GetPriceCommand
-import io.defitrack.networkinfo.toNetworkInformation
-import io.defitrack.market.domain.farming.FarmingPosition
+import io.defitrack.erc20.toVO
 import io.defitrack.market.adapter.`in`.resource.FarmingPositionVO
-import io.defitrack.price.port.`in`.PricePort
+import io.defitrack.market.domain.farming.FarmingPosition
+import io.defitrack.network.toVO
+import io.defitrack.port.output.PriceClient
 import io.defitrack.protocol.mapper.ProtocolVOMapper
 import org.springframework.stereotype.Component
 
 @Component
 class FarmingPositionVOMapper(
-    private val priceResource: PricePort,
+    private val priceResource: PriceClient,
     private val protocolVOMapper: ProtocolVOMapper,
     private val farmingMarketVOMapper: FarmingMarketVOMapper
 ) {
@@ -29,13 +30,13 @@ class FarmingPositionVOMapper(
 
             FarmingPositionVO(
                 id = market.id,
-                network = market.network.toNetworkInformation(),
+                network = market.network.toVO(),
                 protocol = protocolVOMapper.map(market.protocol),
                 dollarValue = stakedInDollars,
                 name = market.name,
                 apr = market.apr?.toDouble(),
-                stakedToken = market.stakedToken,
-                rewardTokens = market.rewardTokens,
+                stakedToken = market.stakedToken.toVO(),
+                rewardTokens = market.rewardTokens.map { it.toVO() },
                 stakedAmountDecimal = underlyingAmount.asEth(market.stakedToken.decimals),
                 stakedAmount = underlyingAmount.toString(10),
                 exitPositionSupported = market.exitPositionPreparer != null,

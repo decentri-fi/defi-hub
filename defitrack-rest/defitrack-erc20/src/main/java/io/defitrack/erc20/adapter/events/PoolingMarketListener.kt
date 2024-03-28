@@ -4,11 +4,10 @@ import arrow.core.Option
 import arrow.core.getOrElse
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import io.defitrack.common.utils.FormatUtilsExtensions.asEth
 import io.defitrack.erc20.application.ERC20TokenService
 import io.defitrack.erc20.application.TokenCache
 import io.defitrack.erc20.domain.TokenInformation
-import io.defitrack.event.event.PoolMarketUpdatedEvent
+import io.defitrack.event.PoolMarketUpdatedEvent
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.TokenType
 import kotlinx.coroutines.runBlocking

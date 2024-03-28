@@ -1,8 +1,8 @@
 package io.defitrack.price.adapter.rest
 
+import io.defitrack.adapter.output.domain.market.GetPriceCommand
 import io.defitrack.common.network.Network
 import io.defitrack.price.application.PriceAggregator
-import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.price.external.domain.ExternalPrice
 import io.defitrack.price.external.domain.NO_EXTERNAL_PRICE
 import io.defitrack.price.port.`in`.PriceCalculator

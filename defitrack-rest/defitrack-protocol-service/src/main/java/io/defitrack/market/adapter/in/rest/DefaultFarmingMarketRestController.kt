@@ -1,17 +1,13 @@
 package io.defitrack.market.adapter.`in`.rest
 
 import io.defitrack.common.network.Network
-import io.defitrack.erc20.port.`in`.ERC20Resource
-import io.defitrack.market.domain.position.ExitPositionCommand
 import io.defitrack.invest.PrepareInvestmentCommand
-import io.defitrack.market.port.out.FarmingMarketProvider
-import io.defitrack.market.domain.farming.FarmingMarket
 import io.defitrack.market.adapter.`in`.mapper.FarmingMarketVOMapper
 import io.defitrack.market.adapter.`in`.resource.FarmingMarketVO
 import io.defitrack.market.adapter.`in`.resource.TransactionPreparationVO
+import io.defitrack.market.domain.farming.FarmingMarket
+import io.defitrack.market.domain.position.ExitPositionCommand
 import io.defitrack.market.port.`in`.FarmingMarkets
-import io.defitrack.market.port.`in`.Markets
-import io.defitrack.token.TokenType
 import kotlinx.coroutines.runBlocking
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*

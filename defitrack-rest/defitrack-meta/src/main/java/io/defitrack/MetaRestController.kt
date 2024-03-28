@@ -1,8 +1,8 @@
 package io.defitrack
 
 import io.defitrack.common.network.Network
-import io.defitrack.networkinfo.NetworkInformation
-import io.defitrack.networkinfo.toNetworkInformation
+import io.defitrack.network.NetworkInformationVO
+import io.defitrack.network.toVO
 import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.ProtocolVO
 import io.defitrack.protocol.mapper.ProtocolVOMapper
@@ -28,7 +28,7 @@ class MetaRestController(
 
     @GetMapping("/networks")
     @Operation(summary = "Get all supported network")
-    fun getNetworks(): List<NetworkInformation> {
-        return Network.entries.map(Network::toNetworkInformation)
+    fun getNetworks(): List<NetworkInformationVO> {
+        return Network.entries.map(Network::toVO)
     }
 }

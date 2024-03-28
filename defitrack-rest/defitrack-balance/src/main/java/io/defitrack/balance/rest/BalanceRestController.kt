@@ -2,37 +2,36 @@ package io.defitrack.balance.rest
 
 import arrow.fx.coroutines.parMap
 import arrow.fx.coroutines.parMapNotNull
+import io.defitrack.adapter.output.domain.market.GetPriceCommand
 import io.defitrack.balance.service.BalanceService
-import io.defitrack.balance.service.dto.BalanceElement
-import io.defitrack.balance.service.dto.TokenBalance
+import io.defitrack.balance.service.dto.BalanceElementVO
+import io.defitrack.balance.service.dto.TokenBalanceVO
+import io.defitrack.balance.service.dto.toVO
 import io.defitrack.balance.service.token.ERC20BalanceService
 import io.defitrack.common.network.Network
-import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.erc20.port.`in`.ERC20Resource
-import io.defitrack.price.domain.GetPriceCommand
-import io.defitrack.networkinfo.toNetworkInformation
-import io.defitrack.price.port.`in`.PricePort
+import io.defitrack.network.toVO
+import io.defitrack.port.output.ERC20Client
+import io.defitrack.port.output.PriceClient
 import kotlinx.coroutines.coroutineScope
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.web3j.crypto.WalletUtils
-import java.math.BigDecimal
 import java.math.BigInteger
 
 @RestController
 @RequestMapping
 class BalanceRestController(
     private val balanceServices: List<BalanceService>,
-    private val priceResource: PricePort,
-    private val erC20Resource: ERC20Resource,
+    private val priceResource: PriceClient,
+    private val erC20Resource: ERC20Client,
     private val erC20BalanceService: ERC20BalanceService
 ) {
 
     private val log = LoggerFactory.getLogger(this::class.java)
 
     @GetMapping("/{user}/native-balance")
-    suspend fun getBalance(@PathVariable("user") address: String): List<BalanceElement> {
+    suspend fun getBalance(@PathVariable("user") address: String): List<BalanceElementVO> {
         return balanceServices.parMapNotNull(concurrency = 8) {
             try {
                 val balance = it.getNativeBalance(address)
@@ -43,12 +42,12 @@ class BalanceRestController(
                             "0x0", it.getNetwork(), 1.0.toBigDecimal()
                         )
                     )
-                    BalanceElement(
+                    BalanceElementVO(
                         amount = balance,
-                        network = it.getNetwork().toNetworkInformation(),
+                        network = it.getNetwork().toVO(),
                         token = erC20Resource.getTokenInformation(
                             it.getNetwork(), "0x0"
-                        ),
+                        ).toVO(),
                         price = price
                     )
                 } else {
@@ -65,7 +64,7 @@ class BalanceRestController(
     suspend fun getNativeBalanceByNetwork(
         @PathVariable("user") address: String,
         @RequestParam("network") networkName: String
-    ): ResponseEntity<BalanceElement> {
+    ): ResponseEntity<BalanceElementVO> {
 
         val network = Network.fromString(networkName) ?: return ResponseEntity.notFound().build()
 
@@ -83,12 +82,12 @@ class BalanceRestController(
         )
 
         return ResponseEntity.ok(
-            BalanceElement(
+            BalanceElementVO(
                 amount = balance,
-                network = network.toNetworkInformation(),
+                network = network.toVO(),
                 token = erC20Resource.getTokenInformation(
                     network, "0x0"
-                ),
+                ).toVO(),
                 price = price
             )
         )
@@ -100,7 +99,7 @@ class BalanceRestController(
         @PathVariable("user") user: String,
         @RequestParam("network") networkName: String,
         @PathVariable("token") token: String
-    ): ResponseEntity<BalanceElement> {
+    ): ResponseEntity<BalanceElementVO> {
 
         val network = Network.fromString(networkName) ?: return ResponseEntity.badRequest().build()
 
@@ -122,10 +121,10 @@ class BalanceRestController(
                 )
             )
             ResponseEntity.ok(
-                BalanceElement(
+                BalanceElementVO(
                     amount = balance,
-                    network = network.toNetworkInformation(),
-                    token = tokenInfo,
+                    network = network.toVO(),
+                    token = tokenInfo.toVO(),
                     price = price
                 )
             )
@@ -133,7 +132,7 @@ class BalanceRestController(
     }
 
     @GetMapping("/{address}/token-balances")
-    suspend fun getTokenBalances(@PathVariable("address") address: String): List<BalanceElement> = coroutineScope {
+    suspend fun getTokenBalances(@PathVariable("address") address: String): List<BalanceElementVO> = coroutineScope {
         balanceServices.parMap {
             try {
                 it.getTokenBalances(address)
@@ -151,7 +150,7 @@ class BalanceRestController(
     @GetMapping(value = ["/{address}/token-balances"], params = ["network"])
     suspend fun getTokenBalanceByNetwork(
         @PathVariable("address") address: String, @RequestParam("network") network: Network
-    ): List<BalanceElement> {
+    ): List<BalanceElementVO> {
         val balanceService = balanceServices.firstOrNull {
             it.getNetwork() == network
         }
@@ -159,15 +158,15 @@ class BalanceRestController(
         return balanceService?.getTokenBalances(address)?.map { it.toBalanceElement() } ?: emptyList()
     }
 
-    suspend fun TokenBalance.toBalanceElement(): BalanceElement {
+    suspend fun TokenBalanceVO.toBalanceElement(): BalanceElementVO {
         val price = priceResource.calculatePrice(
             GetPriceCommand(
                 token.address, network, 1.0.toBigDecimal()
             )
         )
-        return BalanceElement(
+        return BalanceElementVO(
             amount = amount,
-            network = network.toNetworkInformation(),
+            network = network.toVO(),
             token = token,
             price = price
         )

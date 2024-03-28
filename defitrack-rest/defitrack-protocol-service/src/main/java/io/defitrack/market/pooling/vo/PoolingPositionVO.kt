@@ -1,6 +1,6 @@
 package io.defitrack.market.pooling.vo
 
-import io.defitrack.networkinfo.NetworkInformation
+import io.defitrack.network.NetworkInformationVO
 import io.defitrack.protocol.ProtocolVO
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -11,7 +11,7 @@ class PoolingPositionVO(
     val amount: BigInteger,
     val name: String,
     val breakdown: List<PoolingPositionTokenshareVO>?,
-    val network: NetworkInformation,
+    val network: NetworkInformationVO,
     val symbol: String,
     val protocol: ProtocolVO,
     val dollarValue: Double,

@@ -3,7 +3,8 @@ package io.defitrack.erc20.domain
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.Refreshable
 import io.defitrack.common.utils.refreshable
-import io.defitrack.networkinfo.toNetworkInformation
+import io.defitrack.erc20.FungibleTokenInformationVO
+import io.defitrack.network.toVO
 import io.defitrack.protocol.Protocol
 import io.defitrack.token.TokenType
 import java.math.BigInteger
@@ -30,9 +31,9 @@ data class TokenInformation(
     }
 }
 
-fun TokenInformation.toVO(): FungibleTokenInformation {
-    return FungibleTokenInformation(
-        network = network.toNetworkInformation(),
+fun TokenInformation.toVO(): FungibleTokenInformationVO {
+    return FungibleTokenInformationVO(
+        network = network.toVO(),
         logo = logo,
         name = name,
         symbol = symbol,

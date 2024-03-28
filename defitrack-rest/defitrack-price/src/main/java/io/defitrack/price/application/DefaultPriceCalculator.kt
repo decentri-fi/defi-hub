@@ -2,23 +2,22 @@ package io.defitrack.price.application
 
 import com.github.michaelbull.retry.policy.limitAttempts
 import com.github.michaelbull.retry.retry
-import io.defitrack.balance.BalanceResource
+import io.defitrack.adapter.output.domain.erc20.FungibleTokenInformation
+import io.defitrack.adapter.output.domain.market.GetPriceCommand
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
-import io.defitrack.erc20.domain.FungibleTokenInformation
-import io.defitrack.erc20.port.`in`.ERC20Resource
-import io.defitrack.price.domain.GetPriceCommand
+import io.defitrack.domain.BalanceResource
+import io.defitrack.port.output.ERC20Client
 import io.defitrack.price.port.`in`.PriceCalculator
 import io.defitrack.token.TokenType
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigInteger
 
 @Component
 class DefaultPriceCalculator(
-    private val erc20Service: ERC20Resource,
+    private val ERC20Client: ERC20Client,
     private val balanceResource: BalanceResource,
     private val aggregatedPriceProvider: AggregatedPriceProvider
 ) : PriceCalculator {
@@ -33,7 +32,7 @@ class DefaultPriceCalculator(
         }
 
         val tokenAddress = if (getPriceCommand.address == "0x0") {
-            erc20Service.getWrappedToken(getPriceCommand.network).address
+            ERC20Client.getWrappedToken(getPriceCommand.network).address
         } else {
             getPriceCommand.address
         }
@@ -44,9 +43,9 @@ class DefaultPriceCalculator(
         }
 
         return retry(limitAttempts(5)) {
-            val token = erc20Service.getTokenInformation(getPriceCommand.network, tokenAddress)
+            val token = ERC20Client.getTokenInformation(getPriceCommand.network, tokenAddress)
 
-            val tokenPrice = aggregatedPriceProvider.getPrice(token)
+            val tokenPrice = aggregatedPriceProvider.getPrice(token.address, token.network.toNetwork())
 
             val price = if (tokenPrice != null) {
                 getPriceCommand.amount.times(tokenPrice)
@@ -96,7 +95,7 @@ class DefaultPriceCalculator(
         )
 
         return underlyingTokens.map { underlyingToken ->
-            val price = aggregatedPriceProvider.getPrice(underlyingToken)
+            val price = aggregatedPriceProvider.getPrice(underlyingToken.address, underlyingToken.network.toNetwork())
             val underlyingTokenBalance = balanceResource.getTokenBalance(network, lpAddress, underlyingToken.address)
             val userTokenAmount = underlyingTokenBalance.amount.toBigDecimal().times(userShare)
 

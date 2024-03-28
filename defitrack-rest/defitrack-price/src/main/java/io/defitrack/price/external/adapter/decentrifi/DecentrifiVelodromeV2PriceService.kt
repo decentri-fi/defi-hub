@@ -1,9 +1,9 @@
 package io.defitrack.price.external.adapter.decentrifi
 
+import io.defitrack.adapter.output.domain.market.PoolingMarketInformationDTO
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.market.domain.pooling.PoolingMarketInformation
-import io.defitrack.marketinfo.port.out.Markets
+import io.defitrack.port.output.MarketClient
 import io.defitrack.price.external.adapter.stable.StablecoinPriceProvider
 import io.defitrack.price.external.domain.ExternalPrice
 import io.defitrack.price.port.out.ExternalPriceService
@@ -19,7 +19,7 @@ import java.math.BigInteger
 @Component
 @ConditionalOnProperty("oracles.velodrome_v2.enabled", havingValue = "true", matchIfMissing = true)
 class DecentrifiVelodromeV2PriceService(
-    private val markets: Markets,
+    private val markets: MarketClient,
     private val stablecoinPriceProvider: StablecoinPriceProvider,
 ) : ExternalPriceService {
 
@@ -45,7 +45,7 @@ class DecentrifiVelodromeV2PriceService(
         prices
     }
 
-    private suspend fun importNonStableUsdPairs(pools: List<PoolingMarketInformation>) {
+    private suspend fun importNonStableUsdPairs(pools: List<PoolingMarketInformationDTO>) {
         val usdPairs = pools.filter { pool ->
             pool.breakdown?.any { share ->
                 stablecoinPriceProvider.isStable(pool.network.toNetwork()).invoke(share.token.address)
@@ -95,7 +95,7 @@ class DecentrifiVelodromeV2PriceService(
         }
     }
 
-    private suspend fun importEthPairs(pools: List<PoolingMarketInformation>) {
+    private suspend fun importEthPairs(pools: List<PoolingMarketInformationDTO>) {
         val usdPairs = pools.filter { pool ->
             pool.breakdown?.any { share ->
                 share.token.address.lowercase() == weth
@@ -139,7 +139,7 @@ class DecentrifiVelodromeV2PriceService(
     }
 
 
-    suspend fun getUniswapV2Pools(): List<PoolingMarketInformation> {
+    suspend fun getUniswapV2Pools(): List<PoolingMarketInformationDTO> {
         return markets.getPoolingMarkets("velodrome_v2")
     }
 }

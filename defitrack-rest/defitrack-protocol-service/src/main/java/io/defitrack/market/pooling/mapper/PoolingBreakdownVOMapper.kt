@@ -1,21 +1,22 @@
 package io.defitrack.market.pooling.mapper
 
+import io.defitrack.adapter.output.domain.market.GetPriceCommand
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.BigDecimalExtensions.isZero
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
+import io.defitrack.erc20.toVO
 import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.market.domain.PoolingMarketTokenShare
 import io.defitrack.market.pooling.vo.PoolingMarketTokenShareVO
 import io.defitrack.market.pooling.vo.PoolingPositionTokenshareVO
-import io.defitrack.price.domain.GetPriceCommand
-import io.defitrack.price.port.out.Prices
+import io.defitrack.port.output.PriceClient
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigInteger
 
 @Service
-class PoolingBreakdownVOMapper(private val prices: Prices) {
+class PoolingBreakdownVOMapper(private val prices: PriceClient) {
 
     val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -26,7 +27,7 @@ class PoolingBreakdownVOMapper(private val prices: Prices) {
 
         return tokenShares.map { share ->
             PoolingMarketTokenShareVO(
-                token = share.token,
+                token = share.token.toVO(),
                 reserve = share.reserve,
                 reserveDecimal = share.reserve.asEth(share.token.decimals)
             )

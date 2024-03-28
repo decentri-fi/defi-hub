@@ -1,8 +1,9 @@
 package io.defitrack.market.adapter.`in`.mapper
 
-import io.defitrack.networkinfo.toNetworkInformation
-import io.defitrack.market.domain.lending.LendingMarket
+import io.defitrack.erc20.toVO
 import io.defitrack.market.adapter.`in`.resource.LendingMarketVO
+import io.defitrack.market.domain.lending.LendingMarket
+import io.defitrack.network.toVO
 import io.defitrack.protocol.mapper.ProtocolVOMapper
 import org.springframework.stereotype.Component
 import java.time.ZoneOffset
@@ -19,9 +20,9 @@ class LendingMarketVOMapper(
                 id = id,
                 name = name,
                 protocol = protocolVOMapper.map(protocol),
-                network = network.toNetworkInformation(),
-                token = token,
-                marketToken = marketToken,
+                network = network.toVO(),
+                token = token.toVO(),
+                marketToken = marketToken?.toVO(),
                 rate = rate?.toDouble(),
                 poolType = poolType,
                 marketSize = marketSize?.get(),

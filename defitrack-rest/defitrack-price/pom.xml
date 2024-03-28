@@ -14,11 +14,22 @@
     <dependencies>
         <dependency>
             <groupId>io.defitrack</groupId>
-            <artifactId>defitrack-common</artifactId>
+            <artifactId>decentrifi-protocol-client</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>io.defitrack</groupId>
-            <artifactId>decentrifi-client</artifactId>
+            <artifactId>decentrifi-erc20-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>decentrifi-balance-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.defitrack</groupId>
+            <artifactId>decentrifi-event-domain</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

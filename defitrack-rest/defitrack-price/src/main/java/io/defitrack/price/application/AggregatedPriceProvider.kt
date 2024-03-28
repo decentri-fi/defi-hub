@@ -1,6 +1,6 @@
 package io.defitrack.price.application
 
-import io.defitrack.erc20.domain.FungibleTokenInformation
+import io.defitrack.common.network.Network
 import io.github.reactivecircus.cache4k.Cache
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
@@ -13,9 +13,9 @@ class AggregatedPriceProvider(
 
     val priceCache = Cache.Builder<String, BigDecimal>().expireAfterWrite(5.minutes).build()
 
-    suspend fun getPrice(token: FungibleTokenInformation): BigDecimal {
-        return priceCache.get("${token.address.lowercase()}-${token.network.toNetwork().slug}") {
-            priceAggregator.getPrice(token.address, token.network.name.lowercase())?.price
+    suspend fun getPrice(address: String, network: Network): BigDecimal {
+        return priceCache.get("${address.lowercase()}-${network.slug}") {
+            priceAggregator.getPrice(address, network.name.lowercase())?.price
                 ?: BigDecimal.ZERO
         }
     }

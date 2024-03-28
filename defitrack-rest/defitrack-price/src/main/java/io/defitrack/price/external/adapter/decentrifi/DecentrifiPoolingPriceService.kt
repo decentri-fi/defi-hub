@@ -1,16 +1,17 @@
 package io.defitrack.price.external.adapter.decentrifi
 
 import arrow.fx.coroutines.parMap
+import io.defitrack.adapter.output.domain.market.GetPriceCommand
+import io.defitrack.adapter.output.domain.market.PoolingMarketInformationDTO
+import io.defitrack.adapter.output.domain.market.PoolingMarketTokenShareInformationDTO
+import io.defitrack.adapter.output.domain.meta.NetworkInformationDTO
+import io.defitrack.adapter.output.domain.meta.ProtocolInformationDTO
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.BigDecimalExtensions.isZero
-import io.defitrack.market.domain.pooling.PoolingMarketInformation
-import io.defitrack.market.domain.pooling.PoolingMarketTokenShareInformation
-import io.defitrack.networkinfo.NetworkInformation
+import io.defitrack.port.output.ProtocolClient
 import io.defitrack.price.application.DefaultPriceCalculator
-import io.defitrack.price.domain.GetPriceCommand
 import io.defitrack.price.external.domain.ExternalPrice
 import io.defitrack.price.port.out.ExternalPriceService
-import io.defitrack.protocol.ProtocolInformation
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -29,6 +30,7 @@ import java.math.BigDecimal
 @ConditionalOnProperty("oracles.pooling_markets.enabled", havingValue = "true", matchIfMissing = true)
 class DecentrifiPoolingPriceService(
     private val httpClient: HttpClient,
+    private val decentrifiProtocols: ProtocolClient,
 ) : ExternalPriceService {
 
     override suspend fun getAllPrices(): Flow<ExternalPrice> = channelFlow {
@@ -67,7 +69,7 @@ class DecentrifiPoolingPriceService(
 
     fun getPrices() = runBlocking {
         logger.info("fetching prices from decentrifi pools")
-        val protocols = getProtocols()
+        val protocols = decentrifiProtocols.getProtocols()
         protocols.map { proto ->
             try {
                 val parMap = getPools(proto).parMap(concurrency = 12) { pool ->
@@ -108,7 +110,7 @@ class DecentrifiPoolingPriceService(
     }
 
     private fun putInCache(
-        network: NetworkInformation,
+        network: NetworkInformationDTO,
         address: String,
         price: BigDecimal,
         name: String
@@ -122,11 +124,7 @@ class DecentrifiPoolingPriceService(
         return externalPrice
     }
 
-    private suspend fun getProtocols(): List<ProtocolInformation> {
-        return httpClient.get("https://api.decentri.fi/protocols").body()
-    }
-
-    private suspend fun getPools(protocol: ProtocolInformation): List<PoolingMarketInformation> {
+    private suspend fun getPools(protocol: ProtocolInformationDTO): List<PoolingMarketInformationDTO> {
         val result =
             httpClient.get("https://api.decentri.fi/${protocol.slug}/pooling/all-markets")
         return if (result.status.isSuccess())
@@ -138,12 +136,12 @@ class DecentrifiPoolingPriceService(
     }
 
     class AddMarketCommand(
-        val breakdown: List<PoolingMarketTokenShareInformation>?,
+        val breakdown: List<PoolingMarketTokenShareInformationDTO>?,
         val liquidity: BigDecimal,
         val name: String,
         val address: String,
         val protocol: String,
-        val network: NetworkInformation
+        val network: NetworkInformationDTO
     ) {
 
         fun hasBreakdown(): Boolean {

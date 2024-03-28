@@ -1,22 +1,22 @@
 package io.defitrack.market.adapter.`in`.resource
 
-import io.defitrack.erc20.domain.FungibleTokenInformation
-import io.defitrack.networkinfo.NetworkInformation
+import io.defitrack.erc20.FungibleTokenInformationVO
+import io.defitrack.network.NetworkInformationVO
 import io.defitrack.protocol.ProtocolVO
 import java.math.BigDecimal
 import java.util.*
 
 class FarmingMarketVO(
     id: String,
-    network: NetworkInformation,
+    network: NetworkInformationVO,
     protocol: ProtocolVO,
     name: String,
-    val stakedToken: FungibleTokenInformation,
-    val reward: List<FungibleTokenInformation>,
+    val stakedToken: FungibleTokenInformationVO,
+    val reward: List<FungibleTokenInformationVO>,
     val apr: BigDecimal?,
     prepareInvestmentSupported: Boolean,
     exitPositionSupported: Boolean,
-    val token: FungibleTokenInformation? = null,
+    val token: FungibleTokenInformationVO? = null,
     updatedAt: Date,
     deprecated: Boolean,
 ) : MarketVO(

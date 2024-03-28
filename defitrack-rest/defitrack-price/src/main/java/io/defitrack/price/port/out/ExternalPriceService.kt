@@ -1,6 +1,6 @@
 package io.defitrack.price.port.out
 
-import io.defitrack.erc20.domain.FungibleTokenInformation
+import io.defitrack.adapter.output.domain.erc20.FungibleTokenInformation
 import io.defitrack.price.external.domain.ExternalPrice
 import kotlinx.coroutines.flow.Flow
 

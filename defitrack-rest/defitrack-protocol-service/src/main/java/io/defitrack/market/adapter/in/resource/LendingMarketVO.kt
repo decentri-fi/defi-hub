@@ -1,7 +1,7 @@
 package io.defitrack.market.adapter.`in`.resource
 
-import io.defitrack.erc20.domain.FungibleTokenInformation
-import io.defitrack.networkinfo.NetworkInformation
+import io.defitrack.erc20.FungibleTokenInformationVO
+import io.defitrack.network.NetworkInformationVO
 import io.defitrack.protocol.ProtocolVO
 import java.math.BigDecimal
 
@@ -9,9 +9,9 @@ class LendingMarketVO(
     id: String,
     name: String,
     protocol: ProtocolVO,
-    network: NetworkInformation,
-    val token: FungibleTokenInformation,
-    val marketToken: FungibleTokenInformation?,
+    network: NetworkInformationVO,
+    val token: FungibleTokenInformationVO,
+    val marketToken: FungibleTokenInformationVO?,
     val rate: Double?,
     val poolType: String,
     marketSize: BigDecimal?,

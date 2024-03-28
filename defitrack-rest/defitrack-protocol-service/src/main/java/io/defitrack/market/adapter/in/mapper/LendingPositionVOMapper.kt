@@ -1,11 +1,12 @@
 package io.defitrack.market.adapter.`in`.mapper
 
+import io.defitrack.adapter.output.domain.market.GetPriceCommand
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.price.domain.GetPriceCommand
-import io.defitrack.networkinfo.toNetworkInformation
+import io.defitrack.erc20.toVO
 import io.defitrack.market.domain.lending.LendingPosition
 import io.defitrack.market.adapter.`in`.resource.LendingPositionVO
-import io.defitrack.price.port.`in`.PricePort
+import io.defitrack.network.toVO
+import io.defitrack.port.output.PriceClient
 import io.defitrack.protocol.mapper.ProtocolVOMapper
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
@@ -14,7 +15,7 @@ import java.math.BigDecimal
 class LendingPositionVOMapper(
     private val protocolVOMapper: ProtocolVOMapper,
     private val lendingMarketVOMapper: LendingMarketVOMapper,
-    private val priceResource: PricePort,
+    private val priceResource: PriceClient,
 ) {
 
     suspend fun map(lendingPosition: LendingPosition): LendingPositionVO {
@@ -33,14 +34,14 @@ class LendingPositionVOMapper(
             }
 
             LendingPositionVO(
-                network = market.network.toNetworkInformation(),
+                network = market.network.toVO(),
                 protocol = protocolVOMapper.map(market.protocol),
                 dollarValue = lendingInDollars,
                 rate = market.rate?.toDouble(),
                 name = market.name,
                 amountDecimal = underlyingAmount.asEth(market.token.decimals).toDouble(),
                 id = market.id,
-                token = market.token,
+                token = market.token.toVO(),
                 exitPositionSupported = market.exitPositionPreparer !== null,
                 amount = tokenAmount,
                 market = lendingMarketVOMapper.map(market)

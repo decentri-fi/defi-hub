@@ -1,22 +1,22 @@
 package io.defitrack.market.pooling.mapper
 
+import io.defitrack.adapter.output.domain.market.GetPriceCommand
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.erc20.port.`in`.ERC20Resource
-import io.defitrack.networkinfo.toNetworkInformation
 import io.defitrack.market.domain.pooling.PoolingPosition
 import io.defitrack.market.pooling.vo.PoolingPositionVO
-import io.defitrack.price.domain.GetPriceCommand
-import io.defitrack.price.port.out.Prices
+import io.defitrack.network.toVO
+import io.defitrack.port.output.ERC20Client
+import io.defitrack.port.output.PriceClient
 import io.defitrack.protocol.mapper.ProtocolVOMapper
 import org.springframework.stereotype.Component
 
 @Component
 class PoolingPositionVOMapper(
-    private val erC20Resource: ERC20Resource,
+    private val erC20Resource: ERC20Client,
     private val protocolVOMapper: ProtocolVOMapper,
     private val breakdownMapper: PoolingBreakdownVOMapper,
     private val poolingMarketVOMapper: PoolingMarketVOMapper,
-    private val prices: Prices
+    private val prices: PriceClient
 ) {
 
     suspend fun map(poolingPosition: PoolingPosition): PoolingPositionVO {
@@ -39,7 +39,7 @@ class PoolingPositionVOMapper(
                 amountDecimal = amount,
                 name = market.name,
                 dollarValue = dollarValue,
-                network = market.network.toNetworkInformation(),
+                network = market.network.toVO(),
                 symbol = market.symbol,
                 protocol = protocolVOMapper.map(market.protocol),
                 id = market.id,

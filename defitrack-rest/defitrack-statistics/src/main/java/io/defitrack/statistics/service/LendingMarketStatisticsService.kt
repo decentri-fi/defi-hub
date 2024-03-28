@@ -1,7 +1,8 @@
 package io.defitrack.statistics.service
 
+import io.defitrack.adapter.output.domain.market.DefiPrimitive
 import io.defitrack.common.utils.AsyncUtils.await
-import io.defitrack.protocol.DefiPrimitive
+import io.defitrack.port.output.ProtocolClient
 import io.defitrack.statistics.client.DefitrackClient
 import io.defitrack.statistics.domain.MarketStatisticVO
 import io.github.reactivecircus.cache4k.Cache
@@ -12,7 +13,8 @@ import kotlin.time.Duration.Companion.hours
 
 @Service
 class LendingMarketStatisticsService(
-    private val defitrackClient: DefitrackClient
+    private val defitrackClient: DefitrackClient,
+    private val decentrifiProtocols: ProtocolClient
 ) {
 
 
@@ -23,13 +25,13 @@ class LendingMarketStatisticsService(
 
     suspend fun getStatistics(): MarketStatisticVO = coroutineScope {
         cache.get("stats") {
-            val protocols = defitrackClient.getProtocols()
+            val protocols = decentrifiProtocols.getProtocols()
 
             val marketsPerProtocol = protocols.filter {
                 it.primitives.contains(DefiPrimitive.LENDING)
             }.map {
                 it to async {
-                    defitrackClient.getLendingMarketCount(it)
+                    defitrackClient.getLendingMarketCount(it.slug)
                 }
             }.map {
                 it.first to it.second.await(3000L, 0)
@@ -40,7 +42,7 @@ class LendingMarketStatisticsService(
                     it.second
                 },
                 marketsPerProtocol = marketsPerProtocol.associate {
-                    it.first to it.second
+                    it.first.toProtocolVO() to it.second
                 }.filter {
                     it.value > 0
                 }

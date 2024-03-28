@@ -1,9 +1,9 @@
 package io.defitrack.price.external.adapter.decentrifi
 
+import io.defitrack.adapter.output.domain.market.PoolingMarketInformationDTO
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.market.domain.pooling.PoolingMarketInformation
-import io.defitrack.marketinfo.port.out.Markets
+import io.defitrack.port.output.MarketClient
 import io.defitrack.price.external.adapter.stable.StablecoinPriceProvider
 import io.defitrack.price.external.domain.ExternalPrice
 import io.defitrack.price.port.out.ExternalPriceService
@@ -18,7 +18,7 @@ import java.math.BigInteger
 @Component
 @ConditionalOnProperty("oracles.alienbase.enabled", havingValue = "true", matchIfMissing = true)
 class DecentrifiAlienbaseV2PriceService(
-    private val markets: Markets,
+    private val markets: MarketClient,
     private val stablecoinPriceProvider: StablecoinPriceProvider
 ) : ExternalPriceService {
 
@@ -38,7 +38,7 @@ class DecentrifiAlienbaseV2PriceService(
         }
     }
 
-    private suspend fun importEthPairs(pools: List<PoolingMarketInformation>) {
+    private suspend fun importEthPairs(pools: List<PoolingMarketInformationDTO>) {
 
         val ethPrice = prices.find {
             it.address.lowercase() == weth
@@ -88,7 +88,7 @@ class DecentrifiAlienbaseV2PriceService(
     }
 
 
-    private suspend fun importUsdPairs(pools: List<PoolingMarketInformation>) {
+    private suspend fun importUsdPairs(pools: List<PoolingMarketInformationDTO>) {
         val usdPairs = pools.filter { pool ->
             pool.breakdown?.any { share ->
                 stablecoinPriceProvider.isStable(pool.network.toNetwork()).invoke(share.token.address)
@@ -135,7 +135,7 @@ class DecentrifiAlienbaseV2PriceService(
         }
     }
 
-    suspend fun getAlienbasePools(): List<PoolingMarketInformation> {
+    suspend fun getAlienbasePools(): List<PoolingMarketInformationDTO> {
         return markets.getPoolingMarkets("alienbase")
     }
 

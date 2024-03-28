@@ -2,10 +2,10 @@ package io.defitrack.price.external.adapter.event
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import io.defitrack.adapter.output.domain.market.PoolingMarketTokenShareInformationDTO
 import io.defitrack.common.utils.BigDecimalExtensions.isZero
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.event.event.PoolMarketUpdatedEvent
-import io.defitrack.market.domain.pooling.PoolingMarketTokenShareInformation
+import io.defitrack.event.PoolMarketUpdatedEvent
 import io.defitrack.price.application.PriceAggregator
 import io.defitrack.price.external.adapter.decentrifi.DecentrifiPoolingPriceService
 import kotlinx.coroutines.runBlocking
@@ -62,13 +62,7 @@ class PoolingMarketListener(
                 else -> {
                     val externalPrice = decentrifiPoolingPriceService.createExternalPrice(
                         DecentrifiPoolingPriceService.AddMarketCommand(
-                            breakdown = market.breakdown?.map {
-                                PoolingMarketTokenShareInformation(
-                                    token = it.token,
-                                    reserve = it.reserve,
-                                    reserveDecimal = it.reserve.asEth(it.token.decimals)
-                                )
-                            },
+                            breakdown = market.breakdown,
                             address = market.address,
                             liquidity = market.totalSupply,
                             name = market.name ?: "unknown",

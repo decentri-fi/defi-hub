@@ -7,14 +7,13 @@ import arrow.core.some
 import arrow.fx.coroutines.parMap
 import io.defitrack.common.network.Network
 import io.defitrack.erc20.ERC20
-import io.defitrack.erc20.domain.TokenInformation
-import io.defitrack.erc20.application.repository.NativeTokenRepository
 import io.defitrack.erc20.application.protocolspecific.TokenIdentifier
 import io.defitrack.erc20.application.repository.ERC20TokenListResource
+import io.defitrack.erc20.application.repository.NativeTokenRepository
+import io.defitrack.erc20.domain.TokenInformation
 import io.defitrack.erc20.port.input.TokenInformationUseCase
 import io.defitrack.erc20.port.output.ReadERC20Port
 import io.defitrack.token.TokenType
-import kotlinx.coroutines.sync.withLock
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service

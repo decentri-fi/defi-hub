@@ -16,10 +16,16 @@ enum class Network(val logo: String, val chainId: Int, val slug: String) {
             }
         }
 
-        fun fromString(str: String): Network? {
-            return values().firstOrNull {
+        fun fromStringOrNull(str: String): Network? {
+            return entries.firstOrNull {
                 it.slug == str || it.name == str
             }
+        }
+
+        fun fromString(str: String): Network {
+            return entries.firstOrNull {
+                it.slug == str || it.name == str
+            }!!
         }
     }
 }

@@ -47,7 +47,7 @@
     <modules>
         <module>defitrack-common</module>
         <module>decentrifi-client</module>
-        <module>decentrifi-protocol</module>
+        <module>decentrifi-markets</module>
         <module>defitrack-blockchains</module>
         <module>defitrack-protocol-contracts</module>
         <module>defitrack-rest</module>

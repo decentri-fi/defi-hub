@@ -2,13 +2,13 @@ package io.defitrack.balance.service.l1
 
 import io.defitrack.balance.service.BalanceService
 import io.defitrack.common.network.Network
-import io.defitrack.erc20.port.`in`.ERC20Resource
 import io.defitrack.evm.contract.BlockchainGatewayProvider
+import io.defitrack.port.output.ERC20Client
 import org.springframework.stereotype.Service
 
 @Service
 class PolygonBalanceService(
-    erc20Resource: ERC20Resource,
+    erc20Resource: ERC20Client,
     blockchainGatewayProvider: BlockchainGatewayProvider,
 ) : BalanceService(blockchainGatewayProvider, erc20Resource) {
 

@@ -1,15 +1,15 @@
 package io.defitrack.price.external.adapter.decentrifi
 
 import arrow.fx.coroutines.parMap
+import io.defitrack.adapter.output.domain.erc20.FungibleTokenInformation
+import io.defitrack.adapter.output.domain.market.PoolingMarketInformationDTO
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
-import io.defitrack.erc20.domain.FungibleTokenInformation
-import io.defitrack.erc20.port.`in`.ERC20Resource
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.BulkConstantResolver
-import io.defitrack.market.domain.pooling.PoolingMarketInformation
-import io.defitrack.marketinfo.port.out.Markets
+import io.defitrack.port.output.ERC20Client
+import io.defitrack.port.output.MarketClient
 import io.defitrack.price.external.adapter.stable.StablecoinPriceProvider
 import io.defitrack.price.external.domain.ExternalPrice
 import io.defitrack.price.port.out.ExternalPriceService
@@ -26,8 +26,8 @@ import kotlin.time.measureTime
 
 abstract class DecentrifiUniswapV3BasedPriceService(
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
-    private val erC20Resource: ERC20Resource,
-    private val marketResource: Markets,
+    private val erC20ClientResource: ERC20Client,
+    private val markets: MarketClient,
     private val stablecoinPriceProvider: StablecoinPriceProvider,
     private val bulkConstantResolver: BulkConstantResolver,
     private val protocol: Protocol
@@ -59,17 +59,17 @@ abstract class DecentrifiUniswapV3BasedPriceService(
         prices
     }
 
-    private suspend fun importEthPairs(pools: List<PoolingMarketInformation>) {
+    private suspend fun importEthPairs(pools: List<PoolingMarketInformationDTO>) {
         val eths = eths.await()
         val stables = stablecoinPriceProvider.stableCoins.await()
 
-        val containsEth: (PoolingMarketInformation) -> Boolean = {
+        val containsEth: (PoolingMarketInformationDTO) -> Boolean = {
             it.breakdown?.any { share ->
                 (eths.get(it.network.toNetwork())?.address?.lowercase() == share.token.address.lowercase())
             } ?: false
         }
 
-        val containsNoStables: (PoolingMarketInformation) -> Boolean = {
+        val containsNoStables: (PoolingMarketInformationDTO) -> Boolean = {
             it.breakdown?.none { share ->
                 stables.getOrDefault(it.network.toNetwork(), emptyList()).map { it.address.lowercase() }
                     .contains(share.token.address.lowercase())
@@ -79,7 +79,7 @@ abstract class DecentrifiUniswapV3BasedPriceService(
 
         val ethPairs = pools.filter(containsEth).filter(containsNoStables).filter { market ->
             market.tokens.all {
-                erC20Resource.getAllTokens(market.network.toNetwork(), true).map {
+                erC20ClientResource.getAllTokens(market.network.toNetwork(), true).map {
                     it.address.lowercase()
                 }.contains(it.address.lowercase())
             }
@@ -113,9 +113,9 @@ abstract class DecentrifiUniswapV3BasedPriceService(
 
                     val sqrtPriceX96 = contract.slot0.await().sqrtPriceX96
                     val token0 =
-                        erC20Resource.getTokenInformation(pool.network.toNetwork(), contract.token0.await())
+                        erC20ClientResource.getTokenInformation(pool.network.toNetwork(), contract.token0.await())
                     val token1 =
-                        erC20Resource.getTokenInformation(pool.network.toNetwork(), contract.token1.await())
+                        erC20ClientResource.getTokenInformation(pool.network.toNetwork(), contract.token1.await())
 
                     val priceInOtherToken = (sqrtPriceX96.toBigDecimal().dividePrecisely(
                         BigInteger.TWO.pow(96).toBigDecimal()
@@ -143,10 +143,10 @@ abstract class DecentrifiUniswapV3BasedPriceService(
     }
 
 
-    private suspend fun importUsdPairs(pools: List<PoolingMarketInformation>) = coroutineScope {
+    private suspend fun importUsdPairs(pools: List<PoolingMarketInformationDTO>) = coroutineScope {
         val stables = stablecoinPriceProvider.stableCoins.await()
 
-        val containsStableCoin: (PoolingMarketInformation) -> Boolean = {
+        val containsStableCoin: (PoolingMarketInformationDTO) -> Boolean = {
             it.breakdown?.any { share ->
                 stables.getOrDefault(it.network.toNetwork(), emptyList()).map { it.address.lowercase() }
                     .contains(share.token.address.lowercase())
@@ -155,7 +155,7 @@ abstract class DecentrifiUniswapV3BasedPriceService(
 
         val usdPairs = pools.filter(containsStableCoin).filter { market ->
             market.tokens.all {
-                erC20Resource.getAllTokens(market.network.toNetwork(), true).map {
+                erC20ClientResource.getAllTokens(market.network.toNetwork(), true).map {
                     it.address.lowercase()
                 }.contains(it.address.lowercase())
             }
@@ -183,9 +183,9 @@ abstract class DecentrifiUniswapV3BasedPriceService(
 
                 val sqrtPriceX96 = contract.slot0.await().sqrtPriceX96
                 val token0 =
-                    erC20Resource.getTokenInformation(pool.network.toNetwork(), contract.token0.await())
+                    erC20ClientResource.getTokenInformation(pool.network.toNetwork(), contract.token0.await())
                 val token1 =
-                    erC20Resource.getTokenInformation(pool.network.toNetwork(), contract.token1.await())
+                    erC20ClientResource.getTokenInformation(pool.network.toNetwork(), contract.token1.await())
 
                 val priceInOtherToken = (sqrtPriceX96.toBigDecimal().dividePrecisely(
                     BigInteger.TWO.pow(96).toBigDecimal()
@@ -222,7 +222,7 @@ abstract class DecentrifiUniswapV3BasedPriceService(
     }
 
     private fun addPrice(
-        pool: PoolingMarketInformation,
+        pool: PoolingMarketInformationDTO,
         token: FungibleTokenInformation,
         price: BigDecimal
     ) {
@@ -247,25 +247,25 @@ abstract class DecentrifiUniswapV3BasedPriceService(
         )
     }
 
-    suspend fun getUniswapV3Pools(): List<PoolingMarketInformation> {
-        return marketResource.getPoolingMarkets(protocol.slug)
+    suspend fun getUniswapV3Pools(): List<PoolingMarketInformationDTO> {
+        return markets.getPoolingMarkets(protocol.slug)
     }
 
     val eths = AsyncUtils.lazyAsync {
         mapOf(
-            Network.OPTIMISM to erC20Resource.getTokenInformation(
+            Network.OPTIMISM to erC20ClientResource.getTokenInformation(
                 Network.OPTIMISM,
                 "0x4200000000000000000000000000000000000006"
             ),
-            Network.BASE to erC20Resource.getTokenInformation(
+            Network.BASE to erC20ClientResource.getTokenInformation(
                 Network.BASE,
                 "0x4200000000000000000000000000000000000006"
             ),
-            Network.ETHEREUM to erC20Resource.getTokenInformation(
+            Network.ETHEREUM to erC20ClientResource.getTokenInformation(
                 Network.ETHEREUM,
                 "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
             ),
-            Network.ARBITRUM to erC20Resource.getTokenInformation(
+            Network.ARBITRUM to erC20ClientResource.getTokenInformation(
                 Network.ARBITRUM,
                 "0x82af49447d8a07e3bd95bd0d56f35241523fbab1"
             )

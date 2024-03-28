@@ -3,9 +3,9 @@ package io.defitrack.erc20.adapter.rest
 import arrow.core.getOrElse
 import io.defitrack.common.network.Network
 import io.defitrack.common.utils.AsyncUtils
+import io.defitrack.erc20.FungibleTokenInformationVO
 import io.defitrack.erc20.adapter.rest.vo.WrappedTokenVO
 import io.defitrack.erc20.adapter.tokens.NATIVE_WRAP_MAPPING
-import io.defitrack.erc20.domain.FungibleTokenInformation
 import io.defitrack.erc20.domain.toVO
 import io.defitrack.erc20.port.input.AllowanceUseCase
 import io.defitrack.erc20.port.input.TokenInformationUseCase
@@ -158,7 +158,7 @@ class ERC20RestRestController(
 
 
     @GetMapping("{network}/stables/usd")
-    suspend fun stables(@PathVariable("network") networkAsString: String): ResponseEntity<List<FungibleTokenInformation>> {
+    suspend fun stables(@PathVariable("network") networkAsString: String): ResponseEntity<List<FungibleTokenInformationVO>> {
         val network = Network.fromString(networkAsString) ?: return ResponseEntity.badRequest().build()
         return ResponseEntity.ok(
             stableCoins.await()[network]?.mapNotNull {
@@ -171,7 +171,7 @@ class ERC20RestRestController(
     override suspend fun getAllTokensForNetwork(
         @PathVariable("network") networkName: String,
         @RequestParam("verified", defaultValue = "false") verified: Boolean
-    ): ResponseEntity<List<FungibleTokenInformation>> {
+    ): ResponseEntity<List<FungibleTokenInformationVO>> {
         val network = Network.fromString(networkName) ?: return ResponseEntity.badRequest().build()
         try {
             return ResponseEntity.ok(
@@ -200,7 +200,7 @@ class ERC20RestRestController(
     override suspend fun getTokenInformation(
         @PathVariable("network") networkName: String,
         @PathVariable("address") address: String
-    ): ResponseEntity<FungibleTokenInformation> = coroutineScope {
+    ): ResponseEntity<FungibleTokenInformationVO> = coroutineScope {
         val network = Network.fromString(networkName) ?: return@coroutineScope ResponseEntity.badRequest().build()
         val observation = Observation.start("erc20.get-token-information", observationRegistry)
             .lowCardinalityKeyValue("network", networkName)

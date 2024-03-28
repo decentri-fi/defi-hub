@@ -2,20 +2,19 @@ package io.defitrack.event.native
 
 import arrow.core.nel
 import io.defitrack.common.network.Network
-import io.defitrack.erc20.port.`in`.ERC20Resource
-import io.defitrack.networkinfo.toNetworkInformation
 import io.defitrack.event.DefiEvent
 import io.defitrack.event.DefiEventType
 import io.defitrack.evm.contract.BlockchainGatewayProvider
-import io.defitrack.adapter.output.LabeledAddressesRestClient
+import io.defitrack.port.output.ERC20Client
+import io.defitrack.port.output.LabelClient
 import org.springframework.stereotype.Component
 import java.math.BigInteger
 
 @Component
 class NativeTransactionDecoder(
     private val blockchainGatewayProvider: BlockchainGatewayProvider,
-    private val labeledAddressesRestClient: LabeledAddressesRestClient,
-    private val erC20Resource: ERC20Resource
+    private val labeledAddressesRestClient: LabelClient,
+    private val erC20Resource: ERC20Client
 ) {
 
     suspend fun extract(txHash: String, network: Network): List<DefiEvent> {
@@ -40,7 +39,7 @@ class NativeTransactionDecoder(
                     "value" to value,
                     "asset" to asset
                 ),
-                network = network.toNetworkInformation()
+                network = network
             ).nel()
         } ?: emptyList()
     }

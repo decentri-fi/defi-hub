@@ -3,10 +3,10 @@ package io.defitrack.price.external.adapter.decentrifi
 import arrow.fx.coroutines.parMapNotNull
 import io.defitrack.common.utils.BigDecimalExtensions.dividePrecisely
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.marketinfo.port.out.Markets
+import io.defitrack.port.output.MarketClient
+import io.defitrack.port.output.ProtocolClient
 import io.defitrack.price.external.domain.ExternalPrice
 import io.defitrack.price.port.out.ExternalPriceService
-import io.defitrack.protocol.port.`in`.ProtocolResource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.runBlocking
@@ -18,8 +18,8 @@ import java.math.BigDecimal
 @Component
 @ConditionalOnProperty("oracles.farming_markets.enabled", havingValue = "true", matchIfMissing = true)
 class DecentrifiFarmingPriceService(
-    private val marketResource: Markets,
-    private val protocolResource: ProtocolResource
+    private val marketResource: MarketClient,
+    private val protocolResource: ProtocolClient
 ) : ExternalPriceService {
 
     override suspend fun getAllPrices(): Flow<ExternalPrice> = channelFlow {

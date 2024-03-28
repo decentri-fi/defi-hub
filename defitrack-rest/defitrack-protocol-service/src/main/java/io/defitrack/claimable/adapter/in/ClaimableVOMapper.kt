@@ -1,20 +1,20 @@
 package io.defitrack.claimable.adapter.`in`
 
+import io.defitrack.adapter.output.domain.market.GetPriceCommand
 import io.defitrack.claim.UserClaimable
 import io.defitrack.claimable.adapter.`in`.rest.domain.UserClaimableVO
 import io.defitrack.common.utils.FormatUtilsExtensions.asEth
-import io.defitrack.networkinfo.toNetworkInformation
-import io.defitrack.price.domain.GetPriceCommand
-import io.defitrack.price.port.`in`.PricePort
+import io.defitrack.erc20.toVO
+import io.defitrack.mapper.toVO
+import io.defitrack.network.toVO
+import io.defitrack.port.output.PriceClient
 import io.defitrack.protocol.mapper.ProtocolVOMapper
-import io.defitrack.transaction.PreparedTransactionVOMapper
 import org.springframework.stereotype.Component
 
 @Component
 class ClaimableVOMapper(
-    private val priceResource: PricePort,
+    private val priceResource: PriceClient,
     private val protocolVOMapper: ProtocolVOMapper,
-    private val preparedTransactionVOMapper: PreparedTransactionVOMapper
 ) {
 
     suspend fun map(userClaimable: UserClaimable): UserClaimableVO {
@@ -32,11 +32,11 @@ class ClaimableVOMapper(
                 id = id,
                 name = name,
                 protocol = protocolVOMapper.map(protocol),
-                network = network.toNetworkInformation(),
-                token = claimableToken,
+                network = network.toVO(),
+                token = claimableToken.toVO(),
                 amount = amount.toDouble(),
                 dollarValue = claimableInDollar,
-                claimTransaction = preparedTransactionVOMapper.map(claimTransaction)
+                claimTransaction = claimTransaction?.toVO()
             )
         }
     }

@@ -1,7 +1,7 @@
 package io.defitrack.market.pooling.vo
 
 import io.defitrack.market.adapter.`in`.resource.MarketVO
-import io.defitrack.networkinfo.NetworkInformation
+import io.defitrack.network.NetworkInformationVO
 import io.defitrack.protocol.ProtocolVO
 import java.math.BigDecimal
 
@@ -9,7 +9,7 @@ class PoolingMarketVO(
     id: String,
     name: String,
     protocol: ProtocolVO,
-    network: NetworkInformation,
+    network: NetworkInformationVO,
     val breakdown: List<PoolingMarketTokenShareVO>,
     val apr: BigDecimal?,
     val address: String,

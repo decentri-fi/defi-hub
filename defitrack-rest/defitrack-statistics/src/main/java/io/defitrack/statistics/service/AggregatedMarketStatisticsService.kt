@@ -1,5 +1,6 @@
 package io.defitrack.statistics.service
 
+import io.defitrack.port.output.ProtocolClient
 import io.defitrack.statistics.client.DefitrackClient
 import io.defitrack.statistics.domain.MarketStatisticVO
 import io.github.reactivecircus.cache4k.Cache
@@ -12,7 +13,8 @@ import kotlin.time.Duration.Companion.hours
 
 @Component
 class AggregatedMarketStatisticsService(
-    private val defitrackClient: DefitrackClient
+    private val defitrackClient: DefitrackClient,
+    private val decentrifiProtocols: ProtocolClient,
 ) {
 
     val cache = Cache.Builder<String, MarketStatisticVO>()
@@ -22,19 +24,19 @@ class AggregatedMarketStatisticsService(
 
     suspend fun getStatistics(): MarketStatisticVO = withContext(Dispatchers.IO) {
         cache.get("stats") {
-            val protocols = defitrackClient.getProtocols()
+            val protocols = decentrifiProtocols.getProtocols()
 
             val marketsPerProtocol = protocols
                 .map {
                     it to listOf(
                         async {
-                            defitrackClient.getPoolingMarketsCount(it)
+                            defitrackClient.getPoolingMarketsCount(it.slug)
                         },
                         async {
-                            defitrackClient.getFarmingMarketsCount(it)
+                            defitrackClient.getFarmingMarketsCount(it.slug)
                         },
                         async {
-                            defitrackClient.getLendingMarketCount(it)
+                            defitrackClient.getLendingMarketCount(it.slug)
                         }
                     )
                 }.map {
@@ -46,7 +48,7 @@ class AggregatedMarketStatisticsService(
                     it.second
                 }.sum(),
                 marketsPerProtocol = marketsPerProtocol.associate {
-                    it.first to it.second.sum()
+                    it.first.toProtocolVO() to it.second.sum()
                 }.filter {
                     it.value > 0
                 }

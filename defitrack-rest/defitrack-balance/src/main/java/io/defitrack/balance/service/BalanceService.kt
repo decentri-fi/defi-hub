@@ -1,18 +1,18 @@
 package io.defitrack.balance.service
 
-import io.defitrack.balance.service.dto.TokenBalance
+import io.defitrack.balance.service.dto.TokenBalanceVO
+import io.defitrack.balance.service.dto.toVO
 import io.defitrack.common.network.Network
-import io.defitrack.erc20.port.`in`.ERC20Resource
 import io.defitrack.evm.contract.BlockchainGatewayProvider
 import io.defitrack.evm.contract.ContractCall
 import io.defitrack.evm.contract.ERC20Contract
+import io.defitrack.port.output.ERC20Client
 import org.slf4j.LoggerFactory
-import java.math.BigDecimal
 import java.math.BigInteger
 
 abstract class BalanceService(
     val blockchainGatewayProvider: BlockchainGatewayProvider,
-    val erc20Resource: ERC20Resource
+    val erc20Resource: ERC20Client
 ) {
 
     val logger = LoggerFactory.getLogger(this::class.java)
@@ -28,7 +28,7 @@ abstract class BalanceService(
         }
     }
 
-    open suspend fun getTokenBalances(user: String): List<TokenBalance> {
+    open suspend fun getTokenBalances(user: String): List<TokenBalanceVO> {
         return try {
             val tokenAddresses = erc20Resource.getAllTokens(getNetwork(), verified = true).map {
                 it.address
@@ -38,9 +38,9 @@ abstract class BalanceService(
                 .mapIndexed { i, balance ->
                     if (balance > BigInteger.ZERO) {
                         val token = erc20Resource.getTokenInformation(getNetwork(), tokenAddresses[i])
-                        TokenBalance(
+                        TokenBalanceVO(
                             amount = balance,
-                            token = token,
+                            token = token.toVO(),
                             network = getNetwork(),
                         )
                     } else {

@@ -1,15 +1,15 @@
 package io.defitrack.erc20.application.protocolspecific.decentrifi
 
+import io.defitrack.adapter.output.domain.erc20.FungibleTokenInformation
+import io.defitrack.adapter.output.domain.market.FarmingMarketInformationDTO
+import io.defitrack.adapter.output.domain.meta.ProtocolInformationDTO
 import io.defitrack.common.network.Network
-import io.defitrack.erc20.domain.FungibleTokenInformation
-import io.defitrack.protocol.ProtocolInformation
-import io.defitrack.market.domain.farming.FarmingMarketInformation
 import io.defitrack.erc20.ERC20
 import io.defitrack.erc20.application.protocolspecific.TokenIdentifier
 import io.defitrack.erc20.domain.TokenInformation
-import io.defitrack.marketinfo.port.out.Markets
+import io.defitrack.port.output.MarketClient
+import io.defitrack.port.output.ProtocolClient
 import io.defitrack.protocol.Protocol
-import io.defitrack.protocol.port.`in`.ProtocolResource
 import io.defitrack.token.TokenType
 import io.github.reactivecircus.cache4k.Cache
 import kotlinx.coroutines.runBlocking
@@ -19,19 +19,19 @@ import org.springframework.stereotype.Component
 
 @Component
 class DecentrifiTokenIdentifier(
-    private val protocolResource: ProtocolResource,
-    private val marketResource: Markets
+    private val decentrifiProtocols: ProtocolClient,
+    private val markets: MarketClient,
 ) : TokenIdentifier() {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    val tokens = Cache.Builder<String, Pair<FungibleTokenInformation, ProtocolInformation>>().build()
+    val tokens = Cache.Builder<String, Pair<FungibleTokenInformation, ProtocolInformationDTO>>().build()
 
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 6)
     fun init() = runBlocking {
-        protocolResource.getProtocols().map { proto ->
+        decentrifiProtocols.getProtocols().map { proto ->
             try {
-                getFarms(proto)
+                getFarms(proto.slug)
                     .filter { farm ->
                         farm.token != null
                     }.forEach { farm ->
@@ -66,7 +66,7 @@ class DecentrifiTokenIdentifier(
         )
     }
 
-    suspend fun getFarms(protocol: ProtocolInformation): List<FarmingMarketInformation> {
-        return marketResource.getFarmingMarkets(protocol.slug)
+    suspend fun getFarms(slug: String): List<FarmingMarketInformationDTO> {
+        return markets.getFarmingMarkets(slug)
     }
 }

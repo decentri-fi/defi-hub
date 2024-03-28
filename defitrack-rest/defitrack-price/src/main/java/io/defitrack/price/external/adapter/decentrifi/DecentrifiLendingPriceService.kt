@@ -1,15 +1,11 @@
 package io.defitrack.price.external.adapter.decentrifi
 
-import io.defitrack.market.domain.lending.LendingMarketInformation
-import io.defitrack.networkinfo.NetworkInformation
+import io.defitrack.adapter.output.domain.market.LendingMarketInformationDTO
+import io.defitrack.common.network.Network
+import io.defitrack.port.output.MarketClient
+import io.defitrack.port.output.ProtocolClient
 import io.defitrack.price.external.domain.ExternalPrice
 import io.defitrack.price.port.out.ExternalPriceService
-import io.defitrack.protocol.ProtocolInformation
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.runBlocking
@@ -21,9 +17,9 @@ import java.math.BigDecimal
 @Component
 @ConditionalOnProperty("oracles.lending_markets.enabled", havingValue = "true", matchIfMissing = true)
 class DecentrifiLendingPriceService(
-    private val httpClient: HttpClient
+    private val decentrifiProtocols: ProtocolClient,
+    private val markets: MarketClient,
 ) : ExternalPriceService {
-
 
 
     override suspend fun getAllPrices(): Flow<ExternalPrice> = channelFlow {
@@ -37,7 +33,7 @@ class DecentrifiLendingPriceService(
 
     fun getPrices() = runBlocking {
         logger.info("fetching prices from decentrifi lending pools")
-        val protocols = getProtocols()
+        val protocols = decentrifiProtocols.getProtocols()
         protocols.map { protocol ->
             try {
                 val pools = getLendingMarkets(protocol.slug)
@@ -50,7 +46,7 @@ class DecentrifiLendingPriceService(
                         if (price == null) {
                             logger.error("Price for market ${market.name} in ${market.protocol.name} is null")
                         } else {
-                            putInCache(market.network, market.marketToken!!.address, price, market.name)
+                            putInCache(market.network.toNetwork(), market.marketToken!!.address, price, market.name)
                         }
                     }
             } catch (ex: Exception) {
@@ -62,28 +58,15 @@ class DecentrifiLendingPriceService(
         prices
     }
 
-    fun putInCache(network: NetworkInformation, address: String, price: BigDecimal, name: String) {
+    fun putInCache(network: Network, address: String, price: BigDecimal, name: String) {
         prices.add(
             ExternalPrice(
-                address.lowercase(), network.toNetwork(), price, "decentrifi-lending", name, importOrder()
+                address.lowercase(), network, price, "decentrifi-lending", name, importOrder()
             )
         )
     }
 
-    suspend fun getProtocols(): List<ProtocolInformation> {
-        return httpClient.get("https://api.decentri.fi/protocols").body()
+    suspend fun getLendingMarkets(protocol: String): List<LendingMarketInformationDTO> {
+        return markets.getLendingMarkets(protocol)
     }
-
-    suspend fun getLendingMarkets(protocol: String): List<LendingMarketInformation> {
-        val result = httpClient.get("https://api.decentri.fi/$protocol/lending/all-markets")
-        return if (result.status.isSuccess())
-            result.body()
-        else {
-            logger.error(
-                "Unable to fetch lending markets for $protocol (${result.bodyAsText()}"
-            )
-            emptyList()
-        }
-    }
-
 }

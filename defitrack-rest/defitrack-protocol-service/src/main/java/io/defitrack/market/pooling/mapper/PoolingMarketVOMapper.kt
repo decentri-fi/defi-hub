@@ -3,7 +3,7 @@ package io.defitrack.market.pooling.mapper
 import io.defitrack.market.adapter.`in`.mapper.MarketVOMapper
 import io.defitrack.market.domain.PoolingMarket
 import io.defitrack.market.pooling.vo.PoolingMarketVO
-import io.defitrack.networkinfo.toNetworkInformation
+import io.defitrack.network.toVO
 import io.defitrack.protocol.mapper.ProtocolVOMapper
 import org.springframework.stereotype.Component
 import java.time.ZoneOffset
@@ -20,9 +20,9 @@ class PoolingMarketVOMapper(
             PoolingMarketVO(
                 name = name,
                 protocol = protocolVOMapper.map(protocol),
-                network = network.toNetworkInformation(),
+                network = network.toVO(),
                 id = id,
-                breakdown = poolingBreakdownVOMapper.toVO(breakdown?.get()),
+                breakdown = poolingBreakdownVOMapper.toVO(breakdown.get()),
                 decimals = decimals,
                 address = address,
                 apr = apr,

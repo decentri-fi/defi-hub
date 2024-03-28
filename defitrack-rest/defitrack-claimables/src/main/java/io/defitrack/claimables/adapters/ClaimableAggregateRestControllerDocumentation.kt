@@ -1,7 +1,7 @@
 package io.defitrack.claimables.adapters
 
 import io.defitrack.claimables.adapters.rest.resource.ExceptionResult
-import io.defitrack.claimables.domain.ClaimableMarketDTO
+import io.defitrack.claimables.domain.ClaimableMarketVO
 import io.defitrack.claimables.domain.UserClaimableDTO
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -32,7 +32,7 @@ interface ClaimableAggregateRestControllerDocumentation {
                 content = [
                     Content(
                         mediaType = "application/json",
-                        array = (ArraySchema(schema = Schema(implementation = ClaimableMarketDTO::class)))
+                        array = (ArraySchema(schema = Schema(implementation = ClaimableMarketVO::class)))
                     )
                 ]
             ),

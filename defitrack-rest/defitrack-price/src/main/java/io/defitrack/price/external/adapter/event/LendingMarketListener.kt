@@ -2,7 +2,7 @@ package io.defitrack.price.external.adapter.event
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import io.defitrack.event.event.LendingMarketUpdatedEvent
+import io.defitrack.event.LendingMarketUpdatedEvent
 import io.defitrack.price.application.PriceAggregator
 import io.defitrack.price.external.adapter.decentrifi.DecentrifiLendingPriceService
 import io.defitrack.price.external.domain.ExternalPrice
