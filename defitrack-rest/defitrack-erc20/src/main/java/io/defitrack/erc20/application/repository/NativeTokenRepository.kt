@@ -15,7 +15,6 @@ class NativeTokenRepository(private val logoGenerator: LogoGenerator) {
 
     fun getNativeToken(network: Network): TokenInformation {
         val nativeLogo = logoGenerator.generateLogoUrl(network, "0x0")
-        //TODO: add test that tells me there's no token for a network
         return when (network) {
             Network.ETHEREUM -> TokenInformation(
                 address = nullAddress,
