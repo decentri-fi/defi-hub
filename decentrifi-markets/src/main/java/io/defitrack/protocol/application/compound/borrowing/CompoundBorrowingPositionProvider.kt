@@ -1,5 +1,6 @@
 package io.defitrack.protocol.application.compound.borrowing
 
+import arrow.core.Either
 import io.defitrack.common.network.Network
 import io.defitrack.architecture.conditional.ConditionalOnCompany
 import io.defitrack.evm.contract.BlockchainGatewayProvider
@@ -12,6 +13,7 @@ import io.defitrack.protocol.Protocol
 import io.defitrack.protocol.compound.CompoundAddressesProvider
 import io.defitrack.protocol.compound.v2.contract.CompoundComptrollerContract
 import io.defitrack.protocol.compound.v2.contract.CompoundTokenContract
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -24,6 +26,8 @@ class CompoundBorrowingPositionProvider(
     private val erC20Resource: ERC20Client,
     blockchainGatewayProvider: BlockchainGatewayProvider,
 ) : BorrowPositionProvider {
+
+    val logger = LoggerFactory.getLogger(this::class.java)
 
     val gateway = blockchainGatewayProvider.getGateway(getNetwork())
 
@@ -54,31 +58,34 @@ class CompoundBorrowingPositionProvider(
                 it.borrowBalanceStoredFunction(address)
             }
         ).mapIndexed { index, retVal ->
-            //Todo: errors
-            val balance = retVal.data[0].value as BigInteger
-            if (balance > BigInteger.ZERO) {
-                val compoundTokenContract = tokenContracts[index]
-                val underlying = compoundTokenContract.getUnderlyingAddress().let { tokenAddress ->
-                    erC20Resource.getTokenInformation(getNetwork(), tokenAddress)
+            Either.catch {
+                val balance = retVal.data[0].value as BigInteger
+                if (balance > BigInteger.ZERO) {
+                    val compoundTokenContract = tokenContracts[index]
+                    val underlying = compoundTokenContract.getUnderlyingAddress().let { tokenAddress ->
+                        erC20Resource.getTokenInformation(getNetwork(), tokenAddress)
+                    }
+                    val token = underlying
+                    BorrowPosition(
+                        market = BorrowMarket(
+                            id = "compound-${token.address}",
+                            protocol = getProtocol(),
+                            network = getNetwork(),
+                            rate = getBorrowRate(compoundTokenContract),
+                            deprecated = false,
+                            name = "Compound ${token.name} Borrow",
+                            token = token,
+                            type = "compound.borrowing",
+                        ),
+                        tokenAmount = balance,
+                        underlyingAmount = balance,
+                    )
+                } else {
+                    null
                 }
-                val token = underlying
-                BorrowPosition(
-                    market = BorrowMarket(
-                        id = "compound-${token.address}",
-                        protocol = getProtocol(),
-                        network = getNetwork(),
-                        rate = getBorrowRate(compoundTokenContract),
-                        deprecated = false,
-                        name = "Compound ${token.name} Borrow",
-                        token = token,
-                        type = "compound.borrowing",
-                    ),
-                    tokenAmount = balance,
-                    underlyingAmount = balance,
-                )
-            } else {
-                null
-            }
+            }.mapLeft {
+                logger.info("Unable to fetch position for compound", it)
+            }.getOrNull()
         }.filterNotNull()
     }
 
