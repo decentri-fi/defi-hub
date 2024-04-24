@@ -3,7 +3,7 @@ package io.defitrack.web3j
 import io.defitrack.config.Web3JEndpoints
 import io.defitrack.evm.EvmContractInteractionCommand
 import io.defitrack.evm.GetEventLogsCommand
-import io.defitrack.multicall.MulticallService
+import io.defitrack.evm.multicall.MulticallService
 import kotlinx.coroutines.delay
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component

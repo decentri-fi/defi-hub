@@ -1,4 +1,4 @@
-package io.defitrack.rest
+package com.bankless.evm.rest
 
 import io.defitrack.config.Web3JEndpoints
 import io.defitrack.evm.EvmContractInteractionCommand

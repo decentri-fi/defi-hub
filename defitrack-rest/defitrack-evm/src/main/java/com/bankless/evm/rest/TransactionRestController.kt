@@ -1,4 +1,4 @@
-package io.defitrack.rest
+package com.bankless.evm.rest
 
 import arrow.core.None
 import arrow.core.Option

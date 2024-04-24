@@ -1,4 +1,4 @@
-package io.defitrack.rest
+package com.bankless.evm.rest
 
 import arrow.fx.coroutines.parMap
 import io.defitrack.config.Web3JEndpoints
