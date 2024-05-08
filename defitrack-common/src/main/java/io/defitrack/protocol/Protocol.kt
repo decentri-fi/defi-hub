@@ -24,7 +24,7 @@ enum class Protocol(
     ETHER_FI(
         logo = "etherfi.png",
         slug = "ether-fi",
-        primitives = listOf(FARMING, CLAIMABLES),
+        primitives = listOf(FARMING),
         website = "https://ether.fi",
         networks = listOf(ETHEREUM),
         company = Company.ETHER_FI
