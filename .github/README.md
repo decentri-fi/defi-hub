@@ -1,86 +1,177 @@
+# Decentrifi DeFi Hub
 
+A comprehensive API for indexing and querying DeFi-related data across multiple blockchain networks.
 
-<div align="center">
+## Overview
 
-# **Decentrifi**
+Decentrifi DeFi Hub is a modular, multi-chain API that enables developers and applications to access standardized DeFi data including:
 
- **Explore. Track. Integrate.**
+- Token balances and prices
+- Market information (lending, farming, pooling)
+- Protocol statistics
+- Claimable rewards
+- On-chain events
+- NFT data
+- ENS resolution
 
-[Website](https://decentri.fi) | [Discord](https://discord.gg/D95VSCCX) | [Documentation](https://docs.decentri.fi) 
+The project supports multiple EVM-compatible blockchains and provides a unified interface for accessing DeFi data across these chains.
 
-</div>
+## Supported Networks
 
-Welcome to the Decentrifi Defi Hub, an enticing oasis in the vast desert of decentralized finance! Step into a world where possibilities are infinite, and innovation knows no bounds. This **fully open-source** ecosystem beckons developers and integrators with its irresistible charm, promising a seamless journey through the realms of decentralized finance.
+- Ethereum
+- Polygon
+- Polygon zkEVM
+- Arbitrum
+- Optimism
+- Base
 
-At the heart of Decentrifi lies a relentless ambition: to be the epitome of **defi nativity**, blockchain agnosticism, and modularity. We invite you to experience a captivating blend of cutting-edge technology, elegant design, and limitless potential, all within the palm of your hand.
+## Project Structure
 
-Embrace the freedom of choice as our ecosystem breaks down the barriers between blockchains. 
-Whether you prefer Ethereum, Polygon, or any other leading blockchain or L2, Decentrifi is here to welcome you with open arms. Explore, experiment, and harness the true power of decentralization without constraints.
+The project is organized into several modules:
 
-Decentrifi's modular architecture empowers developers and integrators to embark on an extraordinary adventure of customization. Craft your masterpiece, utilizing our meticulously designed building blocks, each with its own unique functionality. Seamlessly integrate existing solutions or create your own modules, fostering innovation like never before.
+- **defitrack-common**: Common utilities and shared functionality
+- **decentrifi-client**: Client libraries for consuming the API
+    - Balance client
+    - ERC20 client
+    - Price client
+    - Protocol client
+    - Event domain
+- **decentrifi-markets**: Market definitions and providers
+- **defitrack-blockchains**: Blockchain-specific implementations
+    - Ethereum
+    - Polygon
+    - Polygon zkEVM
+    - Arbitrum
+    - Optimism
+    - Base
+- **defitrack-protocol-contracts**: Contract integrations for various DeFi protocols
+- **defitrack-rest**: REST API endpoints
+    - Balance API
+    - ERC20 API
+    - Events API
+    - Claimables API
+    - Protocol Service API
+    - Price API
+    - ENS API
+    - NFT API
+    - Statistics API
+    - EVM API
 
-Our siren song calls out to developers, whispering promises of a vibrant community, meticulous documentation, and developer-friendly tools. Dive into our comprehensive resources, and be enchanted by the harmony between intuitive APIs, extensive libraries, and helpful guides. Let your creativity flourish as you unlock the true potential of decentralized finance.
+## Core Features
 
-Join us on this exhilarating quest to redefine the boundaries of defi. Together, we shall embrace the untamed spirit of innovation, rewrite the rules of financial interaction, and unveil a future that is bold, audacious, and unapologetically decentralized. 
+### Price Tracking
+Get token prices across multiple networks with automatic fallbacks and cross-network alternatives for stable coins.
 
-Welcome to the Decentrifi Defi Hub, where the only limit is your imagination.
-
-## Claimables
-
-Claimables are a defi primitive that can indicate any on-chain activity that can be claimed by a user. This can be airdrops, rewards, or any other type of claimable asset. Claimables are a core primitive in the Decentrifi ecosystem, and are used to track on-chain activity for protocols and networks.
-
-### Types of Claimables
-
-| Protocol   | Name                | URL |
-|------------|---------------------|-----|
-| Convex     | Reward Pool Rewards |     |
-| Balancer   | Staking Rewards     |     |
-| Compound   | Rewards             |     |        
-| Uniswap V3 | Pooling Yield       |     |        
-| Aave       | Aave Staking        |     |        
-| Quickswap  | Quickswap Staking   |     |        
-| Quickswap  | Quickswap Staking   |     |        
-| Sushiswap  | Sushiswap Staking   |     |        
-| Aelin      | Aelin Rewards       |     |        
-| Velodrome  | Velodrome Staking   |     |        
-| Hop        | Hop Staking         |     |        
-| Alienbase  | Staking             |     |        
-| Aerodrome  |  Staking            |     |
-
-
-## Unified DeFi Model
-
-Decentrifi takes a pioneering approach in the decentralized finance (DeFi) space by introducing a unified model that encompasses all DeFi primitives. Our mission is to streamline and consolidate the vast array of DeFi functionalities into a cohesive framework, simplifying the development and integration process for developers and integrators.
-
-In the fragmented world of DeFi, where various protocols and primitives operate independently, Decentrifi stands as a beacon of unity. We envision a future where developers can seamlessly harness the power of multiple DeFi primitives without the complexities of navigating disparate systems.
-
-Our unified model provides a comprehensive and standardized framework that spans the entire spectrum of DeFi functionalities. Whether you're exploring lending and borrowing, decentralized exchanges, asset management, or any other DeFi primitive, Decentrifi offers a cohesive architecture that promotes interoperability and ease of integration.
-
-By adopting our unified model, developers and integrators can accelerate their development cycles and reduce complexities associated with integrating multiple protocols. The modular nature of our model enables easy customization, allowing for the creation of tailored DeFi solutions that meet specific project requirements.
-
-With Decentrifi, developers and integrators can focus on building innovative applications and services, leveraging a unified infrastructure that abstracts the underlying complexities of individual DeFi primitives. This streamlined approach empowers developers to unlock the true potential of DeFi without being burdened by the intricacies of protocol-specific implementations.
-
-As we continue to expand our ecosystem, we actively seek to collaborate with DeFi projects and protocols, inviting them to integrate into our unified model. Through these partnerships, we foster a more seamless and harmonious DeFi landscape, driving standardization and interoperability across the industry.
-
-## Building the project
-
-The project is entirely written in Kotlin. The only prerequisite is to have a JDK 17+ installed.
-
-```shell
-./mvn clean package
+```
+GET /{token-address}?network={network}
 ```
 
-## Submodules
+### Balance Tracking
+Query token balances, native balances, and full portfolio data for any address.
 
-### Decentrifi Blockchains
+```
+GET /{user}/token-balances
+GET /{user}/native-balance
+GET /{user}/{token}?network={network}
+```
 
-The Decentrifi ecosystem currently supports an array of prominent networks, including Ethereum, Polygon, and more. You can find the complete list of active supported networks at https://api.decentri.fi/networks, which is automatically updated to reflect our expanding network compatibility.
+### Market Data
+Access standardized market data for:
+- Lending markets
+- Farming (staking) markets
+- Pooling markets (liquidity)
+- Borrowing markets
 
-### Decentrifi Protocols
+```
+GET /markets?protocol={protocol}&network={network}
+```
 
-Decentrifi embraces the collaborative spirit of decentralized finance by supporting a diverse range of protocols that have been fully integrated into our ecosystem, reflecting their onchain activity. These protocols represent the cutting edge of innovation and play a pivotal role in shaping the future of decentralized finance.
+### Position Tracking
+Track user positions across different DeFi protocols.
 
-To explore the impressive lineup of supported protocols and their onchain contributions, please visit https://track.decentri.fi/protocols. This comprehensive resource provides valuable insights into the thriving ecosystem of protocols that actively participate in the Decentrifi network.
+```
+GET /positions/{protocol}/{user}?network={network}
+```
 
-By integrating these protocols into our ecosystem, we unlock new possibilities and unleash the full potential of decentralized finance. These protocols cover a wide spectrum of functionalities, from lending and borrowing to decentralized exchanges, yield farming, and much more.
+### Claimable Rewards
+Discover claimable rewards and airdrops for any address.
 
+```
+GET /claimables/{user}
+```
+
+### Events
+Decode and analyze on-chain events.
+
+```
+GET /events/decode
+```
+
+### Statistics
+Get aggregate statistics about DeFi protocols.
+
+```
+GET /statistics/{protocol}/lending
+GET /statistics/{protocol}/farming
+GET /statistics/{protocol}/pooling
+```
+
+## Technology Stack
+
+- **Language**: Kotlin
+- **Framework**: Spring Boot 3.2.4
+- **Build Tool**: Maven
+- **Blockchain Integration**: Web3j 4.10.3
+- **Async Programming**: Kotlin Coroutines
+- **HTTP Client**: Ktor Client
+- **Caching**: Cache4k
+- **Documentation**: Swagger/OpenAPI
+- **Containerization**: Docker
+- **CI/CD**: Jenkins
+
+## Getting Started
+
+### Prerequisites
+- JDK 21
+- Maven 3.x
+- Docker (for containerized deployment)
+
+### Building the Project
+```bash
+mvn clean package
+```
+
+### Running the Application
+```bash
+java -jar defitrack-rest/defitrack-api-gw/target/defitrack-api-gw-0.0.1-SNAPSHOT.jar
+```
+
+### Docker Deployment
+```bash
+docker build -t defitrack -f ci/Dockerfile .
+docker run -p 8080:8080 defitrack
+```
+
+## API Documentation
+
+API documentation is available via Swagger UI when the application is running:
+
+```
+http://localhost:8080/swagger-ui.html
+```
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+Please read our [Code of Conduct](CODE_OF_CONDUCT.md) before contributing to the project.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
